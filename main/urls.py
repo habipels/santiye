@@ -1,0 +1,19 @@
+from django.urls import path
+from . import views
+app_name = "main"
+urlpatterns = [
+    path("", views.homepage, name="homepage"),
+    path("addingsite", views.santiye_ekle, name="santiye_ekle"),
+    path("sitesettings", views.santiye_listele, name="santiye_listele"),
+    path("delsite", views.santiye_sil, name="santiye_sil"),
+    path("editsite", views.santiye_duzelt, name="santiye_duzelt"),
+    path("langsettings", views.dil_ayari_listele, name="dil_ayari_listele"),
+    path("addlang", views.dil_ekle, name="dil_ekle"),
+    path("setlang", views.dil_duzelt, name="dil_duzelt"),
+    path("dellang", views.dil_sil, name="dil_sil"),
+    path("projectstype", views.proje_tipi_, name="proje_tipi_"),
+    path("addprojectstype", views.proje_ekle, name="proje_ekle"),
+    path("delprojectstype", views.proje_Adi_sil, name="proje_Adi_sil"),
+    path("setprojecttype", views.proje_duzenle, name="proje_duzenle"),
+]
+#
