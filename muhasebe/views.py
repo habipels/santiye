@@ -283,3 +283,99 @@ def gider_kategorisi_duzenle(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
     return redirect("accounting:gider_kategorisi_tipleri")
+
+
+#cari işlemler
+def cari_viev(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =cari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =cari.objects.filter(Q(cari_kart_ait_bilgisi__first_name__icontains = search)|Q(cari_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/cari.html",content)
+
+#cari ekleme
+def cari_ekle(request):
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            cari_Adi   = request.POST.get("cariadi")
+            bakiye = request.POST.get("bakiye")
+            konumu = request.POST.get("konumu")
+            cari.objects.create(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) 
+                                ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye
+                                
+                                )
+        else:
+            cari_Adi   = request.POST.get("cariadi")
+            bakiye = request.POST.get("bakiye")
+            konumu = request.POST.get("konumu")
+            cari.objects.create(cari_kart_ait_bilgisi = request.user
+                ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye)
+    
+    return redirect("accounting:cari")
+
+#cari silme
+def cari_sil(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        cari.objects.filter(id = id).update(silinme_bilgisi = True)
+    else:
+        cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+    return redirect("accounting:cari")
+
+
+#cari düzenle
+def cari_duzenle(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        silinmedurumu = request.POST.get("silinmedurumu")
+        konumu = request.POST.get("konumu")
+        if silinmedurumu == "1":
+            silinmedurumu = False
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
+        elif silinmedurumu == "2":
+            silinmedurumu = True
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
+        
+    else:
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        konumu = request.POST.get("konumu")
+        cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(cari_adi = proje_tip_adi                                                                 
+                ,aciklama = konumu)
+    return redirect("accounting:cari")
+
+#cari işlemler

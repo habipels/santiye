@@ -20,5 +20,11 @@ urlpatterns = [
     path("delwcategory", views.gider_kategoisi_sil, name="gider_kategoisi_sil"),
     path("setwcategory", views.gider_kategorisi_duzenle, name="gider_kategorisi_duzenle"),
     #gider kategorileri
+    #cari işlemleri
+    path("current", views.cari_viev, name="cari"),
+    path("addcurrent", views.cari_ekle, name="cari_ekle"),
+    path("delcurrent", views.cari_sil, name="cari_sil"),
+    path("setcurrent", views.cari_duzenle, name="cari_duzenle"),
+    #cari işlemleri
 ]
 #
