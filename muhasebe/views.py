@@ -22,7 +22,7 @@ def kasa_viev(request):
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
-            profile =Kasa.objects.filter(Q(kasa_kart_ait_bilgisi__last_name__icontains = search)|Q(kasa_adi__icontains = search))
+            profile =Kasa.objects.filter(Q(kasa_kart_ait_bilgisi__first_name__icontains = search)|Q(kasa_adi__icontains = search))
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
