@@ -32,6 +32,12 @@ urlpatterns = [
     path("delincometag", views.gelir_etiketi_sil, name="gelir_etiketi_sil"),
     path("setincometag", views.gelir_etiketi_duzenle, name="gelir_etiketi_duzenle"),
     #gelir etiket işlemleri
+    #gider etiketleri
+    path("expensetag", views.gider_etiketi_tipleri, name="gider_etiketi_tipleri"),
+    path("addexpensetag", views.gider_etiketi_ekleme, name="gider_etiketi_ekleme"),
+    path("delexpensetag", views.gider_etiketi_sil, name="gider_etiketi_sil"),
+    path("setexpensetag", views.gider_etiketi_duzenle, name="gider_etiketi_duzenle"),
+    #gider etiketleri
 ]
 #
 #
