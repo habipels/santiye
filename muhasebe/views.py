@@ -102,3 +102,40 @@ def kasa_duzenle(request):
         Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(kasa_adi = proje_tip_adi                                                                 
                 ,aciklama = konumu)
     return redirect("accounting:kasa")
+
+""""""
+#Gelir Kategorisi
+def gelir_kategorisi_tipleri(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =gelir_kategorisi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =gelir_kategorisi.objects.filter(Q(gelir_kategoris_ait_bilgisi__last_name__icontains = search)|Q(gelir_kategori_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = gelir_kategorisi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/gelir_kategorisi.html",content)
+#gelir KAtegorisi Ekleme
+def gelir_kategorisi_ekleme(request):
+    return redirect("accounting:gelir_kategorisi_tipleri")

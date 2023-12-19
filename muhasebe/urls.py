@@ -6,5 +6,6 @@ urlpatterns = [
     path("addtill", views.kasa_ekle, name="kasa_ekle"),
     path("deltill", views.kasa_sil, name="kasa_sil"),
     path("settill", views.kasa_duzenle, name="kasa_duzenle"),
+    path("incomecategory", views.gelir_kategorisi_tipleri, name="gelir_kategorisi_tipleri"),
 ]
 #
