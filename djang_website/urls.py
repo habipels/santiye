@@ -21,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf.urls.i18n import i18n_patterns
 urlpatterns = [
     path("", include('main.urls', namespace='main')),
+    path("accounting/", include('muhasebe.urls', namespace='muhasebe')),
     path('admin/', admin.site.urls),
     path('users/',include("users.urls", namespace='users')),
 ]
@@ -29,6 +30,7 @@ urlpatterns = [
 urlpatterns += i18n_patterns (
     path("", include('main.urls', namespace='main')),
     path('users/',include("users.urls", namespace='users')),
+    path("accounting/", include('muhasebe.urls', namespace='muhasebe')),
 )
 if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += [
