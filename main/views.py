@@ -193,7 +193,7 @@ def dil_ekle(request):
     else:
         return redirect("/users/login/")
 
-
+#dil düzeltme
 def dil_duzelt(request):
     if request.user.is_authenticated:
         yetki(request)
@@ -218,7 +218,7 @@ def dil_duzelt(request):
     else:
         return redirect("/users/login/")
 
-
+#dil sil
 def dil_sil(request):
     if request.user.is_authenticated:
         yetki(request)
@@ -228,7 +228,7 @@ def dil_sil(request):
         return redirect("main:dil_ayari_listele")
     else:
         return redirect("main:dil_ayari_listele")
-    
+#Proje Tipi
 def proje_tipi_(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -260,7 +260,7 @@ def proje_tipi_(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/proje_tipi.html",content)
-
+#Proje Ekleme
 def proje_ekle(request):
     if request.POST:
         #yetkili_adi
@@ -272,7 +272,7 @@ def proje_ekle(request):
             proje_tip_adi   = request.POST.get("yetkili_adi")
             proje_tipi.objects.create(proje_ait_bilgisi = request.user,Proje_tipi_adi = proje_tip_adi)
     return redirect("main:proje_tipi_")
-
+#Proje Adı Silme
 def proje_Adi_sil(request):
     content = {}
     if request.POST:
@@ -284,7 +284,7 @@ def proje_Adi_sil(request):
     else:
         proje_tipi.objects.filter(proje_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("main:proje_tipi_")
-
+#Proje Düzenlme
 def proje_duzenle(request):
     content = {}
     if request.POST:
@@ -304,7 +304,7 @@ def proje_duzenle(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         proje_tipi.objects.filter(proje_ait_bilgisi = request.user,id = id).update(Proje_tipi_adi = proje_tip_adi)
     return redirect("main:proje_tipi_")
-
+#Şantiye Projesi Ekleme
 def santiye_projesi_ekle_(request):
     content = sozluk_yapisi()
     content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
