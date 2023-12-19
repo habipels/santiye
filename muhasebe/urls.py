@@ -26,5 +26,12 @@ urlpatterns = [
     path("delcurrent", views.cari_sil, name="cari_sil"),
     path("setcurrent", views.cari_duzenle, name="cari_duzenle"),
     #cari işlemleri
+    #gelir etiket işlemleri
+    path("incometag", views.gelir_etiketi_tipleri, name="gelir_etiketi_tipleri"),
+    path("addincometag", views.gelir_etiketi_ekleme, name="gelir_etiketi_ekleme"),
+    path("delincometag", views.gelir_etiketi_sil, name="gelir_etiketi_sil"),
+    path("setincometag", views.gelir_etiketi_duzenle, name="gelir_etiketi_duzenle"),
+    #gelir etiket işlemleri
 ]
+#
 #

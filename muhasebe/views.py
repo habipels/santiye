@@ -377,5 +377,87 @@ def cari_duzenle(request):
         cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(cari_adi = proje_tip_adi                                                                 
                 ,aciklama = konumu)
     return redirect("accounting:cari")
-
 #cari işlemler
+
+#gelir Etiketleri
+def gelir_etiketi_tipleri(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =gelir_etiketi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =gelir_etiketi.objects.filter(Q(gelir_kategoris_ait_bilgisi__last_name__icontains = search)|Q(gelir_kategori_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = gelir_etiketi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/gelir_etiketi.html",content)
+def gelir_etiketi_ekleme(request):
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            
+            gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi)
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = request.user,gelir_etiketi_adi = proje_tip_adi)
+    return redirect("accounting:gelir_etiketi_tipleri")
+
+def gelir_etiketi_sil(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gelir_etiketi.objects.filter(id = id).update(silinme_bilgisi = True)
+    else:
+        gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+    return redirect("accounting:gelir_etiketi_tipleri")
+def gelir_etiketi_duzenle(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        
+        silinmedurumu = request.POST.get("silinmedurumu")
+        if silinmedurumu == "1":
+            silinmedurumu = False
+            gelir_etiketi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
+        elif silinmedurumu == "2":
+            silinmedurumu = True
+            gelir_etiketi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
+        
+    else:
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(gelir_etiketi_adi = proje_tip_adi)
+    return redirect("accounting:gelir_etiketi_tipleri")
+#gelir Etiketleri
+
+#gider etiketi
+#gider etiketi
