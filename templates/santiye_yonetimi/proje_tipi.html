@@ -182,8 +182,8 @@
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Adı</label>
                                             <input type="text" value="{{i.Proje_tipi_adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Dil Adı" />
-                                        </div>
-                                        <div class="mb-3">
+                                        </div>{% if request.user.is_superuser %}
+                                            <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Silinme Durumu</label>
                                             <select name="silinmedurumu"  class="form-control" id="">
                                                 <option value="3">Karışma</option>
@@ -195,6 +195,9 @@
                                                 
                                             </select>
                                         </div>
+                                        
+                                        {% endif %}
+                                        
                                     
                                 </div>
                                 <div class="modal-footer">

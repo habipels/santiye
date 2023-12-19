@@ -23,7 +23,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">Gelir Kategorisi</h4>
+                                <h4 class="card-title mb-0">Gider Kategorisi</h4>
                             </div><!-- end card header -->
                             <div class="card-body">
                                 <div class="listjs-table" id="customerList">
@@ -55,7 +55,7 @@
                                                         </div>
                                                     </th>
                                                     {% if request.user.is_superuser %}
-                                                    <th class="sort" data-sort="customer_name">Gelir Kategorisi Kime Ait</th>
+                                                    <th class="sort" data-sort="customer_name">Gider Kategorisi Kime Ait</th>
                                                     {% endif %}
                                                     <th class="sort" data-sort="email">Kategori Adı</th>
                                                     <th class="sort" data-sort="phone">Kategori Açıklama</th>
@@ -73,16 +73,16 @@
                                                         </div>
                                                     </th>
                                                     {% if request.user.is_superuser %}
-                                                    <td class="kasa">{{i.gelir_kategoris_ait_bilgisi.first_name}}</td>
+                                                    <td class="kasa">{{i.gider_kategoris_ait_bilgisi.first_name}}</td>
                                                     {% endif %}
                                                     <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
-                                                    <td class="customer_name">{{i.gelir_kategori_adi}}
+                                                    <td class="customer_name">{{i.gider_kategori_adi}}
                                                     </td>
                                                     <td class="email">
                                                     {{i.aciklama}}</td>
                                                     <td class="date">
-                                                        <div style="border: 2px solid black; min-width: 25px;min-height: 25px; background-color: {{i.gelir_kategorisi_renk}};"  ></div>
-                                                        {{i.gelir_kategorisi_renk}}
+                                                        <div style="border: 2px solid black; min-width: 25px;min-height: 25px; background-color: {{i.gider_kategorisi_renk}};"  ></div>
+                                                        {{i.gider_kategorisi_renk}}
                                                     
                                                     </td>
                                                     <td class="date">
@@ -168,7 +168,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="{% url 'accounting:gelir_kategorisi_duzenle' %}" method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="{% url 'accounting:gider_kategorisi_duzenle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
@@ -180,7 +180,7 @@
                                             <div class="mb-3">
                                             <label for="date-field" class="form-label">Şantiye Seç</label>
                                             <select class="form-control" name="kullanici" id="date-field">
-                                                <option value="{{i.gelir_kategoris_ait_bilgisi.id}}">{{i.gelir_kategoris_ait_bilgisi.first_name}}</option>
+                                                <option value="{{i.gider_kategoris_ait_bilgisi.id}}">{{i.gider_kategoris_ait_bilgisi.first_name}}</option>
                                                 {% for j in kullanicilar %}
                                                     <option value="{{j.id}}">{{j.first_name}}</option>
                                                 {% endfor %}
@@ -193,16 +193,16 @@
     
                                         
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Gelir Kategorisi Adı</label>
-                                            <input type="text" value="{{i.gelir_kategori_adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Kategori Adı" />
+                                            <label for="date-field" class="form-label">Gider Kategorisi Adı</label>
+                                            <input type="text" value="{{i.gider_kategori_adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Kategori Adı" />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Gelir Kategorisi Açıklaması</label>
+                                            <label for="date-field" class="form-label">Gider Kategorisi Açıklaması</label>
                                             <input type="text" value="{{i.aciklama}}"  name="aciklama" id="date-field" class="form-control" placeholder="Kategori Açıklaması" />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Gelir Kategorisi Rengi</label>
-                                            <input type="color" value="{{i.gelir_kategorisi_renk}}"   name="renk" id="date-field" class="form-control" placeholder="Dil Adı" />
+                                            <label for="date-field" class="form-label">Gider Kategorisi Rengi</label>
+                                            <input type="color" value="{{i.gider_kategorisi_renk}}"   name="renk" id="date-field" class="form-control" placeholder="Dil Adı" />
                                         </div>
                                         {% if request.user.is_superuser %}
                                             
@@ -251,7 +251,7 @@
                                         <p class="text-muted mx-4 mb-0">Are you Sure You want to Remove this Record ?</p>
                                     </div>
                                 </div>
-                                <form action="{% url 'accounting:gelir_kategoisi_sil' %}" method="post">
+                                <form action="{% url 'accounting:gider_kategoisi_sil' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                                 
@@ -278,7 +278,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="{% url 'accounting:gelir_kategorisi_ekleme' %}"  method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="{% url 'accounting:gider_kategorisi_ekleme' %}"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
@@ -296,15 +296,15 @@
                                     {% endif %}
 
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Adı</label>
+                                        <label for="date-field" class="form-label">Gider Kategorisi Adı</label>
                                         <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Kategori Adı" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Açıklaması</label>
+                                        <label for="date-field" class="form-label">Gider Kategorisi Açıklaması</label>
                                         <input type="text"  name="aciklama" id="date-field" class="form-control" placeholder="Kategori Açıklaması" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Rengi</label>
+                                        <label for="date-field" class="form-label">Gider Kategorisi Rengi</label>
                                         <input type="color"  name="renk" id="date-field" class="form-control" placeholder="Dil Adı" />
                                     </div>
                                 </div>

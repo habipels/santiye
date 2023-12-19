@@ -103,7 +103,6 @@ def kasa_duzenle(request):
                 ,aciklama = konumu)
     return redirect("accounting:kasa")
 
-""""""
 #Gelir Kategorisi
 def gelir_kategorisi_tipleri(request):
     content = sozluk_yapisi()
@@ -138,4 +137,149 @@ def gelir_kategorisi_tipleri(request):
     return render(request,"muhasebe_page/gelir_kategorisi.html",content)
 #gelir KAtegorisi Ekleme
 def gelir_kategorisi_ekleme(request):
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            aciklama = request.POST.get("aciklama")
+            renk = request.POST.get("renk")
+            
+            gelir_kategorisi.objects.create(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            aciklama = request.POST.get("aciklama")
+            renk = request.POST.get("renk")
+            gelir_kategorisi.objects.create(gelir_kategoris_ait_bilgisi = request.user,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
     return redirect("accounting:gelir_kategorisi_tipleri")
+
+#gelir Kategorisi Silme
+
+def gelir_kategoisi_sil(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gelir_kategorisi.objects.filter(id = id).update(silinme_bilgisi = True)
+    else:
+        gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+    return redirect("accounting:gelir_kategorisi_tipleri")
+#gelir düzenleme
+def gelir_kategorisi_duzenle(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        aciklama = request.POST.get("aciklama")
+        renk = request.POST.get("renk")
+        silinmedurumu = request.POST.get("silinmedurumu")
+        if silinmedurumu == "1":
+            silinmedurumu = False
+            gelir_kategorisi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu)
+        elif silinmedurumu == "2":
+            silinmedurumu = True
+            gelir_kategorisi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu)
+        
+    else:
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        aciklama = request.POST.get("aciklama")
+        renk = request.POST.get("renk")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
+    return redirect("accounting:gelir_kategorisi_tipleri")
+
+
+#gider_kategorisi.html
+
+#gider Kategorisi
+def gider_kategorisi_tipleri(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =gider_kategorisi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = gider_kategorisi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =gider_kategorisi.objects.filter(Q(gider_kategoris_ait_bilgisi__last_name__icontains = search)|Q(gider_kategori_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = gider_kategorisi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/gider_kategorisi.html",content)
+#gider KAtegorisi Ekleme
+def gider_kategorisi_ekleme(request):
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            aciklama = request.POST.get("aciklama")
+            renk = request.POST.get("renk")
+            
+            gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            aciklama = request.POST.get("aciklama")
+            renk = request.POST.get("renk")
+            gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = request.user,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+    return redirect("accounting:gider_kategorisi_tipleri")
+
+#gider Kategorisi Silme
+
+def gider_kategoisi_sil(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gider_kategorisi.objects.filter(id = id).update(silinme_bilgisi = True)
+    else:
+        gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+    return redirect("accounting:gider_kategorisi_tipleri")
+#gider düzenleme
+def gider_kategorisi_duzenle(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        aciklama = request.POST.get("aciklama")
+        renk = request.POST.get("renk")
+        silinmedurumu = request.POST.get("silinmedurumu")
+        if silinmedurumu == "1":
+            silinmedurumu = False
+            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu)
+        elif silinmedurumu == "2":
+            silinmedurumu = True
+            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu)
+        
+    else:
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        aciklama = request.POST.get("aciklama")
+        renk = request.POST.get("renk")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+    return redirect("accounting:gider_kategorisi_tipleri")
