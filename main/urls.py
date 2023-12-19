@@ -15,5 +15,10 @@ urlpatterns = [
     path("addprojectstype", views.proje_ekle, name="proje_ekle"),
     path("delprojectstype", views.proje_Adi_sil, name="proje_Adi_sil"),
     path("setprojecttype", views.proje_duzenle, name="proje_duzenle"),
+    path("siteprojects", views.santiye_projesi_ekle_, name="santiye_projesi_ekle_"),
+    path("addsite", views.santiye_ekleme_sahibi, name="santiye_ekleme_sahibi"),
+    path("addsitesuperadmin/<int:id>", views.santiye_ekleme_super_admin, name="santiye_ekleme_super_admin"),
+    path("delsiteproject", views.santiye_projesi_sil, name="santiye_projesi_sil"),
+    path("setsiteprojetc", views.santiye_projesi_duzenle, name="santiye_projesi_duzenle"),
 ]
 #

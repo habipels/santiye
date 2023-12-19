@@ -17,6 +17,7 @@ class santiye(models.Model):
     proje_adi = models.CharField(max_length = 200,verbose_name="Proje Adı",blank=True,null = True)
     kat_sayisi =models.FloatField(default = 1,verbose_name="Kat Bilgisi")
     blog_sayisi =models.BigIntegerField(default = 1,verbose_name="Blog Bilgisi")
+    blog_adi = models.CharField(max_length = 200,verbose_name="Blog Adı",blank=True,null = True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 

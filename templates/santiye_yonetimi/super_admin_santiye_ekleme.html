@@ -1,0 +1,49 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% block sidebar %}
+<div class="vertical-overlay"></div>
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3">
+                                            <label for="date-field" class="form-label">Proje Tipi Seç</label>
+                                            <select class="form-control" name="projetipi" id="date-field">
+                                                
+                                                {% for j in proje_tipleri %}
+                                                    <option value="{{j.id}}">{{j.Proje_tipi_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Proje Adı</label>
+                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Proje Adı" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Kat Sayısı</label>
+                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Kat Sayısı" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Blog Sayısı</label>
+                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Blog Sayısı" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Blog Adı</label>
+                                            <input type="text"  name="blogadi" id="date-field" class="form-control" placeholder="Blog Adı" />
+                                        </div>
+                            <input type="submit" class="btn btn-success waves-effect waves-light" value="Projeyi Oluştur">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+</div>
+
+{% endblock sidebar %}
+
