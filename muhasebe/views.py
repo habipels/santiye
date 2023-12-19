@@ -550,7 +550,8 @@ def virman_yapma(request):
         if super_admin_kontrolu(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             proje_tip_adi   = request.POST.get("yetkili_adi")
-            #proje_tipi.objects.create(proje_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,Proje_tipi_adi = proje_tip_adi)
+            z = "/superadmintransfer/"+kullanici_bilgisi
+            return redirect(z)
         else:
             gonderen = request.POST.get("gonderen")
             alici = request.POST.get("alici")
@@ -570,4 +571,31 @@ def virman_yapma(request):
             Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
 
     return redirect("accounting:kasa")
+
+
+def super_admin_virman(request,id):
+    content = sozluk_yapisi()
+    content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  get_object_or_404(CustomUser,id = id))
+    yetki(request)
+    profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = id))
+    content["santiyeler"] = profile
+    if request.POST:    
+            gonderen = request.POST.get("gonderen")
+            alici = request.POST.get("alici")
+            islemtarihi = request.POST.get("islemtarihi")
+            tutar = float(str(request.POST.get("tutar")).replace(",","."))
+            aciklama = request.POST.get("aciklama")
+            virman.objects.create(virman_ait_oldugu = get_object_or_404(CustomUser,id = id),
+                virman_tarihi = islemtarihi,gonderen_kasa = get_object_or_404(Kasa,id = gonderen)
+                ,alici_kasa = get_object_or_404(Kasa,id = alici),tutar = tutar,
+                aciklama = aciklama
+                )
+            bakiye_dusme = get_object_or_404(Kasa,id = gonderen).bakiye
+            bakiye_yukseltme = get_object_or_404(Kasa,id = alici).bakiye
+            bakiye_dusme = bakiye_dusme - float(tutar)
+            bakiye_yukseltme = bakiye_yukseltme + float(tutar)
+            Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
+            Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
+            return redirect("accounting:kasa")
+    return render(request,"muhasebe_page/super_admin_virman.html",content)
 #virman olayları

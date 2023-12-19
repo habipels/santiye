@@ -28,5 +28,6 @@ urlpatterns = [
     path("delsiteproject", views.santiye_projesi_sil, name="santiye_projesi_sil"),
     path("setsiteprojetc", views.santiye_projesi_duzenle, name="santiye_projesi_duzenle"),
     #şantiye proje işlemleri
+    path("yetkisiz", views.yetkisiz, name="yetkisiz"),
 ]
 #

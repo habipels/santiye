@@ -224,7 +224,21 @@
                                         <label for="id-field" class="form-label">ID</label>
                                         <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
                                     </div>
-
+                                    {% if request.user.is_superuser %}
+                                    <div class="mb-3" id="modal-id" >
+                                       
+                                    
+                                        <label for="date-field" class="form-label">Şantiye Seç</label>
+                                            <select class="form-control" name="kullanici" id="date-field">
+                                                {% for j in kullanicilar %}
+                                                    <option value="{{j.id}}">{{j.first_name}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                    {% else %}
+                                    
                                     <div class="mb-3">
                                         <label for="gonderen" class="form-label">Gönderen</label>
                                         <select id="gonderen" name="gonderen" class="form-control">
@@ -264,7 +278,9 @@
                                         <textarea id="aciklama" name="aciklama" type="text" class="form-control" placeholder="Açıklama"></textarea>
                                         <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
                                     </div>
+                                    {% endif %}
                                 </div>
+
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>

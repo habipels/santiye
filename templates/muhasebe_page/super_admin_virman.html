@@ -1,0 +1,61 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% block sidebar %}
+<div class="vertical-overlay"></div>
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3">
+                                        <label for="gonderen" class="form-label">Gönderen</label>
+                                        <select id="gonderen" name="gonderen" class="form-control">
+                                            <option selected disabled>Seçiniz..</option>
+                                                {% for i in santiyeler %}
+                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="alici"  class="form-label">Alıcı</label>
+                                        <select id="alici" name="alici" class="form-control">
+                                            <option selected disabled>Seçiniz..</option>
+                                            {% for i in santiyeler %}
+                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="tarih" class="form-label">Tarih</label>
+                                        <input id="tarih" name="islemtarihi" type="date" class="form-control" />
+                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="tutar" class="form-label">Tutar</label>
+                                        <input id="tutar" name="tutar" step="0.01" type="text" class="form-control" placeholder="Tutar giriniz"/>
+                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="aciklama" class="form-label">Açıklama</label>
+                                        <textarea id="aciklama" name="aciklama" type="text" class="form-control" placeholder="Açıklama"></textarea>
+                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
+                                    </div>
+                            <input type="submit" class="btn btn-success waves-effect waves-light" value="Projeyi Oluştur">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+</div>
+
+{% endblock sidebar %}
+

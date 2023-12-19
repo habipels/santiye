@@ -13,6 +13,8 @@ trans = translate(language='tr')
     z = BlogPost.objects.all()
     content = {"trans":trans,"z":z,"dil":dil_bilgisi}
 """
+def yetkisiz(request):
+    return render(request,"yetkisiz.html",sozluk_yapisi())
 def super_admin_kontrolu(request):
     if request.user.is_superuser:
             return 1
@@ -39,9 +41,11 @@ def sozluk_yapisi():
 #superadmin Kontrol
 def yetki(request):
     if request.user.is_superuser:
-            pass
+        
+        pass
     else:
-        return redirect("/")
+
+        return redirect("main:yetkisiz")
 # Create your views here,
 # Anasayfa
 def homepage(request):
@@ -56,7 +60,12 @@ def homepage(request):
 #şantiye Ekleme
 def santiye_ekle(request):
     if request.user.is_authenticated:
-        yetki(request)
+        if request.user.is_superuser == "True":
+        
+            pass
+        else:
+
+            return redirect("main:yetkisiz")
         if request.POST:
             yetkiliAdSoyad = request.POST.get("yetkiliAdSoyad")
             email = request.POST.get("email")
@@ -73,10 +82,16 @@ def santiye_ekle(request):
 
     return render(request,"santiye_yonetimi/santiye_ekleme.html",sozluk_yapisi())
 #şantiye Listleme Ve Ayarları
+
 def santiye_listele(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
-        yetki(request)
+        if request.user.is_superuser :
+        
+            pass
+        else:
+
+            return redirect("main:yetkisiz")
         if request.GET.get("search"):
             search = request.GET.get("search")
             if search:
