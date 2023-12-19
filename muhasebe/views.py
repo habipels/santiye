@@ -542,3 +542,32 @@ def gider_etiketi_duzenle(request):
     return redirect("accounting:gider_etiketi_tipleri")
 #gider Etiketleri
 #gider etiketi
+
+#virman olayları
+def virman_yapma(request):
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            #proje_tipi.objects.create(proje_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,Proje_tipi_adi = proje_tip_adi)
+        else:
+            gonderen = request.POST.get("gonderen")
+            alici = request.POST.get("alici")
+            islemtarihi = request.POST.get("islemtarihi")
+            tutar = float(str(request.POST.get("tutar")).replace(",","."))
+            aciklama = request.POST.get("aciklama")
+            virman.objects.create(virman_ait_oldugu = request.user,
+                virman_tarihi = islemtarihi,gonderen_kasa = get_object_or_404(Kasa,id = gonderen)
+                ,alici_kasa = get_object_or_404(Kasa,id = alici),tutar = tutar,
+                aciklama = aciklama
+                )
+            bakiye_dusme = get_object_or_404(Kasa,id = gonderen).bakiye
+            bakiye_yukseltme = get_object_or_404(Kasa,id = alici).bakiye
+            bakiye_dusme = bakiye_dusme - float(tutar)
+            bakiye_yukseltme = bakiye_yukseltme + float(tutar)
+            Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
+            Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
+
+    return redirect("accounting:kasa")
+#virman olayları

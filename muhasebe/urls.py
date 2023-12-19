@@ -38,6 +38,9 @@ urlpatterns = [
     path("delexpensetag", views.gider_etiketi_sil, name="gider_etiketi_sil"),
     path("setexpensetag", views.gider_etiketi_duzenle, name="gider_etiketi_duzenle"),
     #gider etiketleri
+    #virman olayı
+    path("maketransfer", views.virman_yapma, name="virman_yapma"),
+    #virman olayı
 ]
 #
 #

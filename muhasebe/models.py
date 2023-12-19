@@ -73,7 +73,7 @@ class virman(models.Model):
     virman_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Virman Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     virman_tarihi = models.DateTimeField(null=True,verbose_name="Virman Tarihi",blank = True)
     gonderen_kasa = models.ForeignKey(Kasa,verbose_name="Gonderen Kasa",blank=True,null=True,on_delete=models.SET_NULL,related_name ="virman_gonderen_kasa")
-    alici_kasa = models.ForeignKey(Kasa,verbose_name="Gonderen Kasa",blank=True,null=True,on_delete=models.SET_NULL,related_name ="virman_alici_kasa")
+    alici_kasa = models.ForeignKey(Kasa,verbose_name="gönderilen Kasa",blank=True,null=True,on_delete=models.SET_NULL,related_name ="virman_alici_kasa")
     tutar = models.FloatField(verbose_name="Toplam Tutar",default=0)
     aciklama = models.TextField(verbose_name="Virman Açıklaması",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)

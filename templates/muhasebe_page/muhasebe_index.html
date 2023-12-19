@@ -188,7 +188,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="customername-field" class="form-label">Açılış Bilançosu</label>
-                                        <input name="bakiye" value="0" type="number" id="customername-field" class="form-control" placeholder="Açılış Bilançosu" required />
+                                        <input name="bakiye" value="0" step="0.01" type="number" id="customername-field" class="form-control" placeholder="Açılış Bilançosu" required />
                                         <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
                                     </div>
                                     <div class="mb-3">
@@ -217,7 +217,8 @@
                                 <h5 class="modal-title" id="exampleModalLabel">Virman</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" autocomplete="off">
+                            <form class="tablelist-form" method="post" action="{% url 'accounting:virman_yapma' %}" autocomplete="off">
+                                {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
                                         <label for="id-field" class="form-label">ID</label>
@@ -226,39 +227,41 @@
 
                                     <div class="mb-3">
                                         <label for="gonderen" class="form-label">Gönderen</label>
-                                        <select id="gonderen" class="form-control">
+                                        <select id="gonderen" name="gonderen" class="form-control">
                                             <option selected disabled>Seçiniz..</option>
-                                            <option>Gönderen Adı 1</option>
-                                            <option>Gönderen Adı 1</option>
+                                                {% for i in santiyeler %}
+                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                {% endfor %}
                                         </select>
                                         <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="alici" class="form-label">Alıcı</label>
-                                        <select id="alici" class="form-control">
+                                        <label for="alici"  class="form-label">Alıcı</label>
+                                        <select id="alici" name="alici" class="form-control">
                                             <option selected disabled>Seçiniz..</option>
-                                            <option>Alıcı Adı 1</option>
-                                            <option>Alıcı Adı 1</option>
+                                            {% for i in santiyeler %}
+                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                {% endfor %}
                                         </select>
                                         <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label for="tarih" class="form-label">Tarih</label>
-                                        <input id="tarih" type="date" class="form-control" />
+                                        <input id="tarih" name="islemtarihi" type="date" class="form-control" />
                                         <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="tutar" class="form-label">Tutar</label>
-                                        <input id="tutar" type="text" class="form-control" placeholder="Tutar giriniz"/>
+                                        <input id="tutar" name="tutar" step="0.01" type="text" class="form-control" placeholder="Tutar giriniz"/>
                                         <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="aciklama" class="form-label">Açıklama</label>
-                                        <textarea id="aciklama" type="text" class="form-control" placeholder="Açıklama"></textarea>
+                                        <textarea id="aciklama" name="aciklama" type="text" class="form-control" placeholder="Açıklama"></textarea>
                                         <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
                                     </div>
                                 </div>
