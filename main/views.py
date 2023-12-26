@@ -60,7 +60,7 @@ def homepage(request):
 #şantiye Ekleme
 def santiye_ekle(request):
     if request.user.is_authenticated:
-        if request.user.is_superuser == "True":
+        if request.user.is_superuser :
         
             pass
         else:
@@ -138,7 +138,12 @@ def santiye_sil(request):
 def santiye_duzelt(request):
     content = {}
     if request.user.is_authenticated:
-        yetki(request)
+        if request.user.is_superuser :
+        
+            pass
+        else:
+
+            return redirect("main:yetkisiz")
         content["santiyeler"] = CustomUser.objects.all()
         if request.POST:
             sil = request.POST.get("buttonId")
@@ -156,7 +161,12 @@ def santiye_duzelt(request):
 def dil_ayari_listele(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
-        yetki(request)
+        if request.user.is_superuser :
+        
+            pass
+        else:
+
+            return redirect("main:yetkisiz")
         if request.GET.get("search"):
             search = request.GET.get("search")
             if search:
@@ -187,7 +197,12 @@ def dil_ayari_listele(request):
 #dil Ekleme
 def dil_ekle(request):
     if request.user.is_authenticated:
-        yetki(request)
+        if request.user.is_superuser :
+        
+            pass
+        else:
+
+            return redirect("main:yetkisiz")
         if request.POST:
             yetkili_adi = request.POST.get("yetkili_adi")
             dilkisitlamasi = request.POST.get("dilkisitlamasi")
@@ -211,7 +226,12 @@ def dil_ekle(request):
 #dil düzeltme
 def dil_duzelt(request):
     if request.user.is_authenticated:
-        yetki(request)
+        if request.user.is_superuser :
+        
+            pass
+        else:
+
+            return redirect("main:yetkisiz")
         if request.POST:
             yetkili_adi = request.POST.get("yetkili_adi")
             dilkisitlamasi = request.POST.get("dilkisitlamasi")
@@ -236,7 +256,12 @@ def dil_duzelt(request):
 #dil sil
 def dil_sil(request):
     if request.user.is_authenticated:
-        yetki(request)
+        if request.user.is_superuser :
+        
+            pass
+        else:
+
+            return redirect("main:yetkisiz")
         if request.POST:
             sil = request.POST.get("buttonId")
             dil_ayarla.objects.filter(id = sil).delete()
@@ -380,7 +405,12 @@ def santiye_ekleme_sahibi(request):
 def santiye_ekleme_super_admin(request,id):
     content = sozluk_yapisi()
     content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  get_object_or_404(CustomUser,id = id))
-    yetki(request)
+    if request.user.is_superuser :
+        
+        pass
+    else:
+
+        return redirect("main:yetkisiz")
     if request.POST:    
         projetipi = request.POST.get("projetipi")
         proje_adi = request.POST.get("yetkili_adi")
