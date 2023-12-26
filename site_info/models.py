@@ -53,4 +53,9 @@ class projeler (models.Model):
     tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
     aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
     durum = models.CharField(max_length = 200,verbose_name = "Durum",blank = True,null = True)
+
+
+class proje_dosyalari(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(projeler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
+    dosya = models.FileField(verbose_name="Dosya Adı",blank=True,null=True)
     
