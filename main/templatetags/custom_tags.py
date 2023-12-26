@@ -15,3 +15,5 @@ def bloglar_getir(veri):
     for i in  deger:
         veri_esiti = veri_esiti + str(i.blog_adi)+str(i.blog_numarasi)+" ,"
     return str(veri_esiti)
+
+

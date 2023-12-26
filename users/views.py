@@ -8,6 +8,8 @@ from .models import *
 from .decorators import user_not_authenticated
 from .tokens import account_activation_token
 from django.contrib.auth.decorators import login_required
+from site_info.models import *
+from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki
 # Create your views here.
 @user_not_authenticated
 def register(request):
@@ -64,3 +66,6 @@ def logoutUser(request):
     messages.success(request,"Başarıyla Çıkış Yaptınız")
     return redirect("/")
 
+def profil_bilgisi (request):
+    content = sozluk_yapisi()
+    return render(request,"account/profile.html")

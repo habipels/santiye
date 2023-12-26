@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load static %}
 <header id="page-topbar">
     <div class="layout-width">
         <div class="navbar-header">
@@ -490,7 +491,13 @@
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                        {% if request.user.image %}
+                        <img class="rounded-circle header-profile-user" src="{{request.user.image.url}}" alt="Header Avatar">
+                            
+                        {% else %}
+                        <img class="rounded-circle header-profile-user" src="{% static 'assets/images/users/avatar-1.jpg' %}" alt="Header Avatar">
+                        {% endif %}
+                            
                             <span class="text-start ms-xl-2">
                                 <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{request.user.first_name}} {{request.user.last_name}}</span>
                                 <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Founder</span>
@@ -500,7 +507,7 @@
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
                         <h6 class="dropdown-header">Welcome {{request.user.last_name}} </h6>
-                        <a class="dropdown-item" href="pages-profile.html"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
+                        <a class="dropdown-item" href="{% url 'user:profil_bilgisi' %}"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
                         <a class="dropdown-item" href="pages-profile-settings.html"><span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
                         <a class="dropdown-item" href="auth-lockscreen-basic.html"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
                         <div class="dropdown-divider"></div>
