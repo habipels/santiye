@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(proje_tipi)
 admin.site.register(santiye)
 admin.site.register(bloglar)
+admin.site.register(santiye_kalemleri)

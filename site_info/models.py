@@ -26,3 +26,12 @@ class bloglar(models.Model):
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     blog_adi = models.CharField(max_length=200,verbose_name="Blog Adı",blank=True,null = True)
     blog_numarasi = models.BigIntegerField(default = 1,verbose_name="Blog Numarasi")
+
+class santiye_kalemleri(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    kalem_adi = models.CharField(max_length= 200,verbose_name="Kalem Adı",blank = True,null = True)
+    santiye_agirligi = models.FloatField(default = 0 ,verbose_name = "Kalem Şantiye Ağırlığı")
+    santiye_finansal_agirligi = models.FloatField(default = 0,verbose_name = "Kalem Finansal Ağırlık")
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
