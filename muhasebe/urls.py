@@ -41,6 +41,7 @@ urlpatterns = [
     #virman olayı
     path("maketransfer", views.virman_yapma, name="virman_yapma"),
     path("superadmintransfer/<int:id>", views.super_admin_virman, name="super_admin_virman"),
+    path("transfer", views.virman_gondermeler, name="virman_gondermeler"),
     #virman olayı
 ]
 #

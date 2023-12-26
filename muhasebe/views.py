@@ -550,7 +550,7 @@ def virman_yapma(request):
         if super_admin_kontrolu(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             proje_tip_adi   = request.POST.get("yetkili_adi")
-            z = "/superadmintransfer/"+kullanici_bilgisi
+            z = "/accounting/superadmintransfer/"+kullanici_bilgisi
             return redirect(z)
         else:
             gonderen = request.POST.get("gonderen")
@@ -598,4 +598,38 @@ def super_admin_virman(request,id):
             Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
             return redirect("accounting:kasa")
     return render(request,"muhasebe_page/super_admin_virman.html",content)
+
+
+def virman_gondermeler(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =virman.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = virman.objects.filter(silinme_bilgisi = False,virman_ait_oldugu = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =virman.objects.filter(Q(kasa_kart_ait_bilgisi__first_name__icontains = search)|Q(kasa_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = virman.objects.filter(Q(virman_ait_oldugu = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/virman_raporu.html",content)
 #virman olayları
+
