@@ -29,5 +29,12 @@ urlpatterns = [
     path("setsiteprojetc", views.santiye_projesi_duzenle, name="santiye_projesi_duzenle"),
     #şantiye proje işlemleri
     path("yetkisiz", views.yetkisiz, name="yetkisiz"),
+    #şantiye Kalemleri
+    path("buldingsite/<int:id>", views.santtiye_kalemleri, name="santtiye_kalemleri"),
+    path("sitesettings", views.santiye_listele, name="santiye_listele"),
+    path("delsite", views.santiye_sil, name="santiye_sil"),
+    path("editsite", views.santiye_duzelt, name="santiye_duzelt"),
+    #şantiye Kalemleri
+
 ]
 #

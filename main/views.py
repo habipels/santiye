@@ -378,8 +378,6 @@ def santiye_projesi_ekle_(request):
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_projesi.html",content)
 
-
-
 def santiye_ekleme_sahibi(request):
     if request.POST:
         if super_admin_kontrolu(request):
@@ -461,3 +459,14 @@ def santiye_projesi_duzenle(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         santiye.objects.filter(proje_ait_bilgisi = request.user,id = id).update(proje_adi = proje_tip_adi)
     return redirect("main:santiye_projesi_ekle_")
+
+#şantiye Kalemleri
+def santtiye_kalemleri(request,id):
+    content = sozluk_yapisi()
+    if request.user.is_authenticated:
+        pass
+    else:
+        return redirect("/users/login/")
+    return render(request,"santiye_yonetimi\santiye_kalemleri.html",content)
+#şantiye Kalemleri
+

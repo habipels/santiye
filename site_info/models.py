@@ -35,3 +35,13 @@ class santiye_kalemleri(models.Model):
     santiye_finansal_agirligi = models.FloatField(default = 0,verbose_name = "Kalem Finansal Ağırlık")
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+
+class santiye_kalemlerin_dagilisi (models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    kat = models.IntegerField(default = 0,verbose_name="kat Numarası")
+    blog_bilgisi = models.ForeignKey(bloglar,verbose_name="Blog Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    degistirme_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    tamamlanma_bilgisi = models.BooleanField(default=False)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
