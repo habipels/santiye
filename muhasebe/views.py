@@ -95,7 +95,8 @@ def kasa_duzenle(request):
         elif silinmedurumu == "2":
             silinmedurumu = True
             Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
-        
+        else:
+            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu)
     else:
         proje_tip_adi   = request.POST.get("yetkili_adi")
         konumu = request.POST.get("konumu")
@@ -183,7 +184,8 @@ def gelir_kategorisi_duzenle(request):
         elif silinmedurumu == "2":
             silinmedurumu = True
             gelir_kategorisi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu)
-        
+        else:
+            gelir_kategorisi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
     else:
         proje_tip_adi   = request.POST.get("yetkili_adi")
         aciklama = request.POST.get("aciklama")
@@ -275,7 +277,8 @@ def gider_kategorisi_duzenle(request):
         elif silinmedurumu == "2":
             silinmedurumu = True
             gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu)
-        
+        else:
+            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
     else:
         proje_tip_adi   = request.POST.get("yetkili_adi")
         aciklama = request.POST.get("aciklama")
@@ -370,7 +373,8 @@ def cari_duzenle(request):
         elif silinmedurumu == "2":
             silinmedurumu = True
             cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
-        
+        else:
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu)
     else:
         proje_tip_adi   = request.POST.get("yetkili_adi")
         konumu = request.POST.get("konumu")
@@ -450,7 +454,8 @@ def gelir_etiketi_duzenle(request):
         elif silinmedurumu == "2":
             silinmedurumu = True
             gelir_etiketi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
-        
+        else:
+           gelir_etiketi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi) 
     else:
         proje_tip_adi   = request.POST.get("yetkili_adi")
         
@@ -533,7 +538,8 @@ def gider_etiketi_duzenle(request):
         elif silinmedurumu == "2":
             silinmedurumu = True
             gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
-        
+        else:
+            gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi)
     else:
         proje_tip_adi   = request.POST.get("yetkili_adi")
         
