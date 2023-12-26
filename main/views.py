@@ -464,9 +464,56 @@ def santiye_projesi_duzenle(request):
 def santtiye_kalemleri(request,id):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
-        pass
+        if request.user.is_superuser:
+            kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+            
+        else:
+            content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+            profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+            if request.GET.get("search"):
+                search = request.GET.get("search")
+                if search:
+                    profile = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).filter(Q(last_name__icontains = search)|Q(first_name__icontains = search)|Q(email__icontains = search) ).order_by("-id")
+                else:
+                    profile = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+            page_num = request.GET.get('page', 1)
+            paginator = Paginator(profile, 10) # 6 employees per page
+            try:
+                page_obj = paginator.page(page_num)
+            except PageNotAnInteger:
+                # if page is not an integer, deliver the first page
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                # if the page is out of range, deliver the last page
+                page_obj = paginator.page(paginator.num_pages)
+            content["santiyeler"] = page_obj
+            content["top"]  = profile
+            content["medya"] = page_obj
     else:
         return redirect("/users/login/")
     return render(request,"santiye_yonetimi\santiye_kalemleri.html",content)
+
+def santiyeye_kalem_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            kullanici = request.POST.get("kullanici")
+            z = "/addbuldingsiteadmin/"+kullanici
+            return redirect("")
+        else:
+            projetipi = request.POST.get("projetipi")
+            yetkili_adi = request.POST.get("yetkili_adi")
+            santiye_agirligi = request.POST.get("katsayisi")
+            finansal_agirlik = request.POST.get("blogsayisi")
+            santiye_kalemleri.objects.create(
+                proje_ait_bilgisi = request.user,
+                proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
+                kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                santiye_finansal_agirligi = finansal_agirlik
+            )
+    return redirect("main:santiye_projesi_ekle_")
+
+def santiye_kalem_ekle_admin(redirect,id):
+    return 0
 #şantiye Kalemleri
 

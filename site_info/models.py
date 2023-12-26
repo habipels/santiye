@@ -39,9 +39,18 @@ class santiye_kalemleri(models.Model):
 class santiye_kalemlerin_dagilisi (models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    kalem_bilgisi = models.ForeignKey(santiye_kalemleri,verbose_name="Kalem Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     kat = models.IntegerField(default = 0,verbose_name="kat Numarası")
     blog_bilgisi = models.ForeignKey(bloglar,verbose_name="Blog Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     degistirme_tarihi = models.DateTimeField(default=datetime.now,null=True)
     tamamlanma_bilgisi = models.BooleanField(default=False)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+
+class projeler (models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_Adi = models.CharField(max_length = 200 ,verbose_name="Proje Adı",blank = True, null = True)
+    tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
+    aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
+    durum = models.CharField(max_length = 200,verbose_name = "Durum",blank = True,null = True)
+    

@@ -255,7 +255,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="/addsite"  method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="{% url 'main:santiyeye_kalem_ekle' %}"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
@@ -272,32 +272,29 @@
                                         </div>
                                         {% else %}
                                             <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Tipi Seç</label>
+                                            <label for="date-field" class="form-label">Şantiye Bilgisi</label>
                                             <select class="form-control" name="projetipi" id="date-field">
                                                 
-                                                {% for j in proje_tipleri %}
-                                                    <option value="{{j.id}}">{{j.Proje_tipi_adi}}</option>
+                                                {% for j in santiyeler_bilgileri %}
+                                                    <option value="{{j.id}}">{{j.proje_adi}}</option>
                                                 {% endfor %}
                                                 
                                                 
                                             </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Adı</label>
-                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Proje Adı" />
+                                            <label for="date-field" class="form-label">Kalem Adı</label>
+                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Kalem Adı" />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Kat Sayısı</label>
-                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Kat Sayısı" />
+                                            <label for="date-field" class="form-label">Şantiye Ağırlığı</label>
+                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Şantiye Ağırlığı" />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Blog Sayısı</label>
-                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Blog Sayısı" />
+                                            <label for="date-field" class="form-label">Finansal Ağırlığı</label>
+                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Fİnansal Ağırlığı" />
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Blog Adı</label>
-                                            <input type="text"  name="blogadi" id="date-field" class="form-control" placeholder="Blog Adı" />
-                                        </div>
+                                        
                                         {% endif %}
     
                                     
