@@ -632,4 +632,102 @@ def virman_gondermeler(request):
     content["medya"] = page_obj
     return render(request,"muhasebe_page/virman_raporu.html",content)
 #virman olayları
+#ürünler olayları
+def urun_viev(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =urunler.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =urunler.objects.filter(Q(urun_ait_oldugu__first_name__icontains = search)|Q(urun_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = urunler.objects.filter(Q(urun_ait_oldugu = request.user) & Q(urun_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/urunler.html",content)
 
+#Ürün ekleme
+def urun_ekle(request):
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            kasa_Adi   = request.POST.get("kasaadi")
+            bakiye = request.POST.get("bakiye")
+            urunler.objects.create(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) 
+                                ,urun_adi = kasa_Adi,urun_fiyati = bakiye
+                                
+                                )
+        else:
+            kasa_Adi   = request.POST.get("kasaadi")
+            bakiye = request.POST.get("bakiye")
+            
+            urunler.objects.create(urun_ait_oldugu = request.user
+                ,urun_adi = kasa_Adi,urun_fiyati = bakiye)
+    
+    return redirect("accounting:urun_viev")
+
+#ürün ekle
+#ürün_sil
+def urun_sil(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        urunler.objects.filter(id = id).update(silinme_bilgisi = True)
+    else:
+        urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(silinme_bilgisi = True)
+    return redirect("accounting:urun_viev")
+
+
+#ürün Sil
+ 
+#ürün Düzenle
+#kasa düzenle
+def urun_duzenle(request):
+    content = {}
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("kasaadi")
+        silinmedurumu = request.POST.get("silinmedurumu")
+        bakiye = request.POST.get("bakiye")
+        if silinmedurumu == "1":
+            silinmedurumu = False
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu)
+        elif silinmedurumu == "2":
+            silinmedurumu = True
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu)
+        else:
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye)
+    else:
+        proje_tip_adi   = request.POST.get("kasaadi")
+        bakiye = request.POST.get("bakiye")
+        urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(urun_adi = proje_tip_adi                                                                 
+                ,urun_fiyati = bakiye)
+    return redirect("accounting:urun_viev")
+
+#ürün Düzenle
+#ürünler olayları

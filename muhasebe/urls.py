@@ -43,6 +43,12 @@ urlpatterns = [
     path("superadmintransfer/<int:id>", views.super_admin_virman, name="super_admin_virman"),
     path("transfer", views.virman_gondermeler, name="virman_gondermeler"),
     #virman olayı
-]
-#
+    #ürünler olayları
+    path("products", views.urun_viev, name="urun_viev"),
+    path("addproduct", views.urun_ekle, name="urun_ekle"),
+    path("delproduct", views.urun_sil, name="urun_sil"),
+    path("setproduct", views.urun_duzenle, name="urun_duzenle"),
+    #ürünler olayları
+]#
+
 #
