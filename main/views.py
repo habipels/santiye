@@ -580,6 +580,9 @@ def proje_ekle(request):
             for i in blogbilgisi:
                 bloglar_bilgisi.append(bloglar.objects.get(id=int(i)))
             new_project.blog_bilgisi.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            for images in images:
+                proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
             
     return redirect("main:projeler_sayfasi")
 

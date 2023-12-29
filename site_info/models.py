@@ -59,5 +59,5 @@ class projeler (models.Model):
 
 class proje_dosyalari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(projeler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
-    dosya = models.FileField(verbose_name="Dosya Adı",blank=True,null=True)
+    dosya = models.FileField(upload_to='proje_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
     
