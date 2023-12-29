@@ -1,0 +1,54 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% block sidebar %}
+<div class="vertical-overlay"></div>
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3">
+                                        <label for="date-field" class="form-label">Proje Adı</label>
+                                        <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Dil Adı" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Tarih</label>
+                                        <input name="tarih_bilgisi" type="date" id="date-field" class="form-control" placeholder="Select Date" required />
+                                        <div class="invalid-feedback">Please select a date.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">Açıklama</label>
+                                        <textarea name="aciklama" class="form-control" placeholder="Enter Description" required></textarea>
+                                        <div class="invalid-feedback">Please enter an email.</div>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Durum</label>
+                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                            <option value="">Durum</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Block">Block</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Bloglar</label>
+                                        <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
+                                            <option value=""></option>
+                                            {% for blog in blog_bilgisi %}
+                                            <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.blog_adi}}{{blog.blog_numarasi}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                          
+                            <input type="submit" class="btn btn-success waves-effect waves-light mt-5" value="Yeni Şantiye Oluştur">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+</div>
+
+{% endblock sidebar %}
+

@@ -23,7 +23,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">Dil Ayarları</h4>
+                                <h4 class="card-title mb-0">Proje Ayarları</h4>
                             </div><!-- end card header -->
                             <div class="card-body">
                                 <div class="listjs-table" id="customerList">
@@ -54,27 +54,55 @@
                                                             <input class="form-check-input" type="checkbox" id="checkAll" value="option">
                                                         </div>
                                                     </th>
-                                                    <th class="sort" data-sort="customer_name">Proje Tipi Kime Ait</th>
-                                                    <th class="sort" data-sort="email">Proje Tip Adı</th>
-                                                    <th class="sort" data-sort="phone">Proje Tip Kayıt Tarihi</th>
+                                                    {% if request.user.is_superuser %}
+                                                        <th class="sort" data-sort="customer_name">Proje Kime Ait</th>
+                                                    {% else %}
+                                                    {% endif %}
+                                                    
+                                                    <th class="sort" data-sort="email">Proje Adı</th>
+                                                    <th class="sort" data-sort="email">Dahil Olan Bloglar</th>
+                                                    <th class="sort" data-sort="phone">Tarihi</th>
+                                                    <th class="sort" data-sort="date">Açıklama</th>
                                                     <th class="sort" data-sort="date">Durum</th>
+                                                    <th class="sort" data-sort="date"></th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
                                             {% for i in santiyeler %}
-                                                <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
                                                     <th scope="row">
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
                                                         </div>
                                                     </th>
                                                     <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
-                                                    <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
+                                                    {% if request.user.is_superuser %}
+                                                        <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
+                                                    {% else %}
+                                                    {% endif %}
+                                                    
                                                     </td>
                                                     <td class="email">
-                                                    {{i.Proje_tipi_adi}}</td>
+                                                    {{i.proje_Adi}}</td>
+                                                    <td class="email">
+                                                     {% for yazar in i.blog_bilgisi.all %}
+                                                       {{ yazar.blog_adi }}{{ yazar.blog_numarasi }},<!-- Her kitabın yazarlarını göstermek için -->
+                                                    {% endfor %}</td>
                                                     <td class="date">
-                                                        {{i.kayit_tarihi}}
+                                                        {{i.kayit_tarihi | date:'Y-m-d'}}
+                                                    
+                                                    </td>
+                                                    <td class="date">
+                                                        {{i.aciklama}}
+                                                    
+                                                    </td>
+                                                    <td class="date">
+                                                        {% if i.durum %}
+                                                         Aktif
+                                                        {% else %}
+                                                        Pasif
+                                                        {% endif %}
+                                                        
                                                     
                                                     </td>
                                                     <td>
@@ -182,9 +210,7 @@
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Adı</label>
                                             <input type="text" value="{{i.Proje_tipi_adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Dil Adı" />
-                                        </div>
-                                            
-                                        {% if request.user.is_superuser %}
+                                        </div>{% if request.user.is_superuser %}
                                             <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Silinme Durumu</label>
                                             <select name="silinmedurumu"  class="form-control" id="">
@@ -231,7 +257,7 @@
                                         <p class="text-muted mx-4 mb-0">Are you Sure You want to Remove this Record ?</p>
                                     </div>
                                 </div>
-                                <form action="/delprojectstype" method="post">
+                                <form action="{% url 'main:proje_silme' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                                 
@@ -258,7 +284,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="/addprojectstype"  method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="{% url 'main:proje_ekle' %}"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
@@ -273,13 +299,87 @@
                                         </select>
                                     </div>
                                     {% else %}
-                                    {% endif %}
+                                    
 
                                     <div class="mb-3">
                                         <label for="date-field" class="form-label">Proje Adı</label>
                                         <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Dil Adı" />
                                     </div>
-                                    
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Tarih</label>
+                                        <input name="tarih_bilgisi" type="date" id="date-field" class="form-control" placeholder="Select Date" required />
+                                        <div class="invalid-feedback">Please select a date.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">Açıklama</label>
+                                        <textarea name="aciklama" class="form-control" placeholder="Enter Description" required></textarea>
+                                        <div class="invalid-feedback">Please enter an email.</div>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Durum</label>
+                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                            <option value="">Durum</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Block">Block</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Bloglar</label>
+                                        <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
+                                            <option value=""></option>
+                                            {% for blog in blog_bilgisi %}
+                                            <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.blog_adi}}{{blog.blog_numarasi}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                     <div class="card-header">
+                                                    <h4 class="card-title mb-0">Dosya Yükle</h4>
+                                                </div><!-- end card header -->
+                                            
+                                                <div class="card-body">
+                                                    <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
+                                                
+                                                    <div class="dropzone">
+                                                        <div class="fallback">
+                                                            <input name="file" type="file" multiple="multiple">
+                                                        </div>
+                                                        <div class="dz-message needsclick">
+                                                            <div class="mb-3">
+                                                                <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+                                                            </div>
+                                                        
+                                                            <h4>Drop files here or click to upload.</h4>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <ul class="list-unstyled mb-0" id="dropzone-preview">
+                                                        <li class="mt-2" id="dropzone-preview-list">
+                                                            <!-- This is used as the file preview template -->
+                                                            <div class="border rounded">
+                                                                <div class="d-flex p-2">
+                                                                    <div class="flex-shrink-0 me-3">
+                                                                        <div class="avatar-sm bg-light rounded">
+                                                                            <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-grow-1">
+                                                                        <div class="pt-1">
+                                                                            <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
+                                                                            <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                                                                            <strong class="error text-danger" data-dz-errormessage></strong>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-shrink-0 ms-3">
+                                                                        <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                    <!-- end dropzon-preview -->
+                                                </div>
+                                                <!-- end card body -->
+                                    {% endif %}
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
@@ -292,5 +392,7 @@
                         </div>
                     </div>
                 </div>
+
+
 {% endblock sidebar %}
 

@@ -516,4 +516,107 @@ def santiyeye_kalem_ekle(request):
 def santiye_kalem_ekle_admin(redirect,id):
     return 0
 #şantiye Kalemleri
+#Proje Bilgisi
+def projeler_sayfasi(request):
+    content = sozluk_yapisi()
+    
+    if super_admin_kontrolu(request):
+        profile =projeler.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = projeler.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+        
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =projeler.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search)|Q(Proje_tipi_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = projeler.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["blog_bilgisi"]  =bloglar.objects.filter(proje_ait_bilgisi = request.user,proje_santiye_Ait__silinme_bilgisi = False)
+    return render(request,"santiye_yonetimi/proje_sayfai.html",content)
 
+#proje Ekleme
+def proje_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            kullanici = request.POST.get("kullanici")
+            return redirect("main:proje_ekle_admin",id = kullanici)
+        else:
+            yetkili_adi = request.POST.get("yetkili_adi")
+            tarih_bilgisi = request.POST.get("tarih_bilgisi") 
+            aciklama = request.POST.get("aciklama")      
+            durumu  = request.POST.get("durumu")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            new_project = projeler(
+                proje_ait_bilgisi = request.user,
+                proje_Adi = yetkili_adi,
+                tarih = tarih_bilgisi,
+                aciklama = aciklama,
+                durum = durumu,silinme_bilgisi = False
+            )
+            new_project.save()
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(bloglar.objects.get(id=int(i)))
+            new_project.blog_bilgisi.add(*bloglar_bilgisi)
+            
+    return redirect("main:projeler_sayfasi")
+
+def proje_ekle_admin(request,id):
+    content = sozluk_yapisi()
+    content["blog_bilgisi"]  =bloglar.objects.filter(proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),proje_santiye_Ait__silinme_bilgisi = False)
+    if request.POST:
+        yetkili_adi = request.POST.get("yetkili_adi")
+        tarih_bilgisi = request.POST.get("tarih_bilgisi") 
+        aciklama = request.POST.get("aciklama")      
+        durumu  = request.POST.get("durumu")
+        if durumu == "1":
+            durumu = True
+        else:
+            durumu = False
+        blogbilgisi = request.POST.getlist("blogbilgisi")
+        new_project = projeler(
+                proje_ait_bilgisi = get_object_or_404(CustomUser,id = id ),
+                proje_Adi = yetkili_adi,
+                tarih = tarih_bilgisi,
+                aciklama = aciklama,
+                durum = durumu,silinme_bilgisi = False
+            )
+        new_project.save()
+        bloglar_bilgisi = []
+        for i in blogbilgisi:
+            bloglar_bilgisi.append(bloglar.objects.get(id=int(i)))
+        new_project.blog_bilgisi.add(*bloglar_bilgisi)
+        return redirect("main:projeler_sayfasi")
+
+    return render(request,"santiye_yonetimi/proje_ekle_admin.html",content)
+#Proje Ekeleme
+#proje silme
+def proje_silme(request):
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        projeler.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+    return redirect("main:projeler_sayfasi")
+
+#proje silme

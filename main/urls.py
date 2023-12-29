@@ -35,6 +35,11 @@ urlpatterns = [
     path("addbuldingsiteadmin/<int:id>", views.santiye_kalem_ekle_admin, name="santiye_kalem_ekle_admin"),
     path("editsite", views.santiye_duzelt, name="santiye_duzelt"),
     #şantiye Kalemleri
-
+    #proje
+    path("prjectspage", views.projeler_sayfasi, name="projeler_sayfasi"),
+    path("addprjects", views.proje_ekle, name="proje_ekle"),
+    path("addprjects/<int:id>", views.proje_ekle_admin, name="proje_ekle_admin"),
+    path("delprjects", views.proje_silme, name="proje_silme"),
+    #proje
 ]
 #
