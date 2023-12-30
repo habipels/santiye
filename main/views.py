@@ -658,7 +658,6 @@ def proje_duzenle_bilgi(request):
             images = request.FILES.getlist('file')
             for images in images:
                 proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
-            print("düzenlendi if içinde")
         else:
             yetkili_adi = request.POST.get("yetkili_adi")
             tarih_bilgisi = request.POST.get("tarih_bilgisi") 
@@ -684,7 +683,7 @@ def proje_duzenle_bilgi(request):
             images = request.FILES.getlist('file')
             for images in images:
                 proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
-            print("düzenlendi else içinde")
-        print("Post")
-        return redirect("main:projeler_sayfasi")
+    return redirect("main:projeler_sayfasi")
 #proje düzenleme
+
+
