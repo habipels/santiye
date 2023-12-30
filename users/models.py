@@ -19,9 +19,8 @@ class CustomUser(AbstractUser):
     image  = models.ImageField(upload_to='profile/',verbose_name="Profile",blank=True,null=True,)
     background_image  = models.ImageField(upload_to='background/',verbose_name="background",blank=True,null=True,)
     telefon_numarasi =  models.CharField(max_length= 20 , verbose_name="Telefon Numarası ",blank=True,null = True)
-    ulke = models.CharField(max_length = 50 ,verbose_name="Ülke",blank = True,null = True)
-    sehir = models.CharField(max_length = 50,verbose_name = "Şehir",blank = True,null = True)
-    zip_kod = models.CharField(max_length = 200 ,verbose_name= "Zip Kodu",blank = True,null = True)
+    gorevi = models.CharField(max_length = 250 ,verbose_name="Görevi",blank = True,null = True)
+
     
     def save(self, *args, **kwargs):
         super(CustomUser, self).save(*args, **kwargs)
@@ -40,3 +39,5 @@ class CustomUser(AbstractUser):
                     super(CustomUser, self).save(*args, **kwargs)
     def __str__(self):
         return self.username
+
+

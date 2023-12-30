@@ -69,3 +69,9 @@ def logoutUser(request):
 def profil_bilgisi (request):
     content = sozluk_yapisi()
     return render(request,"account/profile.html")
+
+#kullanıcılar
+def kullanicilarim(request):
+    content = sozluk_yapisi()
+    return render(request,"account/kullanicilar.html",content)
+#kullanıcılar

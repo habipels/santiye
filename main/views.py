@@ -775,25 +775,25 @@ def taseron_silme(request):
 
 
 #sözleşmeler
-#taseron olaylari
+#sözleşme olaylari
 def sozlesmler_sayfasi(request):
     content = sozluk_yapisi()
     
     if super_admin_kontrolu(request):
-        profile =taseronlar.objects.all()
+        profile = taseron_sozlesme_dosyalari.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user)
+        profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
         
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
-            profile =taseronlar.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            profile =taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = taseronlar.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
     
@@ -809,8 +809,42 @@ def sozlesmler_sayfasi(request):
     content["top"]  = profile
     content["medya"] = page_obj
     content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
     return render(request,"santiye_yonetimi/sozlesmler.html",content)
-#taseron olaylari
+#sözleşme olaylari
 
-
+def sozlesme_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("dosyaadi")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.POST.get("file")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            taseron_sozlesme_dosyalari.objects.create(
+                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                dosya = file,dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu
+            )
+    return redirect("main:sozlesmler_sayfasi")
 #sözleşmeler
+
+#sözleşmeler sil
+def sozlesme_silme(request):
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        taseron_sozlesme_dosyalari.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+    return redirect("main:sozlesmler_sayfasi")
+
+#sözleşmeler sil
+
+
+

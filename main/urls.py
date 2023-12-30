@@ -49,6 +49,11 @@ urlpatterns = [
     #taşeron olayları
     #sözleşmeler olayları
     path("contracts", views.sozlesmler_sayfasi, name="sozlesmler_sayfasi"),
+    path("addcontract", views.sozlesme_ekle, name="sozlesme_ekle"),
+    path("delcontract", views.sozlesme_silme, name="sozlesme_silme"),
     #sözleşmeler olayları
+    #kullanici işlemleri
+    
+    #kullanıcı işlemleri
 ]
-#
+#kullanicilarim
