@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import * 
 from datetime import datetime
-
+from muhasebe.models import *
 
 class proje_tipi(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Tipi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -60,6 +60,22 @@ class projeler (models.Model):
 class proje_dosyalari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(projeler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
     dosya = models.FileField(upload_to='proje_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
-"""class taseronlar(models.Model):
-    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
-"""
+class taseronlar(models.Model):
+    taseron_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    taseron_adi = models.CharField(max_length = 200,verbose_name="Taşeron Adı",blank = True,null = True)
+    email = models.EmailField(verbose_name="Email adresi",blank = True,null=True,max_length=200)
+    aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
+    proje_bilgisi = models.ManyToManyField(projeler,blank=True,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+
+
+class taseron_sozlesme_dosyalari(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(taseronlar,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
+    dosya = models.FileField(upload_to='taseron_sozlesme/',verbose_name="Dosya Adı",blank=True,null=True)
+
+class cari_taseron_baglantisi(models.Model):
+    gelir_kime_ait_oldugu = models.ForeignKey(taseronlar,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    cari_bilgisi = models.ForeignKey(cari,verbose_name="Cari Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)

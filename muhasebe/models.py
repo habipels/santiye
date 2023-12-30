@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import * 
 from datetime import datetime
+
 # Create your models here.
 class cari (models.Model):
     cari_kart_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Cari Kartın Kime Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -10,7 +11,7 @@ class cari (models.Model):
     bakiye = models.FloatField(verbose_name="Cari Bakiyesi",default=0)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
-
+    
 
 class Kasa (models.Model):
     kasa_kart_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Kasa Kime Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
