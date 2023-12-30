@@ -611,6 +611,10 @@ def proje_ekle_admin(request,id):
         for i in blogbilgisi:
             bloglar_bilgisi.append(bloglar.objects.get(id=int(i)))
         new_project.blog_bilgisi.add(*bloglar_bilgisi)
+        
+        images = request.FILES.getlist('file')
+        for images in images:
+            proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
         return redirect("main:projeler_sayfasi")
 
     return render(request,"santiye_yonetimi/proje_ekle_admin.html",content)
@@ -623,3 +627,64 @@ def proje_silme(request):
     return redirect("main:projeler_sayfasi")
 
 #proje silme
+#proje düzenleme
+def proje_duzenle_bilgi(request):
+    c = request.POST
+    if c:
+        if request.user.is_superuser:
+            kullanici = request.POST.get("kullanici")
+            yetkili_adi = request.POST.get("yetkili_adi")
+            tarih_bilgisi = request.POST.get("tarih_bilgisi") 
+            aciklama = request.POST.get("aciklama")      
+            durumu  = request.POST.get("durumu")
+            buttonIdInput = request.POST.get("buttonIdInput")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            projeler.objects.filter(id = buttonIdInput).update(
+                proje_ait_bilgisi = get_object_or_404(CustomUser,id =kullanici ),
+                proje_Adi = yetkili_adi,
+                tarih = tarih_bilgisi,
+                aciklama = aciklama,
+                durum = durumu,silinme_bilgisi = False
+            )
+            z = get_object_or_404(projeler,id = buttonIdInput)
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(bloglar.objects.get(id=int(i)))
+            z.blog_bilgisi.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            for images in images:
+                proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
+            print("düzenlendi if içinde")
+        else:
+            yetkili_adi = request.POST.get("yetkili_adi")
+            tarih_bilgisi = request.POST.get("tarih_bilgisi") 
+            aciklama = request.POST.get("aciklama")      
+            durumu  = request.POST.get("durumu")
+            buttonIdInput = request.POST.get("buttonIdInput")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            projeler.objects.filter(id = buttonIdInput).update(
+                proje_Adi = yetkili_adi,
+                tarih = tarih_bilgisi,
+                aciklama = aciklama,
+                durum = durumu,silinme_bilgisi = False
+            )
+            z = get_object_or_404(projeler,id = buttonIdInput)
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(bloglar.objects.get(id=int(i)))
+            z.blog_bilgisi.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            for images in images:
+                proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
+            print("düzenlendi else içinde")
+        print("Post")
+        return redirect("main:projeler_sayfasi")
+#proje düzenleme

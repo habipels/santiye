@@ -17,3 +17,12 @@ def bloglar_getir(veri):
     return str(veri_esiti)
 
 
+@register.simple_tag
+def proje_dosyalarini(id):
+    a = proje_dosyalari.objects.filter(proje_ait_bilgisi__id = id).count()
+    return a
+    
+@register.simple_tag
+def proje_dosyalarini_bilgi(id):
+    a = proje_dosyalari.objects.filter(proje_ait_bilgisi__id = id)
+    return a

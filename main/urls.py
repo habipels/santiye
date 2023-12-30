@@ -40,6 +40,7 @@ urlpatterns = [
     path("addprjects", views.proje_ekle, name="proje_ekle"),
     path("addprjects/<int:id>", views.proje_ekle_admin, name="proje_ekle_admin"),
     path("delprjects", views.proje_silme, name="proje_silme"),
+    path("setprojects", views.proje_duzenle_bilgi, name="proje_duzenle_bilgi"),
     #proje
 ]
 #
