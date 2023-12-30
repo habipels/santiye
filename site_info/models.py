@@ -53,7 +53,7 @@ class projeler (models.Model):
     blog_bilgisi = models.ManyToManyField(bloglar,blank=True,null=True)
     tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
     aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
-    durum = models.CharField(max_length = 200,verbose_name = "Durum",blank = True,null = True)
+    durum = models.BooleanField(default = False,verbose_name = "Durum",blank = True,null = True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
 
@@ -73,9 +73,17 @@ class taseronlar(models.Model):
 class taseron_sozlesme_dosyalari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(taseronlar,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
     dosya = models.FileField(upload_to='taseron_sozlesme/',verbose_name="Dosya Adı",blank=True,null=True)
+    dosya_adi = models.CharField(max_length = 400,verbose_name="Sözleşme Adı",blank = True,null = True)
+    tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
+    aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
+    durum = models.BooleanField(default = False,verbose_name = "Durum",blank = True,null = True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
 
 class cari_taseron_baglantisi(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(taseronlar,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     cari_bilgisi = models.ForeignKey(cari,verbose_name="Cari Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+
+
