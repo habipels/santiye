@@ -8,6 +8,7 @@ from site_settings.models import *
 from django.utils.translation  import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from site_info.models import *
+from muhasebe.models import *
 """
 trans = translate(language='tr')
     z = BlogPost.objects.all()
@@ -534,7 +535,7 @@ def projeler_sayfasi(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = projeler.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = projeler.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(silinme_bilgisi = False)).filter(Q(aciklama__icontains = search)| Q(proje_Adi__icontains = search))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
     
@@ -686,4 +687,130 @@ def proje_duzenle_bilgi(request):
     return redirect("main:projeler_sayfasi")
 #proje düzenleme
 
+#taseron olaylari
+def taseron_sayfasi(request):
+    content = sozluk_yapisi()
+    
+    if super_admin_kontrolu(request):
+        profile =taseronlar.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user)
+        
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =taseronlar.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = taseronlar.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    return render(request,"santiye_yonetimi/taseronlar.html",content)
+#taseron olaylari
 
+
+def taseron_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            taseron_adi = request.POST.get("taseron_adi")
+            telefonnumarasi = request.POST.get("telefonnumarasi")
+            email_adresi = request.POST.get("email_adresi")
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            aciklama = request.POST.get("aciklama")
+            new_project = taseronlar(
+                taseron_ait_bilgisi = request.user,
+                taseron_adi = taseron_adi,
+                email = email_adresi,
+                aciklama = aciklama,
+                telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+            )
+            new_project.save()
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+            new_project.proje_bilgisi.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            isim = 1
+            for images in images:
+                taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                isim = isim+1
+            car = cari.objects.create(
+                cari_kart_ait_bilgisi = request.user,
+                cari_adi = taseron_adi,
+                telefon_numarasi = telefonnumarasi,
+                aciklama = aciklama
+            )
+            cari_taseron_baglantisi.objects.create(
+                gelir_kime_ait_oldugu = get_object_or_404(taseronlar,id = new_project.id ),
+                cari_bilgisi = get_object_or_404(cari,id = car.id)
+            )
+    return redirect("main:taseron_sayfasi")
+
+#proje silme
+def taseron_silme(request):
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        taseronlar.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+    return redirect("main:taseron_sayfasi")
+
+#proje silme
+
+
+#sözleşmeler
+#taseron olaylari
+def sozlesmler_sayfasi(request):
+    content = sozluk_yapisi()
+    
+    if super_admin_kontrolu(request):
+        profile =taseronlar.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user)
+        
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =taseronlar.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = taseronlar.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    return render(request,"santiye_yonetimi/sozlesmler.html",content)
+#taseron olaylari
+
+
+#sözleşmeler

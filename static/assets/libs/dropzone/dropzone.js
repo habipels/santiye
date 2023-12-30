@@ -159,7 +159,7 @@ var $b657c03155fc27e2$var$defaultOptions = {
    * have the `multiple` attribute as well. This option will
    * also trigger additional events (like `processingmultiple`). See the events
    * documentation section for more information.
-   */ uploadMultiple: false,
+   */ uploadMultiple: true,
     /**
    * Whether you want files to be uploaded in chunks to your server. This can't be
    * used in combination with `uploadMultiple`.
@@ -274,7 +274,7 @@ var $b657c03155fc27e2$var$defaultOptions = {
    * If the Dropzone is `clickable` this option will also be used as
    * [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept)
    * parameter on the hidden file input as well.
-   */ acceptedFiles: null,
+   */ acceptedFiles: "image/*,application/pdf,doc,docx,xls,xlsx",
     /**
    * **Deprecated!**
    * Use acceptedFiles instead.

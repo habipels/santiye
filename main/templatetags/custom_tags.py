@@ -26,3 +26,17 @@ def proje_dosyalarini(id):
 def proje_dosyalarini_bilgi(id):
     a = proje_dosyalari.objects.filter(proje_ait_bilgisi__id = id)
     return a
+
+
+    
+@register.simple_tag
+def taseronsozlesme_saysisi(id):
+    a = taseron_sozlesme_dosyalari.objects.filter(proje_ait_bilgisi__id = id).count()
+    return a
+
+@register.simple_tag
+def taseron_gorev_saysisi(id):
+    a = get_object_or_404(taseronlar,id = id)
+    a = a.proje_bilgisi.all().count()
+
+    return a

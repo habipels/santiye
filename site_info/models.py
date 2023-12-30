@@ -64,6 +64,7 @@ class taseronlar(models.Model):
     taseron_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     taseron_adi = models.CharField(max_length = 200,verbose_name="Taşeron Adı",blank = True,null = True)
     email = models.EmailField(verbose_name="Email adresi",blank = True,null=True,max_length=200)
+    telefon_numarasi = models.CharField(max_length = 200,verbose_name="Telefon Numarası",blank = True,null = True)
     aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
     proje_bilgisi = models.ManyToManyField(projeler,blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
@@ -76,7 +77,7 @@ class taseron_sozlesme_dosyalari(models.Model):
     dosya_adi = models.CharField(max_length = 400,verbose_name="Sözleşme Adı",blank = True,null = True)
     tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
     aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
-    durum = models.BooleanField(default = False,verbose_name = "Durum",blank = True,null = True)
+    durum = models.BooleanField(default = True,verbose_name = "Durum",blank = True,null = True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
 

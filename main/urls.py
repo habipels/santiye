@@ -42,5 +42,13 @@ urlpatterns = [
     path("delprjects", views.proje_silme, name="proje_silme"),
     path("setprojects", views.proje_duzenle_bilgi, name="proje_duzenle_bilgi"),
     #proje
+    #taşeron olayları
+    path("subcontractor", views.taseron_sayfasi, name="taseron_sayfasi"),
+    path("addsubcontractor", views.taseron_ekle, name="taseron_ekle"),
+    path("delsubcontractor", views.taseron_silme, name="taseron_silme"),
+    #taşeron olayları
+    #sözleşmeler olayları
+    path("contracts", views.sozlesmler_sayfasi, name="sozlesmler_sayfasi"),
+    #sözleşmeler olayları
 ]
 #
