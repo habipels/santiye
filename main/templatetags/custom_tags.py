@@ -40,3 +40,9 @@ def taseron_gorev_saysisi(id):
     a = a.proje_bilgisi.all().count()
 
     return a
+
+    
+@register.simple_tag
+def kullanici_dosya_sayisi(id):
+    a = personel_dosyalari.objects.filter(kullanici__id = id).count()
+    return a
