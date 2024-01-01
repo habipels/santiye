@@ -105,3 +105,14 @@ class klasorler(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     klasor_adi = models.CharField(max_length = 200,verbose_name="Klasor Adı",blank = True,null = True)
     klasor_adi_db = models.ForeignKey('self',blank=True,null=True,related_name='children',on_delete=models.CASCADE)
+
+
+class klasor_dosyalari(models.Model):
+    dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_ait_bilgisi = models.ForeignKey(klasorler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
+    dosya = models.FileField(upload_to='users_files/',verbose_name="Dosya Adı",blank=True,null=True)
+    dosya_adi = models.CharField(max_length = 400,verbose_name="Sözleşme Adı",blank = True,null = True)
+    tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
+    aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
