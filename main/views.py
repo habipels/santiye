@@ -918,4 +918,76 @@ def hakedis_silme(request):
     return redirect("main:hakedis_sayfasi")
 
 
-
+#hakediş düzenle
+def hakedis_duzenle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            buttonId = request.POST.get("buttonId")
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("yetkili_adi")
+            tarih = request.POST.get("tarih_bilgisi")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.POST.get("file")
+            tutar = request.POST.get("tutar")
+            fatura_no = request.POST.get("fatura_no")
+            silinmedurumu = request.POST.get("silinmedurumu")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            if silinmedurumu == "3":
+                taseron_hakedisles.objects.filter(id=buttonId).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,
+                    dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,
+                    tutar = tutar,
+                    fatura_numarasi = fatura_no
+                )
+            elif silinmedurumu == "2":
+                taseron_hakedisles.objects.filter(id=buttonId).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,
+                    dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,
+                    tutar = tutar,
+                    fatura_numarasi = fatura_no,silinme_bilgisi = True
+                )
+            elif silinmedurumu == "1":
+                taseron_hakedisles.objects.filter(id=buttonId).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,
+                    dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,
+                    tutar = tutar,
+                    fatura_numarasi = fatura_no,silinme_bilgisi = False
+                )
+                
+        else:
+            buttonId = request.POST.get("buttonId")
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("yetkili_adi")
+            tarih = request.POST.get("tarih_bilgisi")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.POST.get("file")
+            tutar = request.POST.get("tutar")
+            fatura_no = request.POST.get("fatura_no")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            taseron_hakedisles.objects.filter(id=buttonId).update(
+                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                dosya = file,
+                dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu,
+                tutar = tutar,
+                fatura_numarasi = fatura_no
+            )
+    return redirect("main:hakedis_sayfasi")
