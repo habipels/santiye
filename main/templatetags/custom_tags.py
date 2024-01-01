@@ -57,10 +57,11 @@ def klasor_olayi(id):
     while True:
         z = get_object_or_404(klasorler,id = k)
         m.append(z.klasor_adi)
+        m.append(z.id)
         if z.klasor_adi_db:
             k = z.klasor_adi_db.id
         else:
             break
-    for i in range(len(m)-1,-1,-1):
-        a = a+m[i]+" > "
-    return a
+    for i in range(len(m)-1,-1,-2):
+        a = a+'<a href="/storage/mydir/{}/{}/">{}</a> > '.format(m[i],m[i-1],m[i-1]) 
+    return mark_safe(a)
