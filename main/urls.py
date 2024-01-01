@@ -60,6 +60,7 @@ urlpatterns = [
     #hakedişler
     #depolama sistemim 
     path("storage/mydir", views.depolama_sistemim, name="depolama_sistemim"),
+    path("storage/addmydir", views.klasor_olustur, name="klasor_olustur"),
     #depolama sistemim 
 ]
 #

@@ -1026,3 +1026,18 @@ def depolama_sistemim(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/depolama_sistemim.html",content)
+
+
+
+def klasor_olustur(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            klasor = request.POST.get("klasor")
+
+            klasorler.objects.create(
+                dosya_sahibi = request.user,
+                klasor_adi = klasor
+            )
+    return redirect("main:depolama_sistemim")
