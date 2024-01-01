@@ -1,4 +1,5 @@
-from django import template
+from django import template 
+from django.utils.safestring import mark_safe
 from site_info.models import *
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 register = template.Library()
@@ -45,4 +46,21 @@ def taseron_gorev_saysisi(id):
 @register.simple_tag
 def kullanici_dosya_sayisi(id):
     a = personel_dosyalari.objects.filter(kullanici__id = id).count()
+    return a
+
+
+@register.simple_tag
+def klasor_olayi(id):
+    k = id
+    a = ""
+    m = []
+    while True:
+        z = get_object_or_404(klasorler,id = k)
+        m.append(z.klasor_adi)
+        if z.klasor_adi_db:
+            k = z.klasor_adi_db.id
+        else:
+            break
+    for i in range(len(m)-1,-1,-1):
+        a = a+m[i]+" > "
     return a

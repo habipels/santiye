@@ -998,19 +998,19 @@ def depolama_sistemim(request):
     
     if super_admin_kontrolu(request):
         profile = klasorler.objects.all()
-        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        kullanicilar = CustomUser.objects.filter(klasor_adi_db = None).filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = klasorler.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user)
+        profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = request.user)
         
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
-            profile =klasorler.objects.filter(Q(dosya_sahibi__last_name__icontains = search)|Q(klasor_adi__icontains = search))
+            profile =klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi__last_name__icontains = search)|Q(klasor_adi__icontains = search))
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = klasorler.objects.filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
     
@@ -1034,12 +1034,22 @@ def klasor_olustur(request):
         if request.user.is_superuser:
             pass
         else:
-            klasor = request.POST.get("klasor")
+            ust_klasor = request.POST.get("ust_klasor") 
+            if ust_klasor:
+                klasor = request.POST.get("klasor")
 
-            klasorler.objects.create(
-                dosya_sahibi = request.user,
-                klasor_adi = klasor
-            )
+                klasorler.objects.create(
+                    dosya_sahibi = request.user,
+                    klasor_adi = klasor,
+                    klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
+                )
+            else:
+                klasor = request.POST.get("klasor")
+
+                klasorler.objects.create(
+                    dosya_sahibi = request.user,
+                    klasor_adi = klasor
+                )
     return redirect("main:depolama_sistemim")
 
 def klasor__yeniden_adlandir(request):
@@ -1069,12 +1079,13 @@ def klasor_sil(request):
 #klasöre Gir
 def klasore_gir(request,id,slug):
     content = sozluk_yapisi()
+    content["id_bilgisi"] = id
     if super_admin_kontrolu(request):
         profile = klasorler.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = klasorler.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user)
+        profile = klasorler.objects.filter(klasor_adi_db__id =id,silinme_bilgisi = False,dosya_sahibi = request.user)
         
     if request.GET.get("search"):
         search = request.GET.get("search")
@@ -1083,7 +1094,7 @@ def klasore_gir(request,id,slug):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = klasorler.objects.filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = klasorler.objects.filter(klasor_adi_db__id =id).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
     
