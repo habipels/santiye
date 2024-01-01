@@ -1012,7 +1012,7 @@ def depolama_sistemim(request):
         else:
             profile = klasorler.objects.filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
+    paginator = Paginator(profile, 25) # 6 employees per page
     
     try:
         page_obj = paginator.page(page_num)
@@ -1039,5 +1039,29 @@ def klasor_olustur(request):
             klasorler.objects.create(
                 dosya_sahibi = request.user,
                 klasor_adi = klasor
+            )
+    return redirect("main:depolama_sistemim")
+
+def klasor__yeniden_adlandir(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            klasor = request.POST.get("klasor")
+            idbilgisi = request.POST.get("idbilgisi")
+            klasorler.objects.filter(id = idbilgisi).update(
+                dosya_sahibi = request.user,
+                klasor_adi = klasor
+            )
+    return redirect("main:depolama_sistemim")
+
+def klasor_sil(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            idbilgisi = request.POST.get("idbilgisi")
+            klasorler.objects.filter(id = idbilgisi).update(
+                silinme_bilgisi = True
             )
     return redirect("main:depolama_sistemim")

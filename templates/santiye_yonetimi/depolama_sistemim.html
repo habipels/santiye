@@ -119,9 +119,10 @@
                                                                 <i class="ri-more-2-fill fs-16 align-bottom"></i>
                                                             </button>
                                                             <ul class="dropdown-menu dropdown-menu-end">
-                                                                <li><a class="dropdown-item view-item-btn" href="javascript:void(0);">Open</a></li>
-                                                                <li><a class="dropdown-item edit-folder-list" href="#createFolderModal" data-bs-toggle="modal" role="button">Rename</a></li>
-                                                                <li><a class="dropdown-item" href="#removeFolderModal" data-bs-toggle="modal" role="button">Delete</a></li>
+                                                                <li><a class="dropdown-item view-item-btn" href="javascript:void(0);">Klasörü Aç</a></li>
+                                                                <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#createFolderModal{{i.id}}" role="button">Yeniden Adlandır</a></li>
+                                                                <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#removeFileItemModal{{i.id}}" role="button">Sil</a></li>
+
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -347,7 +348,35 @@
                 </div>
             </div>
             <!-- END CREATE FOLDER MODAL -->
-
+            {% for i in santiyeler %}
+                <!-- START CREATE FOLDER MODAL -->
+            <div class="modal fade zoomIn" id="createFolderModal{{i.id}}" tabindex="-1" aria-labelledby="createFolderModalLabel{{i.id}}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0">
+                        <div class="modal-header p-3 bg-success-subtle">
+                            <h5 class="modal-title" id="createFolderModalLabel">Klasör Oluştur</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form  method="post" action="{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="foldername-input" class="form-label">Klasör Adı</label>
+                                    <input type="text" value="{{i.klasor_adi}}" name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
+                                    <div class="invalid-feedback">Please enter a folder name.</div>
+                                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> İptal</button>
+                                    <button type="submit" class="btn btn-primary" id="addNewFolder">Klasör Oluştur</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END CREATE FOLDER MODAL -->
+            {% endfor %}
             <!-- START CREATE FILE MODAL -->
             <div class="modal fade zoomIn" id="createFileModal" tabindex="-1" aria-labelledby="createFileModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -376,13 +405,20 @@
             <!-- END CREATE FILE MODAL -->
 
             <!-- removeFileItemModal -->
-            <div id="removeFileItemModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
+            {% for i in santiyeler  %}
+            <div id="removeFileItemModal{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
                         </div>
                         <div class="modal-body">
+                        <form action="{% url 'main:klasor_sil' %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    
+                                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
                             <div class="mt-2 text-center">
                                 <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                 <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
@@ -392,36 +428,15 @@
                             </div>
                             <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
                                 <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
+                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
                             </div>
+                        </form>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
-
-            <!-- removeFileItemModal -->
-            <div id="removeFolderModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removeFoldermodal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mt-2 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>Are you sure ?</h4>
-                                    <p class="text-muted mx-4 mb-0">Are you sure you want to remove this folder ?</p>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn w-sm btn-danger" id="remove-folderList">Yes, Delete It!</button>
-                            </div>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
+            {% endfor %}
+       
 
             <footer class="footer">
                 <div class="container-fluid">
