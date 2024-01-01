@@ -55,6 +55,7 @@ urlpatterns = [
     #hakedişler
     path("progresspayment", views.hakedis_sayfasi, name="hakedis_sayfasi"),
     path("addprogresspayment", views.hakedis_ekle, name="hakedis_ekle"),
+    path("delprogresspayment", views.hakedis_silme, name="hakedis_silme"),
     #hakedişler
 ]
 #

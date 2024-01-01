@@ -864,7 +864,7 @@ def hakedis_sayfasi(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = taseron_hakedisles.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi = request.user) & Q(proje_ait_bilgisi__taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
     
@@ -889,8 +889,8 @@ def hakedis_ekle(request):
             pass
         else:
             taseron = request.POST.get("taseron")
-            dosyaadi = request.POST.get("dosyaadi")
-            tarih = request.POST.get("tarih")
+            dosyaadi = request.POST.get("yetkili_adi")
+            tarih = request.POST.get("tarih_bilgisi")
             aciklama = request.POST.get("aciklama")
             durumu = request.POST.get("durumu")
             file = request.POST.get("file")
@@ -902,14 +902,20 @@ def hakedis_ekle(request):
                 durumu = False
             taseron_hakedisles.objects.create(
                 proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
-                dosya = file,dosya_adi = dosyaadi,
+                dosya = file,
+                dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
                 durum = durumu,
                 tutar = tutar,
                 fatura_numarasi = fatura_no
             )
-    return redirect("main:sozlesmler_sayfasi")
+    return redirect("main:hakedis_sayfasi")
 #hakedisekle
+def hakedis_silme(request):
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        taseron_hakedisles.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+    return redirect("main:hakedis_sayfasi")
 
 
 #hakedişler
