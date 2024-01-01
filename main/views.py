@@ -860,7 +860,7 @@ def hakedis_sayfasi(request):
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
-            profile =taseron_hakedisles.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            profile =taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi__last_name__icontains = search)|Q(dosya_adi__icontains = search))
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
@@ -918,5 +918,4 @@ def hakedis_silme(request):
     return redirect("main:hakedis_sayfasi")
 
 
-#hakedişler
 

@@ -68,7 +68,7 @@
                                                     <th class="sort" data-sort="date">Durum</th>
                                                     <th class="sort" data-sort="date">Tutar</th>
                                                     <th class="sort" data-sort="date">Fatura Numarası</th>
-                                                    <th class="sort" data-sort="date">Proje Dosya Sayısı</th>
+                                                    <th class="sort" data-sort="date">Dosya</th>
                                                     <th class="sort" data-sort="date"></th>
                                                 </tr>
                                             </thead>
@@ -82,7 +82,7 @@
                                                     </th>
                                                     <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
                                                     {% if request.user.is_superuser %}
-                                                        <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
+                                                        <td class="customer_name">{{i.proje_ait_bilgisi.taseron_ait_bilgisi.first_name}}
                                                     {% else %}
                                                     {% endif %}
                                                     
@@ -211,23 +211,26 @@
                                     </div>
 
                                     {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Seç</label>
-                                            <select class="form-control" name="kullanici" id="date-field">
-                                                <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.first_name}}</option>
-                                                {% for j in kullanicilar %}
-                                                    <option value="{{j.id}}">{{j.first_name}}</option>
-                                                {% endfor %}
-                                                
-                                                
-                                            </select>
-                                        </div>
+                                            
                                         {% else %}
                                         {% endif %}
     
                                         <div class="mb-3">
-                                        <label for="date-field" class="form-label">Proje Adı</label>
-                                        <input type="text" value="{{i.proje_Adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Dil Adı" />
+                                        <label for="customername-field" class="form-label">Taşeron</label>
+                                        <select class="form-control" name="taseron" id="date-field">
+                                            <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.taseron_adi}}</option>
+                                                {% for j in taseronlar %}
+                                                    <option value="{{j.id}}">{{j.taseron_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        <div class="invalid-feedback">Lütfen Taşeron Adını Boş Bırakmayınız.</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Dosya Adı</label>
+                                        <input type="text" value="{{i.dosya_adi}}" name="yetkili_adi" id="date-field" class="form-control" placeholder="Dosya Adı" />
                                     </div>
                                     <div class="mb-3">
                                         <label for="date-field" class="form-label">Tarih</label>
@@ -236,37 +239,30 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="email-field" class="form-label">Açıklama</label>
-                                        <textarea  name="aciklama" class="form-control" placeholder="Enter Description" required>{{i.aciklama}}</textarea>
+                                        <textarea name="aciklama"  class="form-control" placeholder="Enter Description" required>{{i.aciklama}}</textarea>
                                         <div class="invalid-feedback">Please enter an email.</div>
                                     </div>
                                     <div>
                                         <label for="status-field" class="form-label">Durum</label>
                                         <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
                                             {% if i.durum %}
-                                                <option value="1">Active</option>
+                                                <option value="Active">Active</option>
                                             {% else %}
-                                            <option value="0">Block</option>
+                                                <option value="Block">Block</option>
                                             {% endif %}
                                             <option value="">Durum</option>
-                                            <option value="1">Active</option>
-                                            <option value="0">Block</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Block">Block</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="status-field" class="form-label">Bloglar</label>
-                                        <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
-                                           {% for yazar in i.blog_bilgisi.all %}
-                                                       {{ yazar.blog_adi }}{{ yazar.blog_numarasi }},
-                                            {% endfor %}
-                                            {% for blog in blog_bilgisi %}
-                                            {% if blog in  i.blog_bilgisi.all %}
-                                                <option selected value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.blog_adi}}{{blog.blog_numarasi}}</option>
-                                            {% else %}
-                                            <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.blog_adi}}{{blog.blog_numarasi}}</option>
-                                            {% endif %}
-                                            
-                                            {% endfor %}
-                                        </select>
+                                        <label for="status-field" class="form-label">Tutar</label>
+                                        <input name="tutar" value="{{i.tutar | stringformat:'.2F' }}" step="0.01" type="number" id="date-field" class="form-control" placeholder="Select Date" required />
+                                        <div class="invalid-feedback">Please select a date.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Fatura No</label>
+                                        <input type="text"  value="{{i.fatura_numarasi }}" name="fatura_no" id="date-field" class="form-control" placeholder="Fatura No" />
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12">
@@ -322,7 +318,8 @@
                                             </div>
                                             <!-- end card -->
                                         </div> <!-- end col -->
-                                    </div>{% if request.user.is_superuser %}
+                                    </div>
+                                    {% if request.user.is_superuser %}
                                             <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Silinme Durumu</label>
                                             <select name="silinmedurumu"  class="form-control" id="">
