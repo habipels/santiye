@@ -882,7 +882,35 @@ def hakedis_sayfasi(request):
     content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
     content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
     return render(request,"santiye_yonetimi/hakedis.html",content)
-#sözleşme olaylari
+
+def hakedis_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("dosyaadi")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.POST.get("file")
+            tutar = request.POST.get("tutar")
+            fatura_no = request.POST.get("fatura_no")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            taseron_hakedisles.objects.create(
+                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                dosya = file,dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu,
+                tutar = tutar,
+                fatura_numarasi = fatura_no
+            )
+    return redirect("main:sozlesmler_sayfasi")
+#hakedisekle
+
 
 #hakedişler
 

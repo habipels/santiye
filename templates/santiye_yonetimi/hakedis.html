@@ -62,11 +62,12 @@
                                                     {% else %}
                                                     {% endif %}
                                                     
-                                                    <th class="sort" data-sort="email">Proje Adı</th>
-                                                    <th class="sort" data-sort="email">Dahil Olan Bloglar</th>
+                                                    <th class="sort" data-sort="email">Dosya Adı</th>
                                                     <th class="sort" data-sort="phone">Tarihi</th>
                                                     <th class="sort" data-sort="date">Açıklama</th>
                                                     <th class="sort" data-sort="date">Durum</th>
+                                                    <th class="sort" data-sort="date">Tutar</th>
+                                                    <th class="sort" data-sort="date">Fatura Numarası</th>
                                                     <th class="sort" data-sort="date">Proje Dosya Sayısı</th>
                                                     <th class="sort" data-sort="date"></th>
                                                 </tr>
@@ -387,7 +388,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="{% url 'main:proje_ekle' %}"  method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="{% url 'main:hakedis_ekle' %}"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
@@ -427,13 +428,13 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="status-field" class="form-label">Bloglar</label>
-                                        <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
-                                            <option value=""></option>
-                                            {% for blog in blog_bilgisi %}
-                                            <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.blog_adi}}{{blog.blog_numarasi}}</option>
-                                            {% endfor %}
-                                        </select>
+                                        <label for="status-field" class="form-label">Tutar</label>
+                                        <input name="tutar" value="0" step="0.01" type="number" id="date-field" class="form-control" placeholder="Select Date" required />
+                                        <div class="invalid-feedback">Please select a date.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Fatura No</label>
+                                        <input type="text"  name="fatura_no" id="date-field" class="form-control" placeholder="Dil Adı" />
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12">

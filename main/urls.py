@@ -54,6 +54,7 @@ urlpatterns = [
     #sözleşmeler olayları
     #hakedişler
     path("progresspayment", views.hakedis_sayfasi, name="hakedis_sayfasi"),
+    path("addprogresspayment", views.hakedis_ekle, name="hakedis_ekle"),
     #hakedişler
 ]
 #
