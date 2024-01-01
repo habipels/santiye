@@ -52,8 +52,9 @@ urlpatterns = [
     path("addcontract", views.sozlesme_ekle, name="sozlesme_ekle"),
     path("delcontract", views.sozlesme_silme, name="sozlesme_silme"),
     #sözleşmeler olayları
-    #kullanici işlemleri
-    
-    #kullanıcı işlemleri
+    #hakedişler
+    path("progresspayment", views.hakedis_sayfasi, name="hakedis_sayfasi"),
+    #hakedişler
 ]
-#kullanicilarim
+#
+#
