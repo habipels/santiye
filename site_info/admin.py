@@ -13,4 +13,5 @@ admin.site.register(taseronlar)
 admin.site.register(taseron_sozlesme_dosyalari)
 admin.site.register(cari_taseron_baglantisi)
 admin.site.register(taseron_hakedisles)
+
 admin.site.register(klasorler)
