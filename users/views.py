@@ -143,7 +143,35 @@ def kullanici_ekleme(request):
 
 def kullanici_silme(request):
     if request.POST:
-        buttonIdInput = request.POST.get("buttonIdInput")
+        buttonIdInput = request.POST.get("buttonId")
         CustomUser.objects.filter(id = buttonIdInput).update(is_active = False,kullanici_silme_bilgisi  = True)
-        print("güncellendi")
     return redirect("users:kullanicilarim")
+
+def kullanici_bilgileri_duzenle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            buttonId = request.POST.get("buttonId")
+            yetkili_adi = request.POST.get("yetkili_adi")
+            email = request.POST.get("email")
+            gorevi = request.POST.get("gorevi")
+            durumu = request.POST.get("durumu")
+            file = request.POST.getlist("file")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            CustomUser.objects.filter(id=buttonId).update(
+                first_name = request.user.first_name,
+                last_name = yetkili_adi,
+                username = email,
+                email = email,
+                gorevi =gorevi, 
+                kullanicilar_db = request.user,
+                is_active = durumu
+            )
+            if len(file)> 1:
+                for images in file:
+                    personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
+        return redirect("users:kullanicilarim")

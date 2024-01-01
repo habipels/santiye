@@ -13,6 +13,7 @@ urlpatterns = [
     path('myusers/',views.kullanicilarim,name = "kullanicilarim"),
     path('addmyusers/',views.kullanici_ekleme,name = "kullanici_ekleme"),
     path('delmyusers/',views.kullanici_silme,name = "kullanici_silme"),
+    path('setmyusers/',views.kullanici_bilgileri_duzenle,name = "kullanici_bilgileri_duzenle"),
     #kullanici işlemleri
 
 ]

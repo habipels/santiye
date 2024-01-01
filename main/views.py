@@ -638,7 +638,7 @@ def proje_duzenle_bilgi(request):
             tarih_bilgisi = request.POST.get("tarih_bilgisi") 
             aciklama = request.POST.get("aciklama")      
             durumu  = request.POST.get("durumu")
-            buttonIdInput = request.POST.get("buttonIdInput")
+            buttonIdInput = request.POST.get("buttonId")
             if durumu == "1":
                 durumu = True
             else:
@@ -664,7 +664,7 @@ def proje_duzenle_bilgi(request):
             tarih_bilgisi = request.POST.get("tarih_bilgisi") 
             aciklama = request.POST.get("aciklama")      
             durumu  = request.POST.get("durumu")
-            buttonIdInput = request.POST.get("buttonIdInput")
+            buttonIdInput = request.POST.get("buttonId")
             if durumu == "1":
                 durumu = True
             else:
