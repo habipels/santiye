@@ -63,9 +63,14 @@ urlpatterns = [
     path("storage/addmydir", views.klasor_olustur, name="klasor_olustur"),
     path("storage/setmydir", views.klasor__yeniden_adlandir, name="klasor__yeniden_adlandir"),
     path("storage/delmydir", views.klasor_sil, name="klasor_sil"),
+    path("storage/savemydir", views.dosya_geri_getir, name="dosya_geri_getir"),
     path("storage/mydir/<int:id>/<str:slug>/", views.klasore_gir, name="klasore_gir"),
     path("storage/addfile", views.dosya_ekle, name="dosya_ekle"),
     path("storage/delfile", views.dosya_sil, name="dosya_sil"),
+    path("storage/mydir/document", views.dokumanlar, name="dokumanlar"),
+    path("storage/mydir/media", views.media_dosyalari, name="media_dosyalari"),
+    path("storage/mydir/history", views.zamana_dosyalari, name="zamana_dosyalari"),
+    path("storage/mydir/deletedfile", views.silinen_dosyalari, name="silinen_dosyalari"),
     #depolama sistemim 
 ]
 #
