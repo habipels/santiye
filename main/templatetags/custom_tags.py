@@ -65,3 +65,64 @@ def klasor_olayi(id):
     for i in range(len(m)-1,-1,-2):
         a = a+'<a href="/storage/mydir/{}/{}/">{}</a> > '.format(m[i],m[i-1],m[i-1]) 
     return mark_safe(a)
+
+
+@register.simple_tag
+def kullanici_dosya_boyutu(id):
+    boyut = 0
+    a = klasor_dosyalari.objects.filter(dosya_sahibi__id = id)
+    for  i in a:
+        boyut = boyut+ i.dosya.size
+    boyut = boyut/1024
+    #kb oldu
+    boyut = boyut /1024
+    #mb oldu
+    boyut = boyut /1024
+    #gb oldu
+    full = 5 
+    full =( boyut * 100 ) / full
+    full = round(float(full),2)
+    boyut = round(float(boyut),2)
+    if boyut < 5:
+        k = """<div class="progress mb-2 progress-sm">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span class="text-muted fs-12 d-block text-truncate"><b>{}</b>GB used of <b>5</b>GB</span>""".format(full,boyut)
+        return mark_safe(k)
+    elif 5 < boyut:
+        k = """<div class="progress mb-2 progress-sm">
+                                                <div class="progress-bar bg-danger" role="progressbar" style="width: {}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span class="text-muted fs-12 d-block text-truncate"><b>{}</b>GB used of <b>5</b>GB</span>""".format(full,boyut)
+        return mark_safe(k)
+    
+
+
+@register.simple_tag
+def dosya_ekleme_yetenegi(id):
+    boyut = 0
+    a = klasor_dosyalari.objects.filter(dosya_sahibi__id = id)
+    for  i in a:
+        boyut = boyut+ i.dosya.size
+    boyut = boyut/1024
+    #kb oldu
+    boyut = boyut /1024
+    #mb oldu
+    boyut = boyut /1024
+    #gb oldu
+    full = 5 
+    full =( boyut * 100 ) / full
+    full = round(float(full),2)
+    boyut = round(float(boyut),2)
+    sonuc = None
+    if boyut > 5:
+        k = """<button class="btn btn-danger w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target=""><i class="ri-add-line align-bottom me-1"></i> Depolama Dolu</button>"""
+        return mark_safe(k)
+    elif 5 > boyut:
+        k = """<button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#dosyaekle"><i class="ri-add-line align-bottom me-1"></i> Dosya Ekle</button>"""
+        return mark_safe(k)
+@register.simple_tag
+def mb_donusturme(id):
+    id  = id /1024
+    id = id /1024
+    return round(float(id),2)

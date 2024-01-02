@@ -67,10 +67,7 @@
                                             <i class="ri-database-2-line fs-17"></i>
                                         </div>
                                         <div class="flex-grow-1 ms-3 overflow-hidden">
-                                            <div class="progress mb-2 progress-sm">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <span class="text-muted fs-12 d-block text-truncate"><b>0.50</b>GB used of <b>5</b>GB</span>
+                                            {% kullanici_dosya_boyutu request.user.id %}
                                         </div>
                                     </div>
                                 </div>
@@ -100,7 +97,7 @@
                                                
     
                                                 <button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i> Klasör Oluştur</button>
-                                                <button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#dosyaekle"><i class="ri-add-line align-bottom me-1"></i> Dosya Ekle</button>
+                                                {% dosya_ekleme_yetenegi request.user.id %}
                                             </div>
                                         </div>
                                         <!--end col-->
@@ -223,17 +220,14 @@
                                                 
                                                 </td>
                                                 <td class="date">
-                                                    {{i.dosya.url}}
+                                                    {% mb_donusturme i.dosya.size %} MB
                                                 
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-start">
-                                                        <div class="edit">
-                                                            <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
-                                                        </div>
                                                         
                                                         <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">Remove</button>
+                                                            <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">Remove</button>
                                                         </div>
                                                        
                                                     </div>
@@ -392,7 +386,110 @@
                 <!-- container-fluid -->
             </div>
             <!-- End Page-content -->
+            <!-- START CREATE FOLDER MODAL -->
+        <div class="modal fade zoomIn" id="dosyaekle" tabindex="-1"  aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0">
+                    <div class="modal-header p-3 bg-success-subtle">
+                        <h5 class="modal-title" id="createFolderModalLabel">Dosya Ekle</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="tablelist-form" action="{% url 'main:dosya_ekle' %}" method="post" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <div class="mb-3" id="modal-id" style="display: none;">
+                                    <label for="id-field" class="form-label">ID</label>
+                                    <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
+                                    <input type="text" id="id-field"  name="ust_klasor" hidden value="{{id_bilgisi}}" class="form-control" placeholder="ID" readonly />
+                                </div>
 
+                                <div class="mb-3">
+                                    <label for="date-field" class="form-label">Dosya Adı</label>
+                                    <input type="tel" name="klasor" id="date-field" class="form-control" placeholder="Dosya Adı"  />
+                                    <div class="invalid-feedback">Lütfen telefon alanını boş bırakmayınız.</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email-field" class="form-label">Tarih</label>
+                                    <input type="date" name="tarih" class="form-control" placeholder="E-Posta giriniz" ></input>
+                                    <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email-field" class="form-label">Açıklama</label>
+                                    <textarea name="aciklama" class="form-control" placeholder="Enter Description" ></textarea>
+                                    <div class="invalid-feedback">Please enter an email.</div>
+                                </div>
+                                
+                                
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title mb-0">Sözleşmeleri Yükle</h4>
+                                            </div><!-- end card header -->
+                                        
+                                            <div class="card-body">
+                                                <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
+                                            
+                                                <div class="dropzone">
+                                                    <div class="fallback">
+                                                        <input name="file" type="file" >
+                                                    </div>
+                                                    <div class="dz-message needsclick">
+                                                        <div class="mb-3">
+                                                            <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+                                                        </div>
+                                                    
+                                                        <h4>Drop files here or click to upload.</h4>
+                                                    </div>
+                                                </div>
+                                            
+                                                <ul class="list-unstyled mb-0" id="dropzone-preview">
+                                                    <li class="mt-2" id="dropzone-preview-list">
+                                                        <!-- This is used as the file preview template -->
+                                                        <div class="border rounded">
+                                                            <div class="d-flex p-2">
+                                                                <div class="flex-shrink-0 me-3">
+                                                                    <div class="avatar-sm bg-light rounded">
+                                                                        <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex-grow-1">
+                                                                    <div class="pt-1">
+                                                                        <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
+                                                                        <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                                                                        <strong class="error text-danger" data-dz-errormessage></strong>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex-shrink-0 ms-3">
+                                                                    <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <!-- end dropzon-preview -->
+                                            </div>
+                                            <!-- end card body -->
+                                        </div>
+                                        <!-- end card -->
+                                    </div> <!-- end col -->
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                    <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END CREATE FOLDER MODAL -->
             <!-- START CREATE FOLDER MODAL -->
             <div class="modal fade zoomIn" id="createFolderModal" tabindex="-1" aria-labelledby="createFolderModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -509,112 +606,39 @@
             </div><!-- /.modal -->
             {% endfor %}
        
-
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © Velzon.
+            {% for i in dosyalarim  %}
+            <div id="dosya_sil{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-                                Design & Develop by Themesbrand
+                        <div class="modal-body">
+                        <form action="{% url 'main:dosya_sil' %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">
+                                    <input type="hidden" name="klasor" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                            <div class="mt-2 text-center">
+                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
+                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                                    <h4>Are you sure ?</h4>
+                                    <p class="text-muted mx-4 mb-0">Are you sure you want to remove this item ?</p>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-        </div>
-        <!-- end main content-->
-        <!-- START CREATE FOLDER MODAL -->
-        <div class="modal fade zoomIn" id="dosyaekle" tabindex="-1" aria-labelledby="createFolderModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0">
-                    <div class="modal-header p-3 bg-success-subtle">
-                        <h5 class="modal-title" id="createFolderModalLabel">Dosya Ekle</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form  method="post" action="{% url 'main:dosya_ekle' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
-                             {% csrf_token %}
-                            <div class="mb-4">
-                                <label for="foldername-input" class="form-label">Dosya Adı</label>
-                                <input type="text" name="klasor" class="form-control" id="foldername-input" required placeholder="Dosya Adı Giriniz">
-                                <div class="invalid-feedback">Please enter a folder name.</div>
-                                <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="email-field" class="form-label">Tarih</label>
-                                <input type="date" name="tarih" class="form-control" placeholder="Tarih" ></input>
-                                <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email-field" class="form-label">Açıklama</label>
-                                <textarea name="aciklama" class="form-control" placeholder="Enter Description" ></textarea>
-                                <div class="invalid-feedback">Please enter an email.</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h4 class="card-title mb-0">Dosyayı Yükle</h4>
-                                        </div><!-- end card header -->
-                                    
-                                        <div class="card-body">
-                                            <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
-                                        
-                                            <div class="dropzone">
-                                                <div class="fallback">
-                                                    <input name="file" type="file" >
-                                                </div>
-                                                <div class="dz-message needsclick">
-                                                    <div class="mb-3">
-                                                        <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
-                                                    </div>
-                                                
-                                                    <h4>Drop files here or click to upload.</h4>
-                                                </div>
-                                            </div>
-                                        
-                                            <ul class="list-unstyled mb-0" id="dropzone-preview">
-                                                <li class="mt-2" id="dropzone-preview-list">
-                                                    <!-- This is used as the file preview template -->
-                                                    <div class="border rounded">
-                                                        <div class="d-flex p-2">
-                                                            <div class="flex-shrink-0 me-3">
-                                                                <div class="avatar-sm bg-light rounded">
-                                                                    <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <div class="pt-1">
-                                                                    <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
-                                                                    <p class="fs-13 text-muted mb-0" data-dz-size></p>
-                                                                    <strong class="error text-danger" data-dz-errormessage></strong>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex-shrink-0 ms-3">
-                                                                <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <!-- end dropzon-preview -->
-                                        </div>
-                                        <!-- end card body -->
-                                    </div>
-                                    <!-- end card -->
-                                </div> <!-- end col -->
-                            </div>
-                            <div class="hstack gap-2 justify-content-end">
-                                <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> İptal</button>
-                                <button type="submit" class="btn btn-primary" id="addNewFolder">Klasör Oluştur</button>
+                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
                             </div>
                         </form>
-                    </div>
-                </div>
-            </div>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            {% endfor %}
+            
         </div>
-        <!-- END CREATE FOLDER MODAL -->
+        <!-- end main content-->
+        
 {% endblock sidebar %}

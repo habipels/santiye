@@ -111,9 +111,21 @@ class klasorler(models.Model):
 class klasor_dosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_ait_bilgisi = models.ForeignKey(klasorler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
-    dosya = models.FileField(upload_to='users_files/',verbose_name="Dosya Adı",blank=True,null=True)
+    dosya = models.FileField(upload_to='klasor_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
     dosya_adi = models.CharField(max_length = 400,verbose_name="Sözleşme Adı",blank = True,null = True)
     tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
     aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+
+class takvim(models.Model):
+    dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    takvim_turu  =models.CharField(max_length=200,verbose_name="Takvim Etkinlik Türü",blank= True,null = True)
+    baslangic_tarihi  = models.DateField(verbose_name = "Başlangıç Tarihi",blank = True,null = True)
+    bitis_tarihi  = models.DateField(verbose_name = "Bitiş Tarihi",blank = True,null = True)
+    baslangic_saati = models.TimeField(verbose_name = "Başlangıç Tarihi",blank = True,null = True)
+    bitis_saati = models.TimeField(verbose_name = "Başlangıç Tarihi",blank = True,null = True)
+    takvim_lokasyon  =models.CharField(max_length=200,verbose_name="Takvim Etkinlik Türü",blank= True,null = True)
+    aciklma  =models.TextField(verbose_name="Açıklama",blank= True,null = True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)

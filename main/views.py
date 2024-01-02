@@ -823,7 +823,7 @@ def sozlesme_ekle(request):
             tarih = request.POST.get("tarih")
             aciklama = request.POST.get("aciklama")
             durumu = request.POST.get("durumu")
-            file = request.POST.get("file")
+            file = request.FILES.get("file")
             if durumu == "1":
                 durumu = True
             else:
@@ -893,7 +893,7 @@ def hakedis_ekle(request):
             tarih = request.POST.get("tarih_bilgisi")
             aciklama = request.POST.get("aciklama")
             durumu = request.POST.get("durumu")
-            file = request.POST.get("file")
+            file = request.FILES.get("file")
             tutar = request.POST.get("tutar")
             fatura_no = request.POST.get("fatura_no")
             if durumu == "1":
@@ -928,7 +928,7 @@ def hakedis_duzenle(request):
             tarih = request.POST.get("tarih_bilgisi")
             aciklama = request.POST.get("aciklama")
             durumu = request.POST.get("durumu")
-            file = request.POST.get("file")
+            file = request.FILES.get("file")
             tutar = request.POST.get("tutar")
             fatura_no = request.POST.get("fatura_no")
             silinmedurumu = request.POST.get("silinmedurumu")
@@ -974,7 +974,7 @@ def hakedis_duzenle(request):
             tarih = request.POST.get("tarih_bilgisi")
             aciklama = request.POST.get("aciklama")
             durumu = request.POST.get("durumu")
-            file = request.POST.get("file")
+            file = request.FILES.get("file")
             tutar = request.POST.get("tutar")
             fatura_no = request.POST.get("fatura_no")
             if durumu == "1":
@@ -1126,14 +1126,30 @@ def dosya_ekle(request):
             dosya_Adi = request.POST.get("klasor")
             tarih = request.POST.get("tarih")
             aciklama = request.POST.get("aciklama")
-            file = request.POST.get("file")
+            dosya = request.FILES.get("file")
+            print(dosya,"veri_ gelmiş")
             klasor_dosyalari.objects.create(
                 dosya_sahibi = request.user,
                 proje_ait_bilgisi = get_object_or_404(klasorler,id = ust_klasor),
-                dosya = file,dosya_adi = dosya_Adi,
+                dosya = dosya,dosya_adi = dosya_Adi,
                 tarih = tarih,aciklama = aciklama
             )
-        z = "/storage/mydir/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
-        return redirect(z)
+    z = "/storage/mydir/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
+    return redirect(z)
 
 #klasore Dosya Ekle
+
+#dosya_ sil
+def dosya_sil(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+
+            ust_klasor = request.POST.get("ust_klasor")
+            dosya_Adi = request.POST.get("klasor")
+            
+            klasor_dosyalari.objects.filter(id = dosya_Adi).update(silinme_bilgisi = True)
+    z = "/storage/mydir/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
+    return redirect(z)
+#dosya_sil
