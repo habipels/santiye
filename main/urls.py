@@ -64,6 +64,7 @@ urlpatterns = [
     path("storage/setmydir", views.klasor__yeniden_adlandir, name="klasor__yeniden_adlandir"),
     path("storage/delmydir", views.klasor_sil, name="klasor_sil"),
     path("storage/mydir/<int:id>/<str:slug>/", views.klasore_gir, name="klasore_gir"),
+    path("storage/addfile", views.dosya_ekle, name="dosya_ekle"),
     #depolama sistemim 
 ]
 #

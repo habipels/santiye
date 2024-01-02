@@ -1086,7 +1086,7 @@ def klasore_gir(request,id,slug):
         content["kullanicilar"] =kullanicilar
     else:
         profile = klasorler.objects.filter(klasor_adi_db__id =id,silinme_bilgisi = False,dosya_sahibi = request.user)
-        
+        dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1095,6 +1095,7 @@ def klasore_gir(request,id,slug):
             content["kullanicilar"] =kullanicilar
         else:
             profile = klasorler.objects.filter(klasor_adi_db__id =id).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+            dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id).filter(__icontains = search)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
     
@@ -1109,5 +1110,30 @@ def klasore_gir(request,id,slug):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
+    content["dosyalarim"] = dosyalarim
     return render(request,"santiye_yonetimi/klasorici.html",content) 
 #klasöre Gir
+
+
+#klasore Dosya Ekle
+def dosya_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+
+            ust_klasor = request.POST.get("ust_klasor")
+            dosya_Adi = request.POST.get("klasor")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            file = request.POST.get("file")
+            klasor_dosyalari.objects.create(
+                dosya_sahibi = request.user,
+                proje_ait_bilgisi = get_object_or_404(klasorler,id = ust_klasor),
+                dosya = file,dosya_adi = dosya_Adi,
+                tarih = tarih,aciklama = aciklama
+            )
+        z = "/storage/mydir/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
+        return redirect(z)
+
+#klasore Dosya Ekle
