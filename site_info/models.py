@@ -145,3 +145,7 @@ class YapilacakPlanlari(models.Model):
 
 
 
+class YapilacakDosyalari(models.Model):
+    dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi")
+    proje_ait_bilgisi = models.ForeignKey(YapilacakPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="todo_sahibi")    
+    dosya = models.FileField(upload_to='yapilacak_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
