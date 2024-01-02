@@ -126,3 +126,17 @@ def mb_donusturme(id):
     id  = id /1024
     id = id /1024
     return round(float(id),2)
+
+@register.simple_tag
+def dosya_sayisi_ve_boyutu (id):
+    
+    klasor_sayisi = klasorler.objects.filter(klasor_adi_db__id=id).count()
+    dosya_sayisi =  klasor_dosyalari.objects.filter(proje_ait_bilgisi__id=id).count()
+    dosya_boyutu  = 0
+    z = klasor_dosyalari.objects.filter(proje_ait_bilgisi__id=id)
+    for i in z:
+        dosya_boyutu = dosya_boyutu+i.dosya.size
+    dosya_boyutu = ((dosya_boyutu/1024)/1024)/1024
+    a = """<span class="me-auto"><b>{}</b> Files</span>
+            <span><b>{}</b>GB</span>""".format(klasor_sayisi+dosya_sayisi,round(float(dosya_boyutu),2))
+    return mark_safe(a)
