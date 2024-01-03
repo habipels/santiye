@@ -1,0 +1,103 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+
+{% block sidebar %}
+<div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Timeline</h4>
+
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
+                                        <li class="breadcrumb-item active">Timeline</li>
+                                    </ol>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div>
+                                <h5>Yapılacakalar</h5>
+                                <div class="timeline">
+                                    {% for i in santiyeler %}
+                                        <div class="timeline-item {% veri_siralama santiyeler i.id %}">
+                                        <i class="icon ri-stack-line"></i>
+                                        <div class="date">{{i.teslim_tarihi}}</div>
+                                        <div class="content shadow-none">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0">
+                                                {% if i.proje_ait_bilgisi.image %}
+                                                    <img src="{{i.proje_ait_bilgisi.image.url}}" alt="" class="avatar-sm rounded">
+                                                {% else %}
+                                                <img src="{% static 'assets/images/users/avatar-5.jpg' %}" alt="" class="avatar-sm rounded">
+                                                {% endif %}
+                                                    
+                                                </div>
+                                                <div class="flex-grow-1 ms-3">
+                                                    <h5 class="fs-15">{{i.title}} <small class="text-muted fs-13 fw-normal">- {{i.kayit_tarihi}}</small></h5>
+                                                    <p class="text-muted mb-2">{{i.aciklama}}</p>
+                                                    <div class="hstack gap-2">
+                                                        {% if i.status == "Inprogress" %}
+                                                    <span
+                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "New" %}
+                                                <span
+                                                    class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "Pending" %}
+                                                <span
+                                                    class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
+                                                 {% elif i.status == "Completed" %}
+                                                 <span
+                                                    class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
+                                                {% endif %}
+                                                    {% if i.oncelik_durumu == "High" %}
+                                            <span class="badge bg-danger text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Medium" %}
+                                            <span class="badge bg-warning text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Low" %}
+                                            <span class="badge bg-success text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% endif %}
+                                                    </div>
+                                                    <hr>
+                                                    <div class="flex-shrink-0">
+                                                        {% dosya_varsa_indirme i.id %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <!--end col-->
+                    </div>
+                    <!--end row-->
+
+
+
+              
+
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            
+        </div>
+
+{% endblock sidebar %}

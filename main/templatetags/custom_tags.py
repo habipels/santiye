@@ -140,3 +140,26 @@ def dosya_sayisi_ve_boyutu (id):
     a = """<span class="me-auto"><b>{}</b> Files</span>
             <span><b>{}</b>GB</span>""".format(klasor_sayisi+dosya_sayisi,round(float(dosya_boyutu),2))
     return mark_safe(a)
+
+
+
+@register.simple_tag
+def veri_siralama(veri,id):
+    bilgi = []
+    for i in veri :
+        bilgi.append(i.id)
+    cevap = bilgi.index(id)
+    if cevap % 2:
+        return "right"
+    else:
+        return "left"
+    
+
+@register.simple_tag
+def dosya_varsa_indirme(id):
+
+    z = ""
+    veri = YapilacakDosyalari.objects.filter(proje_ait_bilgisi__id = id)
+    for i in veri:
+        z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,i.dosya,i.dosya.size/1024)
+    return mark_safe(z)

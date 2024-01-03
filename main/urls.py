@@ -72,12 +72,15 @@ urlpatterns = [
     path("storage/mydir/history", views.zamana_dosyalari, name="zamana_dosyalari"),
     path("storage/mydir/deletedfile", views.silinen_dosyalari, name="silinen_dosyalari"),
     #depolama sistemim 
-    #yapılacaklar
+    #iş planı
     path("thingstodo", views.yapilacaklar, name="yapilacaklar"),
     path("addthingstodo", views.yapilacalar_ekle, name="yapilacalar_ekle"),
     path("delthingstodo", views.yapilacalar_sil, name="yapilacalar_sil"),
     path("setthingstodo", views.yapilacalar_duzenle, name="yapilacalar_duzenle"),
-    #yapılacakalr
+    #iş planı
+    #yapilacaklar
+    path("todo", views.yapilacaklar_timeline, name="yapilacaklar_timeline"),
+    #yapilacaklar
 
 
 ]
