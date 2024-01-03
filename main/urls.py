@@ -80,6 +80,7 @@ urlpatterns = [
     #iş planı
     #yapilacaklar
     path("todo", views.yapilacaklar_timeline, name="yapilacaklar_timeline"),
+    path("addtodo", views.yapilacalar_time_line_ekle, name="yapilacalar_time_line_ekle"),
     #yapilacaklar
 
 

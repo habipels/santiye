@@ -1472,4 +1472,36 @@ def yapilacaklar_timeline(request):
     content["medya"] = page_obj
     content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False,is_active = True)
     return render(request,"santiye_yonetimi/time_line.html",content)
+
+def yapilacalar_time_line_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            baslik = request.POST.get("baslik")
+            durum = request.POST.get("durum")
+            aciliyet =request.POST.get("aciliyet")
+            teslim_tarihi = request.POST.get("teslim_tarihi")
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            aciklama = request.POST.get("aciklama")
+            new_project = YapilacakPlanlari(
+                proje_ait_bilgisi = request.user,
+                title = baslik,
+                status = durum,
+                aciklama = aciklama,
+                oncelik_durumu =aciliyet,
+                teslim_tarihi = teslim_tarihi,silinme_bilgisi = False
+            )
+            new_project.save()
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+            new_project.yapacaklar.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            isim = 1
+            for images in images:
+                YapilacakDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                isim = isim+1
+    return redirect("main:yapilacaklar_timeline")
+
 #yapilacakalr
