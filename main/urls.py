@@ -74,6 +74,9 @@ urlpatterns = [
     #depolama sistemim 
     #yapılacaklar
     path("thingstodo", views.yapilacaklar, name="yapilacaklar"),
+    path("addthingstodo", views.yapilacalar_ekle, name="yapilacalar_ekle"),
+    path("delthingstodo", views.yapilacalar_sil, name="yapilacalar_sil"),
+    path("setthingstodo", views.yapilacalar_duzenle, name="yapilacalar_duzenle"),
     #yapılacakalr
 
 

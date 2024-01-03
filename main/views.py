@@ -1349,3 +1349,71 @@ def yapilacaklar(request):
     content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
     return render(request,"santiye_yonetimi/yapilacaklar.html",content)
 #yapilacakalr
+
+def yapilacalar_ekle(request):
+    if request.POST:
+        if request.user.superuser:
+            pass
+        else:
+            baslik = request.POST.get("baslik")
+            durum = request.POST.get("durum")
+            aciliyet =request.POST.get("aciliyet")
+            teslim_tarihi = request.POST.get("teslim_tarihi")
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            aciklama = request.POST.get("aciklama")
+            new_project = YapilacakPlanlari(
+                proje_ait_bilgisi = request.user,
+                title = baslik,
+                status = durum,
+                aciklama = aciklama,
+                oncelik_durumu =aciliyet,
+                teslim_tarihi = teslim_tarihi,silinme_bilgisi = False
+            )
+            new_project.save()
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+            new_project.yapacaklar.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            isim = 1
+            for images in images:
+                YapilacakDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                isim = isim+1
+    return redirect("main:yapilacaklar")
+
+def yapilacalar_sil(request):
+    if request.POST:
+        id = request.POSt.get("id_bilgisi")
+        YapilacakPlanlari.objects.filter(id = id).update(silinme_bilgisi = True)
+    return redirect("main:yapilacaklar")
+def yapilacalar_duzenle(request):
+    if request.POST:
+        if request.user.superuser:
+            pass
+        else:
+            id = request.POSt.get("id_bilgisi")
+            baslik = request.POST.get("baslik")
+            durum = request.POST.get("durum")
+            aciliyet =request.POST.get("aciliyet")
+            teslim_tarihi = request.POST.get("teslim_tarihi")
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            aciklama = request.POST.get("aciklama")
+            new_project = YapilacakPlanlari.objects.filter(id = id).update(
+                proje_ait_bilgisi = request.user,
+                title = baslik,
+                status = durum,
+                aciklama = aciklama,
+                oncelik_durumu =aciliyet,
+                teslim_tarihi = teslim_tarihi,silinme_bilgisi = False
+            )
+            new_project.save()
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+            new_project.yapacaklar.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            isim = 1
+            for images in images:
+                YapilacakDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                isim = isim+1
+    return redirect("main:yapilacaklar")
