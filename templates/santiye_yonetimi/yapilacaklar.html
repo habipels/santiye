@@ -21,7 +21,7 @@
                             </button>
                         </div>
                         <div class="col-sm order-3 order-sm-2 mt-3 mt-sm-0">
-                            <h5 class="fw-semibold mb-0">Yapılacakalar</h5>
+                            <h5 class="fw-semibold mb-0">İş Planı</h5>
                         </div>
 
                         <div class="col-auto order-2 order-sm-3 ms-auto">
@@ -36,18 +36,30 @@
                         </div>
                     </div>
                     <div class="p-3 bg-light rounded mb-4">
+                        <form method="get">
                         <div class="row g-2">
                             <div class="col-lg-auto">
                                 <select class="form-control" data-choices data-choices-search-false
-                                    name="choices-select-sortlist" id="choices-select-sortlist">
+                                    name="siralama" id="choices-select-sortlist">
+                                    {% if request.GET.siralama == "1" %}
+                                    <option value="{{ request.GET.siralama }}">By ID</option>
+                                    {% elif request.GET.siralama == "2" %}
+                                    <option value="2">By Name</option>
+                                    {% else %}
+                                    {% endif %}
                                     <option value="">Sort</option>
-                                    <option value="By ID">By ID</option>
-                                    <option value="By Name">By Name</option>
+                                    <option value="1">By ID</option>
+                                    <option value="2">By Name</option>
                                 </select>
+                                
                             </div>
                             <div class="col-lg-auto">
                                 <select class="form-control" data-choices data-choices-search-false
-                                    name="choices-select-status" id="choices-select-status">
+                                    name="status" id="choices-select-status">
+                                    {% if request.GET.status %}
+                                    <option value="{{ request.GET.status }}">{{ request.GET.status }}</option>
+                                    
+                                    {% endif %}
                                     <option value="">All Tasks</option>
                                     <option value="Completed">Completed</option>
                                     <option value="Inprogress">Inprogress</option>
@@ -58,13 +70,12 @@
                             <div class="col-lg">
                                 <div class="search-box">
                                     <input type="text" id="searchTaskList" class="form-control search"
-                                        placeholder="Search task name">
+                                      name="search" value="{% if request.GET.search %}{{ request.GET.search }}{% endif %}"  placeholder="Search task name">
                                     <i class="ri-search-line search-icon"></i>
                                 </div>
                             </div>
                             <div class="col-lg-auto">
-                                <button class="btn btn-success createTask" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#createTask">
+                                <button class="btn btn-success createTask" type="submit">
                                     <i class="ri-search align-bottom"></i> Ara
                                 </button>
                                 <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
@@ -73,6 +84,7 @@
                                 </button>
                             </div>
                         </div>
+                    </form>
                     </div>
 
                     <div class="todo-content position-relative px-4 mx-n4" id="todo-content">
@@ -85,6 +97,7 @@
                                     <thead class="table-active">
                                         <tr>
                                             <th scope="col">Task Name</th>
+                                            <th scope="col">Açıklama</th>
                                             <th scope="col">Assigned</th>
                                             <th scope="col">Due Date</th>
                                             <th scope="col">Status</th>
@@ -94,6 +107,9 @@
                                     </thead>
 
                                     <tbody id="task-list">
+                                        {% for i in santiyeler %}
+                                        
+                                        
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-start">
@@ -101,31 +117,52 @@
                                                     <div class="flex-grow-1">
                                                         <div class="form-check"> <input class="form-check-input"
                                                                 type="checkbox" value="15" id="todo15"> <label
-                                                                class="form-check-label" for="todo15">Added
-                                                                Select2</label> </div>
+                                                                class="form-check-label" for="todo15">{{i.title}}</label> </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="avatar-group flex-nowrap"><a href="javascript: void(0);"
+                                                {{i.aciklama}}
+                                            </td>
+                                            <td>
+                                                <div class="avatar-group flex-nowrap">
+                                                {% for yazar in i.yapacaklar.all %}
+                                                       <a href="javascript: void(0);"
                                                         class="avatar-group-item"
-                                                        data-img="assets/images/users/avatar-1.jpg"
+                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        data-bs-title="Curtis Saenz"> <img
-                                                            src="assets/images/users/avatar-1.jpg" alt=""
-                                                            class="rounded-circle avatar-xxs"> </a><a
-                                                        href="javascript: void(0);" class="avatar-group-item"
-                                                        data-img="assets/images/users/avatar-3.jpg"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        data-bs-title="John Robles"> <img
-                                                            src="assets/images/users/avatar-3.jpg" alt=""
-                                                            class="rounded-circle avatar-xxs"> </a></div>
+                                                        data-bs-title="{{yazar.last_name}}"> <img
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            class="rounded-circle avatar-xxs"> </a>
+                                                {% endfor %}
+                                               </div>
                                             </td>
-                                            <td>23 Apr, 2022</td>
-                                            <td><span
-                                                    class="badge bg-warning-subtle text-warning text-uppercase">Pending</span>
+                                            <td>{{i.teslim_tarihi}}</td>
+                                            <td>
+                                                {% if i.status == "Inprogress" %}
+                                                    <span
+                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "New" %}
+                                                <span
+                                                    class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "Pending" %}
+                                                <span
+                                                    class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
+                                                 {% elif i.status == "Completed" %}
+                                                 <span
+                                                    class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
+                                                {% endif %}
+                                            
                                             </td>
-                                            <td><span class="badge bg-danger text-uppercase">High</span></td>
+                                            <td>
+                                            {% if i.oncelik_durumu == "High" %}
+                                            <span class="badge bg-danger text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Medium" %}
+                                            <span class="badge bg-warning text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Low" %}
+                                            <span class="badge bg-success text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% endif %}
+                                            </td>
                                             <td>
                                                 <div class="hstack gap-2"> <button
                                                         class="btn btn-sm btn-soft-danger remove-list"
@@ -138,9 +175,47 @@
                                                             class="ri-pencil-fill align-bottom"></i></button> </div>
                                             </td>
                                         </tr>
+                                        {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
+                             <div class="d-flex justify-content-end">
+                                        <div class="pagination-wrap hstack gap-2">
+                                            <ul class="pagination pagination-m justify-content-center">
+
+                                                {% if medya.has_previous %}
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                
+                                                  {% if medya.number > 3 %}
+                                                
+                                                    <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                    {% if medya.number > 4 %}
+                                                      <li class="page-item"><span class="page-link">...</span></li>
+                                                    {% endif %}
+                                                  {% endif %}
+                                                {% endif %}
+                                                
+                                                {% for num in medya.paginator.page_range %}
+                                                  {% if medya.number == num %}
+                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% endif %}
+                                                {% endfor %}
+                                                
+                                                {% if medya.has_next %}
+                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                    <li class="page-item"><span class="page-link">...</span></li>
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% endif %}
+                                                
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                {% endif %}
+                                                </ul>
+                                        </div>
+                                    </div>
                         </div>
                         
                     </div>
@@ -199,7 +274,7 @@
                             <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
                                 <option value=""></option>
                                 {% for blog in blog_bilgisi %}
-                                <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.blog_adi}}{{blog.blog_numarasi}}</option>
+                                <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
                                 {% endfor %}
                             </select>
                         </div>

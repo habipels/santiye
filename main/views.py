@@ -1317,20 +1317,30 @@ def yapilacaklar(request):
     content = sozluk_yapisi()
     
     if super_admin_kontrolu(request):
-        profile = taseron_hakedisles.objects.all()
+        profile = IsplaniPlanlari.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = taseron_hakedisles.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
+        profile = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
         
-    if request.GET.get("search"):
+    if request.GET:
+        siralama = request.GET.get("siralama")
+        status = request.GET.get("status")
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
-            profile =taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi__last_name__icontains = search)|Q(dosya_adi__icontains = search))
+            profile =IsplaniPlanlari.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search))
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi = request.user) & Q(proje_ait_bilgisi__taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = IsplaniPlanlari.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(silinme_bilgisi = False))
+        if status:
+            profile = profile.filter(status = status)
+        if search:
+            profile = profile.filter(title__icontains=search )
+        if siralama == "1":
+            profile = profile.order_by("-id")
+        elif siralama == "2":
+            profile = profile.order_by("-title")
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
     
@@ -1345,14 +1355,13 @@ def yapilacaklar(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
-    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
+    content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False,is_active = True)
     return render(request,"santiye_yonetimi/yapilacaklar.html",content)
 #yapilacakalr
 
 def yapilacalar_ekle(request):
     if request.POST:
-        if request.user.superuser:
+        if request.user.is_superuser:
             pass
         else:
             baslik = request.POST.get("baslik")
@@ -1361,7 +1370,7 @@ def yapilacalar_ekle(request):
             teslim_tarihi = request.POST.get("teslim_tarihi")
             blogbilgisi = request.POST.getlist("blogbilgisi")
             aciklama = request.POST.get("aciklama")
-            new_project = YapilacakPlanlari(
+            new_project = IsplaniPlanlari(
                 proje_ait_bilgisi = request.user,
                 title = baslik,
                 status = durum,
@@ -1377,14 +1386,14 @@ def yapilacalar_ekle(request):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                YapilacakDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect("main:yapilacaklar")
 
 def yapilacalar_sil(request):
     if request.POST:
         id = request.POSt.get("id_bilgisi")
-        YapilacakPlanlari.objects.filter(id = id).update(silinme_bilgisi = True)
+        IsplaniPlanlari.objects.filter(id = id).update(silinme_bilgisi = True)
     return redirect("main:yapilacaklar")
 def yapilacalar_duzenle(request):
     if request.POST:
@@ -1398,7 +1407,7 @@ def yapilacalar_duzenle(request):
             teslim_tarihi = request.POST.get("teslim_tarihi")
             blogbilgisi = request.POST.getlist("blogbilgisi")
             aciklama = request.POST.get("aciklama")
-            new_project = YapilacakPlanlari.objects.filter(id = id).update(
+            new_project = IsplaniPlanlari.objects.filter(id = id).update(
                 proje_ait_bilgisi = request.user,
                 title = baslik,
                 status = durum,
@@ -1414,6 +1423,6 @@ def yapilacalar_duzenle(request):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                YapilacakDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect("main:yapilacaklar")
