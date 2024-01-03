@@ -37,6 +37,9 @@ def sozluk_yapisi():
     trans = translate(language='tr')
     sozluk = {"trans":trans,"dil":dil_bilgisi()}
     sozluk ["diller"] = dil_ayarla.objects.all()
+    sozluk ["sayfalogusu"] = sayfa_logosu.objects.last()
+    sozluk ["sayfa_iconu"] = sayfa_iconu.objects.last()
+    sozluk ["site_adi"] = site_adi.objects.last()
     return sozluk
 
 #superadmin Kontrol
