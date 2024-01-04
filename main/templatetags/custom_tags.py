@@ -166,3 +166,18 @@ def dosya_varsa_indirme(id):
         
         z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,k,round(float(i.dosya.size/1024),2))
     return mark_safe(z)
+
+@register.simple_tag
+def kalem_blog(id):
+
+    unique_values = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =id)
+    a = []
+    for i in unique_values:
+        if i.blog_bilgisi in a:
+            pass
+        else:
+            a.append(i.blog_bilgisi)
+    bilgiler = ""
+    for i in a:
+        bilgiler = bilgiler+ '<a href="/delbuldingsites/{}/{}" >{}{}</a>'.format(str(i.id),id,str(i.blog_adi),str(i.blog_numarasi))+" , "
+    return mark_safe(bilgiler)

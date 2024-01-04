@@ -548,6 +548,47 @@ def santiye_kalemleri_duzenle(request):
                 santiye_finansal_agirligi = finansal_agirlik
             )
         return redirect("main:santtiye_kalemleri",geri_don)
+
+def kalem_blog_dagilis_sil(request,id,ik):
+    a = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id).first()
+    a = a.proje_santiye_Ait.id
+    santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id= ik,blog_bilgisi__id = id).delete()
+    return redirect("main:santtiye_kalemleri",a)
+
+def santiye_kalem_ve_blog(request):
+    content = sozluk_yapisi()
+    content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
+    if super_admin_kontrolu(request):
+        profile =santiye.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =santiye.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search)|Q(Proje_tipi_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"santiye_yonetimi/santiye_blog_kalem.html",content)
+
+
 def santiye_kalem_ekle_admin(redirect,id):
     return 0
 #şantiye Kalemleri

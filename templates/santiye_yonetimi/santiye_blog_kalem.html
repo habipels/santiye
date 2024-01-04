@@ -9,11 +9,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Şantiye Kalemleri</h4>
+                            <h4 class="mb-sm-0">Şantiyeler</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Şantiye Kalemleri</li>
+                                    <li class="breadcrumb-item active">Projeler</li>
                                 </ol>
                             </div>
                         </div>
@@ -24,7 +24,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">Şantiye Kalemleri</h4>
+                                <h4 class="card-title mb-0">Şantiye Ayarları</h4>
                             </div><!-- end card header -->
                             <div class="card-body">
                                 <div class="listjs-table" id="customerList">
@@ -55,13 +55,11 @@
                                                             <input class="form-check-input" type="checkbox" id="checkAll" value="option">
                                                         </div>
                                                     </th>
-                                                    <th class="sort" data-sort="customer_name">Şantiye Adı</th>
-                                                    <th class="sort" data-sort="email">Şantiye Adı </th>
-                                                    <th class="sort" data-sort="email">Kalem Adı </th>
-                                                    <th class="sort" data-sort="phone">Şantiye Ağırlığı</th>
-                                                    <th class="sort" data-sort="phone">Finansal Ağırlığı</th>
-                                                    <th class="sort" data-sort="phone">Blog Bilgisi</th>
-                                                    <th class="sort" data-sort="date">Kayıt Tarihi </th>
+                                                    <th class="sort" data-sort="customer_name">Proje Kime Ait</th>
+                                                    <th class="sort" data-sort="email">Proje Tipi </th>
+                                                    <th class="sort" data-sort="phone">Proje Adı</th>
+                                                    <th class="sort" data-sort="phone">Kat Sayısı</th>
+                                                    <th class="sort" data-sort="date">Blog Sayısı </th>
                                                     <th class="sort" data-sort="date">Durum</th>
                                                 </tr>
                                             </thead>
@@ -76,31 +74,27 @@
                                                     <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
                                                     <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
                                                     </td>
-                                                    <td class="customer_name">{{i.proje_santiye_Ait.proje_adi}}
-                                                    </td>
                                                     <td class="email">
-                                                    {{i.kalem_adi}}</td>
+                                                    {{i.proje_tipi.Proje_tipi_adi}}</td>
                                                     <td class="date">
-                                                        {{i.santiye_agirligi}}
+                                                        {{i.proje_adi}}
                                                     
                                                     </td>
                                                     <td class="date">
-                                                        
-                                                    {{i.santiye_finansal_agirligi}}
+                                                        {% to_int i.kat_sayisi %}
+                                                    
                                                     </td>
                                                     <td class="date">
+                                                    <b>{{i.blog_sayisi}} : </b>
                                                         
-                                                    {% kalem_blog  i.id %}
-                                                    </td>
-                                                    <td class="date">
-                                                    <b>{{i.kayit_tarihi}}  </b>
-                                                        
-                                                        
+                                                        {% bloglar_getir i %}
                                                     
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-start">
-                                                        
+                                                        <div class="edit ml-1">
+                                                                <a href="{% url 'main:santtiye_kalemleri' i.id %}" class="btn btn-sm btn-success edit-item-btn" >Şantiye Kalemleri</a>
+                                                            </div>
                                                             <div class="edit">
                                                                 <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
                                                             </div>
@@ -178,28 +172,20 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="{% url 'main:santiye_kalemleri_duzenle' %}" method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="/setsiteprojetc" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
-                                        <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
+                                        
                                         <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
                                     </div>
 
                                     <div class="mb-3">
-                                            <label for="date-field" class="form-label">Kalem Adı</label>
-                                            <input type="text" value="{{i.kalem_adi}}"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Kalem Adı" />
-                                        </div>
+                                        <label for="date-field" class="form-label">Proje Adı</label>
+                                        <input type="text" value="{{i.proje_adi}}"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Proje Adı" />
+                                    </div>
+                                        
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Ağırlığı</label>
-                                            <input type="number" value="{{i.santiye_agirligi | stringformat:'.2F'  }}"  name="katsayisi" id="date-field" class="form-control" placeholder="Şantiye Ağırlığı" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Finansal Ağırlığı</label>
-                                            <input type="number" value="{{i.santiye_finansal_agirligi | stringformat:'.2F'  }}"  name="blogsayisi" id="date-field" class="form-control" placeholder="Fİnansal Ağırlığı" />
-                                        </div>
-                                        {% if  request.user.is_superuser %}
-                                            <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Silinme Durumu</label>
                                             <select name="silinmedurumu"  class="form-control" id="">
                                                 <option value="3">Karışma</option>
@@ -211,9 +197,6 @@
                                                 
                                             </select>
                                         </div>
-                                        {% else %}
-                                        {% endif %}
-                                        
                                     
                                 </div>
                                 <div class="modal-footer">
@@ -245,9 +228,8 @@
                                         <p class="text-muted mx-4 mb-0">Are you Sure You want to Remove this Record ?</p>
                                     </div>
                                 </div>
-                                <form action="{% url 'main:kalem_sil' %}" method="post">
+                                <form action="/delsiteproject" method="post">
                                     {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                                 
                                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
@@ -273,7 +255,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="{% url 'main:santiyeye_kalem_ekle' %}"  method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="/addsite"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
@@ -290,29 +272,32 @@
                                         </div>
                                         {% else %}
                                             <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Bilgisi</label>
+                                            <label for="date-field" class="form-label">Proje Tipi Seç</label>
                                             <select class="form-control" name="projetipi" id="date-field">
                                                 
-                                                {% for j in santiyeler_bilgileri %}
-                                                    <option value="{{j.id}}">{{j.proje_adi}}</option>
+                                                {% for j in proje_tipleri %}
+                                                    <option value="{{j.id}}">{{j.Proje_tipi_adi}}</option>
                                                 {% endfor %}
                                                 
                                                 
                                             </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Kalem Adı</label>
-                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Kalem Adı" />
+                                            <label for="date-field" class="form-label">Proje Adı</label>
+                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Proje Adı" />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Ağırlığı</label>
-                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Şantiye Ağırlığı" />
+                                            <label for="date-field" class="form-label">Kat Sayısı</label>
+                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Kat Sayısı" />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Finansal Ağırlığı</label>
-                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Fİnansal Ağırlığı" />
+                                            <label for="date-field" class="form-label">Blog Sayısı</label>
+                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Blog Sayısı" />
                                         </div>
-                                        
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Blog Adı</label>
+                                            <input type="text"  name="blogadi" id="date-field" class="form-control" placeholder="Blog Adı" />
+                                        </div>
                                         {% endif %}
     
                                     

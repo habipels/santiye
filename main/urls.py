@@ -36,6 +36,7 @@ urlpatterns = [
     path("editsite", views.santiye_duzelt, name="santiye_duzelt"),
     path("delbuldingsite", views.kalem_sil, name="kalem_sil"),
     path("setbuldingsite", views.santiye_kalemleri_duzenle, name="santiye_kalemleri_duzenle"),
+    path("delbuldingsites/<int:id>/<int:ik>", views.kalem_blog_dagilis_sil, name="kalem_blog_dagilis_sil"),
     #
     #şantiye Kalemleri 
     #proje
@@ -45,6 +46,11 @@ urlpatterns = [
     path("delprjects", views.proje_silme, name="proje_silme"),
     path("setprojects", views.proje_duzenle_bilgi, name="proje_duzenle_bilgi"),
     #proje
+    #ilerleme takibi
+    path("progresstracking", views.santiye_kalem_ve_blog, name="santiye_kalem_ve_blog"),
+    #
+    #ilerleme takibi
+
     #taşeron olayları
     path("subcontractor", views.taseron_sayfasi, name="taseron_sayfasi"),
     path("addsubcontractor", views.taseron_ekle, name="taseron_ekle"),
