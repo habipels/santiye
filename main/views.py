@@ -881,7 +881,7 @@ def taseron_sayfasi(request):
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
-            profile =taseronlar.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            profile =taseronlar.objects.filter(Q(taseron_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
@@ -908,7 +908,8 @@ def taseron_sayfasi(request):
 def taseron_ekle(request):
     if request.POST:
         if request.user.is_superuser:
-            pass
+            kullanici = request.POST.get("kullanici")
+            return redirect("main:taseron_ekle_admin",kullanici)
         else:
             taseron_adi = request.POST.get("taseron_adi")
             telefonnumarasi = request.POST.get("telefonnumarasi")
@@ -943,7 +944,45 @@ def taseron_ekle(request):
                 cari_bilgisi = get_object_or_404(cari,id = car.id)
             )
     return redirect("main:taseron_sayfasi")
-
+def taseron_ekle_admin(request,id):
+    content = sozluk_yapisi()
+    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi__id = id,silinme_bilgisi = False)
+    if request.POST:
+        if True:
+            taseron_adi = request.POST.get("taseron_adi")
+            telefonnumarasi = request.POST.get("telefonnumarasi")
+            email_adresi = request.POST.get("email_adresi")
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            aciklama = request.POST.get("aciklama")
+            new_project = taseronlar(
+                taseron_ait_bilgisi = get_object_or_404(CustomUser,id = id),
+                taseron_adi = taseron_adi,
+                email = email_adresi,
+                aciklama = aciklama,
+                telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+            )
+            new_project.save()
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+            new_project.proje_bilgisi.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            isim = 1
+            for images in images:
+                taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                isim = isim+1
+            car = cari.objects.create(
+                cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = id),
+                cari_adi = taseron_adi,
+                telefon_numarasi = telefonnumarasi,
+                aciklama = aciklama
+            )
+            cari_taseron_baglantisi.objects.create(
+                gelir_kime_ait_oldugu = get_object_or_404(taseronlar,id = new_project.id ),
+                cari_bilgisi = get_object_or_404(cari,id = car.id)
+            )
+        return redirect("main:taseron_sayfasi")
+    return render(request,"santiye_yonetimi/admin_taseron_ekle.html",content)
 #proje silme
 def taseron_silme(request):
     if request.POST:

@@ -58,6 +58,8 @@ urlpatterns = [
     path("subcontractor", views.taseron_sayfasi, name="taseron_sayfasi"),
     path("addsubcontractor", views.taseron_ekle, name="taseron_ekle"),
     path("delsubcontractor", views.taseron_silme, name="taseron_silme"),
+    path("addsubcontractoradmin/<int:id>", views.taseron_ekle_admin, name="taseron_ekle_admin"),
+    #
     #taşeron olayları
     #sözleşmeler olayları
     path("contracts", views.sozlesmler_sayfasi, name="sozlesmler_sayfasi"),
