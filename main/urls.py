@@ -67,6 +67,7 @@ urlpatterns = [
     path("addcontract", views.sozlesme_ekle, name="sozlesme_ekle"),
     path("delcontract", views.sozlesme_silme, name="sozlesme_silme"),
     path("adminaddcontracts/<int:id>", views.sozlesme_ekle_admin, name="sozlesme_ekle_admin"),
+    path("setcontracts", views.sozlesme_duzenle, name="sozlesme_duzenle"),
     #
     #sözleşmeler olayları
     #hakedişler

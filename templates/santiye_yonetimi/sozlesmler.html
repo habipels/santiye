@@ -159,7 +159,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-start">
                                                             <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal">Edit</button>
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#duzelt{{i.id}}">Edit</button>
                                                             </div>
                                                             <div class="remove" style="margin-left:10px;">
                                                                 <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">Remove</button>
@@ -416,5 +416,148 @@
                     </div>
                 </div>
                 {% endfor %}
+        {% for i in santiyeler %}
+          <div class="modal fade" id="duzelt{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+                            <form class="tablelist-form" action="{% url 'main:sozlesme_duzenle' %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="mb-3" id="modal-id" style="display: none;">
+                                        <label for="id-field" class="form-label">ID</label>
+                                        <input type="text" id="id-field" name="id_bilgisi" hidden value="{{i.id}}" class="form-control" />
+                                  </div>
+             
+                                    <div class="mb-3">
+                                        <label for="customername-field" class="form-label">Taşeron</label>
+                                        <select class="form-control" name="taseron" id="date-field">
+                                            <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.taseron_adi}}</option>
+                                                {% for j in taseronlar %}
+                                                    <option value="{{j.id}}">{{j.taseron_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        <div class="invalid-feedback">Lütfen Taşeron Adını Boş Bırakmayınız.</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Dosya Adı</label>
+                                        <input type="tel" value="{{i.dosya_adi}}" name="dosyaadi" id="date-field" class="form-control" placeholder="Telefon Gir"  />
+                                        <div class="invalid-feedback">Lütfen telefon alanını boş bırakmayınız.</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">Tarih</label>
+                                        <input type="date" value="{{i.tarih | date:'Y-m-d' }}" name="tarih" class="form-control" placeholder="E-Posta giriniz" >
+                                        <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">Açıklama</label>
+                                        <textarea name="aciklama" class="form-control" placeholder="Enter Description" >{{i.aciklama }}</textarea>
+                                        <div class="invalid-feedback">Please enter an email.</div>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Durum</label>
+                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                            {% if i.durum %}
+                                                <option value="1">Active</option>
+                                            {% else %}  
+                                            <option value="0">Block</option>
+                                            {% endif %}
+                                            <option value="">Durum</option>
+                                            <option value="1">Active</option>
+                                            <option value="0">Block</option>
+                                        </select>
+                                    </div>
+                                    
+                                    
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h4 class="card-title mb-0">Sözleşmeleri Yükle</h4>
+                                                </div><!-- end card header -->
+                                            
+                                                <div class="card-body">
+                                                    <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
+                                                
+                                                    <div class="dropzone">
+                                                        <div class="fallback">
+                                                            <input name="file" type="file" >
+                                                        </div>
+                                                        <div class="dz-message needsclick">
+                                                            <div class="mb-3">
+                                                                <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+                                                            </div>
+                                                        
+                                                            <h4>Drop files here or click to upload.</h4>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <ul class="list-unstyled mb-0" id="dropzone-preview">
+                                                        <li class="mt-2" id="dropzone-preview-list">
+                                                            <!-- This is used as the file preview template -->
+                                                            <div class="border rounded">
+                                                                <div class="d-flex p-2">
+                                                                    <div class="flex-shrink-0 me-3">
+                                                                        <div class="avatar-sm bg-light rounded">
+                                                                            <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-grow-1">
+                                                                        <div class="pt-1">
+                                                                            <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
+                                                                            <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                                                                            <strong class="error text-danger" data-dz-errormessage></strong>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-shrink-0 ms-3">
+                                                                        <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                    <!-- end dropzon-preview -->
+                                                </div>
+                                                <!-- end card body -->
+                                            </div>
+                                            <!-- end card -->
+                                        </div> <!-- end col -->
+                                    </div>
+                                    {% if request.user.is_superuser %}
+                                            <div class="mb-3">
+                                            <label for="date-field" class="form-label">Proje Silinme Durumu</label>
+                                            <select name="silinmedurumu"  class="form-control" id="">
+                                                <option value="3">Karışma</option>
+                                                <option value="2">Sil</option>
+                                                {% if i.silinme_bilgisi %}
+                                                    <option value="1">Geri Getir</option>
+                                                {% else %}
+                                                {% endif %}
+                                                
+                                            </select>
+                                        </div>
+                                        
+                                        {% endif %}
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        
+        {% endfor %}
 </div>
 {% endblock sidebar %}

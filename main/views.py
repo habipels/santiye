@@ -1144,6 +1144,53 @@ def sozlesme_ekle_admin(request,id):
             )
         return redirect("main:sozlesmler_sayfasi")
     return render(request,"santiye_yonetimi/admin_sozlesme_ekle.html",content)
+#sözleşme düzenleme
+
+def sozlesme_duzenle(request):
+    if request.POST:
+        id_bilgisi = request.POST.get("id_bilgisi")
+        taseron = request.POST.get("taseron")
+        dosyaadi = request.POST.get("dosyaadi")
+        tarih = request.POST.get("tarih")
+        aciklama = request.POST.get("aciklama")
+        durumu = request.POST.get("durumu")
+        file = request.FILES.get("file")
+        if durumu == "1":
+            durumu = True
+        else:
+            durumu = False
+        if request.user.is_superuser:
+            silinmedurumu = request.POST.get("silinmedurumu")
+            if silinmedurumu == "3":
+                taseron_sozlesme_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu
+                )
+            elif silinmedurumu == "2":
+                taseron_sozlesme_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,silinme_bilgisi = True
+                )
+            elif silinmedurumu == "1":
+                taseron_sozlesme_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,silinme_bilgisi = False
+                )
+        else:
+
+            taseron_sozlesme_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu
+                )
+    return redirect("main:sozlesmler_sayfasi")
 
 
 #sözleşmeler
