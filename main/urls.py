@@ -81,6 +81,8 @@ urlpatterns = [
     #yapilacaklar
     path("todo", views.yapilacaklar_timeline, name="yapilacaklar_timeline"),
     path("addtodo", views.yapilacalar_time_line_ekle, name="yapilacalar_time_line_ekle"),
+    path("deltodo", views.yapilacalar_time_line_sil, name="yapilacalar_time_line_sil"),
+    path("settodo", views.yapilacalar_time_line_duzenle, name="yapilacalar_time_line_duzenle"),
     #yapilacaklar
 
 
