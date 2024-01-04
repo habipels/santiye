@@ -989,6 +989,72 @@ def taseron_silme(request):
         buttonId = request.POST.get("buttonId")
         taseronlar.objects.filter(id = buttonId).update(silinme_bilgisi = True)
     return redirect("main:taseron_sayfasi")
+#taşeron Düzenleme
+
+def taseron_duzelt(request):
+    if request.POST:
+        if request.user.is_superuser:
+            id_bilgisi = request.POST.get("id_bilgisi")
+            taseron_adi = request.POST.get("taseron_adi")
+            telefonnumarasi = request.POST.get("telefonnumarasi")
+            email_adresi = request.POST.get("email_adresi")
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            aciklama = request.POST.get("aciklama")
+            silinmedurumu = request.POST.get("silinmedurumu")
+            if silinmedurumu == "1":
+                taseronlar.objects.filter(id =id_bilgisi ).update(
+                    taseron_adi = taseron_adi,
+                    email = email_adresi,
+                    aciklama = aciklama,
+                    telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+                )
+            elif silinmedurumu == "2":
+                taseronlar.objects.filter(id =id_bilgisi ).update(
+                    taseron_adi = taseron_adi,
+                    email = email_adresi,
+                    aciklama = aciklama,
+                    telefon_numarasi = telefonnumarasi,silinme_bilgisi = True
+                )
+            else:
+                taseronlar.objects.filter(id =id_bilgisi ).update(
+                    taseron_adi = taseron_adi,
+                    email = email_adresi,
+                    aciklama = aciklama,
+                    telefon_numarasi = telefonnumarasi
+                )
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+            get_object_or_404(taseronlar,id =id_bilgisi).proje_bilgisi.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            isim = 1
+            for images in images:
+                taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                isim = isim+1     
+        else:
+
+            id_bilgisi = request.POST.get("id_bilgisi")
+            taseron_adi = request.POST.get("taseron_adi")
+            telefonnumarasi = request.POST.get("telefonnumarasi")
+            email_adresi = request.POST.get("email_adresi")
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            aciklama = request.POST.get("aciklama")
+            new_project = taseronlar.objects.filter(id =id_bilgisi ).update(
+                taseron_adi = taseron_adi,
+                email = email_adresi,
+                aciklama = aciklama,
+                telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+            )
+            bloglar_bilgisi = []
+            for i in blogbilgisi:
+                bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+            get_object_or_404(taseronlar,id =id_bilgisi).proje_bilgisi.add(*bloglar_bilgisi)
+            images = request.FILES.getlist('file')
+            isim = 1
+            for images in images:
+                taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                isim = isim+1      
+    return redirect("main:taseron_sayfasi")
 
 #proje silme
 
