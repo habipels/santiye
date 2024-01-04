@@ -471,29 +471,24 @@ def santtiye_kalemleri(request,id):
         if request.user.is_superuser:
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
-            
+            profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id))
+            content["santiyeler_bilgileri"] = santiye.objects.all()
         else:
             content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
             profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user)
-            if request.GET.get("search"):
-                search = request.GET.get("search")
-                if search:
-                    profile = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).filter(Q(last_name__icontains = search)|Q(first_name__icontains = search)|Q(email__icontains = search) ).order_by("-id")
-                else:
-                    profile = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-            page_num = request.GET.get('page', 1)
-            paginator = Paginator(profile, 10) # 6 employees per page
-            try:
-                page_obj = paginator.page(page_num)
-            except PageNotAnInteger:
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(profile, 10) # 6 employees per page
+        try:
+            page_obj = paginator.page(page_num)
+        except PageNotAnInteger:
                 # if page is not an integer, deliver the first page
-                page_obj = paginator.page(1)
-            except EmptyPage:
+            page_obj = paginator.page(1)
+        except EmptyPage:
                 # if the page is out of range, deliver the last page
-                page_obj = paginator.page(paginator.num_pages)
-            content["santiyeler"] = page_obj
-            content["top"]  = profile
-            content["medya"] = page_obj
+            page_obj = paginator.page(paginator.num_pages)
+        content["santiyeler"] = page_obj
+        content["top"]  = profile
+        content["medya"] = page_obj
     else:
         return redirect("/users/login/")
     return render(request,"santiye_yonetimi\santiye_kalemleri.html",content)
@@ -502,8 +497,7 @@ def santiyeye_kalem_ekle(request):
     if request.POST:
         if request.user.is_superuser:
             kullanici = request.POST.get("kullanici")
-            z = "/addbuldingsiteadmin/"+kullanici
-            return redirect("")
+            return redirect("main:santiye_kalem_ekle_admin",kullanici)
         else:
             projetipi = request.POST.get("projetipi")
             yetkili_adi = request.POST.get("yetkili_adi")
@@ -542,11 +536,30 @@ def santiye_kalemleri_duzenle(request):
         santiye_agirligi = request.POST.get("katsayisi")
         finansal_agirlik = request.POST.get("blogsayisi")
         geri_don = request.POST.get("geri_don")
-        santiye_kalemleri.objects.filter(id  = buttonId).update(
-                proje_ait_bilgisi = request.user,
-                kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
-                santiye_finansal_agirligi = finansal_agirlik
-            )
+        if request.user.is_superuser:
+            silinmedurumu = request.POST.get("silinmedurumu")
+            if silinmedurumu == "3":
+                santiye_kalemleri.objects.filter(id  = buttonId).update(
+                        kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                        santiye_finansal_agirligi = finansal_agirlik)
+            elif silinmedurumu == "2":
+                santiye_kalemleri.objects.filter(id  = buttonId).update(
+                        kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                        santiye_finansal_agirligi = finansal_agirlik,
+                        silinme_bilgisi = True)
+                    
+            elif silinmedurumu == "1":
+                santiye_kalemleri.objects.filter(id  = buttonId).update(
+                        kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                        santiye_finansal_agirligi = finansal_agirlik,
+                        silinme_bilgisi = False
+                    )
+        else:
+            santiye_kalemleri.objects.filter(id  = buttonId).update(
+                    proje_ait_bilgisi = request.user,
+                    kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                    santiye_finansal_agirligi = finansal_agirlik
+                )
         return redirect("main:santtiye_kalemleri",geri_don)
 
 def kalem_blog_dagilis_sil(request,id,ik):
@@ -645,8 +658,32 @@ def ilerleme_kaydet(request):
     return redirect("main:blogtan_kaleme_ilerleme_takibi",geri_don,veri_cek)
 
 
-def santiye_kalem_ekle_admin(redirect,id):
-    return 0
+def santiye_kalem_ekle_admin(request,id):
+    content = sozluk_yapisi()
+    content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = id)
+    if request.POST:
+        projetipi = request.POST.get("projetipi")
+        yetkili_adi = request.POST.get("yetkili_adi")
+        santiye_agirligi = request.POST.get("katsayisi")
+        finansal_agirlik = request.POST.get("blogsayisi")
+        kalem = santiye_kalemleri.objects.create(
+                proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),
+                proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
+                kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                santiye_finansal_agirligi = finansal_agirlik
+            )
+        blog_lar = bloglar.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ))
+        kat_sayisi = int(get_object_or_404(santiye,id =projetipi ).kat_sayisi)
+        for i in blog_lar:
+            for j in range(0,kat_sayisi):
+                santiye_kalemlerin_dagilisi.objects.create(
+                    proje_ait_bilgisi = get_object_or_404(CustomUser,id = id) ,
+                    proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
+                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                    kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),   
+                    )
+        return redirect("main:santtiye_kalemleri",get_object_or_404(santiye,id =projetipi ).id)
+    return render(request,"santiye_yonetimi/santiyeyekalem_ekle_admin.html",content)
 #şantiye Kalemleri
 #Proje Bilgisi
 def projeler_sayfasi(request):

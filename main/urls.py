@@ -32,6 +32,7 @@ urlpatterns = [
     #şantiye Kalemleri
     path("buldingsite/<int:id>", views.santtiye_kalemleri, name="santtiye_kalemleri"),
     path("addbuldingsite", views.santiyeye_kalem_ekle, name="santiyeye_kalem_ekle"),
+    path("adminaddbuldingsite/<int:id>", views.santiye_kalem_ekle_admin, name="santiye_kalem_ekle_admin"),
     path("addbuldingsiteadmin/<int:id>", views.santiye_kalem_ekle_admin, name="santiye_kalem_ekle_admin"),
     path("editsite", views.santiye_duzelt, name="santiye_duzelt"),
     path("delbuldingsite", views.kalem_sil, name="kalem_sil"),

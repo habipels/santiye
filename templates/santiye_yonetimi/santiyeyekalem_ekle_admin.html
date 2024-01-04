@@ -1,0 +1,48 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% block sidebar %}
+<div class="vertical-overlay"></div>
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3">
+                                            <label for="date-field" class="form-label">Şantiye Bilgisi</label>
+                                            <select class="form-control" name="projetipi" id="date-field">
+                                                
+                                                {% for j in santiyeler_bilgileri %}
+                                                    <option value="{{j.id}}">{{j.proje_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Kalem Adı</label>
+                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Kalem Adı" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Şantiye Ağırlığı</label>
+                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Şantiye Ağırlığı" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Finansal Ağırlığı</label>
+                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Fİnansal Ağırlığı" />
+                                        </div>
+                                    
+                            <input type="submit" class="btn btn-success waves-effect waves-light mt-5" value="Yeni Şantiye Oluştur">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+</div>
+
+{% endblock sidebar %}
+    
+
