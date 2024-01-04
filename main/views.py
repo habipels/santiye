@@ -535,7 +535,19 @@ def kalem_sil(request):
             silinme_bilgisi = True
         )
     return redirect("main:santtiye_kalemleri",geri_don)
-
+def santiye_kalemleri_duzenle(request):
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        yetkili_adi = request.POST.get("yetkili_adi")
+        santiye_agirligi = request.POST.get("katsayisi")
+        finansal_agirlik = request.POST.get("blogsayisi")
+        geri_don = request.POST.get("geri_don")
+        santiye_kalemleri.objects.filter(id  = buttonId).update(
+                proje_ait_bilgisi = request.user,
+                kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                santiye_finansal_agirligi = finansal_agirlik
+            )
+        return redirect("main:santtiye_kalemleri",geri_don)
 def santiye_kalem_ekle_admin(redirect,id):
     return 0
 #şantiye Kalemleri
