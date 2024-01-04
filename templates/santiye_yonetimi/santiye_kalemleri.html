@@ -56,6 +56,7 @@
                                                         </div>
                                                     </th>
                                                     <th class="sort" data-sort="customer_name">Şantiye Adı</th>
+                                                    <th class="sort" data-sort="email">Şantiye Adı </th>
                                                     <th class="sort" data-sort="email">Kalem Adı </th>
                                                     <th class="sort" data-sort="phone">Şantiye Ağırlığı</th>
                                                     <th class="sort" data-sort="phone">Finansal Ağırlığı</th>
@@ -74,27 +75,27 @@
                                                     <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
                                                     <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
                                                     </td>
+                                                    <td class="customer_name">{{i.proje_santiye_Ait.proje_adi}}
+                                                    </td>
                                                     <td class="email">
-                                                    {{i.proje_tipi.Proje_tipi_adi}}</td>
+                                                    {{i.kalem_adi}}</td>
                                                     <td class="date">
-                                                        {{i.proje_adi}}
+                                                        {{i.santiye_agirligi}}
                                                     
                                                     </td>
                                                     <td class="date">
-                                                        {% to_int i.kat_sayisi %}
-                                                    
-                                                    </td>
-                                                    <td class="date">
-                                                    <b>{{i.blog_sayisi}} : </b>
                                                         
-                                                        {% bloglar_getir i %}
+                                                    {{i.santiye_finansal_agirligi}}
+                                                    </td>
+                                                    <td class="date">
+                                                    <b>{{i.kayit_tarihi}}  </b>
+                                                        
+                                                        
                                                     
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-start">
-                                                        <div class="edit ml-1">
-                                                                <a href="{% url 'main:santtiye_kalemleri' i.id %}" class="btn btn-sm btn-success edit-item-btn" >Şantiye Kalemleri</a>
-                                                            </div>
+                                                        
                                                             <div class="edit">
                                                                 <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
                                                             </div>
@@ -228,8 +229,9 @@
                                         <p class="text-muted mx-4 mb-0">Are you Sure You want to Remove this Record ?</p>
                                     </div>
                                 </div>
-                                <form action="/delsiteproject" method="post">
+                                <form action="{% url 'main:kalem_sil' %}" method="post">
                                     {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                                 
                                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">

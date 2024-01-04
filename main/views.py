@@ -509,13 +509,32 @@ def santiyeye_kalem_ekle(request):
             yetkili_adi = request.POST.get("yetkili_adi")
             santiye_agirligi = request.POST.get("katsayisi")
             finansal_agirlik = request.POST.get("blogsayisi")
-            santiye_kalemleri.objects.create(
+            kalem = santiye_kalemleri.objects.create(
                 proje_ait_bilgisi = request.user,
                 proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
                 kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
                 santiye_finansal_agirligi = finansal_agirlik
             )
-    return redirect("main:santiye_projesi_ekle_")
+            blog_lar = bloglar.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ))
+            kat_sayisi = int(get_object_or_404(santiye,id =projetipi ).kat_sayisi)
+            for i in blog_lar:
+                for j in range(0,kat_sayisi):
+                    santiye_kalemlerin_dagilisi.objects.create(
+                        proje_ait_bilgisi = request.user,
+                        proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
+                        kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                        kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),   
+                    )
+    return redirect("main:santtiye_kalemleri",projetipi)
+
+def kalem_sil(request):
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        geri_don = request.POST.get("geri_don")
+        santiye_kalemleri.objects.filter(id = buttonId).update(
+            silinme_bilgisi = True
+        )
+    return redirect("main:santtiye_kalemleri",geri_don)
 
 def santiye_kalem_ekle_admin(redirect,id):
     return 0
