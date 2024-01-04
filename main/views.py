@@ -588,7 +588,40 @@ def santiye_kalem_ve_blog(request):
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_blog_kalem.html",content)
 
-
+def blogtan_kaleme_ilerleme_takibi(request,id,slug):
+    content = sozluk_yapisi()
+    content["id"] = get_object_or_404(bloglar,id = id).proje_santiye_Ait
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            pass
+            
+        else:
+            content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+            kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
+            kalem_id = []
+            for i in kalemler:
+                if i.kalem_bilgisi.id in kalem_id:
+                    pass
+                else:
+                    kalem_id.append(i.kalem_bilgisi.id)
+            
+            profile =  santiye_kalemleri.objects.filter(id__in = kalem_id,silinme_bilgisi = False)
+            page_num = request.GET.get('page', 1)
+            paginator = Paginator(profile, 10) # 6 employees per page
+            try:
+                page_obj = paginator.page(page_num)
+            except PageNotAnInteger:
+                # if page is not an integer, deliver the first page
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                # if the page is out of range, deliver the last page
+                page_obj = paginator.page(paginator.num_pages)
+            content["santiyeler"] = page_obj
+            content["top"]  = profile
+            content["medya"] = page_obj
+    else:
+        return redirect("/users/login/")
+    return render(request,"santiye_yonetimi/ilerleme_takibi.html",content)
 def santiye_kalem_ekle_admin(redirect,id):
     return 0
 #şantiye Kalemleri

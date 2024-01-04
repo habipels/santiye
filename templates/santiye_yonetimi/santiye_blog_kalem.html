@@ -24,15 +24,13 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">Şantiye Ayarları</h4>
+                                <h4 class="card-title mb-0">İlerleme Takibi</h4>
                             </div><!-- end card header -->
                             <div class="card-body">
                                 <div class="listjs-table" id="customerList">
                                     <div class="row g-4 mb-3">
                                         <div class="col-sm-auto">
                                             <div>
-                                                <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i> Ekle</button>
-                                                <button class="btn btn-soft-danger" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
                                             </div>
                                         </div>
                                         <div class="col-sm">
@@ -52,15 +50,12 @@
                                                 <tr>
                                                     <th scope="col" style="width: 50px;">
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="checkAll" value="option">
+                                                          
                                                         </div>
                                                     </th>
                                                     <th class="sort" data-sort="customer_name">Proje Kime Ait</th>
-                                                    <th class="sort" data-sort="email">Proje Tipi </th>
-                                                    <th class="sort" data-sort="phone">Proje Adı</th>
-                                                    <th class="sort" data-sort="phone">Kat Sayısı</th>
-                                                    <th class="sort" data-sort="date">Blog Sayısı </th>
-                                                    <th class="sort" data-sort="date">Durum</th>
+                                                    <th class="sort" data-sort="email">Proje Tipi > Proje Adı > Kat Sayısı</th>
+                                                    <th class="sort" data-sort="date">Blog İlerleme Takibi </th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
@@ -68,43 +63,22 @@
                                                 <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
                                                     <th scope="row">
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
+                                                         
                                                         </div>
                                                     </th>
                                                     <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
                                                     <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
                                                     </td>
                                                     <td class="email">
-                                                    {{i.proje_tipi.Proje_tipi_adi}}</td>
-                                                    <td class="date">
-                                                        {{i.proje_adi}}
+                                                    {{i.proje_tipi.Proje_tipi_adi}} > {{i.proje_adi}} > {% to_int i.kat_sayisi %}</td>
                                                     
-                                                    </td>
                                                     <td class="date">
-                                                        {% to_int i.kat_sayisi %}
-                                                    
-                                                    </td>
-                                                    <td class="date">
-                                                    <b>{{i.blog_sayisi}} : </b>
+                                                    <b>{{i.blog_sayisi}} :  </b>
                                                         
-                                                        {% bloglar_getir i %}
+                                                        {% blogtan_kaleme_ilerleme i.id %}
                                                     
                                                     </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-start">
-                                                        <div class="edit ml-1">
-                                                                <a href="{% url 'main:santtiye_kalemleri' i.id %}" class="btn btn-sm btn-success edit-item-btn" >Şantiye Kalemleri</a>
-                                                            </div>
-                                                            <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
-                                                            </div>
-                                                            
-                                                            <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">Remove</button>
-                                                            </div>
-                                                           
-                                                        </div>
-                                                    </td>
+                                                 
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -164,154 +138,13 @@
                     <!-- end col -->
                 </div>
                 <!-- end row -->
-                {% for i in santiyeler %}
-                <div class="modal fade" id="showModal{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form class="tablelist-form" action="/setsiteprojetc" method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                    <div class="mb-3" id="modal-id" style="display: none;">
-                                        
-                                        <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
-                                    </div>
 
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">Proje Adı</label>
-                                        <input type="text" value="{{i.proje_adi}}"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Proje Adı" />
-                                    </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Silinme Durumu</label>
-                                            <select name="silinmedurumu"  class="form-control" id="">
-                                                <option value="3">Karışma</option>
-                                                <option value="2">Sil</option>
-                                                {% if i.silinme_bilgisi %}
-                                                    <option value="1">Geri Getir</option>
-                                                {% else %}
-                                                {% endif %}
-                                                
-                                            </select>
-                                        </div>
-                                    
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                {% for i in santiyeler %}
-                <!-- Modal -->
-                <div class="modal fade zoomIn" id="deleteRecordModal{{i.id}}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"></button>
-                            </div>
-                            <div class="modal-body">
-                                
-                                <div class="mt-2 text-center">
-                                    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                                    <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                        <h4>Are you Sure ?</h4>
-                                        <p class="text-muted mx-4 mb-0">Are you Sure You want to Remove this Record ?</p>
-                                    </div>
-                                </div>
-                                <form action="/delsiteproject" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                                
-                                <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                    <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn w-sm btn-danger " id="delete-record">Yes, Delete It!</button>
-                                </div>
-                            </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <!--end modal -->
+
             </div>
         </div>
         
 
 </div>
-<div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form class="tablelist-form" action="/addsite"  method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                    {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Seç</label>
-                                            <select class="form-control" name="kullanici" id="date-field">
-                                                
-                                                {% for j in kullanicilar %}
-                                                    <option value="{{j.id}}">{{j.first_name}}</option>
-                                                {% endfor %}
-                                                
-                                                
-                                            </select>
-                                        </div>
-                                        {% else %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Tipi Seç</label>
-                                            <select class="form-control" name="projetipi" id="date-field">
-                                                
-                                                {% for j in proje_tipleri %}
-                                                    <option value="{{j.id}}">{{j.Proje_tipi_adi}}</option>
-                                                {% endfor %}
-                                                
-                                                
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Adı</label>
-                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Proje Adı" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Kat Sayısı</label>
-                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Kat Sayısı" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Blog Sayısı</label>
-                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Blog Sayısı" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Blog Adı</label>
-                                            <input type="text"  name="blogadi" id="date-field" class="form-control" placeholder="Blog Adı" />
-                                        </div>
-                                        {% endif %}
-    
-                                    
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+
 {% endblock sidebar %}
 

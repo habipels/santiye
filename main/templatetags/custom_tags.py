@@ -181,3 +181,23 @@ def kalem_blog(id):
     for i in a:
         bilgiler = bilgiler+ '<a href="/delbuldingsites/{}/{}" >{}{}</a>'.format(str(i.id),id,str(i.blog_adi),str(i.blog_numarasi))+" , "
     return mark_safe(bilgiler)
+
+
+@register.simple_tag
+
+def blogtan_kaleme_ilerleme(id):
+    a = ""
+    blog_bilgis = bloglar.objects.filter(proje_santiye_Ait__id=id)
+    for i in blog_bilgis:
+        a = a+'<a style="padding:2px !important;margin:0px 2px 0px 0px!important;" class="btn btn-info " href="progresstracking/progress/{}/{}" >{}</a>'.format(str(i.id),str(i.blog_adi)+str(i.blog_numarasi),str(i.blog_adi)+str(i.blog_numarasi))
+    return mark_safe(a)
+
+@register.simple_tag
+def kat_sirala(id):
+    a = ""
+    b = get_object_or_404(santiye,id = id).kat_sayisi
+    b= int(b)
+    for i in range(0,b):
+        a = a+'<th class="text-uppercase" data-sort="{}">{}</th>'.format(i,i)
+
+    return mark_safe(a)
