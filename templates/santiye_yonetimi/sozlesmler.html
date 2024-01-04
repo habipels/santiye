@@ -182,13 +182,39 @@
                                     </div>
                                     <div class="d-flex justify-content-end">
                                         <div class="pagination-wrap hstack gap-2">
-                                            <a class="page-item pagination-prev disabled" href="javascrpit:void(0);">
-                                                Previous
-                                            </a>
-                                            <ul class="pagination listjs-pagination mb-0"></ul>
-                                            <a class="page-item pagination-next" href="javascrpit:void(0);">
-                                                Next
-                                            </a>
+                                            <ul class="pagination pagination-m justify-content-center">
+
+                                                {% if medya.has_previous %}
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                
+                                                  {% if medya.number > 3 %}
+                                                
+                                                    <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                    {% if medya.number > 4 %}
+                                                      <li class="page-item"><span class="page-link">...</span></li>
+                                                    {% endif %}
+                                                  {% endif %}
+                                                {% endif %}
+                                                
+                                                {% for num in medya.paginator.page_range %}
+                                                  {% if medya.number == num %}
+                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% endif %}
+                                                {% endfor %}
+                                                
+                                                {% if medya.has_next %}
+                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                    <li class="page-item"><span class="page-link">...</span></li>
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% endif %}
+                                                
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                {% endif %}
+                                                </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -214,7 +240,18 @@
                                         <label for="id-field" class="form-label">ID</label>
                                         <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
                                     </div>
-
+                                    {% if request.user.is_superuser %}
+                                        <div class="mb-3">
+                                        <label for="date-field" class="form-label">Şantiye Seç</label>
+                                        <select class="form-control" name="kullanici" id="date-field">
+                                            {% for i in kullanicilar %}
+                                                <option value="{{i.id}}">{{i.first_name}}</option>
+                                            {% endfor %}
+                                            
+                                            
+                                        </select>
+                                    </div>
+                                    {% else %}
                                     <div class="mb-3">
                                         <label for="customername-field" class="form-label">Taşeron</label>
                                         <select class="form-control" name="taseron" id="date-field">
@@ -307,6 +344,7 @@
                                             <!-- end card -->
                                         </div> <!-- end col -->
                                     </div>
+                                    {% endif %}
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">

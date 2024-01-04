@@ -1101,7 +1101,8 @@ def sozlesmler_sayfasi(request):
 def sozlesme_ekle(request):
     if request.POST:
         if request.user.is_superuser:
-            pass
+            kullanici = request.POST.get("kullanici")
+            return redirect("main:sozlesme_ekle_admin",kullanici)
         else:
             taseron = request.POST.get("taseron")
             dosyaadi = request.POST.get("dosyaadi")
@@ -1120,6 +1121,31 @@ def sozlesme_ekle(request):
                 durum = durumu
             )
     return redirect("main:sozlesmler_sayfasi")
+def sozlesme_ekle_admin(request,id):
+    content = sozluk_yapisi()
+    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi__id= id,silinme_bilgisi = False)
+    if request.POST:
+        if True:
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("dosyaadi")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.FILES.get("file")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            taseron_sozlesme_dosyalari.objects.create(
+                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                dosya = file,dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu
+            )
+        return redirect("main:sozlesmler_sayfasi")
+    return render(request,"santiye_yonetimi/admin_sozlesme_ekle.html",content)
+
+
 #sözleşmeler
 
 #sözleşmeler sil
