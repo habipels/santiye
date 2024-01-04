@@ -210,3 +210,10 @@ def ckboxlar(id,kalem):
         else:
             a = a+'<td class="kat"><input  type="checkbox" name="kalem" value="{}" ></td>'.format(str(i.id))
     return mark_safe(a)
+@register.simple_tag
+def tum_bilgiler(id,kalem):
+    bilgi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id =kalem).order_by("kat")
+    a = ""
+    for i in bilgi:
+        a = a+str(i.id)+","
+    return a

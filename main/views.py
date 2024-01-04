@@ -628,8 +628,20 @@ def ilerleme_kaydet(request):
         geri_don = request.POST.get("geri_don")
         veri_cek = request.POST.get("veri_cek")
         kalem = request.POST.getlist("kalem")
+        tumbilgi = request.POST.getlist("tumbilgi")
+        a = []
+        for i in tumbilgi:
+            k = i.split(",")
+            for j in k :
+                a.append(j)
+        print(a)
         for i in kalem:
+            a.remove(i)
             santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = True)
+        for i in a:
+            if i != "":
+                santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = False)
+            
     return redirect("main:blogtan_kaleme_ilerleme_takibi",geri_don,veri_cek)
 
 
