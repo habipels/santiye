@@ -49,6 +49,7 @@ urlpatterns = [
     #ilerleme takibi
     path("progresstracking", views.santiye_kalem_ve_blog, name="santiye_kalem_ve_blog"),
     path("progresstracking/progress/<int:id>/<str:slug>", views.blogtan_kaleme_ilerleme_takibi, name="blogtan_kaleme_ilerleme_takibi"),
+    path("saveprogresstracking", views.ilerleme_kaydet, name="ilerleme_kaydet"),
     #
     #ilerleme takibi
 

@@ -197,7 +197,16 @@ def kat_sirala(id):
     a = ""
     b = get_object_or_404(santiye,id = id).kat_sayisi
     b= int(b)
-    for i in range(0,b):
+    for i in range(1,b+1):
         a = a+'<th class="text-uppercase" data-sort="{}">{}</th>'.format(i,i)
-
+    return mark_safe(a)
+@register.simple_tag
+def ckboxlar(id,kalem):
+    bilgi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id =kalem).order_by("kat")
+    a = ""
+    for i in bilgi:
+        if i.tamamlanma_bilgisi:
+            a = a+'<td class="kat"><input checked type="checkbox" name="kalem" value="{}" ></td>'.format(str(i.id))
+        else:
+            a = a+'<td class="kat"><input  type="checkbox" name="kalem" value="{}" ></td>'.format(str(i.id))
     return mark_safe(a)

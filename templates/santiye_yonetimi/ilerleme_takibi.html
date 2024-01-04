@@ -26,9 +26,28 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title mb-0">İlerleme Takibi</h4>
+                                <h5><b>Blog : </b> {{id.blog_adi}}{{id.blog_numarasi}}</h5>
+                            
+                            
                             </div><!-- end card header -->
+                        <form action="{% url 'main:ilerleme_kaydet' %}" method="post">
+                            {% csrf_token %}
+                            <input type="text" hidden name="geri_don" value="{{id.id}}">
+                            <input type="text" hidden name="veri_cek" value="{{id.blog_adi}}{{id.blog_numarasi}}">
                             <div class="card-body">
                                 <div class="listjs-table" id="customerList">
+                                    <div class="row g-4 mb-3">
+                                        <div class="col-sm-auto">
+                                            
+                                        </div>
+                                        <div class="col-sm">
+                                            <div class="d-flex justify-content-sm-end">
+                                                <div class="search-box ms-2">
+                                                    <button type="submit" class="btn btn-success add-btn" > Kaydet</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive table-card mt-3 mb-1">
                                         <table class="ilerleme-table table align-middle table-nowrap" id="customerTable">
                                             <thead class="text-muted">
@@ -43,7 +62,7 @@
 
                                                     
                                                     <th class="text-uppercase" data-sort="weight">weight</th>
-                                                    {% kat_sirala id.id %}
+                                                    {% kat_sirala id.proje_santiye_Ait.id %}
                                                     
                                                     
                                                 </tr>
@@ -64,93 +83,8 @@
                                                         <input type="text">
                                                         <label>%</label>
                                                     </td>
-                                                    <td class="zemin">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="bodrum">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
-                                                    <td class="kat">
-                                                        <input type="checkbox">
-                                                    </td>
+                                                    
+                                                    {% ckboxlar blog_id i.id %}
                                                 </tr></tbody>
                                         {% endfor %}
                                         </table>
@@ -203,6 +137,7 @@
                                     </div>
                                 </div>
                             </div><!-- end card -->
+                        </form>
                         </div>
                         <!-- end col -->
                     </div>

@@ -590,7 +590,8 @@ def santiye_kalem_ve_blog(request):
 
 def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     content = sozluk_yapisi()
-    content["id"] = get_object_or_404(bloglar,id = id).proje_santiye_Ait
+    content["id"] = get_object_or_404(bloglar,id = id)
+    content["blog_id"] = id
     if request.user.is_authenticated:
         if request.user.is_superuser:
             pass
@@ -622,6 +623,16 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     else:
         return redirect("/users/login/")
     return render(request,"santiye_yonetimi/ilerleme_takibi.html",content)
+def ilerleme_kaydet(request):
+    if request.POST:
+        geri_don = request.POST.get("geri_don")
+        veri_cek = request.POST.get("veri_cek")
+        kalem = request.POST.getlist("kalem")
+        for i in kalem:
+            santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = True)
+    return redirect("main:blogtan_kaleme_ilerleme_takibi",geri_don,veri_cek)
+
+
 def santiye_kalem_ekle_admin(redirect,id):
     return 0
 #şantiye Kalemleri
