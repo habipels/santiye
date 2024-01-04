@@ -75,6 +75,8 @@ urlpatterns = [
     path("addprogresspayment", views.hakedis_ekle, name="hakedis_ekle"),
     path("delprogresspayment", views.hakedis_silme, name="hakedis_silme"),
     path("setprogresspayment", views.hakedis_duzenle, name="hakedis_duzenle"),
+    path("adminaddprogresspayment/<int:id>", views.hakedis_ekle_admin, name="hakedis_ekle_admin"),
+    #
     #hakedişler
     #depolama sistemim 
     path("storage/mydir", views.depolama_sistemim, name="depolama_sistemim"),

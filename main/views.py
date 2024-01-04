@@ -1192,9 +1192,6 @@ def sozlesme_duzenle(request):
                 )
     return redirect("main:sozlesmler_sayfasi")
 
-
-#sözleşmeler
-
 #sözleşmeler sil
 def sozlesme_silme(request):
     if request.POST:
@@ -1203,7 +1200,7 @@ def sozlesme_silme(request):
     return redirect("main:sozlesmler_sayfasi")
 
 #sözleşmeler sil
-
+#sözleşmeler
 #hakedişler
 def hakedis_sayfasi(request):
     content = sozluk_yapisi()
@@ -1237,14 +1234,15 @@ def hakedis_sayfasi(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
     content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
     return render(request,"santiye_yonetimi/hakedis.html",content)
 
 def hakedis_ekle(request):
     if request.POST:
         if request.user.is_superuser:
-            pass
+            kullanici = request.POST.get("kullanici")
+            return redirect("main:hakedis_ekle_admin",kullanici)
         else:
             taseron = request.POST.get("taseron")
             dosyaadi = request.POST.get("yetkili_adi")
@@ -1275,6 +1273,34 @@ def hakedis_silme(request):
         taseron_hakedisles.objects.filter(id = buttonId).update(silinme_bilgisi = True)
     return redirect("main:hakedis_sayfasi")
 
+def hakedis_ekle_admin(request,id):
+    content = sozluk_yapisi()
+    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi__id= id,silinme_bilgisi = False)
+    if request.POST:
+        if request.user.is_superuser:
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("yetkili_adi")
+            tarih = request.POST.get("tarih_bilgisi")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.FILES.get("file")
+            tutar = request.POST.get("tutar")
+            fatura_no = request.POST.get("fatura_no")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            taseron_hakedisles.objects.create(
+                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                dosya = file,
+                dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu,
+                tutar = tutar,
+                fatura_numarasi = fatura_no
+            )
+        return redirect("main:hakedis_sayfasi")
+    return render(request,"santiye_yonetimi/hakedis_admin_ekle.html",content)
 
 #hakediş düzenle
 def hakedis_duzenle(request):
