@@ -187,4 +187,28 @@ def lock_screen(request):
 
 
 def profile_edit_kismi(request):
-    return 0
+    content = sozluk_yapisi()
+    if request.POST:
+        background = request.FILES.get("background_bilgisi")
+        profile = request.FILES.get("profile_bilgisi")
+        adi_soyadi = request.POST.get("adi_soyadi")
+        telefon_numarasi = request.POST.get("telefon_numarasi")
+        email_bilgisi = request.POST.get("email_bilgisi")
+        aciklama = request.POST.get("aciklama")
+        CustomUser.objects.filter(id = request.user.id).update(
+            username = email_bilgisi,email = email_bilgisi,
+            description = aciklama, last_name = adi_soyadi,
+            telefon_numarasi = telefon_numarasi
+        )
+        if profile:
+            print(profile,"veri")
+            CustomUser.objects.filter(id = request.user.id).update(
+            image = profile
+             )
+        if background:
+            print(background,"veri")
+            CustomUser.objects.filter(id = request.user.id).update(
+                background_image = background
+                )
+        return redirect("users:profile_edit_kismi")
+    return render(request,"account/profile_edit.html",content)
