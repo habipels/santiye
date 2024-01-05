@@ -56,7 +56,7 @@ def loginUser(request):
 
         if user is None:
             messages.info(request,"Kullanıcı Adı veya Parola Hatalı")
-            return render(request,"login.html",context)
+            return render(request,"account/login.html",context)
 
         messages.success(request,"Başarıyla Giriş Yaptınız")
         login(request,user)
@@ -212,3 +212,19 @@ def profile_edit_kismi(request):
                 )
         return redirect("users:profile_edit_kismi")
     return render(request,"account/profile_edit.html",content)
+
+
+def parola_degistime(request):
+    if request.POST:
+        eski_parola = request.POST.get("eski_parola")
+        yeni_parola = request.POST.get("yeni_parola")
+        yeni_parola_tekrar = request.POST.get("yeni_parola_tekrar")
+        if yeni_parola == yeni_parola_tekrar:
+            if request.user.check_password(eski_parola):
+                CustomUser.objects.get(id = request.user.id).set_password(yeni_parola)
+
+            else:
+                messages.success(request, 'Eski Parolanız hatalı')
+        else:
+            messages.success(request, 'Parolanız Uyuşmuyor')
+    return redirect("users:profile_edit_kismi")
