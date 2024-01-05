@@ -143,7 +143,7 @@ LANGUAGES = (
     ('fr', _('French')),
     ('ar', _('Arabic')),
     #('ku', _('Kurdish')),
-    
+    #('fr', _('Kurdish')),
 
 )
 # Static files (CSS, JavaScript, Images)
