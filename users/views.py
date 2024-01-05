@@ -66,8 +66,9 @@ def loginUser(request):
 def logoutUser(request):
     logout(request)
     messages.success(request,"Başarıyla Çıkış Yaptınız")
-    return redirect("/")
-
+    return redirect("users:yonlendir")
+def yonlendir(request):
+    return render(request,"account/logout.html")
 def profil_bilgisi (request):
     content = sozluk_yapisi()
     return render(request,"account/profile.html")
@@ -175,3 +176,11 @@ def kullanici_bilgileri_duzenle(request):
                 for images in file:
                     personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
         return redirect("users:kullanicilarim")
+    
+#lockscreen
+def lock_screen(request):
+    content = []
+    username = request.session["username"]
+    content["username"] = username
+    return render(request,"account/lock_screen.html",content)
+#lockscreen
