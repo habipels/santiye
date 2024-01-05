@@ -71,7 +71,7 @@ def yonlendir(request):
     return render(request,"account/logout.html")
 def profil_bilgisi (request):
     content = sozluk_yapisi()
-    return render(request,"account/profile.html")
+    return render(request,"account/profile.html",content)
 
 #kullanıcılar
 def kullanicilarim(request):
@@ -184,3 +184,7 @@ def lock_screen(request):
     content["username"] = username
     return render(request,"account/lock_screen.html",content)
 #lockscreen
+
+
+def profile_edit_kismi(request):
+    return 0

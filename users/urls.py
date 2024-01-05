@@ -9,7 +9,8 @@ urlpatterns = [
     path('login/',views.loginUser,name = "login"),
     path('logout/',views.logoutUser,name = "logout"),
     path('profile/',views.profil_bilgisi,name = "profil_bilgisi"),
-    path('user/logout/',views.yonlendir,name = "yonlendir"),
+    path('profile/',views.profil_bilgisi,name = "profil_bilgisi"),
+    path('profileedit/',views.profile_edit_kismi,name = "profile_edit_kismi"),
     #kullanici işlemleri
     path('myusers/',views.kullanicilarim,name = "kullanicilarim"),
     path('addmyusers/',views.kullanici_ekleme,name = "kullanici_ekleme"),
