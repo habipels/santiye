@@ -3,6 +3,7 @@ from . import views
 app_name = "main"
 urlpatterns = [
     path("", views.homepage, name="homepage"),
+
     #şantiye işlemelri
     path("addingsite", views.santiye_ekle, name="santiye_ekle"),
     path("sitesettings", views.santiye_listele, name="santiye_listele"),

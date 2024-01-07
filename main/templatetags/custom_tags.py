@@ -235,3 +235,18 @@ def gelir_faturasi_no(id):
     c = 8 - b
     a = "#GLR"+(c*"0")+a
     return a
+
+from datetime import datetime
+
+@register.simple_tag
+def saat_bilgisi():
+    su_an = datetime.now()
+    saat = su_an.strftime("%H")
+    #
+    return  int(saat)
+
+@register.simple_tag
+def yaziyi_duzelt(isim):
+    isim = str(isim).split(" ")
+    isim = str(isim[0]).capitalize()
+    return isim

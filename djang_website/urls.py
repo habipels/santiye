@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.utils.translation import gettext_lazy as _
 from django.conf.urls.i18n import i18n_patterns
+from django.conf.urls import handler404
 urlpatterns = [
     path("", include('main.urls', namespace='main')),
     path("accounting/", include('muhasebe.urls', namespace='muhasebe')),
@@ -39,3 +40,5 @@ if 'rosetta' in settings.INSTALLED_APPS:
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = "main.views.page_not_found_view"

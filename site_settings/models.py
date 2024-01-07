@@ -5,26 +5,13 @@ from PIL import Image
 from io import BytesIO
 class sayfa_logosu(models.Model):
     image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Ekleyin")
-    def save(self, *args, **kwargs):
-        super(sayfa_logosu, self).save(*args, **kwargs)
-        if self.image:
-            with Image.open(self.image.path) as img:
-                if img.mode != 'RGB':
-                    img = img.convert('RGB')
-                width, height = img.size
-                if width > 800:
-                    new_width = 800
-                    new_height = int((new_width / width) * height)
-                    img = img.resize((new_width, new_height), Image.ANTIALIAS)
-                    buffer = BytesIO()
-                    img.save(buffer, format='JPEG', quality=60)
-                    self.image.save(self.image.name, content=buffer, save=False)
-                    super(sayfa_logosu, self).save(*args, **kwargs)
+   
 class sayfa_iconu(models.Model):
     sayfa_icon = models.FileField(upload_to='logo/',verbose_name="Sayfaya ikon ekleyin")
 class site_adi(models.Model):
     site_adi_genel = models.CharField(max_length=200,verbose_name="Google Nasıl Görünecek")
     site_adi_sekme_tr= models.CharField(max_length=200,verbose_name="Sekmede Görünme Türkçe")
+    footer = models.CharField(max_length=200,verbose_name="Footer")
     def __str__(self):
         return self.site_adi_genel
 

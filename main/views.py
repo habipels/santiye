@@ -9,6 +9,8 @@ from django.utils.translation  import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from site_info.models import *
 from muhasebe.models import *
+def page_not_found_view(request, exception):
+    return render(request, '404.html')
 """
 trans = translate(language='tr')
     z = BlogPost.objects.all()
@@ -59,6 +61,7 @@ def homepage(request):
         return redirect("/users/login/")
 
     return render(request,"index.html",sozluk_yapisi())
+
 
 # Create your views here.
 #şantiye Ekleme
