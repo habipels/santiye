@@ -221,10 +221,12 @@ def parola_degistime(request):
         yeni_parola_tekrar = request.POST.get("yeni_parola_tekrar")
         if yeni_parola == yeni_parola_tekrar:
             if request.user.check_password(eski_parola):
-                CustomUser.objects.get(id = request.user.id).set_password(yeni_parola)
+                u = CustomUser.objects.get(id = request.user.id)
+                u.set_password(yeni_parola)
+                u.save()
 
             else:
                 messages.success(request, 'Eski Parolanız hatalı')
         else:
             messages.success(request, 'Parolanız Uyuşmuyor')
-    return redirect("users:profile_edit_kismi")
+    return redirect("users:logout")
