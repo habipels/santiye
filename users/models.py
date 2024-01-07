@@ -16,8 +16,8 @@ class CustomUser(AbstractUser):
     description = models.TextField("Açıklama", max_length=600, default='', blank=True)
     kullanicilar_db = models.ForeignKey('self',blank=True,null=True,related_name='children',on_delete=models.CASCADE)
     kullanici_silme_bilgisi = models.BooleanField(default= False)
-    image  = models.ImageField(upload_to='profile/',verbose_name="Profile",blank=True,null=True,)
-    background_image  = models.ImageField(upload_to='background/',verbose_name="background",blank=True,null=True,)
+    image  = models.FileField(upload_to='profile/',verbose_name="Profile",blank=True,null=True,)
+    background_image  = models.FileField(upload_to='background/',verbose_name="background",blank=True,null=True,)
     telefon_numarasi =  models.CharField(max_length= 20 , verbose_name="Telefon Numarası ",blank=True,null = True)
     gorevi = models.CharField(max_length = 250 ,verbose_name="Görevi",blank = True,null = True)
 

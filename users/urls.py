@@ -18,6 +18,6 @@ urlpatterns = [
     path('delmyusers/',views.kullanici_silme,name = "kullanici_silme"),
     path('setmyusers/',views.kullanici_bilgileri_duzenle,name = "kullanici_bilgileri_duzenle"),
     #kullanici işlemleri
-
+#
 ]
 #

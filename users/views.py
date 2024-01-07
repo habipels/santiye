@@ -184,7 +184,7 @@ def lock_screen(request):
     content["username"] = username
     return render(request,"account/lock_screen.html",content)
 #lockscreen
-
+from django.core.files.storage import FileSystemStorage
 
 def profile_edit_kismi(request):
     content = sozluk_yapisi()
@@ -201,15 +201,14 @@ def profile_edit_kismi(request):
             telefon_numarasi = telefon_numarasi
         )
         if profile:
-            print(profile,"veri")
-            CustomUser.objects.filter(id = request.user.id).update(
-            image = profile
-             )
+            u = CustomUser.objects.get(id = request.user.id)
+            u.image = profile
+            u.save()
+            
         if background:
-            print(background,"veri")
-            CustomUser.objects.filter(id = request.user.id).update(
-                background_image = background
-                )
+            u = CustomUser.objects.get(id = request.user.id)
+            u.background_image = background
+            u.save()
         return redirect("users:profile_edit_kismi")
     return render(request,"account/profile_edit.html",content)
 
