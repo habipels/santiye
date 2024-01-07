@@ -217,3 +217,21 @@ def tum_bilgiler(id,kalem):
     for i in bilgi:
         a = a+str(i.id)+","
     return a
+
+@register.simple_tag
+def cari_taseron_mu(id):
+    a = cari_taseron_baglantisi.objects.filter(cari_bilgisi__id = id) 
+    b = ""
+    for i in a:
+        b = b+ str(i.gelir_kime_ait_oldugu.taseron_adi)
+    return b
+
+@register.simple_tag
+def gelir_faturasi_no(id):
+    a = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu__id = id).count()
+    a = a+1
+    a = str(a)
+    b = len(a)
+    c = 8 - b
+    a = "#GLR"+(c*"0")+a
+    return a

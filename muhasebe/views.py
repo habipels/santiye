@@ -737,3 +737,95 @@ def urun_duzenle(request):
 
 #ürün Düzenle
 #ürünler olayları
+
+#Gelirler Sayfası
+def gelirler_sayfasi(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =Kasa.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =Kasa.objects.filter(Q(kasa_kart_ait_bilgisi__first_name__icontains = search)|Q(kasa_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/gelir.html",content)
+def gelir_ekle(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =Kasa.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
+        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = request.user)
+    content["kasa"] = profile
+    content["urunler"]  = urunler_bilgisi
+    content["cari_bilgileri"] = cari_bilgileri
+    return render(request,"muhasebe_page/gelir_faturasi.html",content)
+
+def gelir_faturasi_kaydet(request):
+    if request.POST:
+        cari_bilgileri = request.POST.get("cari_bilgileri")
+        aciklama = request.POST.get("aciklama")
+        kasa_bilgisi = request.POST.get("kasa_bilgisi")
+        faturano = request.POST.get("faturano")
+        fatura_tarihi = request.POST.get("fatura_tarihi")
+    
+    return 0
+#Gelirler Sayfası
+
+#Gider Sayfası
+def giderler_sayfasi(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =Kasa.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =Kasa.objects.filter(Q(kasa_kart_ait_bilgisi__first_name__icontains = search)|Q(kasa_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/gelir.html",content)
+#Gider Sayfası

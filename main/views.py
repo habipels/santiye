@@ -1925,3 +1925,10 @@ def yapilacalar_time_line_duzenle(request):
                 YapilacakDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect("main:yapilacaklar_timeline")
+
+
+
+
+
+
+

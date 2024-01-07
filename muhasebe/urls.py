@@ -49,6 +49,14 @@ urlpatterns = [
     path("delproduct", views.urun_sil, name="urun_sil"),
     path("setproduct", views.urun_duzenle, name="urun_duzenle"),
     #ürünler olayları
-]#
+    #gelirler Sayfası
+    path("theycome", views.gelirler_sayfasi, name="gelirler_sayfasi"),
+    path("addtheycome", views.gelir_ekle, name="gelir_ekle"),
+    #gelirler Sayfası
+    #giderler Sayfası
+    path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
+    #giderler Sayfası
 
+]
 #
+
