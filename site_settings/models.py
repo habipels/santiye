@@ -18,7 +18,6 @@ class site_adi(models.Model):
     def __str__(self):
         return self.site_adi_genel
 
-
 class numara(models.Model):
     sirket_numarasi_gosterilecek_metin = models.CharField(max_length=20,verbose_name="Telefon Sitede Nasıl görünecek" )
     sirket_numarasi = models.CharField(max_length=20,verbose_name="Aranacak Numara Başında + olmadan ülke kodu ile Yazabilirisniz")
