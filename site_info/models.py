@@ -118,7 +118,7 @@ class klasor_dosyalari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
 
-class takvim(models.Model):
+class Event(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     takvim_turu  =models.CharField(max_length=200,verbose_name="Takvim Etkinlik Türü",blank= True,null = True)
     baslangic_tarihi  = models.DateField(verbose_name = "Başlangıç Tarihi",blank = True,null = True)

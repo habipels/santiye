@@ -789,11 +789,10 @@ def gelir_faturasi_kaydet(request):
     if request.POST:
         cari_bilgileri = request.POST.get("cari_bilgileri")
         aciklama = request.POST.get("aciklama")
-        kasa_bilgisi = request.POST.get("kasa_bilgisi")
         faturano = request.POST.get("faturano")
         fatura_tarihi = request.POST.get("fatura_tarihi")
         odenme_durumu = request.POST.get("odenme_durumu")
-        
+
     return 0
 #Gelirler Sayfası
 

@@ -4,7 +4,8 @@ from django.db import models
 from PIL import Image
 from io import BytesIO
 class sayfa_logosu(models.Model):
-    image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Ekleyin")
+    image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Dark")
+    l_image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Light")
    
 class sayfa_iconu(models.Model):
     sayfa_icon = models.FileField(upload_to='logo/',verbose_name="Sayfaya ikon ekleyin")

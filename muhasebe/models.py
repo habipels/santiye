@@ -108,11 +108,13 @@ class gelir_urun_bilgisi(models.Model):
 class Gelir_odemesi(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(Gelir_Bilgisi,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     tutar = models.FloatField(verbose_name = "Tutar",default = 0)
+    gelir_makbuzu = models.FileField(upload_to='makbuzlar/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 
 class Gider_odemesi(models.Model):
     gider_kime_ait_oldugu = models.ForeignKey(Gider_Bilgisi,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     tutar = models.FloatField(verbose_name = "Tutar",default = 0)
+    gider_makbuzu = models.FileField(upload_to='makbuzlar/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
