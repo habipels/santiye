@@ -103,4 +103,16 @@ class gelir_urun_bilgisi(models.Model):
     urun_adeti = models.FloatField(verbose_name="Ürün Adeti",default=0)
     gider_bilgis = models.ForeignKey(Gelir_Bilgisi,blank=True,null=True,verbose_name="Gelir Bilgisi",on_delete=models.SET_NULL)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)    
+    
 
+class Gelir_odemesi(models.Model):
+    gelir_kime_ait_oldugu = models.ForeignKey(Gelir_Bilgisi,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    tutar = models.FloatField(verbose_name = "Tutar",default = 0)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+
+class Gider_odemesi(models.Model):
+    gider_kime_ait_oldugu = models.ForeignKey(Gider_Bilgisi,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    tutar = models.FloatField(verbose_name = "Tutar",default = 0)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)

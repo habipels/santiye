@@ -106,6 +106,10 @@ urlpatterns = [
     path("settodo", views.yapilacalar_time_line_duzenle, name="yapilacalar_time_line_duzenle"),
     #yapilacaklar
 
+    #takvim
+    path("calendar", views.takvim_olaylari, name="takvim_olaylari"),
+    #takvim
+
 
 ]
 #

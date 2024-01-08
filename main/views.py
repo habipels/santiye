@@ -1929,8 +1929,10 @@ def yapilacalar_time_line_duzenle(request):
                 isim = isim+1
     return redirect("main:yapilacaklar_timeline")
 
-
-
+#takvim
+def takvim_olaylari(request):
+    return render(request,"santiye_yonetimi/takvim.html")
+#takvim
 
 
 
