@@ -6,7 +6,9 @@ from io import BytesIO
 class sayfa_logosu(models.Model):
     image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Dark")
     l_image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Light")
-   
+class faturalardaki_gelir_gider_etiketi(models.Model):
+    gelir_etiketi = models.CharField(max_length=10,verbose_name  ="Gelir Etiketi",blank = True,null=True)
+    gider_etiketi = models.CharField(max_length=10,verbose_name  ="Gider Etiketi",blank = True,null=True)
 class sayfa_iconu(models.Model):
     sayfa_icon = models.FileField(upload_to='logo/',verbose_name="Sayfaya ikon ekleyin")
 class site_adi(models.Model):
