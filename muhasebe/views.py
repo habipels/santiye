@@ -791,8 +791,15 @@ def gelir_faturasi_kaydet(request):
         aciklama = request.POST.get("aciklama")
         faturano = request.POST.get("faturano")
         fatura_tarihi = request.POST.get("fatura_tarihi")
-        odenme_durumu = request.POST.get("odenme_durumu")
-
+        fatura_sirket_adi = request.POST.get("fatura_sirket_adi")
+        fatura_sirket_adresi = request.POST.get("fatura_sirket_adresi")
+        telefon_no = request.POST.get("telefon_no")
+        fatura_sirket_email = request.POST.get("fatura_sirket_email")
+        fatura_kesilen_sirket_adi = request.POST.get("fatura_kesilen_sirket_adi")
+        sirket_Adresi = request.POST.get("sirket_Adresi")
+        fatura_kesilen_telefon = request.POST.get("fatura_kesilen_telefon")
+        fatura_kesilen_email = request.POST.get("fatura_kesilen_email")
+        
     return 0
 #Gelirler Sayfası
 
