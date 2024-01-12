@@ -120,7 +120,7 @@
                                     <i class="ri-search align-bottom"></i> Ara
                                 </button>
                                 <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#createTask">
+                                    data-bs-target="#createTasktoplu">
                                     <i class="ri-add-fill align-bottom"></i> Görev Ata
                                 </button>
                                 <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
@@ -284,126 +284,7 @@
                     </div>
                 </div>
             </footer>
-    <div class="modal fade" id="createTask" tabindex="-1" aria-labelledby="createTaskLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header p-3 bg-success-subtle">
-                    <h5 class="modal-title" id="createTaskLabel">Create Task</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="createTaskBtn-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="task-error-msg" class="alert alert-danger py-2"></div>
-                    <form class="tablelist-form" action="{% url 'main:yapilacalar_ekle' %}" method="post" enctype="multipart/form-data" >
-                        {% csrf_token %}
-                        <input type="hidden" id="taskid-input" class="form-control">
-                        <div class="mb-3">
-                            <label for="task-title-input" class="form-label">Başlık Ekle</label>
-                            <input type="text" name="baslik" id="task-title-input" class="form-control" placeholder="Enter task title">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email-field" class="form-label">Açıklama</label>
-                            <textarea name="aciklama" class="form-control" placeholder="Enter Description" ></textarea>
-                            <div class="invalid-feedback">Please enter an email.</div>
-                        </div>
-                        <div class="row g-4 mb-3">
-                            <div class="col-lg-6">
-                                <label for="task-status" class="form-label">Durum</label>
-                                <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
-                                    <option value="">Status</option>
-                                    <option value="New" selected>New</option>
-                                    <option value="Inprogress">Inprogress</option>
-                                    <option value="Pending">Pending</option>
-                                    <option value="Completed">Completed</option>
-                                </select>
-                            </div>
-                            <!--end col-->
-                            <div class="col-lg-6">
-                                <label for="priority-field" class="form-label">Priority</label>
-                                <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
-                                    <option value="">Priority</option>
-                                    <option value="High">High</option>
-                                    <option value="Medium">Medium</option>
-                                    <option value="Low">Low</option>
-                                </select>
-                            </div>
-                            <!--end col-->
-                        </div>
-                        <div>
-                            <label for="status-field" class="form-label">Kişiler</label>
-                            <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
-                                <option value=""></option>
-                                {% for blog in blog_bilgisi %}
-                                <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label for="task-duedate-input" class="form-label">Due Date:</label>
-                            <input type="date" name="teslim_tarihi" id="task-duedate-input" class="form-control" placeholder="Due date">
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h4 class="card-title mb-0">Dosya Yükle</h4>
-                                    </div><!-- end card header -->
-                                
-                                    <div class="card-body">
-                                        <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
-                                    
-                                        <div class="dropzone">
-                                            <div class="fallback">
-                                                <input name="file" type="file" multiple="multiple">
-                                            </div>
-                                            <div class="dz-message needsclick">
-                                                <div class="mb-3">
-                                                    <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
-                                                </div>
-                                            
-                                                <h4>Drop files here or click to upload.</h4>
-                                            </div>
-                                        </div>
-                                    
-                                        <ul class="list-unstyled mb-0" id="dropzone-preview">
-                                            <li class="mt-2" id="dropzone-preview-list">
-                                                <!-- This is used as the file preview template -->
-                                                <div class="border rounded">
-                                                    <div class="d-flex p-2">
-                                                        <div class="flex-shrink-0 me-3">
-                                                            <div class="avatar-sm bg-light rounded">
-                                                                <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="flex-grow-1">
-                                                            <div class="pt-1">
-                                                                <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
-                                                                <p class="fs-13 text-muted mb-0" data-dz-size></p>
-                                                                <strong class="error text-danger" data-dz-errormessage></strong>
-                                                            </div>
-                                                        </div>
-                                                        <div class="flex-shrink-0 ms-3">
-                                                            <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <!-- end dropzon-preview -->
-                                    </div>
-                                    <!-- end card body -->
-                                </div>
-                                <!-- end card -->
-                            </div> <!-- end col -->
-                        </div>
-                        <div class="hstack gap-2 justify-content-end">
-                            <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-fill align-bottom"></i> Close</button>
-                            <button type="submit" class="btn btn-primary" id="addNewTodo">Add Task</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!--end create taks-->
         <!-- container-fluid -->
     <div class="modal fade" id="createTasktoplu" tabindex="-1" aria-labelledby="createTaskLabel" aria-hidden="true">
@@ -636,3 +517,44 @@ let z = 0;
   }
 </script>
 {% endblock sidebar %}
+
+{% block javascriptcode %}
+<!-- JAVASCRIPT -->
+    <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+    <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+    <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+    <script src="{% static 'assets/js/plugins.js' %}"></script>
+
+    <!-- apexcharts -->
+    <script src="{% static 'assets/libs/apexcharts/apexcharts.min.js' %}"></script>
+
+    <!-- piecharts init -->
+    <script src="{% static 'assets/js/pages/apexcharts-pie.init.js' %}"></script>
+
+    <!-- apexcharts init -->
+    <script src="{% static 'assets/js/pages/apexcharts-column.init.js' %}"></script>
+
+    <!-- projects js -->
+    <script src="{% static 'assets/js/pages/dashboard-projects.init.js' %}"></script>
+    
+    <!-- App js -->
+    <script src="{% static 'assets/js/app.js' %}"></script>
+        <!-- JAVASCRIPT -->
+
+    <!-- dropzone min -->
+    <script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
+
+    <!--file Upload-->
+    <script src="{% static 'assets/js/pages/form-file-upload.init.js' %}"></script>
+
+    
+    <!-- listjs init -->
+    <script src="{% static 'assets/js/pages/listjs.init.js' %}"></script>
+
+    <!-- Sweet Alerts js -->
+    <script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
+
+
+{% endblock javascriptcode %}
