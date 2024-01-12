@@ -1776,6 +1776,38 @@ def yapilacalar_ekle(request):
                 IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect("main:yapilacaklar")
+def yapilacalar_ekle_toplu(request):
+    if request.POST:
+        if request.user.is_superuser:
+            pass
+        else:
+            baslik = request.POST.get("baslik")
+            durum = request.POST.get("durum")
+            aciliyet =request.POST.get("aciliyet")
+            teslim_tarihi = request.POST.get("teslim_tarihi")
+            blogbilgisi = request.POST.getlist("blogbilgisi")
+            aciklama = request.POST.getlist("aciklama")
+            for i in range(0,len(aciklama)):
+                if aciklama[i]:
+                    new_project = IsplaniPlanlari(
+                        proje_ait_bilgisi = request.user,
+                        title = baslik,
+                        status = durum,
+                        aciklama = aciklama[i],
+                        oncelik_durumu =aciliyet,
+                        teslim_tarihi = teslim_tarihi,silinme_bilgisi = False
+                    )
+                    new_project.save()
+                    bloglar_bilgisi = []
+                    for i in blogbilgisi:
+                        bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+                    new_project.yapacaklar.add(*bloglar_bilgisi)
+                    images = request.FILES.getlist('file')
+                    isim = 1
+                    for images in images:
+                        IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                        isim = isim+1
+    return redirect("main:yapilacaklar")
 
 def yapilacalar_sil(request):
     if request.POST:

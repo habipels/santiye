@@ -98,6 +98,8 @@ urlpatterns = [
     path("addthingstodo", views.yapilacalar_ekle, name="yapilacalar_ekle"),
     path("delthingstodo", views.yapilacalar_sil, name="yapilacalar_sil"),
     path("setthingstodo", views.yapilacalar_duzenle, name="yapilacalar_duzenle"),
+    path("allthingstodo", views.yapilacalar_ekle_toplu, name="yapilacalar_ekle_toplu"),
+    #
     #iş planı
     #yapilacaklar
     path("todo", views.yapilacaklar_timeline, name="yapilacaklar_timeline"),

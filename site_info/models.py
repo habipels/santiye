@@ -150,7 +150,6 @@ class YapilacakDosyalari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(YapilacakPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="todo_sahibi")    
     dosya = models.FileField(upload_to='yapilacak_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
 
-
 class IsplaniPlanlari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=400, verbose_name="Adı", blank=True, null=True)
@@ -162,7 +161,22 @@ class IsplaniPlanlari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
 
+class IsplaniPlanlariIlerleme(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
+    teslim_tarihi = models.DateField(verbose_name="Proje Tarihi", blank=True, null=True)
+    aciklama = models.TextField(verbose_name="Açıklama", blank=True, null=True)
+    status = models.CharField(max_length=200, verbose_name="Durum", blank=True, null=True)
+    yapan_kisi = models.ForeignKey(CustomUser, verbose_name="Yapan Kişi", related_name="isplani_planlari_ilerleme_yapanlar", blank=True, null=True, on_delete=models.SET_NULL)
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+
+class IsplaniIlerlemeDosyalari(models.Model):
+    dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_ilerleme_dosyalari")
+    yapan_kisi = models.ForeignKey(CustomUser, verbose_name="Yapan Kişi", related_name="isplani_ilerleme_dosyalari_yapanlar", blank=True, null=True, on_delete=models.SET_NULL)
+    proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlariIlerleme, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_ilerleme_dosyalari")    
+    dosya = models.FileField(upload_to='isplani_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
+
 class IsplaniDosyalari(models.Model):
-    dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani")
-    proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani")    
+    dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")
+    proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")    
     dosya = models.FileField(upload_to='isplani_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
