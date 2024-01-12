@@ -99,6 +99,7 @@ urlpatterns = [
     path("delthingstodo", views.yapilacalar_sil, name="yapilacalar_sil"),
     path("setthingstodo", views.yapilacalar_duzenle, name="yapilacalar_duzenle"),
     path("allthingstodo", views.yapilacalar_ekle_toplu, name="yapilacalar_ekle_toplu"),
+    path("statusthingstodo", views.yapilacak_durumu_yenileme, name="yapilacak_durumu_yenileme"),
     #
     #iş planı
     #yapilacaklar

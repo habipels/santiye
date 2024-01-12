@@ -250,3 +250,40 @@ def yaziyi_duzelt(isim):
     isim = str(isim).split(" ")
     isim = str(isim[0]).capitalize()
     return isim
+
+@register.simple_tag
+def isplani_durumu_kontrol(id):
+    a = IsplaniPlanlariIlerleme.objects.filter(proje_ait_bilgisi__id = id)
+    b = ""
+    for i in a:
+        b = i.status
+    
+    return b
+
+@register.simple_tag
+def dosya_varsa_indirme_isplani(id):
+
+    z = ""
+    veri = IsplaniDosyalari.objects.filter(proje_ait_bilgisi__id = id)
+    for i in veri:
+        k = str(i.dosya.url).split("/")
+        k = k[ -1]
+        
+        z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,k,round(float(i.dosya.size/1024),2))
+    return mark_safe(z)
+@register.simple_tag
+def ilerleme_goster(id):
+    ilerlemeler = IsplaniPlanlariIlerleme.objects.filter(proje_ait_bilgisi__id = id).order_by("-teslim_tarihi")
+    
+    return ilerlemeler
+@register.simple_tag
+def dosya_varsa_indirme_isplani_ilerleme(id):
+
+    z = ""
+    veri = IsplaniIlerlemeDosyalari.objects.filter(proje_ait_bilgisi__id = id)
+    for i in veri:
+        k = str(i.dosya.url).split("/")
+        k = k[ -1]
+        
+        z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,k,round(float(i.dosya.size/1024),2))
+    return mark_safe(z)

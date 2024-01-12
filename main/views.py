@@ -1814,6 +1814,27 @@ def yapilacalar_sil(request):
         id = request.POST.get("id_bilgisi")
         IsplaniPlanlari.objects.filter(id = id).update(silinme_bilgisi = True)
     return redirect("main:yapilacaklar")
+
+def yapilacak_durumu_yenileme(request):
+    if request.POST:
+        yenilenecekeklemeyapilacak = request.POST.get("yenilenecekeklemeyapilacak")
+        aciklama = request.POST.get("aciklama")
+        durum  =request.POST.get("durum")
+        teslim_tarihi  =request.POST.get("teslim_tarihi")
+        new_project = IsplaniPlanlariIlerleme(
+                proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id =yenilenecekeklemeyapilacak ),
+                status = durum,
+                aciklama = aciklama,
+                teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                yapan_kisi = request.user
+            )
+        new_project.save()
+        images = request.FILES.getlist('file')
+        isim = 1
+        for images in images:
+            IsplaniIlerlemeDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlariIlerleme,id = new_project.id),yapan_kisi = request.user,dosya=images,dosya_sahibi = get_object_or_404(IsplaniPlanlari,id =yenilenecekeklemeyapilacak))  # Urun_resimleri modeline resimleri kaydet
+            isim = isim+1
+    return redirect("main:yapilacaklar")
 def yapilacalar_duzenle(request):
     if request.POST:
         if request.user.superuser:

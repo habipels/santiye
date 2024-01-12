@@ -21,3 +21,5 @@ admin.site.register(YapilacakDosyalari)
 
 admin.site.register(IsplaniPlanlari)
 admin.site.register(IsplaniDosyalari)
+admin.site.register(IsplaniPlanlariIlerleme)
+admin.site.register(IsplaniIlerlemeDosyalari)
