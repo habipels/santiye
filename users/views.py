@@ -179,10 +179,25 @@ def kullanici_bilgileri_duzenle(request):
     
 #lockscreen
 def lock_screen(request):
-    content = []
-    username = request.session["username"]
-    content["username"] = username
-    return render(request,"account/lock_screen.html",content)
+    content = {}
+    a = render(request,"account/lock_screen.html",content)
+    a.set_cookie(key="isim",value=request.user.username)
+    name = request.COOKIES["isim"]
+    content["username"] = name
+    if request.POST:
+        
+        print(name,"bilgisi")
+        userpassword = request.POST.get("userpassword")
+        user = authenticate(username = name,password = userpassword)
+        if user is None:
+            messages.info(request,"Kullanıcı Adı veya Parola Hatalı")
+            return render(request,"account/login.html",content)
+
+        messages.success(request,"Başarıyla Giriş Yaptınız")
+        login(request,user)
+        return redirect("/") 
+    logout(request)
+    return a
 #lockscreen
 from django.core.files.storage import FileSystemStorage
 

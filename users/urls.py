@@ -7,6 +7,7 @@ app_name = "user"
 urlpatterns = [
     path('register/',views.register,name = "register"),
     path('login/',views.loginUser,name = "login"),
+    path('lockout/',views.lock_screen,name = "lock_screen"),
     path('logout/',views.logoutUser,name = "logout"),
     path('profile/',views.profil_bilgisi,name = "profil_bilgisi"),
     path('yonlendir/',views.yonlendir,name = "yonlendir"),
@@ -20,4 +21,4 @@ urlpatterns = [
     #kullanici işlemleri
 #
 ]
-#
+#lock_screen

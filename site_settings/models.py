@@ -81,3 +81,40 @@ class dil_ayarla(models.Model):
     dil_kisaltması = models.CharField(max_length=5,verbose_name="Dİl Kısaltması",blank=True,null = True)
     dil_bayragi_icon = models.FileField(upload_to='bayrak/',verbose_name="Dil Bayrağı")
     dil_aktiflik_durumu = models.BooleanField(default = False,verbose_name="Dİl Aktiflik Durumu")
+
+
+#sistem görüntü ayarları
+class layout(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_layout = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
+
+class color_sheme(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_bs_theme = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
+
+class side_bar_gorunum(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_sidebar_visibility = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
+
+class layout_pozisyonu(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_layout_position = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
+class topbar_color(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_topbar = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
+
+class sidebar_boyutu(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_sidebar_size = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
+class sidebar_rengi(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_sidebar = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
+
+#
