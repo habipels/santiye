@@ -88,7 +88,10 @@ class layout(models.Model):
     isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
     data_layout = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
     aktiflik = models.BooleanField(default = False)
-
+class layout_uzunlugu(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_layout_width = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
 class color_sheme(models.Model):
     isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
     data_bs_theme = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
@@ -112,8 +115,13 @@ class sidebar_boyutu(models.Model):
     isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
     data_sidebar_size = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
     aktiflik = models.BooleanField(default = False)
+class layout_sitili(models.Model):
+    isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
+    data_layout_style = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
+    aktiflik = models.BooleanField(default = False)
 class sidebar_rengi(models.Model):
     isim  = models.CharField(max_length = 500,verbose_name ="Görünüş isimleri")
     data_sidebar = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
     aktiflik = models.BooleanField(default = False)
 
+#

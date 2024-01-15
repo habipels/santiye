@@ -5,6 +5,7 @@ urlpatterns = [
     path("", views.homepage, name="homepage"),
     #site ayarları
     path("sitesettings", views.site_ayarlari, name="site_ayarlari"),
+    path("savesitesettings", views.site_ayari_kaydet, name="site_ayari_kaydet"),
     #
     #site ayarları
     #şantiye işlemelri

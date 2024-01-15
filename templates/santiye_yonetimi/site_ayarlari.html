@@ -1,7 +1,8 @@
 {% extends "homebase.html" %}
 {% load i18n %}
 {% block sidebar %}
-<form class="tablelist-form" action="{% url 'main:taseron_ekle' %}" method="post" enctype="multipart/form-data">
+<form class="tablelist-form" action="{% url 'main:site_ayari_kaydet' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
     <div class="main-content">
         <div class="page-content options">
             <div class="container-fluid">
@@ -633,7 +634,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div id="sidebar-view" style="display: none;">
+                                                    <div id="sidebar-view" style="">
                                                         <h6 class="mt-4 mb-0 fw-bold text-uppercase">Sidebar View</h6>
                                                         <p class="text-muted">Choose Default or Detached Sidebar view.
                                                         </p>
@@ -885,7 +886,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="simplebar-placeholder" style="width: 824px; height: 1174px;"></div>
+                                <div class="simplebar-placeholder" style="width: 824px; height: 1274px;"></div>
                             </div>
                             <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
                                 <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
@@ -912,15 +913,15 @@
                     </div>
                     <div  class="col-sm-12">
                         <label>Site Adı</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="site_adi" value="">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="site_adi" value="{{site_adi.site_adi_sekme_tr}}">
                         <label>Footer Yazısı</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="footeryazisi" value="">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="footeryazisi" value="{{site_adi.footer}}">
                     </div>
                     <div  class="col-sm-12 mb-5 ">
                         <label>Fatura Gider Etiketi</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="gideretiketi" value="">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gideretiketi" value="{{etiketler.gider_etiketi}}">
                         <label>Fatura Gelir Etiketi</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="gelir_etiketi" value="">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gelir_etiketi" value="{{etiketler.gelir_etiketi}}">
                     </div>
                     <input type="submit" class="btn btn-success waves-effect waves-light" value="Kaydet">
 

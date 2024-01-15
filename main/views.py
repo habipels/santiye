@@ -49,6 +49,9 @@ def sozluk_yapisi():
     sozluk["layout_pozisyonu"] = layout_pozisyonu.objects.last()
     sozluk["topbar_color"] = topbar_color.objects.last()
     sozluk["sidebar_rengi"] = sidebar_rengi.objects.last()
+    sozluk["layout_uzunlugu"] = layout_uzunlugu.objects.last()
+    sozluk["layout_sitili"] = layout_sitili.objects.last()
+    sozluk["etiketler"] = faturalardaki_gelir_gider_etiketi.objects.last()
     return sozluk
 
 #superadmin Kontrol
@@ -88,21 +91,59 @@ def site_ayarlari(request):
 def site_ayari_kaydet(request):
     if request.POST:
         data_layout = request.POST.get("data-layout")
+        if data_layout:
+            layout.objects.all().update(isim =data_layout,data_layout =data_layout )
         data_bs_theme = request.POST.get("data-bs-theme")
+        if data_bs_theme:
+            color_sheme.objects.all().update(isim =data_bs_theme,data_bs_theme =data_bs_theme )
         data_sidebar_visibility = request.POST.get("data-sidebar-visibility")
+        if data_sidebar_visibility :
+            side_bar_gorunum.objects.all().update(isim =data_sidebar_visibility,data_sidebar_visibility =data_sidebar_visibility )
         data_layout_width = request.POST.get("data-layout-width")
+        if data_layout_width:
+            layout_uzunlugu.objects.all().update(isim =data_layout_width,data_layout_width =data_layout_width )
         data_layout_position = request.POST.get("data-layout-position")
+        if data_layout_position:
+            layout_pozisyonu.objects.all().update(isim =data_layout_position,data_layout_position =data_layout_position )
         data_topbar = request.POST.get("data-topbar")
+        if data_topbar:
+            topbar_color.objects.all().update(isim =data_topbar,data_topbar =data_topbar )
         data_sidebar_size = request.POST.get("data-sidebar-size")
+        if data_sidebar_size:
+            sidebar_boyutu.objects.all().update(isim =data_sidebar_size,data_sidebar_size =data_sidebar_size )
         data_layout_style = request.POST.get("data-layout-style")
+        if data_layout_style:
+            layout_sitili.objects.all().update(isim =data_layout_style,data_layout_style =data_layout_style )
         data_sidebar = request.POST.get("data-sidebar")
+        if data_sidebar:
+            sidebar_rengi.objects.all().update(isim =data_sidebar,data_sidebar =data_sidebar )
         dark_logo = request.POST.get("dark_logo")
+        if dark_logo:
+            u = sayfa_logosu.objects.get(id = 4)
+            u.image = dark_logo
+            u.save()
         light_logo = request.POST.get("light_logo")
+        if light_logo:
+            u = sayfa_logosu.objects.get(id = 4)
+            u.l_image = light_logo
+            u.save()
         icon = request.POST.get("icon")
+        if icon:
+            u = sayfa_iconu.objects.get(id = 1)
+            u.sayfa_icon = icon
+            u.save()
         site_adi_bilgisi = request.POST.get("site_adi")
         footeryazisi = request.POST.get("footeryazisi")
+        if site_adi_bilgisi:
+            site_adi.objects.all().update(site_adi_sekme_tr = site_adi_bilgisi)
+        if footeryazisi:
+            site_adi.objects.all().update(footer = footeryazisi)
         gideretiketi = request.POST.get("gideretiketi")
+        if gideretiketi :
+            faturalardaki_gelir_gider_etiketi.objects.all().update(gider_etiketi = gideretiketi )
         geliretiketi = request.POST.get("gelir_etiketi")
+        if geliretiketi :
+            faturalardaki_gelir_gider_etiketi.objects.all().update(gelir_etiketi = geliretiketi )
     return redirect("main:site_ayarlari")
 #site ayarı
 
