@@ -42,6 +42,13 @@ def sozluk_yapisi():
     sozluk ["sayfalogusu"] = sayfa_logosu.objects.last()
     sozluk ["sayfa_iconu"] = sayfa_iconu.objects.last()
     sozluk ["site_adi"] = site_adi.objects.last()
+    sozluk ["layout"] = layout.objects.last()
+    sozluk ["color_sheme"] = color_sheme.objects.last()
+    sozluk["sidebar_boyutu"] = sidebar_boyutu.objects.last()
+    sozluk["side_bar_gorunum"] = side_bar_gorunum.objects.last()
+    sozluk["layout_pozisyonu"] = layout_pozisyonu.objects.last()
+    sozluk["topbar_color"] = topbar_color.objects.last()
+    sozluk["sidebar_rengi"] = sidebar_rengi.objects.last()
     return sozluk
 
 #superadmin Kontrol
@@ -55,12 +62,13 @@ def yetki(request):
 # Create your views here,
 # Anasayfa
 def homepage(request):
+    content = sozluk_yapisi()
     if request.user.is_authenticated:
         pass
     else:
         return redirect("/users/login/")
 
-    return render(request,"index.html",sozluk_yapisi())
+    return render(request,"index.html",content)
 
 #site ayarı
 def site_ayarlari(request):
