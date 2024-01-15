@@ -4,8 +4,8 @@ from django.db import models
 from PIL import Image
 from io import BytesIO
 class sayfa_logosu(models.Model):
-    image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Dark")
-    l_image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Light")
+    image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Dark",blank = True,null=True)
+    dark_image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Light",blank = True,null=True)
 class faturalardaki_gelir_gider_etiketi(models.Model):
     gelir_etiketi = models.CharField(max_length=10,verbose_name  ="Gelir Etiketi",blank = True,null=True)
     gider_etiketi = models.CharField(max_length=10,verbose_name  ="Gider Etiketi",blank = True,null=True)

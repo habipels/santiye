@@ -117,17 +117,17 @@ def site_ayari_kaydet(request):
         data_sidebar = request.POST.get("data-sidebar")
         if data_sidebar:
             sidebar_rengi.objects.all().update(isim =data_sidebar,data_sidebar =data_sidebar )
-        dark_logo = request.POST.get("dark_logo")
+        dark_logo = request.FILES.get("dark_logo")
         if dark_logo:
             u = sayfa_logosu.objects.get(id = 4)
             u.image = dark_logo
             u.save()
-        light_logo = request.POST.get("light_logo")
+        light_logo = request.FILES.get("light_logo")
         if light_logo:
             u = sayfa_logosu.objects.get(id = 4)
-            u.l_image = light_logo
+            u.dark_image = light_logo
             u.save()
-        icon = request.POST.get("icon")
+        icon = request.FILES.get("icon")
         if icon:
             u = sayfa_iconu.objects.get(id = 1)
             u.sayfa_icon = icon
