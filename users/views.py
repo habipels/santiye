@@ -12,6 +12,14 @@ from site_info.models import *
 from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki
 from django.core.paginator import Paginator , EmptyPage, PageNotAnInteger
 from django.db.models.query_utils import Q
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 # Create your views here.
 @user_not_authenticated
 def register(request):
@@ -71,6 +79,7 @@ def yonlendir(request):
     return render(request,"account/logout.html")
 def profil_bilgisi (request):
     content = sozluk_yapisi()
+    get_client_ip(request)
     return render(request,"account/profile.html",content)
 
 #kullanıcılar
