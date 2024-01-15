@@ -62,6 +62,41 @@ def homepage(request):
 
     return render(request,"index.html",sozluk_yapisi())
 
+#site ayarı
+def site_ayarlari(request):
+    content = sozluk_yapisi()
+    if request.user.is_authenticated:
+        if request.user.is_superuser :
+        
+            pass
+        else:
+
+            return redirect("main:yetkisiz")
+    else:
+        return redirect("/users/login/")
+
+    return render(request,"santiye_yonetimi/site_ayarlari.html",content)
+
+def site_ayari_kaydet(request):
+    if request.POST:
+        data_layout = request.POST.get("data-layout")
+        data_bs_theme = request.POST.get("data-bs-theme")
+        data_sidebar_visibility = request.POST.get("data-sidebar-visibility")
+        data_layout_width = request.POST.get("data-layout-width")
+        data_layout_position = request.POST.get("data-layout-position")
+        data_topbar = request.POST.get("data-topbar")
+        data_sidebar_size = request.POST.get("data-sidebar-size")
+        data_layout_style = request.POST.get("data-layout-style")
+        data_sidebar = request.POST.get("data-sidebar")
+        dark_logo = request.POST.get("dark_logo")
+        light_logo = request.POST.get("light_logo")
+        icon = request.POST.get("icon")
+        site_adi_bilgisi = request.POST.get("site_adi")
+        footeryazisi = request.POST.get("footeryazisi")
+        gideretiketi = request.POST.get("gideretiketi")
+        geliretiketi = request.POST.get("gelir_etiketi")
+    return redirect("main:site_ayarlari")
+#site ayarı
 
 # Create your views here.
 #şantiye Ekleme

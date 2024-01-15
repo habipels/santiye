@@ -117,4 +117,3 @@ class sidebar_rengi(models.Model):
     data_sidebar = models.CharField(max_length = 500 ,verbose_name="Görünüş Anahtarı")
     aktiflik = models.BooleanField(default = False)
 
-#
