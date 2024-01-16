@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login,authenticate,logout
 from django.shortcuts import render,get_object_or_404
 from .models import *
-from .decorators import user_not_authenticated
+from .decorators import user_not_authenticated ,lock_screen_required  
 from .tokens import account_activation_token
 from django.contrib.auth.decorators import login_required
 from site_info.models import *
@@ -186,27 +186,33 @@ def kullanici_bilgileri_duzenle(request):
                     personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
         return redirect("users:kullanicilarim")
     
-#lockscreen
+@login_required
+@lock_screen_required
 def lock_screen(request):
     content = {}
-    a = render(request,"account/lock_screen.html",content)
-    a.set_cookie(key="isim",value=request.user.username)
-    name = request.COOKIES["isim"]
-    content["username"] = name
-    if request.POST:
-        
-        print(name,"bilgisi")
-        userpassword = request.POST.get("userpassword")
-        user = authenticate(username = name,password = userpassword)
-        if user is None:
-            messages.info(request,"Kullanıcı Adı veya Parola Hatalı")
-            return render(request,"account/login.html",content)
+    try:
+        lock_status = LockScreenStatus.objects.get(user=request.user)
+        lock_status.is_locked=True
+        lock_status.save()
+    except LockScreenStatus.DoesNotExist:
+        # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
+        lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=True)
 
-        messages.success(request,"Başarıyla Giriş Yaptınız")
-        login(request,user)
-        return redirect("/") 
-    logout(request)
-    return a
+    if request.method == 'POST':
+        password = request.POST.get('userpassword')
+        user = authenticate(request, username=request.user.username, password=password)
+
+        if user is not None:
+            # Parola doğru, kullanıcıyı kilidi aç
+            lock_status.is_locked = False
+            lock_status.save()
+            return redirect('/')   # Yönlendireceğiniz sayfayı belirtin
+        else:
+            # Parola doğru değilse hata mesajını gösterin
+            error_message = "Parola yanlış. Tekrar deneyin."
+            return render(request, 'account/lock_screen.html', {'error_message': error_message})
+
+    return render(request, 'account/lock_screen.html')
 #lockscreen
 from django.core.files.storage import FileSystemStorage
 

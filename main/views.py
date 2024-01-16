@@ -1469,8 +1469,7 @@ def depolama_sistemim(request):
     
     if super_admin_kontrolu(request):
         profile = klasorler.objects.all()
-        kullanicilar = CustomUser.objects.filter(klasor_adi_db = None).filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-        content["kullanicilar"] =kullanicilar
+        
     else:
         profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = request.user)
         
