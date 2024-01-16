@@ -19,11 +19,19 @@ class LockScreenMiddleware:
         if lock_status.is_locked and not self.is_unlock_url(request.path_info):
             print("kilitli")
             return redirect('users:unlock')
-        
+
         response = self.get_response(request)
         return response
 
     def is_unlock_url(self, url):
         # Burada unlock URL'si kontrolü yapılmalı
         unlock_url = reverse('users:unlock')
+        if url == reverse('users:unlock'):
+
+            return url == unlock_url
+        elif url == reverse('users:logout'):
+            return url == reverse('users:logout')
+    def is_logout_url(self, url):
+        # Burada unlock URL'si kontrolü yapılmalı
+        unlock_url = reverse('users:logout')
         return url == unlock_url

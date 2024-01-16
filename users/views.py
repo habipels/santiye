@@ -72,6 +72,14 @@ def loginUser(request):
     return render(request,"account/login.html",context)
 @login_required
 def logoutUser(request):
+    
+    try:
+        lock_status = LockScreenStatus.objects.get(user=request.user)
+        lock_status.is_locked=False
+        lock_status.save()
+    except LockScreenStatus.DoesNotExist:
+        # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
+        lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=False)
     logout(request)
     messages.success(request,"Başarıyla Çıkış Yaptınız")
     return redirect("users:yonlendir")
