@@ -784,23 +784,20 @@ def gelir_ekle(request):
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
     return render(request,"muhasebe_page/gelir_faturasi.html",content)
-
+from django.http import JsonResponse
+def search(request):
+    term = request.GET.get('term', '')
+    user = request.user
+    results = urunler.objects.filter(urun_adi__icontains=term, urun_ait_oldugu=user)
+    suggestions = [{'label': result.urun_adi, 'value': result.urun_fiyati} for result in results]
+    print("oldu mu yav")
+    return JsonResponse(suggestions, safe=False)
 def gelir_faturasi_kaydet(request):
     if request.POST:
-        cari_bilgileri = request.POST.get("cari_bilgileri")
-        aciklama = request.POST.get("aciklama")
-        faturano = request.POST.get("faturano")
-        fatura_tarihi = request.POST.get("fatura_tarihi")
-        fatura_sirket_adi = request.POST.get("fatura_sirket_adi")
-        fatura_sirket_adresi = request.POST.get("fatura_sirket_adresi")
-        telefon_no = request.POST.get("telefon_no")
-        fatura_sirket_email = request.POST.get("fatura_sirket_email")
-        fatura_kesilen_sirket_adi = request.POST.get("fatura_kesilen_sirket_adi")
-        sirket_Adresi = request.POST.get("sirket_Adresi")
-        fatura_kesilen_telefon = request.POST.get("fatura_kesilen_telefon")
-        fatura_kesilen_email = request.POST.get("fatura_kesilen_email")
+        print(request.POST)
         
-    return 0
+    return redirect("accounting:gelirler_sayfasi")
+
 #Gelirler Sayfası
 
 #Gider Sayfası

@@ -1,74 +1,24 @@
-window.addEventListener("DOMContentLoaded", () => {
+/*New İtem*/
+window.addEventListener("DOMContentLoaded", ()=>{
     var addNewItem = document.querySelector("#satis-ekle .card .addNewItem span");
-    var table = document.querySelector("#satis-ekle .card .card-body #form2");
+    var table = document.querySelector("#satis-ekle .card .card-body .form2");
+    var newItem = document.querySelector("#satis-ekle .card .card-body .form2").innerHTML; 
+    var item = document.getElementsByClassName("table-item");
     var araToplam = document.querySelector("#satis-ekle > div.card.hesaplar > div > div:nth-child(1) > span");
     var tumToplam = document.querySelector("#satis-ekle > div.card.hesaplar > div > div:nth-child(2) > span");
-    var itemCounter = 1; // Başlangıç değeri
-
-    /*Add New Item */
-    addNewItem.addEventListener("click", function () {
-        var newItem = table.firstElementChild.cloneNode(true); // Önceki satırı kopyala
-        clearInputs(newItem); // Input alanlarını temizle
-        table.appendChild(newItem); // Yeni satırı tabloya ekle
-
-        // ID'leri güncelle
-        newItem.querySelectorAll("[id]").forEach(element => {
-            element.id += itemCounter; // Her ID'nin sonuna sayı ekle
-        });
-
-        // Event listener'ları yeniden kaydet
-        newItem.querySelector(".miktarInput").addEventListener("change", hesapla);
-        newItem.querySelector(".bfiyatInput").addEventListener("change", hesapla);
-
-        // Toplam fiyatları güncelle
-        updateTotal();
+    
+    /*Add New İtem */
+    addNewItem.addEventListener("click", function(){
+        table.innerHTML += newItem;
+            for(var i = 0; i<closeItem.length; i++){
+                if(item.length > 1){
+                closeItem[i].style.display = "flex";
+            }
+        }
         araToplam.textContent = 0 + " $"
         tumToplam.textContent = 0 + " $"
-
-        // Counter'ı artır
-        itemCounter++;
-    });
-
-    // İlk yükleme için toplam fiyatları güncelle
-    updateTotal();
-});
-
-// Diğer fonksiyonlar burada...
-
-function clearInputs(element) {
-    var inputs = element.querySelectorAll("#searchInput");
-    inputs.forEach(input => input.value = "");
-    var inpt = element.querySelectorAll(".miktarInput");
-    inpt.forEach(inptx => inptx.value = "1");
-    var inpt = element.querySelectorAll(".bfiyatInput");
-    inpt.forEach(inptx => inptx.value = "0");
-    var inpt = element.querySelectorAll(".toplamInput");
-    inpt.forEach(inptx => inptx.value = "0");
-}
-
-function hesapla(event) {
-    var miktarValue = event.target.parentElement.parentElement.querySelector('.miktarInput').value;
-    var bFiyatValue = event.target.parentElement.parentElement.querySelector('.bfiyatInput').value;
-    var tFiyatValue = miktarValue * bFiyatValue;
-    event.target.parentElement.parentElement.querySelector('.toplamInput').value = tFiyatValue;
-
-    // Toplam fiyatları güncelle
-    updateTotal();
-}
-
-function updateTotal() {
-    var maxTotal = 0;
-    var toplamInputs = document.getElementsByClassName("toplamInput");
-    var araToplam = document.querySelector("#satis-ekle > div.card.hesaplar > div > div:nth-child(1) > span");
-    var tumToplam = document.querySelector("#satis-ekle > div.card.hesaplar > div > div:nth-child(2) > span");
-
-    for (var i = 0; i < toplamInputs.length; i++) {
-        maxTotal += Number(toplamInputs[i].value);
-    }
-
-    araToplam.textContent = maxTotal + " $";
-    tumToplam.textContent = maxTotal + " $";
-}
+    })
+})
 
 var addSpec = document.getElementsByClassName("specBtn");
 var closeItem = document.getElementsByClassName("closeBtn");

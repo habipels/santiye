@@ -52,11 +52,12 @@ urlpatterns = [
     #gelirler Sayfası
     path("theycome", views.gelirler_sayfasi, name="gelirler_sayfasi"),
     path("addtheycome", views.gelir_ekle, name="gelir_ekle"),
+    path("addtheycomesave", views.gelir_faturasi_kaydet, name="gelir_faturasi_kaydet"),
     #gelirler Sayfası
     #giderler Sayfası
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
     #giderler Sayfası
-
+    path('search/', views.search, name='search'),
 ]
 #
 
