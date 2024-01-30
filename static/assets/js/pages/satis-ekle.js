@@ -140,6 +140,7 @@ const indirimEkle = function(event){
     indirimKapat.setAttribute("class","mdi mdi-close-box-outline");
     indirimKapat.setAttribute("onclick", "indirimSil(event)");
     indirimInput.setAttribute("id","indirim");
+    indirimInput.setAttribute("value","0");
     indirimInput.setAttribute("name","indirim");
     indirimInput.setAttribute("type", "number");
     indirimInput.setAttribute("placeholder", "İndirim gir %");

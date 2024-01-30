@@ -1,6 +1,6 @@
 window.addEventListener("DOMContentLoaded", ()=>{
     var tahsilatEkle = document.querySelector("body > div.invoice-detail-modal > div > div.modal-body > div.kalan > div > div.ekle > span.mdi.mdi-plus-circle");
-    var modal = document.querySelector(".invoice-detail-modal");
+    var modal = document.querySelectorAll(".invoice-detail-modal");
     var modalClose = document.querySelector("body > div.invoice-detail-modal > div > div.modal-head > div.invoice-icons > div.icon-item.close-icon > span");
     var tahsilatPopup = document.querySelector(".invoice-detail-modal .tahsilatEkle");
     var tahsilatClose = document.querySelector("body > div.invoice-detail-modal > div > div.modal-body > div.tahsilatEkle > form > div.buttons > span");
@@ -16,7 +16,10 @@ window.addEventListener("DOMContentLoaded", ()=>{
     var tahsilatMakbuzuKapat = document.querySelector("body > div.tahsilat-makbuzu-modal > div > div.modal-head > div.invoice-icons > div.icon-item.close-icon > span");
     for(var i = 0; i< faturaItems.length; i++){
         faturaItems[i].addEventListener("click", function(){
-            modal.style.display = "flex";
+            alert(faturaItems[i].id,modal[i].id);
+            if (faturaItems[i].id == modal[i].id){
+                alert(faturaItems[i].id,modal[i].id);
+            modal[i].style.display = "flex";}
         })
     }
     tahsilatEkle.addEventListener("click", function(){

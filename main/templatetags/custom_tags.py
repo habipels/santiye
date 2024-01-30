@@ -287,3 +287,19 @@ def dosya_varsa_indirme_isplani_ilerleme(id):
         
         z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,k,round(float(i.dosya.size/1024),2))
     return mark_safe(z)
+
+@register.simple_tag
+def toplam_tutar_cikarma(id):
+    a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+    topla = 0
+    for i in a:
+        topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+    return topla
+
+@register.simple_tag
+def toplam_odenme_tutar(id):
+    a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+    topla = 0
+    for i in a:
+        topla = topla + i.tutar
+    return topla

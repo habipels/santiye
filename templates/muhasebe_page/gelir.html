@@ -1,8 +1,11 @@
+
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load custom_tags %}
-{% block sidebar %}
-<div class="main-content">
+{% load static %}
+{% block slider %}
+<!-- ============================================================== -->
+    <div class="main-content">
         <div class="page-content">
             <div class="container-fluid">
                 
@@ -63,7 +66,7 @@
                                                 <div class="flex-shrink-0">
                                                     <div class="d-flex gap-2 flex-wrap">
                                                         <button class="btn btn-primary" id="remove-actions" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
-                                                        <a href="{% url 'accounting:gelir_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> Create Invoice</a>
+                                                        <a href="satis-ekle.html" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> Create Invoice</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -93,87 +96,30 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all" id="invoice-list-data">
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>0 $</span></td>
-                                                    <td class="paid"><span>ÖDENDİ</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>0 $</span></td>
-                                                    <td class="paid"><span>ÖDENDİ</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>23000 $</span></td>
+                                                {% for i in  santiyeler %}
+                                                <tr class="faturabilgisi" id="{{i.id}}">
+                                                    <td><span>{{i.fatura_no}}</span></td>
+                                                    <td><span>{{i.cari_bilgisi.cari_adi}}</span></td>
+                                                    <td><span>{{i.fatura_tarihi| date:'Y-m-d'}}</span></td>
+                                                    <td><span>{{i.vade_tarihi| date:'Y-m-d'}}</span></td>
+                                                    <td><span>{% toplam_tutar_cikarma i %} $</span></td>
+                                                    <td><span>{% toplam_odenme_tutar i %} $</span></td>
+                                                    
+                                                    {% if i.silinme_bilgisi %}
                                                     <td class="cancel"><span>İPTAL</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td class="unpaid"><span>ÖDENMEDİ</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>0 $</span></td>
-                                                    <td class="paid"><span>ÖDENDİ</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>9000 $</span></td>
+                                                    {% else %}
+                                                   {% toplam_tutar_cikarma i as tutar %}
+                                                    {% toplam_odenme_tutar i as odeme %}
+                                                    {% if  odeme == tutar %}
+                                                        <td class="paid"><span>ÖDENDİ</span></td>
+                                                    {% elif odeme > 0 %}
                                                     <td class="paidinparts"><span>PARÇALI ÖDENDİ</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>23000 $</span></td>
+                                                    {% elif odeme == 0 %}
                                                     <td class="unpaid"><span>ÖDENMEDİ</span></td>
+                                                    {% endif %}
+                                                     {% endif %}
                                                 </tr>
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>0 $</span></td>
-                                                    <td class="paid"><span>ÖDENDİ</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span>#VM000100</span></td>
-                                                    <td><span>Cari Adı</span></td>
-                                                    <td><span>10 / 10 / 2023</span></td>
-                                                    <td><span>20 / 03 / 2024</span></td>
-                                                    <td><span>23000 $</span></td>
-                                                    <td><span>16000 $</span></td>
-                                                    <td class="paidinparts"><span>PARÇALI ÖDENDİ</span></td>
-                                                </tr>
+                                            {% endfor %}
                                             </tbody>
                                         </table>
                                         <div class="noresult" style="display: none">
@@ -236,11 +182,11 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6">
-                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        <script>document.write(new Date().getFullYear())</script> © Velzon.
                     </div>
                     <div class="col-sm-6">
                         <div class="text-sm-end d-none d-sm-block">
-                           
+                            Design & Develop by Themesbrand
                         </div>
                     </div>
                 </div>
@@ -248,4 +194,255 @@
         </footer>
     </div>
     <!-- end main content-->
-{% endblock sidebar %}
+{% endblock slider %}
+{% block footer %}
+{% for i in  santiyeler %}
+<!-- END layout-wrapper -->
+<div class="invoice-detail-modal" id = "{{i.id}}">
+    <div class="wrapper">
+        <div class="modal-head">
+            <div class="invoice-title">
+                <a>Fatura Adı</a>
+            </div>
+            <div class="invoice-icons">
+                <div class="icon-item print-icon"><span title="Yazdır" class="mdi mdi-printer-outline"></span></div>
+                <div class="icon-item cancel-icon"><span title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
+                <div class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></div>
+                <div class="icon-item close-icon"><span title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="top">
+                <div class="title"><h4>Satış Faturası</h4></div>
+                <div class="category"><span>Kategori</span></div>
+            </div>
+            <div class="fatura-info">
+                <div class="info-item">
+                    <div class="title"><h5>Fatura no</h5></div>
+                    <div class="value"><span>{{i.fatura_no}}</span></div>
+                </div>
+                <div class="info-item">
+                    <div class="title"><h5>DÖVİZ KURU</h5></div>
+                    <div class="value"><span>1400<span>IQN</span></span></div>
+                </div>
+                <div class="info-item">
+                    <div class="title"><h5>Düzenleme Tarihi</h5></div>
+                    <div class="value"><span>03-10-2023</span></div>
+                </div>
+                <div class="info-item">
+                    <div class="title"><h5>VADE TARİHİ</h5></div>
+                    <div class="value"><span>05-02-2024</span></div>
+                </div>
+            </div>
+            <div class="fature-desc">
+                <div class="title"><h5>Açıklama</h5></div>
+                <div class="value"><span>Açıklama yazısı gelecek.</span></div>
+            </div>
+            <div class="title">
+                <h5>Fatura Kalemleri</h5>
+            </div>
+            <div class="satis-table">
+                <div class="table-titles">
+                    <h5>Ürün</h5>
+                    <h5>Adet</h5>
+                    <h5>Fiyat</h5>
+                    <h5>Toplam</h5>
+                </div>
+                <div class="table-item">
+                    <div class="title"><span>Filan</span></div>
+                    <div class="adet">1</div>
+                    <div class="fiyat"><span>100<span>$</span></span></div>
+                    <div class="toplam"><span>100<span>$</span></span></div>
+                </div>
+                <div class="table-item">
+                    <div class="title"><span>Falan</span></div>
+                    <div class="adet">1</div>
+                    <div class="fiyat"><span>100<span>$</span></span></div>
+                    <div class="toplam"><span>100<span>$</span></span></div>
+                </div>
+                <div class="table-total">
+                    <div class="fiyat"><span>100<span>$</span></span></div>
+                    <div class="toplam"><span>100<span>$</span></span></div>
+                </div>
+            </div>
+            <div class="eklenen-kasa">
+                <div class="eklenen-item">
+                    <div class="tarih">
+                        <span>18-01-2024</span>
+                    </div>
+                    <div title="Makbuzu Görüntüle" class="makbuz">
+                        <span class="mdi mdi-text-box-search-outline"></span>
+                        <span>Kasa Hesabı</span>
+                    </div>
+                    <div class="fiyat"><span>3,600 <span>$</span></div>
+                </div>
+            </div>
+            <div class="kalan">
+                <div class="wrapper">
+                    <div title="ekle" class="ekle">
+                        <span class="mdi mdi-plus-circle"></span>
+                        <span>KALAN</span>
+                    </div>
+                    <div class="price">
+                        <span>3.610,50 <span>$</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="tahsilatEkle">
+                <form>
+                    <div class="input-item">
+                        <label>TÜR</label>
+                        <select>
+                            <option value="nakitBanka">Nakit / Banka</option>
+                            <option disabled>ÇEK VEYA SENET</option>
+                            <option value="cek">ÇEK</option>
+                            <option value="senet">SENET</option>
+                        </select>
+                    </div>
+                    <div class="input-item">
+                        <label>HESAP</label>
+                        <select>
+                            <option>Kasa Hesabı</option>
+                        </select>
+                    </div>
+                    <div class="input-item">
+                        <label>TARİH</label>
+                        <input type="date" />
+                    </div>
+                    <div class="input-item">
+                        <label>TUTAR</label>
+                        <input type="text" placeholder="105000.41" />
+                        <span class="mdi mdi-currency-usd"></span>
+                    </div>
+                    <div class="input-item">
+                        <label>MAKBUZ NO</label>
+                        <input type="text" />
+                    </div>
+                    <div class="input-item">
+                        <label>AÇIKLAMA</label>
+                        <input type="text" />
+                    </div>
+                    <div class="input-item">
+                        <label>DOSYA</label>
+                        <input type="file" />
+                    </div>
+                    <div class="buttons">
+                        <span>Vazgeç</span>
+                        <input type="submit" value="Tahsilat İşle" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<div class="tahsilat-makbuzu-modal">
+    <div class="wrapper">
+        <div class="modal-head">
+            <div class="invoice-title">
+                <h2>Tahsilat Makbuzu</h2>
+            </div>
+            <div class="invoice-icons">
+                <div class="icon-item print-icon"><span title="Yazdır" class="mdi mdi-printer-outline"></span></div>
+                <div class="icon-item cancel-icon"><span title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
+                <div class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></div>
+                <div class="icon-item close-icon"><span title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="hesap">
+                <h2>CARİ HESABI</h2>
+                <span><a href="">Cari Adı</a></span>
+            </div>
+            <div class="odeme-tarihi">
+                <div class="left">
+                    <h2>ÖDEME TARİHİ</h2>
+                    <span>18 Ocak 2024 Cuma</span>
+                </div>
+                <div class="right">
+                    <h2>KASA HESABI</h2>
+                    <span>Kasa Hesabı</span>
+                </div>
+            </div>
+            <div class="islem-tarihi">
+                <div class="left">
+                    <h2>İŞLEM TARİHİ</h2>
+                    <span>18 Ocak 2024 Cuma</span>
+                </div>
+                <div class="right">
+                    <h2>KULLANICI</h2>
+                    <span>Tolga</span>
+                </div>
+            </div>
+            <div class="tutar">
+                <h2>TUTAR</h2>
+                <span>500 $</span>
+            </div>
+            <div class="fatura-table">
+                <div class="table-head">
+                    <div class="item"><h2>İŞLENEN FATURA</h2></div>
+                    <div class="item"><h2>FATURA TUTARI</h2></div>
+                    <div class="item"><h2>MAHSUP TUTARI</h2></div>
+                </div>
+                <div class="table-body">
+                    <div class="fatura-item">
+                        <div class="item"><span>18 Ocak 2024 Perşembe</span></div>
+                        <div class="item"><span>500 $</span></div>
+                        <div class="item"><span>1100 $</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="kalan">
+                <h2>KALAN</h2>
+                <span>500 $</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="delete-fatura-modal">
+    <div class="wrapper">
+        <div class="title"><h4>Satış Faturası Silme İşlemini Onaylayınız</h4></div>
+        <div class="uyari"><span class="mdi mdi-alert-circle"></span><span>Bu işlem geri alınamayacaktır.</span></div>
+        <div class="buttons">
+            <span>Vazgeç</span>
+            <input type="button" value="Onayla ve Sil" />
+        </div>
+    </div>
+</div>
+<div class="delete-makbuz-modal">
+    <div class="wrapper">
+        <div class="title"><h4>Tahsilat Makbuzu Silme İşlemini Onaylayınız</h4></div>
+        <div class="uyari"><span class="mdi mdi-alert-circle"></span><span>Bu işlem geri alınamayacaktır.</span></div>
+        <div class="buttons">
+            <span>Vazgeç</span>
+            <input type="button" value="Onayla ve Sil" />
+        </div>
+    </div>
+</div>
+<!--start back-to-top-->
+<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+    <i class="ri-arrow-up-line"></i>
+</button>
+<!--end back-to-top-->
+
+<!-- JAVASCRIPT -->
+<script src="{% static '' %}assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{% static '' %}assets/libs/simplebar/simplebar.min.js"></script>
+<script src="{% static '' %}assets/libs/node-waves/waves.min.js"></script>
+<script src="{% static '' %}assets/libs/feather-icons/feather.min.js"></script>
+<script src="{% static '' %}assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+<script src="{% static '' %}assets/js/plugins.js"></script>
+<script src="{% static '' %}assets/js/custom.js"></script>
+
+<!-- list.js min js -->
+<script src="{% static '' %}assets/libs/list.js/list.min.js"></script>
+<!--list pagination js-->
+<script src="{% static '' %}assets/libs/list.pagination.js/list.pagination.min.js"></script>
+<!-- Sweet Alerts js -->
+<script src="{% static '' %}assets/libs/sweetalert2/sweetalert2.min.js"></script>
+<!-- App js -->
+<script src="{% static '' %}assets/js/app.js"></script>
+{% endblock footer %}
+    
+
+

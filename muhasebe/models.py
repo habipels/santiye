@@ -55,7 +55,6 @@ class Gelir_Bilgisi(models.Model):
     aciklama = models.TextField(verbose_name="Gelir Açıklaması",blank=True,null=True)
     gelir_kategorisi = models.ForeignKey(gelir_kategorisi,verbose_name="Gelirin Kategori Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
     gelir_etiketi_sec = models.ManyToManyField(gelir_etiketi,blank=True,null=True)
-    
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 class Gider_Bilgisi(models.Model):
@@ -100,7 +99,9 @@ class gelir_urun_bilgisi(models.Model):
     urun_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     urun_bilgisi = models.ForeignKey(urunler,blank=True,null=True,verbose_name="Ürün Bilgisi",on_delete=models.SET_NULL)
     urun_fiyati = models.FloatField(verbose_name="Ürün Fiyatı",default=0)
-    urun_adeti = models.FloatField(verbose_name="Ürün Adeti",default=0)
+    urun_indirimi = models.FloatField(verbose_name="Ürün Fiyatı",default=0)
+    urun_adeti = models.BigIntegerField(verbose_name="Ürün Adeti",default=0)
+    aciklama = models.CharField(max_length = 400,verbose_name ="Açıklama",blank = True,null = True)
     gider_bilgis = models.ForeignKey(Gelir_Bilgisi,blank=True,null=True,verbose_name="Gelir Bilgisi",on_delete=models.SET_NULL)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)    
     
