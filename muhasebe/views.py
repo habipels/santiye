@@ -780,6 +780,10 @@ def gelir_ekle(request):
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
         cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = request.user)
+        kategori_bilgisi = gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
+        etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
+    content["gelir_kategoerisi"] = kategori_bilgisi
+    content["gelir_etiketi"] = etiketler
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
@@ -791,6 +795,12 @@ def search(request):
     results = urunler.objects.filter(urun_adi__icontains=term, urun_ait_oldugu=user)
     suggestions = [{'label': result.urun_adi, 'value': result.urun_fiyati} for result in results]
     print("oldu mu yav")
+    return JsonResponse(suggestions, safe=False)
+def cariler_bilgisi(request):
+    term = request.GET.get('term', '')
+    user = request.user
+    results = cari.objects.filter(cari_adi__icontains=term, cari_kart_ait_bilgisi=user)
+    suggestions = [{'label': result.cari_adi, 'value':result.aciklama} for result in results]
     return JsonResponse(suggestions, safe=False)
 def gelir_faturasi_kaydet(request):
     if request.POST:

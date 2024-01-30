@@ -1,3 +1,5 @@
+
+var itemCounter = 1; // Başlangıç değeri
 window.addEventListener("DOMContentLoaded", () => {
     var addNewItem = document.querySelector("#satis-ekle .card .addNewItem span");
     var table = document.querySelector("#satis-ekle .card .card-body #form2");
@@ -113,6 +115,8 @@ const aciklamaEkle = function(event){
     var aciklamaKapat = document.createElement("span");
     aciklamaKapat.setAttribute("class","mdi mdi-close-box-outline");
     aciklamaKapat.setAttribute("onclick", "aciklamaDelete(event)");
+    aciklamaInput.setAttribute("id","aciklama");
+    aciklamaInput.setAttribute("name","aciklama");
     aciklamaInput.setAttribute("type", "text");
     aciklamaInput.setAttribute("placeholder","Açıklama Giriniz");
     aciklama.appendChild(aciklamaInput);
@@ -135,6 +139,8 @@ const indirimEkle = function(event){
     var indirimKapat = document.createElement("span");
     indirimKapat.setAttribute("class","mdi mdi-close-box-outline");
     indirimKapat.setAttribute("onclick", "indirimSil(event)");
+    indirimInput.setAttribute("id","indirim");
+    indirimInput.setAttribute("name","indirim");
     indirimInput.setAttribute("type", "number");
     indirimInput.setAttribute("placeholder", "İndirim gir %");
     indirim.appendChild(indirimInput);

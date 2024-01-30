@@ -8,11 +8,13 @@
     background:red;
     height:10px;
     font-size:8px;
+
 }
 </style>
 <!--Multi Select Date Picker Calender-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-{% endblock head %}
+
+    {% endblock head %}
 {% block sidebar %}
 <!-- ============================================================== -->
 <form method="post" action="{% url 'accounting:gelir_faturasi_kaydet' %}">
@@ -50,7 +52,7 @@
                             <div class="form2">
                                 <div class="input-item musteri-input">
                                     <label>Müşteri</label>
-                                    <input type="search" placeholder="Müşteri ünvanı" />
+                                    <input type="search" class="cari" placeholder="Müşteri ünvanı" />
                                 </div>
                                 <div class="input-item duzenleme-vade-tarihi">
                                     <label>Düzenleme ve Vade Tarihi</label>
@@ -59,30 +61,31 @@
                                 <div class="input-item kategori">
                                     <label>Kategori</label>
                                     <select>
-                                        <option value="kategori">kategori - 1</option>
-                                        <option value="kategori2">kategori - 2</option>
+                                        {% for i in gelir_kategoerisi %}
+                                            <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="input-item aciklama">
                                     <label>Açıklama</label>
-                                    <input type="text" placeholder="Açıklama" />
+                                    <input type="text" class="aciklama" placeholder="Açıklama" />
                                 </div>
                                 <div class="input-item etiket">
                                     <label for="choices-multiple-default">ETİKETLER</label>
                                     <select class="form-control" id="choices-multiple-default" data-choices name="choices-multiple-default" multiple data-choices-removeItem>
-                                        <option value="Choice 1">Choice 1</option>
-                                        <option value="Choice 2">Choice 2</option>
-                                        <option value="Choice 3">Choice 3</option>
-                                        <option value="Choice 4">Choice 4</option>
+                                        {% for i in gelir_etiketi %}
+                                             <option value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="input-item doviz">
                                     <label>DÖVİZ KURU</label>
-                                    <input type="text" placeholder="Açıklama" value="IQN" disabled />
+                                    <input type="text" placeholder="Açıklama" value="USD" disabled />
                                 </div>
                                 <div class="input-item fatura">
                                     <label>FATURA NO</label>
-                                    <input type="text" />
+                                    <input type="text" hidden value="{% gelir_faturasi_no request.user.id %}" />
+                                    <input type="text" placeholder="Açıklama" value="{% gelir_faturasi_no request.user.id %}" disabled />
                                 </div>
                             </div>
                         </div>
@@ -107,14 +110,14 @@
 
                                     </div>
                                     <div class="miktar">
-                                        <input class="miktarInput" type="number" value="1" onchange="hesapla(event)" />
+                                        <input class="miktarInput" type="number" value="1" oninput="hesaplama_islemi()" />
                                     </div>
                                     <div class="bfiyat">
-                                        <input class="bfiyatInput" type="number" value="0" onchange="hesapla(event)" />
+                                        <input id="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
                                         <span class="mdi mdi-currency-usd"></span>
                                     </div>
                                     <div class="toplam">
-                                        <input class="toplamInput" type="text" value="0" disabled/>
+                                        <input class="toplamInput" type="text" step="0.01" value="0" disabled/>
                                         <span class="mdi mdi-currency-usd"></span>
                                     </div>
                                     <div class="icons">
@@ -168,6 +171,18 @@
 </form>
 {% endblock sidebar %}
 {% block javascriptcodeadd %}
+
+<!--Multi Select Date Calender-->
+<script>
+    $(function() {
+      $('input[name="daterange"]').daterangepicker({
+        opens: 'left'
+      }, function(start, end, label) {
+        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+      });
+    });
+</script>
+
 <script src="{% static 'assets/js/pages/satis-ekle.js '%}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -177,15 +192,27 @@
 
 
     <script>
+        function hesaplama_islemi(){
+            
+            var brimtutar = document.querySelectorAll(".bfiyatInput");
+            var miktar = document.querySelectorAll(".miktarInput");
+            var ana_toplam = document.querySelectorAll(".toplamInput");
+            for (var u = 0; u < brimtutar.length; u++) {
+                ana_toplam[u].value = parseFloat(miktar[u].value*brimtutar[u].value).toFixed(2);
+                }
+    
+    }
         function enableAutocompleteForNewItems() {
     $('.den').autocomplete({
         source: '/accounting/search/',
         minLength: 2,
         select: function(event, ui) {
+            var id = this.id;
             $(this).val(ui.item.label);
             $(this).siblings().val(ui.item.label);
-            $(this).siblings('.bfiyatInput').val(ui.item.value);
-            $(this).siblings('.bfiyatInput').trigger('input');
+            id = id.replace("searchInput", "bfiyatInput");
+            document.getElementById(id).value = ui.item.value;
+            hesaplama_islemi()
             return false;
         }
     }).data('ui-autocomplete')._renderItem = function(ul, item) {
@@ -206,7 +233,21 @@ $(document).ready(function(){
 
     // Diğer kodlarınız buraya gelebilir...
 });
-
+$(document).ready(function(){
+    $('.cari').autocomplete({
+                source: '/accounting/cari/',
+                minLength: 2,
+                select: function(event, ui) {
+                    $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+                    $('.aciklama').val(ui.item.value)
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + '</div>')// Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
 /*
 $(document).ready(function(){
     $('.den').each(function() {
@@ -236,4 +277,5 @@ $(document).ready(function(){
 */
        
     </script>
+
 {% endblock javascriptcodeadd %}

@@ -58,6 +58,7 @@ urlpatterns = [
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
     #giderler Sayfası
     path('search/', views.search, name='search'),
+    path('cari/', views.cariler_bilgisi, name='cariler_bilgisi'),
 ]
 #
 
