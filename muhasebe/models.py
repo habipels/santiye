@@ -50,12 +50,12 @@ class Gelir_Bilgisi(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     cari_bilgisi = models.ForeignKey(cari,verbose_name="Cari Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
     fatura_tarihi = models.DateTimeField(null=True,verbose_name="Fatura Tarihi",blank = True)
+    vade_tarihi = models.DateTimeField(null=True,verbose_name="Vade Tarihi",blank = True)
     fatura_no = models.CharField(verbose_name="Fatura No",max_length=200,blank=True,null=True)
     aciklama = models.TextField(verbose_name="Gelir Açıklaması",blank=True,null=True)
     gelir_kategorisi = models.ForeignKey(gelir_kategorisi,verbose_name="Gelirin Kategori Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
     gelir_etiketi_sec = models.ManyToManyField(gelir_etiketi,blank=True,null=True)
-    tutar = models.FloatField(verbose_name="Toplam Tutar",default=0)
-    odeme_bilgisi = models.CharField(verbose_name="Ödeme Bilgisi",max_length=200,blank=True,null=True)
+    
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 class Gider_Bilgisi(models.Model):

@@ -788,6 +788,8 @@ def gelir_ekle(request):
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
     return render(request,"muhasebe_page/gelir_faturasi.html",content)
+def denme(request):
+    return render(request,"a.html")
 from django.http import JsonResponse
 def search(request):
     term = request.GET.get('term', '')
@@ -804,7 +806,17 @@ def cariler_bilgisi(request):
     return JsonResponse(suggestions, safe=False)
 def gelir_faturasi_kaydet(request):
     if request.POST:
-        print(request.POST)
+        musteri_bilgisi  = request.POST.get("musteri_bilgisi")
+        daterange = request.POST.get("daterange")
+        gelir_kategorisi = request.POST.get("gelir_kategorisi")
+        cari_aciklma = request.POST.get("cari_aciklma")
+        etiketler = request.POST.getlist("etiketler")
+        faturano = request.POST.get("faturano")
+        urunadi = request.POST.getlist("urunadi")
+        miktari = request.POST.getlist("miktari")
+        bfiyatInput = request.POST.getlist("bfiyatInput")
+        indirim = request.POST.getlist("indirim")
+        aciklama = request.POST.getlist("aciklama")
         
     return redirect("accounting:gelirler_sayfasi")
 

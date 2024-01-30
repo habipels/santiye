@@ -13,7 +13,18 @@
 </style>
 <!--Multi Select Date Picker Calender-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
+    <script src="{% static '' %}assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static '' %}assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static '' %}assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static '' %}assets/css/app.min.css" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static '' %}assets/css/custom.min.css" rel="stylesheet" type="text/css">
+    <link href="{% static '' %}assets/css/custom.css" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
     {% endblock head %}
 {% block sidebar %}
 <!-- ============================================================== -->
@@ -52,7 +63,7 @@
                             <div class="form2">
                                 <div class="input-item musteri-input">
                                     <label>Müşteri</label>
-                                    <input type="search" class="cari" placeholder="Müşteri ünvanı" />
+                                    <input type="search" name="musteri_bilgisi" class="cari" placeholder="Müşteri ünvanı" />
                                 </div>
                                 <div class="input-item duzenleme-vade-tarihi">
                                     <label>Düzenleme ve Vade Tarihi</label>
@@ -60,7 +71,7 @@
                                 </div>
                                 <div class="input-item kategori">
                                     <label>Kategori</label>
-                                    <select>
+                                    <select name="gelir_kategorisi">
                                         {% for i in gelir_kategoerisi %}
                                             <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
                                         {% endfor %}
@@ -68,11 +79,11 @@
                                 </div>
                                 <div class="input-item aciklama">
                                     <label>Açıklama</label>
-                                    <input type="text" class="aciklama" placeholder="Açıklama" />
+                                    <input type="text" name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
                                 </div>
                                 <div class="input-item etiket">
                                     <label for="choices-multiple-default">ETİKETLER</label>
-                                    <select class="form-control" id="choices-multiple-default" data-choices name="choices-multiple-default" multiple data-choices-removeItem>
+                                    <select name="etiketler" class="form-control" id="choices-multiple-default" data-choices name="choices-multiple-default" multiple data-choices-removeItem>
                                         {% for i in gelir_etiketi %}
                                              <option value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
                                         {% endfor %}
@@ -84,8 +95,8 @@
                                 </div>
                                 <div class="input-item fatura">
                                     <label>FATURA NO</label>
-                                    <input type="text" hidden value="{% gelir_faturasi_no request.user.id %}" />
-                                    <input type="text" placeholder="Açıklama" value="{% gelir_faturasi_no request.user.id %}" disabled />
+                                    <input type="text" name="faturano" hidden value="{% gelir_faturasi_no request.user.id %}" />
+                                    <input type="text"  placeholder="Açıklama" value="{% gelir_faturasi_no request.user.id %}" disabled />
                                 </div>
                             </div>
                         </div>
@@ -110,16 +121,17 @@
 
                                     </div>
                                     <div class="miktar">
-                                        <input class="miktarInput" type="number" value="1" oninput="hesaplama_islemi()" />
+                                        <input class="miktarInput" name="miktari"  type="number" value="1" oninput="hesaplama_islemi()" />
                                     </div>
                                     <div class="bfiyat">
-                                        <input id="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                                        <input id="bfiyatInput" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
                                         <span class="mdi mdi-currency-usd"></span>
                                     </div>
                                     <div class="toplam">
-                                        <input class="toplamInput" type="text" step="0.01" value="0" disabled/>
+                                        <input class="toplamInput"  type="text" step="0.01" value="0" disabled/>
                                         <span class="mdi mdi-currency-usd"></span>
                                     </div>
+                                    
                                     <div class="icons">
                                         <span class="mdi mdi-pan-left specBtn" onclick="specAc(event)"></span>
                                         <ul class="specs">
@@ -128,6 +140,8 @@
                                         </ul>
                                         <span class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
                                     </div>
+                                    <div class="indirim"><input id="indirim" name="indirim" type="number" placeholder="İndirim gir %"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
+                                    <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="Açıklama Giriniz"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
                                 </div>
                               
                             </div>
@@ -169,6 +183,47 @@
     </div>
     <!-- end main content-->
 </form>
+<!-- JAVASCRIPT -->
+<script src="{% static '' %}assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{% static '' %}assets/libs/simplebar/simplebar.min.js"></script>
+<script src="{% static '' %}assets/libs/node-waves/waves.min.js"></script>
+<script src="{% static '' %}assets/libs/feather-icons/feather.min.js"></script>
+<script src="{% static '' %}assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+<script src="{% static '' %}assets/js/plugins.js"></script>
+<script src="{% static '' %}assets/js/pages/satis-ekle.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<!-- Sweet Alerts js -->
+<script src="{% static '' %}assets/libs/sweetalert2/sweetalert2.min.js"></script>
+<!-- App js -->
+<script src="{% static '' %}assets/js/app.js"></script>
+<!--Multi Select Date Calender-->
+<script>
+    $(function () {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        }, function (start, end, label) {
+            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+    });
+</script>
+
+
+<div class="daterangepicker ltr show-calendar opensleft">
+    <div class="ranges"></div>
+    <div class="drp-calendar left">
+        <div class="calendar-table"></div>
+        <div class="calendar-time" style="display: none;"></div>
+    </div>
+    <div class="drp-calendar right">
+        <div class="calendar-table"></div>
+        <div class="calendar-time" style="display: none;"></div>
+    </div>
+    <div class="drp-buttons"><span class="drp-selected">01/01/2024 - 01/30/2024</span><button
+            class="cancelBtn btn btn-sm btn-default" type="button">Cancel</button><button
+            class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">Apply</button> </div>
+</div>
 {% endblock sidebar %}
 {% block javascriptcodeadd %}
 

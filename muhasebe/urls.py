@@ -59,6 +59,7 @@ urlpatterns = [
     #giderler Sayfası
     path('search/', views.search, name='search'),
     path('cari/', views.cariler_bilgisi, name='cariler_bilgisi'),
+    path('denme/', views.denme, name='denme'),
 ]
 #
 
