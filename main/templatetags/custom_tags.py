@@ -303,3 +303,37 @@ def toplam_odenme_tutar(id):
     for i in a:
         topla = topla + i.tutar
     return topla
+
+@register.simple_tag
+def kalemleri_getir_gelir_faturasi_icin(id):
+    a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+    return a
+@register.simple_tag
+def carpma_islemi(a,b):
+    return a*b
+
+@register.simple_tag
+def kalemleri_getir_gelir_faturasi_icin_toplam_flan(id):
+    a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+    
+    toplam_urun_fiyati = 0
+    genel_toplam = 0
+    for i in a:
+        toplam_urun_fiyati = toplam_urun_fiyati+i.urun_fiyati
+        genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+    sonuc = {"toplam" : toplam_urun_fiyati,
+             "genel":genel_toplam}
+    
+    return sonuc
+
+@register.simple_tag
+def kalan_tutuar(id):
+    a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+    toplam = 0
+    for i in a:
+        toplam = toplam+i.tutar
+    a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+    genel_toplam = 0
+    for i in a:
+        genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+    return round(float(genel_toplam - toplam),2)

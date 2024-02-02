@@ -29,44 +29,40 @@
                     <div class="col-lg-12">
                         <div class="card" id="invoiceList">
                             <div class="card-header border-0">
-                                <form>
+                                <form method="get">
                                     <div class="row g-3 gelirler-filtre">
                                         <div class="col-sm-4">
                                             <div class="search-box">
-                                                <input type="text" class="form-control search bg-light border-light" placeholder="Search for customer, email, country, status or something...">
+                                                <input type="text" name="search" value="{% if request.GET.search %}{{request.GET.search}}{% endif %}" class="form-control search bg-light border-light" placeholder="Search for customer, email, country, status or something...">
                                                 <i class="ri-search-line search-icon"></i>
                                             </div>
                                         </div>
                                         <!--end col-->
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control bg-light border-light" id="datepicker-range" placeholder="Select date">
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-sm-2">
-                                            <div class="input-light">
-                                                <select class="form-control" data-choices data-choices-search-false name="choices-single-default" id="idStatus">
-                                                    <option value="">Status</option>
-                                                    <option value="all" selected>All</option>
-                                                    <option value="Unpaid">Unpaid</option>
-                                                    <option value="Paid">Paid</option>
-                                                    <option value="Cancel">Cancel</option>
-                                                    <option value="Refund">Refund</option>
-                                                </select>
-                                            </div>
+                                            <input type="date" name="tarih" value="{% if request.GET.tarih %}{{request.GET.tarih}}{% endif %}" class="form-control bg-light border-light" id="datepicker-range" placeholder="Select date">
                                         </div>
                                         <!--end col-->
                                         <div class="col-sm-1">
-                                            <button type="button" class="btn btn-primary w-100" onclick="SearchData();">
-                                                <i class="ri-equalizer-fill me-1 align-bottom"></i> Filters
+                                            <button type="submit" class="btn btn-primary w-100">
+                                            Ara
                                             </button>
+                                            
                                         </div>
+                                        <div class="col-sm-2">
+                                            <a href="{% url 'accounting:gelirler_sayfasi' %}" type="button" class="btn btn-primary w-100">
+                                                Temizle
+                                            </a>
+                                            
+                                        </div>
+                                        <!--end col-->
+                                        
                                         <!--end col-->
                                         <div class="col-sm-1 fatura-ekle">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
                                                     <div class="d-flex gap-2 flex-wrap">
                                                         <button class="btn btn-primary" id="remove-actions" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
-                                                        <a href="satis-ekle.html" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> Create Invoice</a>
+                                                        <a href="{% url 'accounting:gelir_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> Create Invoice</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -134,17 +130,39 @@
                                     </div>
                                     <div class="d-flex justify-content-end mt-3">
                                         <div class="pagination-wrap hstack gap-2">
-                                            <a class="page-item pagination-prev disabled" href="#">
-                                                Geri
-                                            </a>
-                                            <ul class="pagination listjs-pagination mb-0 custom-pagination">
-                                                <li class="active"><span>1</span></li>
-                                                <li><span>2</span></li>
-                                                <li><span>3</span></li>
-                                            </ul>
-                                            <a class="page-item pagination-next" href="#">
-                                                İleri
-                                            </a>
+                                            <ul class="pagination pagination-m justify-content-center">
+
+                                                {% if medya.has_previous %}
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                
+                                                  {% if medya.number > 3 %}
+                                                
+                                                    <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                    {% if medya.number > 4 %}
+                                                      <li class="page-item"><span class="page-link">...</span></li>
+                                                    {% endif %}
+                                                  {% endif %}
+                                                {% endif %}
+                                                
+                                                {% for num in medya.paginator.page_range %}
+                                                  {% if medya.number == num %}
+                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% endif %}
+                                                {% endfor %}
+                                                
+                                                {% if medya.has_next %}
+                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                    <li class="page-item"><span class="page-link">...</span></li>
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% endif %}
+                                                
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                {% endif %}
+                                                </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -182,11 +200,11 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6">
-                        <script>document.write(new Date().getFullYear())</script> © Velzon.
+                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
                     </div>
                     <div class="col-sm-6">
                         <div class="text-sm-end d-none d-sm-block">
-                            Design & Develop by Themesbrand
+                            
                         </div>
                     </div>
                 </div>
@@ -198,7 +216,7 @@
 {% block footer %}
 {% for i in  santiyeler %}
 <!-- END layout-wrapper -->
-<div class="invoice-detail-modal" id = "{{i.id}}">
+<div class="invoice-detail-modal" id="invoice-detail-modal{{i.id}}">
     <div class="wrapper">
         <div class="modal-head">
             <div class="invoice-title">
@@ -214,7 +232,7 @@
         <div class="modal-body">
             <div class="top">
                 <div class="title"><h4>Satış Faturası</h4></div>
-                <div class="category"><span>Kategori</span></div>
+                <div class="category"><span>{{i.gelir_kategorisi.gelir_kategori_adi}}</span></div>
             </div>
             <div class="fatura-info">
                 <div class="info-item">
@@ -227,16 +245,21 @@
                 </div>
                 <div class="info-item">
                     <div class="title"><h5>Düzenleme Tarihi</h5></div>
-                    <div class="value"><span>03-10-2023</span></div>
+                    <div class="value"><span>{{i.fatura_tarihi}}</span></div>
                 </div>
                 <div class="info-item">
                     <div class="title"><h5>VADE TARİHİ</h5></div>
-                    <div class="value"><span>05-02-2024</span></div>
+                    <div class="value"><span>{{i.vade_tarihi}}</span></div>
                 </div>
             </div>
             <div class="fature-desc">
                 <div class="title"><h5>Açıklama</h5></div>
-                <div class="value"><span>Açıklama yazısı gelecek.</span></div>
+                <div class="value"><span>
+                {% if i.aciklama %}
+                    {{i.aciklama}}
+                {% else %}
+                {% endif %}
+                </span></div>
             </div>
             <div class="title">
                 <h5>Fatura Kalemleri</h5>
@@ -248,21 +271,19 @@
                     <h5>Fiyat</h5>
                     <h5>Toplam</h5>
                 </div>
-                <div class="table-item">
-                    <div class="title"><span>Filan</span></div>
-                    <div class="adet">1</div>
-                    <div class="fiyat"><span>100<span>$</span></span></div>
-                    <div class="toplam"><span>100<span>$</span></span></div>
-                </div>
-                <div class="table-item">
-                    <div class="title"><span>Falan</span></div>
-                    <div class="adet">1</div>
-                    <div class="fiyat"><span>100<span>$</span></span></div>
-                    <div class="toplam"><span>100<span>$</span></span></div>
-                </div>
+                {% kalemleri_getir_gelir_faturasi_icin i as bilgi_getir %}
+                {% for j in bilgi_getir %}
+                    <div class="table-item">
+                        <div class="title"><span>{{j.urun_bilgisi.urun_adi}}</span></div>
+                        <div class="adet">{{j.urun_adeti}}</div>
+                        <div class="fiyat"><span>{{j.urun_fiyati}}<span>$</span></span></div>
+                        <div class="toplam"><span>{% carpma_islemi j.urun_adeti j.urun_fiyati %}<span>$</span></span></div>
+                    </div>
+                {% endfor %}
+                {% kalemleri_getir_gelir_faturasi_icin_toplam_flan i as topla %}
                 <div class="table-total">
-                    <div class="fiyat"><span>100<span>$</span></span></div>
-                    <div class="toplam"><span>100<span>$</span></span></div>
+                    <div class="fiyat"><span>{{topla.toplam}}<span>$</span></span></div>
+                    <div class="toplam"><span>{{topla.genel}}<span>$</span></span></div>
                 </div>
             </div>
             <div class="eklenen-kasa">
@@ -280,7 +301,7 @@
             <div class="kalan">
                 <div class="wrapper">
                     <div title="ekle" class="ekle">
-                        <span class="mdi mdi-plus-circle"></span>
+                        <span id="{{i.id}}" class="mdi mdi-plus-circle"></span>
                         <span>KALAN</span>
                     </div>
                     <div class="price">
@@ -288,46 +309,51 @@
                     </div>
                 </div>
             </div>
-            <div class="tahsilatEkle">
-                <form>
+            <div class="tahsilatEkle" id="tahsilatEkle{{i.id}}">
+                <form method="post" action="{% url 'accounting:gelir_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="text" hidden value="{{i.id}}" name="faturabilgisi">
                     <div class="input-item">
                         <label>TÜR</label>
-                        <select>
-                            <option value="nakitBanka">Nakit / Banka</option>
-                            <option disabled>ÇEK VEYA SENET</option>
-                            <option value="cek">ÇEK</option>
-                            <option value="senet">SENET</option>
+                        <select name="odemeturu">
+                            <option value="0">Nakit / Banka</option>
+                            <option value="1" disabled>ÇEK VEYA SENET</option>
+                            <option value="2">ÇEK</option>
+                            <option value="3">SENET</option>
                         </select>
                     </div>
                     <div class="input-item">
                         <label>HESAP</label>
-                        <select>
-                            <option>Kasa Hesabı</option>
+                        <select name="kasabilgisi">
+                            {% for m in kasa %}
+                                <option value="{{m.id}}">{{m.kasa_adi}}</option>
+                            {% endfor %}
+                            
                         </select>
                     </div>
                     <div class="input-item">
                         <label>TARİH</label>
-                        <input type="date" />
+                        <input required name="islemtarihi" type="date" />
                     </div>
                     <div class="input-item">
                         <label>TUTAR</label>
-                        <input type="text" placeholder="105000.41" />
+                        <input type="number" required step="0.01" value="{% kalan_tutuar i %}" max="{% kalan_tutuar i %}" min="0"  name="islemtutari" placeholder="105000.41" />
                         <span class="mdi mdi-currency-usd"></span>
                     </div>
                     <div class="input-item">
                         <label>MAKBUZ NO</label>
-                        <input type="text" />
+                        <input name="makbuznumarasi" type="text" />
                     </div>
                     <div class="input-item">
                         <label>AÇIKLAMA</label>
-                        <input type="text" />
+                        <input name="aciklama_bilgisi" type="text" />
                     </div>
                     <div class="input-item">
                         <label>DOSYA</label>
-                        <input type="file" />
+                        <input name="dosya" type="file" />
                     </div>
                     <div class="buttons">
-                        <span>Vazgeç</span>
+                        <span id ="{{i.id}}">Vazgeç</span>
                         <input type="submit" value="Tahsilat İşle" />
                     </div>
                 </form>

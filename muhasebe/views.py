@@ -752,6 +752,20 @@ def gelirler_sayfasi(request):
         content["kullanicilar"] =kullanicilar
     else:
         profile = Gelir_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user)
+        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET:
+        search = request.GET.get("search")
+        tarih = request.GET.get("tarih")
+        if search:
+            if super_admin_kontrolu(request):
+                profile =Gelir_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                content["kullanicilar"] =kullanicilar
+            else:
+                profile = Gelir_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if tarih :
+            profile = profile.filter(fatura_tarihi  =tarih)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
     
@@ -763,6 +777,7 @@ def gelirler_sayfasi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
+        
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
@@ -894,6 +909,25 @@ def gelir_faturasi_kaydet(request):
     
     return redirect("accounting:gelirler_sayfasi")
 
+
+def gelir_odemesi_ekle(request):
+
+    if request.POST:
+        faturabilgisi = request.POST.get("faturabilgisi")
+        odemeturu = request.POST.get("odemeturu")
+        kasabilgisi = request.POST.get("kasabilgisi")
+        islemtarihi = request.POST.get("islemtarihi")
+        islemtutari = request.POST.get("islemtutari")
+        makbuznumarasi = request.POST.get("makbuznumarasi")
+        aciklama_bilgisi = request.POST.get("aciklama_bilgisi")
+        dosya = request.FILES.get("dosya")
+        Gelir_odemesi.objects.create(
+            gelir_kime_ait_oldugu =get_object_or_none(Gelir_Bilgisi, id = faturabilgisi),
+            gelir_turu = odemeturu,kasa_bilgisi = get_object_or_none(Kasa,id = kasabilgisi),
+            tutar  =islemtutari,tarihi = islemtarihi,gelir_makbuzu = dosya,
+            makbuz_no = makbuznumarasi,aciklama = aciklama_bilgisi
+        )
+    return redirect("accounting:gelirler_sayfasi")
 #Gelirler Sayfası
 
 #Gider Sayfası
