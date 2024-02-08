@@ -225,7 +225,7 @@
             <div class="invoice-icons">
                 <div class="icon-item print-icon"><span title="Yazdır" class="mdi mdi-printer-outline"></span></div>
                 <div class="icon-item cancel-icon"><span title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
-                <div class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></div>
+                <a href="{% url 'accounting:gelir_duzenle' i.id %}" class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></a>
                 <div class="icon-item close-icon"><span title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
             </div>
         </div>
@@ -292,7 +292,7 @@
                         <span>18-01-2024</span>
                     </div>
                     <div title="Makbuzu Görüntüle" class="makbuz">
-                        <span class="mdi mdi-text-box-search-outline"></span>
+                        <span id="{{i.id}}" class="mdi mdi-text-box-search-outline"></span>
                         <span>Kasa Hesabı</span>
                     </div>
                     <div class="fiyat"><span>3,600 <span>$</span></div>
@@ -362,7 +362,8 @@
     </div>
 </div>
 {% endfor %}
-<div class="tahsilat-makbuzu-modal">
+{% for i in  santiyeler %}
+<div id="tahsilat-makbuzu-modal{{i.id}}" class="tahsilat-makbuzu-modal">
     <div class="wrapper">
         <div class="modal-head">
             <div class="invoice-title">
@@ -372,28 +373,41 @@
                 <div class="icon-item print-icon"><span title="Yazdır" class="mdi mdi-printer-outline"></span></div>
                 <div class="icon-item cancel-icon"><span title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
                 <div class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></div>
-                <div class="icon-item close-icon"><span title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
+                <div class="icon-item close-icon"><span id="{{i.id}}" title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
             </div>
         </div>
-        <div class="modal-body">
+        <style>
+       
+        div.scroll {
+            margin: 4px, 4px;
+            height: 400px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            text-align: justify;
+        }
+    </style>
+        {% makbuzlari_getir i.id as gelen_makbuzlar %}
+        {% kalemleri_getir_gelir_faturasi_icin_toplam_flan i as topla %}
+        <div class="modal-body scroll">
             <div class="hesap">
                 <h2>CARİ HESABI</h2>
-                <span><a href="">Cari Adı</a></span>
+                <span><a href="">{{i.cari_bilgisi.cari_adi}}</a></span>
             </div>
+            {% for k in gelen_makbuzlar %}           
             <div class="odeme-tarihi">
                 <div class="left">
                     <h2>ÖDEME TARİHİ</h2>
-                    <span>18 Ocak 2024 Cuma</span>
+                    <span>{{k.tarihi|date:'d-m-Y'}}</span>
                 </div>
                 <div class="right">
                     <h2>KASA HESABI</h2>
-                    <span>Kasa Hesabı</span>
+                    <span>{{k.kasa_bilgisi.kasa_adi}}</span>
                 </div>
             </div>
             <div class="islem-tarihi">
                 <div class="left">
                     <h2>İŞLEM TARİHİ</h2>
-                    <span>18 Ocak 2024 Cuma</span>
+                    <span>{{k.kayit_tarihi|date:'d-m-Y'}}</span>
                 </div>
                 <div class="right">
                     <h2>KULLANICI</h2>
@@ -402,8 +416,9 @@
             </div>
             <div class="tutar">
                 <h2>TUTAR</h2>
-                <span>500 $</span>
+                <span>{{k.tutar}} $</span>
             </div>
+            {% endfor %}
             <div class="fatura-table">
                 <div class="table-head">
                     <div class="item"><h2>İŞLENEN FATURA</h2></div>
@@ -412,19 +427,20 @@
                 </div>
                 <div class="table-body">
                     <div class="fatura-item">
-                        <div class="item"><span>18 Ocak 2024 Perşembe</span></div>
-                        <div class="item"><span>500 $</span></div>
-                        <div class="item"><span>1100 $</span></div>
+                        <div class="item"><span>{{i.fatura_tarihi|date:'d-m-Y'}}</span></div>
+                        <div class="item"><span>{{topla.genel}} $</span></div>
+                        <div class="item"><span>{{topla.genel}} $</span></div>
                     </div>
                 </div>
             </div>
             <div class="kalan">
                 <h2>KALAN</h2>
-                <span>500 $</span>
+                <span>{% kalan_tutuar i %} $</span>
             </div>
         </div>
     </div>
 </div>
+{% endfor %}
 <div class="delete-fatura-modal">
     <div class="wrapper">
         <div class="title"><h4>Satış Faturası Silme İşlemini Onaylayınız</h4></div>

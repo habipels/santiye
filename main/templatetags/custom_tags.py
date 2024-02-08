@@ -337,3 +337,37 @@ def kalan_tutuar(id):
     for i in a:
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
     return round(float(genel_toplam - toplam),2)
+
+@register.simple_tag
+
+def makbuzlari_getir(id):
+    a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__id = id)
+    return a
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+import hashlib
+
+"""@register.simple_tag
+def generate_token(object_id):
+    hash_input = force_bytes(object_id)
+    hash_value = hashlib.sha256(hash_input).digest()
+    return urlsafe_base64_encode(hash_value)"""
+
+import base64
+import hashlib
+@register.simple_tag
+def generate_token(number):
+    # Sayıyı stringe dönüştür
+    number_str = str(number)
+    
+    # Stringi bayt dizisine dönüştür
+    byte_str = number_str.encode('utf-8')
+    
+    # Bayt dizisini SHA-256 ile şifrele
+    hashed_bytes = hashlib.sha256(byte_str).digest()
+    
+    # Şifrelenmiş bayt dizisini base64 formatında kodla
+    token = base64.urlsafe_b64encode(hashed_bytes)
+    
+    # Oluşturulan tokeni döndür
+    return token

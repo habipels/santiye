@@ -65,15 +65,16 @@ def loginUser(request):
         if user is None:
             messages.info(request,"Kullanıcı Adı veya Parola Hatalı")
             return render(request,"account/login.html",context)
+        messages.success(request,"Başarıyla Giriş Yaptınız")
+        login(request,user)
         try:
             lock_status = LockScreenStatus.objects.get(user=request.user)
             lock_status.is_locked=False
             lock_status.save()
-        except LockScreenStatus.DoesNotExist:
+        except :
             # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
             lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=False)
-        messages.success(request,"Başarıyla Giriş Yaptınız")
-        login(request,user)
+        
         return redirect("/")
     return render(request,"account/login.html",context)
 @login_required

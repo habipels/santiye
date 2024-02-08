@@ -17,6 +17,8 @@ window.addEventListener("DOMContentLoaded", () => {
     var tahsilatEkle = document.querySelectorAll("body > div.invoice-detail-modal > div > div.modal-body > div.kalan > div > div.ekle > span.mdi.mdi-plus-circle");
     var tahsilatPopup = document.querySelector(".invoice-detail-modal .tahsilatEkle");
     var tahsilatClose = document.querySelectorAll("body > div.invoice-detail-modal > div > div.modal-body > div.tahsilatEkle > form > div.buttons > span");
+    var tahsilatMakbuzuGoruntuleBtn = document.querySelectorAll("body > div.invoice-detail-modal > div > div.modal-body > div.eklenen-kasa > div > div.makbuz > span.mdi.mdi-text-box-search-outline");
+    var tahsilatMakbuzuKapat = document.querySelectorAll("body > div.tahsilat-makbuzu-modal > div > div.modal-head > div.invoice-icons > div.icon-item.close-icon > span");
     for (var i = 0; i < faturaItems.length; i++) {
         faturaItems[i].addEventListener("click", function() {
             var modalId = "invoice-detail-modal" + this.id;
@@ -37,6 +39,18 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
     
+    for (var i = 0; i < tahsilatMakbuzuGoruntuleBtn.length; i++) {
+        tahsilatMakbuzuGoruntuleBtn[i].addEventListener("click", function() {
+            var bilgis = "tahsilat-makbuzu-modal" + this.id;
+            openModal(bilgis);
+        });
+    }
+    for (var i = 0; i < tahsilatMakbuzuKapat.length; i++) {
+        tahsilatMakbuzuKapat[i].addEventListener("click", function() {
+            var da = "tahsilat-makbuzu-modal" + this.id;
+            closeModal(da);
+        });
+    }
 
     var closeButtons = document.querySelectorAll(".close-icon > span");
     closeButtons.forEach(function(button) {
@@ -54,21 +68,4 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    var tahsilatMakbuzuGoruntuleBtn = document.querySelector("body > div.invoice-detail-modal > div > div.modal-body > div.eklenen-kasa > div > div.makbuz > span.mdi.mdi-text-box-search-outline");
-    var tahsilatMakbuzuKapat = document.querySelector("body > div.tahsilat-makbuzu-modal > div > div.modal-head > div.invoice-icons > div.icon-item.close-icon > span");
-    tahsilatMakbuzuGoruntuleBtn.addEventListener("click", function() {
-        openModal("tahsilat-makbuzu-modal");
-    });
-    tahsilatMakbuzuKapat.addEventListener("click", function() {
-        closeModal("tahsilat-makbuzu-modal");
-    });
-
-    var makbuzDeleteBtn = document.querySelector("body > div.tahsilat-makbuzu-modal > div > div.modal-head > div.invoice-icons > div.icon-item.cancel-icon > span");
-    var makbuzDeleteCancelBtn = document.querySelector("body > div.delete-makbuz-modal > div > div.buttons > span");
-    makbuzDeleteBtn.addEventListener("click", function() {
-        openModal("delete-makbuz-modal");
-    });
-    makbuzDeleteCancelBtn.addEventListener("click", function() {
-        closeModal("delete-makbuz-modal");
-    });
 });
