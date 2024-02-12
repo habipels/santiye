@@ -2,6 +2,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from site_info.models import *
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
+from site_settings.models import *
 register = template.Library()
 
 #@register.filter
@@ -233,9 +234,17 @@ def gelir_faturasi_no(id):
     a = str(a)
     b = len(a)
     c = 8 - b
-    a = "#GLR"+(c*"0")+a
+    a = faturalardaki_gelir_gider_etiketi.objects.last().gelir_etiketi+(c*"0")+a
     return a
-
+@register.simple_tag
+def gider_faturasi_no(id):
+    a = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu__id = id).count()
+    a = a+1
+    a = str(a)
+    b = len(a)
+    c = 8 - b
+    a = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+a
+    return a
 from datetime import datetime
 
 @register.simple_tag
@@ -295,7 +304,13 @@ def toplam_tutar_cikarma(id):
     for i in a:
         topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
     return topla
-
+@register.simple_tag
+def toplam_tutar_cikarmai(id):
+    a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
+    topla = 0
+    for i in a:
+        topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+    return topla
 @register.simple_tag
 def toplam_odenme_tutar(id):
     a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
@@ -303,10 +318,20 @@ def toplam_odenme_tutar(id):
     for i in a:
         topla = topla + i.tutar
     return topla
-
+@register.simple_tag
+def toplam_odenme_tutari(id):
+    a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+    topla = 0
+    for i in a:
+        topla = topla + i.tutar
+    return topla
 @register.simple_tag
 def kalemleri_getir_gelir_faturasi_icin(id):
     a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+    return a
+@register.simple_tag
+def kalemleri_getir_gelir_faturasi_icini(id):
+    a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
     return a
 @register.simple_tag
 def carpma_islemi(a,b):
@@ -325,7 +350,19 @@ def kalemleri_getir_gelir_faturasi_icin_toplam_flan(id):
              "genel":genel_toplam}
     
     return sonuc
-
+@register.simple_tag
+def kalemleri_getir_gelir_faturasi_icin_toplam_flani(id):
+    a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
+    
+    toplam_urun_fiyati = 0
+    genel_toplam = 0
+    for i in a:
+        toplam_urun_fiyati = toplam_urun_fiyati+i.urun_fiyati
+        genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+    sonuc = {"toplam" : toplam_urun_fiyati,
+             "genel":genel_toplam}
+    
+    return sonuc
 @register.simple_tag
 def kalan_tutuar(id):
     a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
@@ -337,11 +374,25 @@ def kalan_tutuar(id):
     for i in a:
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
     return round(float(genel_toplam - toplam),2)
-
+@register.simple_tag
+def kalan_tutuari(id):
+    a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+    toplam = 0
+    for i in a:
+        toplam = toplam+i.tutar
+    a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
+    genel_toplam = 0
+    for i in a:
+        genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+    return round(float(genel_toplam - toplam),2)
 @register.simple_tag
 
 def makbuzlari_getir(id):
     a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__id = id)
+    return a
+@register.simple_tag
+def makbuzlari_getiri(id):
+    a = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu__id = id)
     return a
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode

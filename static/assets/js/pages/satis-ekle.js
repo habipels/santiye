@@ -24,8 +24,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
         // Toplam fiyatları güncelle
         updateTotal();
-        araToplam.textContent = 0 + " $"
-        tumToplam.textContent = 0 + " $"
 
         // Counter'ı artır
         itemCounter++;
@@ -64,12 +62,18 @@ function updateTotal() {
     var araToplam = document.querySelector("#satis-ekle > div.card.hesaplar > div > div:nth-child(1) > span");
     var tumToplam = document.querySelector("#satis-ekle > div.card.hesaplar > div > div:nth-child(2) > span");
 
-    for (var i = 0; i < toplamInputs.length; i++) {
-        maxTotal += Number(toplamInputs[i].value);
+    var indirim = document.getElementById("indirim");
+    var indirim_toplam = 0;
+    for(var x = 0; x<toplamInputs.length; x++){
+        maxTotal = Number(toplamInputs[x].value) + Number(maxTotal);
     }
-
+    for (var u = 0; u < indirim.length; u++) {
+        indirim_toplam = indirim_toplam + parseFloat(indirim[u].value).toFixed(2);
+        alert(indirim[u].value);
+    }
+    
     araToplam.textContent = maxTotal + " $";
-    tumToplam.textContent = maxTotal + " $";
+    tumToplam.textContent = parseFloat(maxTotal).toFixed(2)-parseFloat(indirim_toplam).toFixed(2) + " $";
 }
 
 var addSpec = document.getElementsByClassName("specBtn");
@@ -90,20 +94,29 @@ const specAc = function(event){
 
 /*Delete Button function*/
 const itemDelete = function(event){
-    event.target.parentElement.parentElement.remove();
+    if(item.length > 1){
+        event.target.parentElement.parentElement.remove();
+    }
+    
     if(item.length < 2){
         for(var i = 0; i<item.length; i++){
-            closeItem[i].style.display = "none";
+            closeItem[i].style.display = "flex";
         }
     }
     var maxTotal = 0;
     var araToplam = document.querySelector("#satis-ekle > div.card.hesaplar > div > div:nth-child(1) > span");
     var tumToplam = document.querySelector("#satis-ekle > div.card.hesaplar > div > div:nth-child(2) > span");
+    
+    var indirim = document.querySelectorAll("#indirim");
+    var indirim_toplam = 0;
     for(var x = 0; x<toplamInputs.length; x++){
         maxTotal = Number(toplamInputs[x].value) + Number(maxTotal);
     }
+    for (var u = 0; u < indirim.length; u++) {
+        indirim_toplam = indirim_toplam + parseFloat(indirim[u].value).toFixed(2);
+    }
     araToplam.textContent = maxTotal + " $";
-    tumToplam.textContent = maxTotal + " $";
+    tumToplam.textContent = parseFloat(maxTotal)-parseFloat(indirim_toplam) + " $";
 }
 
 /*Açıklama Ekle Function*/

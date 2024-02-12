@@ -393,31 +393,35 @@
                 <h2>CARİ HESABI</h2>
                 <span><a href="">{{i.cari_bilgisi.cari_adi}}</a></span>
             </div>
-            {% for k in gelen_makbuzlar %}           
+            {% for k in gelen_makbuzlar %}
+                   
             <div class="odeme-tarihi">
-                <div class="left">
-                    <h2>ÖDEME TARİHİ</h2>
-                    <span>{{k.tarihi|date:'d-m-Y'}}</span>
+                
+            <table>
+                <thead>
+                    <tr>
+                        <th>ÖDEME TARİHİ</th>
+                        <th>KASA HESABI</th>
+                        <th>İŞLEM TARİHİ</th>
+                        <th>KULLANICI</th>
+                        <th>TUTAR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{k.tarihi|date:'d-m-Y'}}</td>
+                        <td>{{k.kasa_bilgisi.kasa_adi}}</td>
+                        <td>{{k.kayit_tarihi|date:'d-m-Y'}}</td>
+                        <td>Tolga</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                        <td>{{k.tutar}} $</td>
+                    </tr>
+                </tbody>
+            </table>
                 </div>
-                <div class="right">
-                    <h2>KASA HESABI</h2>
-                    <span>{{k.kasa_bilgisi.kasa_adi}}</span>
-                </div>
-            </div>
-            <div class="islem-tarihi">
-                <div class="left">
-                    <h2>İŞLEM TARİHİ</h2>
-                    <span>{{k.kayit_tarihi|date:'d-m-Y'}}</span>
-                </div>
-                <div class="right">
-                    <h2>KULLANICI</h2>
-                    <span>Tolga</span>
-                </div>
-            </div>
-            <div class="tutar">
-                <h2>TUTAR</h2>
-                <span>{{k.tutar}} $</span>
-            </div>
             {% endfor %}
             <div class="fatura-table">
                 <div class="table-head">

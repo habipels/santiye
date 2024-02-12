@@ -58,14 +58,14 @@ class Gelir_Bilgisi(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 class Gider_Bilgisi(models.Model):
-    gider_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gider Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     cari_bilgisi = models.ForeignKey(cari,verbose_name="Cari Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
     fatura_tarihi = models.DateTimeField(null=True,verbose_name="Fatura Tarihi",blank = True)
+    vade_tarihi = models.DateTimeField(null=True,verbose_name="Vade Tarihi",blank = True)
     fatura_no = models.CharField(verbose_name="Fatura No",max_length=200,blank=True,null=True)
     aciklama = models.TextField(verbose_name="Gelir Açıklaması",blank=True,null=True)
-    gider_kategorisi = models.ForeignKey(gider_kategorisi,verbose_name="Gider Kategori Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
-    gider_etiketi_sec = models.ManyToManyField(gider_etiketi,blank=True,null=True)
-    tutar = models.FloatField(verbose_name="Toplam Tutar",default=0)
+    gelir_kategorisi = models.ForeignKey(gider_kategorisi,verbose_name="Gelirin Kategori Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
+    gelir_etiketi_sec = models.ManyToManyField(gider_etiketi,blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 
@@ -92,8 +92,10 @@ class gider_urun_bilgisi(models.Model):
     urun_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     urun_bilgisi = models.ForeignKey(urunler,blank=True,null=True,verbose_name="Ürün Bilgisi",on_delete=models.SET_NULL)
     urun_fiyati = models.FloatField(verbose_name="Ürün Fiyatı",default=0)
-    urun_adeti = models.FloatField(verbose_name="Ürün Adeti",default=0)
-    gider_bilgis = models.ForeignKey(Gider_Bilgisi,blank=True,null=True,verbose_name="Gider Bilgisi",on_delete=models.SET_NULL)
+    urun_indirimi = models.FloatField(verbose_name="Ürün Fiyatı",default=0)
+    urun_adeti = models.BigIntegerField(verbose_name="Ürün Adeti",default=0)
+    aciklama = models.CharField(max_length = 400,verbose_name ="Açıklama",blank = True,null = True)
+    gider_bilgis = models.ForeignKey(Gider_Bilgisi,blank=True,null=True,verbose_name="Gelir Bilgisi",on_delete=models.SET_NULL)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 class gelir_urun_bilgisi(models.Model):
     urun_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -119,9 +121,14 @@ class Gelir_odemesi(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 
 class Gider_odemesi(models.Model):
-    gider_kime_ait_oldugu = models.ForeignKey(Gider_Bilgisi,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    gelir_kime_ait_oldugu = models.ForeignKey(Gider_Bilgisi,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    gelir_turu = models.CharField(max_length = 200,verbose_name="gelir_turu",blank = True,null=True)
+    kasa_bilgisi = models.ForeignKey(Kasa,blank=True,null = True, verbose_name ="Kasa",on_delete=models.SET_NULL)
     tutar = models.FloatField(verbose_name = "Tutar",default = 0)
-    gider_makbuzu = models.FileField(upload_to='makbuzlar/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    tarihi = models.DateTimeField(blank=True,null=True)
+    gelir_makbuzu = models.FileField(upload_to='makbuzlar/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    makbuz_no = models.CharField(max_length = 200,verbose_name="Makbuz No",blank = True,null=True)
+    aciklama = models.CharField(max_length = 200,verbose_name="Açıklama",blank = True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 

@@ -58,6 +58,8 @@ urlpatterns = [
     #gelirler Sayfası
     #giderler Sayfası
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
+    path("addexpenses", views.gider_ekle, name="gider_ekle"),
+    path("saveaddexpenses", views.gider_faturasi_kaydet, name="gider_faturasi_kaydet"),
     #giderler Sayfası
     path('search/', views.search, name='search'),
     path('cari/', views.cariler_bilgisi, name='cariler_bilgisi'),
