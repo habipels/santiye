@@ -394,6 +394,8 @@ def makbuzlari_getir(id):
 def makbuzlari_getiri(id):
     a = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu__id = id)
     return a
+
+
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 import hashlib

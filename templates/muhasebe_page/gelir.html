@@ -93,6 +93,7 @@
                                             </thead>
                                             <tbody class="list form-check-all" id="invoice-list-data">
                                                 {% for i in  santiyeler %}
+                                                
                                                 <tr class="faturabilgisi" id="{{i.id}}">
                                                     <td><span>{{i.fatura_no}}</span></td>
                                                     <td><span>{{i.cari_bilgisi.cari_adi}}</span></td>
@@ -195,7 +196,37 @@
                 <!--end row-->
             </div>
         </div>
-        
+        {% for i in  santiyeler %}
+        {% makbuzlari_getir i.id as gelen_makbuzlar %}
+        {% for k in gelen_makbuzlar %}
+        <div class="modal" id="makbuzsil{{k.id}}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Ödeme Sil</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    Ödemeyi Silmek İstediğinizden Emin Misiniz ? 
+                    <input type="text" name="makbuz" value="0" hidden>
+                    <input type="text" name="makbuzidsi" value="{{k.id}}" hidden>
+                </div>
+                    
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
+                    <button type="button"  id="{{k.id}}-{{k.gelir_kime_ait_oldugu.id}}" data-bs-dismiss="modal" class="btn btn-danger makbuzsill" >Sil</button>
+                </div>
+
+                </div>
+            </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
@@ -388,13 +419,17 @@
     </style>
         {% makbuzlari_getir i.id as gelen_makbuzlar %}
         {% kalemleri_getir_gelir_faturasi_icin_toplam_flan i as topla %}
-        <div class="modal-body scroll">
+        <div id="guncelle{{i.id}}" class="modal-body scroll ">
             <div class="hesap">
                 <h2>CARİ HESABI</h2>
                 <span><a href="">{{i.cari_bilgisi.cari_adi}}</a></span>
             </div>
             {% for k in gelen_makbuzlar %}
-                   
+                <!-- The Modal -->
+                
+                   <style>.odeme-tarihi table, .odeme-tarihi th,.odeme-tarihi td {
+                    border: 1px solid black;
+                  }</style>
             <div class="odeme-tarihi">
                 
             <table>
@@ -416,7 +451,13 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="4"></td>
+                        {% if k.gelir_makbuzu %}
+                             <td colspan="2"><a target="_blank" href="//{{k.gelir_makbuzu.url}}">Resmi Göster</a></td>
+                        {% else %}
+                        <td colspan="2">Resim Yok</td>
+                        {% endif %}
+                       
+                        <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil{{k.id}}">SİL</button></td>
                         <td>{{k.tutar}} $</td>
                     </tr>
                 </tbody>
@@ -488,6 +529,34 @@
 <script src="{% static '' %}assets/libs/sweetalert2/sweetalert2.min.js"></script>
 <!-- App js -->
 <script src="{% static '' %}assets/js/app.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+         
+<script>
+    $(document).ready(function () {
+  $(".makbuzsill").click(function (event) {
+    makbuz = "0",
+    y = this.id.split('-')[0],
+    makbuzidsi = y,
+    a = this.id.split('-')[1],
+    $.ajax({
+      type: "POST",
+      url: "{% url 'accounting:makbuz_sil' %}",
+      data: {
+        makbuz: makbuz,
+        makbuzidsi :makbuzidsi,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+    
+        $("#guncelle"+ String(a) ).load(window.location.href + " #guncelle"+ String(a) );
+        document.querySelector("#guncelle"+ String(a)).style.display="flex";
+    }
+    });
+    return false; //<---- move it here
+  });
+});
+</script>
 {% endblock footer %}
     
 

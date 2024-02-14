@@ -952,7 +952,17 @@ def gelir_odemesi_ekle(request):
         )
     return redirect("accounting:gelirler_sayfasi")
 #Gelirler Sayfası
-
+def makbuz_sil(request):
+    if request.POST:
+        gelir_gider = request.POST.get("makbuz")
+        makbuz_bilgisi = request.POST.get("makbuzidsi")
+        if gelir_gider == "0":
+            Gelir_odemesi.objects.filter(id = makbuz_bilgisi).delete()
+            return redirect("accounting:gelirler_sayfasi")
+        elif gelir_gider == "1":
+            Gider_odemesi.objects.filter(id = makbuz_bilgisi).delete()
+        
+            return redirect("accounting:giderler_sayfasi")
 #Gider Sayfası
 def giderler_sayfasi(request):
     content = sozluk_yapisi()

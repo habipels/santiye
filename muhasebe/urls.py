@@ -60,6 +60,7 @@ urlpatterns = [
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
     path("addexpenses", views.gider_ekle, name="gider_ekle"),
     path("saveaddexpenses", views.gider_faturasi_kaydet, name="gider_faturasi_kaydet"),
+    path("delcomeandexpenses", views.makbuz_sil, name="makbuz_sil"),
     #giderler Sayfası
     path('search/', views.search, name='search'),
     path('cari/', views.cariler_bilgisi, name='cariler_bilgisi'),
