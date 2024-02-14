@@ -91,7 +91,9 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="input-item doviz">
+                            </div>
+                            <div class="form2">
+                                  <div class="input-item doviz">
                                     <label>DÖVİZ KURU</label>
                                     <input type="text" placeholder="Açıklama" value="USD" disabled />
                                 </div>
@@ -101,6 +103,8 @@
                                     <input type="text"  placeholder="Açıklama" value="{% gelir_faturasi_no request.user.id %}" disabled />
                                 </div>
                             </div>
+                              
+                           
                         </div>
                     </div>
                     <div class="card">
@@ -119,7 +123,7 @@
 
                                 <div class="table-item">
                                     <div class="urun">
-                                        <input type="search" name="urunadi" class="den" id="searchInput" placeholder="Ürün / Hizmet Adı" />
+                                        <input type="search" name="urunadi" class="den"  id="searchInput" placeholder="Ürün / Hizmet Adı" />
 
                                     </div>
                                     <div class="miktar">
@@ -142,7 +146,7 @@
                                         </ul>
                                         <span style="display: flex !important;" class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
                                     </div>
-                                    <div class="indirim"><input id="indirim" name="indirim" value="0" type="number" placeholder="İndirim gir %"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
+                                    <div class="indirim"><input id="indirim" class="indiirm" name="indirim" value="0" type="number" placeholder="İndirim gir %"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
                                     <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="Açıklama Giriniz"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
                                 </div>
                               
@@ -154,13 +158,15 @@
                     </div>
                     <div class="card hesaplar">
                         <div class="card-body">
-                            <div class="price-item">
+                            <div class="text-center">
                                 <h2>ARA TOPLAM</h2>
-                                <span>0 $</span>
+                                <hr>
+                                <h3 class="aratoplam text-center">0</h3>
                             </div>
-                            <div class="price-item">
+                            <div class="text-center">
                                 <h2>ÖDENECEK TUTAR</h2>
-                                <span>0 $</span>
+                                <hr>
+                                <h3 class="odenecektutar text-center">0</h3>
                             </div>
                         </div>
                     </div>
@@ -175,7 +181,7 @@
                         <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
                     </div>
                     <div class="col-sm-6">
-                        <div class="text-sm-end d-none d-sm-block">
+                        <div  class="text-sm-end d-none d-sm-block">
                            
                         </div>
                     </div>
@@ -222,7 +228,7 @@
         <div class="calendar-table"></div>
         <div class="calendar-time" style="display: none;"></div>
     </div>
-    <div class="drp-buttons"><span class="drp-selected">01/01/2024 - 01/30/2024</span><button
+    <div   class="drp-buttons"><span class="drp-selected">01/01/2024 - 01/30/2024</span><button
             class="cancelBtn btn btn-sm btn-default" type="button">Cancel</button><button
             class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">Apply</button> </div>
 </div>
@@ -239,7 +245,19 @@
       });
     });
 </script>
-
+<style>
+    .ui-menu-item-wrapper:hover{
+        background-color: white !important;
+        color: black;
+    }
+    .ui-menu-item-wrapper{
+    background-color:  orange !important; 
+    max-width: 400px !important; 
+    z-index: 999 !important; 
+    font-size: 15px !important; 
+    list-style: none; color: white;
+    }
+    </style>
 <script src="{% static 'assets/js/pages/satis-ekle.js '%}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -249,17 +267,31 @@
 
 
     <script>
-        function hesaplama_islemi(){
+           
+        function enableAutocompleteForNewItems() {
+            function hesaplama_islemi(){
             
             var brimtutar = document.querySelectorAll(".bfiyatInput");
             var miktar = document.querySelectorAll(".miktarInput");
             var ana_toplam = document.querySelectorAll(".toplamInput");
+            var indirim = document.querySelectorAll(".indiirm");
+            var indirim_toplam = 0;
             for (var u = 0; u < brimtutar.length; u++) {
                 ana_toplam[u].value = parseFloat(miktar[u].value*brimtutar[u].value).toFixed(2);
                 }
-    
-    }
-        function enableAutocompleteForNewItems() {
+            var islem_sonucu = 0;
+            var aratoplam = document.querySelector(".aratoplam");
+            for (var u = 0; u < ana_toplam.length; u++) {
+                islem_sonucu = islem_sonucu+ parseFloat(ana_toplam[u].value).toFixed(2);
+                }
+                for (var u = 0; u < indirim.length; u++) {
+                    indirim_toplam = indirim_toplam + parseFloat(indirim[u].value);
+
+                    
+                }
+                aratoplam.textContent =String(parseFloat(islem_sonucu).toFixed(2))+" $";
+                document.querySelector(".odenecektutar").textContent = String(parseFloat(islem_sonucu).toFixed(2)-parseFloat(indirim_toplam).toFixed(2))+" $";
+    }    
     $('.den').autocomplete({
         source: '/accounting/search/',
         minLength: 2,
@@ -269,12 +301,12 @@
             $(this).siblings().val(ui.item.label);
             id = id.replace("searchInput", "bfiyatInput");
             document.getElementById(id).value = ui.item.value;
-            hesaplama_islemi()
+            hesaplama_islemi();
             return false;
         }
     }).data('ui-autocomplete')._renderItem = function(ul, item) {
         return $('<li>')
-            .append('<div>' + item.label + '<br>' + item.value + ' USD</div>')
+            .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
             .appendTo(ul);
     };
 }

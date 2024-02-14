@@ -930,7 +930,7 @@ def gelir_faturasi_kaydet(request):
                             aciklama = aciklama[i]
                         )
     
-    return redirect("accounting:gelirler_sayfasi")
+    return redirect("accounting:gider_sayfasi")
 
 
 def gelir_odemesi_ekle(request):
@@ -1113,6 +1113,32 @@ def gider_faturasi_kaydet(request):
                         )
     
     return redirect("accounting:giderler_sayfasi")
+def gider_odemesi_ekle(request):
+
+    if request.POST:
+        faturabilgisi = request.POST.get("faturabilgisi")
+        odemeturu = request.POST.get("odemeturu")
+        kasabilgisi = request.POST.get("kasabilgisi")
+        islemtarihi = request.POST.get("islemtarihi")
+        islemtutari = request.POST.get("islemtutari")
+        makbuznumarasi = request.POST.get("makbuznumarasi")
+        aciklama_bilgisi = request.POST.get("aciklama_bilgisi")
+        dosya = request.FILES.get("dosya")
+        Gider_odemesi.objects.create(
+            gelir_kime_ait_oldugu =get_object_or_none(Gider_Bilgisi, id = faturabilgisi),
+            gelir_turu = odemeturu,kasa_bilgisi = get_object_or_none(Kasa,id = kasabilgisi),
+            tutar  =islemtutari,tarihi = islemtarihi,gelir_makbuzu = dosya,
+            makbuz_no = makbuznumarasi,aciklama = aciklama_bilgisi
+        )
+    return redirect("accounting:giderler_sayfasi")
 
 
+def fatura_sil(request):
+    if request.POST:
+        gelir_gider = request.POST.get("gelir_gider")
+        id_bilgisi  = request.POST.get("idbilgisicek")
+        if gelir_gider == "0":
+            return redirect("accounting:gelirler_sayfasi")
+        elif gelir_gider == "1":
+            return redirect("accounting:giderler_sayfasi")
 #Gider Sayfası

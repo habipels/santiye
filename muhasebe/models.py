@@ -119,6 +119,7 @@ class Gelir_odemesi(models.Model):
     aciklama = models.CharField(max_length = 200,verbose_name="Açıklama",blank = True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    islemi_yapan = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank = True,null = True,verbose_name = "İşlemi Yapan")
 
 class Gider_odemesi(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(Gider_Bilgisi,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
@@ -131,7 +132,7 @@ class Gider_odemesi(models.Model):
     aciklama = models.CharField(max_length = 200,verbose_name="Açıklama",blank = True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
-
+    islemi_yapan = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank = True,null = True,verbose_name = "İşlemi Yapan")
 class faturalar_icin_logo(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     gelir_makbuzu = models.FileField(upload_to='faturalogosu/',verbose_name="Sayfaya Logo Light",blank=True,null=True)

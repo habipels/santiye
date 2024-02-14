@@ -61,8 +61,10 @@ urlpatterns = [
     path("addexpenses", views.gider_ekle, name="gider_ekle"),
     path("saveaddexpenses", views.gider_faturasi_kaydet, name="gider_faturasi_kaydet"),
     path("delcomeandexpenses", views.makbuz_sil, name="makbuz_sil"),
+    path("savereceivingpayment", views.gider_odemesi_ekle, name="gider_odemesi_ekle"),
     #giderler Sayfası
     path('search/', views.search, name='search'),
+    path('delivon', views.fatura_sil, name='fatura_sil'),
     path('cari/', views.cariler_bilgisi, name='cariler_bilgisi'),
     path('denme/', views.denme, name='denme'),
 ]

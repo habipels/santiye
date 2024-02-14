@@ -62,7 +62,7 @@
                                                 <div class="flex-shrink-0">
                                                     <div class="d-flex gap-2 flex-wrap">
                                                         <button class="btn btn-primary" id="remove-actions" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
-                                                        <a href="{% url 'accounting:gelir_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> Create Invoice</a>
+                                                        <a href="{% url 'accounting:gider_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> Create Invoice</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -105,8 +105,8 @@
                                                     {% if i.silinme_bilgisi %}
                                                     <td class="cancel"><span>İPTAL</span></td>
                                                     {% else %}
-                                                   {% toplam_tutar_cikarma i as tutar %}
-                                                    {% toplam_odenme_tutar i as odeme %}
+                                                   {% toplam_tutar_cikarmai i as tutar %}
+                                                    {% toplam_odenme_tutari i as odeme %}
                                                     {% if  odeme == tutar %}
                                                         <td class="paid"><span>ÖDENDİ</span></td>
                                                     {% elif odeme > 0 %}
@@ -447,10 +447,7 @@
                         <td>{{k.tarihi|date:'d-m-Y'}}</td>
                         <td>{{k.kasa_bilgisi.kasa_adi}}</td>
                         <td>{{k.kayit_tarihi|date:'d-m-Y'}}</td>
-                        <td>{% if k.islemi_yapan.last_name %}
-                            {{k.islemi_yapan.last_name}}
-                        {% else %}
-                        {% endif %}</td>
+                        <td>Tolga</td>
                         <td></td>
                     </tr>
                     <tr>
@@ -538,7 +535,7 @@
 <script>
     $(document).ready(function () {
   $(".makbuzsill").click(function (event) {
-    makbuz = "0",
+    makbuz = "1",
     y = this.id.split('-')[0],
     makbuzidsi = y,
     a = this.id.split('-')[1],

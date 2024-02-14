@@ -49,7 +49,7 @@
                                             
                                         </div>
                                         <div class="col-sm-2">
-                                            <a href="{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
+                                            <a href="{% url 'accounting:gelirler_sayfasi' %}" type="button" class="btn btn-primary w-100">
                                                 Temizle
                                             </a>
                                             
@@ -93,6 +93,7 @@
                                             </thead>
                                             <tbody class="list form-check-all" id="invoice-list-data">
                                                 {% for i in  santiyeler %}
+                                                
                                                 <tr class="faturabilgisi" id="{{i.id}}">
                                                     <td><span>{{i.fatura_no}}</span></td>
                                                     <td><span>{{i.cari_bilgisi.cari_adi}}</span></td>
@@ -195,7 +196,37 @@
                 <!--end row-->
             </div>
         </div>
-        
+        {% for i in  santiyeler %}
+        {% makbuzlari_getiri  i.id as gelen_makbuzlar %}
+        {% for k in gelen_makbuzlar %}
+        <div class="modal" id="makbuzsil{{k.id}}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Ödeme Sil</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    Ödemeyi Silmek İstediğinizden Emin Misiniz ? 
+                    <input type="text" name="makbuz" value="0" hidden>
+                    <input type="text" name="makbuzidsi" value="{{k.id}}" hidden>
+                </div>
+                    
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
+                    <button type="button"  id="{{k.id}}-{{k.gelir_kime_ait_oldugu.id}}" data-bs-dismiss="modal" class="btn btn-danger makbuzsill" >Sil</button>
+                </div>
+
+                </div>
+            </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
@@ -271,7 +302,7 @@
                     <h5>Fiyat</h5>
                     <h5>Toplam</h5>
                 </div>
-                {% kalemleri_getir_gelir_faturasi_icin i as bilgi_getir %}
+                {% kalemleri_getir_gelir_faturasi_icini i as bilgi_getir %}
                 {% for j in bilgi_getir %}
                     <div class="table-item">
                         <div class="title"><span>{{j.urun_bilgisi.urun_adi}}</span></div>
@@ -310,7 +341,7 @@
                 </div>
             </div>
             <div class="tahsilatEkle" id="tahsilatEkle{{i.id}}">
-                <form method="post" action="{% url 'accounting:gelir_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
+                <form method="post" action="{% url 'accounting:gider_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="text" hidden value="{{i.id}}" name="faturabilgisi">
                     <div class="input-item">
@@ -386,38 +417,55 @@
             text-align: justify;
         }
     </style>
-        {% makbuzlari_getir i.id as gelen_makbuzlar %}
+        {% makbuzlari_getiri  i.id as gelen_makbuzlar %}
         {% kalemleri_getir_gelir_faturasi_icin_toplam_flani i as topla %}
-        <div class="modal-body scroll">
+        <div id="guncelle{{i.id}}" class="modal-body scroll ">
             <div class="hesap">
                 <h2>CARİ HESABI</h2>
                 <span><a href="">{{i.cari_bilgisi.cari_adi}}</a></span>
             </div>
-            {% for k in gelen_makbuzlar %}           
+            {% for k in gelen_makbuzlar %}
+                <!-- The Modal -->
+                
+                   <style>.odeme-tarihi table, .odeme-tarihi th,.odeme-tarihi td {
+                    border: 1px solid black;
+                  }</style>
             <div class="odeme-tarihi">
-                <div class="left">
-                    <h2>ÖDEME TARİHİ</h2>
-                    <span>{{k.tarihi|date:'d-m-Y'}}</span>
+                
+            <table>
+                <thead>
+                    <tr>
+                        <th>ÖDEME TARİHİ</th>
+                        <th>KASA HESABI</th>
+                        <th>İŞLEM TARİHİ</th>
+                        <th>KULLANICI</th>
+                        <th>TUTAR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{k.tarihi|date:'d-m-Y'}}</td>
+                        <td>{{k.kasa_bilgisi.kasa_adi}}</td>
+                        <td>{{k.kayit_tarihi|date:'d-m-Y'}}</td>
+                        <td>{% if k.islemi_yapan.last_name %}
+                            {{k.islemi_yapan.last_name}}
+                        {% else %}
+                        {% endif %}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        {% if k.gelir_makbuzu %}
+                             <td colspan="2"><a target="_blank" href="//{{k.gelir_makbuzu.url}}">Resmi Göster</a></td>
+                        {% else %}
+                        <td colspan="2">Resim Yok</td>
+                        {% endif %}
+                       
+                        <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil{{k.id}}">SİL</button></td>
+                        <td>{{k.tutar}} $</td>
+                    </tr>
+                </tbody>
+            </table>
                 </div>
-                <div class="right">
-                    <h2>KASA HESABI</h2>
-                    <span>{{k.kasa_bilgisi.kasa_adi}}</span>
-                </div>
-            </div>
-            <div class="islem-tarihi">
-                <div class="left">
-                    <h2>İŞLEM TARİHİ</h2>
-                    <span>{{k.kayit_tarihi|date:'d-m-Y'}}</span>
-                </div>
-                <div class="right">
-                    <h2>KULLANICI</h2>
-                    <span>Tolga</span>
-                </div>
-            </div>
-            <div class="tutar">
-                <h2>TUTAR</h2>
-                <span>{{k.tutar}} $</span>
-            </div>
             {% endfor %}
             <div class="fatura-table">
                 <div class="table-head">
@@ -484,6 +532,34 @@
 <script src="{% static '' %}assets/libs/sweetalert2/sweetalert2.min.js"></script>
 <!-- App js -->
 <script src="{% static '' %}assets/js/app.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+         
+<script>
+    $(document).ready(function () {
+  $(".makbuzsill").click(function (event) {
+    makbuz = "1",
+    y = this.id.split('-')[0],
+    makbuzidsi = y,
+    a = this.id.split('-')[1],
+    $.ajax({
+      type: "POST",
+      url: "{% url 'accounting:makbuz_sil' %}",
+      data: {
+        makbuz: makbuz,
+        makbuzidsi :makbuzidsi,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+    
+        $("#guncelle"+ String(a) ).load(window.location.href + " #guncelle"+ String(a) );
+        document.querySelector("#guncelle"+ String(a)).style.display="flex";
+    }
+    });
+    return false; //<---- move it here
+  });
+});
+</script>
 {% endblock footer %}
     
 

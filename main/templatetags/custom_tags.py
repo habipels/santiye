@@ -371,20 +371,24 @@ def kalan_tutuar(id):
         toplam = toplam+i.tutar
     a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
     genel_toplam = 0
+    indirim = 0
     for i in a:
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
-    return round(float(genel_toplam - toplam),2)
+        indirim = indirim+ i.urun_indirimi
+    return round(float(genel_toplam - toplam-indirim),2)
 @register.simple_tag
 def kalan_tutuari(id):
     a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
     toplam = 0
+    indirim = 0
     for i in a:
         toplam = toplam+i.tutar
     a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
     genel_toplam = 0
     for i in a:
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
-    return round(float(genel_toplam - toplam),2)
+        indirim = indirim+ i.urun_indirimi
+    return round(float(genel_toplam - toplam -indirim),2)
 @register.simple_tag
 
 def makbuzlari_getir(id):
@@ -392,7 +396,7 @@ def makbuzlari_getir(id):
     return a
 @register.simple_tag
 def makbuzlari_getiri(id):
-    a = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu__id = id)
+    a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__id = id)
     return a
 
 
