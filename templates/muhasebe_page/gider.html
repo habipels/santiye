@@ -197,6 +197,33 @@
             </div>
         </div>
         {% for i in  santiyeler %}
+         <div class="modal" id="faturasil{{i.id}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Faturayı İptal Et</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+        <form action="{% url 'accounting:fatura_sil' %}" method="post">
+        {% csrf_token %}
+      <!-- Modal body -->
+      <div class="modal-body">
+        Faturayı Silmek Etmek İstediğinizden Emin misiniz ? 
+        <input type="text" name="gelir_gider" value="1" hidden>
+        <input type="text" name="idbilgisicek" value="{{i.id}}" hidden>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Sil</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
         {% makbuzlari_getiri  i.id as gelen_makbuzlar %}
         {% for k in gelen_makbuzlar %}
         <div class="modal" id="makbuzsil{{k.id}}">
@@ -255,8 +282,8 @@
             </div>
             <div class="invoice-icons">
                 <div class="icon-item print-icon"><span title="Yazdır" class="mdi mdi-printer-outline"></span></div>
-                <div class="icon-item cancel-icon"><span title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
-                <a href="{% url 'accounting:gelir_duzenle' i.id %}" class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></a>
+                <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil{{i.id}}" title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
+                <a href="{% url 'accounting:gider_duzenle' i.id %}" class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></a>
                 <div class="icon-item close-icon"><span title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
             </div>
         </div>

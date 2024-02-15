@@ -751,7 +751,7 @@ def gelirler_sayfasi(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = Gelir_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user)
+        profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user)
         content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
     if request.GET:
         search = request.GET.get("search")
@@ -762,7 +762,7 @@ def gelirler_sayfasi(request):
                 kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
                 content["kullanicilar"] =kullanicilar
             else:
-                profile = Gelir_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(fatura_tarihi  =tarih)
@@ -951,6 +951,28 @@ def gelir_odemesi_ekle(request):
             makbuz_no = makbuznumarasi,aciklama = aciklama_bilgisi
         )
     return redirect("accounting:gelirler_sayfasi")
+def gider_duzenle(request ,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =Kasa.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
+        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = request.user)
+        kategori_bilgisi = gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
+        etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
+        gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
+        urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
+    content["gelir_kategoerisi"] = kategori_bilgisi
+    content["gelir_etiketi"] = etiketler
+    content["kasa"] = profile
+    content["urunler"]  = urunler_bilgisi
+    content["cari_bilgileri"] = cari_bilgileri
+    content["bilgi"] = gelir_bilgisi_ver
+    content["urunler"] = urunleri
+    return render(request,"muhasebe_page/gider_faturasi_duzeltme.html",content)
 #Gelirler Sayfası
 def makbuz_sil(request):
     if request.POST:
@@ -971,7 +993,7 @@ def giderler_sayfasi(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user)
+        profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user)
         content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
     if request.GET:
         search = request.GET.get("search")
@@ -982,7 +1004,7 @@ def giderler_sayfasi(request):
                 kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
                 content["kullanicilar"] =kullanicilar
             else:
-                profile = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(fatura_tarihi  =tarih)
@@ -1138,7 +1160,188 @@ def fatura_sil(request):
         gelir_gider = request.POST.get("gelir_gider")
         id_bilgisi  = request.POST.get("idbilgisicek")
         if gelir_gider == "0":
+            Gelir_Bilgisi.objects.filter(id = id_bilgisi).update(silinme_bilgisi = True)
             return redirect("accounting:gelirler_sayfasi")
+            
         elif gelir_gider == "1":
+            Gider_Bilgisi.objects.filter(id = id_bilgisi).update(silinme_bilgisi = True)
             return redirect("accounting:giderler_sayfasi")
 #Gider Sayfası
+
+def gelir_gider_duzelt(request):
+    if request.POST:
+        bilgi = request.POST.get("bilgi")
+        degisen = request.POST.get("degisen")
+        musteri_bilgisi  = request.POST.get("musteri_bilgisi")
+        daterange = request.POST.get("daterange")
+        gelir_kategorisi = request.POST.get("gelir_kategorisi")
+        cari_aciklma = request.POST.get("cari_aciklma")
+        etiketler = request.POST.getlist("etiketler")
+        faturano = request.POST.get("faturano")
+        urunadi = request.POST.getlist("urunadi")
+        miktari = request.POST.getlist("miktari")
+        bfiyatInput = request.POST.getlist("bfiyatInput")
+        indirim = request.POST.getlist("indirim")
+        aciklama = request.POST.getlist("aciklama")
+        if bilgi == "0":
+            gelir_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = degisen)).delete()
+            cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
+            if cari_bilgisi:
+                date_range_parts = daterange.split(' - ')
+
+                # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
+                fatura_tarihi_str, vade_tarihi_str = date_range_parts
+                fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+                vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+
+                new_project =Gelir_Bilgisi.objects.filter(id = degisen).update(gelir_kime_ait_oldugu = request.user,
+                cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user),
+                fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
+                gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+                                            )
+                new_project.save()
+                gelir_etiketi_sec = []
+                for i in etiketler:
+                    gelir_etiketi_sec.append(gelir_etiketi.objects.get(id=int(i)))
+                new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+                for i in range(0,len(urunadi)):
+                    if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
+                        urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
+                        if urun:
+                            gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                                urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
+                                urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                                gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = degisen),
+                                aciklama = aciklama[i]
+                            )
+                        else:
+                            urun = urunler.objects.create(urun_ait_oldugu=request.user,urun_adi = urunadi[i],
+                                                        urun_fiyati = float(bfiyatInput[i]))
+                            gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                                urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
+                                urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                                gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = degisen),
+                                aciklama = aciklama[i]
+                            )
+
+            else:
+                cari_bilgisi = cari.objects.create(cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user,aciklama = cari_aciklma)
+                date_range_parts = daterange.split(' - ')
+
+                # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
+                fatura_tarihi_str, vade_tarihi_str = date_range_parts
+                fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+                vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+
+                new_project =Gelir_Bilgisi.objects.filter(id = degisen).update(gelir_kime_ait_oldugu = request.user,
+                cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
+                fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
+                gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+                                            )
+                new_project.save()
+                gelir_etiketi_sec = []
+                for i in etiketler:
+                    gelir_etiketi_sec.append(gelir_etiketi.objects.get(id=int(i)))
+                new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+                for i in range(0,len(urunadi)):
+                    if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
+                        urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
+                        if urun:
+                            gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                                urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
+                                urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                                gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = degisen),
+                                aciklama = aciklama[i]
+                            )
+                        else:
+                            urun = urunler.objects.create(urun_ait_oldugu=request.user,urun_adi = urunadi[i],
+                                                        urun_fiyati = float(bfiyatInput[i]))
+                            gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                                urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
+                                urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                                gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = degisen),
+                                aciklama = aciklama[i]
+                            )
+        
+            return redirect("accounting:gider_sayfasi")
+        elif bilgi == "1":
+            gider_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = new_project.id))
+            cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
+            if cari_bilgisi:
+                date_range_parts = daterange.split(' - ')
+
+                # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
+                fatura_tarihi_str, vade_tarihi_str = date_range_parts
+                fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+                vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+
+                new_project =Gider_Bilgisi.objects.filter(id = degisen).update(gelir_kime_ait_oldugu = request.user,
+                cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user),
+                fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
+                gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+                                            )
+                new_project.save()
+                gelir_etiketi_sec = []
+                for i in etiketler:
+                    gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(i)))
+                new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+                for i in range(0,len(urunadi)):
+                    if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
+                        urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
+                        if urun:
+                            gelir_urun_bilgisi_bi = gider_urun_bilgisi.objects.create(
+                                urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
+                                urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                                gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = degisen),
+                                aciklama = aciklama[i]
+                            )
+                        else:
+                            urun = urunler.objects.create(urun_ait_oldugu=request.user,urun_adi = urunadi[i],
+                                                        urun_fiyati = float(bfiyatInput[i]))
+                            gelir_urun_bilgisi_bi = gider_urun_bilgisi.objects.create(
+                                urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
+                                urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                                gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = degisen),
+                                aciklama = aciklama[i]
+                            )
+
+            else:
+                cari_bilgisi = cari.objects.create(cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user,aciklama = cari_aciklma)
+                date_range_parts = daterange.split(' - ')
+
+                # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
+                fatura_tarihi_str, vade_tarihi_str = date_range_parts
+                fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+                vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+
+                new_project =Gider_Bilgisi.objects.filter(id = degisen).update(gelir_kime_ait_oldugu = request.user,
+                cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
+                fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
+                gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+                                            )
+                new_project.save()
+                gelir_etiketi_sec = []
+                for i in etiketler:
+                    gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(i)))
+                new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+                for i in range(0,len(urunadi)):
+                    if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
+                        urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
+                        if urun:
+                            gelir_urun_bilgisi_bi = gider_urun_bilgisi.objects.create(
+                                urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
+                                urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                                gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = degisen),
+                                aciklama = aciklama[i]
+                            )
+                        else:
+                            urun = urunler.objects.create(urun_ait_oldugu=request.user,urun_adi = urunadi[i],
+                                                        urun_fiyati = float(bfiyatInput[i]))
+                            gelir_urun_bilgisi_bi = gider_urun_bilgisi.objects.create(
+                                urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
+                                urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                                gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = degisen),
+                                aciklama = aciklama[i]
+                            )
+        
+        return redirect("accounting:giderler_sayfasi")
