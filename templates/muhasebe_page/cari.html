@@ -81,13 +81,20 @@
                                                     {% endif %}
                                                     <td class="id" style="display:none;"><a href="javascript:void(0);" class="fw-medium link-primary">#VZ2101</a></td>
                                                     <td class="cari">{{i.cari_adi}}</td>
-                                                    <td class="bakiye">{{i.bakiye}} <span>$</span></td>
+                                                    <td class="bakiye">{% cari_islemleri i as bilgi_veriyor %}
+                                                    
+                                                        {{ bilgi_veriyor.sonuc }}
+                                                        
+                                                    <span>$</span></td>
                                                     <td class="konum">{{i.aciklama}}</td>
                                                     <td class="konum">{{i.telefon_numarasi}}</td>
                                                     <td class="konum">{{i.kayit_tarihi}}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-end">
-                                                            <div class="edit">
+                                                        <div class="edit">
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#detay{{i.id}}">Detay</button>
+                                                            </div>
+                                                            <div class="edit" style="margin-left:10px;">
                                                                 <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
                                                             </div>
                                                             <div class="remove" style="margin-left:10px;">
@@ -339,6 +346,113 @@
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% for i in santiyeler %}
+                <div class="modal fade" id="detay{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel">Cari Datayı</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+                                <div class="modal-body">
+                                    <style>
+                                    
+                                        div.scroll {
+                                            margin: 4px, 4px;
+                                            height: 400px;
+                                            overflow-x: hidden;
+                                            overflow-y: auto;
+                                            text-align: justify;
+                                        }
+                                    </style>
+
+                                    <!-- The Modal -->
+                
+                   <style>.odeme-tarihi table, .odeme-tarihi th,.odeme-tarihi td {
+                    border: 1px solid black;
+                  }</style>
+            <div class="odeme-tarihi scroll">
+                
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fatura Mı</th>
+                        <th>Ödeme Mi ? </th>
+                        <th>Tutar</th>
+                        <th>Bakiye</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% cari_islemleri i as bilgi_veriyor %}
+                    {% for j in bilgi_veriyor.a %}
+                    {% cari_gelirlerii j.id as tutar  %}
+                    {% cari_gelirleri j.id as gelir_bilgileri_tamami %}
+                    {% for k in gelir_bilgileri_tamami.gider_odemesi %}
+                    
+                    
+                    <tr>
+                        <td>Hayır</td>
+                        <td>Evet</td>
+                        <td style="color:orange;">- {{k.tutar }}</td>
+                        <td style="color:orange;">{{tutar}}</td>
+                    </tr>
+                    {% cikarma  tutar k.tutar  as tutar %}
+                    {% endfor %}
+                    <tr>
+                        <td>Gelir Faturası</td>
+                        <td>Hayır</td>
+                        <td style="color:blue;">{{gelir_bilgileri_tamami.gelir_toplama}}</td>
+                        <td style="color:blue;">{{gelir_bilgileri_tamami.gelir_toplama }}</td>
+                    </tr>
+                    {% endfor %}
+                <tr>
+                        
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                    </tr>
+                {% cari_islemleri i as bilgi_veriyor %}
+                    {% for j in bilgi_veriyor.b %}
+                    {% cari_giderlerii j.id as tutar  %}
+                    {% cari_giderleri j.id as gider_bilgileri_tamami %}
+                    {% for k in gider_bilgileri_tamami.gider_odemesi %}
+                    
+                    
+                    <tr>
+                        <td>Hayır</td>
+                        <td>Evet</td>
+                        <td style="color:orange;">{{k.tutar }}</td>
+                        <td style="color:orange;">{{tutar}}</td>
+                    </tr>
+                    {% cikarma  tutar k.tutar  as tutar %}
+                    {% endfor %}
+                    <tr>
+                        <td>Gider Faturası</td>
+                        <td>Hayır</td>
+                        <td style="color:blue;">- {{gider_bilgileri_tamami.gelir_toplama}}</td>
+                        <td style="color:blue;">- {{gider_bilgileri_tamami.gelir_toplama }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+                </div>
+                         
+                                        
+                                    
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                        
                         </div>
                     </div>
                 </div>

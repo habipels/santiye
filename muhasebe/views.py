@@ -930,7 +930,7 @@ def gelir_faturasi_kaydet(request):
                             aciklama = aciklama[i]
                         )
     
-    return redirect("accounting:gider_sayfasi")
+    return redirect("accounting:gelirler_sayfasi")
 
 
 def gelir_odemesi_ekle(request):
