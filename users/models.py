@@ -46,4 +46,3 @@ class LockScreenStatus(models.Model):
 class personel_dosyalari(models.Model):
     kullanici = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
     dosyalari  = models.FileField(verbose_name="Kullanıcı Dosyası",upload_to='kullanici_dosyasi/',blank=True,null=True)
-    
