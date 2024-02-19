@@ -69,6 +69,7 @@ urlpatterns = [
     path('delivon', views.fatura_sil, name='fatura_sil'),
     path('cari/', views.cariler_bilgisi, name='cariler_bilgisi'),
     path('denme/', views.denme, name='denme'),
+    path('kategoriekleme', views.gider_gelir_ekleme, name='gider_gelir_ekleme'),
 ]
 #
 

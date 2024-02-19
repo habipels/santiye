@@ -852,6 +852,8 @@ def gelir_faturasi_kaydet(request):
         bfiyatInput = request.POST.getlist("bfiyatInput")
         indirim = request.POST.getlist("indirim")
         aciklama = request.POST.getlist("aciklama")
+        doviz_kuru = request.POST.get("doviz_kuru")
+        
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -864,7 +866,7 @@ def gelir_faturasi_kaydet(request):
             new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = request.user,
             cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user),
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
-            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),doviz = doviz_kuru
                                          )
             new_project.save()
             gelir_etiketi_sec = []
@@ -903,8 +905,8 @@ def gelir_faturasi_kaydet(request):
             new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = request.user,
             cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
-            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
-                                         )
+            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),doviz = doviz_kuru
+            )
             new_project.save()
             gelir_etiketi_sec = []
             for i in etiketler:
@@ -1056,6 +1058,7 @@ def gider_faturasi_kaydet(request):
         bfiyatInput = request.POST.getlist("bfiyatInput")
         indirim = request.POST.getlist("indirim")
         aciklama = request.POST.getlist("aciklama")
+        doviz_kuru = request.POST.get("doviz_kuru")
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -1068,7 +1071,7 @@ def gider_faturasi_kaydet(request):
             new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = request.user,
             cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user),
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
-            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),doviz = doviz_kuru
                                          )
             new_project.save()
             gelir_etiketi_sec = []
@@ -1107,7 +1110,7 @@ def gider_faturasi_kaydet(request):
             new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = request.user,
             cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
-            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),doviz = doviz_kuru
                                          )
             new_project.save()
             gelir_etiketi_sec = []
@@ -1183,6 +1186,7 @@ def gelir_gider_duzelt(request):
         bfiyatInput = request.POST.getlist("bfiyatInput")
         indirim = request.POST.getlist("indirim")
         aciklama = request.POST.getlist("aciklama")
+        doviz_kuru = request.POST.get("doviz_kuru")
         if bilgi == "0":
             gelir_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = degisen)).delete()
             cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
@@ -1278,7 +1282,7 @@ def gelir_gider_duzelt(request):
                 new_project =Gider_Bilgisi.objects.filter(id = degisen).update(gelir_kime_ait_oldugu = request.user,
                 cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user),
                 fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
-                gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+                gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),doviz = doviz_kuru
                                             )
                 new_project.save()
                 gelir_etiketi_sec = []
@@ -1317,7 +1321,7 @@ def gelir_gider_duzelt(request):
                 new_project =Gider_Bilgisi.objects.filter(id = degisen).update(gelir_kime_ait_oldugu = request.user,
                 cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
                 fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano, 
-                gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),
+                gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisi ),doviz = doviz_kuru
                                             )
                 new_project.save()
                 gelir_etiketi_sec = []
@@ -1345,3 +1349,27 @@ def gelir_gider_duzelt(request):
                             )
         
         return redirect("accounting:giderler_sayfasi")
+
+
+def gider_gelir_ekleme(request):
+    user = request.user
+    tur = request.POST.get("tur")
+    adi = request.POST.get("adi")
+    aciklama= request.POST.get("aciklama")
+    renk = request.POST.get("renk")
+    if tur == "0":
+        gelir_kategorisi.objects.create(
+            gelir_kategoris_ait_bilgisi = user,
+            gelir_kategori_adi = adi,
+            gelir_kategorisi_renk = renk,
+            aciklama = aciklama
+        )
+        return redirect("accounting:gelir_ekle")
+    elif tur == "1":
+        gider_kategorisi.objects.create(
+            gider_kategoris_ait_bilgisi = user,
+            gider_kategori_adi = adi,
+            gider_kategorisi_renk = renk,
+            aciklama = aciklama
+        )
+        return redirect("accounting:gider_ekle")

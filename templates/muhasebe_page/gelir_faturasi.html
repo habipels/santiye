@@ -71,13 +71,18 @@
                                     <label>Düzenleme ve Vade Tarihi</label>
                                     <input type="text" name="daterange" value="01/01/2024 - 01/30/2024" />
                                 </div>
-                                <div class="input-item kategori">
+                                <div class="input-item kategori" >
+                                    
                                     <label>Kategori</label>
-                                    <select name="gelir_kategorisi">
+                                    <div  id="kategorii">
+                                    <select  id="kategori" name="gelir_kategorisi">
                                         {% for i in gelir_kategoerisi %}
                                             <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
                                         {% endfor %}
                                     </select>
+                                </div>
+                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i></button>
+                                    
                                 </div>
                                 <div class="input-item aciklama">
                                     <label>Açıklama</label>
@@ -95,7 +100,7 @@
                             <div class="form2">
                                   <div class="input-item doviz">
                                     <label>DÖVİZ KURU</label>
-                                    <input type="text" placeholder="Açıklama" value="USD" disabled />
+                                    <input type="text" placeholder="Açıklama" value="IQN" name="doviz_kuru" />
                                 </div>
                                 <div class="input-item fatura">
                                     <label>FATURA NO</label>
@@ -232,6 +237,39 @@
             class="cancelBtn btn btn-sm btn-default" type="button">Cancel</button><button
             class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">Apply</button> </div>
 </div>
+<div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+                               
+                                <div class="modal-body">
+                                    <input type="text" name="tur" id="tur" hidden value="0">
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Gelir Kategorisi Adı</label>
+                                        <input type="text"  name="adi" id="adi" class="form-control" placeholder="Kategori Adı" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Gelir Kategorisi Açıklaması</label>
+                                        <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="Kategori Açıklaması" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Gelir Kategorisi Rengi</label>
+                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="Dil Adı" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">Ekle</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
 {% endblock sidebar %}
 {% block javascriptcodeadd %}
 
@@ -386,5 +424,32 @@ $(document).ready(function(){
         console.log(values)
     }
 })
-</script>
+
+
+$(document).ready(function () {
+  $("#ekle").click(function (event) {
+    tur = $("#tur").val(),
+    adi = $("#adi").val(),
+    aciklama = $("#aciklama").val(),
+    renk = $("#renk").val(),
+    
+    $.ajax({
+      type: "POST",
+      url: "{% url 'accounting:gider_gelir_ekleme' %}",
+      data: {
+        tur: tur,
+        adi:adi,
+        aciklama:aciklama,
+        renk:renk,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+        $( "#kategorii" ).load(window.location.href + " #kategori" );
+      }
+    });
+    return false; //<---- move it here
+  });
+});
+    </script>
+
 {% endblock javascriptcodeadd %}
