@@ -70,6 +70,7 @@ urlpatterns = [
     path('cari/', views.cariler_bilgisi, name='cariler_bilgisi'),
     path('denme/', views.denme, name='denme'),
     path('kategoriekleme', views.gider_gelir_ekleme, name='gider_gelir_ekleme'),
+    path('etiketekleme', views.gider_gelir_etiketekleme, name='gider_gelir_etiketekleme'),
 ]
 #
 

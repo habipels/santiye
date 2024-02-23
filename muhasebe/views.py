@@ -1373,3 +1373,22 @@ def gider_gelir_ekleme(request):
             aciklama = aciklama
         )
         return redirect("accounting:gider_ekle")
+    
+
+def gider_gelir_etiketekleme(request):
+    user = request.user
+    tur = request.POST.get("tur2")
+    adi = request.POST.get("adi2")
+    print(tur,adi)
+    if tur == "0":
+        gelir_etiketi.objects.create(
+            gelir_kategoris_ait_bilgisi = user,
+            gelir_etiketi_adi = adi
+        )
+        return redirect("accounting:gelir_ekle")
+    elif tur == "1":
+        gider_etiketi.objects.create(
+            gider_kategoris_ait_bilgisi = user,
+            gider_etiketi_adi = adi
+        )
+        return redirect("accounting:gider_ekle")
