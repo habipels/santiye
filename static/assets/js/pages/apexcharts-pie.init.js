@@ -32,7 +32,7 @@ var upadatedonutchart,
             ((options = { 
                 series: [44, 55, 41, 17, 15], 
                 chart: { height: 300, type: "donut" }, 
-                labels: ["Maaş Avans", "Demirbaş El Al.", "Nakliye Deplas.", "Yemekhane", "Bakım Onarım"], 
+                labels: ["Maaş Avans", "Dsdasd", "Nakliye Deplas.", "Yemekhane", "Bakım Onarım"], 
                 legend: { position: "right" }, 
                 dataLabels: { dropShadow: { enabled: !1 } }, 
                 colors: chartDonutBasicColors

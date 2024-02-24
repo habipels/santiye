@@ -788,6 +788,10 @@ def gelir_ekle(request):
         profile =Kasa.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
+        urunler_bilgisi = ""
+        cari_bilgileri = ""
+        kategori_bilgisi = ""
+        etiketler =  ""
     else:
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
@@ -1033,6 +1037,11 @@ def gider_ekle(request):
         profile =Kasa.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
+        urunler_bilgisi = ""
+        cari_bilgileri = ""
+        kategori_bilgisi =""
+        etiketler =  ""
+
     else:
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
@@ -1379,7 +1388,6 @@ def gider_gelir_etiketekleme(request):
     user = request.user
     tur = request.POST.get("tur2")
     adi = request.POST.get("adi2")
-    print(tur,adi)
     if tur == "0":
         gelir_etiketi.objects.create(
             gelir_kategoris_ait_bilgisi = user,

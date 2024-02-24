@@ -476,6 +476,70 @@ def cari_islemleri(bilgi):
     gelir_bilgisi = gelir_toplami - gelir_odemesi
     sonuc = gelir_bilgisi - gider_bilgisi
     return {"gelir_bilgisi":gelir_bilgisi,"gider_bilgisi":gider_bilgisi,"sonuc":round(sonuc,2),"b":b,"a":a}
+@register.simple_tag
+def gelirler_tutari(bilgi):
+    if bilgi.is_superuser:
+        a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__silinme_bilgisi= False)
+        toplam = 0
+        for i in a:
+            toplam = toplam+i.tutar
+        a = gelir_urun_bilgisi.objects.filter(gider_bilgis__silinme_bilgisi= False)
+        genel_toplam = 0
+        indirim = 0
+        for i in a:
+            genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+            indirim = indirim+ i.urun_indirimi
+        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+    else:
+        a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,gelir_kime_ait_oldugu__silinme_bilgisi= False)
+        toplam = 0
+        for i in a:
+            toplam = toplam+i.tutar
+        a = gelir_urun_bilgisi.objects.filter(gider_bilgis__gelir_kime_ait_oldugu = bilgi,gider_bilgis__silinme_bilgisi= False)
+        genel_toplam = 0
+        indirim = 0
+        for i in a:
+            genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+            indirim = indirim+ i.urun_indirimi
+        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+
+@register.simple_tag
+def giderler_tutari(bilgi):
+    if bilgi.is_superuser:
+        a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__silinme_bilgisi= False)
+        toplam = 0
+        for i in a:
+            toplam = toplam+i.tutar
+        a = gider_urun_bilgisi.objects.filter(gider_bilgis__silinme_bilgisi= False)
+        genel_toplam = 0
+        indirim = 0
+        for i in a:
+            genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+            indirim = indirim+ i.urun_indirimi
+       
+        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+    else:
+        a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,gelir_kime_ait_oldugu__silinme_bilgisi= False)
+        toplam = 0
+        for i in a:
+            toplam = toplam+i.tutar
+        a = gider_urun_bilgisi.objects.filter(gider_bilgis__gelir_kime_ait_oldugu = bilgi,gider_bilgis__silinme_bilgisi= False)
+        genel_toplam = 0
+        indirim = 0
+        for i in a:
+            genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+            indirim = indirim+ i.urun_indirimi
+        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+#
+@register.simple_tag
+def basit_cikarma(a,b):
+    y = float(a)-float(b)
+    return str(round(y,2))
+@register.simple_tag
+def kategori_bilgi_ver():
+    a = [44, 55, 41, 17, 15]
+    b  = ["Maaş Avans", "Dsdasd", "Nakliye Deplas.", "Yemekhane", "Bakım Onarım"]
+    return {"a":a,"b":b}
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 import hashlib
