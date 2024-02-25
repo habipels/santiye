@@ -538,8 +538,22 @@ def basit_cikarma(a,b):
 @register.simple_tag
 def kategori_bilgi_ver():
     a = [44, 55, 41, 17, 15]
-    b  = ["Maaş Avans", "Dsdasd", "Nakliye Deplas.", "Yemekhane", "Bakım Onarım"]
-    return {"a":a,"b":b}
+    b  = [1,2,3,4,5]
+    isimleri = []
+    renk = []
+    bilgi = gelir_kategorisi.objects.filter(id__in = b)
+    for i in bilgi:
+        isimleri.append(str(i.gelir_kategori_adi))
+        renk.append(str(i.gelir_kategorisi_renk))
+    return {"b":isimleri,"a":a,"renk":renk}
+@register.simple_tag
+def deneme(id):
+    a = get_object_or_404(gelir_kategorisi,id = id)
+    return str(a.gelir_kategori_adi)
+@register.simple_tag
+def renk_cagir(id):
+    a = get_object_or_404(gelir_kategorisi,id = id)
+    return str(a.gelir_kategorisi_renk)
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 import hashlib

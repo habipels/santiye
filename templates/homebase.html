@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 {% load i18n %}
 <!doctype html>
 <html lang="{{dil}}" data-layout="{{layout.data_layout}}" data-layout-style="{{layout_sitili.data_layout_style}}" data-layout-position="{{layout_pozisyonu.data_layout_position}}" data-topbar="{{topbar_color.data_topbar}}" data-sidebar="{{sidebar_rengi.data_sidebar}}" data-sidebar-size="{{sidebar_boyutu.data_sidebar_size}}" data-layout-width="{{layout_uzunlugu.data_layout_width}}" data-sidebar-visibility="{{side_bar_gorunum.data_sidebar_visibility}}" data-bs-theme="{{color_sheme.data_bs_theme}}" data-preloader="disable">
@@ -22,7 +23,7 @@
     <!-- custom Css-->
     <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css" />
- 
+
     {% block head %}
     
     {% endblock head %}
@@ -61,9 +62,9 @@
     <!-- apexcharts -->
     <script src="{% static 'assets/libs/apexcharts/apexcharts.min.js' %}"></script>
 
-    <!-- piecharts init -->
-    <script src="{% static 'assets/js/pages/apexcharts-pie.init.js' %}"></script>
-
+    <!-- piecharts init 
+    <script src="{% static 'assets/js/pages/apexcharts-pie.init.html' %}"></script>
+-->
     <!-- apexcharts init -->
     <script src="{% static 'assets/js/pages/apexcharts-column.init.js' %}"></script>
 
@@ -86,6 +87,50 @@
 
     <!-- Sweet Alerts js -->
     <script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
+    <script>
+         {% kategori_bilgi_ver as bilgi_cagir %}
+function getChartColorsArray(e) {
+    if (null !== document.getElementById(e))
+        return (
+            (e = document.getElementById(e).getAttribute("data-colors")),
+            (e = JSON.parse(e)).map(function (e) {
+                var t = e.replace(" ", "");
+                return -1 === t.indexOf(",")
+                    ? getComputedStyle(document.documentElement).getPropertyValue(t) || t
+                    : 2 == (e = e.split(",")).length
+                    ? "rgba(" + getComputedStyle(document.documentElement).getPropertyValue(e[0]) + "," + e[1] + ")"
+                    : t;
+            })
+        );
+}
+var upadatedonutchart,
+    chartPieBasicColors = getChartColorsArray("simple_pie_chart"),
+    chartDonutBasicColors =
+        (chartPieBasicColors &&
+            ((options = {
+                series: [44, 55, 13, 43, 22],
+                chart: { height: 300, type: "pie" },
+                labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
+                legend: { position: "right" },
+                dataLabels: { dropShadow: { enabled: !1 } },
+                colors: chartPieBasicColors,
+            }),
+            (chart = new ApexCharts(document.querySelector("#simple_pie_chart"), options)).render()),
+
+        getChartColorsArray("simple_dount_chart")),
+        chartDonutupdatingColors =
+        (chartDonutBasicColors &&
+            ((options = { 
+                series: {{bilgi_cagir.a}}, 
+                chart: { height: 300, type: "donut" }, 
+                labels:{{bilgi_cagir.b |safe}}, 
+                legend: { position: "right" }, 
+                dataLabels: { dropShadow: { enabled: !1 } }, 
+                colors: {{bilgi_cagir.renk |safe}}
+            }),
+            (chart = new ApexCharts(document.querySelector("#simple_dount_chart"), options)).render()),
+        getChartColorsArray("updating_donut_chart"));
+    </script>
 {% block javascriptcode %}
 
 

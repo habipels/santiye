@@ -1,3 +1,4 @@
+{% kategori_bilgi_ver as bilgi_cagir %}
 function getChartColorsArray(e) {
     if (null !== document.getElementById(e))
         return (
@@ -30,9 +31,9 @@ var upadatedonutchart,
         chartDonutupdatingColors =
         (chartDonutBasicColors &&
             ((options = { 
-                series: [44, 55, 41, 17, 15], 
+                series:  {{bilgi_cagir.a}}, 
                 chart: { height: 300, type: "donut" }, 
-                labels: ["Maaş Avans", "sada", "Nakliye Deplas.", "Yemekhane", "Bakım Onarım"], 
+                labels: {{bilgi_cagir.b |safe}}, 
                 legend: { position: "right" }, 
                 dataLabels: { dropShadow: { enabled: !1 } }, 
                 colors: chartDonutBasicColors
