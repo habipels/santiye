@@ -74,6 +74,8 @@ urlpatterns = [
     path('kategoriekleme', views.gider_gelir_ekleme, name='gider_gelir_ekleme'),
     path('etiketekleme', views.gider_gelir_etiketekleme, name='gider_gelir_etiketekleme'),
      path("accountextra", views.hesap_ekstra_durumu, name="hesap_ekstra_durumu"),
+      path('download-excel/', views.download_excel, name='download_excel'),
+      path('download-pdf/', views.download_pdf, name='download_pdf'),
 ]
 #
 

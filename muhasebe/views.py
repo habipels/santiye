@@ -1521,3 +1521,55 @@ def hesap_ekstra_durumu(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/hesap_eksta.html",content)
+from openpyxl import Workbook
+from io import BytesIO
+from django.http import HttpResponse
+from openpyxl import Workbook
+
+
+def download_excel(request):
+    wb = Workbook()
+    ws = wb.active
+    ws['A1'] = 'Header 1'
+    ws['B1'] = 'Header 2'
+    ws.append(['Data 1', 'Data 2'])
+
+    # Excel dosyasını bir BytesIO nesnesine yaz
+    excel_data = BytesIO()
+    wb.save(excel_data)
+    excel_data.seek(0)
+
+    # HttpResponse ile dosyayı indirme bağlantısı olarak sun
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=my_excel_file.xlsx'
+    response.write(excel_data.getvalue())
+    return response
+from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+
+def download_pdf(request):
+    # PDF dosyasını oluştur
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=my_pdf_file.pdf'
+
+    # PDF içeriği oluştur
+    pdf = SimpleDocTemplate(response, pagesize=letter)
+    data = [['Header 1', 'Header 2'],
+            ['Data 1', 'Data 2']]
+    table = Table(data)
+    style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black)])
+    table.setStyle(style)
+
+    # PDF'e tabloyu ekle
+    elements = []
+    elements.append(table)
+    pdf.build(elements)
+    return response
