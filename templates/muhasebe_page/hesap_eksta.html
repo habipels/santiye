@@ -11,11 +11,11 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Gelir Özeti</h4>
+                        <h4 class="mb-sm-0">Hesap Ekstrası</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                <li class="breadcrumb-item active">Gelir Özeti</li>
+                                <li class="breadcrumb-item active">Hesap Ekstrası</li>
                             </ol>
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                     <div class="card" id="invoiceList">
                         <div class="card-header border-0">
                             <div class="d-flex align-items-center">
-                                <h5 class="card-title mb-0 flex-grow-1">Gelen Faturalar</h5>
+                                <h5 class="card-title mb-0 flex-grow-1">Hesap Özeti</h5>
                                 <div class="export">
                                     <span>Export:</span>
                                     <span class="item"><i class="ri-file-excel-line"></i>Excell</span>
@@ -123,14 +123,14 @@
                                                     {% endif %} </span></td>
                                                     <td><span>{{i.fatura_tarihi| date:'Y-m-d'}}</span></td>
                                                     
-                                                    <td><span>{% toplam_tutar_cikarmai i %} $</span></td>
+                                                    <td><span>{% ekstra i i.fatura_no %} $</span></td>
                                                    
                                                     
                                                     {% if i.silinme_bilgisi %}
                                                     <td class="cancel"><span>İPTAL</span></td>
                                                     {% else %}
-                                                   {% toplam_tutar_cikarmai i as tutar %}
-                                                    {% toplam_odenme_tutari i as odeme %}
+                                                   {% ekstra i  i.fatura_no  as tutar %}
+                                                    {% ekstra_odeme i  i.fatura_no  as odeme %}
                                                     {% if  odeme == tutar %}
                                                         <td class="paid"><span>ÖDENDİ</span></td>
                                                     {% elif odeme > 0 %}
@@ -144,7 +144,7 @@
                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="ri-more-fill align-middle"></i>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" >
+                        <ul class="dropdown-menu dropdown-menu-end" style="">
                             <li><button class="dropdown-item" href="javascript:void(0);" onclick="ViewInvoice(this);" data-id="25000351"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                     View</button></li>
                             <li><button class="dropdown-item" href="javascript:void(0);" onclick="EditInvoice(this);" data-id="25000351"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>

@@ -547,13 +547,35 @@ def kategori_bilgi_ver():
         renk.append(str(i.gelir_kategorisi_renk))
     return {"b":isimleri,"a":a,"renk":renk}
 @register.simple_tag
-def deneme(id):
-    a = get_object_or_404(gelir_kategorisi,id = id)
-    return str(a.gelir_kategori_adi)
+def ekstra(id,k):
+    bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
+    if bilgi.gelir_etiketi in k:
+        a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+        topla = 0
+        for i in a:
+            topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+        return topla
+    else:
+        a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
+        topla = 0
+        for i in a:
+            topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+        return topla
 @register.simple_tag
-def renk_cagir(id):
-    a = get_object_or_404(gelir_kategorisi,id = id)
-    return str(a.gelir_kategorisi_renk)
+def ekstra_odeme(id,k):
+    bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
+    if bilgi.gelir_etiketi in k:
+        a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+        topla = 0
+        for i in a:
+            topla = topla +  i.tutar
+        return topla
+    else:
+        a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+        topla = 0
+        for i in a:
+            topla = topla +  i.tutar
+        return topla
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 import hashlib

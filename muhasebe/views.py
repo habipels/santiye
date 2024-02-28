@@ -1480,3 +1480,44 @@ def giderler_ozeti(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gider_ozeti.html",content)
+
+#Hesapğ eksta
+def hesap_ekstra_durumu(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =Gider_Bilgisi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))
+        profile.sort(key=lambda x: x.fatura_tarihi) 
+        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET:
+        search = request.GET.get("search")
+        tarih = request.GET.get("tarih")
+        if search:
+            if super_admin_kontrolu(request):
+                profile =Gider_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                content["kullanicilar"] =kullanicilar
+            else:
+                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if tarih :
+            profile = profile.filter(fatura_tarihi  =tarih)
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+        
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/hesap_eksta.html",content)
