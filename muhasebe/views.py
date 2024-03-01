@@ -1521,14 +1521,17 @@ def hesap_ekstra_durumu(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/hesap_eksta.html",content)
-from openpyxl import Workbook
+
+"""from openpyxl import Workbook
 from io import BytesIO
 from django.http import HttpResponse
 from openpyxl import Workbook
-
-
+from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle"""
 def download_excel(request):
-    wb = Workbook()
+    """wb = Workbook()
     ws = wb.active
     ws['A1'] = 'Header 1'
     ws['B1'] = 'Header 2'
@@ -1543,13 +1546,12 @@ def download_excel(request):
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=my_excel_file.xlsx'
     response.write(excel_data.getvalue())
-    return response
-from django.http import HttpResponse
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    return response"""
+    return redirect("/")
+
 
 def download_pdf(request):
+    """
     # PDF dosyasını oluştur
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=my_pdf_file.pdf'
@@ -1573,3 +1575,5 @@ def download_pdf(request):
     elements.append(table)
     pdf.build(elements)
     return response
+    """
+    return redirect("/")
