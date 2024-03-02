@@ -46,3 +46,56 @@ class LockScreenStatus(models.Model):
 class personel_dosyalari(models.Model):
     kullanici = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
     dosyalari  = models.FileField(verbose_name="Kullanıcı Dosyası",upload_to='kullanici_dosyasi/',blank=True,null=True)
+class personel_izinleri(models.Model):
+    #bu izinler kime ait
+    izinlerin_sahibi_kullanici = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
+    #kasada virman yapma özelliği
+    kasa_virman_izni = models.BooleanField(default= False,verbose_name="Kasa Virman Yapma İzni")
+    #kasada işlem yapma özelliği
+    kasa_olusturma_izni = models.BooleanField(default = False,verbose_name = "Kasa Oluştuma İzni")
+    Kasa_silme_izni = models.BooleanField(default = False,verbose_name = "Cari Silme İzni")
+    #cari hesaplarda işlem yapmöa özelliği 
+    cari_olusturma = models.BooleanField(default= False,verbose_name="Cari Oluşturma İzni")
+    cari_silme_izni = models.BooleanField(default = False,verbose_name = "Cari Silme İzni")
+    #gelir gider kategori ve etiket  oluşturma silme düzenlme işlemi
+    gelir_etiketi_olusturma = models.BooleanField(default = False,verbose_name = "Gelir Etiketi Oluştuma İzni")
+    gelir_etiketi_silme = models.BooleanField(default = False,verbose_name = "Gelir Etiketi Silme İzni ")
+    gider_etiketi_olusturma = models.BooleanField(default = False,verbose_name = "Gider Etiketi Oluştuma İzni")
+    gider_etiketi_silme = models.BooleanField(default = False,verbose_name = "Gider Etiketi Silme İzni ")
+    gider_kategorisi_olusturma = models.BooleanField(default = False,verbose_name = "Gider Kategorisi Oluştuma İzni")
+    gider_kategorisi_silme = models.BooleanField(default = False,verbose_name = "Gider Kategorisi Silme İzni ")
+    gelir_kategorisi_olusturma = models.BooleanField(default = False,verbose_name = "Gelir Kategorisi Oluştuma İzni")
+    gelir_kategorisi_silme = models.BooleanField(default = False,verbose_name = "Gelir Kategorisi Silme İzni ")
+    #ürün oluşturma silme özelliği 
+    urun_olusturma = models.BooleanField(default = False,verbose_name = "Ürün Oluştuma İzni")
+    urun_silme = models.BooleanField(default = False,verbose_name = "Ürün Silme İzni ")
+    # gelir gider faturası oluştuma silme ve düzenleme özelliği
+    gelir_faturasi_kesme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Kesme İzni ")
+    gelir_faturasi_silme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Silme İzni ")
+    gelir_faturasi_duzenleme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Düzenleme İzni ")
+    gider_faturasi_kesme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Kesme İzni ")
+    gider_faturasi_silme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Silme İzni ")
+    gider_faturasi_duzenleme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Düzenleme İzni ")
+    #gelir gider makbuz işlemleri 
+    gider_faturasi_makbuz_kesme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Makbuz Kesme İzni ")
+    gider_faturasi_makbuz_silme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Makbuz Silme İzni ")
+    gider_faturasi_makbuz_duzenleme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Makbuz Düzenleme İzni ")
+    gelir_faturasi_makbuz_kesme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Makbuz Kesme İzni ")
+    gelir_faturasi_makbuz_silme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Makbuz Silme İzni ")
+    gelir_faturasi_makbuz_duzenleme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Makbuz Düzenleme İzni ")
+    #şantiye proje oluştuma özelliği 
+    proje_tipi_olusturma = models.BooleanField(default = False,verbose_name = "Proje Tipi Oluştuma  İzni")
+    proje_tipi_silme = models.BooleanField(default = False,verbose_name = "Proje Tipi Silme İzni ")
+    #Şantiye Oluştuma 
+    santiye_olusturma = models.BooleanField(default = False,verbose_name = "Şantiye Oluşturma İzni")
+    santiye_silme = models.BooleanField(default = False,verbose_name = "Şantiye Silme İzni ")
+    #Şantiye Kategorileri 
+    santiye_kategoriler_olusturma = models.BooleanField(default = False,verbose_name = "Şantiye Kategorileri Oluşturma İzni")
+    santiye_kategoriler_silme = models.BooleanField(default = False,verbose_name = "Şantiye Kategorileri Silme İzni ")
+    #Sözleşmeler Kategorileri 
+    sozlesmeler_olusturma = models.BooleanField(default = False,verbose_name = "Sözleşmeler Oluşturma İzni")
+    sozlesmeler_silme = models.BooleanField(default = False,verbose_name = "Sözleşmeler Silme İzni ")
+    #Hakedişler Kategorileri 
+    hakedisler_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
+    hakedisler_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
+    
