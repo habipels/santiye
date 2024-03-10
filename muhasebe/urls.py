@@ -56,6 +56,7 @@ urlpatterns = [
     path("receivingpayment", views.gelir_odemesi_ekle, name="gelir_odemesi_ekle"),
     path("settheycome/<int:id>", views.gelir_duzenle, name="gelir_duzenle"),
     path("incomesummary", views.gelirler_ozeti, name="gelirler_ozeti"),
+    path("viewcome/<int:id>", views.fatura_goster, name="fatura_goster"),
     #gelirler Sayfası
     #giderler Sayfası
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),

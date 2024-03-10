@@ -140,3 +140,68 @@ class faturalar_icin_logo(models.Model):
     gelir_makbuzu = models.FileField(upload_to='faturalogosu/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+
+import qrcode
+from io import BytesIO
+from django.core.files import File
+from PIL import Image, ImageDraw
+class gelir_qr(models.Model):
+    gelir_kime_ait_oldugu = models.ForeignKey(Gelir_Bilgisi,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    qr_bilgisi = models.ImageField(upload_to='faturaqr/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    def _str_(self):
+        return str(self.name)
+    def save(self, *args, **kwargs):
+        qr_code_data = str(self.gelir_kime_ait_oldugu.id)
+        
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=10,
+            border=4,
+        )
+
+        qr.add_data(qr_code_data)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
+        
+        fname = f'qr_code-{qr_code_data}.png'
+
+        self.qr_bilgisi.save(fname, File(buffer), save=False)
+
+        super().save(*args, **kwargs)
+    
+
+class gider_qr(models.Model):
+    gelir_kime_ait_oldugu = models.ForeignKey(Gider_Bilgisi,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    qr_bilgisi = models.ImageField(upload_to='faturaqr/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    def _str_(self):
+        return str(self.name)
+    def save(self, *args, **kwargs):
+        qr_code_data = str(self.gelir_kime_ait_oldugu.id)
+        
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=10,
+            border=4,
+        )
+
+        qr.add_data(qr_code_data)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
+        
+        fname = f'qr_code-{qr_code_data}.png'
+
+        self.qr_bilgisi.save(fname, File(buffer), save=False)
+
+        super().save(*args, **kwargs)

@@ -576,6 +576,11 @@ def ekstra_odeme(id,k):
         for i in a:
             topla = topla +  i.tutar
         return topla
+
+@register.simple_tag
+def gelir_qr_cek(id):
+    a = get_object_or_404(gelir_qr,gelir_kime_ait_oldugu__id = id)
+    return a.qr_bilgisi.url
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 import hashlib
