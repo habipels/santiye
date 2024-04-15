@@ -881,9 +881,13 @@ def gelir_faturasi_kaydet(request):
                 if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
                     urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
                     if urun:
+                        if indirim[i] == "":
+                            a = 0
+                        else:
+                            a = indirim[i]
                         gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
                             urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
-                            urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                            urun_fiyati = bfiyatInput[i],urun_indirimi = float(a),urun_adeti = int(miktari[i]),
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
                         )
@@ -1366,6 +1370,7 @@ def gider_gelir_ekleme(request):
     adi = request.POST.get("adi")
     aciklama= request.POST.get("aciklama")
     renk = request.POST.get("renk")
+    print("selam")
     if tur == "0":
         gelir_kategorisi.objects.create(
             gelir_kategoris_ait_bilgisi = user,
@@ -1385,9 +1390,11 @@ def gider_gelir_ekleme(request):
     
 
 def gider_gelir_etiketekleme(request):
+    print("sela")
     user = request.user
     tur = request.POST.get("tur2")
     adi = request.POST.get("adi2")
+    
     if tur == "0":
         gelir_etiketi.objects.create(
             gelir_kategoris_ait_bilgisi = user,
