@@ -67,7 +67,73 @@ def yetki(request):
 def homepage(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
-        pass
+        content = sozluk_yapisi()
+        if super_admin_kontrolu(request):
+            profile =Gelir_Bilgisi.objects.all()
+            kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
+            content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if request.GET:
+            search = request.GET.get("search")
+            tarih = request.GET.get("tarih")
+            if search:
+                if super_admin_kontrolu(request):
+                    profile =Gelir_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                    kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                    content["kullanicilar"] =kullanicilar
+                else:
+                    profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            if tarih :
+                profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(profile, 5) # 6 employees per page
+        
+        try:
+            page_obj = paginator.page(page_num)
+        except PageNotAnInteger:
+                # if page is not an integer, deliver the first page
+            page_obj = paginator.page(1)
+        except EmptyPage:
+                # if the page is out of range, deliver the last page
+            page_obj = paginator.page(paginator.num_pages)
+            
+        content["santiyeler"] = page_obj
+        if super_admin_kontrolu(request):
+            profile =Gider_Bilgisi.objects.all()
+            kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
+            content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if request.GET:
+            search = request.GET.get("search")
+            tarih = request.GET.get("tarih")
+            if search:
+                if super_admin_kontrolu(request):
+                    profile =Gider_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                    kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                    content["kullanicilar"] =kullanicilar
+                else:
+                    profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            if tarih :
+                profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(profile, 5) # 6 employees per page
+        
+        try:
+            page_obj = paginator.page(page_num)
+        except PageNotAnInteger:
+                # if page is not an integer, deliver the first page
+            page_obj = paginator.page(1)
+        except EmptyPage:
+                # if the page is out of range, deliver the last page
+            page_obj = paginator.page(paginator.num_pages)
+            
+        content["gider"] = page_obj
     else:
         return redirect("/users/login/")
 
@@ -2077,5 +2143,8 @@ def takvim_olaylari(request):
 #takvim
 
 
-
+def santiye_raporu(request,id):
+    content = sozluk_yapisi()
+    id = id
+    return render(request,"santiye_yonetimi\santiye_raporu.html",content)
 

@@ -48,11 +48,8 @@
                                         <table class="table align-middle table-nowrap" id="customerTable">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th scope="col" style="width: 50px;">
-                                                        <div class="form-check">
-                                                          
-                                                        </div>
-                                                    </th>
+                                                    
+                                                    <th class="sort" data-sort="customer_name">Rapor</th>
                                                     <th class="sort" data-sort="customer_name">Proje Kime Ait</th>
                                                     <th class="sort" data-sort="email">Proje Tipi > Proje Adı > Kat Sayısı</th>
                                                     <th class="sort" data-sort="date">Blog İlerleme Takibi </th>
@@ -62,11 +59,9 @@
                                             {% for i in santiyeler %}
                                                 <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
                                                     <th scope="row">
-                                                        <div class="form-check">
-                                                         
-                                                        </div>
+                                                        <a href="{% url 'main:santiye_raporu' i.id %}" class="fw-medium link-primary"> Raporu Göster </a>
                                                     </th>
-                                                    <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
+                                                    
                                                     <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
                                                     </td>
                                                     <td class="email">

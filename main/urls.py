@@ -58,8 +58,8 @@ urlpatterns = [
     path("saveprogresstracking", views.ilerleme_kaydet, name="ilerleme_kaydet"),
     #
     #ilerleme takibi
-
-    #taşeron olayları
+    path("santiyeraporu/<int:id>", views.santiye_raporu, name="santiye_raporu"),
+#    #taşeron olayları
     path("subcontractor", views.taseron_sayfasi, name="taseron_sayfasi"),
     path("addsubcontractor", views.taseron_ekle, name="taseron_ekle"),
     path("delsubcontractor", views.taseron_silme, name="taseron_silme"),

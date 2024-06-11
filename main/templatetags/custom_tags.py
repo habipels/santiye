@@ -245,10 +245,11 @@ def gider_faturasi_no(id):
     c = 8 - b
     a = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+a
     return a
-from datetime import datetime
+
 
 @register.simple_tag
 def saat_bilgisi():
+    from datetime import datetime
     su_an = datetime.now()
     saat = su_an.strftime("%H")
     #
@@ -584,13 +585,42 @@ def gelir_qr_cek(id):
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 import hashlib
+@register.simple_tag
+def toplama_yaptirma(bilgi):
+    toplama = 0
+    for i in bilgi:
+        toplama = toplama + (i.urun_fiyati*i.urun_adeti)
+
+    return toplama
+@register.simple_tag
+def kasa_toplam(bilgi):
+    toplam = 0
+    for i in bilgi:
+        toplam = toplam + i.bakiye
+    return toplam
 
 """@register.simple_tag
 def generate_token(object_id):
     hash_input = force_bytes(object_id)
     hash_value = hashlib.sha256(hash_input).digest()
     return urlsafe_base64_encode(hash_value)"""
+import datetime
+@register.simple_tag
+def tarih_cek():
+    from datetime import datetime, timedelta
 
+    # Bugünün tarihini al
+    bugun = datetime.today()
+
+    # Bir hafta ekle
+    bir_hafta_sonra = bugun + timedelta(weeks=1)
+
+    # Belirtilen formatta tarihleri yazdır
+    bugun_formatli = bugun.strftime("%m/%d/%Y")
+    bir_hafta_sonra_formatli = bir_hafta_sonra.strftime("%m/%d/%Y")
+    a =  bugun_formatli + " - " + bir_hafta_sonra_formatli
+    print(a)
+    return a
 import base64
 import hashlib
 @register.simple_tag

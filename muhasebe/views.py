@@ -1551,6 +1551,28 @@ def fatura_goster(request,id):
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/gelir_faturasi_goster.html",content)
+def fatura_goster2(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =Kasa.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
+        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = request.user)
+        kategori_bilgisi = gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
+        etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
+        gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
+        urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
+    content["gelir_kategoerisi"] = kategori_bilgisi
+    content["gelir_etiketi"] = etiketler
+    content["kasa"] = profile
+    content["urunler"]  = urunler_bilgisi
+    content["cari_bilgileri"] = cari_bilgileri
+    content["bilgi"] = gelir_bilgisi_ver
+    content["urunler"] = urunleri
+    return render(request,"muhasebe_page/gider_faturasi_goster.html",content)
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 from io import BytesIO
@@ -1564,31 +1586,20 @@ from openpyxl.styles import Font, Border, Side, GradientFill, Alignment
 def download_excel(request):
     wb = Workbook()
     ws = wb.active
-    ws.merge_cells("A1:G3")
+    
     top_left_cell = ws["A1"]
-    light_purple = "00CC99FF"
-    green = "00008000"
-    thin = Side(border_style="thin", color=light_purple)
-    double = Side(border_style="double", color=green)
-    top_left_cell.value = "GELİRLER"
-    top_left_cell.border = Border(top=double, left=thin, right=thin,
-                                  bottom=double)
-    top_left_cell.fill = GradientFill(stop=( "00ffff","013742"))
-    top_left_cell.font = Font(b=True, color="FF0000", size=16)
     top_left_cell.alignment = Alignment(horizontal="center",
                                         vertical="center")
-    ws['A4'] = 'Fatura No'
-    ws['B4'] = 'Müşteri'
-    ws['C4'] = 'Açıklama'
-    ws['D4'] = 'Tarih'
-    ws['E4'] = 'Tutar'
-    ws['F4'] = 'Ödeme Durumu'
+    ws['A1'] = 'Fatura No'
+    ws['B1'] = 'Müşteri'
+    ws['C1'] = 'Açıklama'
+    ws['D1'] = 'Tarih'
+    ws['E1'] = 'Tutar'
+    ws['F1'] = 'Ödeme Durumu'
     yellow = "FFFF00"
 
     # PatternFill için düzeltme
-    for row in ws.iter_rows(min_row=4, max_row=4, min_col=1, max_col=7):
-        for cell in row:
-            cell.fill = PatternFill(start_color="013742", end_color=yellow, fill_type="solid")
+    
     ws.append(['Data 1', 'Data 2'])
 
     # Excel dosyasını bir BytesIO nesnesine yaz
@@ -1605,7 +1616,7 @@ def download_excel(request):
 
 
 def download_pdf(request):
-    """
+    
     # PDF dosyasını oluştur
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=my_pdf_file.pdf'
@@ -1629,5 +1640,5 @@ def download_pdf(request):
     elements.append(table)
     pdf.build(elements)
     return response
-    """
-    return redirect("/")
+    
+    #return redirect("/")

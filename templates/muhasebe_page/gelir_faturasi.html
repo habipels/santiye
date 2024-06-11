@@ -65,17 +65,17 @@
                             <div class="form2">
                                 <div class="input-item musteri-input">
                                     <label>Müşteri</label>
-                                    <input type="search" name="musteri_bilgisi" class="cari" placeholder="Müşteri ünvanı" />
+                                    <input type="search" required name="musteri_bilgisi" class="cari" placeholder="Müşteri ünvanı" />
                                 </div>
                                 <div class="input-item duzenleme-vade-tarihi">
                                     <label>Düzenleme ve Vade Tarihi</label>
-                                    <input type="text" name="daterange" value="01/01/2024 - 01/30/2024" />
+                                    <input type="text" required name="daterange" value="{% tarih_cek  %}" />
                                 </div>
                                 <div class="input-item kategori" >
                                     
                                     <label>Kategori</label>
                                     <div  id="kategorii">
-                                    <select  id="kategori" name="gelir_kategorisi">
+                                    <select  required id="kategori" name="gelir_kategorisi">
                                         {% for i in gelir_kategoerisi %}
                                             <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
                                         {% endfor %}
@@ -86,11 +86,11 @@
                                 </div>
                                 <div class="input-item aciklama">
                                     <label>Açıklama</label>
-                                    <input type="text" name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
+                                    <input type="text" required name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
                                 </div>
                                 <div class="input-item etiket">
                                     <label>ETİKETLER</label>
-                                    <select name="etiketler" id="cokluetiket" multiple >
+                                    <select name="etiketler" required id="cokluetiket" multiple >
                                         {% for i in gelir_etiketi %}
                                              <option value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
                                         {% endfor %}
@@ -100,12 +100,12 @@
                             <div class="form2">
                                   <div class="input-item doviz">
                                     <label>DÖVİZ KURU</label>
-                                    <input type="text" placeholder="Açıklama" value="IQN" name="doviz_kuru" />
+                                    <input required type="text" placeholder="Açıklama" value="IQN" name="doviz_kuru" />
                                 </div>
                                 <div class="input-item fatura">
                                     <label>FATURA NO</label>
-                                    <input type="text" name="faturano" hidden value="{% gelir_faturasi_no request.user.id %}" />
-                                    <input type="text"  placeholder="Açıklama" value="{% gelir_faturasi_no request.user.id %}" disabled />
+                                    <input type="text" required name="faturano" hidden value="{% gelir_faturasi_no request.user.id %}" />
+                                    <input type="text" required  placeholder="Açıklama" value="{% gelir_faturasi_no request.user.id %}" disabled />
                                 </div>
                             </div>
                               
@@ -128,7 +128,7 @@
 
                                 <div class="table-item">
                                     <div class="urun">
-                                        <input type="search" name="urunadi" class="den"  id="searchInput" placeholder="Ürün / Hizmet Adı" />
+                                        <input type="search" name="urunadi" class="den" required id="searchInput" placeholder="Ürün / Hizmet Adı" />
 
                                     </div>
                                     <div class="miktar">
@@ -151,7 +151,7 @@
                                         </ul>
                                         <span style="display: flex !important;" class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
                                     </div>
-                                    <div class="indirim"><input id="indirim" class="indiirm" name="indirim" value="0" type="number" placeholder="İndirim gir %"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
+                                    <div class="indirim"><input id="indirim" class="indirim" name="indirim" value="0" type="number" placeholder="İndirim gir %"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
                                     <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="Açıklama Giriniz"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
                                 </div>
                               
@@ -306,30 +306,32 @@
 
     <script>
            
-        function enableAutocompleteForNewItems() {
-            function hesaplama_islemi(){
-            
-            var brimtutar = document.querySelectorAll(".bfiyatInput");
-            var miktar = document.querySelectorAll(".miktarInput");
-            var ana_toplam = document.querySelectorAll(".toplamInput");
-            var indirim = document.querySelectorAll(".indiirm");
-            var indirim_toplam = 0;
-            for (var u = 0; u < brimtutar.length; u++) {
-                ana_toplam[u].value = parseFloat(miktar[u].value*brimtutar[u].value).toFixed(2);
-                }
-            var islem_sonucu = 0;
-            var aratoplam = document.querySelector(".aratoplam");
-            for (var u = 0; u < ana_toplam.length; u++) {
-                islem_sonucu = islem_sonucu+ parseFloat(ana_toplam[u].value).toFixed(2);
-                }
-                for (var u = 0; u < indirim.length; u++) {
-                    indirim_toplam = indirim_toplam + parseFloat(indirim[u].value);
+       function enableAutocompleteForNewItems() {
+    function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
 
-                    
-                }
-                aratoplam.textContent =String(parseFloat(islem_sonucu).toFixed(2))+" $";
-                document.querySelector(".odenecektutar").textContent = String(parseFloat(islem_sonucu).toFixed(2)-parseFloat(indirim_toplam).toFixed(2))+" $";
-    }    
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
     $('.den').autocomplete({
         source: '/accounting/search/',
         minLength: 2,
@@ -354,9 +356,10 @@ $(document).ready(function(){
 
     $(document).on('click', '.addNewItem span', function() {
         var newItem = $('<input>').addClass('den');
-        $('.container').append(newItem); // Yeni öğeyi ekleyin
-        enableAutocompleteForNewItems(); // Yalnızca yeni eklenen öğe için otomatik tamamlama özelliğini etkinleştirin
+        $('.container').append(newItem); 
+        enableAutocompleteForNewItems();  
     });
+
 
     // Diğer kodlarınız buraya gelebilir...
 });

@@ -171,7 +171,7 @@
                                                 </div>
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="165.89">0</span>k
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% kasa_toplam kasa %}">0</span>
                                                         </h4>
                                                         <a href="" class="text-decoration-underline text-muted">Para Çek</a>
                                                     </div>
@@ -240,109 +240,39 @@
                                     <div class="table-responsive table-card">
                                         <table class="table table-centered table-hover align-middle table-nowrap mb-0">
                                             <tbody>
+                                            {% for i in  santiyeler %}
+                                            
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
+                                                                {% toplam_odenme_tutar i as odeme %}
+                                                    {% if  odeme == tutar %}
+                                                    <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
+                                                    {% elif odeme > 0 %}
+                                                    <div class="bg-warning" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
+                                                    {% elif odeme == 0 %}
+                                                    <div class="bg-danger" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
+                                                    {% endif %}
+                                                                
+                                                                
+                                                                
                                                             </div>
                                                             <div>
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Power Company</a>
+                                                                <h5 class="fs-13 my-1"><a  href="{% url 'accounting:fatura_goster' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
                                                                 </h5>
-                                                                <span class="text-muted">Kak Aram</span>
+                                                                <span class="text-muted">{{i.cari_bilgisi.cari_adi}}</span>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Elektrik Taşeronu</span>
+                                                        <span class="text-muted">{{i.vade_tarihi| date:'Y-m-d'}}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">$5412</span>
+                                                        <span class="text-muted">${% toplam_tutar_cikarma i %}</span>
                                                     </td>
                                                 </tr><!-- end -->
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Digitech
-                                                                        Galaxy</a></h5>
-                                                                <span class="text-muted">John Roberts</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">Watches</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">$75030</span>
-                                                    </td>
-
-                                                </tr><!-- end -->
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
-                                                            </div>
-                                                            <div class="flex-gow-1">
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Nesta
-                                                                        Technologies</a></h5>
-                                                                <span class="text-muted">Harley
-                                                                    Fuller</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">Bike Accessories</span>
-                                                    </td>
-													<td>
-                                                        <span class="text-muted">$45600</span>
-                                                    </td>
-
-                                                </tr><!-- end -->
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Zoetic
-                                                                        Fashion</a></h5>
-                                                                <span class="text-muted">James Bowen</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">Clothes</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">$29456</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Meta4Systems</a>
-                                                                </h5>
-                                                                <span class="text-muted">Zoe Dennis</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">Furniture</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">$11260</span>
-                                                    </td>
-                                                </tr><!-- end -->
+                                                {% endfor %}
                                             </tbody>
                                         </table><!-- end table -->
                                     </div>
@@ -350,27 +280,11 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">5</span> fatura. Toplam <span class="fw-semibold">25</span> fatura.
+                                                Gösterilen <span class="fw-semibold">5</span> fatura.
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
-                                            <ul class="pagination pagination-separated pagination-sm mb-0 justify-content-center">
-                                                <li class="page-item disabled">
-                                                    <a href="#" class="page-link">←</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a href="#" class="page-link">1</a>
-                                                </li>
-                                                <li class="page-item active">
-                                                    <a href="#" class="page-link">2</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a href="#" class="page-link">3</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a href="#" class="page-link">→</a>
-                                                </li>
-                                            </ul>
+                                          
                                         </div>
                                     </div>
 
@@ -398,108 +312,39 @@
                                     <div class="table-responsive table-card">
                                         <table class="table table-centered table-hover align-middle table-nowrap mb-0">
                                             <tbody>
+                                                {% for i in  gider %}
+                                            
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
+                                                                {% toplam_odenme_tutari i as odeme %}
+                                                    {% if  odeme == tutar %}
+                                                    <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
+                                                    {% elif odeme > 0 %}
+                                                    <div class="bg-warning" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
+                                                    {% elif odeme == 0 %}
+                                                    <div class="bg-danger" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
+                                                    {% endif %}
+                                                                
+                                                                
+                                                                
                                                             </div>
                                                             <div>
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">iTest Factory</a>
+                                                                <h5 class="fs-13 my-1"><a href="{% url 'accounting:fatura_goster2' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
                                                                 </h5>
-                                                                <span class="text-muted">Oliver Tyler</span>
+                                                                <span class="text-muted">{{i.cari_bilgisi.cari_adi}}</span>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Bags and Wallets</span>
+                                                        <span class="text-muted">{{i.vade_tarihi| date:'Y-m-d'}}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">$541200</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Digitech
-                                                                        Galaxy</a></h5>
-                                                                <span class="text-muted">John Roberts</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">Watches</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">$75030</span>
+                                                        <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
                                                     </td>
                                                 </tr><!-- end -->
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
-                                                            </div>
-                                                            <div class="flex-gow-1">
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Nesta
-                                                                        Technologies</a></h5>
-                                                                <span class="text-muted">Harley
-                                                                    Fuller</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">Bike Accessories</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">$45600</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Zoetic
-                                                                        Fashion</a></h5>
-                                                                <span class="text-muted">James Bowen</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">Clothes</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">$29456</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                <img src="{% static 'logo.png' %}" alt="" class="avatar-sm p-2" />
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <h5 class="fs-13 my-1"><a href="apps-ecommerce-seller-details.html" class="text-reset">Meta4Systems</a>
-                                                                </h5>
-                                                                <span class="text-muted">Zoe Dennis</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">Furniture</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">$11260</span>
-                                                    </td>
-                                                    <td>
-                                                </tr><!-- end -->
+                                                {% endfor %}
                                             </tbody>
                                         </table><!-- end table -->
                                     </div>
@@ -507,27 +352,11 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">5</span> fatura. Toplam <span class="fw-semibold">11</span> fatura.
+                                                Gösterilen <span class="fw-semibold">5</span> fatura. 
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
-                                            <ul class="pagination pagination-separated pagination-sm mb-0 justify-content-center">
-                                                <li class="page-item disabled">
-                                                    <a href="#" class="page-link">←</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a href="#" class="page-link">1</a>
-                                                </li>
-                                                <li class="page-item active">
-                                                    <a href="#" class="page-link">2</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a href="#" class="page-link">3</a>
-                                                </li>
-                                                <li class="page-item">
-                                                    <a href="#" class="page-link">→</a>
-                                                </li>
-                                            </ul>
+                                     
                                         </div>
                                     </div>
 
