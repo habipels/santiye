@@ -282,28 +282,29 @@
            
         function enableAutocompleteForNewItems() {
             function hesaplama_islemi(){
-            
-            var brimtutar = document.querySelectorAll(".bfiyatInput");
-            var miktar = document.querySelectorAll(".miktarInput");
-            var ana_toplam = document.querySelectorAll(".toplamInput");
-            var indirim = document.querySelectorAll(".indiirm");
-            var indirim_toplam = 0;
-            for (var u = 0; u < brimtutar.length; u++) {
-                ana_toplam[u].value = parseFloat(miktar[u].value*brimtutar[u].value).toFixed(2);
-                }
-            var islem_sonucu = 0;
-            var aratoplam = document.querySelector(".aratoplam");
-            for (var u = 0; u < ana_toplam.length; u++) {
-                islem_sonucu = islem_sonucu+ parseFloat(ana_toplam[u].value).toFixed(2);
-                }
-                for (var u = 0; u < indirim.length; u++) {
-                    indirim_toplam = indirim_toplam + parseFloat(indirim[u].value);
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
 
-                    
-                }
-                aratoplam.textContent =String(parseFloat(islem_sonucu).toFixed(2))+" $";
-                document.querySelector(".odenecektutar").textContent = String(parseFloat(islem_sonucu).toFixed(2)-parseFloat(indirim_toplam).toFixed(2))+" $";
-    }    
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
     $('.den').autocomplete({
         source: '/accounting/search/',
         minLength: 2,

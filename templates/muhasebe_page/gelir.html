@@ -100,7 +100,9 @@
                                                     <td><span>{{i.fatura_tarihi| date:'Y-m-d'}}</span></td>
                                                     <td><span>{{i.vade_tarihi| date:'Y-m-d'}}</span></td>
                                                     <td><span>{% toplam_tutar_cikarma i %} $</span></td>
-                                                    <td><span>{% kalan_tutuar i %} $</span></td>
+                                                    <td>
+                                                        <div id="ge{{i.id}}">
+                                                        <span>{% kalan_tutuar i %} $</span></div></td>
                                                     
                                                     {% if i.silinme_bilgisi %}
                                                     <td class="cancel"><span>İPTAL</span></td>
@@ -363,7 +365,8 @@
                         <span>KALAN</span>
                     </div>
                     <div class="price">
-                        <span>{% kalan_tutuar i %} <span>$</span></span>
+                    <div id="g{{i.id}}">
+                        <span >{% kalan_tutuar i %} <span>$</span></span></div>
                     </div>
                 </div>
             </div>
@@ -580,6 +583,8 @@
       success: function (data) {
     
         $("#guncelle"+ String(a) ).load(window.location.href + " #guncelle"+ String(a) );
+        $("#g"+ String(a) ).load(window.location.href + " #g"+ String(a) );
+        $("#ge"+ String(a) ).load(window.location.href + " #ge"+ String(a) );
         document.querySelector("#guncelle"+ String(a)).style.display="flex";
     }
     });

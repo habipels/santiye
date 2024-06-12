@@ -13,11 +13,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Gelirler</h4>
+                            <h4 class="mb-sm-0">Giderler</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Gelirler</li>
+                                    <li class="breadcrumb-item active">Giderler</li>
                                 </ol>
                             </div>
                         </div>
@@ -100,7 +100,9 @@
                                                     <td><span>{{i.fatura_tarihi| date:'Y-m-d'}}</span></td>
                                                     <td><span>{{i.vade_tarihi| date:'Y-m-d'}}</span></td>
                                                     <td><span>{% toplam_tutar_cikarmai i %} $</span></td>
-                                                    <td><span>{% toplam_odenme_tutari i %} $</span></td>
+                                                    <td>
+                                                        <div id="ge{{i.id}}">
+                                                        <span>{% kalan_tutuari i %} $</span></div></td>
                                                     
                                                     {% if i.silinme_bilgisi %}
                                                     <td class="cancel"><span>İPTAL</span></td>
@@ -363,7 +365,8 @@
                         <span>KALAN</span>
                     </div>
                     <div class="price">
-                        <span>{% kalan_tutuari i %} <span>$</span></span>
+                    <div id="g{{i.id}}">
+                        <span>{% kalan_tutuari i %} <span>$</span></span></div>
                     </div>
                 </div>
             </div>
@@ -580,6 +583,9 @@
       success: function (data) {
     
         $("#guncelle"+ String(a) ).load(window.location.href + " #guncelle"+ String(a) );
+        $("#g"+ String(a) ).load(window.location.href + " #g"+ String(a) );
+        $("#ge"+ String(a) ).load(window.location.href + " #ge"+ String(a) );
+        $("#get"+ String(a) ).load(window.location.href + " #get"+ String(a) );
         document.querySelector("#guncelle"+ String(a)).style.display="flex";
     }
     });
