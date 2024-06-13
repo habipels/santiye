@@ -30,8 +30,15 @@
                                 <h5 class="card-title mb-0 flex-grow-1">Gelen Faturalar</h5>
                                 <div class="export">
                                     <span>Export:</span>
-                                    <span class="item"><a style="color: white;" href="{% url 'accounting:download_excel' %}"><i class="ri-file-excel-line"></i>Excell</a></span>
-                                    <span class="item"><a style="color: white;" href="{% url 'accounting:download_pdf' %}"><i class="ri-file-pdf-2-line"></i>Pdf</a></span>
+                                    <form action="{% url 'accounting:download_excel' %}" method="post">
+                                        {% csrf_token %}
+                                        <button value="1" type="submit" name="sonuc_cek" class="item bg-danger"><a style="color: white;" ><i class="ri-file-excel-line"></i>Excell</a></button>
+                                        
+                                    </form>
+                                    <form action="{% url 'accounting:download_pdf' %}" method="post">
+                                        {% csrf_token %}
+                                        <button value="1" type="submit" name="sonuc_cek" class="item bg-danger"><a style="color: white;" ><i class="ri-file-pdf-2-line"></i>Pdf</a></button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -145,19 +152,14 @@
                             <i class="ri-more-fill align-middle"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" >
-                            <li><button class="dropdown-item" href="javascript:void(0);" onclick="ViewInvoice(this);" data-id="25000351"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
-                                    View</button></li>
-                            <li><button class="dropdown-item" href="javascript:void(0);" onclick="EditInvoice(this);" data-id="25000351"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                    Edit</button></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);"><i class="ri-download-2-line align-bottom me-2 text-muted"></i>
+                            <li><a href="{% url 'accounting:fatura_goster2' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="ViewInvoice(this);" data-id="25000351"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
+                                    View</a></li>
+                            <li><a href="{% url 'accounting:gider_duzenle' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="EditInvoice(this);" data-id="25000351"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                    Edit</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounting:fatura_goster2' i.id %}"><i class="ri-download-2-line align-bottom me-2 text-muted"></i>
                                     Download</a></li>
-                            <li class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item remove-item-btn" data-bs-toggle="modal" href="#deleteOrder">
-                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                    Delete
-                                </a>
-                            </li>
+                   
+                           
                         </ul>
                     </div>
                 </td>

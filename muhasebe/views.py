@@ -1497,7 +1497,7 @@ def hesap_ekstra_durumu(request):
         content["kullanicilar"] =kullanicilar
     else:
         profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))
-        profile.sort(key=lambda x: x.fatura_tarihi) 
+        profile.sort(key=lambda x: x.kayit_tarihi) 
         content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
     if request.GET:
         search = request.GET.get("search")
@@ -1574,33 +1574,120 @@ def fatura_goster2(request,id):
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/gider_faturasi_goster.html",content)
 from openpyxl import Workbook
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Font, Border, Side, GradientFill, Alignment
 from io import BytesIO
-from django.http import HttpResponse
-from openpyxl import Workbook
 from django.http import HttpResponse
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-from openpyxl.styles import Font, Border, Side, GradientFill, Alignment
+
+def toplam_odenme_tutar(id):
+    a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu=id)
+    topla = 0
+    for i in a:
+        topla += i.tutar
+    return topla
+
+def toplam_tutar_cikarma(id):
+    a = gelir_urun_bilgisi.objects.filter(gider_bilgis=id)
+    topla = 0
+    for i in a:
+        topla += (i.urun_fiyati * i.urun_adeti) - i.urun_indirimi
+    return topla
+def toplam_tutar_cikarmai(id):
+    a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
+    topla = 0
+    for i in a:
+        topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+    return topla
+def toplam_odenme_tutari(id):
+    a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+    topla = 0
+    for i in a:
+        topla = topla + i.tutar
+    return topla
+def ekstra(id,k):
+    bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
+    if bilgi.gelir_etiketi in k:
+        a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+        topla = 0
+        for i in a:
+            topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+        return topla
+    else:
+        a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
+        topla = 0
+        for i in a:
+            topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+        return topla
+
+def ekstra_odeme(id,k):
+    bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
+    if bilgi.gelir_etiketi in k:
+        a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+        topla = 0
+        for i in a:
+            topla = topla +  i.tutar
+        return topla
+    else:
+        a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+        topla = 0
+        for i in a:
+            topla = topla +  i.tutar
+        return topla
 def download_excel(request):
+    tablo = []
+    if request.POST:
+        a = request.POST.get("sonuc_cek")
+        if a == "0":
+            islem = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user)
+            for i in islem:
+                tablo.append([
+                    str(i.fatura_no),
+                    str(i.cari_bilgisi.cari_adi),
+                    str(i.aciklama),
+                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
+                    str(toplam_tutar_cikarma(i.id)),
+                    str(toplam_odenme_tutar(i.id))
+                ])
+        elif a == "1":
+            islem = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user)
+            for i in islem:
+                tablo.append([
+                    str(i.fatura_no),
+                    str(i.cari_bilgisi.cari_adi),
+                    str(i.aciklama),
+                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
+                    str(toplam_tutar_cikarmai(i.id)),
+                    str(toplam_odenme_tutari(i.id))
+                ])
+        elif a == "2":
+            profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))
+            profile.sort(key=lambda x: x.kayit_tarihi)
+            for i in profile:
+                tablo.append([
+                    str(i.fatura_no),
+                    str(i.cari_bilgisi.cari_adi),
+                    str(i.aciklama),
+                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
+                    str(ekstra(i,i.fatura_no)),
+                    str(ekstra_odeme(i,i.fatura_no))
+                ]) 
+
     wb = Workbook()
     ws = wb.active
-    
-    top_left_cell = ws["A1"]
-    top_left_cell.alignment = Alignment(horizontal="center",
-                                        vertical="center")
-    ws['A1'] = 'Fatura No'
-    ws['B1'] = 'Müşteri'
-    ws['C1'] = 'Açıklama'
-    ws['D1'] = 'Tarih'
-    ws['E1'] = 'Tutar'
-    ws['F1'] = 'Ödeme Durumu'
-    yellow = "FFFF00"
 
-    # PatternFill için düzeltme
-    
-    ws.append(['Data 1', 'Data 2'])
+    # Başlık satırını ekle
+    ws.append(['Fatura No', 'Müşteri', 'Açıklama', 'Tarih', 'Tutar', 'Ödeme Tutarı'])
+
+    # İçerik satırlarını ekle
+    for row in tablo:
+        ws.append(row)
+
+    # Stil düzenlemeleri (opsiyonel)
+    for cell in ws["1:1"]:
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell.fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
 
     # Excel dosyasını bir BytesIO nesnesine yaz
     excel_data = BytesIO()
@@ -1609,36 +1696,86 @@ def download_excel(request):
 
     # HttpResponse ile dosyayı indirme bağlantısı olarak sun
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=incomesummary.xlsx'
+    if a == "0":
+        response['Content-Disposition'] = 'attachment; filename=incomesummary.xlsx'
+    if a == "1":
+        response['Content-Disposition'] = 'attachment; filename=expensesummary.xlsx'
+    if a == "2":
+        response['Content-Disposition'] = 'attachment; filename=accountsummary.xlsx'
     response.write(excel_data.getvalue())
     return response
-    #return redirect("/")
+
 
 
 def download_pdf(request):
-    
+    a = request.POST.get("sonuc_cek")
     # PDF dosyasını oluştur
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=my_pdf_file.pdf'
+    if a == "0":
+        response['Content-Disposition'] = 'attachment; filename=incomesummary.pdf'
+    if a == "1":
+        response['Content-Disposition'] = 'attachment; filename=expensesummary.pdf'
+    if a == "2":
+        response['Content-Disposition'] = 'attachment; filename=accountsummary.pdf'
+    
 
     # PDF içeriği oluştur
     pdf = SimpleDocTemplate(response, pagesize=letter)
-    data = [['Header 1', 'Header 2'],
-            ['Data 1', 'Data 2']]
+    elements = []
+
+    data = [['Fatura No', 'Müşteri', 'Açıklama', 'Tarih', 'Tutar', 'Ödeme Tutarı']]
+
+    if request.POST:
+        a = request.POST.get("sonuc_cek")
+        if a == "0":
+            islem = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user)
+            for i in islem:
+                data.append([
+                    str(i.fatura_no),
+                    str(i.cari_bilgisi.cari_adi),
+                    str(i.aciklama),
+                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
+                    str(toplam_tutar_cikarma(i.id)),
+                    str(toplam_odenme_tutar(i.id))
+                ])
+        elif a == "1":
+            islem = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user)
+            for i in islem:
+                data.append([
+                    str(i.fatura_no),
+                    str(i.cari_bilgisi.cari_adi),
+                    str(i.aciklama),
+                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
+                    str(toplam_tutar_cikarmai(i.id)),
+                    str(toplam_odenme_tutari(i.id))
+                ])
+        elif a == "2":
+            profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))
+            profile.sort(key=lambda x: x.kayit_tarihi)
+            for i in profile:
+                data.append([
+                    str(i.fatura_no),
+                    str(i.cari_bilgisi.cari_adi),
+                    str(i.aciklama),
+                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
+                    str(ekstra(i,i.fatura_no)),
+                    str(ekstra_odeme(i,i.fatura_no))
+                ]) 
+
     table = Table(data)
-    style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.gray),
-                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black)])
+    style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ])
     table.setStyle(style)
 
     # PDF'e tabloyu ekle
-    elements = []
     elements.append(table)
     pdf.build(elements)
     return response
-    
     #return redirect("/")

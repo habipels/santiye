@@ -639,3 +639,12 @@ def generate_token(number):
     
     # Oluşturulan tokeni döndür
     return token
+@register.simple_tag
+def ayiklama(k):
+    gelir = faturalardaki_gelir_gider_etiketi.objects.last().gelir_etiketi
+    gider = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi
+    if gelir in k:
+        return 0
+    elif gider in k :
+        return 1
+    
