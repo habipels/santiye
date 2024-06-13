@@ -105,7 +105,7 @@ var options,
 chartHeatMapShadesColors &&
     ((options = {
           series: [
-                { name: "İmalat Kalemi", data: generateData(3, { min: 0, max: 90 }) },
+                { name: "birinci", data: generateData(5, { min: 0, max: 90 }) },
                 { name: "İmalat Kalemi", data: generateData(3, { min: 0, max: 90 }) },
                 { name: "İmalat Kalemi", data: generateData(3, { min: 0, max: 90 }) },
                 { name: "İmalat Kalemi", data: generateData(3, { min: 0, max: 90 }) },

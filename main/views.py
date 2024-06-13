@@ -2145,6 +2145,8 @@ def takvim_olaylari(request):
 
 def santiye_raporu(request,id):
     content = sozluk_yapisi()
-    id = id
+    
+    profile =  get_object_or_404(santiye,silinme_bilgisi = False,proje_ait_bilgisi = request.user,id = id ) 
+    content["santiye"] = profile
     return render(request,"santiye_yonetimi\santiye_raporu.html",content)
 

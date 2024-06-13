@@ -18,7 +18,24 @@ def bloglar_getir(veri):
         veri_esiti = veri_esiti + str(i.blog_adi)+str(i.blog_numarasi)+" ,"
     return str(veri_esiti)
 
-
+@register.simple_tag
+def bloglari_rapora_yansitma(veri):
+    deger = bloglar.objects.filter(proje_santiye_Ait = veri)
+    santiye_kalemleri_bilgisi = santiye_kalemleri.objects.filter(proje_santiye_Ait = veri,silinme_bilgisi = False)
+    
+    degerler = []
+    bloglar_getirme = []
+    kalemleri_gonder= []
+    kalemler_dagilisi_gonder= []
+    
+    for i in santiye_kalemleri_bilgisi:
+        kalemleri_gonder.append(i.kalem_adi)
+    for i in deger:
+        unique_values = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi =i.id,tamamlanma_bilgisi = True)
+        bloglar_getirme.append(i.blog_adi+str(i.blog_numarasi))
+        degerler.append(unique_values.count())
+    print(bloglar_getirme,degerler)
+    return {"blog" : bloglar_getirme,"degerler" : degerler,"kalemler":kalemleri_gonder,"kalem_dagilisi" : kalemler_dagilisi_gonder}
 @register.simple_tag
 def proje_dosyalarini(id):
     a = proje_dosyalari.objects.filter(proje_ait_bilgisi__id = id).count()
