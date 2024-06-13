@@ -419,7 +419,7 @@ def makbuzlari_getiri(id):
 @register.simple_tag
 def cari_gelirleri(bilgi):
     b = get_object_or_404(Gelir_Bilgisi,id = bilgi)
-    c = gelir_urun_bilgisi.objects.filter(gider_bilgis__id  =  b.id)
+    c = gelir_urun_bilgisi.objects.filter(silinme_bilgisi = False,gider_bilgis__id  =  b.id)
     gelir_toplami = 0
     for j in c:
         gelir_toplami = gelir_toplami + (j.urun_fiyati*j.urun_adeti) - j.urun_indirimi
@@ -434,7 +434,7 @@ def cari_gelirlerii(bilgi):
     gider_odemesi = 0
     for j in c:
         gelir_toplami = gelir_toplami + (j.urun_fiyati*j.urun_adeti) - j.urun_indirimi
-    d = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__id = b.id,silinme_bilgisi = False)
+    d = Gelir_odemesi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu__id = b.id,silinme_bilgisi = False)
     for j in d:
         gider_odemesi = gider_odemesi+j.tutar
     return round(float(gelir_toplami-gider_odemesi),2)
@@ -480,7 +480,7 @@ def cari_islemleri(bilgi):
         c = gider_urun_bilgisi.objects.filter(gider_bilgis__id =  i.id)
         for j in c:
             gider_toplami = gider_toplami + (j.urun_fiyati*j.urun_adeti) - j.urun_indirimi
-        d = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__id = i.id)
+        d = Gider_odemesi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu__id = i.id)
         for j in d:
             gider_odemesi = gider_odemesi+j.tutar
     gider_bilgisi = gider_toplami-gider_odemesi
@@ -488,7 +488,7 @@ def cari_islemleri(bilgi):
         c = gelir_urun_bilgisi.objects.filter(gider_bilgis__id  =  i.id)
         for j in c:
             gelir_toplami = gelir_toplami + (j.urun_fiyati*j.urun_adeti) - j.urun_indirimi
-        d = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__id = i.id)
+        d = Gelir_odemesi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu__id = i.id)
         for j in d:
             gelir_odemesi = gelir_odemesi+j.tutar
     gelir_bilgisi = gelir_toplami - gelir_odemesi

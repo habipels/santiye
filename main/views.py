@@ -2148,5 +2148,5 @@ def santiye_raporu(request,id):
     
     profile =  get_object_or_404(santiye,silinme_bilgisi = False,proje_ait_bilgisi = request.user,id = id ) 
     content["santiye"] = profile
-    return render(request,"santiye_yonetimi\santiye_raporu.html",content)
+    return render(request,"santiye_yonetimi/santiye_raporu.html",content)
 

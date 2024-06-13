@@ -89,12 +89,16 @@
                                     <input type="text" required name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
                                 </div>
                                 <div class="input-item etiket">
-                                    <label>ETİKETLER</label>
+                                    <div class="div">
+                                        <label>ETİKETLER</label>
                                     <select name="etiketler" required id="cokluetiket" multiple >
                                         {% for i in gelir_etiketi %}
                                              <option value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
                                         {% endfor %}
                                     </select>
+                                        <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#gideretiketiekle"><i class="ri-add-line align-bottom me-1"></i></button>
+                                    </div>
+                                    
                                 </div>
                             </div>
                             <div class="form2">
@@ -270,9 +274,36 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal fade" id="gideretiketiekle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+                               
+                                <div class="modal-body">
+                                    <input type="text" name="tur" id="tur" hidden value="0">
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Gelir Etiketi Adı</label>
+                                        <input type="text"  name="etiketadi" id="etiketadi" class="form-control" placeholder="Etiket Adı" />
+                                    </div>
+                                    
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">Ekle</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
 {% endblock sidebar %}
 {% block javascriptcodeadd %}
 
+    
 <!--Multi Select Date Calender-->
 <script>
     
@@ -378,6 +409,7 @@ $(document).ready(function(){
                     .appendTo(ul);
             };
         });
+        
 /*
 $(document).ready(function(){
     $('.den').each(function() {
@@ -405,7 +437,31 @@ $(document).ready(function(){
     });
 });
 */
-       
+       function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
     </script>
 <style>
   .item-label{
@@ -413,46 +469,90 @@ $(document).ready(function(){
   }
 </style>
 <script>
- // id
-    new MultiSelectTag('cokluetiket', {
-    rounded: true,    // default true
-    shadow: true,      // default false
-    placeholder: 'Search',  // default Search...
-    tagColor: {
-        textColor: '#327b2c',
-        borderColor: '#92e681',
-        bgColor: '#eaffe6',
-    },
-    onChange: function(values) {
-        console.log(values)
+    // Function to initialize MultiSelectTag
+    function initializeMultiSelectTag() {
+        return new MultiSelectTag('cokluetiket', {
+            rounded: true,
+            shadow: true,
+            placeholder: 'Search',
+            tagColor: {
+                textColor: '#327b2c',
+                borderColor: '#92e681',
+                bgColor: '#eaffe6',
+            },
+            onChange: function(values) {
+                console.log(values);
+            }
+        });
     }
-})
 
+    // Initialize MultiSelectTag initially
+    var multiSelectInstance = initializeMultiSelectTag();
 
-$(document).ready(function () {
-  $("#ekle").click(function (event) {
-    tur = $("#tur").val(),
-    adi = $("#adi").val(),
-    aciklama = $("#aciklama").val(),
-    renk = $("#renk").val(),
-    
-    $.ajax({
-      type: "POST",
-      url: "{% url 'accounting:gider_gelir_ekleme' %}",
-      data: {
-        tur: tur,
-        adi:adi,
-        aciklama:aciklama,
-        renk:renk,
-        csrfmiddlewaretoken: '{{ csrf_token }}'
-      },
-      success: function (data) {
-        $( "#kategorii" ).load(window.location.href + " #kategori" );
-      }
+    $(document).ready(function () {
+        $("#ekle").click(function (event) {
+            var tur = $("#tur").val(),
+                adi = $("#adi").val(),
+                aciklama = $("#aciklama").val(),
+                renk = $("#renk").val();
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'accounting:gider_gelir_ekleme' %}",
+                data: {
+                    tur: tur,
+                    adi: adi,
+                    aciklama: aciklama,
+                    renk: renk,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $("#kategorii").load(window.location.href + " #kategori");
+                }
+            });
+            return false;
+        });
     });
-    return false; //<---- move it here
-  });
-});
-    </script>
 
+    document.getElementById('ekle2').addEventListener('click', function() {
+        var etiketAdi = document.getElementById('etiketadi').value;
+
+        if (etiketAdi.trim() !== '') {
+            // Add new option to the <select> element
+            var newOption = document.createElement('option');
+            newOption.value = etiketAdi;
+            newOption.text = etiketAdi;
+            newOption.selected = true;
+
+            var selectElement = document.getElementById('cokluetiket');
+            selectElement.appendChild(newOption);
+
+            // Add new item to the drawer list
+            var newListItem = document.createElement('li');
+            newListItem.setAttribute('data-value', etiketAdi);  // or use a unique value if needed
+            newListItem.textContent = etiketAdi;
+            document.querySelector('.drawer ul').appendChild(newListItem);
+
+            // Remove the existing MultiSelectTag element
+           
+            var multiSelectElement = document.querySelector('.multi-select-tag');
+            alert(multiSelectElement);
+            if (multiSelectElement) {
+                multiSelectElement.remove();
+            }
+            // Reinitialize MultiSelectTag
+            multiSelectInstance = initializeMultiSelectTag();
+            
+            document.getElementById('etiketadi').value = '';
+
+            var modalElement = document.getElementById('gideretiketiekle');
+            var modalInstance = bootstrap.Modal.getInstance(modalElement);
+            modalInstance.hide();
+        } else {
+            alert('Etiket adı boş olamaz!');
+        }
+    });
+</script>
+
+   
 {% endblock javascriptcodeadd %}

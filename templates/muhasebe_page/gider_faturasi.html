@@ -132,10 +132,10 @@
 
                                     </div>
                                     <div class="miktar">
-                                        <input class="miktarInput" name="miktari"  type="number" value="1" oninput="hesaplama_islemi()" />
+                                        <input class="miktarInput" name="miktari"  type="number" value="1" oninput="hesaplama_islemi();" />
                                     </div>
                                     <div class="bfiyat">
-                                        <input id="bfiyatInput" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                                        <input id="bfiyatInput" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi();" />
                                         <span class="mdi mdi-currency-usd"></span>
                                     </div>
                                     <div class="toplam">
@@ -304,107 +304,134 @@
          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
-    <script>
+         <script>
            
-        function enableAutocompleteForNewItems() {
-                function hesaplama_islemi(){
-        var brimtutar = document.querySelectorAll(".bfiyatInput");
-        var miktar = document.querySelectorAll(".miktarInput");
-        var ana_toplam = document.querySelectorAll(".toplamInput");
-        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
-        var indirim_toplam = 0;
-
-        for (var u = 0; u < brimtutar.length; u++) {
-            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
-        }
-
-        var islem_sonucu = 0;
-        var aratoplam = document.querySelector(".aratoplam");
-        for (var u = 0; u < ana_toplam.length; u++) {
-            islem_sonucu += parseFloat(ana_toplam[u].value);
-        }
-
-        for (var u = 0; u < indirim.length; u++) {
-            indirim_toplam += parseFloat(indirim[u].value);
-        }
-
-        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
-        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
-    }
-    $('.den').autocomplete({
-        source: '/accounting/search/',
-        minLength: 2,
-        select: function(event, ui) {
-            var id = this.id;
-            $(this).val(ui.item.label);
-            $(this).siblings().val(ui.item.label);
-            id = id.replace("searchInput", "bfiyatInput");
-            document.getElementById(id).value = ui.item.value;
-            hesaplama_islemi();
-            return false;
-        }
-    }).data('ui-autocomplete')._renderItem = function(ul, item) {
-        return $('<li>')
-            .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
-            .appendTo(ul);
-    };
-}
-
-$(document).ready(function(){
-    enableAutocompleteForNewItems();
-
-    $(document).on('click', '.addNewItem span', function() {
-        var newItem = $('<input>').addClass('den');
-        $('.container').append(newItem); // Yeni öğeyi ekleyin
-        enableAutocompleteForNewItems(); // Yalnızca yeni eklenen öğe için otomatik tamamlama özelliğini etkinleştirin
-    });
-
-    // Diğer kodlarınız buraya gelebilir...
-});
-$(document).ready(function(){
-    $('.cari').autocomplete({
-                source: '/accounting/cari/',
-                minLength: 2,
-                select: function(event, ui) {
-                    $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
-                    $('.aciklama').val(ui.item.value)
-                    return false;
-                }
-            }).data('ui-autocomplete')._renderItem = function(ul, item) {
-                return $('<li>')
-                    .append('<div>' + item.label + '<br>' + item.value + '</div>')// Görünümü özelleştirin (ürün adı ve birim fiyat)
-                    .appendTo(ul);
-            };
-        });
-/*
-$(document).ready(function(){
-    $('.den').each(function() {
-        $(this).keyup(function() {
-            $(this).autocomplete({
-                source: '/accounting/search/',
-                minLength: 2,
-                select: function(event, ui) {
-                    $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
-                    $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
-                    $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
-                    return false;
-                }
-            }).data('ui-autocomplete')._renderItem = function(ul, item) {
-                return $('<li>')
-                    .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
-                    .appendTo(ul);
-            };
-        });
-    });
-
-    $('.bfiyatInput').on('input', function(){
-        // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
-        $('#hiddenBfiyatInput').val($(this).val());
-    });
-});
-*/
-       
-    </script>
+            function enableAutocompleteForNewItems() {
+         function hesaplama_islemi(){
+             var brimtutar = document.querySelectorAll(".bfiyatInput");
+             var miktar = document.querySelectorAll(".miktarInput");
+             var ana_toplam = document.querySelectorAll(".toplamInput");
+             var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+             var indirim_toplam = 0;
+     
+             for (var u = 0; u < brimtutar.length; u++) {
+                 ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+             }
+     
+             var islem_sonucu = 0;
+             var aratoplam = document.querySelector(".aratoplam");
+             for (var u = 0; u < ana_toplam.length; u++) {
+                 islem_sonucu += parseFloat(ana_toplam[u].value);
+             }
+     
+             for (var u = 0; u < indirim.length; u++) {
+                 indirim_toplam += parseFloat(indirim[u].value);
+             }
+     
+             aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+             document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+         }
+     
+         $('.den').autocomplete({
+             source: '/accounting/search/',
+             minLength: 2,
+             select: function(event, ui) {
+                 var id = this.id;
+                 $(this).val(ui.item.label);
+                 $(this).siblings().val(ui.item.label);
+                 id = id.replace("searchInput", "bfiyatInput");
+                 document.getElementById(id).value = ui.item.value;
+                 hesaplama_islemi();
+                 return false;
+             }
+         }).data('ui-autocomplete')._renderItem = function(ul, item) {
+             return $('<li>')
+                 .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
+                 .appendTo(ul);
+         };
+     }
+     
+     $(document).ready(function(){
+         enableAutocompleteForNewItems();
+     
+         $(document).on('click', '.addNewItem span', function() {
+             var newItem = $('<input>').addClass('den');
+             $('.container').append(newItem); 
+             enableAutocompleteForNewItems();  
+         });
+     
+     
+         // Diğer kodlarınız buraya gelebilir...
+     });
+     $(document).ready(function(){
+         $('.cari').autocomplete({
+                     source: '/accounting/cari/',
+                     minLength: 2,
+                     select: function(event, ui) {
+                         $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+                         $('.aciklama').val(ui.item.value)
+                         return false;
+                     }
+                 }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                     return $('<li>')
+                         .append('<div>' + item.label + '<br>' + item.value + '</div>')// Görünümü özelleştirin (ürün adı ve birim fiyat)
+                         .appendTo(ul);
+                 };
+             });
+             
+     /*
+     $(document).ready(function(){
+         $('.den').each(function() {
+             $(this).keyup(function() {
+                 $(this).autocomplete({
+                     source: '/accounting/search/',
+                     minLength: 2,
+                     select: function(event, ui) {
+                         $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+                         $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
+                         $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
+                         return false;
+                     }
+                 }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                     return $('<li>')
+                         .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
+                         .appendTo(ul);
+                 };
+             });
+         });
+     
+         $('.bfiyatInput').on('input', function(){
+             // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
+             $('#hiddenBfiyatInput').val($(this).val());
+         });
+     });
+     */
+            function hesaplama_islemi(){
+             var brimtutar = document.querySelectorAll(".bfiyatInput");
+             var miktar = document.querySelectorAll(".miktarInput");
+             var ana_toplam = document.querySelectorAll(".toplamInput");
+             var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+             var indirim_toplam = 0;
+     
+             for (var u = 0; u < brimtutar.length; u++) {
+                 ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+             }
+     
+             var islem_sonucu = 0;
+             var aratoplam = document.querySelector(".aratoplam");
+             for (var u = 0; u < ana_toplam.length; u++) {
+                 islem_sonucu += parseFloat(ana_toplam[u].value);
+             }
+     
+             for (var u = 0; u < indirim.length; u++) {
+                 indirim_toplam += parseFloat(indirim[u].value);
+             }
+     
+             aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+             document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+         }
+     
+         </script>
 <style>
   .item-label{
     font-size: 15px !important;
