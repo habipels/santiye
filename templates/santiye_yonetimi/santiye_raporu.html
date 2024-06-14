@@ -155,7 +155,11 @@ function generateData(a, e) {
 var options,
     chart,
     data = [
-        
+        {% for i in blog.blog  %}
+            
+            
+          { name: "{{i}}", data: 50 },
+          {% endfor %}
           { name: "T4", data: generateData(8, { min: 0, max: 90 }) },
           { name: "W2", data: generateData(8, { min: 0, max: 90 }) },
           { name: "W3", data: generateData(8, { min: 0, max: 90 }) },
@@ -356,14 +360,7 @@ var worldlinemap,
         (vectorMapUsaColors &&
             (usmap = new jsVectorMap({ map: "us_merc_en", selector: "#sales-by-locations", regionStyle: { initial: { stroke: "#9599ad", strokeWidth: 0.25, fill: vectorMapUsaColors, fillOpacity: 1 } }, zoomOnScroll: !1, zoomButtons: !1 })),
         getChartColorsArray("portfolio_donut_charts"));
-function generateData(e, t) {
-    for (var o = 0, a = []; o < e; ) {
-        var r = "w" + (o + 1).toString(),
-            n = Math.floor(Math.random() * (t.max - t.min + 1)) + t.min;
-        a.push({ x: r, y: n }), o++;
-    }
-    return a;
-}
+
 function getChartColorsArray(e) {
     if (null !== document.getElementById(e)) {
         var t = document.getElementById(e).getAttribute("data-colors");
@@ -457,14 +454,7 @@ var worldlinemap,
         (vectorMapUsaColors &&
             (usmap = new jsVectorMap({ map: "us_merc_en", selector: "#sales-by-locations", regionStyle: { initial: { stroke: "#9599ad", strokeWidth: 0.25, fill: vectorMapUsaColors, fillOpacity: 1 } }, zoomOnScroll: !1, zoomButtons: !1 })),
         getChartColorsArray("portfolio_donut_charts"));
-function generateData(e, t) {
-    for (var o = 0, a = []; o < e; ) {
-        var r = "w" + (o + 1).toString(),
-            n = Math.floor(Math.random() * (t.max - t.min + 1)) + t.min;
-        a.push({ x: r, y: n }), o++;
-    }
-    return a;
-}
+
 
 </script>
 {% endblock sidebar %}
