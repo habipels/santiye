@@ -20,7 +20,7 @@ class CustomUser(AbstractUser):
     background_image  = models.FileField(upload_to='background/',verbose_name="background",blank=True,null=True,)
     telefon_numarasi =  models.CharField(max_length= 20 , verbose_name="Telefon Numarası ",blank=True,null = True)
     gorevi = models.CharField(max_length = 250 ,verbose_name="Görevi",blank = True,null = True)
-
+    adrrsi = models.TextField("Adres", max_length=600, default='', blank=True)
     
     def save(self, *args, **kwargs):
         super(CustomUser, self).save(*args, **kwargs)
