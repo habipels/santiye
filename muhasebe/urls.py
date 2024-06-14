@@ -78,6 +78,9 @@ urlpatterns = [
      path("accountextra", views.hesap_ekstra_durumu, name="hesap_ekstra_durumu"),
       path('download-excel/', views.download_excel, name='download_excel'),
       path('download-pdf/', views.download_pdf, name='download_pdf'),
+    #qrfaturasıgöster
+    path("viewcomeqr/<int:id>", views.fatura_gosterqr, name="fatura_gosterqr"),
+    path("viewexpensesqr/<int:id>", views.fatura_goster2qr, name="fatura_goster2qr"),
 ]
 #
 

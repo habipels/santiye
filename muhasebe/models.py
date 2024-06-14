@@ -151,7 +151,7 @@ class gelir_qr(models.Model):
     def _str_(self):
         return str(self.name)
     def save(self, *args, **kwargs):
-        qr_code_data = str(self.gelir_kime_ait_oldugu.id)
+        qr_code_data = "http://127.0.0.1:8000"+str("/accounting/viewcomeqr/")+str(self.gelir_kime_ait_oldugu.id)
         
         qr = qrcode.QRCode(
             version=1,
@@ -169,7 +169,7 @@ class gelir_qr(models.Model):
         img.save(buffer, format="PNG")
         buffer.seek(0)
         
-        fname = f'qr_code-{qr_code_data}.png'
+        fname = f'qr_code-{str(self.gelir_kime_ait_oldugu.id)}.png'
 
         self.qr_bilgisi.save(fname, File(buffer), save=False)
 
@@ -182,7 +182,7 @@ class gider_qr(models.Model):
     def _str_(self):
         return str(self.name)
     def save(self, *args, **kwargs):
-        qr_code_data = str(self.gelir_kime_ait_oldugu.id)
+        qr_code_data = "http://127.0.0.1:8000"+str("/accounting/viewexpensesqr/")+str(self.gelir_kime_ait_oldugu.id)
         
         qr = qrcode.QRCode(
             version=1,
@@ -200,7 +200,7 @@ class gider_qr(models.Model):
         img.save(buffer, format="PNG")
         buffer.seek(0)
         
-        fname = f'qr_code-{qr_code_data}.png'
+        fname = f'qr_code-{str(self.gelir_kime_ait_oldugu.id)}.png'
 
         self.qr_bilgisi.save(fname, File(buffer), save=False)
 

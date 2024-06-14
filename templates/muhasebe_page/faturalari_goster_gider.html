@@ -3,31 +3,18 @@
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
+{% block header %}
+        
+{% endblock header %}
 {% block slider %}
 <div class="main-content">
 
     <div class="page-content">
         <div class="container-fluid">
 
-            <!-- start page title -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">FATURA DETAYI</h4>
+     
 
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Invoices</a></li>
-                                <li class="breadcrumb-item active">Invoice Details</li>
-                            </ol>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <!-- end page title -->
-
-            <div class="row justify-content-center">
+            <div class="row justify-content-start">
                 <div class="col-xxl-9">
                     <div class="card" id="demo">
                         <div class="row">
@@ -45,7 +32,6 @@
                                             <p class="fw-medium mb-2" id="billing-name">{{bilgi.gelir_kime_ait_oldugu.first_name}}</p>
                                             <p class="text-muted mb-1" id="billing-address-line-1">{{bilgi.gelir_kime_ait_oldugu.adrrsi}}</p>
                                             <p class="text-muted mb-1"><span>Phone: </span><span id="billing-phone-no">{{bilgi.gelir_kime_ait_oldugu.telefon_numarasi}}</span></p>
-
                                         </div>
                                         <!--end col-->
                                         <div class="col-6">
@@ -65,7 +51,7 @@
                                             </div>
                                         </div>
                                         <div class="flex-shrink-0 mt-sm-0 mt-3">
-                                            <img src="{%  gelir_qr_cek bilgi.id %}"  alt="logo dark" height="100">
+                                            <img src="{%  gider_qr_cek bilgi.id %}"  alt="logo dark" height="100">
                                             
                                         </div>
                                     </div>
@@ -90,8 +76,8 @@
                                             {% if i.silinme_bilgisi %}
                                                     <td class="cancel"><span>İPTAL</span></td>
                                                     {% else %}
-                                                   {% toplam_tutar_cikarma bilgi as tutar %}
-                                                    {% toplam_odenme_tutar bilgi as odeme %}
+                                                   {% toplam_tutar_cikarmai bilgi as tutar %}
+                                                    {% toplam_odenme_tutari bilgi as odeme %}
                                                     {% if  odeme == tutar %}
                                                         <span class="badge bg-success-subtle text-success fs-11" id="payment-status">ÖDENDİ</span>
                                                     {% elif odeme > 0 %}
@@ -104,7 +90,7 @@
                                         <!--end col-->
                                         <div class="col-lg-3 col-6">
                                             <p class="text-muted mb-2 text-uppercase fw-semibold">Total Amount</p>
-                                            <h5 class="fs-14 mb-0">$<span id="total-amount">{% toplam_tutar_cikarma bilgi %}</span></h5>
+                                            <h5 class="fs-14 mb-0">$<span id="total-amount">{% toplam_tutar_cikarmai bilgi %}</span></h5>
                                         </div>
                                         <!--end col-->
                                     </div>
