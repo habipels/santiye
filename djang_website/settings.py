@@ -51,13 +51,13 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
-    
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     #
     'django.middleware.locale.LocaleMiddleware',
-    
+
     #
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -84,7 +84,7 @@ TEMPLATES = [
             'custom_tags': 'main.templatetags.custom_tags',
             },
         },
-        
+
     },
 ]
 
@@ -156,7 +156,7 @@ LOCALE_PATHS = (
 )
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-#STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
 
 MEDIA_URL = ''
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')

@@ -1,4 +1,4 @@
-from django import template 
+from django import template
 from django.utils.safestring import mark_safe
 from site_info.models import *
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
@@ -22,12 +22,12 @@ def bloglar_getir(veri):
 def bloglari_rapora_yansitma(veri):
     deger = bloglar.objects.filter(proje_santiye_Ait = veri)
     santiye_kalemleri_bilgisi = santiye_kalemleri.objects.filter(proje_santiye_Ait = veri,silinme_bilgisi = False)
-    
+
     degerler = []
     bloglar_getirme = []
     kalemleri_gonder= []
     kalemler_dagilisi_gonder= []
-    
+
     for i in santiye_kalemleri_bilgisi:
         kalemleri_gonder.append(i.kalem_adi)
     for i in deger:
@@ -40,14 +40,14 @@ def bloglari_rapora_yansitma(veri):
 def proje_dosyalarini(id):
     a = proje_dosyalari.objects.filter(proje_ait_bilgisi__id = id).count()
     return a
-    
+
 @register.simple_tag
 def proje_dosyalarini_bilgi(id):
     a = proje_dosyalari.objects.filter(proje_ait_bilgisi__id = id)
     return a
 
 
-    
+
 @register.simple_tag
 def taseronsozlesme_saysisi(id):
     a = taseron_sozlesme_dosyalari.objects.filter(proje_ait_bilgisi__id = id).count()
@@ -60,7 +60,7 @@ def taseron_gorev_saysisi(id):
 
     return a
 
-    
+
 @register.simple_tag
 def kullanici_dosya_sayisi(id):
     a = personel_dosyalari.objects.filter(kullanici__id = id).count()
@@ -81,7 +81,7 @@ def klasor_olayi(id):
         else:
             break
     for i in range(len(m)-1,-1,-2):
-        a = a+'<a href="/storage/mydir/{}/{}/">{}</a> > '.format(m[i],m[i-1],m[i-1]) 
+        a = a+'<a href="/storage/mydir/{}/{}/">{}</a> > '.format(m[i],m[i-1],m[i-1])
     return mark_safe(a)
 
 
@@ -97,7 +97,7 @@ def kullanici_dosya_boyutu(id):
     #mb oldu
     boyut = boyut /1024
     #gb oldu
-    full = 5 
+    full = 5
     full =( boyut * 100 ) / full
     full = round(float(full),2)
     boyut = round(float(boyut),2)
@@ -113,7 +113,7 @@ def kullanici_dosya_boyutu(id):
                                             </div>
                                             <span class="text-muted fs-12 d-block text-truncate"><b>{}</b>GB used of <b>5</b>GB</span>""".format(full,boyut)
         return mark_safe(k)
-    
+
 
 
 @register.simple_tag
@@ -128,7 +128,7 @@ def dosya_ekleme_yetenegi(id):
     #mb oldu
     boyut = boyut /1024
     #gb oldu
-    full = 5 
+    full = 5
     full =( boyut * 100 ) / full
     full = round(float(full),2)
     boyut = round(float(boyut),2)
@@ -147,7 +147,7 @@ def mb_donusturme(id):
 
 @register.simple_tag
 def dosya_sayisi_ve_boyutu (id):
-    
+
     klasor_sayisi = klasorler.objects.filter(klasor_adi_db__id=id).count()
     dosya_sayisi =  klasor_dosyalari.objects.filter(proje_ait_bilgisi__id=id).count()
     dosya_boyutu  = 0
@@ -171,7 +171,7 @@ def veri_siralama(veri,id):
         return "right"
     else:
         return "left"
-    
+
 
 @register.simple_tag
 def dosya_varsa_indirme(id):
@@ -181,7 +181,7 @@ def dosya_varsa_indirme(id):
     for i in veri:
         k = str(i.dosya.url).split("/")
         k = k[ -1]
-        
+
         z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,k,round(float(i.dosya.size/1024),2))
     return mark_safe(z)
 
@@ -238,7 +238,7 @@ def tum_bilgiler(id,kalem):
 
 @register.simple_tag
 def cari_taseron_mu(id):
-    a = cari_taseron_baglantisi.objects.filter(cari_bilgisi__id = id) 
+    a = cari_taseron_baglantisi.objects.filter(cari_bilgisi__id = id)
     b = ""
     for i in a:
         b = b+ str(i.gelir_kime_ait_oldugu.taseron_adi)
@@ -284,7 +284,7 @@ def isplani_durumu_kontrol(id):
     b = ""
     for i in a:
         b = i.status
-    
+
     return b
 
 @register.simple_tag
@@ -295,13 +295,13 @@ def dosya_varsa_indirme_isplani(id):
     for i in veri:
         k = str(i.dosya.url).split("/")
         k = k[ -1]
-        
+
         z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,k,round(float(i.dosya.size/1024),2))
     return mark_safe(z)
 @register.simple_tag
 def ilerleme_goster(id):
     ilerlemeler = IsplaniPlanlariIlerleme.objects.filter(proje_ait_bilgisi__id = id).order_by("-teslim_tarihi")
-    
+
     return ilerlemeler
 @register.simple_tag
 def dosya_varsa_indirme_isplani_ilerleme(id):
@@ -311,7 +311,7 @@ def dosya_varsa_indirme_isplani_ilerleme(id):
     for i in veri:
         k = str(i.dosya.url).split("/")
         k = k[ -1]
-        
+
         z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,k,round(float(i.dosya.size/1024),2))
     return mark_safe(z)
 
@@ -358,7 +358,7 @@ def carpma_islemi(a,b):
 @register.simple_tag
 def kalemleri_getir_gelir_faturasi_icin_toplam_flan(id):
     a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
-    
+
     toplam_urun_fiyati = 0
     genel_toplam = 0
     for i in a:
@@ -366,12 +366,12 @@ def kalemleri_getir_gelir_faturasi_icin_toplam_flan(id):
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
     sonuc = {"toplam" : toplam_urun_fiyati,
              "genel":genel_toplam}
-    
+
     return sonuc
 @register.simple_tag
 def kalemleri_getir_gelir_faturasi_icin_toplam_flani(id):
     a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
-    
+
     toplam_urun_fiyati = 0
     genel_toplam = 0
     for i in a:
@@ -379,7 +379,7 @@ def kalemleri_getir_gelir_faturasi_icin_toplam_flani(id):
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
     sonuc = {"toplam" : toplam_urun_fiyati,
              "genel":genel_toplam}
-    
+
     return sonuc
 @register.simple_tag
 def kalan_tutuar(id):
@@ -534,8 +534,8 @@ def giderler_tutari(bilgi):
         for i in a:
             genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
             indirim = indirim+ i.urun_indirimi
-       
-        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+
+        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2),"genel_odeme2":str(round(float(toplam-indirim),2))}
     else:
         a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,gelir_kime_ait_oldugu__silinme_bilgisi= False)
         toplam = 0
@@ -547,23 +547,35 @@ def giderler_tutari(bilgi):
         for i in a:
             genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
             indirim = indirim+ i.urun_indirimi
-        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2),"genel_odeme2":str(round(float(toplam-indirim),2))}
 #
 @register.simple_tag
 def basit_cikarma(a,b):
     y = float(a)-float(b)
     return str(round(y,2))
 @register.simple_tag
-def kategori_bilgi_ver():
-    a = [44, 55, 41, 17, 15]
-    b  = [1,2,3,4,5]
+def sorgu(a):
+    y = float(a)
+    return str(round(y,2))
+@register.simple_tag
+def basit_toplama(a,b):
+    y = float(a)+float(b)
+    return str(round(y,2))
+@register.simple_tag
+def kategori_bilgi_ver(b):
+    if b.is_superuser:
+        bilgi = gelir_kategorisi.objects.filter(silinme_bilgisi = False)
+    else:
+        bilgi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = b)
+    a = []
     isimleri = []
     renk = []
-    bilgi = gelir_kategorisi.objects.filter(id__in = b)
+
     for i in bilgi:
         isimleri.append(str(i.gelir_kategori_adi))
         renk.append(str(i.gelir_kategorisi_renk))
-    return {"b":isimleri,"a":a,"renk":renk}
+        a.append(Gelir_Bilgisi.objects.filter(gelir_kategorisi_id = i.id).count())
+    return {"isimleri":isimleri,"a":a,"renk":renk}
 @register.simple_tag
 def ekstra(id,k):
     bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
@@ -648,16 +660,16 @@ import hashlib
 def generate_token(number):
     # Sayıyı stringe dönüştür
     number_str = str(number)
-    
+
     # Stringi bayt dizisine dönüştür
     byte_str = number_str.encode('utf-8')
-    
+
     # Bayt dizisini SHA-256 ile şifrele
     hashed_bytes = hashlib.sha256(byte_str).digest()
-    
+
     # Şifrelenmiş bayt dizisini base64 formatında kodla
     token = base64.urlsafe_b64encode(hashed_bytes)
-    
+
     # Oluşturulan tokeni döndür
     return token
 @register.simple_tag
@@ -677,7 +689,66 @@ def kasa_verisi(bakiye,id):
         toplam_tutar = toplam_tutar +i.tutar
     toplam_tutar = toplam_tutar + bakiye
     a = Gider_odemesi.objects.filter(kasa_bilgisi = id,silinme_bilgisi = False)
-    
+
     for i in a:
         toplam_tutar = toplam_tutar -i.tutar
     return round(toplam_tutar,2)
+@register.simple_tag
+def kasa_islemleri(bilgi):
+    a = list(Gider_odemesi.objects.filter(silinme_bilgisi = False,kasa_bilgisi__id = bilgi.id))+list(Gelir_odemesi.objects.filter(silinme_bilgisi = False,kasa_bilgisi__id = bilgi.id))
+    return a
+@register.simple_tag
+def fatura_durumu(k):
+    bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
+    if bilgi.gelir_etiketi in k:
+        return 0
+    else:
+        return 1
+from django.db.models import Sum
+from django.utils.timezone import now
+@register.simple_tag
+def ozellikler(bilgi):
+    if bilgi.is_superuser:
+        this_year = now().year
+        aylik_gelir = []
+        aylik_gider = []
+        for month in range(1, 13):
+            total = Gelir_odemesi.objects.filter(
+                tarihi__year=this_year,
+                tarihi__month=month,
+                silinme_bilgisi=False
+            ).aggregate(total_gelir=Sum('tutar'))['total_gelir'] or 0
+            aylik_gelir.append(total)
+            total_g = Gider_odemesi.objects.filter(
+                tarihi__year=this_year,
+                tarihi__month=month,
+                silinme_bilgisi=False
+            ).aggregate(total_gider=Sum('tutar'))['total_gider'] or 0
+            aylik_gider.append(total_g)
+        print(aylik_gelir)
+        print(aylik_gider)
+        kategoriler = ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]
+    else:
+        this_year = now().year
+        aylik_gelir = []
+        aylik_gider = []
+        for month in range(1, 13):
+            total = Gelir_odemesi.objects.filter(
+                tarihi__year=this_year,gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,
+                tarihi__month=month,
+                silinme_bilgisi=False
+            ).aggregate(total_gelir=Sum('tutar'))['total_gelir'] or 0
+            aylik_gelir.append(total)
+            total_g = Gider_odemesi.objects.filter(
+                tarihi__year=this_year,gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,
+                tarihi__month=month,
+                silinme_bilgisi=False
+            ).aggregate(total_gider=Sum('tutar'))['total_gider'] or 0
+            aylik_gider.append(total_g)
+        print(aylik_gelir)
+        print(aylik_gider)
+        kategoriler = ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]
+    return {"gelir":aylik_gelir,"gider":aylik_gider,"kategoriler":kategoriler}
+
+
+

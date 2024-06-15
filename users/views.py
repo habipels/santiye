@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login,authenticate,logout
 from django.shortcuts import render,get_object_or_404
 from .models import *
-from .decorators import user_not_authenticated ,lock_screen_required  
+from .decorators import user_not_authenticated ,lock_screen_required
 from .tokens import account_activation_token
 from django.contrib.auth.decorators import login_required
 from site_info.models import *
@@ -42,7 +42,7 @@ def register(request):
         messages.info(request,"Başarıyla Kayıt Oldunuz...")
 
         return redirect("/")
-    
+
     return render(request,"account/register.html",context)
 
 
@@ -50,11 +50,8 @@ def register(request):
 def loginUser(request):
     form = LoginForm(request.POST or None)
 
-
-    context = {
-
-        "form":form
-    }
+    context = sozluk_yapisi()
+    context ["form"] = form
 
     if form.is_valid():
         username = form.cleaned_data.get("username")
@@ -74,12 +71,12 @@ def loginUser(request):
         except :
             # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
             lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=False)
-        
+
         return redirect("/")
     return render(request,"account/login.html",context)
 @login_required
 def logoutUser(request):
-    
+
     try:
         lock_status = LockScreenStatus.objects.get(user=request.user)
         lock_status.is_locked=False
@@ -100,14 +97,14 @@ def profil_bilgisi (request):
 #kullanıcılar
 def kullanicilarim(request):
     content = sozluk_yapisi()
-    
+
     if super_admin_kontrolu(request):
         profile = taseron_sozlesme_dosyalari.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
         profile = CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False).order_by("-id")
-        
+
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -118,7 +115,7 @@ def kullanicilarim(request):
             profile = CustomUser.objects.filter(Q(last_name__icontains = search) & Q(kullanici_silme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -154,7 +151,7 @@ def kullanici_ekleme(request):
                 last_name = yetkili_adi,
                 username = email,
                 email = email,
-                gorevi =gorevi, 
+                gorevi =gorevi,
                 kullanicilar_db = request.user,
                 is_active = durumu
             )
@@ -164,7 +161,7 @@ def kullanici_ekleme(request):
             for images in file:
                 personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
         return redirect("users:kullanicilarim")
-    
+
 
 def kullanici_silme(request):
     if request.POST:
@@ -192,7 +189,7 @@ def kullanici_bilgileri_duzenle(request):
                 last_name = yetkili_adi,
                 username = email,
                 email = email,
-                gorevi =gorevi, 
+                gorevi =gorevi,
                 kullanicilar_db = request.user,
                 is_active = durumu
             )
@@ -200,11 +197,11 @@ def kullanici_bilgileri_duzenle(request):
                 for images in file:
                     personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
         return redirect("users:kullanicilarim")
-    
+
 @login_required
 @lock_screen_required
 def lock_screen(request):
-    content = {}
+    content = sozluk_yapisi()
     try:
         lock_status = LockScreenStatus.objects.get(user=request.user)
         lock_status.is_locked=True
@@ -250,7 +247,7 @@ def profile_edit_kismi(request):
             u = CustomUser.objects.get(id = request.user.id)
             u.image = profile
             u.save()
-            
+
         if background:
             u = CustomUser.objects.get(id = request.user.id)
             u.background_image = background

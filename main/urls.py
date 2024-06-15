@@ -22,7 +22,7 @@ urlpatterns = [
     #dil ayarları
     #proje tip işlemelri
     path("projectstype", views.proje_tipi_, name="proje_tipi_"),
-    path("addprojectstype", views.proje_ekle, name="proje_ekle"),
+    path("addprojectstype", views.proje_ekleme, name="proje_ekleme"),
     path("delprojectstype", views.proje_Adi_sil, name="proje_Adi_sil"),
     path("setprojecttype", views.proje_duzenle, name="proje_duzenle"),
     #proje tip işlemelri
@@ -44,7 +44,7 @@ urlpatterns = [
     path("setbuldingsite", views.santiye_kalemleri_duzenle, name="santiye_kalemleri_duzenle"),
     path("delbuldingsites/<int:id>/<int:ik>", views.kalem_blog_dagilis_sil, name="kalem_blog_dagilis_sil"),
     #
-    #şantiye Kalemleri 
+    #şantiye Kalemleri
     #proje
     path("prjectspage", views.projeler_sayfasi, name="projeler_sayfasi"),
     path("addprjects", views.proje_ekle, name="proje_ekle"),
@@ -83,7 +83,7 @@ urlpatterns = [
     path("adminaddprogresspayment/<int:id>", views.hakedis_ekle_admin, name="hakedis_ekle_admin"),
     #
     #hakedişler
-    #depolama sistemim 
+    #depolama sistemim
     path("storage/mydir", views.depolama_sistemim, name="depolama_sistemim"),
     path("storage/addmydir", views.klasor_olustur, name="klasor_olustur"),
     path("storage/setmydir", views.klasor__yeniden_adlandir, name="klasor__yeniden_adlandir"),
@@ -96,7 +96,7 @@ urlpatterns = [
     path("storage/mydir/media", views.media_dosyalari, name="media_dosyalari"),
     path("storage/mydir/history", views.zamana_dosyalari, name="zamana_dosyalari"),
     path("storage/mydir/deletedfile", views.silinen_dosyalari, name="silinen_dosyalari"),
-    #depolama sistemim 
+    #depolama sistemim
     #iş planı
     path("thingstodo", views.yapilacaklar, name="yapilacaklar"),
     path("addthingstodo", views.yapilacalar_ekle, name="yapilacalar_ekle"),

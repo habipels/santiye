@@ -9,6 +9,9 @@ function getChartColorsArray(e) {
                 : t;
         });
 }
+document.addEventListener('DOMContentLoaded', function() {
+    logDjangoVariables(window.gelir, window.gider,window.kategoriler);
+});
 var chartColumnColors = getChartColorsArray("column_chart"),
     chartColumnDatatalabelColors =
         (chartColumnColors &&
@@ -18,11 +21,11 @@ var chartColumnColors = getChartColorsArray("column_chart"),
                 dataLabels: { enabled: !1 },
                 stroke: { show: !0, width: 2, colors: ["transparent"] },
                 series: [
-                    { name: "Gelirler", data: [46, 57, 59, 54, 62, 58, 64, 60, 66] },
-                    { name: "Giderler", data: [74, 83, 102, 97, 86, 106, 93, 114, 94] },
+                    { name: "Gelirler", data: window.gelir },
+                    { name: "Giderler", data: window.gider },
                 ],
                 colors: chartColumnColors,
-                xaxis: { categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"] },
+                xaxis: { categories: window.kategoriler },
                 yaxis: { title: { text: "$ (thousands)" } },
                 grid: { borderColor: "#f1f1f1" },
                 fill: { opacity: 1 },

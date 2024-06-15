@@ -66,7 +66,7 @@
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-success fs-14 mb-0">
                                                             <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-                                                            +16.24 %
+                                                           
                                                         </h5>
                                                     </div>
                                                 </div>
@@ -75,7 +75,7 @@
                                                     {% gelirler_tutari request.user as gelir_bilgisi_cek %}
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">+ $<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
                                                         </h4>
-                                                        <a href="" class="text-decoration-underline text-muted">Gelirleri Görüntüle</a>
+                                                        <a href="{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">Gelirleri Görüntüle</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-success-subtle rounded fs-3">
@@ -99,15 +99,15 @@
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-danger fs-14 mb-0">
                                                             <i class="ri-arrow-right-down-line fs-13 align-middle"></i>
-                                                            -3.57 %
+                                                          
                                                         </h5>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
-                                                    {% giderler_tutari request.user  as gider_bilgisicekeme%}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">- $<span class="counter-value" data-target="{{gider_bilgisicekeme.tutar}}">0</span></h4>
-                                                        <a href="" class="text-decoration-underline text-muted">Giderleri Görüntüle</a>
+                                                    {% giderler_tutari request.user  as gider_bilgisicekeme %}
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">- $<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
+                                                        <a href="{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">Giderleri Görüntüle</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-info-subtle rounded fs-3">
@@ -131,7 +131,7 @@
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-success fs-14 mb-0">
                                                             <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-                                                            +29.08 %
+                                                            
                                                         </h5>
                                                     </div>
                                                 </div>
@@ -140,9 +140,10 @@
                                                     {% basit_cikarma  gelir_bilgisi_cek.tutar gelir_bilgisi_cek.genel_odeme as gelir_islem_sonucu  %}
                                                     {% basit_cikarma  gider_bilgisicekeme.tutar gider_bilgisicekeme.genel_odeme as gider_islem_sonucu  %}
                                                     {% basit_cikarma  gelir_islem_sonucu gider_islem_sonucu as sonuc_Bilgisi  %}
+
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span class="counter-value" data-target="{{sonuc_Bilgisi}}">0</span>
                                                         </h4>
-                                                        <a href="" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
+                                                        <a href="{% url 'accounting:kasa' %}" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-warning-subtle rounded fs-3">
@@ -165,15 +166,18 @@
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-muted fs-14 mb-0">
-                                                            +0.00 %
+                                                          
                                                         </h5>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% kasa_toplam kasa %}">0</span>
+                                                        {% basit_cikarma  gelir_bilgisi_cek.genel_odeme gider_bilgisicekeme.genel_odeme as sonuc_Bilgisi2  %}
+                                                        {% kasa_toplam kasa as bilgisis %}
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% basit_toplama sonuc_Bilgisi2 bilgisis %}">0</span>
                                                         </h4>
-                                                        <a href="" class="text-decoration-underline text-muted">Para Çek</a>
+
+                                                        <a href="{% url 'accounting:kasa' %}" class="text-decoration-underline text-muted">Para Çek</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-primary-subtle rounded fs-3">
@@ -208,6 +212,7 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h4 class="card-title mb-0">Kategoriye Göre Giderler</h4>
+
                                     <span>2023 Yılı</span>
                                 </div><!-- end card header -->
                                 <div class="card-body">
@@ -240,13 +245,35 @@
                                     <div class="table-responsive table-card">
                                         <table class="table table-centered table-hover align-middle table-nowrap mb-0">
                                             <tbody>
+                                            <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+
+                                                            <div>
+                                                                <h5 class="fs-13 my-1"> Fatura NO</a>
+                                                                </h5>
+
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">Vade Tarihi</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">Fatura Tutar</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">Kalan Tutar</span>
+                                                    </td>
+                                                </tr><!-- end -->
                                             {% for i in  santiyeler %}
-                                            
+
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="flex-shrink-0 me-2">
                                                                 {% toplam_odenme_tutar i as odeme %}
+                                                                {% toplam_tutar_cikarma i as tutar %}
                                                     {% if  odeme == tutar %}
                                                     <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
                                                     {% elif odeme > 0 %}
@@ -254,9 +281,9 @@
                                                     {% elif odeme == 0 %}
                                                     <div class="bg-danger" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
                                                     {% endif %}
-                                                                
-                                                                
-                                                                
+
+
+
                                                             </div>
                                                             <div>
                                                                 <h5 class="fs-13 my-1"><a  href="{% url 'accounting:fatura_goster' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
@@ -267,6 +294,9 @@
                                                     </td>
                                                     <td>
                                                         <span class="text-muted">{{i.vade_tarihi| date:'Y-m-d'}}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">${% toplam_tutar_cikarma i %}</span>
                                                     </td>
                                                     <td>
                                                         <span class="text-muted">${% kalan_tutuar i %}</span>
@@ -284,7 +314,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
-                                          
+
                                         </div>
                                     </div>
 
@@ -312,12 +342,35 @@
                                     <div class="table-responsive table-card">
                                         <table class="table table-centered table-hover align-middle table-nowrap mb-0">
                                             <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+
+                                                            <div>
+                                                                <h5 class="fs-13 my-1"> Fatura NO</a>
+                                                                </h5>
+
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">Vade Tarihi</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">Fatura Tutar</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">Kalan Tutar</span>
+                                                    </td>
+                                                </tr><!-- end -->
                                                 {% for i in  gider %}
-                                            
+
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="flex-shrink-0 me-2">
+
+                                                                {% toplam_tutar_cikarmai i as tutar %}
                                                                 {% toplam_odenme_tutari i as odeme %}
                                                     {% if  odeme == tutar %}
                                                     <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
@@ -326,9 +379,9 @@
                                                     {% elif odeme == 0 %}
                                                     <div class="bg-danger" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
                                                     {% endif %}
-                                                                
-                                                                
-                                                                
+
+
+
                                                             </div>
                                                             <div>
                                                                 <h5 class="fs-13 my-1"><a href="{% url 'accounting:fatura_goster2' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
@@ -339,6 +392,9 @@
                                                     </td>
                                                     <td>
                                                         <span class="text-muted">{{i.vade_tarihi| date:'Y-m-d'}}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
                                                     </td>
                                                     <td>
                                                         <span class="text-muted">${% kalan_tutuari i %} </span>
@@ -352,11 +408,11 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">5</span> fatura. 
+                                                Gösterilen <span class="fw-semibold">5</span> fatura.
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
-                                     
+
                                         </div>
                                     </div>
 
@@ -376,7 +432,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -385,9 +441,15 @@
             </div>
             <!-- End Page-content -->
 
-         
+
     </div>
     <!-- end main content-->
-
-
+    {% ozellikler request.user as ozellikleri %}
+    <script>
+        // Django şablon etiketlerini JavaScript değişkenlerine atayın
+        
+        window.gelir = {{ozellikleri.gelir}};
+        window.gider = {{ozellikleri.gider}} ;
+        window.kategoriler = {{ozellikleri.kategoriler |safe}};
+    </script>
 {% endblock sidebar %}

@@ -11,7 +11,7 @@
     <meta content="Habip ELİŞ" name="author" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{sayfa_iconu.sayfa_icon.url}}">
-    
+
     <!-- Layout config Js -->
     <script src="{% static 'assets/js/layout.js' %}"></script>
     <!-- Bootstrap Css -->
@@ -25,13 +25,13 @@
     <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css" />
 
     {% block head %}
-    
+
     {% endblock head %}
 </head>
 <body>
 <div id="layout-wrapper">
 {% block header %}
-        
+
     {% include "page_include/header.html" %}
 
     <!-- END layout-wrapper -->
@@ -62,7 +62,7 @@
     <!-- apexcharts -->
     <script src="{% static 'assets/libs/apexcharts/apexcharts.min.js' %}"></script>
 
-    <!-- piecharts init 
+    <!-- piecharts init
     <script src="{% static 'assets/js/pages/apexcharts-pie.init.html' %}"></script>
 -->
     <!-- apexcharts init -->
@@ -70,7 +70,7 @@
 
     <!-- projects js -->
     <script src="{% static 'assets/js/pages/dashboard-projects.init.js' %}"></script>
-    
+
     <!-- App js -->
     <script src="{% static 'assets/js/app.js' %}"></script>
         <!-- JAVASCRIPT -->
@@ -81,14 +81,15 @@
     <!--file Upload-->
     <script src="{% static 'assets/js/pages/form-file-upload.init.js' %}"></script>
 
-    
+
     <!-- listjs init -->
     <script src="{% static 'assets/js/pages/listjs.init.js' %}"></script>
 
     <!-- Sweet Alerts js -->
     <script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
     <script>
-         {% kategori_bilgi_ver as bilgi_cagir %}
+    
+         {% kategori_bilgi_ver request.user as bilgi_cagir %}
 function getChartColorsArray(e) {
     if (null !== document.getElementById(e))
         return (
@@ -108,24 +109,24 @@ var upadatedonutchart,
     chartDonutBasicColors =
         (chartPieBasicColors &&
             ((options = {
-                series: [44, 55, 13, 43, 22],
+                series: {{bilgi_cagir.a}},
                 chart: { height: 300, type: "pie" },
-                labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
+                labels: {{bilgi_cagir.isimleri |safe}},
                 legend: { position: "right" },
                 dataLabels: { dropShadow: { enabled: !1 } },
-                colors: chartPieBasicColors,
+                colors: {{bilgi_cagir.renk |safe}},
             }),
             (chart = new ApexCharts(document.querySelector("#simple_pie_chart"), options)).render()),
 
         getChartColorsArray("simple_dount_chart")),
         chartDonutupdatingColors =
         (chartDonutBasicColors &&
-            ((options = { 
-                series: {{bilgi_cagir.a}}, 
-                chart: { height: 300, type: "donut" }, 
-                labels:{{bilgi_cagir.b |safe}}, 
-                legend: { position: "right" }, 
-                dataLabels: { dropShadow: { enabled: !1 } }, 
+            ((options = {
+                series: {{bilgi_cagir.a}},
+                chart: { height: 300, type: "donut" },
+                labels:{{bilgi_cagir.isimleri |safe}},
+                legend: { position: "right" },
+                dataLabels: { dropShadow: { enabled: !1 } },
                 colors: {{bilgi_cagir.renk |safe}}
             }),
             (chart = new ApexCharts(document.querySelector("#simple_dount_chart"), options)).render()),

@@ -57,7 +57,7 @@ def sozluk_yapisi():
 #superadmin Kontrol
 def yetki(request):
     if request.user.is_superuser:
-        
+
         pass
     else:
 
@@ -90,7 +90,7 @@ def homepage(request):
                 profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 5) # 6 employees per page
-        
+
         try:
             page_obj = paginator.page(page_num)
         except PageNotAnInteger:
@@ -99,7 +99,7 @@ def homepage(request):
         except EmptyPage:
                 # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
-            
+
         content["santiyeler"] = page_obj
         if super_admin_kontrolu(request):
             profile =Gider_Bilgisi.objects.all()
@@ -123,7 +123,7 @@ def homepage(request):
                 profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 5) # 6 employees per page
-        
+
         try:
             page_obj = paginator.page(page_num)
         except PageNotAnInteger:
@@ -132,7 +132,7 @@ def homepage(request):
         except EmptyPage:
                 # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
-            
+
         content["gider"] = page_obj
     else:
         return redirect("/users/login/")
@@ -144,7 +144,7 @@ def site_ayarlari(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
         if request.user.is_superuser :
-        
+
             pass
         else:
 
@@ -184,20 +184,7 @@ def site_ayari_kaydet(request):
         if data_sidebar:
             sidebar_rengi.objects.all().update(isim =data_sidebar,data_sidebar =data_sidebar )
         dark_logo = request.FILES.get("dark_logo")
-        if dark_logo:
-            u = sayfa_logosu.objects.get(id = 4)
-            u.image = dark_logo
-            u.save()
-        light_logo = request.FILES.get("light_logo")
-        if light_logo:
-            u = sayfa_logosu.objects.get(id = 4)
-            u.dark_image = light_logo
-            u.save()
-        icon = request.FILES.get("icon")
-        if icon:
-            u = sayfa_iconu.objects.get(id = 1)
-            u.sayfa_icon = icon
-            u.save()
+
         site_adi_bilgisi = request.POST.get("site_adi")
         footeryazisi = request.POST.get("footeryazisi")
         if site_adi_bilgisi:
@@ -210,6 +197,20 @@ def site_ayari_kaydet(request):
         geliretiketi = request.POST.get("gelir_etiketi")
         if geliretiketi :
             faturalardaki_gelir_gider_etiketi.objects.all().update(gelir_etiketi = geliretiketi )
+        if dark_logo:
+            u = sayfa_logosu.objects.last()
+            u.image = dark_logo
+            u.save()
+        light_logo = request.FILES.get("light_logo")
+        if light_logo:
+            u = sayfa_logosu.objects.last()
+            u.dark_image = light_logo
+            u.save()
+        icon = request.FILES.get("icon")
+        if icon:
+            u = sayfa_iconu.objects.last()
+            u.sayfa_icon = icon
+            u.save()
     return redirect("main:site_ayarlari")
 #site ayarı
 
@@ -218,7 +219,7 @@ def site_ayari_kaydet(request):
 def santiye_ekle(request):
     if request.user.is_authenticated:
         if request.user.is_superuser :
-        
+
             pass
         else:
 
@@ -230,10 +231,10 @@ def santiye_ekle(request):
             sfire = request.POST.get("sfire")
             print(yetkiliAdSoyad,email,santiyeAdi,sfire)
             newUser = CustomUser(username =email,email=email,first_name = santiyeAdi,last_name =yetkiliAdSoyad )
-            newUser.set_password(sfire)    
+            newUser.set_password(sfire)
             newUser.save()
             return redirect("main:santiye_listele")
-            
+
     else:
         return redirect("/users/login/")
 
@@ -244,7 +245,7 @@ def santiye_listele(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
         if request.user.is_superuser :
-        
+
             pass
         else:
 
@@ -270,7 +271,7 @@ def santiye_listele(request):
         content["santiyeler"] = page_obj
         content["top"]  = profile
         content["medya"] = page_obj
-        
+
     else:
         return redirect("/users/login/")
 
@@ -296,7 +297,7 @@ def santiye_duzelt(request):
     content = {}
     if request.user.is_authenticated:
         if request.user.is_superuser :
-        
+
             pass
         else:
 
@@ -314,12 +315,12 @@ def santiye_duzelt(request):
 
     return redirect("main:santiye_listele")
 
-#dil_ayarlari 
+#dil_ayarlari
 def dil_ayari_listele(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
         if request.user.is_superuser :
-        
+
             pass
         else:
 
@@ -345,7 +346,7 @@ def dil_ayari_listele(request):
         content["santiyeler"] = page_obj
         content["top"]  = profile
         content["medya"] = page_obj
-        
+
     else:
         return redirect("/users/login/")
 
@@ -355,7 +356,7 @@ def dil_ayari_listele(request):
 def dil_ekle(request):
     if request.user.is_authenticated:
         if request.user.is_superuser :
-        
+
             pass
         else:
 
@@ -369,14 +370,14 @@ def dil_ekle(request):
                 dil_aktiflik_durumu = True
             else:
                 dil_aktiflik_durumu = False
-            
+
             dil =dil_ayarla(dil_adi =yetkili_adi,dil_kisaltması =  dilkisitlamasi,dil_bayragi_icon =santiyeadi,
                                       dil_aktiflik_durumu = dil_aktiflik_durumu )
-            
+
             dil.save()
 
             return redirect("main:dil_ayari_listele")
-            
+
     else:
         return redirect("/users/login/")
 
@@ -384,7 +385,7 @@ def dil_ekle(request):
 def dil_duzelt(request):
     if request.user.is_authenticated:
         if request.user.is_superuser :
-        
+
             pass
         else:
 
@@ -402,11 +403,11 @@ def dil_duzelt(request):
             dil_ayarla.objects.filter(id =buttonId ).delete()
             dil =dil_ayarla(dil_adi =yetkili_adi,dil_kisaltması =  dilkisitlamasi,dil_bayragi_icon =santiyeadi,
                                       dil_aktiflik_durumu = dil_aktiflik_durumu )
-            
+
             dil.save()
 
             return redirect("main:dil_ayari_listele")
-            
+
     else:
         return redirect("/users/login/")
 
@@ -414,7 +415,7 @@ def dil_duzelt(request):
 def dil_sil(request):
     if request.user.is_authenticated:
         if request.user.is_superuser :
-        
+
             pass
         else:
 
@@ -444,7 +445,7 @@ def proje_tipi_(request):
             profile = proje_tipi.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -458,7 +459,7 @@ def proje_tipi_(request):
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/proje_tipi.html",content)
 #Proje Ekleme
-def proje_ekle(request):
+def proje_ekleme(request):
     if request.POST:
         #yetkili_adi
         if super_admin_kontrolu(request):
@@ -496,7 +497,7 @@ def proje_duzenle(request):
         elif silinmedurumu == "2":
             silinmedurumu = True
             proje_tipi.objects.filter(id = id).update(proje_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,Proje_tipi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
-        
+
     else:
         proje_tip_adi   = request.POST.get("yetkili_adi")
         proje_tipi.objects.filter(proje_ait_bilgisi = request.user,id = id).update(Proje_tipi_adi = proje_tip_adi)
@@ -521,7 +522,7 @@ def santiye_projesi_ekle_(request):
             profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -541,7 +542,7 @@ def santiye_ekleme_sahibi(request):
             kullanici = request.POST.get("kullanici")
             link = "/addsitesuperadmin/"+kullanici
             return redirect(link)
-        
+
         projetipi = request.POST.get("projetipi")
         proje_adi = request.POST.get("yetkili_adi")
         katsayisi = int(request.POST.get("katsayisi"))
@@ -561,12 +562,12 @@ def santiye_ekleme_super_admin(request,id):
     content = sozluk_yapisi()
     content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  get_object_or_404(CustomUser,id = id))
     if request.user.is_superuser :
-        
+
         pass
     else:
 
         return redirect("main:yetkisiz")
-    if request.POST:    
+    if request.POST:
         projetipi = request.POST.get("projetipi")
         proje_adi = request.POST.get("yetkili_adi")
         katsayisi = int(request.POST.get("katsayisi"))
@@ -611,7 +612,7 @@ def santiye_projesi_duzenle(request):
         elif silinmedurumu == "2":
             silinmedurumu = True
             santiye.objects.filter(id = id).update(proje_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
-        
+
     else:
         proje_tip_adi   = request.POST.get("yetkili_adi")
         santiye.objects.filter(proje_ait_bilgisi = request.user,id = id).update(proje_adi = proje_tip_adi)
@@ -629,7 +630,7 @@ def santtiye_kalemleri(request,id):
         else:
             content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
             profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user)
-        
+
         if request.GET.get("search"):
             search = request.GET.get("search")
             if request.user.is_superuser:
@@ -640,7 +641,7 @@ def santtiye_kalemleri(request,id):
             else:
                 content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
                 profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user).filter(Q(kalem_adi__icontains =search) | Q(proje_santiye_Ait__proje_adi__icontains =search))
-            
+
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 10) # 6 employees per page
         try:
@@ -656,7 +657,7 @@ def santtiye_kalemleri(request,id):
         content["medya"] = page_obj
     else:
         return redirect("/users/login/")
-    return render(request,"santiye_yonetimi\santiye_kalemleri.html",content)
+    return render(request,"santiye_yonetimi/santiye_kalemleri.html",content)
 
 def santiyeye_kalem_ekle(request):
     if request.POST:
@@ -682,7 +683,7 @@ def santiyeye_kalem_ekle(request):
                         proje_ait_bilgisi = request.user,
                         proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
                         kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
-                        kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),   
+                        kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
                     )
     return redirect("main:santtiye_kalemleri",projetipi)
 
@@ -712,7 +713,7 @@ def santiye_kalemleri_duzenle(request):
                         kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
                         santiye_finansal_agirligi = finansal_agirlik,
                         silinme_bilgisi = True)
-                    
+
             elif silinmedurumu == "1":
                 santiye_kalemleri.objects.filter(id  = buttonId).update(
                         kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
@@ -752,7 +753,7 @@ def santiye_kalem_ve_blog(request):
             profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -773,7 +774,7 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     if request.user.is_authenticated:
         if request.user.is_superuser:
             pass
-            
+
         else:
             content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
             kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
@@ -783,7 +784,7 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
                     pass
                 else:
                     kalem_id.append(i.kalem_bilgisi.id)
-            
+
             profile =  santiye_kalemleri.objects.filter(id__in = kalem_id,silinme_bilgisi = False)
             page_num = request.GET.get('page', 1)
             paginator = Paginator(profile, 10) # 6 employees per page
@@ -819,7 +820,7 @@ def ilerleme_kaydet(request):
         for i in a:
             if i != "":
                 santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = False)
-            
+
     return redirect("main:blogtan_kaleme_ilerleme_takibi",geri_don,veri_cek)
 
 
@@ -845,7 +846,7 @@ def santiye_kalem_ekle_admin(request,id):
                     proje_ait_bilgisi = get_object_or_404(CustomUser,id = id) ,
                     proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
                     kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
-                    kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),   
+                    kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
                     )
         return redirect("main:santtiye_kalemleri",get_object_or_404(santiye,id =projetipi ).id)
     return render(request,"santiye_yonetimi/santiyeyekalem_ekle_admin.html",content)
@@ -853,14 +854,14 @@ def santiye_kalem_ekle_admin(request,id):
 #Proje Bilgisi
 def projeler_sayfasi(request):
     content = sozluk_yapisi()
-    
+
     if super_admin_kontrolu(request):
         profile =projeler.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
         profile = projeler.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
-        
+
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -871,7 +872,7 @@ def projeler_sayfasi(request):
             profile = projeler.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(silinme_bilgisi = False)).filter(Q(aciklama__icontains = search)| Q(proje_Adi__icontains = search))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -894,8 +895,8 @@ def proje_ekle(request):
             return redirect("main:proje_ekle_admin",id = kullanici)
         else:
             yetkili_adi = request.POST.get("yetkili_adi")
-            tarih_bilgisi = request.POST.get("tarih_bilgisi") 
-            aciklama = request.POST.get("aciklama")      
+            tarih_bilgisi = request.POST.get("tarih_bilgisi")
+            aciklama = request.POST.get("aciklama")
             durumu  = request.POST.get("durumu")
             if durumu == "1":
                 durumu = True
@@ -917,7 +918,7 @@ def proje_ekle(request):
             images = request.FILES.getlist('file')
             for images in images:
                 proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
-            
+
     return redirect("main:projeler_sayfasi")
 
 def proje_ekle_admin(request,id):
@@ -925,8 +926,8 @@ def proje_ekle_admin(request,id):
     content["blog_bilgisi"]  =bloglar.objects.filter(proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),proje_santiye_Ait__silinme_bilgisi = False)
     if request.POST:
         yetkili_adi = request.POST.get("yetkili_adi")
-        tarih_bilgisi = request.POST.get("tarih_bilgisi") 
-        aciklama = request.POST.get("aciklama")      
+        tarih_bilgisi = request.POST.get("tarih_bilgisi")
+        aciklama = request.POST.get("aciklama")
         durumu  = request.POST.get("durumu")
         if durumu == "1":
             durumu = True
@@ -945,7 +946,7 @@ def proje_ekle_admin(request,id):
         for i in blogbilgisi:
             bloglar_bilgisi.append(bloglar.objects.get(id=int(i)))
         new_project.blog_bilgisi.add(*bloglar_bilgisi)
-        
+
         images = request.FILES.getlist('file')
         for images in images:
             proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
@@ -968,8 +969,8 @@ def proje_duzenle_bilgi(request):
         if request.user.is_superuser:
             kullanici = request.POST.get("kullanici")
             yetkili_adi = request.POST.get("yetkili_adi")
-            tarih_bilgisi = request.POST.get("tarih_bilgisi") 
-            aciklama = request.POST.get("aciklama")      
+            tarih_bilgisi = request.POST.get("tarih_bilgisi")
+            aciklama = request.POST.get("aciklama")
             durumu  = request.POST.get("durumu")
             buttonIdInput = request.POST.get("buttonId")
             if durumu == "1":
@@ -994,8 +995,8 @@ def proje_duzenle_bilgi(request):
                 proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
         else:
             yetkili_adi = request.POST.get("yetkili_adi")
-            tarih_bilgisi = request.POST.get("tarih_bilgisi") 
-            aciklama = request.POST.get("aciklama")      
+            tarih_bilgisi = request.POST.get("tarih_bilgisi")
+            aciklama = request.POST.get("aciklama")
             durumu  = request.POST.get("durumu")
             buttonIdInput = request.POST.get("buttonId")
             if durumu == "1":
@@ -1023,14 +1024,14 @@ def proje_duzenle_bilgi(request):
 #taseron olaylari
 def taseron_sayfasi(request):
     content = sozluk_yapisi()
-    
+
     if super_admin_kontrolu(request):
         profile =taseronlar.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
         profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user)
-        
+
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1041,7 +1042,7 @@ def taseron_sayfasi(request):
             profile = taseronlar.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1183,7 +1184,7 @@ def taseron_duzelt(request):
             isim = 1
             for images in images:
                 taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
-                isim = isim+1     
+                isim = isim+1
         else:
 
             id_bilgisi = request.POST.get("id_bilgisi")
@@ -1206,7 +1207,7 @@ def taseron_duzelt(request):
             isim = 1
             for images in images:
                 taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
-                isim = isim+1      
+                isim = isim+1
     return redirect("main:taseron_sayfasi")
 
 #proje silme
@@ -1216,14 +1217,14 @@ def taseron_duzelt(request):
 #sözleşme olaylari
 def sozlesmler_sayfasi(request):
     content = sozluk_yapisi()
-    
+
     if super_admin_kontrolu(request):
         profile = taseron_sozlesme_dosyalari.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
         profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
-        
+
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1234,7 +1235,7 @@ def sozlesmler_sayfasi(request):
             profile = taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1357,14 +1358,14 @@ def sozlesme_silme(request):
 #hakedişler
 def hakedis_sayfasi(request):
     content = sozluk_yapisi()
-    
+
     if super_admin_kontrolu(request):
         profile = taseron_hakedisles.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
         profile = taseron_hakedisles.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
-        
+
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1375,7 +1376,7 @@ def hakedis_sayfasi(request):
             profile = taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi = request.user) & Q(proje_ait_bilgisi__taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1503,7 +1504,7 @@ def hakedis_duzenle(request):
                     tutar = tutar,
                     fatura_numarasi = fatura_no,silinme_bilgisi = False
                 )
-                
+
         else:
             buttonId = request.POST.get("buttonId")
             taseron = request.POST.get("taseron")
@@ -1532,13 +1533,13 @@ def hakedis_duzenle(request):
 
 def depolama_sistemim(request):
     content = sozluk_yapisi()
-    
+
     if super_admin_kontrolu(request):
         profile = klasorler.objects.all()
-        
+
     else:
         profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = request.user)
-        
+
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1549,7 +1550,7 @@ def depolama_sistemim(request):
             profile = klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1570,7 +1571,7 @@ def klasor_olustur(request):
         if request.user.is_superuser:
             pass
         else:
-            ust_klasor = request.POST.get("ust_klasor") 
+            ust_klasor = request.POST.get("ust_klasor")
             if ust_klasor:
                 klasor = request.POST.get("klasor")
 
@@ -1634,7 +1635,7 @@ def klasore_gir(request,id,slug):
             dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id).filter(__icontains = search)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1647,7 +1648,7 @@ def klasore_gir(request,id,slug):
     content["top"]  = profile
     content["medya"] = page_obj
     content["dosyalarim"] = dosyalarim
-    return render(request,"santiye_yonetimi/klasorici.html",content) 
+    return render(request,"santiye_yonetimi/klasorici.html",content)
 #klasöre Gir
 
 
@@ -1684,11 +1685,11 @@ def dosya_sil(request):
 
             ust_klasor = request.POST.get("ust_klasor")
             dosya_Adi = request.POST.get("klasor")
-            
+
             klasor_dosyalari.objects.filter(id = dosya_Adi).update(silinme_bilgisi = True)
     if ust_klasor:
         z = "/storage/mydir/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
-        return redirect(z) 
+        return redirect(z)
     else:
         return redirect("main:depolama_sistemim")
 def dosya_geri_getir(request):
@@ -1699,7 +1700,7 @@ def dosya_geri_getir(request):
 
             ust_klasor = request.POST.get("ust_klasor")
             dosya_Adi = request.POST.get("klasor")
-            
+
             klasor_dosyalari.objects.filter(id = dosya_Adi).update(silinme_bilgisi = False)
     return redirect("main:silinen_dosyalari")
 #dosya_sil
@@ -1713,7 +1714,7 @@ def dokumanlar(request):
     if super_admin_kontrolu(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
-    else:   
+    else:
         profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(reduce(operator.or_, (Q(dosya__icontains = x) for x in dosya_turu)))
     if request.GET.get("search"):
         search = request.GET.get("search")
@@ -1725,7 +1726,7 @@ def dokumanlar(request):
             profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(__icontains = search)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1749,7 +1750,7 @@ def media_dosyalari(request):
     if super_admin_kontrolu(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
-    else:   
+    else:
         profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(reduce(operator.or_, (Q(dosya__icontains = x) for x in dosya_turu)))
     if request.GET.get("search"):
         search = request.GET.get("search")
@@ -1761,7 +1762,7 @@ def media_dosyalari(request):
             profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(__icontains = search)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1786,7 +1787,7 @@ def zamana_dosyalari(request):
     if super_admin_kontrolu(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
-    else:   
+    else:
         profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).order_by("-id")
     if request.GET.get("search"):
         search = request.GET.get("search")
@@ -1798,7 +1799,7 @@ def zamana_dosyalari(request):
             profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(__icontains = search)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1821,7 +1822,7 @@ def silinen_dosyalari(request):
     if super_admin_kontrolu(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
-    else:   
+    else:
         profile = klasor_dosyalari.objects.filter(silinme_bilgisi = True,dosya_sahibi = request.user).order_by("-id")
     if request.GET.get("search"):
         search = request.GET.get("search")
@@ -1833,7 +1834,7 @@ def silinen_dosyalari(request):
             profile = klasor_dosyalari.objects.filter(silinme_bilgisi = True,dosya_sahibi = request.user).filter(__icontains = search)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -1851,14 +1852,14 @@ def silinen_dosyalari(request):
 
 def yapilacaklar(request):
     content = sozluk_yapisi()
-    
+
     if super_admin_kontrolu(request):
         profile = IsplaniPlanlari.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
         profile = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
-        
+
     if request.GET:
         siralama = request.GET.get("siralama")
         status = request.GET.get("status")
@@ -1879,7 +1880,7 @@ def yapilacaklar(request):
             profile = profile.order_by("-title")
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -2019,14 +2020,14 @@ def yapilacalar_duzenle(request):
 #time_lline
 def yapilacaklar_timeline(request):
     content = sozluk_yapisi()
-    
+
     if super_admin_kontrolu(request):
         profile = YapilacakPlanlari.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
         profile = YapilacakPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user).order_by("teslim_tarihi")
-        
+
     if request.GET:
         siralama = request.GET.get("siralama")
         status = request.GET.get("status")
@@ -2047,7 +2048,7 @@ def yapilacaklar_timeline(request):
             profile = profile.order_by("-title")
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
-    
+
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -2145,8 +2146,8 @@ def takvim_olaylari(request):
 
 def santiye_raporu(request,id):
     content = sozluk_yapisi()
-    
-    profile =  get_object_or_404(santiye,silinme_bilgisi = False,proje_ait_bilgisi = request.user,id = id ) 
+
+    profile =  get_object_or_404(santiye,silinme_bilgisi = False,proje_ait_bilgisi = request.user,id = id )
     content["santiye"] = profile
     return render(request,"santiye_yonetimi/santiye_raporu.html",content)
 

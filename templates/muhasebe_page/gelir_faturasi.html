@@ -89,15 +89,17 @@
                                     <input type="text" required name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
                                 </div>
                                 <div class="input-item etiket">
-                                    <div class="div">
-                                        <label>ETİKETLER</label>
-                                    <select name="etiketler" required id="cokluetiket" multiple >
+                                <label>ETİKETLER</label>
+                                    <div class="div" id="etkett">
+                                        
+                                    <select name="etiketler" required id="cokluetiket" class="etkett" multiple >
                                         {% for i in gelir_etiketi %}
                                              <option value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
                                         {% endfor %}
                                     </select>
-                                        <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#gideretiketiekle"><i class="ri-add-line align-bottom me-1"></i></button>
+                                        
                                     </div>
+                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#gideretiketiekle"><i class="ri-add-line align-bottom me-1"></i></button>
                                     
                                 </div>
                             </div>
@@ -201,7 +203,7 @@
     <!-- end main content-->
 </form>
 <!-- JAVASCRIPT -->
-<script src="{% static '' %}assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+
 <script src="{% static '' %}assets/libs/simplebar/simplebar.min.js"></script>
 <script src="{% static '' %}assets/libs/node-waves/waves.min.js"></script>
 <script src="{% static '' %}assets/libs/feather-icons/feather.min.js"></script>
@@ -283,12 +285,12 @@
                             </div>
                                
                                 <div class="modal-body">
-                                    <input type="text" name="tur" id="tur" hidden value="0">
+                                    <input type="text" name="tur2" id="tur2" hidden value="0">
                                     <div class="mb-3">
                                         <label for="date-field" class="form-label">Gelir Etiketi Adı</label>
-                                        <input type="text"  name="etiketadi" id="etiketadi" class="form-control" placeholder="Etiket Adı" />
+                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="Kategori Adı" />
                                     </div>
-                                    
+
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
@@ -400,7 +402,7 @@ $(document).ready(function(){
                 minLength: 2,
                 select: function(event, ui) {
                     $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
-                    $('.aciklama').val(ui.item.value)
+                    
                     return false;
                 }
             }).data('ui-autocomplete')._renderItem = function(ul, item) {
@@ -469,6 +471,7 @@ $(document).ready(function(){
   }
 </style>
 <script>
+
     // Function to initialize MultiSelectTag
     function initializeMultiSelectTag() {
         return new MultiSelectTag('cokluetiket', {
@@ -485,9 +488,8 @@ $(document).ready(function(){
             }
         });
     }
+var multiSelectInstance = initializeMultiSelectTag();
 
-    // Initialize MultiSelectTag initially
-    var multiSelectInstance = initializeMultiSelectTag();
 
     $(document).ready(function () {
         $("#ekle").click(function (event) {
@@ -513,45 +515,30 @@ $(document).ready(function(){
             return false;
         });
     });
+    $(document).ready(function () {
+  $("#ekle2").click(function (event) {
+    tur2 = $("#tur2").val(),
+    adi2 = $("#etiket_ismi_gonder").val(),
 
-    document.getElementById('ekle2').addEventListener('click', function() {
-        var etiketAdi = document.getElementById('etiketadi').value;
-
-        if (etiketAdi.trim() !== '') {
-            // Add new option to the <select> element
-            var newOption = document.createElement('option');
-            newOption.value = etiketAdi;
-            newOption.text = etiketAdi;
-            newOption.selected = true;
-
-            var selectElement = document.getElementById('cokluetiket');
-            selectElement.appendChild(newOption);
-
-            // Add new item to the drawer list
-            var newListItem = document.createElement('li');
-            newListItem.setAttribute('data-value', etiketAdi);  // or use a unique value if needed
-            newListItem.textContent = etiketAdi;
-            document.querySelector('.drawer ul').appendChild(newListItem);
-
-            // Remove the existing MultiSelectTag element
-           
-            var multiSelectElement = document.querySelector('.multi-select-tag');
-            alert(multiSelectElement);
-            if (multiSelectElement) {
-                multiSelectElement.remove();
-            }
-            // Reinitialize MultiSelectTag
-            multiSelectInstance = initializeMultiSelectTag();
-            
-            document.getElementById('etiketadi').value = '';
-
-            var modalElement = document.getElementById('gideretiketiekle');
-            var modalInstance = bootstrap.Modal.getInstance(modalElement);
-            modalInstance.hide();
-        } else {
-            alert('Etiket adı boş olamaz!');
-        }
+    $.ajax({
+      type: "POST",
+      url: "{% url 'accounting:gider_gelir_etiketekleme' %}",
+      data: {
+        tur2: tur2,
+        adi2:adi2,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+        
+        $("#etkett").load(window.location.href + " .etkett", function() {
+        multiSelectInstance = initializeMultiSelectTag() });
+        
+      }
     });
+    return false; //<---- move it here
+  });
+});
+
 </script>
 
    

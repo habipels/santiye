@@ -75,18 +75,18 @@
                                                     {{i.Proje_tipi_adi}}</td>
                                                     <td class="date">
                                                         {{i.kayit_tarihi}}
-                                                    
+
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-start">
                                                             <div class="edit">
                                                                 <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
                                                             </div>
-                                                            
+
                                                             <div class="remove" style="margin-left:10px;">
                                                                 <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">Remove</button>
                                                             </div>
-                                                           
+
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -109,16 +109,16 @@
 
                                                 {% if medya.has_previous %}
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
-                                                
+
                                                   {% if medya.number > 3 %}
-                                                
+
                                                     <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
                                                     {% if medya.number > 4 %}
                                                       <li class="page-item"><span class="page-link">...</span></li>
                                                     {% endif %}
                                                   {% endif %}
                                                 {% endif %}
-                                                
+
                                                 {% for num in medya.paginator.page_range %}
                                                   {% if medya.number == num %}
                                                     <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
@@ -126,7 +126,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
                                                   {% endif %}
                                                 {% endfor %}
-                                                
+
                                                 {% if medya.has_next %}
                                                   {% if medya.number < medya.paginator.num_pages|add:'-3' %}
                                                     <li class="page-item"><span class="page-link">...</span></li>
@@ -134,7 +134,7 @@
                                                   {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
-                                                
+
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
                                                 {% endif %}
                                                 </ul>
@@ -160,7 +160,7 @@
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
-                                        
+
                                         <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
                                     </div>
 
@@ -172,18 +172,18 @@
                                                 {% for j in kullanicilar %}
                                                     <option value="{{j.id}}">{{j.first_name}}</option>
                                                 {% endfor %}
-                                                
-                                                
+
+
                                             </select>
                                         </div>
                                         {% else %}
                                         {% endif %}
-    
+
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Adı</label>
                                             <input type="text" value="{{i.Proje_tipi_adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Dil Adı" />
                                         </div>
-                                            
+
                                         {% if request.user.is_superuser %}
                                             <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Silinme Durumu</label>
@@ -194,13 +194,13 @@
                                                     <option value="1">Geri Getir</option>
                                                 {% else %}
                                                 {% endif %}
-                                                
+
                                             </select>
                                         </div>
-                                        
+
                                         {% endif %}
-                                        
-                                    
+
+
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
@@ -223,7 +223,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"></button>
                             </div>
                             <div class="modal-body">
-                                
+
                                 <div class="mt-2 text-center">
                                     <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
@@ -234,7 +234,7 @@
                                 <form action="/delprojectstype" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                                
+
                                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
                                     <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn w-sm btn-danger " id="delete-record">Yes, Delete It!</button>
@@ -255,14 +255,14 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                
+
                             </div>
                         </div>
                     </div>
                 </div>
             </footer>
         </div>
-        
+
 
 </div>
 <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -282,8 +282,8 @@
                                             {% for i in kullanicilar %}
                                                 <option value="{{i.id}}">{{i.first_name}}</option>
                                             {% endfor %}
-                                            
-                                            
+
+
                                         </select>
                                     </div>
                                     {% else %}
@@ -293,7 +293,7 @@
                                         <label for="date-field" class="form-label">Proje Adı</label>
                                         <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Dil Adı" />
                                     </div>
-                                    
+
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">

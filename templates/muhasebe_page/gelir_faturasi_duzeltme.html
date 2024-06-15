@@ -31,9 +31,9 @@
 {% block sidebar %}
 <!-- ============================================================== -->
 <form method="post" action="{% url 'accounting:gelir_gider_duzelt' %}">
+    {% csrf_token %}
     <input type="text" name="bilgi" value="0" hidden>
     <input type="text" value="{{bilgi.id}}" name="degisen" hidden>
-    {% csrf_token %}
     <div class="main-content">
         <div class="page-content">
             <div class="container-fluid">
@@ -67,28 +67,35 @@
                             <div class="form2">
                                 <div class="input-item musteri-input">
                                     <label>Müşteri</label>
-                                    <input type="search" value="{{bilgi.cari_bilgisi.cari_adi}}"  name="musteri_bilgisi" class="cari" placeholder="Müşteri ünvanı" />
+                                    <input type="search"  value="{{bilgi.cari_bilgisi.cari_adi}}"  required name="musteri_bilgisi" class="cari" placeholder="Müşteri ünvanı" />
                                 </div>
                                 <div class="input-item duzenleme-vade-tarihi">
                                     <label>Düzenleme ve Vade Tarihi</label>
-                                    <input type="text" name="daterange"  value="{{bilgi.fatura_tarihi|date:'m-d-Y'}} - {{bilgi.vade_tarihi|date:'m-d-Y'}}" />
+                                    <input type="text" required name="daterange" value="{{bilgi.fatura_tarihi|date:'m-d-Y'}} - {{bilgi.vade_tarihi|date:'m-d-Y'}}" />
                                 </div>
-                                <div class="input-item kategori">
+                                <div class="input-item kategori" >
+                                    
                                     <label>Kategori</label>
-                                    <select name="gelir_kategorisi">
-                                    <option value="{{bilgi.gelir_kategorisi.id}}">{{bilgi.gelir_kategorisi.gelir_kategori_adi}}</option>
+                                    <div  id="kategorii">
+                                    <select  required id="kategori" name="gelir_kategorisi">
+                                        <option selected value="{{bilgi.gelir_kategorisi.id}}">{{bilgi.gelir_kategorisi.gelir_kategori_adi}}</option>
                                         {% for i in gelir_kategoerisi %}
                                             <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
+                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i></button>
+                                    
+                                </div>
                                 <div class="input-item aciklama">
                                     <label>Açıklama</label>
-                                    <input type="text" value="{{bilgi.aciklama}}" name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
+                                    <input type="text" required value="{{bilgi.aciklama}}" name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
                                 </div>
                                 <div class="input-item etiket">
-                                    <label>ETİKETLER</label>
-                                    <select name="etiketler" id="cokluetiket" multiple >
+                                <label>ETİKETLER</label>
+                                    <div class="div" id="etkett">
+                                        
+                                    <select name="etiketler" required id="cokluetiket" class="etkett" multiple >
                                         {% for i in gelir_etiketi %}
                                         {% if i in bilgi.gelir_etiketi_sec.all %}
                                             <option selected value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
@@ -97,17 +104,21 @@
                                         {% endif %}  
                                         {% endfor %}
                                     </select>
+                                        
+                                    </div>
+                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#gideretiketiekle"><i class="ri-add-line align-bottom me-1"></i></button>
+                                    
                                 </div>
                             </div>
                             <div class="form2">
                                   <div class="input-item doviz">
                                     <label>DÖVİZ KURU</label>
-                                   <input type="text" placeholder="Açıklama" value="IQN" name="doviz_kuru" />
+                                    <input required type="text" placeholder="Açıklama" value="{{bilgi.doviz}}" name="doviz_kuru" />
                                 </div>
                                 <div class="input-item fatura">
                                     <label>FATURA NO</label>
-                                    <input type="text" name="faturano" hidden value="{{bilgi.fatura_no}}"/>
-                                    <input type="text"  placeholder="Açıklama" value="{{bilgi.fatura_no}}" disabled />
+                                    <input type="text" required name="faturano" hidden value="{{bilgi.fatura_no}}"/>
+                                    <input type="text" required  placeholder="Açıklama" value="{{bilgi.fatura_no}}" disabled />
                                 </div>
                             </div>
                               
@@ -126,8 +137,7 @@
                         </div>
                         <div class="card-body">
                             <div class="form2" id="form2" >
-
-                                {% for i in urunler %}
+{% for i in urunler %}
                                 <div class="table-item">
                                     <div class="urun">
                                         <input type="search" name="urunadi" value="{{i.urun_bilgisi.urun_adi}}" class="den"  id="searchInput" placeholder="Ürün / Hizmet Adı" />
@@ -157,6 +167,7 @@
                                     <div class="aciklama"><input id="aciklama" name="aciklama" type="text" value="{{i.aciklama}}" placeholder="Açıklama Giriniz"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
                                 </div>
                                 {% endfor %}
+                              
                             </div>
                         </div>
                         <div class="addNewItem">
@@ -199,7 +210,7 @@
     <!-- end main content-->
 </form>
 <!-- JAVASCRIPT -->
-<script src="{% static '' %}assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+
 <script src="{% static '' %}assets/libs/simplebar/simplebar.min.js"></script>
 <script src="{% static '' %}assets/libs/node-waves/waves.min.js"></script>
 <script src="{% static '' %}assets/libs/feather-icons/feather.min.js"></script>
@@ -214,19 +225,14 @@
 <!-- App js -->
 <script src="{% static '' %}assets/js/app.js"></script>
 <!--Multi Select Date Calender-->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-   
 <script>
-
+    $(function () {
         $('input[name="daterange"]').daterangepicker({
             opens: 'left'
         }, function (start, end, label) {
             console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
-    
+    });
 </script>
 
 
@@ -244,18 +250,78 @@
             class="cancelBtn btn btn-sm btn-default" type="button">Cancel</button><button
             class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">Apply</button> </div>
 </div>
+<div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+                               
+                                <div class="modal-body">
+                                    <input type="text" name="tur" id="tur" hidden value="0">
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Gelir Kategorisi Adı</label>
+                                        <input type="text"  name="adi" id="adi" class="form-control" placeholder="Kategori Adı" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Gelir Kategorisi Açıklaması</label>
+                                        <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="Kategori Açıklaması" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Gelir Kategorisi Rengi</label>
+                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="Dil Adı" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">Ekle</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="gideretiketiekle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+                               
+                                <div class="modal-body">
+                                    <input type="text" name="tur2" id="tur2" hidden value="0">
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Gelir Etiketi Adı</label>
+                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="Kategori Adı" />
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">Ekle</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
 {% endblock sidebar %}
 {% block javascriptcodeadd %}
 
+    
 <!--Multi Select Date Calender-->
 <script>
-    $(function() {
+    
       $('input[name="daterange"]').daterangepicker({
         opens: 'left'
       }, function(start, end, label) {
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
       });
-    });
+    
 </script>
 <style>
     .ui-menu-item-wrapper:hover{
@@ -278,153 +344,209 @@
          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
-         <script>
+    <script>
            
-            function enableAutocompleteForNewItems() {
-         function hesaplama_islemi(){
-             var brimtutar = document.querySelectorAll(".bfiyatInput");
-             var miktar = document.querySelectorAll(".miktarInput");
-             var ana_toplam = document.querySelectorAll(".toplamInput");
-             var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
-             var indirim_toplam = 0;
-     
-             for (var u = 0; u < brimtutar.length; u++) {
-                 ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
-             }
-     
-             var islem_sonucu = 0;
-             var aratoplam = document.querySelector(".aratoplam");
-             for (var u = 0; u < ana_toplam.length; u++) {
-                 islem_sonucu += parseFloat(ana_toplam[u].value);
-             }
-     
-             for (var u = 0; u < indirim.length; u++) {
-                 indirim_toplam += parseFloat(indirim[u].value);
-             }
-     
-             aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
-             document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
-         }
-     
-         $('.den').autocomplete({
-             source: '/accounting/search/',
-             minLength: 2,
-             select: function(event, ui) {
-                 var id = this.id;
-                 $(this).val(ui.item.label);
-                 $(this).siblings().val(ui.item.label);
-                 id = id.replace("searchInput", "bfiyatInput");
-                 document.getElementById(id).value = ui.item.value;
-                 hesaplama_islemi();
-                 return false;
-             }
-         }).data('ui-autocomplete')._renderItem = function(ul, item) {
-             return $('<li>')
-                 .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
-                 .appendTo(ul);
-         };
-     }
-     
-     $(document).ready(function(){
-         enableAutocompleteForNewItems();
-     
-         $(document).on('click', '.addNewItem span', function() {
-             var newItem = $('<input>').addClass('den');
-             $('.container').append(newItem); 
-             enableAutocompleteForNewItems();  
-         });
-     
-     
-         // Diğer kodlarınız buraya gelebilir...
-     });
-     $(document).ready(function(){
-         $('.cari').autocomplete({
-                     source: '/accounting/cari/',
-                     minLength: 2,
-                     select: function(event, ui) {
-                         $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
-                         $('.aciklama').val(ui.item.value)
-                         return false;
-                     }
-                 }).data('ui-autocomplete')._renderItem = function(ul, item) {
-                     return $('<li>')
-                         .append('<div>' + item.label + '<br>' + item.value + '</div>')// Görünümü özelleştirin (ürün adı ve birim fiyat)
-                         .appendTo(ul);
-                 };
-             });
-             
-     /*
-     $(document).ready(function(){
-         $('.den').each(function() {
-             $(this).keyup(function() {
-                 $(this).autocomplete({
-                     source: '/accounting/search/',
-                     minLength: 2,
-                     select: function(event, ui) {
-                         $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
-                         $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
-                         $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
-                         return false;
-                     }
-                 }).data('ui-autocomplete')._renderItem = function(ul, item) {
-                     return $('<li>')
-                         .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
-                         .appendTo(ul);
-                 };
-             });
-         });
-     
-         $('.bfiyatInput').on('input', function(){
-             // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
-             $('#hiddenBfiyatInput').val($(this).val());
-         });
-     });
-     */
-            function hesaplama_islemi(){
-             var brimtutar = document.querySelectorAll(".bfiyatInput");
-             var miktar = document.querySelectorAll(".miktarInput");
-             var ana_toplam = document.querySelectorAll(".toplamInput");
-             var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
-             var indirim_toplam = 0;
-     
-             for (var u = 0; u < brimtutar.length; u++) {
-                 ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
-             }
-     
-             var islem_sonucu = 0;
-             var aratoplam = document.querySelector(".aratoplam");
-             for (var u = 0; u < ana_toplam.length; u++) {
-                 islem_sonucu += parseFloat(ana_toplam[u].value);
-             }
-     
-             for (var u = 0; u < indirim.length; u++) {
-                 indirim_toplam += parseFloat(indirim[u].value);
-             }
-     
-             aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
-             document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
-         }
-     
-         </script>
+       function enableAutocompleteForNewItems() {
+    function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
+    $('.den').autocomplete({
+        source: '/accounting/search/',
+        minLength: 2,
+        select: function(event, ui) {
+            var id = this.id;
+            $(this).val(ui.item.label);
+            $(this).siblings().val(ui.item.label);
+            id = id.replace("searchInput", "bfiyatInput");
+            document.getElementById(id).value = ui.item.value;
+            hesaplama_islemi();
+            return false;
+        }
+    }).data('ui-autocomplete')._renderItem = function(ul, item) {
+        return $('<li>')
+            .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
+            .appendTo(ul);
+    };
+}
+
+$(document).ready(function(){
+    enableAutocompleteForNewItems();
+
+    $(document).on('click', '.addNewItem span', function() {
+        var newItem = $('<input>').addClass('den');
+        $('.container').append(newItem); 
+        enableAutocompleteForNewItems();  
+    });
+
+
+    // Diğer kodlarınız buraya gelebilir...
+});
+$(document).ready(function(){
+    $('.cari').autocomplete({
+                source: '/accounting/cari/',
+                minLength: 2,
+                select: function(event, ui) {
+                    $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+                    
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + '</div>')// Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
+        
+/*
+$(document).ready(function(){
+    $('.den').each(function() {
+        $(this).keyup(function() {
+            $(this).autocomplete({
+                source: '/accounting/search/',
+                minLength: 2,
+                select: function(event, ui) {
+                    $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+                    $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
+                    $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
+    });
+
+    $('.bfiyatInput').on('input', function(){
+        // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
+        $('#hiddenBfiyatInput').val($(this).val());
+    });
+});
+*/
+       function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+    hesaplama_islemi();
+    </script>
 <style>
   .item-label{
     font-size: 15px !important;
   }
 </style>
 <script>
- // id
-    new MultiSelectTag('cokluetiket', {
-    rounded: true,    // default true
-    shadow: true,      // default false
-    placeholder: 'Search',  // default Search...
-    tagColor: {
-        textColor: '#327b2c',
-        borderColor: '#92e681',
-        bgColor: '#eaffe6',
-    },
-    onChange: function(values) {
-        console.log(values)
+
+    // Function to initialize MultiSelectTag
+    function initializeMultiSelectTag() {
+        return new MultiSelectTag('cokluetiket', {
+            rounded: true,
+            shadow: true,
+            placeholder: 'Search',
+            tagColor: {
+                textColor: '#327b2c',
+                borderColor: '#92e681',
+                bgColor: '#eaffe6',
+            },
+            onChange: function(values) {
+                console.log(values);
+            }
+        });
     }
-})
+var multiSelectInstance = initializeMultiSelectTag();
+
+
+    $(document).ready(function () {
+        $("#ekle").click(function (event) {
+            var tur = $("#tur").val(),
+                adi = $("#adi").val(),
+                aciklama = $("#aciklama").val(),
+                renk = $("#renk").val();
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'accounting:gider_gelir_ekleme' %}",
+                data: {
+                    tur: tur,
+                    adi: adi,
+                    aciklama: aciklama,
+                    renk: renk,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $("#kategorii").load(window.location.href + " #kategori");
+                }
+            });
+            return false;
+        });
+    });
+    $(document).ready(function () {
+  $("#ekle2").click(function (event) {
+    tur2 = $("#tur2").val(),
+    adi2 = $("#etiket_ismi_gonder").val(),
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'accounting:gider_gelir_etiketekleme' %}",
+      data: {
+        tur2: tur2,
+        adi2:adi2,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+        
+        $("#etkett").load(window.location.href + " .etkett", function() {
+        multiSelectInstance = initializeMultiSelectTag() });
+        
+      }
+    });
+    return false; //<---- move it here
+  });
+});
+
 </script>
+
+   
 {% endblock javascriptcodeadd %}
