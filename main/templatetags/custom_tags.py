@@ -212,9 +212,11 @@ def blogtan_kaleme_ilerleme(id):
 
 @register.simple_tag
 def kat_sirala(id):
+    #z = bloglar.objects.filter(proje_santiye_Ait = id)
     a = ""
-    b = get_object_or_404(santiye,id = id).kat_sayisi
-    b= int(b)
+    b = 0
+
+    b= int(id.kat_sayisi)
     for i in range(1,b+1):
         a = a+'<th class="text-uppercase" data-sort="{}">{}</th>'.format(i,i)
     return mark_safe(a)

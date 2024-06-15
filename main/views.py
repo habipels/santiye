@@ -535,7 +535,51 @@ def santiye_projesi_ekle_(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_projesi.html",content)
+def santiye_projesi_bloklar_ekle_(request,id):
+    content = sozluk_yapisi()
+    content["id_bilgisi"] = id
+    content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
+    if super_admin_kontrolu(request):
+        profile =bloglar.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = bloglar.objects.filter(proje_santiye_Ait__id = id)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =bloglar.objects.filter(Q(proje_santiye_Ait__proje_ait_bilgisi__last_name__icontains = search)|Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = bloglar.objects.filter(Q(proje_santiye_Ait__proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
 
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"santiye_yonetimi/santiye_projesi_blok_ekle.html",content)
+def blog_ekle(request):
+    if request.POST:
+        santiye_bilgisi = request.POST.get("santiye_bilgisi")
+        blok_adi = request.POST.get("blok_adi")
+        kat_sayisi = request.POST.get("kat_sayisi")
+        bloglar.objects.create(
+            proje_ait_bilgisi = get_object_or_404(santiye,id = santiye_bilgisi).proje_ait_bilgisi,
+            proje_santiye_Ait = get_object_or_404(santiye,id = santiye_bilgisi),
+            blog_adi = blok_adi,kat_sayisi = kat_sayisi
+        )
+        y = "/siteblog/"+santiye_bilgisi+"/"
+    return redirect(y)
 def santiye_ekleme_sahibi(request):
     if request.POST:
         if super_admin_kontrolu(request):
@@ -545,17 +589,12 @@ def santiye_ekleme_sahibi(request):
 
         projetipi = request.POST.get("projetipi")
         proje_adi = request.POST.get("yetkili_adi")
-        katsayisi = int(request.POST.get("katsayisi"))
-        blogsayisi = int(request.POST.get("blogsayisi"))
-        blogadi = request.POST.get("blogadi")
+        baslangic_tarihi = request.POST.get("baslangic_tarihi")
+        bitis_tarihi = request.POST.get("bitis_tarihi")
         a = santiye.objects.create(proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
-                               proje_adi = proje_adi,kat_sayisi = katsayisi,
-                               blog_sayisi = blogsayisi,blog_adi = blogadi
+                               proje_adi = proje_adi,baslangic_tarihi = baslangic_tarihi,
+                               tahmini_bitis_tarihi = bitis_tarihi
                                )
-        for i in range(1,blogsayisi+1):
-            bloglar.objects.create(proje_ait_bilgisi =request.user,
-                                   proje_santiye_Ait = get_object_or_404(santiye,id = a.id),
-                                    blog_adi = blogadi,blog_numarasi = i )
     return redirect("main:santiye_projesi_ekle_")
 
 def santiye_ekleme_super_admin(request,id):
@@ -570,17 +609,12 @@ def santiye_ekleme_super_admin(request,id):
     if request.POST:
         projetipi = request.POST.get("projetipi")
         proje_adi = request.POST.get("yetkili_adi")
-        katsayisi = int(request.POST.get("katsayisi"))
-        blogsayisi = int(request.POST.get("blogsayisi"))
-        blogadi = request.POST.get("blogadi")
+        baslangic_tarihi = request.POST.get("baslangic_tarihi")
+        bitis_tarihi = request.POST.get("bitis_tarihi")
         a = santiye.objects.create(proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
-                               proje_adi = proje_adi,kat_sayisi = katsayisi,
-                               blog_sayisi = blogsayisi,blog_adi = blogadi
+                               proje_adi = proje_adi,baslangic_tarihi = baslangic_tarihi,
+                               tahmini_bitis_tarihi = bitis_tarihi
                                )
-        for i in range(1,blogsayisi+1):
-            bloglar.objects.create(proje_ait_bilgisi =get_object_or_404(CustomUser,id = id),
-                                   proje_santiye_Ait = get_object_or_404(santiye,id = a.id),
-                                    blog_adi = blogadi,blog_numarasi = i )
         return redirect("main:santiye_projesi_ekle_")
     return render(request,"santiye_yonetimi/super_admin_santiye_ekleme.html",content)
 
@@ -676,9 +710,8 @@ def santiyeye_kalem_ekle(request):
                 santiye_finansal_agirligi = finansal_agirlik
             )
             blog_lar = bloglar.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ))
-            kat_sayisi = int(get_object_or_404(santiye,id =projetipi ).kat_sayisi)
             for i in blog_lar:
-                for j in range(0,kat_sayisi):
+                for j in range(0,int(i.kat_sayisi)):
                     santiye_kalemlerin_dagilisi.objects.create(
                         proje_ait_bilgisi = request.user,
                         proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),

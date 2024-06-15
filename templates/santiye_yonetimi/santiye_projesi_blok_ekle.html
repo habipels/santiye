@@ -58,8 +58,8 @@
                                                     <th class="sort" data-sort="customer_name">Proje Kime Ait</th>
                                                     <th class="sort" data-sort="email">Proje Tipi </th>
                                                     <th class="sort" data-sort="phone">Proje Adı</th>
-                                                    <th class="sort" data-sort="phone">Başlangıç - Bitiş Tarihi</th>
-                                                    <th class="sort" data-sort="date">Blok Sayısı </th>
+                                                    <th class="sort" data-sort="date">Blok Adı </th>
+                                                    <th class="sort" data-sort="phone">Blok Kat Sayısı</th>
                                                     <th class="sort" data-sort="date">Durum</th>
                                                 </tr>
                                             </thead>
@@ -75,29 +75,24 @@
                                                     <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
                                                     </td>
                                                     <td class="email">
-                                                    {{i.proje_tipi.Proje_tipi_adi}}</td>
+                                                    {{i.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
                                                     <td class="date">
-                                                        {{i.proje_adi}}
+                                                        {{i.proje_santiye_Ait.proje_adi}}
                                                     
                                                     </td>
                                                     <td class="date">
-                                                        {{i.baslangic_tarihi | date:'Y-m-d'}} - {{i.tahmini_bitis_tarihi | date:'Y-m-d'}}
+                                                        {{i.blog_adi}}
                                                     
                                                     </td>
                                                     <td class="date">
-                                                    <b>{{i.blog_sayisi}} : </b>
-                                                        
-                                                        {% bloglar_getir i %}
+                                                        {% to_int i.kat_sayisi%}
                                                     
                                                     </td>
+                                                    
+                                                   
                                                     <td>
                                                         <div class="d-flex justify-content-start">
-                                                        <div class="edit" >
-                                                                <a href="{% url 'main:santiye_projesi_bloklar_ekle_' i.id %}" class="btn btn-sm btn-success edit-item-btn" >Blok Ekle</a>
-                                                            </div>
-                                                        <div class="edit" style="margin-left:10px;">
-                                                                <a href="{% url 'main:santtiye_kalemleri' i.id %}" class="btn btn-sm btn-success edit-item-btn" >Şantiye Kalemleri</a>
-                                                            </div>
+                                                        
                                                             <div class="edit" style="margin-left:10px;">
                                                                 <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
                                                             </div>
@@ -272,8 +267,9 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="/addsite"  method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="{% url 'main:blog_ekle' %}"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
+                                <input type="text" value="{{id_bilgisi}}" hidden name="santiye_bilgisi">
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
                                             <div class="mb-3">
@@ -288,29 +284,16 @@
                                             </select>
                                         </div>
                                         {% else %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Tipi Seç</label>
-                                            <select class="form-control" name="projetipi" id="date-field">
-                                                
-                                                {% for j in proje_tipleri %}
-                                                    <option value="{{j.id}}">{{j.Proje_tipi_adi}}</option>
-                                                {% endfor %}
-                                                
-                                                
-                                            </select>
+                                            
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Blok Adı</label>
+                                            <input type="text"  required  name="blok_adi" id="date-field" class="form-control" placeholder="Blok Adı" />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Adı</label>
-                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Proje Adı" />
+                                            <label for="date-field" class="form-label">Kat Sayısı</label>
+                                            <input type="number" required  name="kat_sayisi" required id="date-field" class="form-control"  />
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Başlangıç Tarihi</label>
-                                            <input type="date"  name="baslangic_tarihi" required id="date-field" class="form-control"  />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Bitiş Tarihi</label>
-                                            <input type="date"  name="bitis_tarihi" required id="date-field" class="form-control"  />
-                                        </div>
+                                        
                                         
                                         {% endif %}
     

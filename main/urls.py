@@ -32,7 +32,10 @@ urlpatterns = [
     path("addsitesuperadmin/<int:id>", views.santiye_ekleme_super_admin, name="santiye_ekleme_super_admin"),
     path("delsiteproject", views.santiye_projesi_sil, name="santiye_projesi_sil"),
     path("setsiteprojetc", views.santiye_projesi_duzenle, name="santiye_projesi_duzenle"),
+    path("siteblog/<int:id>/", views.santiye_projesi_bloklar_ekle_, name="santiye_projesi_bloklar_ekle_"),
+    path("addblog", views.blog_ekle, name="blog_ekle"),
     #şantiye proje işlemleri
+    #
     path("yetkisiz", views.yetkisiz, name="yetkisiz"),
     #şantiye Kalemleri
     path("buldingsite/<int:id>", views.santtiye_kalemleri, name="santtiye_kalemleri"),
