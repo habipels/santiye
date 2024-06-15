@@ -1525,6 +1525,8 @@ def fatura_goster(request,id):
         profile =Kasa.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
+        gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
+        urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
     else:
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
@@ -1533,11 +1535,8 @@ def fatura_goster(request,id):
         etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
         urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
-    content["gelir_kategoerisi"] = kategori_bilgisi
-    content["gelir_etiketi"] = etiketler
-    content["kasa"] = profile
-    content["urunler"]  = urunler_bilgisi
-    content["cari_bilgileri"] = cari_bilgileri
+    
+    
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/gelir_faturasi_goster.html",content)
