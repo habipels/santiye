@@ -34,6 +34,8 @@ urlpatterns = [
     path("setsiteprojetc", views.santiye_projesi_duzenle, name="santiye_projesi_duzenle"),
     path("siteblog/<int:id>/", views.santiye_projesi_bloklar_ekle_, name="santiye_projesi_bloklar_ekle_"),
     path("addblog", views.blog_ekle, name="blog_ekle"),
+    path("delblog", views.blog_sil, name="blog_sil"),
+    path("setblog", views.blog_duzenle, name="blog_duzenle"),
     #şantiye proje işlemleri
     #
     path("yetkisiz", views.yetkisiz, name="yetkisiz"),

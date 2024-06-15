@@ -170,31 +170,19 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form class="tablelist-form" action="/setsiteprojetc" method="post" enctype="multipart/form-data" >
+                            <form class="tablelist-form" action="{% url 'main:blog_duzenle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
-                                    <div class="mb-3" id="modal-id" style="display: none;">
-                                        
-                                        <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
-                                    </div>
-
+                                    <input type="text" name="santiye_bilgisi" hidden value="{{i.proje_santiye_Ait.id}}">
+                                    <input type="text" name="blog" hidden value="{{i.id}}">
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Proje Adı</label>
-                                        <input type="text" value="{{i.proje_adi}}"   name="yetkili_adi" id="date-field" class="form-control" placeholder="Proje Adı" />
+                                        <label for="date-field" class="form-label">Blok Adı</label>
+                                        <input type="text"  required value="{{i.blog_adi}}"  name="blok_adi" id="date-field" class="form-control" placeholder="Blok Adı" />
                                     </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Silinme Durumu</label>
-                                            <select name="silinmedurumu"  class="form-control" id="">
-                                                <option value="3">Karışma</option>
-                                                <option value="2">Sil</option>
-                                                {% if i.silinme_bilgisi %}
-                                                    <option value="1">Geri Getir</option>
-                                                {% else %}
-                                                {% endif %}
-                                                
-                                            </select>
-                                        </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Kat Sayısı</label>
+                                        <input type="number" required value="{{i.kat_sayisi |stringformat:'.f'}}"  name="kat_sayisi" required id="date-field" class="form-control"  />
+                                    </div>
                                     
                                 </div>
                                 <div class="modal-footer">
@@ -226,8 +214,9 @@
                                         <p class="text-muted mx-4 mb-0">Are you Sure You want to Remove this Record ?</p>
                                     </div>
                                 </div>
-                                <form action="/delsiteproject" method="post">
+                                <form action="{% url 'main:blog_sil' %}" method="post">
                                     {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="geri" value="{{i.proje_santiye_Ait.id}}">
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                                 
                                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">

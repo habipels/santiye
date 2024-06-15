@@ -580,6 +580,27 @@ def blog_ekle(request):
         )
         y = "/siteblog/"+santiye_bilgisi+"/"
     return redirect(y)
+def blog_duzenle(request):
+    if request.POST:
+        santiye_bilgisi = request.POST.get("santiye_bilgisi")
+        blog = request.POST.get("blog")
+        blok_adi = request.POST.get("blok_adi")
+        kat_sayisi = request.POST.get("kat_sayisi")
+        bloglar.objects.filter(id = blog).update(
+            proje_ait_bilgisi = get_object_or_404(santiye,id = santiye_bilgisi).proje_ait_bilgisi,
+            proje_santiye_Ait = get_object_or_404(santiye,id = santiye_bilgisi),
+            blog_adi = blok_adi,kat_sayisi = kat_sayisi
+        )
+        y = "/siteblog/"+santiye_bilgisi+"/"
+    return redirect(y)
+def blog_sil(request):
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        geri = request.POST.get("geri")
+        blog_bilgisi = get_object_or_404(bloglar,id = buttonId)
+        bloglar.objects.filter(id = buttonId).delete()
+        y = "/siteblog/"+geri+"/"
+    return redirect(y)
 def santiye_ekleme_sahibi(request):
     if request.POST:
         if super_admin_kontrolu(request):
