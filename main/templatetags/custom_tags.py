@@ -443,7 +443,10 @@ def cikarma(a,b):
     y = float(a)+float(b)
     return round(float(y),2)
 
-
+@register.simple_tag
+def cari_islemleri_bilgi(bilgi):
+    a = list(Gider_odemesi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu__cari_bilgisi = bilgi))+list(Gelir_odemesi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu__cari_bilgisi = bilgi))
+    return a
 @register.simple_tag
 def cari_giderleri(bilgi):
     b = get_object_or_404(Gider_Bilgisi,id = bilgi)

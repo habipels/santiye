@@ -358,7 +358,42 @@ def cari_viev(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/cari.html",content)
+    return render(request,"muhasebe_page/cariler.html",content)
+#cari işlemler
+def cari_views_details(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =cari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        k_gonder = get_object_or_404(cari,id = id)
+    else:
+        profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+        k_gonder = get_object_or_404(cari,id = id)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =cari.objects.filter(Q(cari_kart_ait_bilgisi__first_name__icontains = search)|Q(cari_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["cari"] = k_gonder
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/cari_detay.html",content)
 
 #cari ekleme
 def cari_ekle(request):

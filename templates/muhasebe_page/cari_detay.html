@@ -1,0 +1,128 @@
+{% extends "homebase.html" %}
+{% load static  %}
+{% load i18n %}
+{% load custom_tags %}
+{% block head %}
+
+<link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css" />
+{% endblock head %}
+{% block sidebar %}
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">Cari Detayı</h4>
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Cari Detay</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+                <div class="row">
+                    <div class="cari-details-container">
+                        <div class="row">
+                            <div class="cariler-container">
+                                <div class="cariler-table">
+                                    <div class="table-head">
+                                        <div class="icon"></div>
+                                        <h2 class="title-tahsilat">İŞLEM TARİHİ</h2>
+                                        <h2 class="title-bilgi">BİLGİ</h2>
+                                        <h2 class="title-tutar">TUTAR</h2>
+                                        <h2 class="title-bakiye">BAKİYE</h2>
+                                    </div>
+                                    <div class="table-body">
+                                        
+                {% cari_islemleri_bilgi cari as bilgi_veriyor %}
+                {% sorgu cari.bakiye as bakiye  %}
+                    {% for i in bilgi_veriyor %}
+                    <div class="table-item">
+                                            <a href="cari-details.html">
+                                                <div class="icon-value"><span class="mdi mdi-cash-check"></span></div>
+                                                <h2 class="tahsilat-value">{{i.tarihi| date:'Y-m-d'}}</h2>
+                                                <p class="bilgi-value">{{i.aciklama}}</p>
+                                                {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                        {% if bilgisicek == 0 %}
+                                                        <h2 class="tutar-value"><span style="color:blue;" > + $ {{i.tutar}}<span>$</span></h2>
+                                                        {% else %}
+                                                        <h2 class="tutar-value"><span style="color:orange;" > - $ {{i.tutar}}<span>$</span></h2>
+                                                        {% endif %}
+                                               <h2 class="bakiye-value">
+                                               {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                        {% if bilgisicek == 0 %}
+                                                       <span  > $ {% basit_toplama bakiye i.tutar %}
+                                                       {% basit_toplama bakiye i.tutar  as bakiye%}</span>
+                                                        {% else %}
+                                                        
+                                                         <span > $ {% basit_cikarma bakiye i.tutar %}
+                                                         {% basit_cikarma bakiye i.tutar as bakiye %}</span>
+                                                        {% endif %}
+                                                        </h2>
+                                            </a>
+                                        </div>
+                    {% endfor %}
+                    
+                    
+                                        
+
+                                    </div>
+                                </div>
+                                <div class="footer">
+                                    <div class="export"><span class="mdi mdi-file-export-outline">DIŞA AKTAR</span></div>
+                                    <div class="table-count"><span> </span> CARİ KARTI</div>
+                                    <div class="paginations">
+                                        <div class="listelemeSayisi">
+                                            <div class="listelemeSecimCont">
+                                                <ul>
+                                                    <li>25/SAYFA</li>
+                                                    <li>50/SAYFA</li>
+                                                    <li>100/SAYFA</li>
+                                                    <li>150/SAYFA</li>
+                                                </ul>
+                                            </div>
+                                            <span>25/SAYFA</span>
+                                        </div>
+                                        <div class="pageArrows">
+                                            <div class="prev"><span class="mdi mdi-chevron-left"></span></div>
+                                            <span>1</span>
+                                            <div class="next"><span class="mdi mdi-chevron-right"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rightMenu">
+                                <h2></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end row-->
+            </div>
+        </div>
+        
+        <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+    </div>
+{% endblock sidebar %}
+
