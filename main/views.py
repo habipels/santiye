@@ -766,29 +766,37 @@ def santiye_kalemleri_duzenle(request):
         santiye_agirligi = request.POST.get("katsayisi")
         finansal_agirlik = request.POST.get("blogsayisi")
         geri_don = request.POST.get("geri_don")
+        metraj = request.POST.get("metraj")
+        tutar = request.POST.get("tutar")
+        birim_bilgisi = request.POST.get("birim_bilgisi")
         if request.user.is_superuser:
             silinmedurumu = request.POST.get("silinmedurumu")
             if silinmedurumu == "3":
                 santiye_kalemleri.objects.filter(id  = buttonId).update(
                         kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
-                        santiye_finansal_agirligi = finansal_agirlik)
+                        santiye_finansal_agirligi = finansal_agirlik,
+                        birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                tutari = tutar)
             elif silinmedurumu == "2":
                 santiye_kalemleri.objects.filter(id  = buttonId).update(
                         kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
                         santiye_finansal_agirligi = finansal_agirlik,
-                        silinme_bilgisi = True)
+                        silinme_bilgisi = True,birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                tutari = tutar)
 
             elif silinmedurumu == "1":
                 santiye_kalemleri.objects.filter(id  = buttonId).update(
                         kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
                         santiye_finansal_agirligi = finansal_agirlik,
-                        silinme_bilgisi = False
+                        silinme_bilgisi = False,birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                tutari = tutar
                     )
         else:
             santiye_kalemleri.objects.filter(id  = buttonId).update(
                     proje_ait_bilgisi = request.user,
                     kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
-                    santiye_finansal_agirligi = finansal_agirlik
+                    santiye_finansal_agirligi = finansal_agirlik,birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                tutari = tutar
                 )
         return redirect("main:santtiye_kalemleri",geri_don)
 

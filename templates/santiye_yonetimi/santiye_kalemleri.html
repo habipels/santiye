@@ -208,11 +208,30 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Şantiye Ağırlığı</label>
-                                            <input type="number" value="{{i.santiye_agirligi | stringformat:'.2F'  }}"  name="katsayisi" id="date-field" class="form-control" placeholder="Şantiye Ağırlığı" />
+                                            <input type="number" step="0.001" value="{{i.santiye_agirligi | stringformat:'.2F'  }}"  name="katsayisi" id="date-field" class="form-control" placeholder="Şantiye Ağırlığı" />
                                         </div>
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Finansal Ağırlığı</label>
-                                            <input type="number" value="{{i.santiye_finansal_agirligi | stringformat:'.2F'  }}"  name="blogsayisi" id="date-field" class="form-control" placeholder="Fİnansal Ağırlığı" />
+                                            <input type="number" step="0.001" value="{{i.santiye_finansal_agirligi | stringformat:'.2F'  }}"  name="blogsayisi" id="date-field" class="form-control" placeholder="Fİnansal Ağırlığı" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Birimi</label>
+                                            <select class="form-control" name="birim_bilgisi" id="date-field">
+                                                <option selected value="{{i.birimi.id}}">{{i.birimi.Proje_tipi_adi}}</option>
+                                                {% for l in birim_bilgisi %}
+                                                    <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
+                                                {% endfor %}
+
+
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Metraj</label>
+                                            <input type="number" step="0.001" value="{{i.metraj|stringformat:'.2f'}}"  name="metraj" id="date-field" class="form-control" placeholder="Metraj" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Tutar</label>
+                                            <input type="number" step="0.001" value="{{i.tutari|stringformat:'.2f'}}"  name="tutar" id="date-field" class="form-control" placeholder="Tutar" />
                                         </div>
                                         {% if  request.user.is_superuser %}
                                             <div class="mb-3">
@@ -337,11 +356,11 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Şantiye Ağırlığı</label>
-                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Şantiye Ağırlığı" />
+                                            <input type="number" step="0.001" value="0"  name="katsayisi" id="date-field" class="form-control" placeholder="Şantiye Ağırlığı" />
                                         </div>
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Finansal Ağırlığı</label>
-                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Fİnansal Ağırlığı" />
+                                            <input type="number" step="0.001" value="0"  name="blogsayisi" id="date-field" class="form-control" placeholder="Fİnansal Ağırlığı" />
                                         </div>
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Birimi</label>
@@ -356,11 +375,11 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Metraj</label>
-                                            <input type="number" value="0"  name="metraj" id="date-field" class="form-control" placeholder="Metraj" />
+                                            <input type="number" step="0.001" value="0"  name="metraj" id="date-field" class="form-control" placeholder="Metraj" />
                                         </div>
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Tutar</label>
-                                            <input type="number" value="0"  name="tutar" id="date-field" class="form-control" placeholder="Tutar" />
+                                            <input type="number" step="0.001" value="0"  name="tutar" id="date-field" class="form-control" placeholder="Tutar" />
                                         </div>
                                         {% endif %}
 

@@ -80,9 +80,15 @@
                                         <table class="table align-middle table-nowrap" id="invoiceTable">
                                             <thead class="text-muted">
                                                 <tr>
+                                                {% if request.user.is_superuser %}
+                                                <th class="text-uppercase">Gider Kime Ait</th>
+                                                {% else %}
+                                                {% endif %}
                                                     <th class="text-uppercase">Fatura No</th>
                                                     <th class="text-uppercase">
                                                         Cari</th>
+                                                    <th class="text-uppercase">
+                                                        Açıklma</th>
                                                     <th class="text-uppercase">Düzenleme Tarihi</th>
                                                     <th class="text-uppercase">Vade Tarihi</th>
                                                     <th class="text-uppercase">Fatura Bedeli</th>
@@ -95,8 +101,14 @@
                                                 {% for i in  santiyeler %}
 
                                                 <tr class="faturabilgisi" id="{{i.id}}">
+                                                {% if request.user.is_superuser %}
+                                                <td class="customer_name">{{i.gelir_kime_ait_oldugu.first_name}}
+                                                    </td>
+                                                {% else %}
+                                                {% endif %}
                                                     <td><span>{{i.fatura_no}}</span></td>
                                                     <td><span>{{i.cari_bilgisi.cari_adi}}</span></td>
+                                                    <td><span>{{i.aciklama}}</span></td>
                                                     <td><span>{{i.fatura_tarihi| date:'Y-m-d'}}</span></td>
                                                     <td><span>{{i.vade_tarihi| date:'Y-m-d'}}</span></td>
                                                     <td><span>{% toplam_tutar_cikarmai i %} $</span></td>
