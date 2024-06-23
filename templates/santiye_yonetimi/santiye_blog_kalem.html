@@ -48,11 +48,13 @@
                                         <table class="table align-middle table-nowrap" id="customerTable">
                                             <thead class="table-light">
                                                 <tr>
-                                                    
+
                                                     <th class="sort" data-sort="customer_name">Rapor</th>
+                                                    <th class="sort" data-sort="customer_name">Yapı Adı</th>
+                                                    <th class="sort" data-sort="email">Kat Sayısı</th>
                                                     <th class="sort" data-sort="customer_name">Proje Kime Ait</th>
-                                                    <th class="sort" data-sort="email">Proje Tipi > Proje Adı </th>
-                                                    <th class="sort" data-sort="date">Blog İlerleme Takibi </th>
+
+                                                    <th class="sort" data-sort="date">Yapı İlerleme Takibi </th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
@@ -61,19 +63,19 @@
                                                     <th scope="row">
                                                         <a href="{% url 'main:santiye_raporu' i.id %}" class="fw-medium link-primary"> Raporu Göster </a>
                                                     </th>
-                                                    
+                                                    <td class="customer_name">{{i.blog_adi}}
+                                                    </td>
+                                                    <td class="customer_name">{{i.kat_sayisi | stringformat:'.f'}}
+                                                    </td>
                                                     <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
                                                     </td>
-                                                    <td class="email">
-                                                    {{i.proje_tipi.Proje_tipi_adi}} > {{i.proje_adi}} </td>
-                                                    
-                                                    <td class="date">
+                                                    <td class="customer_name">
                                                     <b>{{i.blog_sayisi}} :  </b>
-                                                        
-                                                        {% blogtan_kaleme_ilerleme i.id %}
-                                                    
+                                                        <a style="padding:2px !important;margin:0px 2px 0px 0px!important;" class="btn btn-info " href="progresstracking/progress/{{i.id}}/{{i.blog_adi}}" >{{i.blog_adi}}</a>
+
+
                                                     </td>
-                                                 
+
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -94,16 +96,16 @@
 
                                                 {% if medya.has_previous %}
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
-                                                
+
                                                   {% if medya.number > 3 %}
-                                                
+
                                                     <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
                                                     {% if medya.number > 4 %}
                                                       <li class="page-item"><span class="page-link">...</span></li>
                                                     {% endif %}
                                                   {% endif %}
                                                 {% endif %}
-                                                
+
                                                 {% for num in medya.paginator.page_range %}
                                                   {% if medya.number == num %}
                                                     <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
@@ -111,7 +113,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
                                                   {% endif %}
                                                 {% endfor %}
-                                                
+
                                                 {% if medya.has_next %}
                                                   {% if medya.number < medya.paginator.num_pages|add:'-3' %}
                                                     <li class="page-item"><span class="page-link">...</span></li>
@@ -119,7 +121,7 @@
                                                   {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
-                                                
+
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
                                                 {% endif %}
                                                 </ul>
@@ -144,14 +146,14 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                
+
                             </div>
                         </div>
                     </div>
                 </div>
             </footer>
         </div>
-        
+
 
 </div>
 

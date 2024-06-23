@@ -552,7 +552,7 @@ def santiye_projesi_bloklar_ekle_(request,id):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = bloglar.objects.filter(Q(proje_santiye_Ait__proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(blog_adi__icontains = search))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -573,10 +573,13 @@ def blog_ekle(request):
         santiye_bilgisi = request.POST.get("santiye_bilgisi")
         blok_adi = request.POST.get("blok_adi")
         kat_sayisi = request.POST.get("kat_sayisi")
+        baslangictarihi = request.POST.get("baslangictarihi")
+        bitistarihi =request.POST.get("bitistarihi")
         bloglar.objects.create(
             proje_ait_bilgisi = get_object_or_404(santiye,id = santiye_bilgisi).proje_ait_bilgisi,
             proje_santiye_Ait = get_object_or_404(santiye,id = santiye_bilgisi),
-            blog_adi = blok_adi,kat_sayisi = kat_sayisi
+            blog_adi = blok_adi,kat_sayisi = kat_sayisi,
+            baslangic_tarihi = baslangictarihi,bitis_tarihi = bitistarihi
         )
         y = "/siteblog/"+santiye_bilgisi+"/"
     return redirect(y)
@@ -586,10 +589,13 @@ def blog_duzenle(request):
         blog = request.POST.get("blog")
         blok_adi = request.POST.get("blok_adi")
         kat_sayisi = request.POST.get("kat_sayisi")
+        baslangictarihi = request.POST.get("baslangictarihi")
+        bitistarihi =request.POST.get("bitistarihi")
         bloglar.objects.filter(id = blog).update(
             proje_ait_bilgisi = get_object_or_404(santiye,id = santiye_bilgisi).proje_ait_bilgisi,
             proje_santiye_Ait = get_object_or_404(santiye,id = santiye_bilgisi),
-            blog_adi = blok_adi,kat_sayisi = kat_sayisi
+            blog_adi = blok_adi,kat_sayisi = kat_sayisi,
+            baslangic_tarihi = baslangictarihi,bitis_tarihi = bitistarihi
         )
         y = "/siteblog/"+santiye_bilgisi+"/"
     return redirect(y)
@@ -610,11 +616,9 @@ def santiye_ekleme_sahibi(request):
 
         projetipi = request.POST.get("projetipi")
         proje_adi = request.POST.get("yetkili_adi")
-        baslangic_tarihi = request.POST.get("baslangic_tarihi")
-        bitis_tarihi = request.POST.get("bitis_tarihi")
+
         a = santiye.objects.create(proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
-                               proje_adi = proje_adi,baslangic_tarihi = baslangic_tarihi,
-                               tahmini_bitis_tarihi = bitis_tarihi
+                               proje_adi = proje_adi
                                )
     return redirect("main:santiye_projesi_ekle_")
 
@@ -676,6 +680,7 @@ def santiye_projesi_duzenle(request):
 #şantiye Kalemleri
 def santtiye_kalemleri(request,id):
     content = sozluk_yapisi()
+    content["birim_bilgisi"] = birimler.objects.filter(silinme_bilgisi = False)
     if request.user.is_authenticated:
         if request.user.is_superuser:
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
@@ -724,11 +729,16 @@ def santiyeye_kalem_ekle(request):
             yetkili_adi = request.POST.get("yetkili_adi")
             santiye_agirligi = request.POST.get("katsayisi")
             finansal_agirlik = request.POST.get("blogsayisi")
+            metraj = request.POST.get("metraj")
+            tutar = request.POST.get("tutar")
+            birim_bilgisi = request.POST.get("birim_bilgisi")
             kalem = santiye_kalemleri.objects.create(
                 proje_ait_bilgisi = request.user,
                 proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
                 kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
-                santiye_finansal_agirligi = finansal_agirlik
+                santiye_finansal_agirligi = finansal_agirlik,
+                birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                tutari = tutar
             )
             blog_lar = bloglar.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ))
             for i in blog_lar:
@@ -792,19 +802,19 @@ def santiye_kalem_ve_blog(request):
     content = sozluk_yapisi()
     content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
     if super_admin_kontrolu(request):
-        profile =santiye.objects.all()
+        profile =bloglar.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+        profile = bloglar.objects.filter(proje_ait_bilgisi = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
-            profile =santiye.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search)|Q(Proje_tipi_adi__icontains = search))
+            profile =bloglar.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search)|Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -2201,7 +2211,7 @@ def takvim_olaylari(request):
 def santiye_raporu(request,id):
     content = sozluk_yapisi()
 
-    profile =  get_object_or_404(santiye,silinme_bilgisi = False,proje_ait_bilgisi = request.user,id = id )
+    profile =  get_object_or_404(bloglar,proje_ait_bilgisi = request.user,id = id )
     content["santiye"] = profile
     return render(request,"santiye_yonetimi/santiye_raporu.html",content)
 

@@ -27,15 +27,90 @@ def bloglari_rapora_yansitma(veri):
     bloglar_getirme = []
     kalemleri_gonder= []
     kalemler_dagilisi_gonder= []
+    kalemeler_ = []
 
     for i in santiye_kalemleri_bilgisi:
-        kalemleri_gonder.append(i.kalem_adi)
+        if i.silinme_bilgisi:
+            pass
+        else:
+            kalemleri_gonder.append(i.kalem_adi)
+            kalemeler_.append(i)
     for i in deger:
         unique_values = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi =i.id,tamamlanma_bilgisi = True)
         bloglar_getirme.append(i.blog_adi+str(i.blog_numarasi))
         degerler.append(unique_values.count())
     print(bloglar_getirme,degerler)
-    return {"blog" : bloglar_getirme,"degerler" : degerler,"kalemler":kalemleri_gonder,"kalem_dagilisi" : kalemler_dagilisi_gonder}
+    return {"blog" : bloglar_getirme,"degerler" : degerler,"k":kalemeler_,"kalemler":kalemleri_gonder,"kalem_dagilisi" : kalemler_dagilisi_gonder}
+@register.simple_tag
+def bloglar_daireleri_kalemleri(id):
+    toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id).count()
+    toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True).count()
+    toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False).count()
+    yuzde = (toplam_yapilan_kalem*100)/toplam_kalem
+    return round(yuzde,2)
+@register.simple_tag
+def bloglar_daireleri_kalemleri_finansal(id):
+    toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id).count()
+    toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True).count()
+    toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False).count()
+    yuzde = (toplam_yapilan_kalem*100)/toplam_kalem
+    return round(yuzde,2)
+@register.simple_tag
+def bloglar_daireleri_kalemleri_fiziksel_bilgileri(id,k_b):
+    genel_toplam = 0
+    for i in k_b:
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id = i.id).count()
+        toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
+        toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
+        genel_toplam = ((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)+genel_toplam
+    return round(genel_toplam,2)
+@register.simple_tag
+def bloglar_daireleri_kalemleri_finansal_bilgileri(id,k_b):
+    genel_toplam = 0
+    for i in k_b:
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id = i.id).count()
+        toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
+        toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
+        genel_toplam = ((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)+genel_toplam
+    return round(genel_toplam,2)
+@register.simple_tag
+def bloglar_daireleri_kalemleri_fiziksel_bilgileri_genel(k_b):
+    genel_toplam = 0
+    for i in k_b:
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id = i.id).count()
+        toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
+        toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
+        genel_toplam = ((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)+genel_toplam
+    return round(genel_toplam,2)
+@register.simple_tag
+def bloglar_daireleri_kalemleri_finansal_bilgileri_genel(k_b):
+    genel_toplam = 0
+    for i in k_b:
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id = i.id).count()
+        toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
+        toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
+        genel_toplam = ((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)+genel_toplam
+    return round(genel_toplam,2)
+@register.simple_tag
+def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme(id,k_b):
+    genel_toplam = []
+    for i in k_b:
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id = i.id).count()
+        toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
+        toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
+        a = round(((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)*100/(i.santiye_agirligi),2)
+        b =round(((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)*100/(i.santiye_finansal_agirligi),2)
+        genel_toplam.append({"isim":i.kalem_adi,"ilerleme1":a,"ilerleme2":b})
+
+    return genel_toplam
+@register.simple_tag
+def days_until(bitis_tarihi):
+    from django.utils import timezone
+    now = timezone.now()
+    if bitis_tarihi > now:
+        delta = bitis_tarihi - now
+        return delta.days
+    return 0  # Eğer bitiş tarihi geçmişse 0 döndür
 @register.simple_tag
 def proje_dosyalarini(id):
     a = proje_dosyalari.objects.filter(proje_ait_bilgisi__id = id).count()
@@ -197,7 +272,8 @@ def kalem_blog(id):
             a.append(i.blog_bilgisi)
     bilgiler = ""
     for i in a:
-        bilgiler = bilgiler+ '<a href="/delbuldingsites/{}/{}" >{}{}</a>'.format(str(i.id),id,str(i.blog_adi),str(i.blog_numarasi))+" , "
+        #/delbuldingsites/{}/{}
+        bilgiler = bilgiler+ '<a href="#" >{}</a>'.format(str(i.blog_adi))+" , "
     return mark_safe(bilgiler)
 
 

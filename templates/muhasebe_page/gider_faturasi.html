@@ -35,7 +35,7 @@
     <div class="main-content">
         <div class="page-content">
             <div class="container-fluid">
-                
+
                 <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
@@ -71,42 +71,43 @@
                                     <label>Düzenleme ve Vade Tarihi</label>
                                     <input type="text" required name="daterange" value="{% tarih_cek  %}" />
                                 </div>
-                                <div class="input-item kategori" >
-                                    
-                                    <label>Kategori</label>
-                                    <div  id="kategorii">
-                                    <select  required id="kategori" name="gelir_kategorisi">
+                              <div class="input-item kategori">
+                                <label>Kategori</label>
+                                <div id="kategorii" class="d-flex align-items-center">
+                                    <select required id="kategori" name="gelir_kategorisi" class="me-2">
                                         {% for i in gelir_kategoerisi %}
                                             <option value="{{i.id}}">{{i.gider_kategori_adi}}</option>
                                         {% endfor %}
                                     </select>
+                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal">
+                                        <i class="ri-add-line align-bottom me-1"></i>
+                                    </button>
                                 </div>
-                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i></button>
-                                    
-                                </div>
+                            </div>
+
                                 <div class="input-item aciklama">
                                     <label>Açıklama</label>
                                     <input type="text" required name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
                                 </div>
                                 <div class="input-item etiket">
-                                <label>ETİKETLER</label>
-                                    <div class="div" id="etkett">
-                                        
-                                    <select name="etiketler" required id="cokluetiket" class="etkett" multiple >
-                                        {% for i in gelir_etiketi %}
-                                             <option value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
-                                        {% endfor %}
-                                    </select>
-                                        
+                                    <label>ETİKETLER</label>
+                                    <div id="etkett" class="d-flex align-items-center">
+                                        <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
+                                            {% for i in gelir_etiketi %}
+                                                <option value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#gideretiketiekle">
+                                            <i class="ri-add-line align-bottom me-1"></i>
+                                        </button>
                                     </div>
-                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#gideretiketiekle"><i class="ri-add-line align-bottom me-1"></i></button>
-                                    
                                 </div>
+
                             </div>
                             <div class="form2">
                                   <div class="input-item doviz">
                                     <label>DÖVİZ KURU</label>
-                                    <input required type="text" placeholder="Açıklama" value="IQN" name="doviz_kuru" />
+                                    <input required type="text" placeholder="Açıklama" value="IQD" name="doviz_kuru" />
                                 </div>
                                 <div class="input-item fatura">
                                     <label>FATURA NO</label>
@@ -114,8 +115,8 @@
                                     <input type="text" required  placeholder="Açıklama" value="{% gider_faturasi_no request.user.id %}" disabled />
                                 </div>
                             </div>
-                              
-                           
+
+
                         </div>
                     </div>
                     <div class="card">
@@ -148,7 +149,7 @@
                                         <input class="toplamInput"  type="text" step="0.01" value="0" disabled/>
                                         <span class="mdi mdi-currency-usd"></span>
                                     </div>
-                                    
+
                                     <div class="icons">
                                         <span class="mdi mdi-pan-left specBtn" onclick="specAc(event)"></span>
                                         <ul class="specs">
@@ -160,7 +161,7 @@
                                     <div class="indirim"><input id="indirim" class="indirim" name="indirim" value="0" type="number" placeholder="İndirim gir %"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
                                     <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="Açıklama Giriniz"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
                                 </div>
-                              
+
                             </div>
                         </div>
                         <div class="addNewItem">
@@ -184,7 +185,7 @@
                 </div>
                 <!--end row-->
             </div>
-        </div>    
+        </div>
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
@@ -193,7 +194,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div  class="text-sm-end d-none d-sm-block">
-                           
+
                         </div>
                     </div>
                 </div>
@@ -250,20 +251,20 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                               
+
                                 <div class="modal-body">
                                     <input type="text" name="tur" id="tur" hidden value="1">
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Adı</label>
+                                        <label for="date-field" class="form-label">Gider Kategorisi Adı</label>
                                         <input type="text"  name="adi" id="adi" class="form-control" placeholder="Kategori Adı" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Açıklaması</label>
+                                        <label for="date-field" class="form-label">Gider Kategorisi Açıklaması</label>
                                         <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="Kategori Açıklaması" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Rengi</label>
-                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="Dil Adı" />
+                                        <label for="date-field" class="form-label">Gider Kategorisi Rengi</label>
+                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="Gider Kategorisi" />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -283,12 +284,12 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                               
+
                                 <div class="modal-body">
                                     <input type="text" name="tur2" id="tur2" hidden value="1">
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Etiketi Adı</label>
-                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="Kategori Adı" />
+                                        <label for="date-field" class="form-label">Gider Etiketi Adı</label>
+                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="Etiket Adı" />
                                     </div>
 
                                 </div>
@@ -305,16 +306,16 @@
 {% endblock sidebar %}
 {% block javascriptcodeadd %}
 
-    
+
 <!--Multi Select Date Calender-->
 <script>
-    
+
       $('input[name="daterange"]').daterangepicker({
         opens: 'left'
       }, function(start, end, label) {
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
       });
-    
+
 </script>
 <style>
     .ui-menu-item-wrapper:hover{
@@ -322,10 +323,10 @@
         color: black;
     }
     .ui-menu-item-wrapper{
-    background-color:  orange !important; 
-    max-width: 400px !important; 
-    z-index: 999 !important; 
-    font-size: 15px !important; 
+    background-color:  orange !important;
+    max-width: 400px !important;
+    z-index: 999 !important;
+    font-size: 15px !important;
     list-style: none; color: white;
     }
     </style>
@@ -338,7 +339,7 @@
 
 
     <script>
-           
+
        function enableAutocompleteForNewItems() {
     function hesaplama_islemi(){
         var brimtutar = document.querySelectorAll(".bfiyatInput");
@@ -389,8 +390,8 @@ $(document).ready(function(){
 
     $(document).on('click', '.addNewItem span', function() {
         var newItem = $('<input>').addClass('den');
-        $('.container').append(newItem); 
-        enableAutocompleteForNewItems();  
+        $('.container').append(newItem);
+        enableAutocompleteForNewItems();
     });
 
 
@@ -402,7 +403,7 @@ $(document).ready(function(){
                 minLength: 2,
                 select: function(event, ui) {
                     $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
-                    
+
                     return false;
                 }
             }).data('ui-autocomplete')._renderItem = function(ul, item) {
@@ -411,7 +412,7 @@ $(document).ready(function(){
                     .appendTo(ul);
             };
         });
-        
+
 /*
 $(document).ready(function(){
     $('.den').each(function() {
@@ -529,10 +530,10 @@ var multiSelectInstance = initializeMultiSelectTag();
         csrfmiddlewaretoken: '{{ csrf_token }}'
       },
       success: function (data) {
-        
+
         $("#etkett").load(window.location.href + " .etkett", function() {
         multiSelectInstance = initializeMultiSelectTag() });
-        
+
       }
     });
     return false; //<---- move it here
@@ -541,5 +542,5 @@ var multiSelectInstance = initializeMultiSelectTag();
 
 </script>
 
-   
+
 {% endblock javascriptcodeadd %}

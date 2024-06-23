@@ -10,7 +10,7 @@
 <div class="main-content">
         <div class="page-content">
             <div class="container-fluid">
-                
+
                 <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
@@ -39,12 +39,14 @@
                                         <h2 class="title-bakiye">BAKİYE</h2>
                                     </div>
                                     <div class="table-body">
-                                        
+
                 {% cari_islemleri_bilgi cari as bilgi_veriyor %}
                 {% sorgu cari.bakiye as bakiye  %}
                     {% for i in bilgi_veriyor %}
                     <div class="table-item">
-                                            <a href="cari-details.html">
+                        {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                        {% if bilgisicek == 0 %}
+                                                       <a href="{% url 'accounting:fatura_goster' i.gelir_kime_ait_oldugu.id %}">
                                                 <div class="icon-value"><span class="mdi mdi-cash-check"></span></div>
                                                 <h2 class="tahsilat-value">{{i.tarihi| date:'Y-m-d'}}</h2>
                                                 <p class="bilgi-value">{{i.aciklama}}</p>
@@ -60,17 +62,42 @@
                                                        <span  > $ {% basit_toplama bakiye i.tutar %}
                                                        {% basit_toplama bakiye i.tutar  as bakiye%}</span>
                                                         {% else %}
-                                                        
+
                                                          <span > $ {% basit_cikarma bakiye i.tutar %}
                                                          {% basit_cikarma bakiye i.tutar as bakiye %}</span>
                                                         {% endif %}
                                                         </h2>
                                             </a>
+                                                        {% else %}
+                                                        <a href="{% url 'accounting:fatura_goster2' i.gelir_kime_ait_oldugu.id %}">
+                                                <div class="icon-value"><span class="mdi mdi-cash-check"></span></div>
+                                                <h2 class="tahsilat-value">{{i.tarihi| date:'Y-m-d'}}</h2>
+                                                <p class="bilgi-value">{{i.aciklama}}</p>
+                                                {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                        {% if bilgisicek == 0 %}
+                                                        <h2 class="tutar-value"><span style="color:blue;" > + $ {{i.tutar}}<span>$</span></h2>
+                                                        {% else %}
+                                                        <h2 class="tutar-value"><span style="color:orange;" > - $ {{i.tutar}}<span>$</span></h2>
+                                                        {% endif %}
+                                               <h2 class="bakiye-value">
+                                               {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                        {% if bilgisicek == 0 %}
+                                                       <span  > $ {% basit_toplama bakiye i.tutar %}
+                                                       {% basit_toplama bakiye i.tutar  as bakiye%}</span>
+                                                        {% else %}
+
+                                                         <span > $ {% basit_cikarma bakiye i.tutar %}
+                                                         {% basit_cikarma bakiye i.tutar as bakiye %}</span>
+                                                        {% endif %}
+                                                        </h2>
+                                            </a>
+                                                        {% endif %}
+
                                         </div>
                     {% endfor %}
-                    
-                    
-                                        
+
+
+
 
                                     </div>
                                 </div>
@@ -108,7 +135,7 @@
                 <!--end row-->
             </div>
         </div>
-        
+
         <footer class="footer">
                 <div class="container-fluid">
                     <div class="row">
@@ -117,7 +144,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                
+
                             </div>
                         </div>
                     </div>

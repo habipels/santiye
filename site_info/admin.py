@@ -18,6 +18,7 @@ admin.site.register(klasor_dosyalari)
 admin.site.register(Event)
 admin.site.register(YapilacakPlanlari)
 admin.site.register(YapilacakDosyalari)
+admin.site.register(birimler)
 
 admin.site.register(IsplaniPlanlari)
 admin.site.register(IsplaniDosyalari)

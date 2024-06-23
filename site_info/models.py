@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import * 
+from users.models import *
 from datetime import datetime
 from muhasebe.models import *
 
@@ -10,13 +10,16 @@ class proje_tipi(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     durum_bilgisi = models.BooleanField(default=True)
 
+class birimler(models.Model):
+    Proje_tipi_adi = models.CharField(max_length=400,verbose_name="Birim  Adı",blank=True,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    durum_bilgisi = models.BooleanField(default=True)
 
 class santiye(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_tipi = models.ForeignKey(proje_tipi,verbose_name="Proje Tipi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_adi = models.CharField(max_length = 200,verbose_name="Proje Adı",blank=True,null = True)
-    baslangic_tarihi = models.DateTimeField(default=datetime.now,null=True)
-    tahmini_bitis_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 
@@ -26,22 +29,28 @@ class bloglar(models.Model):
     blog_adi = models.CharField(max_length=200,verbose_name="Blog Adı",blank=True,null = True)
     blog_numarasi = models.BigIntegerField(default = 1,verbose_name="Blog Numarasi")
     kat_sayisi =models.FloatField(default = 1,verbose_name="Kat Bilgisi")
+    baslangic_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    bitis_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 
 class santiye_kalemleri(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    birimi = models.ForeignKey(birimler,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     kalem_adi = models.CharField(max_length= 200,verbose_name="Kalem Adı",blank = True,null = True)
     santiye_agirligi = models.FloatField(default = 0 ,verbose_name = "Kalem Şantiye Ağırlığı")
     santiye_finansal_agirligi = models.FloatField(default = 0,verbose_name = "Kalem Finansal Ağırlık")
+    metraj = models.FloatField(default = 0 ,verbose_name = "Metraj Bilgisi")
+    tutari = models.FloatField(default = 0 ,verbose_name = "Tutarı Bilgisi")
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
 
 class santiye_kalemlerin_dagilisi (models.Model):
-    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
-    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
-    kalem_bilgisi = models.ForeignKey(santiye_kalemleri,verbose_name="Kalem Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.CASCADE)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.CASCADE)
+    kalem_bilgisi = models.ForeignKey(santiye_kalemleri,verbose_name="Kalem Ait Olduğu",blank=True,null=True,on_delete=models.CASCADE)
     kat = models.IntegerField(default = 0,verbose_name="kat Numarası")
-    blog_bilgisi = models.ForeignKey(bloglar,verbose_name="Blog Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    blog_bilgisi = models.ForeignKey(bloglar,verbose_name="Blog Ait Olduğu",blank=True,null=True,on_delete=models.CASCADE)
     degistirme_tarihi = models.DateTimeField(default=datetime.now,null=True)
     tamamlanma_bilgisi = models.BooleanField(default=False)
     silinme_bilgisi = models.BooleanField(default=False)
@@ -58,7 +67,7 @@ class projeler (models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
 
 class proje_dosyalari(models.Model):
-    proje_ait_bilgisi = models.ForeignKey(projeler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
+    proje_ait_bilgisi = models.ForeignKey(projeler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     dosya = models.FileField(upload_to='proje_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
 class taseronlar(models.Model):
     taseron_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -72,7 +81,7 @@ class taseronlar(models.Model):
 
 
 class taseron_sozlesme_dosyalari(models.Model):
-    proje_ait_bilgisi = models.ForeignKey(taseronlar,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
+    proje_ait_bilgisi = models.ForeignKey(taseronlar,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     dosya = models.FileField(upload_to='taseron_sozlesme/',verbose_name="Dosya Adı",blank=True,null=True)
     dosya_adi = models.CharField(max_length = 400,verbose_name="Sözleşme Adı",blank = True,null = True)
     tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
@@ -90,7 +99,7 @@ class cari_taseron_baglantisi(models.Model):
 
 
 class taseron_hakedisles(models.Model):
-    proje_ait_bilgisi = models.ForeignKey(taseronlar,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
+    proje_ait_bilgisi = models.ForeignKey(taseronlar,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     dosya = models.FileField(upload_to='taseron_sozlesme/',verbose_name="Dosya Adı",blank=True,null=True)
     dosya_adi = models.CharField(max_length = 400,verbose_name="Sözleşme Adı",blank = True,null = True)
     tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
@@ -110,7 +119,7 @@ class klasorler(models.Model):
 
 class klasor_dosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
-    proje_ait_bilgisi = models.ForeignKey(klasorler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)    
+    proje_ait_bilgisi = models.ForeignKey(klasorler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     dosya = models.FileField(upload_to='klasor_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
     dosya_adi = models.CharField(max_length = 400,verbose_name="Sözleşme Adı",blank = True,null = True)
     tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
@@ -147,7 +156,7 @@ class YapilacakPlanlari(models.Model):
 
 class YapilacakDosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi")
-    proje_ait_bilgisi = models.ForeignKey(YapilacakPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="todo_sahibi")    
+    proje_ait_bilgisi = models.ForeignKey(YapilacakPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="todo_sahibi")
     dosya = models.FileField(upload_to='yapilacak_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
 
 class IsplaniPlanlari(models.Model):
@@ -173,10 +182,10 @@ class IsplaniPlanlariIlerleme(models.Model):
 class IsplaniIlerlemeDosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_ilerleme_dosyalari")
     yapan_kisi = models.ForeignKey(CustomUser, verbose_name="Yapan Kişi", related_name="isplani_ilerleme_dosyalari_yapanlar", blank=True, null=True, on_delete=models.SET_NULL)
-    proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlariIlerleme, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_ilerleme_dosyalari")    
+    proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlariIlerleme, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_ilerleme_dosyalari")
     dosya = models.FileField(upload_to='isplani_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
 
 class IsplaniDosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")
-    proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")    
+    proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")
     dosya = models.FileField(upload_to='isplani_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)

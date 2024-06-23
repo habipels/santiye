@@ -58,8 +58,10 @@
                                                     <th class="sort" data-sort="customer_name">Proje Kime Ait</th>
                                                     <th class="sort" data-sort="email">Proje Tipi </th>
                                                     <th class="sort" data-sort="phone">Proje Adı</th>
-                                                    <th class="sort" data-sort="date">Blok Adı </th>
-                                                    <th class="sort" data-sort="phone">Blok Kat Sayısı</th>
+                                                    <th class="sort" data-sort="date">Yapı Adı </th>
+                                                    <th class="sort" data-sort="phone">Yapı Kat Sayısı</th>
+                                                    <th class="sort" data-sort="phone">Başlangıç Tarihi</th>
+                                                    <th class="sort" data-sort="phone">Bitiş Tarihi</th>
                                                     <th class="sort" data-sort="date">Durum</th>
                                                 </tr>
                                             </thead>
@@ -78,29 +80,36 @@
                                                     {{i.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
                                                     <td class="date">
                                                         {{i.proje_santiye_Ait.proje_adi}}
-                                                    
+
                                                     </td>
                                                     <td class="date">
                                                         {{i.blog_adi}}
-                                                    
+
                                                     </td>
                                                     <td class="date">
                                                         {% to_int i.kat_sayisi%}
-                                                    
+
                                                     </td>
-                                                    
-                                                   
+                                                    <td class="date">
+                                                        {{i.baslangic_tarihi |date:'d-m-Y'}}
+
+                                                    </td>
+                                                    <td class="date">
+                                                        {{i.bitis_tarihi |date:'d-m-Y'}}
+
+                                                    </td>
+
                                                     <td>
                                                         <div class="d-flex justify-content-start">
-                                                        
+
                                                             <div class="edit" style="margin-left:10px;">
                                                                 <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
                                                             </div>
-                                                            
+
                                                             <div class="remove" style="margin-left:10px;">
                                                                 <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">Remove</button>
                                                             </div>
-                                                           
+
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -123,16 +132,16 @@
 
                                                 {% if medya.has_previous %}
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
-                                                
+
                                                   {% if medya.number > 3 %}
-                                                
+
                                                     <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
                                                     {% if medya.number > 4 %}
                                                       <li class="page-item"><span class="page-link">...</span></li>
                                                     {% endif %}
                                                   {% endif %}
                                                 {% endif %}
-                                                
+
                                                 {% for num in medya.paginator.page_range %}
                                                   {% if medya.number == num %}
                                                     <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
@@ -140,7 +149,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
                                                   {% endif %}
                                                 {% endfor %}
-                                                
+
                                                 {% if medya.has_next %}
                                                   {% if medya.number < medya.paginator.num_pages|add:'-3' %}
                                                     <li class="page-item"><span class="page-link">...</span></li>
@@ -148,7 +157,7 @@
                                                   {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
-                                                
+
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
                                                 {% endif %}
                                                 </ul>
@@ -176,14 +185,22 @@
                                     <input type="text" name="santiye_bilgisi" hidden value="{{i.proje_santiye_Ait.id}}">
                                     <input type="text" name="blog" hidden value="{{i.id}}">
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Blok Adı</label>
-                                        <input type="text"  required value="{{i.blog_adi}}"  name="blok_adi" id="date-field" class="form-control" placeholder="Blok Adı" />
+                                        <label for="date-field" class="form-label">Yapı Adı</label>
+                                        <input type="text"  required value="{{i.blog_adi}}"  name="blok_adi" id="date-field" class="form-control" placeholder="Yapı Adı" />
                                     </div>
                                     <div class="mb-3">
                                         <label for="date-field" class="form-label">Kat Sayısı</label>
                                         <input type="number" required value="{{i.kat_sayisi |stringformat:'.f'}}"  name="kat_sayisi" required id="date-field" class="form-control"  />
                                     </div>
-                                    
+                                    <div class="mb-3">
+                                            <label for="date-field" class="form-label">Başlangıç Tarihi</label>
+                                            <input type="date" required  value="{{i.baslangic_tarihi |date:'Y-m-d'}}" name="baslangictarihi" required id="date-field" class="form-control"  />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Bitiş Tarihi</label>
+                                            <input type="date" required value="{{i.baslangic_tarihi |date:'Y-m-d'}}"  name="bitistarihi" required id="date-field" class="form-control"  />
+                                        </div>
+
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
@@ -206,7 +223,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"></button>
                             </div>
                             <div class="modal-body">
-                                
+
                                 <div class="mt-2 text-center">
                                     <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
@@ -218,7 +235,7 @@
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="geri" value="{{i.proje_santiye_Ait.id}}">
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                                
+
                                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
                                     <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn w-sm btn-danger " id="delete-record">Yes, Delete It!</button>
@@ -239,14 +256,14 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                
+
                             </div>
                         </div>
                     </div>
                 </div>
             </footer>
         </div>
-        
+
 
 </div>
 <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -264,29 +281,36 @@
                                             <div class="mb-3">
                                             <label for="date-field" class="form-label">Şantiye Seç</label>
                                             <select class="form-control" name="kullanici" id="date-field">
-                                                
+
                                                 {% for j in kullanicilar %}
                                                     <option value="{{j.id}}">{{j.first_name}}</option>
                                                 {% endfor %}
-                                                
-                                                
+
+
                                             </select>
                                         </div>
                                         {% else %}
-                                            
+
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Blok Adı</label>
-                                            <input type="text"  required  name="blok_adi" id="date-field" class="form-control" placeholder="Blok Adı" />
+                                            <label for="date-field" class="form-label">Yapı Adı</label>
+                                            <input type="text"  required  name="blok_adi" id="date-field" class="form-control" placeholder="Yapı Adı" />
                                         </div>
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Kat Sayısı</label>
                                             <input type="number" required  name="kat_sayisi" required id="date-field" class="form-control"  />
                                         </div>
-                                        
-                                        
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Başlangıç Tarihi</label>
+                                            <input type="date" required  name="baslangictarihi" required id="date-field" class="form-control"  />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">Bitiş Tarihi</label>
+                                            <input type="date" required  name="bitistarihi" required id="date-field" class="form-control"  />
+                                        </div>
+
                                         {% endif %}
-    
-                                    
+
+
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">

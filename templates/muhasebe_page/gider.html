@@ -8,7 +8,7 @@
     <div class="main-content">
         <div class="page-content">
             <div class="container-fluid">
-                
+
                 <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
@@ -33,36 +33,36 @@
                                     <div class="row g-3 gelirler-filtre">
                                         <div class="col-sm-4">
                                             <div class="search-box">
-                                                <input type="text" name="search" value="{% if request.GET.search %}{{request.GET.search}}{% endif %}" class="form-control search bg-light border-light" placeholder="Search for customer, email, country, status or something...">
+                                                <input type="text" name="search" value="{% if request.GET.search %}{{request.GET.search}}{% endif %}" class="form-control search bg-light border-light" placeholder="Cari adı, kategori veya etiket yazınız...">
                                                 <i class="ri-search-line search-icon"></i>
                                             </div>
                                         </div>
                                         <!--end col-->
                                         <div class="col-sm-4">
-                                            <input type="date" name="tarih" value="{% if request.GET.tarih %}{{request.GET.tarih}}{% endif %}" class="form-control bg-light border-light" id="datepicker-range" placeholder="Select date">
+                                            <input type="date" name="tarih" value="{% if request.GET.tarih %}{{request.GET.tarih}}{% endif %}" class="form-control bg-light border-light" id="datepicker-range" placeholder="Tarih seçiniz">
                                         </div>
                                         <!--end col-->
                                         <div class="col-sm-1">
                                             <button type="submit" class="btn btn-primary w-100">
                                             Ara
                                             </button>
-                                            
+
                                         </div>
                                         <div class="col-sm-2">
                                             <a href="{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
                                                 Temizle
                                             </a>
-                                            
+
                                         </div>
                                         <!--end col-->
-                                        
+
                                         <!--end col-->
                                         <div class="col-sm-1 fatura-ekle">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
                                                     <div class="d-flex gap-2 flex-wrap">
                                                         <button class="btn btn-primary" id="remove-actions" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
-                                                        <a href="{% url 'accounting:gider_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> Create Invoice</a>
+                                                        <a href="{% url 'accounting:gider_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> Fatura Oluştur</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -93,7 +93,7 @@
                                             </thead>
                                             <tbody class="list form-check-all" id="invoice-list-data">
                                                 {% for i in  santiyeler %}
-                                                
+
                                                 <tr class="faturabilgisi" id="{{i.id}}">
                                                     <td><span>{{i.fatura_no}}</span></td>
                                                     <td><span>{{i.cari_bilgisi.cari_adi}}</span></td>
@@ -103,7 +103,7 @@
                                                     <td>
                                                         <div id="ge{{i.id}}">
                                                         <span>{% kalan_tutuari i %} $</span></div></td>
-                                                    
+
                                                     {% if i.silinme_bilgisi %}
                                                     <td class="cancel"><span>İPTAL</span></td>
                                                     {% else %}
@@ -137,16 +137,16 @@
 
                                                 {% if medya.has_previous %}
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
-                                                
+
                                                   {% if medya.number > 3 %}
-                                                
+
                                                     <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
                                                     {% if medya.number > 4 %}
                                                       <li class="page-item"><span class="page-link">...</span></li>
                                                     {% endif %}
                                                   {% endif %}
                                                 {% endif %}
-                                                
+
                                                 {% for num in medya.paginator.page_range %}
                                                   {% if medya.number == num %}
                                                     <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
@@ -154,7 +154,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
                                                   {% endif %}
                                                 {% endfor %}
-                                                
+
                                                 {% if medya.has_next %}
                                                   {% if medya.number < medya.paginator.num_pages|add:'-3' %}
                                                     <li class="page-item"><span class="page-link">...</span></li>
@@ -162,7 +162,7 @@
                                                   {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
-                                                
+
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
                                                 {% endif %}
                                                 </ul>
@@ -212,7 +212,7 @@
         {% csrf_token %}
       <!-- Modal body -->
       <div class="modal-body">
-        Faturayı Silmek Etmek İstediğinizden Emin misiniz ? 
+        Faturayı iptal etmek istediğinizden emin misiniz ?
         <input type="text" name="gelir_gider" value="1" hidden>
         <input type="text" name="idbilgisicek" value="{{i.id}}" hidden>
       </div>
@@ -240,11 +240,11 @@
 
                 <!-- Modal body -->
                 <div class="modal-body">
-                    Ödemeyi Silmek İstediğinizden Emin Misiniz ? 
+                    Ödemeyi Silmek İstediğinizden Emin Misiniz ?
                     <input type="text" name="makbuz" value="0" hidden>
                     <input type="text" name="makbuzidsi" value="{{k.id}}" hidden>
                 </div>
-                    
+
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
@@ -264,7 +264,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="text-sm-end d-none d-sm-block">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -389,7 +389,7 @@
                             {% for m in kasa %}
                                 <option value="{{m.id}}">{{m.kasa_adi}}</option>
                             {% endfor %}
-                            
+
                         </select>
                     </div>
                     <div class="input-item">
@@ -438,7 +438,7 @@
             </div>
         </div>
         <style>
-       
+
         div.scroll {
             margin: 4px, 4px;
             height: 400px;
@@ -456,12 +456,12 @@
             </div>
             {% for k in gelen_makbuzlar %}
                 <!-- The Modal -->
-                
+
                    <style>.odeme-tarihi table, .odeme-tarihi th,.odeme-tarihi td {
                     border: 1px solid black;
                   }</style>
             <div class="odeme-tarihi">
-                
+
             <table>
                 <thead>
                     <tr>
@@ -489,7 +489,7 @@
                         {% else %}
                         <td colspan="2">Resim Yok</td>
                         {% endif %}
-                       
+
                         <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil{{k.id}}">SİL</button></td>
                         <td>{{k.tutar}} $</td>
                     </tr>
@@ -564,7 +564,7 @@
 <script src="{% static '' %}assets/js/app.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-         
+
 <script>
     $(document).ready(function () {
   $(".makbuzsill").click(function (event) {
@@ -581,7 +581,7 @@
         csrfmiddlewaretoken: '{{ csrf_token }}'
       },
       success: function (data) {
-    
+
         $("#guncelle"+ String(a) ).load(window.location.href + " #guncelle"+ String(a) );
         $("#g"+ String(a) ).load(window.location.href + " #g"+ String(a) );
         $("#ge"+ String(a) ).load(window.location.href + " #ge"+ String(a) );
@@ -594,6 +594,6 @@
 });
 </script>
 {% endblock footer %}
-    
+
 
 

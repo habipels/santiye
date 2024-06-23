@@ -4,8 +4,12 @@
 {% load static %}
 {% block sidebar %}
 
-{%  bloglari_rapora_yansitma santiye as blog %}
 
+{%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
+{% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
+{{tablo}}
 <div class="vertical-overlay"></div>
     <div class="main-content">
         <div class="page-content">
@@ -17,7 +21,7 @@
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <p class="fw-medium text-muted mb-0">Fiziksel İlerleme</p>
-                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="67.45">0</span>%</h2>
+                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="{% bloglar_daireleri_kalemleri_fiziksel_bilgileri_genel blog.k  %}">0</span>%</h2>
                                         <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0">
                                                 <i class="ri-arrow-up-line align-middle"></i> 7.05 %
                                             </span> previous month</p>
@@ -39,7 +43,7 @@
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <p class="fw-medium text-muted mb-0">Finansal İlerleme</p>
-                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="55.0">0</span>%</h2>
+                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="{% bloglar_daireleri_kalemleri_finansal_bilgileri_genel blog.k  %}">0</span>%</h2>
                                         <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0">
                                                 <i class="ri-arrow-up-line align-middle"></i> 7.05 %
                                             </span> previous month</p>
@@ -61,7 +65,7 @@
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <p class="fw-medium text-muted mb-0">Kalan Gün</p>
-                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="127">0</span> Gün</h2>
+                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="{% days_until santiye.bitis_tarihi %}">0</span> Gün</h2>
                                         <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0">
                                                 <i class="ri-arrow-up-line align-middle"></i> 7.05 %
                                             </span> previous month</p>
@@ -121,8 +125,8 @@
                 </div>
             </div>
         </div>
-        
-        
+
+
 </div>
 
  <script src="{% static 'assets/libs/apexcharts/apexcharts.min.js' %}"></script>
@@ -156,25 +160,11 @@ var options,
     chart,
     data = [
         {% for i in blog.blog  %}
-            
-            
-          { name: "{{i}}", data: 50 },
+
+
+          { name: "{{i}}", data: [50,60]},
           {% endfor %}
-          { name: "T4", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W2", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W3", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W4", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W5", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W6", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W7", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W8", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W9", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W10", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W11", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W12", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W13", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W14", data: generateData(8, { min: 0, max: 90 }) },
-          { name: "W15", data: generateData(8, { min: 0, max: 90 }) },
+
     ],
     colors = (data.reverse(), ["#f7cc53", "#f1734f", "#663f59", "#6a6e94", "#4e88b4", "#00a7c6", "#18d8d8", "#a9d794", "#46aF78", "#a93f55", "#8c5e58", "#2176ff", "#5fd0f3", "#74788d", "#51d28c"]),
     chartHeatMapMultipleColors = (colors.reverse(), getChartColorsArray("multiple_heatmap")),
@@ -240,10 +230,10 @@ var options,
 chartHeatMapShadesColors &&
     ((options = {
           series: [
-                {% for i in blog.kalemler  %}
-            
-            
-                { name: "{{i}}", data: generateData(5, { min: 0, max: 90 }) },
+                {% for i in tablo  %}
+
+
+                { name: "{{i.isim | safe}}", data: [ {{i.ilerleme1 | safe}},{{i.ilerleme2 | safe}}] },
                 {% endfor %}
           ],
           chart: { height: 500, type: "heatmap", toolbar: { show: !1 } },
@@ -321,14 +311,14 @@ var worldlinemap,
     chartAudienceColumnChartsColors =
         (barchartCountriesColors &&
             ((options = {
-                series: [{ data: {{blog.degerler }}, name: "Sessions" }],
+                series: [{ data: [{{fiziksel_ilerleme |safe }}], name: "{{santiye.blog_adi}}" }],
                 chart: { type: "bar", height: 436, toolbar: { show: !1 } },
                 plotOptions: { bar: { borderRadius: 4, horizontal: !0, distributed: !0, dataLabels: { position: "top" } } },
                 colors: barchartCountriesColors,
                 dataLabels: { enabled: !0, offsetX: 32, style: { fontSize: "12px", fontWeight: 400, colors: ["#adb5bd"] } },
                 legend: { show: !1 },
                 grid: { show: !1 },
-                xaxis: { categories: {{blog.blog | safe}} },
+                xaxis: { categories: ["{{santiye.blog_adi}}"]},
             }),
             (chart = new ApexCharts(document.querySelector("#countries_charts"), options)).render()),
         getChartColorsArray("audiences_metrics_charts")),
@@ -415,14 +405,14 @@ var worldlinemap,
     chartAudienceColumnChartsColors =
         (barchartCountriesColors &&
             ((options = {
-                series: [{ data: {{blog.degerler }}, name: "Sessions" }],
+                series: [{ data: [{{finansal_ilerleme |safe}}], name: "{{santiye.blog_adi}}" }],
                 chart: { type: "bar", height: 436, toolbar: { show: !1 } },
                 plotOptions: { bar: { borderRadius: 4, horizontal: !0, distributed: !0, dataLabels: { position: "top" } } },
                 colors: barchartCountriesColors,
                 dataLabels: { enabled: !0, offsetX: 32, style: { fontSize: "12px", fontWeight: 400, colors: ["#adb5bd"] } },
                 legend: { show: !1 },
                 grid: { show: !1 },
-                xaxis: { categories: {{blog.blog | safe}} },
+                xaxis: { categories: ["{{santiye.blog_adi}}"] },
             }),
             (chart = new ApexCharts(document.querySelector("#countries_charts2"), options)).render()),
         getChartColorsArray("audiences_metrics_charts")),

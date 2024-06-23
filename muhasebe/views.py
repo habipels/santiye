@@ -831,10 +831,10 @@ def gelirler_sayfasi(request):
                 kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
                 content["kullanicilar"] =kullanicilar
             else:
-                profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
-            profile = profile.filter(Q(fatura_tarihi__lt  = tarih) & Q(vade_tarihi__gt  = tarih) )
+            profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -1044,13 +1044,13 @@ def gider_duzenle(request ,id):
         etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
         urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
-    content["gelir_kategoerisi"] = kategori_bilgisi
-    content["gelir_etiketi"] = etiketler
-    content["kasa"] = profile
-    content["urunler"]  = urunler_bilgisi
-    content["cari_bilgileri"] = cari_bilgileri
-    content["bilgi"] = gelir_bilgisi_ver
-    content["urunler"] = urunleri
+        content["gelir_kategoerisi"] = kategori_bilgisi
+        content["gelir_etiketi"] = etiketler
+        content["kasa"] = profile
+        content["urunler"]  = urunler_bilgisi
+        content["cari_bilgileri"] = cari_bilgileri
+        content["bilgi"] = gelir_bilgisi_ver
+        content["urunler"] = urunleri
     return render(request,"muhasebe_page/gider_faturasi_duzeltme.html",content)
 #Gelirler Sayfası
 def makbuz_sil(request):
@@ -1083,10 +1083,10 @@ def giderler_sayfasi(request):
                 kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
                 content["kullanicilar"] =kullanicilar
             else:
-                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gider_kategori_adi__icontains = search))
+                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)|  Q(aciklama__icontains = search) | Q(gelir_kategorisi__gider_kategori_adi__icontains = search))
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
-            profile = profile.filter(Q(fatura_tarihi__lt  = tarih) & Q(vade_tarihi__gt  = tarih) )
+            profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -1222,7 +1222,7 @@ def gider_faturasi_kaydet(request):
                         )
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         print(aciklama_id,"gelen id")
-        
+
     return redirect("accounting:giderler_sayfasi")
 def gider_odemesi_ekle(request):
 
@@ -1250,10 +1250,12 @@ def fatura_sil(request):
         id_bilgisi  = request.POST.get("idbilgisicek")
         if gelir_gider == "0":
             Gelir_Bilgisi.objects.filter(id = id_bilgisi).update(silinme_bilgisi = True)
+            Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu =get_object_or_404(Gelir_Bilgisi,id =id_bilgisi )).update(silinme_bilgisi = True)
             return redirect("accounting:gelirler_sayfasi")
 
         elif gelir_gider == "1":
             Gider_Bilgisi.objects.filter(id = id_bilgisi).update(silinme_bilgisi = True)
+            Gider_odemesi.objects.filter(gelir_kime_ait_oldugu=get_object_or_404(Gider_Bilgisi,id =id_bilgisi )).update(silinme_bilgisi = True)
             return redirect("accounting:giderler_sayfasi")
 #Gider Sayfası
 from django.shortcuts import get_object_or_404
@@ -1535,8 +1537,8 @@ def fatura_goster(request,id):
         etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
         urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
-    
-    
+
+
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/gelir_faturasi_goster.html",content)
@@ -1790,7 +1792,7 @@ def fatura_goster2qr(request,id):
         gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
         urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
     else:
-        
+
         gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
         urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
 

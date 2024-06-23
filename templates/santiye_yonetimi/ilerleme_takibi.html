@@ -26,9 +26,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title mb-0">İlerleme Takibi</h4>
-                                <h5><b>Blog : </b> {{id.blog_adi}}{{id.blog_numarasi}}</h5>
-                            
-                            
+                                <h5><b>Blog : </b> {{id.blog_adi}}</h5>
+
+
                             </div><!-- end card header -->
                         <form action="{% url 'main:ilerleme_kaydet' %}" method="post">
                             {% csrf_token %}
@@ -38,7 +38,7 @@
                                 <div class="listjs-table" id="customerList">
                                     <div class="row g-4 mb-3">
                                         <div class="col-sm-auto">
-                                            
+
                                         </div>
                                         <div class="col-sm">
                                             <div class="d-flex justify-content-sm-end">
@@ -60,17 +60,17 @@
                                                     <th class="text-uppercase&quot;" data-sort="mission_name">
                                                         Görev Adı</th>
 
-                                                    
-                                                    
+
+
                                                     {% kat_sirala id %}
-                                                    
-                                                    
+
+
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
                                             {% for i in santiyeler %}
                                             <input type="text" hidden name="tumbilgi" value="{% tum_bilgiler blog_id i.id  %}">
-                                            
+
                                                 <tr>
                                                     <th scope="row">
                                                         <div class="form-check">
@@ -79,7 +79,7 @@
                                                     </th>
                                                     <td class="id" style="display:none;"><a href="javascript:void(0);" class="fw-medium link-primary">#VZ2101</a></td>
                                                     <td class="mission_name">{{i.kalem_adi}}</td>
-                                                    
+
                                                     {% ckboxlar blog_id i.id %}
                                                 </tr></tbody>
                                         {% endfor %}
@@ -100,16 +100,16 @@
 
                                                 {% if medya.has_previous %}
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
-                                                
+
                                                   {% if medya.number > 3 %}
-                                                
+
                                                     <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
                                                     {% if medya.number > 4 %}
                                                       <li class="page-item"><span class="page-link">...</span></li>
                                                     {% endif %}
                                                   {% endif %}
                                                 {% endif %}
-                                                
+
                                                 {% for num in medya.paginator.page_range %}
                                                   {% if medya.number == num %}
                                                     <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
@@ -117,7 +117,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
                                                   {% endif %}
                                                 {% endfor %}
-                                                
+
                                                 {% if medya.has_next %}
                                                   {% if medya.number < medya.paginator.num_pages|add:'-3' %}
                                                     <li class="page-item"><span class="page-link">...</span></li>
@@ -125,7 +125,7 @@
                                                   {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
-                                                
+
                                                   <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
                                                 {% endif %}
                                                 </ul>
@@ -149,15 +149,15 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                
+
                             </div>
                         </div>
                     </div>
                 </div>
             </footer>
         </div>
-        
-    
+
+
 </div>
 
 {% endblock sidebar %}

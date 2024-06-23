@@ -4,7 +4,7 @@
 {% load custom_tags %}
 {% load static %}
 {% block header %}
-        
+
 {% endblock header %}
 {% block slider %}
 <div class="main-content">
@@ -12,7 +12,7 @@
     <div class="page-content">
         <div class="container-fluid">
 
-     
+
 
             <div class="row justify-content-start">
                 <div class="col-xxl-9">
@@ -38,13 +38,13 @@
                                         <!--end col-->
                                         <div class="col-6">
                                             <h6 class="text-muted text-uppercase fw-semibold mb-3">Shipping Address</h6>
-                                            
-                                            
-                                            
+
+
+
                                             <p class="fw-medium mb-2" id="shipping-name">{{bilgi.cari_bilgisi.cari_adi}}</p>
                                             <p class="text-muted mb-1" id="shipping-address-line-1">{{bilgi.cari_bilgisi.aciklama}}</p>
                                             <p class="text-muted mb-1"><span>Phone: </span><span id="shipping-phone-no">{{bilgi.cari_bilgisi.telefon_numarasi}}</span></p>
-                                       
+
                                         </div>
                                         <!--end col-->
                                     </div>
@@ -54,7 +54,7 @@
                                         </div>
                                         <div class="flex-shrink-0 mt-sm-0 mt-3">
                                             <img src="{%  gelir_qr_cek bilgi.id %}"  alt="logo dark" height="100">
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -100,15 +100,16 @@
                                 </div>
                                 <!--end card-body-->
                             </div><!--end col-->
-                         
+
                             <div class="col-lg-12">
                                 <div class="card-body p-4">
                                     <div class="table-responsive">
                                         <table class="table table-borderless text-center table-nowrap align-middle mb-0">
                                             <thead>
                                                 <tr class="table-active">
-                                                  
+
                                                     <th scope="col">Ürün</th>
+                                                    <th scope="col">Açıklama</th>
                                                     <th scope="col">Fiyat</th>
                                                     <th scope="col">Adet</th>
                                                     <th scope="col" class="text-end">Tutar</th>
@@ -117,11 +118,23 @@
                                             <tbody id="products-list">
                                              {% for i in urunler %}
                                                 <tr>
-                                                    
+
                                                     <td class="text-start">
                                                         <span class="fw-medium">{{i.urun_bilgisi.urun_adi}}</span>
                                                         <p class="text-muted mb-0"></p>
                                                     </td>
+                                                    {% if i.aciklama %}
+                                                    <td class="text-start">
+                                                        <span class="fw-medium">{{i.aciklama}}</span>
+                                                        <p class="text-muted mb-0"></p>
+                                                    </td>
+                                                    {% else %}
+                                                    <td class="text-start">
+                                                        <span class="fw-medium"></span>
+                                                        <p class="text-muted mb-0"></p>
+                                                    </td>
+                                                    {% endif %}
+
                                                     <td>${{i.urun_fiyati|stringformat:'.2f'}}</td>
                                                     <td>{{i.urun_adeti}}</td>
                                                     <td class="text-end">${%  carpma_islemi i.urun_adeti i.urun_fiyati %}</td>
@@ -137,7 +150,7 @@
                                                     <td>Sub Total</td>
                                                     <td class="text-end">${% toplama_yaptirma urunler %}</td>
                                                 </tr>
-                                                
+
                                                 <tr class="border-top border-top-dashed fs-15">
                                                     <th scope="row">Total Amount</th>
                                                     <th class="text-end">${% toplama_yaptirma urunler %}</th>
@@ -165,7 +178,7 @@
                                             </p>
                                         </div>
                                     </div>
-                                    
+
                                     -->
                                     <div class="hstack gap-2 justify-content-end d-print-none mt-4">
                                         <a href="javascript:window.print()" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Print</a>
@@ -193,7 +206,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="text-sm-end d-none d-sm-block">
-                        
+
                     </div>
                 </div>
             </div>
