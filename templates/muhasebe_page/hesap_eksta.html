@@ -43,48 +43,34 @@
                             </div>
                         </div>
                         <div class="card-body bg-light-subtle border border-dashed border-start-0 border-end-0">
-                            <form>
-                                <div class="row g-3" style="height:50px; display:flex; align-items: center;">
+                            <form method="get">
+                                <div class="row g-3 gelirler-filtre">
                                     <div class="col-sm-4">
                                         <div class="search-box">
-                                            <input type="text" class="form-control search bg-light border-light" placeholder="Search for customer, email, country, status or something...">
+                                            <input type="text" name="search" value="{% if request.GET.search %}{{request.GET.search}}{% endif %}" class="form-control search bg-light border-light" placeholder="Cari adı, kategori veya etiket yazınız...">
                                             <i class="ri-search-line search-icon"></i>
                                         </div>
                                     </div>
                                     <!--end col-->
-                                    <div class="col-sm-2">
-                                        <input type="text" class="form-control bg-light border-light" id="datepicker-range" placeholder="Select date">
+                                    <div class="col-sm-4">
+                                        <input type="date" name="tarih" value="{% if request.GET.tarih %}{{request.GET.tarih}}{% endif %}" class="form-control bg-light border-light" id="datepicker-range" placeholder="Tarih seçiniz">
                                     </div>
                                     <!--end col-->
-                                    <div class="col-sm-2">
-                                        <div class="input-light">
-                                            <select class="form-control" data-choices data-choices-search-false name="choices-single-default" id="idStatus">
-                                                <option value="">Status</option>
-                                                <option value="all" selected>All</option>
-                                                <option value="Unpaid">Unpaid</option>
-                                                <option value="Paid">Paid</option>
-                                                <option value="Cancel">Cancel</option>
-                                                <option value="Refund">Refund</option>
-                                            </select>
-                                        </div>
+                                    <div class="col-sm-1">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                        Ara
+                                        </button>
+
                                     </div>
                                     <div class="col-sm-2">
-                                        <label for="choices-multiple-default" class="form-label text-muted">Show</label>
-                                        <select>
-                                            <option value="Choice 1" selected>25</option>
-                                            <option value="Choice 2">50</option>
-                                            <option value="Choice 3">100</option>
-                                            <option value="Choice 4" disabled>All</option>
-                                        </select>
+                                        <a href="{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
+                                            Temizle
+                                        </a>
+
                                     </div>
                                     <!--end col-->
 
-                                    <div class="col-sm-2">
-                                        <button type="button" class="btn btn-primary w-100" onclick="SearchData();">
-                                            <i class="ri-equalizer-fill me-1 align-bottom"></i> Filters
-                                        </button>
-                                    </div>
-                                    <!--end col-->
+                                    
                                 </div>
                                 <!--end row-->
                             </form>

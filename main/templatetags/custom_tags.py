@@ -832,4 +832,12 @@ def ozellikler(bilgi):
     return {"gelir":aylik_gelir,"gider":aylik_gider,"kategoriler":kategoriler}
 
 
-
+#@register.filter
+@register.simple_tag
+def toplam_kalem_orani_toplami(veri):
+    a = 0
+    b = 0
+    for i in veri:
+        a = a + i.santiye_agirligi
+        b = b + i.santiye_finansal_agirligi
+    return {"a":a,"b":b}

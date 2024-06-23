@@ -27,8 +27,6 @@
                             <div class="card-header">
                                 <h4 class="card-title mb-0">İlerleme Takibi</h4>
                                 <h5><b>Blog : </b> {{id.blog_adi}}</h5>
-
-
                             </div><!-- end card header -->
                         <form action="{% url 'main:ilerleme_kaydet' %}" method="post">
                             {% csrf_token %}
@@ -41,9 +39,23 @@
 
                                         </div>
                                         <div class="col-sm">
-                                            <div class="d-flex justify-content-sm-end">
+                                        <div class="d-flex justify-content-sm-start">
+                                            {% toplam_kalem_orani_toplami santiyeler as bilgi  %}
+                                                        <div class="back-button-container">
+                                                            <span>Fiziksel Ağırlık : {{bilgi.a}}</span>
+                                                </div>
                                                 <div class="search-box ms-2">
-                                                    <button type="submit" class="btn btn-success add-btn" > Kaydet</button>
+                                                    <span>Finansal Ağırlık : {{bilgi.b}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-sm-end">
+                                                        <div class="back-button-container">
+                                                    <a href="{% url 'main:santiye_kalem_ve_blog' %}" type="button" class="btn btn-info btn-animation waves-effect waves-light"  data-text="Geri"><span>Geri</span></a>
+                                                </div>
+                                                <div class="search-box ms-2">
+                                                    <button type="submit" class="btn btn-success btn-label waves-effect waves-light"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Kaydet</button>
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -59,6 +71,10 @@
                                                     </th>
                                                     <th class="text-uppercase&quot;" data-sort="mission_name">
                                                         Görev Adı</th>
+                                                    <th class="text-uppercase&quot;" data-sort="mission_name">
+                                                        Fiziksel Ağırlığı</th>
+                                                    <th class="text-uppercase&quot;" data-sort="mission_name">
+                                                        Finansal Ağırlığı</th>
 
 
 
@@ -79,6 +95,8 @@
                                                     </th>
                                                     <td class="id" style="display:none;"><a href="javascript:void(0);" class="fw-medium link-primary">#VZ2101</a></td>
                                                     <td class="mission_name">{{i.kalem_adi}}</td>
+                                                    <td class="mission_name">{{i.santiye_agirligi}}</td>
+                                                    <td class="mission_name">{{i.santiye_finansal_agirligi}}</td>
 
                                                     {% ckboxlar blog_id i.id %}
                                                 </tr></tbody>
