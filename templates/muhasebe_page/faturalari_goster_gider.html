@@ -29,20 +29,20 @@
                                           <div class="card-body p-4 border-top border-top-dashed">
                                     <div class="row g-3">
                                         <div class="col-6">
-                                            <h6 class="text-muted text-uppercase fw-semibold mb-3">Billing Address</h6>
+                                            <h6 class="text-muted text-uppercase fw-semibold mb-3">{% trans "Billing Address" %}</h6>
                                             <p class="fw-medium mb-2" id="billing-name">{{bilgi.gelir_kime_ait_oldugu.first_name}}</p>
                                             <p class="text-muted mb-1" id="billing-address-line-1">{{bilgi.gelir_kime_ait_oldugu.adrrsi}}</p>
-                                            <p class="text-muted mb-1"><span>Phone: </span><span id="billing-phone-no">{{bilgi.gelir_kime_ait_oldugu.telefon_numarasi}}</span></p>
+                                            <p class="text-muted mb-1"><span>{% trans "Phone" %}: </span><span id="billing-phone-no">{{bilgi.gelir_kime_ait_oldugu.telefon_numarasi}}</span></p>
                                         </div>
                                         <!--end col-->
                                         <div class="col-6">
-                                            <h6 class="text-muted text-uppercase fw-semibold mb-3">Shipping Address</h6>
+                                            <h6 class="text-muted text-uppercase fw-semibold mb-3">{% trans "Shipping Address" %}</h6>
 
 
 
                                             <p class="fw-medium mb-2" id="shipping-name">{{bilgi.cari_bilgisi.cari_adi}}</p>
                                             <p class="text-muted mb-1" id="shipping-address-line-1">{{bilgi.cari_bilgisi.aciklama}}</p>
-                                            <p class="text-muted mb-1"><span>Phone: </span><span id="shipping-phone-no">{{bilgi.cari_bilgisi.telefon_numarasi}}</span></p>
+                                            <p class="text-muted mb-1"><span>{% trans "Phone" %}: </span><span id="shipping-phone-no">{{bilgi.cari_bilgisi.telefon_numarasi}}</span></p>
 
                                         </div>
                                         <!--end col-->
@@ -63,34 +63,34 @@
                                 <div class="card-body p-4">
                                     <div class="row g-3">
                                         <div class="col-lg-3 col-6">
-                                            <p class="text-muted mb-2 text-uppercase fw-semibold">Invoice No</p>
+                                            <p class="text-muted mb-2 text-uppercase fw-semibold">{% trans "Invoice No" %}</p>
                                             <h5 class="fs-14 mb-0"><span id="invoice-no">{{bilgi.fatura_no}}</span></h5>
                                         </div>
                                         <!--end col-->
                                         <div class="col-lg-3 col-6">
-                                            <p class="text-muted mb-2 text-uppercase fw-semibold">Date</p>
+                                            <p class="text-muted mb-2 text-uppercase fw-semibold">{% trans "Date" %}</p>
                                             <h5 class="fs-14 mb-0"><span id="invoice-date">{{bilgi.fatura_tarihi | date:'Y-m-d'}}</span> </h5>
                                         </div>
                                         <!--end col-->
                                         <div class="col-lg-3 col-6">
-                                            <p class="text-muted mb-2 text-uppercase fw-semibold">Payment Status</p>
+                                            <p class="text-muted mb-2 text-uppercase fw-semibold">{% trans "Payment Status" %}</p>
                                             {% if i.silinme_bilgisi %}
-                                                    <td class="cancel"><span>İPTAL</span></td>
+                                                    <td class="cancel"><span>{% trans "İPTAL" %}</span></td>
                                                     {% else %}
                                                    {% toplam_tutar_cikarmai bilgi as tutar %}
                                                     {% toplam_odenme_tutari bilgi as odeme %}
                                                     {% if  odeme == tutar %}
-                                                        <span class="badge bg-success-subtle text-success fs-11" id="payment-status">ÖDENDİ</span>
+                                                        <span class="badge bg-success-subtle text-success fs-11" id="payment-status">{% trans "ÖDENDİ" %}</span>
                                                     {% elif odeme > 0 %}
-                                                    <span class="badge bg-warning-subtle text-warning fs-11" id="payment-status">PARÇALI ÖDENDİ</span>
+                                                    <span class="badge bg-warning-subtle text-warning fs-11" id="payment-status">{% trans "PARÇALI ÖDENDİ" %}</span>
                                                     {% elif odeme == 0 %}
-                                                    <span class="badge bg-danger-subtle text-danger fs-11" id="payment-status">ÖDENMEDİ</span>
+                                                    <span class="badge bg-danger-subtle text-danger fs-11" id="payment-status">{% trans "ÖDENMEDİ" %}</span>
                                                     {% endif %}
                                                      {% endif %}
                                         </div>
                                         <!--end col-->
                                         <div class="col-lg-3 col-6">
-                                            <p class="text-muted mb-2 text-uppercase fw-semibold">Total Amount</p>
+                                            <p class="text-muted mb-2 text-uppercase fw-semibold">{% trans "Total Amount" %}</p>
                                             <h5 class="fs-14 mb-0">$<span id="total-amount">{% toplam_tutar_cikarmai bilgi %}</span></h5>
                                         </div>
                                         <!--end col-->
@@ -107,11 +107,11 @@
                                             <thead>
                                                 <tr class="table-active">
 
-                                                    <th scope="col">Ürün</th>
-                                                    <th scope="col">Açıklama</th>
-                                                    <th scope="col">Fiyat</th>
-                                                    <th scope="col">Adet</th>
-                                                    <th scope="col" class="text-end">Tutar</th>
+                                                    <th scope="col">{% trans "Ürün" %}</th>
+                                                    <th scope="col">{% trans "Açıklama" %}</th>
+                                                    <th scope="col">{% trans "Fiyat" %}</th>
+                                                    <th scope="col">{% trans "Adet" %}</th>
+                                                    <th scope="col" class="text-end">{% trans "Tutar" %}</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="products-list">
@@ -145,12 +145,12 @@
                                         <table class="table table-borderless table-nowrap align-middle mb-0 ms-auto" style="width:250px">
                                             <tbody>
                                                 <tr>
-                                                    <td>Sub Total</td>
+                                                    <td>{% trans "Sub Total" %}</td>
                                                     <td class="text-end">${% toplama_yaptirma urunler %}</td>
                                                 </tr>
 
                                                 <tr class="border-top border-top-dashed fs-15">
-                                                    <th scope="row">Total Amount</th>
+                                                    <th scope="row">{% trans "Total Amount" %}</th>
                                                     <th class="text-end">${% toplama_yaptirma urunler %}</th>
                                                 </tr>
                                             </tbody>
@@ -179,7 +179,7 @@
 
                                     -->
                                     <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                                        <a href="javascript:window.print()" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Print</a>
+                                        <a href="javascript:window.print()" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> {% trans "Print" %}</a>
                                        <!-- <a href="javascript:void(0);" class="btn btn-primary"><i class="ri-download-2-line align-bottom me-1"></i> Download</a>
                                     end card-body--></div>
                                 </div>

@@ -54,71 +54,82 @@
 
                 <div id="satis-ekle" class="row">
                     <div class="card">
-                        <div class="card-head">
-                            <div class="title"><h2>Genel Bilgiler</h2></div>
-                            <div class="buttons">
-                                <a class="vazgec" href="{% url 'accounting:gelirler_sayfasi' %}">İptal</a>
-                                <input type="submit" class="kaydet" value="kaydet" />
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="form2">
-                                <div class="input-item musteri-input">
-                                    <label>Müşteri</label>
-                                    <input type="search" required name="musteri_bilgisi" class="cari" placeholder="Müşteri ünvanı" />
-                                </div>
-                                <div class="input-item duzenleme-vade-tarihi">
-                                    <label>Düzenleme ve Vade Tarihi</label>
-                                    <input type="text" required name="daterange" value="{% tarih_cek  %}" />
-                                </div>
-                              <div class="input-item kategori">
-                                <label>Kategori</label>
-                                <div id="kategorii" class="d-flex align-items-center">
-                                    <select required id="kategori" name="gelir_kategorisi" class="me-2">
-                                        {% for i in gelir_kategoerisi %}
-                                            <option value="{{i.id}}">{{i.gider_kategori_adi}}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal">
-                                        <i class="ri-add-line align-bottom me-1"></i>
-                                    </button>
-                                </div>
-                            </div>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="title">Genel Bilgiler</h2>
+        <div class="buttons">
+            <a class="btn btn-warning btn-label waves-effect waves-light" href="{% url 'accounting:giderler_sayfasi' %}"><i class="ri-error-warning-line label-icon align-middle fs-16 me-2"></i> Vazgeç</a>
+            <button type="submit" class="btn btn-success btn-label waves-effect waves-light"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Kaydet</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="input-item musteri-input">
+                    <label>Cari</label>
+                    <input type="search" required name="musteri_bilgisi" class="form-control cari" title="Kayıtlı cariler için cari adının ilk üç karekterini giriniz." placeholder="Cari Hesabı" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Düzenleme ve Vade Tarihi</label>
+                    <input type="text" required name="daterange" class="form-control" value="{% tarih_cek %}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Döviz Kuru</label>
+                  <div class="input-group">
+                    <input required type="text" name="doviz_kuru" class="form-control" pattern="[0-9]+([,.][0-9]+)?" title="Lütfen sadece rakam giriniz, ondalık için '.' veya ',' kullanabilirsiniz" placeholder="Örn: 1450 veya 1450,06">
+                    <span class="input-group-text">IQD</span>
+                 </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Fatura No</label>
+                    <input type="text" required name="faturano" class="form-control" value="{% gider_faturasi_no request.user.id %}" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <input type="text" required name="cari_aciklma" class="form-control" placeholder="Açıklama">
+                </div>
+            </div>
+<div class="col-md-3">
+    <div class="form-group">
+        <label>Kategori</label>
+        <div class="input-group">
+            <select required id="kategori" name="gelir_kategorisi" class="form-select">
+                {% for i in gelir_kategoerisi %}
+                <option value="{{i.id}}">{{i.gider_kategori_adi}}</option>
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#showModal">
+                <i class="ri-add-line align-bottom me-1"></i>Ekle
+            </button>
+        </div>
+    </div>
+</div>
+<div class="col-md-3">
+    <div class="input-item etiket">
+        <label>Etiketler</label>
+        <div id="etkett" class="d-flex align-items-center">
+            <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
+                {% for i in gelir_etiketi %}
+                <option value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#gideretiketiekle">
+                <i class="ri-add-line align-bottom me-1"></i>Ekle
+            </button>
+        </div>
+    </div>
+</div>
 
-                                <div class="input-item aciklama">
-                                    <label>Açıklama</label>
-                                    <input type="text" required name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
-                                </div>
-                                <div class="input-item etiket">
-                                    <label>ETİKETLER</label>
-                                    <div id="etkett" class="d-flex align-items-center">
-                                        <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
-                                            {% for i in gelir_etiketi %}
-                                                <option value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#gideretiketiekle">
-                                            <i class="ri-add-line align-bottom me-1"></i>
-                                        </button>
-                                    </div>
-                                </div>
+    </div>
+</div>
 
-                            </div>
-                            <div class="form2">
-                                  <div class="input-item doviz">
-                                    <label>DÖVİZ KURU</label>
-                                    <input required type="text" placeholder="Açıklama" value="IQD" name="doviz_kuru" />
-                                </div>
-                                <div class="input-item fatura">
-                                    <label>FATURA NO</label>
-                                    <input type="text" required name="faturano" hidden value="{% gider_faturasi_no request.user.id %}" />
-                                    <input type="text" required  placeholder="Açıklama" value="{% gider_faturasi_no request.user.id %}" disabled />
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
                     <div class="card">
                         <div class="card-head">
                             <div class="title"><h2>Fatura Kalemleri</h2></div>
@@ -168,20 +179,24 @@
                             <span>Yeni Satır Ekle</span>
                         </div>
                     </div>
-                    <div class="card hesaplar">
-                        <div class="card-body">
-                            <div class="text-center">
-                                <h2>ARA TOPLAM</h2>
-                                <hr>
-                                <h3 class="aratoplam text-center">0</h3>
-                            </div>
-                            <div class="text-center">
-                                <h2>ÖDENECEK TUTAR</h2>
-                                <hr>
-                                <h3 class="odenecektutar text-center">0</h3>
-                            </div>
-                        </div>
-                    </div>
+<div class="card hesaplar">
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col text-center">
+                <h5 class="fw-bold">ARA TOPLAM</h5>
+                <h2 class="fw-bold text-primary">$<span class="aratoplam">0.00</span></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <h5 class="fw-bold">ÖDENECEK TUTAR</h5>
+                <h2 class="fw-bold text-success">$<span class="odenecektutar">0.00</span></h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+
                 </div>
                 <!--end row-->
             </div>

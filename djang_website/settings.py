@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Add our new application
       #rosetta çeviri için
     'rosetta',
+
     #
     'main',
     'users',

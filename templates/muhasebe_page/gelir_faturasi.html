@@ -40,11 +40,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Satış Ekle</h4>
+                            <h4 class="mb-sm-0">{% trans 'Satış Ekle' %}</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Satış Ekle</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                                    <li class="breadcrumb-item active">{% trans 'Satış Ekle' %}</li>
                                 </ol>
                             </div>
                         </div>
@@ -55,25 +55,25 @@
                 <div id="satis-ekle" class="row">
                     <div class="card">
                         <div class="card-head">
-                            <div class="title"><h2>Genel Bilgiler</h2></div>
+                            <div class="title"><h2>{% trans 'Genel Bilgiler' %}</h2></div>
                             <div class="buttons">
-                                <a class="vazgec" href="{% url 'accounting:gelirler_sayfasi' %}">İptal</a>
-                                <input type="submit" class="kaydet" value="kaydet" />
+                                <a class="vazgec" href="{% url 'accounting:gelirler_sayfasi' %}">{% trans 'İptal' %}</a>
+                                <input type="submit" class="kaydet" value="{% trans 'kaydet' %}" />
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="form2">
                                 <div class="input-item musteri-input">
-                                    <label>Müşteri</label>
-                                    <input type="search" required name="musteri_bilgisi" class="cari" placeholder="Müşteri ünvanı" />
+                                    <label>{% trans 'Müşteri' %}</label>
+                                    <input type="search" required name="musteri_bilgisi" class="cari" placeholder="{% trans 'Müşteri ünvanı' %}" />
                                 </div>
                                 <div class="input-item duzenleme-vade-tarihi">
-                                    <label>Düzenleme ve Vade Tarihi</label>
+                                    <label>{% trans 'Düzenleme ve Vade Tarihi' %}</label>
                                     <input type="text" required name="daterange" value="{% tarih_cek  %}" />
                                 </div>
                                 <div class="input-item kategori" >
                                     
-                                    <label>Kategori</label>
+                                    <label>{% trans 'Kategori' %}</label>
                                     <div  id="kategorii">
                                     <select  required id="kategori" name="gelir_kategorisi">
                                         {% for i in gelir_kategoerisi %}
@@ -85,11 +85,11 @@
                                     
                                 </div>
                                 <div class="input-item aciklama">
-                                    <label>Açıklama</label>
-                                    <input type="text" required name="cari_aciklma" class="aciklama" placeholder="Açıklama" />
+                                    <label>{% trans 'Açıklama' %}</label>
+                                    <input type="text" required name="cari_aciklma" class="aciklama" placeholder="{% trans 'Açıklama' %}" />
                                 </div>
                                 <div class="input-item etiket">
-                                <label>ETİKETLER</label>
+                                <label>{% trans 'ETİKETLER' %}</label>
                                     <div class="div" id="etkett">
                                         
                                     <select name="etiketler" required id="cokluetiket" class="etkett" multiple >
@@ -105,13 +105,13 @@
                             </div>
                             <div class="form2">
                                   <div class="input-item doviz">
-                                    <label>DÖVİZ KURU</label>
-                                    <input required type="text" placeholder="Açıklama" value="IQN" name="doviz_kuru" />
+                                    <label>{% trans 'DÖVİZ KURU' %}</label>
+                                    <input required type="text" placeholder="{% trans 'Açıklama' %}" value="IQN" name="doviz_kuru" />
                                 </div>
                                 <div class="input-item fatura">
-                                    <label>FATURA NO</label>
+                                    <label>{% trans 'FATURA NO' %}</label>
                                     <input type="text" required name="faturano" hidden value="{% gelir_faturasi_no request.user.id %}" />
-                                    <input type="text" required  placeholder="Açıklama" value="{% gelir_faturasi_no request.user.id %}" disabled />
+                                    <input type="text" required  placeholder="{% trans 'Fatura No' %}" value="{% gelir_faturasi_no request.user.id %}" disabled />
                                 </div>
                             </div>
                               
@@ -120,13 +120,13 @@
                     </div>
                     <div class="card">
                         <div class="card-head">
-                            <div class="title"><h2>Fatura Kalemleri</h2></div>
+                            <div class="title"><h2>{% trans 'Fatura Kalemleri' %}</h2></div>
                         </div>
                         <div class="fatura-tablosu-basliklar">
-                            <h2 class="urun">HİZMET / ÜRÜN</h2>
-                            <h2 class="miktar">MİKTAR</h2>
-                            <h2 class="bfiyat">BİRİM FİYAT</h2>
-                            <h2 class="toplam">TOPLAM</h2>
+                            <h2 class="urun">{% trans 'HİZMET / ÜRÜN' %}</h2>
+                            <h2 class="miktar">{% trans 'MİKTAR' %}</h2>
+                            <h2 class="bfiyat">{% trans 'BİRİM FİYAT' %}</h2>
+                            <h2 class="toplam">{% trans 'TOPLAM' %}</h2>
                         </div>
                         <div class="card-body">
                             <div class="form2" id="form2" >
@@ -134,7 +134,7 @@
 
                                 <div class="table-item">
                                     <div class="urun">
-                                        <input type="search" name="urunadi" class="den" required id="searchInput" placeholder="Ürün / Hizmet Adı" />
+                                        <input type="search" name="urunadi" class="den" required id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
 
                                     </div>
                                     <div class="miktar">
@@ -152,30 +152,30 @@
                                     <div class="icons">
                                         <span class="mdi mdi-pan-left specBtn" onclick="specAc(event)"></span>
                                         <ul class="specs">
-                                            <li class="addDesc" onclick="aciklamaEkle(event)">Açıklama Ekle</li>
-                                            <li class="addSale" onclick="indirimEkle(event)">İndirim Ekle</li>
+                                            <li class="addDesc" onclick="aciklamaEkle(event)">{% trans 'Açıklama Ekle' %}</li>
+                                            <li class="addSale" onclick="indirimEkle(event)">{% trans 'İndirim Ekle' %}</li>
                                         </ul>
                                         <span style="display: flex !important;" class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
                                     </div>
-                                    <div class="indirim"><input id="indirim" class="indirim" name="indirim" value="0" type="number" placeholder="İndirim gir %"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
-                                    <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="Açıklama Giriniz"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
+                                    <div class="indirim"><input id="indirim" class="indirim" name="indirim" value="0" type="number" placeholder="{% trans 'İndirim gir %' %}"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
+                                    <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="{% trans 'Açıklama Giriniz' %}"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
                                 </div>
                               
                             </div>
                         </div>
                         <div class="addNewItem">
-                            <span>Yeni Satır Ekle</span>
+                            <span>{% trans 'Yeni Satır Ekle' %}</span>
                         </div>
                     </div>
                     <div class="card hesaplar">
                         <div class="card-body">
                             <div class="text-center">
-                                <h2>ARA TOPLAM</h2>
+                                <h2>{% trans 'ARA TOPLAM' %}</h2>
                                 <hr>
                                 <h3 class="aratoplam text-center">0</h3>
                             </div>
                             <div class="text-center">
-                                <h2>ÖDENECEK TUTAR</h2>
+                                <h2>{% trans 'ÖDENECEK TUTAR' %}</h2>
                                 <hr>
                                 <h3 class="odenecektutar text-center">0</h3>
                             </div>
@@ -240,8 +240,8 @@
         <div class="calendar-time" style="display: none;"></div>
     </div>
     <div   class="drp-buttons"><span class="drp-selected">01/01/2024 - 01/30/2024</span><button
-            class="cancelBtn btn btn-sm btn-default" type="button">Cancel</button><button
-            class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">Apply</button> </div>
+            class="cancelBtn btn btn-sm btn-default" type="button">{% trans 'Cancel' %}</button><button
+            class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">{% trans 'Apply' %}</button> </div>
 </div>
 <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
@@ -254,22 +254,22 @@
                                 <div class="modal-body">
                                     <input type="text" name="tur" id="tur" hidden value="0">
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Adı</label>
-                                        <input type="text"  name="adi" id="adi" class="form-control" placeholder="Kategori Adı" />
+                                        <label for="date-field" class="form-label">{% trans 'Gelir Kategorisi Adı' %}</label>
+                                        <input type="text"  name="adi" id="adi" class="form-control" placeholder="{% trans 'Kategori Adı' %}" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Açıklaması</label>
-                                        <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="Kategori Açıklaması" />
+                                        <label for="date-field" class="form-label">{% trans 'Gelir Kategorisi Açıklaması' %}</label>
+                                        <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="{% trans 'Kategori Açıklaması' %}" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Kategorisi Rengi</label>
-                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="Dil Adı" />
+                                        <label for="date-field" class="form-label">{% trans 'Gelir Kategorisi Rengi' %}</label>
+                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="{% trans 'Gelir Kategorisi Rengi' %}" />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">Ekle</button>
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Close' %}</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">{% trans 'Ekle' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -287,15 +287,15 @@
                                 <div class="modal-body">
                                     <input type="text" name="tur2" id="tur2" hidden value="0">
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gelir Etiketi Adı</label>
-                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="Kategori Adı" />
+                                        <label for="date-field" class="form-label">{% trans 'Gelir Etiketi Adı' %}</label>
+                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="{% trans 'Gelir Etiketi Adı' %}" />
                                     </div>
 
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">Ekle</button>
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Close' %}</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">{% trans 'Ekle' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
