@@ -2,6 +2,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from PIL import Image
 from io import BytesIO
+from simple_history.models import HistoricalRecords
+from django.conf import settings
+from django.db import models
+from simple_history.models import HistoricalRecords
 # Create your models here.
 class CustomUser(AbstractUser):
 
@@ -21,6 +25,7 @@ class CustomUser(AbstractUser):
     telefon_numarasi =  models.CharField(max_length= 20 , verbose_name="Telefon Numarası ",blank=True,null = True)
     gorevi = models.CharField(max_length = 250 ,verbose_name="Görevi",blank = True,null = True)
     adrrsi = models.TextField("Adres", max_length=600, default='', blank=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 
     def __str__(self):
@@ -29,9 +34,11 @@ class CustomUser(AbstractUser):
 class LockScreenStatus(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     is_locked = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class personel_dosyalari(models.Model):
     kullanici = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
     dosyalari  = models.FileField(verbose_name="Kullanıcı Dosyası",upload_to='kullanici_dosyasi/',blank=True,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class personel_izinleri(models.Model):
     #bu izinler kime ait
     izinlerin_sahibi_kullanici = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
@@ -84,4 +91,4 @@ class personel_izinleri(models.Model):
     #Hakedişler Kategorileri
     hakedisler_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     hakedisler_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
-
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

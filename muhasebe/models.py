@@ -1,7 +1,10 @@
 from django.db import models
 from users.models import * 
 from datetime import datetime
-
+from simple_history.models import HistoricalRecords
+from django.conf import settings
+from django.db import models
+from simple_history.models import HistoricalRecords
 # Create your models here.
 class cari (models.Model):
     cari_kart_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Cari Kartın Kime Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -11,7 +14,7 @@ class cari (models.Model):
     bakiye = models.FloatField(verbose_name="Cari Bakiyesi",default=0)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
-    
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class Kasa (models.Model):
     kasa_kart_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Kasa Kime Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -20,7 +23,7 @@ class Kasa (models.Model):
     bakiye = models.FloatField(verbose_name="Kasa Bakiyesi",default=0)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
-
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class gelir_kategorisi(models.Model):
     gelir_kategoris_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     gelir_kategori_adi = models.CharField(max_length=400,verbose_name="Gelir Adı",blank=True,null=True)
@@ -28,6 +31,7 @@ class gelir_kategorisi(models.Model):
     aciklama = models.TextField(verbose_name="Gelir Kategorisi Açkıklama",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class gider_kategorisi(models.Model):
     gider_kategoris_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Gider Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -36,16 +40,19 @@ class gider_kategorisi(models.Model):
     aciklama = models.TextField(verbose_name="Gider Kategorisi Açkıklama",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class gelir_etiketi(models.Model):
     gelir_kategoris_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     gelir_etiketi_adi = models.CharField(max_length=400,verbose_name="Gelir Adı",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class gider_etiketi(models.Model):
     gider_kategoris_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Gider Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     gider_etiketi_adi = models.CharField(max_length=400,verbose_name="Gider Adı",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class Gelir_Bilgisi(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     cari_bilgisi = models.ForeignKey(cari,verbose_name="Cari Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
@@ -58,6 +65,7 @@ class Gelir_Bilgisi(models.Model):
     gelir_etiketi_sec = models.ManyToManyField(gelir_etiketi,blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class Gider_Bilgisi(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     cari_bilgisi = models.ForeignKey(cari,verbose_name="Cari Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
@@ -70,6 +78,7 @@ class Gider_Bilgisi(models.Model):
     gelir_etiketi_sec = models.ManyToManyField(gider_etiketi,blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 
 class virman(models.Model):
@@ -81,6 +90,7 @@ class virman(models.Model):
     aciklama = models.TextField(verbose_name="Virman Açıklaması",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 
 class urunler(models.Model):
@@ -89,6 +99,7 @@ class urunler(models.Model):
     urun_fiyati = models.FloatField(verbose_name="Ürün Fiyatı",default=0)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class gider_urun_bilgisi(models.Model):
     urun_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -99,6 +110,7 @@ class gider_urun_bilgisi(models.Model):
     aciklama = models.CharField(max_length = 400,verbose_name ="Açıklama",blank = True,null = True)
     gider_bilgis = models.ForeignKey(Gider_Bilgisi,blank=True,null=True,verbose_name="Gelir Bilgisi",on_delete=models.SET_NULL)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class gelir_urun_bilgisi(models.Model):
     urun_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     urun_bilgisi = models.ForeignKey(urunler,blank=True,null=True,verbose_name="Ürün Bilgisi",on_delete=models.SET_NULL)
@@ -107,7 +119,8 @@ class gelir_urun_bilgisi(models.Model):
     urun_adeti = models.BigIntegerField(verbose_name="Ürün Adeti",default=0)
     aciklama = models.CharField(max_length = 400,verbose_name ="Açıklama",blank = True,null = True)
     gider_bilgis = models.ForeignKey(Gelir_Bilgisi,blank=True,null=True,verbose_name="Gelir Bilgisi",on_delete=models.SET_NULL)
-    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)    
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)   
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
     
 
 class Gelir_odemesi(models.Model):
@@ -122,7 +135,7 @@ class Gelir_odemesi(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     islemi_yapan = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank = True,null = True,verbose_name = "İşlemi Yapan")
-
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class Gider_odemesi(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(Gider_Bilgisi,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     gelir_turu = models.CharField(max_length = 200,verbose_name="gelir_turu",blank = True,null=True)
@@ -135,12 +148,13 @@ class Gider_odemesi(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     islemi_yapan = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank = True,null = True,verbose_name = "İşlemi Yapan")
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class faturalar_icin_logo(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     gelir_makbuzu = models.FileField(upload_to='faturalogosu/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
-
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 import qrcode
 from io import BytesIO
 from django.core.files import File
@@ -148,6 +162,7 @@ from PIL import Image, ImageDraw
 class gelir_qr(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(Gelir_Bilgisi,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     qr_bilgisi = models.ImageField(upload_to='faturaqr/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
     def _str_(self):
         return str(self.name)
     def save(self, *args, **kwargs):
@@ -179,6 +194,7 @@ class gelir_qr(models.Model):
 class gider_qr(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(Gider_Bilgisi,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     qr_bilgisi = models.ImageField(upload_to='faturaqr/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
     def _str_(self):
         return str(self.name)
     def save(self, *args, **kwargs):
@@ -205,3 +221,12 @@ class gider_qr(models.Model):
         self.qr_bilgisi.save(fname, File(buffer), save=False)
 
         super().save(*args, **kwargs)
+
+class Gelir_excel_ekleme(models.Model):
+    gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    gelir_makbuzu = models.FileField(upload_to='excel/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+
+class Gider_excel_ekleme(models.Model):
+    gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    gelir_makbuzu = models.FileField(upload_to='excel/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    

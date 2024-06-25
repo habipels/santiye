@@ -163,9 +163,13 @@ def klasor_olayi(id):
 @register.simple_tag
 def kullanici_dosya_boyutu(id):
     boyut = 0
-    a = klasor_dosyalari.objects.filter(dosya_sahibi__id = id)
+    try:
+        a = klasor_dosyalari.objects.filter(dosya_sahibi__id = id)
+    except:
+        a = 0
     for  i in a:
         boyut = boyut+ i.dosya.size
+        
     boyut = boyut/1024
     #kb oldu
     boyut = boyut /1024

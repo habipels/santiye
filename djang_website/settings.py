@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     # Add our new application
       #rosetta çeviri için
     'rosetta',
-
+    'simple_history',
     #
     'main',
     'users',
@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     #
     'django.middleware.locale.LocaleMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 
     #
     'django.middleware.csrf.CsrfViewMiddleware',

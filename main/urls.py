@@ -120,7 +120,9 @@ urlpatterns = [
 
     #takvim
     path("calendar", views.takvim_olaylari, name="takvim_olaylari"),
+    path("deneme/<int:cari_id>", views.cari_history_view, name="cari_history_view"),
     #takvim
+    path("yukleme/<int:id>", views.giderleri_excelden_ekle, name="giderleri_excelden_ekle"),
 
 
 ]

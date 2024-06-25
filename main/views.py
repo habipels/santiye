@@ -9,6 +9,7 @@ from django.utils.translation  import gettext as _
 from django.utils.translation import get_language, activate, gettext
 from site_info.models import *
 from muhasebe.models import *
+from django.contrib.admin.models import LogEntry
 def page_not_found_view(request, exception):
     return render(request, '404.html')
 """
@@ -52,6 +53,7 @@ def sozluk_yapisi():
     sozluk["layout_uzunlugu"] = layout_uzunlugu.objects.last()
     sozluk["layout_sitili"] = layout_sitili.objects.last()
     sozluk["etiketler"] = faturalardaki_gelir_gider_etiketi.objects.last()
+    sozluk["latest_actions"] =LogEntry.objects.all().order_by('-action_time')[:10]
     return sozluk
 
 #superadmin Kontrol
@@ -158,45 +160,45 @@ def site_ayari_kaydet(request):
     if request.POST:
         data_layout = request.POST.get("data-layout")
         if data_layout:
-            layout.objects.all().update(isim =data_layout,data_layout =data_layout )
+            layout.objects.create(isim =data_layout,data_layout =data_layout )
         data_bs_theme = request.POST.get("data-bs-theme")
         if data_bs_theme:
-            color_sheme.objects.all().update(isim =data_bs_theme,data_bs_theme =data_bs_theme )
+            color_sheme.objects.create(isim =data_bs_theme,data_bs_theme =data_bs_theme )
         data_sidebar_visibility = request.POST.get("data-sidebar-visibility")
         if data_sidebar_visibility :
-            side_bar_gorunum.objects.all().update(isim =data_sidebar_visibility,data_sidebar_visibility =data_sidebar_visibility )
+            side_bar_gorunum.objects.create(isim =data_sidebar_visibility,data_sidebar_visibility =data_sidebar_visibility )
         data_layout_width = request.POST.get("data-layout-width")
         if data_layout_width:
-            layout_uzunlugu.objects.all().update(isim =data_layout_width,data_layout_width =data_layout_width )
+            layout_uzunlugu.objects.create(isim =data_layout_width,data_layout_width =data_layout_width )
         data_layout_position = request.POST.get("data-layout-position")
         if data_layout_position:
-            layout_pozisyonu.objects.all().update(isim =data_layout_position,data_layout_position =data_layout_position )
+            layout_pozisyonu.objects.create(isim =data_layout_position,data_layout_position =data_layout_position )
         data_topbar = request.POST.get("data-topbar")
         if data_topbar:
-            topbar_color.objects.all().update(isim =data_topbar,data_topbar =data_topbar )
+            topbar_color.objects.create(isim =data_topbar,data_topbar =data_topbar )
         data_sidebar_size = request.POST.get("data-sidebar-size")
         if data_sidebar_size:
-            sidebar_boyutu.objects.all().update(isim =data_sidebar_size,data_sidebar_size =data_sidebar_size )
+            sidebar_boyutu.objects.create(isim =data_sidebar_size,data_sidebar_size =data_sidebar_size )
         data_layout_style = request.POST.get("data-layout-style")
         if data_layout_style:
-            layout_sitili.objects.all().update(isim =data_layout_style,data_layout_style =data_layout_style )
+            layout_sitili.objects.create(isim =data_layout_style,data_layout_style =data_layout_style )
         data_sidebar = request.POST.get("data-sidebar")
         if data_sidebar:
-            sidebar_rengi.objects.all().update(isim =data_sidebar,data_sidebar =data_sidebar )
+            sidebar_rengi.objects.create(isim =data_sidebar,data_sidebar =data_sidebar )
         dark_logo = request.FILES.get("dark_logo")
 
         site_adi_bilgisi = request.POST.get("site_adi")
         footeryazisi = request.POST.get("footeryazisi")
         if site_adi_bilgisi:
-            site_adi.objects.all().update(site_adi_sekme_tr = site_adi_bilgisi)
+            site_adi.objects.create(site_adi_sekme_tr = site_adi_bilgisi)
         if footeryazisi:
-            site_adi.objects.all().update(footer = footeryazisi)
+            site_adi.objects.create(footer = footeryazisi)
         gideretiketi = request.POST.get("gideretiketi")
-        if gideretiketi :
-            faturalardaki_gelir_gider_etiketi.objects.all().update(gider_etiketi = gideretiketi )
         geliretiketi = request.POST.get("gelir_etiketi")
-        if geliretiketi :
-            faturalardaki_gelir_gider_etiketi.objects.all().update(gelir_etiketi = geliretiketi )
+        if gideretiketi and geliretiketi :
+            faturalardaki_gelir_gider_etiketi.objects.create(gider_etiketi = gideretiketi,gelir_etiketi = geliretiketi )
+        
+
         if dark_logo:
             u = sayfa_logosu.objects.last()
             u.image = dark_logo
@@ -1736,12 +1738,14 @@ def dosya_ekle(request):
             tarih = request.POST.get("tarih")
             aciklama = request.POST.get("aciklama")
             dosya = request.FILES.get("file")
-            print(dosya,"veri_ gelmiş")
+            
             klasor_dosyalari.objects.create(
-                dosya_sahibi = request.user,
-                proje_ait_bilgisi = get_object_or_404(klasorler,id = ust_klasor),
-                dosya = dosya,dosya_adi = dosya_Adi,
-                tarih = tarih,aciklama = aciklama
+                dosya_sahibi=request.user,
+                proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
+                dosya=dosya,
+                dosya_adi=dosya_Adi,
+                tarih=tarih,
+                aciklama=aciklama
             )
     z = "/storage/mydir/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
     return redirect(z)
@@ -2223,3 +2227,96 @@ def santiye_raporu(request,id):
     content["santiye"] = profile
     return render(request,"santiye_yonetimi/santiye_raporu.html",content)
 
+
+def cari_history_view(request, cari_id):
+    cari_instance = cari.objects.get(id=cari_id)
+    history = cari_instance.history.all()
+    return render(request, 'cari_history.html', {'history': history})
+def get_object_or_none(model, *args, **kwargs):
+    try:
+        return model.objects.get(*args, **kwargs)
+    except :
+        return None
+def giderleri_excelden_ekle(request,id):
+    import openpyxl
+    Gider_excel_ekl = get_object_or_404(Gider_excel_ekleme,id = id)
+    dataframe = openpyxl.load_workbook(Gider_excel_ekl.gelir_makbuzu)
+    dataframe1 = dataframe.active
+    data = []
+    sadece_cari = []
+    sadece_etiket = []
+    sadece_kategorisi = []
+    sadece_urunler = []
+    sadece_fiyat = []
+    sozluk_cari ={}
+    sozluk_etiket = {}
+    sozluk_kategorisi = {}
+    sozluk_urun = {}
+    for row in range(1, dataframe1.max_row):
+        a = []
+        a.append(row + 1)
+        for col in dataframe1.iter_cols(1, dataframe1.max_column):
+            a.append(col[row].value)
+        data.append(a)
+        print(a)
+    print("-" * 50)
+    for i in data:
+        if i[3] not in sadece_cari:
+            sadece_cari.append(i[3])
+        if i[4] not in sadece_fiyat:
+            y = float(str(str(i[4]).replace("$","")).replace(",","."))
+            sadece_fiyat.append(y)
+        if i[5] not in sadece_urunler:
+            sadece_urunler.append(i[5])
+        if i[6] not in sadece_etiket:
+            sadece_etiket.append(i[6])
+        if i[7] not in sadece_etiket:
+            sadece_etiket.append(i[7]) 
+        if i[8] not in sadece_kategorisi:
+            sadece_kategorisi.append(i[8])
+    for i in sadece_cari:
+        z = cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                ,cari_adi = i,aciklama = "",telefon_numarasi = 0.0)
+        sozluk_cari[i] = z.id
+    k = 0
+    for i in sadece_urunler:
+        z = urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                ,urun_adi = i,urun_fiyati = sadece_fiyat[k]
+
+                                )
+        k = k+1
+        sozluk_urun[i] = z.id
+    for i in sadece_kategorisi:
+        z = gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                            ,gider_kategori_adi = i,gider_kategorisi_renk = "#000000",aciklama = "")
+        sozluk_kategorisi[i] = z.id
+    for i in sadece_etiket:
+        z = gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                         ,gider_etiketi_adi = i)
+        sozluk_etiket[i] = z.id
+    y = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu).count()
+    for i in data:
+        y = y+1
+        b = len(str(y))
+        c = 8 - b
+        m = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+str(y)
+        new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            cari_bilgisi = get_object_or_none(cari,cari_adi = sozluk_cari[i[3]],cari_kart_ait_bilgisi = request.user),
+            fatura_tarihi=i[2],vade_tarihi=i[2],fatura_no = m,
+            gelir_kategorisi = get_object_or_none( gider_kategorisi,id =sozluk_kategorisi[i[8]] ),doviz = i[10],aciklama = i[9]
+                                         )
+        new_project.save()
+        gelir_etiketi_sec = []
+        gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(sozluk_etiket[i[5]])))
+        gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(sozluk_etiket[i[6]])))
+        new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+        gelir_urun_bilgisi_bi = gider_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=Gider_excel_ekl.gelir_kime_ait_oldugu,urun_adi = sozluk_urun[i[5]]),
+                            urun_fiyati = float(str(str(i[4]).replace("$","")).replace(",",".")),urun_indirimi = 0.0,urun_adeti = 1,
+                            gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = new_project.id),
+                            aciklama = ""
+                        )
+        
+    return redirect("/")
+
+        

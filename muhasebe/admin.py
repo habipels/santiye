@@ -1,8 +1,9 @@
 from django.contrib import admin
 from .models import *
+from simple_history.admin import SimpleHistoryAdmin
 # Register your models here.
 
-admin.site.register(cari)
+
 admin.site.register(Kasa)
 admin.site.register(gelir_kategorisi)
 admin.site.register(gider_kategorisi)
@@ -19,3 +20,8 @@ admin.site.register(Gider_odemesi)
 admin.site.register(faturalar_icin_logo)
 admin.site.register(gelir_qr)
 admin.site.register(gider_qr)
+admin.site.register(Gelir_excel_ekleme)
+admin.site.register(Gider_excel_ekleme)
+@admin.register(cari)
+class CariAdmin(SimpleHistoryAdmin):
+    pass
