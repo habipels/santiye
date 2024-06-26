@@ -10,6 +10,20 @@ from django.utils.translation import get_language, activate, gettext
 from site_info.models import *
 from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki
 from .models import *
+from hashids import Hashids
+
+# Salt değeri ve minimum hash uzunluğu belirleyin
+HASHIDS_SALT = "habip_elis_12345"
+HASHIDS_MIN_LENGTH = 32
+
+hashids = Hashids(salt=HASHIDS_SALT, min_length=HASHIDS_MIN_LENGTH)
+
+def encode_id(id):
+    return hashids.encode(id)
+
+def decode_id(hash_id):
+    ids = hashids.decode(hash_id)
+    return ids[0] if ids else None
 def get_object_or_none(model, *args, **kwargs):
     try:
         return model.objects.get(*args, **kwargs)
@@ -20,6 +34,39 @@ def kasa_viev(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         profile =Kasa.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =Kasa.objects.filter(Q(kasa_kart_ait_bilgisi__first_name__icontains = search)|Q(kasa_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/muhasebe_index.html",content)
+def a_kasa_viev(request,hash_id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        post_id = decode_id(hash_id)
+        d = get_object_or_404(CustomUser,id = post_id)
+        profile = Kasa.objects.filter(kasa_kart_ait_bilgisi =  get_object_or_404(CustomUser,id = post_id))
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:

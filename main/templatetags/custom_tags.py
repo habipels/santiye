@@ -845,3 +845,17 @@ def toplam_kalem_orani_toplami(veri):
         a = a + i.santiye_agirligi
         b = b + i.santiye_finansal_agirligi
     return {"a":a,"b":b}
+from hashids import Hashids
+
+# Salt değeri ve minimum hash uzunluğu belirleyin
+HASHIDS_SALT = "habip_elis_12345"
+HASHIDS_MIN_LENGTH = 32
+
+hashids = Hashids(salt=HASHIDS_SALT, min_length=HASHIDS_MIN_LENGTH)
+@register.simple_tag
+def encode_id(id):
+    return hashids.encode(id)
+@register.simple_tag
+def decode_id(hash_id):
+    ids = hashids.decode(hash_id)
+    return ids[0] if ids else None

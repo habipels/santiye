@@ -4,6 +4,7 @@ app_name = "accounting"
 urlpatterns = [
     #kasa işlemleri
     path("till", views.kasa_viev, name="kasa"),
+    path("authority/till/<str:hash_id>", views.a_kasa_viev, name="a_kasa_viev"),
     path("viewstill/<int:id>", views.kasa_tekli, name="kasa_tekli"),
     path("addtill", views.kasa_ekle, name="kasa_ekle"),
     path("deltill", views.kasa_sil, name="kasa_sil"),

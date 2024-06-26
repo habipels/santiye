@@ -3,6 +3,7 @@ from . import views
 app_name = "main"
 urlpatterns = [
     path("", views.homepage, name="homepage"),
+    path("logs", views.loglar, name="loglar"),
     #site ayarları
     path("websitesettings", views.site_ayarlari, name="site_ayarlari"),
     path("savesitesettings", views.site_ayari_kaydet, name="site_ayari_kaydet"),
@@ -123,6 +124,7 @@ urlpatterns = [
     path("deneme/<int:cari_id>", views.cari_history_view, name="cari_history_view"),
     #takvim
     path("yukleme/<int:id>", views.giderleri_excelden_ekle, name="giderleri_excelden_ekle"),
+    path("yukleme2/<int:id>", views.gelirleri_excelden_ekle, name="gelirleri_excelden_ekle"),
 
 
 ]

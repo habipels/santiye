@@ -10,6 +10,20 @@ from django.utils.translation import get_language, activate, gettext
 from site_info.models import *
 from muhasebe.models import *
 from django.contrib.admin.models import LogEntry
+from hashids import Hashids
+
+# Salt değeri ve minimum hash uzunluğu belirleyin
+HASHIDS_SALT = "habip_elis_12345"
+HASHIDS_MIN_LENGTH = 8
+
+hashids = Hashids(salt=HASHIDS_SALT, min_length=HASHIDS_MIN_LENGTH)
+
+def encode_id(id):
+    return hashids.encode(id)
+
+def decode_id(hash_id):
+    ids = hashids.decode(hash_id)
+    return ids[0] if ids else None
 def page_not_found_view(request, exception):
     return render(request, '404.html')
 """
@@ -55,6 +69,37 @@ def sozluk_yapisi():
     sozluk["etiketler"] = faturalardaki_gelir_gider_etiketi.objects.last()
     sozluk["latest_actions"] =LogEntry.objects.all().order_by('-action_time')[:10]
     return sozluk
+def loglar(request):
+    content = sozluk_yapisi()
+    if request.user.is_authenticated:
+        if request.user.is_superuser :
+            content["latest_actions"] =LogEntry.objects.all().order_by('-action_time')
+        if request.GET.get("search"):
+            search = request.GET.get("search")
+            if search:
+                profile = LogEntry.objects.all().order_by('-action_time')
+            else:
+                profile = LogEntry.objects.all().order_by('-action_time')
+        else:
+            profile = LogEntry.objects.all().order_by('-action_time')
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(profile, 10) # 6 employees per page
+        try:
+            page_obj = paginator.page(page_num)
+        except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            # if the page is out of range, deliver the last page
+            page_obj = paginator.page(paginator.num_pages)
+        content["santiyeler"] = page_obj
+        content["top"]  = profile
+        content["medya"] = page_obj
+
+    else:
+        return redirect("/users/login/")
+
+    return render(request,"santiye_yonetimi/loglar.html",content)
 
 #superadmin Kontrol
 def yetki(request):
@@ -2319,4 +2364,86 @@ def giderleri_excelden_ekle(request,id):
         
     return redirect("/")
 
+def gelirleri_excelden_ekle(request,id):
+    import openpyxl
+    Gider_excel_ekl = get_object_or_404(Gelir_excel_ekleme,id = id)
+    dataframe = openpyxl.load_workbook(Gider_excel_ekl.gelir_makbuzu)
+    dataframe1 = dataframe.active
+    data = []
+    sadece_cari = []
+    sadece_etiket = []
+    sadece_kategorisi = []
+    sadece_urunler = []
+    sadece_fiyat = []
+    sozluk_cari ={}
+    sozluk_etiket = {}
+    sozluk_kategorisi = {}
+    sozluk_urun = {}
+    for row in range(1, dataframe1.max_row):
+        a = []
+        a.append(row + 1)
+        for col in dataframe1.iter_cols(1, dataframe1.max_column):
+            a.append(col[row].value)
+        data.append(a)
+        print(a)
+    print("-" * 50)
+    for i in data:
+        if i[3] not in sadece_cari:
+            sadece_cari.append(i[3])
+        if i[4] not in sadece_fiyat:
+            y = float(str(str(i[4]).replace("$","")).replace(",","."))
+            sadece_fiyat.append(y)
+        if i[5] not in sadece_urunler:
+            sadece_urunler.append(i[5])
+        if i[6] not in sadece_etiket:
+            sadece_etiket.append(i[6])
+        if i[7] not in sadece_etiket:
+            sadece_etiket.append(i[7]) 
+        if i[8] not in sadece_kategorisi:
+            sadece_kategorisi.append(i[8])
+    for i in sadece_cari:
+        z = cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                ,cari_adi = i,aciklama = "",telefon_numarasi = 0.0)
+        sozluk_cari[i] = z.id
+    k = 0
+    for i in sadece_urunler:
+        z = urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                ,urun_adi = i,urun_fiyati = sadece_fiyat[k]
+
+                                )
+        k = k+1
+        sozluk_urun[i] = z.id
+    for i in sadece_kategorisi:
+        z = gelir_kategorisi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                            ,gider_kategori_adi = i,gider_kategorisi_renk = "#000000",aciklama = "")
+        sozluk_kategorisi[i] = z.id
+    for i in sadece_etiket:
+        z = gelir_etiketi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                         ,gider_etiketi_adi = i)
+        sozluk_etiket[i] = z.id
+    y = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu).count()
+    for i in data:
+        y = y+1
+        b = len(str(y))
+        c = 8 - b
+        m = faturalardaki_gelir_gider_etiketi.objects.last().gelir_etiketi+(c*"0")+str(y)
+        new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            cari_bilgisi = get_object_or_none(cari,cari_adi = sozluk_cari[i[3]],cari_kart_ait_bilgisi = request.user),
+            fatura_tarihi=i[2],vade_tarihi=i[2],fatura_no = m,
+            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =sozluk_kategorisi[i[8]] ),doviz = i[10],aciklama = i[9]
+                                         )
+        new_project.save()
+        gelir_etiketi_sec = []
+        gelir_etiketi_sec.append(gelir_etiketi.objects.get(id=int(sozluk_etiket[i[5]])))
+        gelir_etiketi_sec.append(gelir_etiketi.objects.get(id=int(sozluk_etiket[i[6]])))
+        new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+        gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=Gider_excel_ekl.gelir_kime_ait_oldugu,urun_adi = sozluk_urun[i[5]]),
+                            urun_fiyati = float(str(str(i[4]).replace("$","")).replace(",",".")),urun_indirimi = 0.0,urun_adeti = 1,
+                            gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
+                            aciklama = ""
+                        )
         
+    return redirect("/")
+
+                
