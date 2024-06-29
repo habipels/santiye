@@ -36,6 +36,7 @@
                                                     <div class="row g-3 mb-0 align-items-center">
                                                         <div class="col-sm-auto">
                                                             <div class="input-group">
+                                                            {% if request.user.is_superuser %}
                                                                 <select name="" onchange="document.location.href = this.value" id="">
                                                                     {% for i in kullanicilar %}
                                                                     {% encode_id i.id as hash %}
@@ -43,6 +44,8 @@
                                                                     {% endfor %}
                                                                     
                                                                 </select>
+                                                                {% else %}
+                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                         <!--end col-->
