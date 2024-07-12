@@ -2361,6 +2361,9 @@ def giderleri_excelden_ekle(request,id):
                             gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = new_project.id),
                             aciklama = ""
                         )
+        Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+                                     tutar =float(str(str(i[4]).replace("$","")).replace(",",".")),tarihi =i[2],makbuz_no = new_project.id,
+                                       aciklama = "deneme"  )
         
     return redirect("/")
 
@@ -2443,7 +2446,9 @@ def gelirleri_excelden_ekle(request,id):
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = ""
                         )
-        
+        Gelir_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_odemesi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+                                     tutar =float(str(str(i[4]).replace("$","")).replace(",",".")),tarihi =i[2],makbuz_no = new_project.id,
+                                       aciklama = "deneme"  )
     return redirect("/")
 
                 
