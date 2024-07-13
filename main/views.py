@@ -14,7 +14,7 @@ from hashids import Hashids
 
 # Salt değeri ve minimum hash uzunluğu belirleyin
 HASHIDS_SALT = "habip_elis_12345"
-HASHIDS_MIN_LENGTH = 8
+HASHIDS_MIN_LENGTH = 32
 
 hashids = Hashids(salt=HASHIDS_SALT, min_length=HASHIDS_MIN_LENGTH)
 
@@ -130,6 +130,87 @@ def homepage(request):
                     profile =Gelir_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
                     kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
                     content["kullanicilar"] =kullanicilar
+                else:
+                    profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            if tarih :
+                profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(profile, 5) # 6 employees per page
+
+        try:
+            page_obj = paginator.page(page_num)
+        except PageNotAnInteger:
+                # if page is not an integer, deliver the first page
+            page_obj = paginator.page(1)
+        except EmptyPage:
+                # if the page is out of range, deliver the last page
+            page_obj = paginator.page(paginator.num_pages)
+
+        content["santiyeler"] = page_obj
+        if super_admin_kontrolu(request):
+            profile =Gider_Bilgisi.objects.all()
+            kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
+            content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if request.GET:
+            search = request.GET.get("search")
+            tarih = request.GET.get("tarih")
+            if search:
+                if super_admin_kontrolu(request):
+                    profile =Gider_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                    kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                    content["kullanicilar"] =kullanicilar
+                else:
+                    profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            if tarih :
+                profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
+        page_num = request.GET.get('page', 1)
+        paginator = Paginator(profile, 5) # 6 employees per page
+
+        try:
+            page_obj = paginator.page(page_num)
+        except PageNotAnInteger:
+                # if page is not an integer, deliver the first page
+            page_obj = paginator.page(1)
+        except EmptyPage:
+                # if the page is out of range, deliver the last page
+            page_obj = paginator.page(paginator.num_pages)
+
+        content["gider"] = page_obj
+    else:
+        return redirect("/users/login/")
+
+    return render(request,"index.html",content)
+def homepage_2(request,hash):
+    content = sozluk_yapisi()
+    if request.user.is_authenticated:
+        content = sozluk_yapisi()
+        if super_admin_kontrolu(request):
+            d = decode_id(hash)
+            content["hashler"] = hash
+            users = get_object_or_404(CustomUser,id = d)
+            content["hash_bilgi"] = users
+            kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+            profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-id")
+            content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = users)
+        else:
+            profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
+            content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if request.GET:
+            search = request.GET.get("search")
+            tarih = request.GET.get("tarih")
+            if search:
+                if super_admin_kontrolu(request):
+                    d = decode_id(hash)
+                    users = get_object_or_404(CustomUser,id = d)
+                    content["hash_bilgi"] = users
+                    kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                    profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-id")
+                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = users)
                 else:
                     profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
@@ -505,6 +586,46 @@ def proje_tipi_(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/proje_tipi.html",content)
+#Proje Tipi
+def proje_tipi_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        users = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = users
+        profile = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = users)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            d = decode_id(hash)
+            users = get_object_or_404(CustomUser,id = d)
+            content["hashler"] = hash
+            content["hash_bilgi"] = users
+            profile = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = users)
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = proje_tipi.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"santiye_yonetimi/proje_tipi.html",content)
 #Proje Ekleme
 def proje_ekleme(request):
     if request.POST:
@@ -582,6 +703,47 @@ def santiye_projesi_ekle_(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_projesi.html",content)
+def santiye_projesi_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        users = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = users
+        profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = users)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            d = decode_id(hash)
+            users = get_object_or_404(CustomUser,id = d)
+            content["hashler"] = hash
+            content["hash_bilgi"] = users
+            profile =santiye.objects.filter(Q(proje_ait_bilgisi = users) & Q(proje_ait_bilgisi__last_name__icontains = search)|Q(Proje_tipi_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"santiye_yonetimi/santiye_projesi.html",content)
+#asdas
 def santiye_projesi_bloklar_ekle_(request,id):
     content = sozluk_yapisi()
     content["id_bilgisi"] = id
@@ -615,6 +777,7 @@ def santiye_projesi_bloklar_ekle_(request,id):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_projesi_blok_ekle.html",content)
+
 def blog_ekle(request):
     if request.POST:
         santiye_bilgisi = request.POST.get("santiye_bilgisi")
@@ -886,13 +1049,68 @@ def santiye_kalem_ve_blog(request):
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_blog_kalem.html",content)
 
+def santiye_kalem_ve_blog_2(request,hash):
+    content = sozluk_yapisi()
+    content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
+    if super_admin_kontrolu(request):
+        profile =bloglar.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = bloglar.objects.filter(proje_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =bloglar.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search)|Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"santiye_yonetimi/santiye_blog_kalem.html",content)
+
 def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     content = sozluk_yapisi()
     content["id"] = get_object_or_404(bloglar,id = id)
     content["blog_id"] = id
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            pass
+            content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = get_object_or_404(bloglar,id = id).proje_ait_bilgisi)
+            kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
+            kalem_id = []
+            for i in kalemler:
+                if i.kalem_bilgisi.id in kalem_id:
+                    pass
+                else:
+                    kalem_id.append(i.kalem_bilgisi.id)
+
+            profile =  santiye_kalemleri.objects.filter(id__in = kalem_id,silinme_bilgisi = False)
+            page_num = request.GET.get('page', 1)
+            paginator = Paginator(profile, 10) # 6 employees per page
+            try:
+                page_obj = paginator.page(page_num)
+            except PageNotAnInteger:
+                # if page is not an integer, deliver the first page
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                # if the page is out of range, deliver the last page
+                page_obj = paginator.page(paginator.num_pages)
+            content["santiyeler"] = page_obj
+            content["top"]  = profile
+            content["medya"] = page_obj
 
         else:
             content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)

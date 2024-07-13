@@ -803,16 +803,16 @@ def ozellikler(bilgi):
                 tarihi__month=month,
                 silinme_bilgisi=False
             ).aggregate(total_gelir=Sum('tutar'))['total_gelir'] or 0
-            aylik_gelir.append(total)
+            aylik_gelir.append(round(total,2))
             total_g = Gider_odemesi.objects.filter(
                 tarihi__year=this_year,
                 tarihi__month=month,
                 silinme_bilgisi=False
             ).aggregate(total_gider=Sum('tutar'))['total_gider'] or 0
-            aylik_gider.append(total_g)
+            aylik_gider.append(round(total_g,2))
         print(aylik_gelir)
         print(aylik_gider)
-        kategoriler = ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]
+        kategoriler = ["Oct","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
     else:
         this_year = now().year
         aylik_gelir = []
@@ -823,13 +823,13 @@ def ozellikler(bilgi):
                 tarihi__month=month,
                 silinme_bilgisi=False
             ).aggregate(total_gelir=Sum('tutar'))['total_gelir'] or 0
-            aylik_gelir.append(total)
+            aylik_gelir.append(round(total,2))
             total_g = Gider_odemesi.objects.filter(
                 tarihi__year=this_year,gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,
                 tarihi__month=month,
                 silinme_bilgisi=False
             ).aggregate(total_gider=Sum('tutar'))['total_gider'] or 0
-            aylik_gider.append(total_g)
+            aylik_gider.append(round(total_g,2))
         print(aylik_gelir)
         print(aylik_gider)
         kategoriler = ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]

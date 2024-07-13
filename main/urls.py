@@ -1,8 +1,9 @@
 from django.urls import path
 from . import views
 app_name = "main"
-urlpatterns = [
+urlpatterns = [#
     path("", views.homepage, name="homepage"),
+    path("control/<str:hash>", views.homepage_2, name="homepage_2"),
     path("logs", views.loglar, name="loglar"),
     #site ayarları
     path("websitesettings", views.site_ayarlari, name="site_ayarlari"),
@@ -26,9 +27,11 @@ urlpatterns = [
     path("addprojectstype", views.proje_ekleme, name="proje_ekleme"),
     path("delprojectstype", views.proje_Adi_sil, name="proje_Adi_sil"),
     path("setprojecttype", views.proje_duzenle, name="proje_duzenle"),
+    path("control/projectstypes/<str:hash>", views.proje_tipi_2, name="proje_tipi_2"),
     #proje tip işlemelri
     #şantiye proje işlemleri
     path("siteprojects", views.santiye_projesi_ekle_, name="santiye_projesi_ekle_"),
+    path("control/siteprojects/<str:hash>", views.santiye_projesi_ekle_2, name="santiye_projesi_ekle_2"),
     path("addsite", views.santiye_ekleme_sahibi, name="santiye_ekleme_sahibi"),
     path("addsitesuperadmin/<int:id>", views.santiye_ekleme_super_admin, name="santiye_ekleme_super_admin"),
     path("delsiteproject", views.santiye_projesi_sil, name="santiye_projesi_sil"),
@@ -60,6 +63,7 @@ urlpatterns = [
     #proje
     #ilerleme takibi
     path("progresstracking", views.santiye_kalem_ve_blog, name="santiye_kalem_ve_blog"),
+    path("control/progresstracking/<str:hash>", views.santiye_kalem_ve_blog_2, name="santiye_kalem_ve_blog_2"),
     path("progresstracking/progress/<int:id>/<str:slug>", views.blogtan_kaleme_ilerleme_takibi, name="blogtan_kaleme_ilerleme_takibi"),
     path("saveprogresstracking", views.ilerleme_kaydet, name="ilerleme_kaydet"),
     #
