@@ -323,7 +323,7 @@ def site_ayari_kaydet(request):
         geliretiketi = request.POST.get("gelir_etiketi")
         if gideretiketi and geliretiketi :
             faturalardaki_gelir_gider_etiketi.objects.create(gider_etiketi = gideretiketi,gelir_etiketi = geliretiketi )
-        
+
 
         if dark_logo:
             u = sayfa_logosu.objects.last()
@@ -2001,7 +2001,7 @@ def dosya_ekle(request):
             tarih = request.POST.get("tarih")
             aciklama = request.POST.get("aciklama")
             dosya = request.FILES.get("file")
-            
+
             klasor_dosyalari.objects.create(
                 dosya_sahibi=request.user,
                 proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
@@ -2502,6 +2502,7 @@ def get_object_or_none(model, *args, **kwargs):
         return None
 def giderleri_excelden_ekle(request,id):
     import openpyxl
+    
     Gider_excel_ekl = get_object_or_404(Gider_excel_ekleme,id = id)
     dataframe = openpyxl.load_workbook(Gider_excel_ekl.gelir_makbuzu)
     dataframe1 = dataframe.active
@@ -2527,28 +2528,29 @@ def giderleri_excelden_ekle(request,id):
         if i[3] not in sadece_cari:
             sadece_cari.append(i[3])
         if i[4] not in sadece_fiyat:
-            y = float(str(str(i[4]).replace("$","")).replace(",","."))
+            y = float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",","."))
             sadece_fiyat.append(y)
         if i[5] not in sadece_urunler:
             sadece_urunler.append(i[5])
         if i[6] not in sadece_etiket:
             sadece_etiket.append(i[6])
         if i[7] not in sadece_etiket:
-            sadece_etiket.append(i[7]) 
+            sadece_etiket.append(i[7])
         if i[8] not in sadece_kategorisi:
             sadece_kategorisi.append(i[8])
     for i in sadece_cari:
-        z = cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+        l = cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                 ,cari_adi = i,aciklama = "",telefon_numarasi = 0.0)
-        sozluk_cari[i] = z.id
+        sozluk_cari[i] = l.id
     k = 0
     for i in sadece_urunler:
-        z = urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+        l = urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
                                 ,urun_adi = i,urun_fiyati = sadece_fiyat[k]
 
                                 )
+        print(i)
         k = k+1
-        sozluk_urun[i] = z.id
+        sozluk_urun[i] = l.id
     for i in sadece_kategorisi:
         z = gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                             ,gider_kategori_adi = i,gider_kategorisi_renk = "#000000",aciklama = "")
@@ -2564,25 +2566,27 @@ def giderleri_excelden_ekle(request,id):
         c = 8 - b
         m = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+str(y)
         new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
-            cari_bilgisi = get_object_or_none(cari,cari_adi = sozluk_cari[i[3]],cari_kart_ait_bilgisi = request.user),
+            cari_bilgisi = get_object_or_none(cari,id = sozluk_cari[i[3]]),
             fatura_tarihi=i[2],vade_tarihi=i[2],fatura_no = m,
-            gelir_kategorisi = get_object_or_none( gider_kategorisi,id =sozluk_kategorisi[i[8]] ),doviz = i[10],aciklama = i[9]
+            gelir_kategorisi = get_object_or_none( gider_kategorisi,id =sozluk_kategorisi[i[8]] ),doviz = i[11],aciklama = i[10]
                                          )
+        print(sozluk_cari[i[3]])
         new_project.save()
         gelir_etiketi_sec = []
         gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(sozluk_etiket[i[5]])))
         gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(sozluk_etiket[i[6]])))
         new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
-        gelir_urun_bilgisi_bi = gider_urun_bilgisi.objects.create(
-                            urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=Gider_excel_ekl.gelir_kime_ait_oldugu,urun_adi = sozluk_urun[i[5]]),
-                            urun_fiyati = float(str(str(i[4]).replace("$","")).replace(",",".")),urun_indirimi = 0.0,urun_adeti = 1,
-                            gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = new_project.id),
-                            aciklama = ""
-                        )
+        #bilgi_getirler = urunler.objects.create(urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_adi = sozluk_urun[i[5]],urun_fiyati = float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")))
+        gider_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi = get_object_or_404(urunler, 
+                            id = sozluk_urun[i[5]]),
+                            urun_fiyati = float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")),urun_indirimi = 0.0,urun_adeti = 1,
+                            gider_bilgis =  get_object_or_404(Gider_Bilgisi,id = new_project.id),
+                            aciklama = "")
         Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
-                                     tutar =float(str(str(i[4]).replace("$","")).replace(",",".")),tarihi =i[2],makbuz_no = new_project.id,
-                                       aciklama = "deneme"  )
-        
+                                     tutar =float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")),tarihi =i[2],
+                                       aciklama = "",makbuz_no =str(i[13] ) ,gelir_makbuzu = str(i[13] ) )
+        gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
     return redirect("/")
 
 def gelirleri_excelden_ekle(request,id):
@@ -2619,7 +2623,7 @@ def gelirleri_excelden_ekle(request,id):
         if i[6] not in sadece_etiket:
             sadece_etiket.append(i[6])
         if i[7] not in sadece_etiket:
-            sadece_etiket.append(i[7]) 
+            sadece_etiket.append(i[7])
         if i[8] not in sadece_kategorisi:
             sadece_kategorisi.append(i[8])
     for i in sadece_cari:
@@ -2669,4 +2673,3 @@ def gelirleri_excelden_ekle(request,id):
                                        aciklama = "deneme"  )
     return redirect("/")
 
-                
