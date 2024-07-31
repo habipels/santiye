@@ -1169,11 +1169,17 @@ def santiye_kalem_ekle_admin(request,id):
         yetkili_adi = request.POST.get("yetkili_adi")
         santiye_agirligi = request.POST.get("katsayisi")
         finansal_agirlik = request.POST.get("blogsayisi")
+        metraj = request.POST.get("metraj")
+        tutar = request.POST.get("tutar")
+        birim_bilgisi = request.POST.get("birim_bilgisi")
+        
         kalem = santiye_kalemleri.objects.create(
                 proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),
                 proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
                 kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
-                santiye_finansal_agirligi = finansal_agirlik
+                santiye_finansal_agirligi = finansal_agirlik,
+                birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                tutari = tutar
             )
         blog_lar = bloglar.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ))
         kat_sayisi = int(get_object_or_404(santiye,id =projetipi ).kat_sayisi)

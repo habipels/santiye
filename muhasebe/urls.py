@@ -4,25 +4,28 @@ app_name = "accounting"
 urlpatterns = [
     #kasa işlemleri
     path("till", views.kasa_viev, name="kasa"),
-    path("authority/till/<str:hash_id>", views.a_kasa_viev, name="a_kasa_viev"),
+    path("control/till/<str:hash>", views.a_kasa_viev, name="a_kasa_viev"),
     path("viewstill/<int:id>", views.kasa_tekli, name="kasa_tekli"),
     path("addtill", views.kasa_ekle, name="kasa_ekle"),
     path("deltill", views.kasa_sil, name="kasa_sil"),
     path("settill", views.kasa_duzenle, name="kasa_duzenle"),
     #kasa işlemleri
     #gelir kategorileri
+    path("control/incomecategory/<str:hash>", views.gelir_kategorisi_tipleri_2, name="gelir_kategorisi_tipleri_2"),
     path("incomecategory", views.gelir_kategorisi_tipleri, name="gelir_kategorisi_tipleri"),
     path("addcomecategory", views.gelir_kategorisi_ekleme, name="gelir_kategorisi_ekleme"),
     path("delcomecategory", views.gelir_kategoisi_sil, name="gelir_kategoisi_sil"),
     path("setcomecategory", views.gelir_kategorisi_duzenle, name="gelir_kategorisi_duzenle"),
     #gelir kategorileri
-    #gider kategorileri
+    #gider kategorileri}
+    path("control/inwcategory/<str:hash>", views.gider_kategorisi_tipleri_2, name="gider_kategorisi_tipleri_2"),
     path("inwcategory", views.gider_kategorisi_tipleri, name="gider_kategorisi_tipleri"),
     path("addwcategory", views.gider_kategorisi_ekleme, name="gider_kategorisi_ekleme"),
     path("delwcategory", views.gider_kategoisi_sil, name="gider_kategoisi_sil"),
     path("setwcategory", views.gider_kategorisi_duzenle, name="gider_kategorisi_duzenle"),
     #gider kategorileri
     #cari işlemleri$
+    path("control/current/<str:hash>", views.cari_viev_2, name="cari_viev_2"),
     path("current", views.cari_viev, name="cari"),
     path("currentdetails/<int:id>", views.cari_views_details, name="cari_views_details"),
     path("addcurrent", views.cari_ekle, name="cari_ekle"),
@@ -30,6 +33,7 @@ urlpatterns = [
     path("setcurrent", views.cari_duzenle, name="cari_duzenle"),
     #cari işlemleri
     #gelir etiket işlemleri
+    path("control/incometag/<str:hash>", views.gelir_etiketi_tipleri_2, name="gelir_etiketi_tipleri_2"),
     path("incometag", views.gelir_etiketi_tipleri, name="gelir_etiketi_tipleri"),
     path("addincometag", views.gelir_etiketi_ekleme, name="gelir_etiketi_ekleme"),
     path("delincometag", views.gelir_etiketi_sil, name="gelir_etiketi_sil"),
