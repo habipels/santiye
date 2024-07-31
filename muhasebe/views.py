@@ -770,6 +770,43 @@ def gider_etiketi_tipleri(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gider_etiketi.html",content)
+def gider_etiketi_tipleri_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        content["hashler"] = hash
+        users = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = users
+        #profile =gelir_etiketi.objects.all()
+        profile = gider_etiketi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = users)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = gider_etiketi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =gider_etiketi.objects.filter(Q(gider_kategoris_ait_bilgisi__last_name__icontains = search)|Q(gider_kategori_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = gider_etiketi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/gider_etiketi.html",content)
+#
 def gider_etiketi_ekleme(request):
     if request.POST:
         #yetkili_adi
@@ -941,8 +978,43 @@ def urun_viev(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/urunler.html",content)
+def urun_viev_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        content["hashler"] = hash
+        users = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = users
+        profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = users)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =urunler.objects.filter(Q(urun_ait_oldugu__first_name__icontains = search)|Q(urun_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = urunler.objects.filter(Q(urun_ait_oldugu = request.user) & Q(urun_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
 
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/urunler.html",content)
 #Ürün ekleme
+
 def urun_ekle(request):
     if request.POST:
         #yetkili_adi
@@ -1048,6 +1120,50 @@ def gelirler_sayfasi(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gelir.html",content)
+def gelirler_sayfasi_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        content["hashler"] = hash
+        users = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = users
+        profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-fatura_tarihi")
+        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = users)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET:
+        search = request.GET.get("search")
+        tarih = request.GET.get("tarih")
+        if search:
+            if super_admin_kontrolu(request):
+                profile =Gelir_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                content["kullanicilar"] =kullanicilar
+            else:
+                profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if tarih :
+            profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/gelir.html",content)
+#
 def gelir_ekle(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -1058,6 +1174,33 @@ def gelir_ekle(request):
         cari_bilgileri = ""
         kategori_bilgisi = ""
         etiketler =  ""
+    else:
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
+        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = request.user)
+        kategori_bilgisi = gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
+        etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
+    content["gelir_kategoerisi"] = kategori_bilgisi
+    content["gelir_etiketi"] = etiketler
+    content["kasa"] = profile
+    content["urunler"]  = urunler_bilgisi
+    content["cari_bilgileri"] = cari_bilgileri
+    return render(request,"muhasebe_page/gelir_faturasi.html",content)
+#
+def gelir_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        content["hashler"] = hash
+        users = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = users
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = users)
+        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = users)
+        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = users)
+        kategori_bilgisi = gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = users)
+        etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = users)
     else:
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
@@ -1109,7 +1252,123 @@ def cariler_bilgisi(request):
     results = cari.objects.filter(cari_adi__icontains=term, cari_kart_ait_bilgisi=user)
     suggestions = [{'label': result.cari_adi, 'value':result.aciklama} for result in results]
     return JsonResponse(suggestions, safe=False)
+def search_2(request,hash):
+    term = request.GET.get('term', '')
+    d = decode_id(hash)
+    user = get_object_or_404(CustomUser,id = d)
+    #user = request.user
+    results = urunler.objects.filter(urun_adi__icontains=term, urun_ait_oldugu=user)
+    suggestions = [{'label': result.urun_adi, 'value': result.urun_fiyati} for result in results]
+    print("oldu mu yav")
+    return JsonResponse(suggestions, safe=False)
+def cariler_bilgisi_2(request,hash):
+    term = request.GET.get('term', '')
+    d = decode_id(hash)
+    user = get_object_or_404(CustomUser,id = d)
+    results = cari.objects.filter(cari_adi__icontains=term, cari_kart_ait_bilgisi=user)
+    suggestions = [{'label': result.cari_adi, 'value':result.aciklama} for result in results]
+    return JsonResponse(suggestions, safe=False)
+
 def gelir_faturasi_kaydet(request):
+    if request.POST:
+        musteri_bilgisi  = request.POST.get("musteri_bilgisi")
+        daterange = request.POST.get("daterange")
+        gelir_kategorisii = request.POST.get("gelir_kategorisi")
+        cari_aciklma = request.POST.get("cari_aciklma")
+        etiketler = request.POST.getlist("etiketler")
+        faturano = request.POST.get("faturano")
+        urunadi = request.POST.getlist("urunadi")
+        miktari = request.POST.getlist("miktari")
+        bfiyatInput = request.POST.getlist("bfiyatInput")
+        indirim = request.POST.getlist("indirim")
+        aciklama = request.POST.getlist("aciklama")
+        doviz_kuru = request.POST.get("doviz_kuru")
+
+        cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
+        if cari_bilgisi:
+            date_range_parts = daterange.split(' - ')
+
+            # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
+            fatura_tarihi_str, vade_tarihi_str = date_range_parts
+            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+
+            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = request.user,
+            cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user),
+            fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano,
+            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisii),doviz = doviz_kuru,aciklama = cari_aciklma
+                                         )
+            new_project.save()
+            gelir_etiketi_sec = []
+            for i in etiketler:
+                gelir_etiketi_sec.append(gelir_etiketi.objects.get(id=int(i)))
+            new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+            for i in range(0,len(urunadi)):
+                if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
+                    urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
+                    if urun:
+                        if indirim[i] == "":
+                            a = 0
+                        else:
+                            a = indirim[i]
+                        gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
+                            urun_fiyati = bfiyatInput[i],urun_indirimi = float(a),urun_adeti = int(miktari[i]),
+                            gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
+                            aciklama = aciklama[i]
+                        )
+                    else:
+                        urun = urunler.objects.create(urun_ait_oldugu=request.user,urun_adi = urunadi[i],
+                                                      urun_fiyati = float(bfiyatInput[i]))
+                        gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
+                            urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                            gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
+                            aciklama = aciklama[i]
+                        )
+
+        else:
+            cari_bilgisi = cari.objects.create(cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user,aciklama = cari_aciklma)
+            date_range_parts = daterange.split(' - ')
+
+            # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
+            fatura_tarihi_str, vade_tarihi_str = date_range_parts
+            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+
+            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = request.user,
+            cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
+            fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano,
+            gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =gelir_kategorisii),doviz = doviz_kuru,aciklama = cari_aciklma
+            )
+            new_project.save()
+            gelir_etiketi_sec = []
+            for i in etiketler:
+                gelir_etiketi_sec.append(gelir_etiketi.objects.get(id=int(i)))
+            new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+            for i in range(0,len(urunadi)):
+                if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
+                    urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
+                    if urun:
+                        gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
+                            urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                            gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
+                            aciklama = aciklama[i]
+                        )
+                    else:
+                        urun = urunler.objects.create(urun_ait_oldugu=request.user,urun_adi = urunadi[i],
+                                                      urun_fiyati = float(bfiyatInput[i]))
+                        gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
+                            urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
+                            gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
+                            aciklama = aciklama[i]
+                        )
+        gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
+    return redirect("accounting:gelirler_sayfasi")
+
+def gelir_faturasi_kaydet_2(request,hash):
     if request.POST:
         musteri_bilgisi  = request.POST.get("musteri_bilgisi")
         daterange = request.POST.get("daterange")
@@ -1576,10 +1835,54 @@ def gider_gelir_ekleme(request):
             aciklama = aciklama
         )
         return redirect("accounting:gider_ekle")
+def gider_gelir_ekleme_2(request,hash):
+    d = decode_id(hash)
+    user = get_object_or_404(CustomUser,id = d)
+    tur = request.POST.get("tur")
+    adi = request.POST.get("adi")
+    aciklama= request.POST.get("aciklama")
+    renk = request.POST.get("renk")
+    print("selam")
+    if tur == "0":
+        gelir_kategorisi.objects.create(
+            gelir_kategoris_ait_bilgisi = user,
+            gelir_kategori_adi = adi,
+            gelir_kategorisi_renk = renk,
+            aciklama = aciklama
+        )
+        return redirect("accounting:gelir_ekle")
+    elif tur == "1":
+        gider_kategorisi.objects.create(
+            gider_kategoris_ait_bilgisi = user,
+            gider_kategori_adi = adi,
+            gider_kategorisi_renk = renk,
+            aciklama = aciklama
+        )
+        return redirect("accounting:gider_ekle")
 
 from django.utils import timezone
 def gider_gelir_etiketekleme(request):
     print("sela")
+    user = request.user
+    tur = request.POST.get("tur2")
+    adi = request.POST.get("adi2")
+
+    if tur == "0":
+        gelir_etiketi.objects.create(
+            gelir_kategoris_ait_bilgisi = user,
+            gelir_etiketi_adi = adi,kayit_tarihi = timezone.now()
+        )
+        return redirect("accounting:gelir_ekle")
+    elif tur == "1":
+        gider_etiketi.objects.create(
+            gider_kategoris_ait_bilgisi = user,
+            gider_etiketi_adi = adi,kayit_tarihi = timezone.now()
+        )
+        return redirect("accounting:gider_ekle")
+
+def gider_gelir_etiketekleme_2(request,hash):
+    d = decode_id(hash)
+    user = get_object_or_404(CustomUser,id = d)
     user = request.user
     tur = request.POST.get("tur2")
     adi = request.POST.get("adi2")

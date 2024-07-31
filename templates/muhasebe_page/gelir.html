@@ -62,7 +62,11 @@
                                                 <div class="flex-shrink-0">
                                                     <div class="d-flex gap-2 flex-wrap">
                                                         <button class="btn btn-primary" id="remove-actions" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
-                                                        <a href="{% url 'accounting:gelir_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Fatura Oluştur' %}</a>
+                                                        {% if hash_bilgi %}
+                                                        <a href="/{{dil}}{% url 'accounting:gelir_ekle_2' hashler %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Fatura Oluştur' %}</a>
+                                                        {% else %}
+                                                        <a href="/{{dil}}{% url 'accounting:gelir_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Fatura Oluştur' %}</a>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
                                             </div>
