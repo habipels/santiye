@@ -41,6 +41,7 @@ class personel_dosyalari(models.Model):
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class personel_izinleri(models.Model):
     #bu izinler kime ait
+    isim = models.CharField(max_length = 250 ,verbose_name="Görevi",blank = True,null = True)
     izinlerin_sahibi_kullanici = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
     #kasada virman yapma özelliği
     kasa_virman_izni = models.BooleanField(default= False,verbose_name="Kasa Virman Yapma İzni")
@@ -92,3 +93,7 @@ class personel_izinleri(models.Model):
     hakedisler_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     hakedisler_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class bagli_kullanicilar(models.Model):
+    #bu izinler kime ait
+    izinler = models.ForeignKey(personel_izinleri, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
+    kullanicilar = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")

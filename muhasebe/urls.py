@@ -70,9 +70,12 @@ urlpatterns = [
     path("incomesummary", views.gelirler_ozeti, name="gelirler_ozeti"),
     path("viewcome/<int:id>", views.fatura_goster, name="fatura_goster"),
     #gelirler Sayfası
-    #giderler Sayfası
+    #giderler Sayfası#
+    path("control/expenses/<str:hash>", views.giderler_sayfasi_2, name="giderler_sayfasi_2"),
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
+    path("control/addexpenses/<str:hash>", views.gider_ekle_2, name="gider_ekle_2"),
     path("addexpenses", views.gider_ekle, name="gider_ekle"),
+    path("control/saveaddexpenses/<str:hash>", views.gider_faturasi_kaydet_2, name="gider_faturasi_kaydet_2"),
     path("saveaddexpenses", views.gider_faturasi_kaydet, name="gider_faturasi_kaydet"),
     path("delcomeandexpenses", views.makbuz_sil, name="makbuz_sil"),
     path("savereceivingpayment", views.gider_odemesi_ekle, name="gider_odemesi_ekle"),

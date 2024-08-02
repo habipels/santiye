@@ -353,6 +353,215 @@
          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
+{% if hash_bilgi %}
+                                                    
+
+    <script>
+
+       function enableAutocompleteForNewItems() {
+    function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
+    $('.den').autocomplete({
+        source: "{% url 'accounting:search_2' hashler %}",
+        minLength: 2,
+        select: function(event, ui) {
+            var id = this.id;
+            $(this).val(ui.item.label);
+            $(this).siblings().val(ui.item.label);
+            id = id.replace("searchInput", "bfiyatInput");
+            document.getElementById(id).value = ui.item.value;
+            hesaplama_islemi();
+            return false;
+        }
+    }).data('ui-autocomplete')._renderItem = function(ul, item) {
+        return $('<li>')
+            .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
+            .appendTo(ul);
+    };
+}
+
+$(document).ready(function(){
+    enableAutocompleteForNewItems();
+
+    $(document).on('click', '.addNewItem span', function() {
+        var newItem = $('<input>').addClass('den');
+        $('.container').append(newItem);
+        enableAutocompleteForNewItems();
+    });
+
+
+    // Diğer kodlarınız buraya gelebilir...
+});
+$(document).ready(function(){
+    $('.cari').autocomplete({
+                source: "{% url 'accounting:cariler_bilgisi_2' hashler %}",
+                minLength: 2,
+                select: function(event, ui) {
+                    $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + '</div>')// Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
+
+/*
+$(document).ready(function(){
+    $('.den').each(function() {
+        $(this).keyup(function() {
+            $(this).autocomplete({
+                source: '/accounting/search/',
+                minLength: 2,
+                select: function(event, ui) {
+                    $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+                    $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
+                    $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
+    });
+
+    $('.bfiyatInput').on('input', function(){
+        // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
+        $('#hiddenBfiyatInput').val($(this).val());
+    });
+});
+*/
+       function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
+    </script>
+<style>
+  .item-label{
+    font-size: 15px !important;
+  }
+</style>
+<script>
+
+    // Function to initialize MultiSelectTag
+    function initializeMultiSelectTag() {
+        return new MultiSelectTag('cokluetiket', {
+            rounded: true,
+            shadow: true,
+            placeholder: 'Search',
+            tagColor: {
+                textColor: '#327b2c',
+                borderColor: '#92e681',
+                bgColor: '#eaffe6',
+            },
+            onChange: function(values) {
+                console.log(values);
+            }
+        });
+    }
+var multiSelectInstance = initializeMultiSelectTag();
+
+
+    $(document).ready(function () {
+        $("#ekle").click(function (event) {
+            var tur = $("#tur").val(),
+                adi = $("#adi").val(),
+                aciklama = $("#aciklama").val(),
+                renk = $("#renk").val();
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'accounting:gider_gelir_ekleme' %}",
+                data: {
+                    tur: tur,
+                    adi: adi,
+                    aciklama: aciklama,
+                    renk: renk,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $("#kategorii").load(window.location.href + " #kategori");
+                }
+            });
+            return false;
+        });
+    });
+    $(document).ready(function () {
+  $("#ekle2").click(function (event) {
+    tur2 = $("#tur2").val(),
+    adi2 = $("#etiket_ismi_gonder").val(),
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'accounting:gider_gelir_etiketekleme' %}",
+      data: {
+        tur2: tur2,
+        adi2:adi2,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+
+        $("#etkett").load(window.location.href + " .etkett", function() {
+        multiSelectInstance = initializeMultiSelectTag() });
+
+      }
+    });
+    return false; //<---- move it here
+  });
+});
+
+</script>
+{% else %}
+                                                     
+
     <script>
 
        function enableAutocompleteForNewItems() {
@@ -556,6 +765,7 @@ var multiSelectInstance = initializeMultiSelectTag();
 });
 
 </script>
+{% endif %}
 
 
 {% endblock javascriptcodeadd %}
