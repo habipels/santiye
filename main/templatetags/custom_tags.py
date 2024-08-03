@@ -649,23 +649,24 @@ def basit_toplama(a,b):
 @register.simple_tag
 def kategori_bilgi_ver(b):
     if b.is_superuser:
-        bilgi = gelir_kategorisi.objects.filter(silinme_bilgisi = False)
+        bilgi = gider_kategorisi.objects.filter(silinme_bilgisi = False)
     else:
-        bilgi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = b)
+        bilgi = gider_kategorisi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = b)
     a = []
     isimleri = []
     renk = []
 
     for i in bilgi:
-        isimleri.append(str(i.gelir_kategori_adi))
-        renk.append(str(i.gelir_kategorisi_renk))
-        a.append(Gelir_Bilgisi.objects.filter(gelir_kategorisi_id = i.id).count())
+        isimleri.append(str(i.gider_kategori_adi))
+        renk.append(str(i.gider_kategorisi_renk))
+        a.append(Gider_Bilgisi.objects.filter(gelir_kategorisi_id = i.id).count())
+    print(isimleri)
     return {"isimleri":isimleri,"a":a,"renk":renk}
 @register.simple_tag
 def ekstra(id,k):
     bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
     if bilgi.gelir_etiketi in k:
-        a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+        a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
         topla = 0
         for i in a:
             topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
@@ -859,3 +860,9 @@ def encode_id(id):
 def decode_id(hash_id):
     ids = hashids.decode(hash_id)
     return ids[0] if ids else None
+@register.simple_tag
+def mutlak_deger(a):
+    if float(a) < 0:
+        return round((float(a)*-1),2)
+    elif float(a) > 0:
+        return round((float(a)),2)

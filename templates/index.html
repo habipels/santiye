@@ -81,7 +81,7 @@
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
                                                     {% gelirler_tutari hash_bilgi as gelir_bilgisi_cek %}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">+ $<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"> $<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
                                                         </h4>
                                                         <a href="{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">Gelirleri Görüntüle</a>
                                                     </div>
@@ -114,7 +114,7 @@
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
                                                     {% giderler_tutari hash_bilgi  as gider_bilgisicekeme %}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">- $<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
                                                         <a href="{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">Giderleri Görüntüle</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
@@ -149,9 +149,9 @@
                                                     {% basit_cikarma  gider_bilgisicekeme.tutar gider_bilgisicekeme.genel_odeme as gider_islem_sonucu  %}
                                                     {% basit_cikarma  gelir_islem_sonucu gider_islem_sonucu as sonuc_Bilgisi  %}
 
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span class="counter-value" data-target="{{sonuc_Bilgisi}}">0</span>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% mutlak_deger  sonuc_Bilgisi %}">0</span>
                                                         </h4>
-                                                        <a href="{% url 'accounting:kasa' %}" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
+                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc_2' hashler %}" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-warning-subtle rounded fs-3">
@@ -238,13 +238,10 @@
                                     <h4 class="card-title mb-0 flex-grow-1">Son Faturalar</h4>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="text-muted">Rapor Al<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                            <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_2' hashler %}" >
+                                                <span class="text-muted">Gider Faturaları<i class="mdi mdi-chevron-down ms-1"></i></span>
                                             </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="#">PDF</a>
-                                                <a class="dropdown-item" href="#">EXCEL</a>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div><!-- end card header -->
@@ -274,14 +271,14 @@
                                                         <span class="text-muted">Kalan Tutar</span>
                                                     </td>
                                                 </tr><!-- end -->
-                                            {% for i in  santiyeler %}
+                                            {% for i in  bilgi %}
 
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="flex-shrink-0 me-2">
-                                                                {% toplam_odenme_tutar i as odeme %}
-                                                                {% toplam_tutar_cikarma i as tutar %}
+                                                                {% toplam_odenme_tutari i as odeme %}
+                                                                {% toplam_tutar_cikarmai i as tutar %}
                                                     {% if  odeme == tutar %}
                                                     <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
                                                     {% elif odeme > 0 %}
@@ -301,13 +298,13 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">{{i.vade_tarihi| date:'Y-m-d'}}</span>
+                                                        <span class="text-muted">{{i.vade_tarihi| date:'d.m.Y'}}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">${% toplam_tutar_cikarma i %}</span>
+                                                        <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">${% kalan_tutuar i %}</span>
+                                                        <span class="text-muted">${% kalan_tutuari i %}</span>
                                                     </td>
                                                 </tr><!-- end -->
                                                 {% endfor %}
@@ -318,7 +315,7 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">5</span> fatura.
+                                                Gösterilen <span class="fw-semibold">{{bilgi.count}}</span> fatura.
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
@@ -335,13 +332,10 @@
                                     <h4 class="card-title mb-0 flex-grow-1">Borç Faturaları</h4>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="text-muted">Rapor Al<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                            <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc_2' hashler %}" >
+                                                <span class="text-muted">Gider Faturaları<i class="mdi mdi-chevron-down ms-1"></i></span>
                                             </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="#">PDF</a>
-                                                <a class="dropdown-item" href="#">EXCEL</a>
-                                            </div>
+                                           
                                         </div>
                                     </div>
                                 </div><!-- end card header -->
@@ -399,7 +393,7 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">{{i.vade_tarihi| date:'Y-m-d'}}</span>
+                                                        <span class="text-muted">{{i.vade_tarihi| date:'d.m.Y'}}</span>
                                                     </td>
                                                     <td>
                                                         <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
@@ -416,7 +410,7 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">5</span> fatura.
+                                                Gösterilen <span class="fw-semibold">{{ gider.count}}</span> fatura.
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
@@ -538,7 +532,7 @@
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
                                                     {% gelirler_tutari request.user as gelir_bilgisi_cek %}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">+ $<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
                                                         </h4>
                                                         <a href="{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">Gelirleri Görüntüle</a>
                                                     </div>
@@ -571,7 +565,7 @@
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
                                                     {% giderler_tutari request.user  as gider_bilgisicekeme %}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">- $<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
                                                         <a href="{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">Giderleri Görüntüle</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
@@ -606,9 +600,9 @@
                                                     {% basit_cikarma  gider_bilgisicekeme.tutar gider_bilgisicekeme.genel_odeme as gider_islem_sonucu  %}
                                                     {% basit_cikarma  gelir_islem_sonucu gider_islem_sonucu as sonuc_Bilgisi  %}
 
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span class="counter-value" data-target="{{sonuc_Bilgisi}}">0</span>
+                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% mutlak_deger  sonuc_Bilgisi %}">0</span>
                                                         </h4>
-                                                        <a href="{% url 'accounting:kasa' %}" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
+                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-warning-subtle rounded fs-3">
@@ -695,13 +689,10 @@
                                     <h4 class="card-title mb-0 flex-grow-1">Son Faturalar</h4>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="text-muted">Rapor Al<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                            <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi'  %}" >
+                                                <span class="text-muted">Gider Faturaları<i class="mdi mdi-chevron-down ms-1"></i></span>
                                             </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="#">PDF</a>
-                                                <a class="dropdown-item" href="#">EXCEL</a>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div><!-- end card header -->
@@ -731,14 +722,14 @@
                                                         <span class="text-muted">Kalan Tutar</span>
                                                     </td>
                                                 </tr><!-- end -->
-                                            {% for i in  santiyeler %}
+                                            {% for i in  bilgi %}
 
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="flex-shrink-0 me-2">
-                                                                {% toplam_odenme_tutar i as odeme %}
-                                                                {% toplam_tutar_cikarma i as tutar %}
+                                                                {% toplam_odenme_tutari i as odeme %}
+                                                                {% toplam_tutar_cikarmai i as tutar %}
                                                     {% if  odeme == tutar %}
                                                     <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
                                                     {% elif odeme > 0 %}
@@ -758,13 +749,13 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">{{i.vade_tarihi| date:'Y-m-d'}}</span>
+                                                        <span class="text-muted">{{i.vade_tarihi| date:'d.m.Y'}}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">${% toplam_tutar_cikarma i %}</span>
+                                                        <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">${% kalan_tutuar i %}</span>
+                                                        <span class="text-muted">${% kalan_tutuari i %}</span>
                                                     </td>
                                                 </tr><!-- end -->
                                                 {% endfor %}
@@ -775,7 +766,7 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">5</span> fatura.
+                                                Gösterilen <span class="fw-semibold">{{bilgi.count}}</span> fatura.
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
@@ -792,13 +783,10 @@
                                     <h4 class="card-title mb-0 flex-grow-1">Borç Faturaları</h4>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="text-muted">Rapor Al<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                            <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}" >
+                                                <span class="text-muted">Gider Faturaları<i class="mdi mdi-chevron-down ms-1"></i></span>
                                             </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="#">PDF</a>
-                                                <a class="dropdown-item" href="#">EXCEL</a>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div><!-- end card header -->
@@ -856,7 +844,7 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">{{i.vade_tarihi| date:'Y-m-d'}}</span>
+                                                        <span class="text-muted">{{i.vade_tarihi| date:'d.m.Y'}}</span>
                                                     </td>
                                                     <td>
                                                         <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
@@ -873,7 +861,7 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">5</span> fatura.
+                                                Gösterilen <span class="fw-semibold">{{gider.count}}</span> fatura.
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">

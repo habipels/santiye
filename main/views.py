@@ -179,8 +179,23 @@ def homepage(request):
         except EmptyPage:
                 # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
-
-        content["gider"] = page_obj
+        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+        sonuc = []
+        for i in bilgi_ver:
+            y =  gider_urun_bilgisi.objects.filter(gider_bilgis = i)
+            urun_tutari = 0
+            for j in y:
+                urun_tutari = urun_tutari + (float(j.urun_adeti)*float(j.urun_fiyati))
+            y =  Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = i)
+            odeme_tutari = 0
+            for j in y:
+                odeme_tutari = odeme_tutari + float(j.tutar)
+            if urun_tutari > odeme_tutari:
+                sonuc.append(i)
+            if len(sonuc) >= 5 :
+                break
+        content["gider"] = sonuc
+        content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
     else:
         return redirect("/users/login/")
 
@@ -261,7 +276,23 @@ def homepage_2(request,hash):
                 # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
 
-        content["gider"] = page_obj
+        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-fatura_tarihi")
+        sonuc = []
+        for i in bilgi_ver:
+            y =  gider_urun_bilgisi.objects.filter(gider_bilgis = i)
+            urun_tutari = 0
+            for j in y:
+                urun_tutari = urun_tutari + (float(j.urun_adeti)*float(j.urun_fiyati))
+            y =  Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = i)
+            odeme_tutari = 0
+            for j in y:
+                odeme_tutari = odeme_tutari + float(j.tutar)
+            if urun_tutari > odeme_tutari:
+                sonuc.append(i)
+            if len(sonuc) >= 5 :
+                break
+        content["gider"] = sonuc
+        content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-id")[:5]
     else:
         return redirect("/users/login/")
 

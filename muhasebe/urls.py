@@ -73,6 +73,8 @@ urlpatterns = [
     #giderler Sayfası#
     path("control/expenses/<str:hash>", views.giderler_sayfasi_2, name="giderler_sayfasi_2"),
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
+    path("expenseswait", views.giderler_sayfasi_borc, name="giderler_sayfasi_borc"),
+    path("control/expenseswait/<str:hash>", views.giderler_sayfasi_borc_2, name="giderler_sayfasi_borc_2"),
     path("control/addexpenses/<str:hash>", views.gider_ekle_2, name="gider_ekle_2"),
     path("addexpenses", views.gider_ekle, name="gider_ekle"),
     path("control/saveaddexpenses/<str:hash>", views.gider_faturasi_kaydet_2, name="gider_faturasi_kaydet_2"),

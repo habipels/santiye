@@ -1543,6 +1543,47 @@ def giderler_sayfasi(request):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
+  
+
+    content["santiyeler"] = profile[:100]
+
+    return render(request,"muhasebe_page/gider.html",content)
+#
+def giderler_sayfasi_borc(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =Gider_Bilgisi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+        sonuc = []
+        for i in bilgi_ver:
+            y =  gider_urun_bilgisi.objects.filter(gider_bilgis = i)
+            urun_tutari = 0
+            for j in y:
+                urun_tutari = urun_tutari + (float(j.urun_adeti)*float(j.urun_fiyati))
+            y =  Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = i)
+            odeme_tutari = 0
+            for j in y:
+                odeme_tutari = odeme_tutari + float(j.tutar)
+            if urun_tutari > odeme_tutari:
+                sonuc.append(i)
+        profile = sonuc
+        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET:
+        search = request.GET.get("search")
+        tarih = request.GET.get("tarih")
+        if search:
+            if super_admin_kontrolu(request):
+                profile =Gider_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                content["kullanicilar"] =kullanicilar
+            else:
+                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)|  Q(aciklama__icontains = search) | Q(gelir_kategorisi__gider_kategori_adi__icontains = search))
+                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if tarih :
+            profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -1559,6 +1600,76 @@ def giderler_sayfasi(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gider.html",content)
+#
+def giderler_sayfasi_borc_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        content["hashler"] = hash
+        users = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = users
+        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-fatura_tarihi")
+        sonuc = []
+        for i in bilgi_ver:
+            y =  gider_urun_bilgisi.objects.filter(gider_bilgis = i)
+            urun_tutari = 0
+            for j in y:
+                urun_tutari = urun_tutari + (float(j.urun_adeti)*float(j.urun_fiyati))
+            y =  Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = i)
+            odeme_tutari = 0
+            for j in y:
+                odeme_tutari = odeme_tutari + float(j.tutar)
+            if urun_tutari > odeme_tutari:
+                sonuc.append(i)
+        profile = sonuc
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+        sonuc = []
+        for i in bilgi_ver:
+            y =  gider_urun_bilgisi.objects.filter(gider_bilgis = i)
+            urun_tutari = 0
+            for j in y:
+                urun_tutari = urun_tutari + (float(j.urun_adeti)*float(j.urun_fiyati))
+            y =  Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = i)
+            odeme_tutari = 0
+            for j in y:
+                odeme_tutari = odeme_tutari + float(j.tutar)
+            if urun_tutari > odeme_tutari:
+                sonuc.append(i)
+        profile = sonuc
+        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET:
+        search = request.GET.get("search")
+        tarih = request.GET.get("tarih")
+        if search:
+            if super_admin_kontrolu(request):
+                profile =Gider_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
+                kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+                content["kullanicilar"] =kullanicilar
+            else:
+                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)|  Q(aciklama__icontains = search) | Q(gelir_kategorisi__gider_kategori_adi__icontains = search))
+                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if tarih :
+            profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/gider.html",content)
+#
 def giderler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -2311,9 +2422,9 @@ def download_excel(request):
                     str(i.fatura_no),
                     str(i.cari_bilgisi.cari_adi),
                     str(i.aciklama),
-                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
-                    str(toplam_tutar_cikarma(i.id)),
-                    str(toplam_odenme_tutar(i.id))
+                    str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+                    str(round(float(toplam_tutar_cikarma(i.id)),2)),
+                    str(round(float(toplam_odenme_tutar(i.id)),2))
                 ])
         elif a == "1":
             islem = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user)
@@ -2322,9 +2433,9 @@ def download_excel(request):
                     str(i.fatura_no),
                     str(i.cari_bilgisi.cari_adi),
                     str(i.aciklama),
-                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
-                    str(toplam_tutar_cikarmai(i.id)),
-                    str(toplam_odenme_tutari(i.id))
+                    str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+                    str(round(float(toplam_tutar_cikarmai(i.id)),2)),
+                    str(round(float(toplam_odenme_tutari(i.id)),2))
                 ])
         elif a == "2":
             profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))
@@ -2334,9 +2445,9 @@ def download_excel(request):
                     str(i.fatura_no),
                     str(i.cari_bilgisi.cari_adi),
                     str(i.aciklama),
-                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
-                    str(ekstra(i,i.fatura_no)),
-                    str(ekstra_odeme(i,i.fatura_no))
+                    str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+                    str(round(float(ekstra(i,i.fatura_no)),2)),
+                    str(round(float(ekstra_odeme(i,i.fatura_no)),2))
                 ])
 
     wb = Workbook()
@@ -2399,9 +2510,9 @@ def download_pdf(request):
                     str(i.fatura_no),
                     str(i.cari_bilgisi.cari_adi),
                     str(i.aciklama),
-                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
-                    str(toplam_tutar_cikarma(i.id)),
-                    str(toplam_odenme_tutar(i.id))
+                    str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+                    str(round(float(toplam_tutar_cikarma(i.id)),2)),
+                    str(round(float(toplam_odenme_tutar(i.id)),2))
                 ])
         elif a == "1":
             islem = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user)
@@ -2410,9 +2521,9 @@ def download_pdf(request):
                     str(i.fatura_no),
                     str(i.cari_bilgisi.cari_adi),
                     str(i.aciklama),
-                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
-                    str(toplam_tutar_cikarmai(i.id)),
-                    str(toplam_odenme_tutari(i.id))
+                    str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+                    str(round(float(toplam_tutar_cikarmai(i.id)),2)),
+                    str(round(float(toplam_odenme_tutari(i.id)),2))
                 ])
         elif a == "2":
             profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))
@@ -2422,9 +2533,9 @@ def download_pdf(request):
                     str(i.fatura_no),
                     str(i.cari_bilgisi.cari_adi),
                     str(i.aciklama),
-                    str(i.fatura_tarihi.strftime("%d-%m-%y")),
-                    str(ekstra(i,i.fatura_no)),
-                    str(ekstra_odeme(i,i.fatura_no))
+                    str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+                    str(round(float(ekstra(i,i.fatura_no)),2)),
+                    str(round(float(ekstra_odeme(i,i.fatura_no)),2))
                 ])
 
     table = Table(data)
