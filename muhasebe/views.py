@@ -17,6 +17,92 @@ HASHIDS_SALT = "habip_elis_12345"
 HASHIDS_MIN_LENGTH = 32
 
 hashids = Hashids(salt=HASHIDS_SALT, min_length=HASHIDS_MIN_LENGTH)
+def toplam_tutar_cikarmai(id):
+    a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
+    topla = 0
+    for i in a:
+        topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+    return topla
+def kalan_tutuari(id):
+    a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+    toplam = 0
+    indirim = 0
+    for i in a:
+        toplam = toplam+i.tutar
+    a = gider_urun_bilgisi.objects.filter(gider_bilgis = id)
+    genel_toplam = 0
+    for i in a:
+        genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+        indirim = indirim+ i.urun_indirimi
+    return round(float(genel_toplam - toplam -indirim),2)
+def jhson_gonder(a):
+    from django.shortcuts import render
+    from django.http import JsonResponse
+    data = []
+    for i in a:
+        if i.silinme_bilgisi:
+            b = "İPTAL"
+        tutar = toplam_tutar_cikarmai(i)
+        odeme = toplam_odenme_tutari(i)
+        if odeme == tutar :
+            b = "Ödendi"
+        elif odeme > 0:
+            b  = "Parçalı Ödendi"
+        elif odeme == 0:
+            b = "Ödenmedi"
+        y =   {
+        "fatura_no": str(i.fatura_no),
+        "cari": str(i.cari_bilgisi.cari_adi),
+        "aciklama": str(i.aciklama),
+        "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+        "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
+        "fatura_bedeli": "$"+str(toplam_tutar_cikarmai(i)),
+        "kalan_tutar": "$"+str(kalan_tutuari(i)),
+        "durum": b
+        }
+        data.append(y)
+    
+    return data
+def toplam_tutar_cikarma(id):
+    a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+    topla = 0
+    for i in a:
+        topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
+    return topla
+def toplam_odenme_tutar(id):
+    a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+    topla = 0
+    for i in a:
+        topla = topla + i.tutar
+    return topla
+def jhson_gonder_2(a):
+    from django.shortcuts import render
+    from django.http import JsonResponse
+    data = []
+    for i in a:
+        if i.silinme_bilgisi:
+            b = "İPTAL"
+        tutar = toplam_tutar_cikarma(i)
+        odeme = toplam_odenme_tutar(i)
+        if odeme == tutar :
+            b = "Ödendi"
+        elif odeme > 0:
+            b  = "Parçalı Ödendi"
+        elif odeme == 0:
+            b = "Ödenmedi"
+        y =   {
+        "fatura_no": str(i.fatura_no),
+        "cari": str(i.cari_bilgisi.cari_adi),
+        "aciklama": str(i.aciklama),
+        "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+        "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
+        "fatura_bedeli": "$"+str(toplam_tutar_cikarmai(i)),
+        "kalan_tutar": "$"+str(kalan_tutuari(i)),
+        "durum": b
+        }
+        data.append(y)
+    
+    return data
 
 def encode_id(id):
     return hashids.encode(id)
@@ -1165,22 +1251,12 @@ def gelirler_sayfasi(request):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
 
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
-    return render(request,"muhasebe_page/gelir.html",content)
+  
+    content["santiyeler_i"] = jhson_gonder_2(profile)
+    content["santiyeler"] = profile[:1]
+    content["giderler_bilgisi"] = profile
+    return render(request,"muhasebe_page/deneme_gelir.html",content)
 def gelirler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -1208,22 +1284,12 @@ def gelirler_sayfasi_2(request,hash):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
 
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
 
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
-    return render(request,"muhasebe_page/gelir.html",content)
+    content["santiyeler_i"] = jhson_gonder_2(profile)
+    content["santiyeler"] = profile[:1]
+    content["giderler_bilgisi"] = profile
+    return render(request,"muhasebe_page/deneme_gelir.html",content)
 #
 def gelir_ekle(request):
     content = sozluk_yapisi()
@@ -1604,23 +1670,11 @@ def giderler_sayfasi(request):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
-
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
+    
+    content["santiyeler_i"] = jhson_gonder(profile)
+    content["santiyeler"] = profile[:1]
+    content["giderler_bilgisi"] = profile
     return render(request,"muhasebe_page/deneme_gider.html",content)
-#
 def giderler_sayfasi_borc(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -1656,21 +1710,11 @@ def giderler_sayfasi_borc(request):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
+   
 
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-
-    content["santiyeler"] = page_obj
+    content["santiyeler_i"] = jhson_gonder(profile)
+    content["santiyeler"] = profile
     content["top"]  = profile
-    content["medya"] = page_obj
     return render(request,"muhasebe_page/deneme_gider.html",content)
 #
 def giderler_sayfasi_borc_2(request,hash):
@@ -1725,21 +1769,11 @@ def giderler_sayfasi_borc_2(request,hash):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
 
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
 
-    content["santiyeler"] = page_obj
+    content["santiyeler_i"] = jhson_gonder(profile)
+    content["santiyeler"] = profile
     content["top"]  = profile
-    content["medya"] = page_obj
     return render(request,"muhasebe_page/deneme_gider.html",content)
 #
 def giderler_sayfasi_2(request,hash):
@@ -1769,21 +1803,10 @@ def giderler_sayfasi_2(request,hash):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
 
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-
-    content["santiyeler"] = page_obj
+    content["santiyeler_i"] = jhson_gonder(profile)
+    content["santiyeler"] = profile
     content["top"]  = profile
-    content["medya"] = page_obj
     return render(request,"muhasebe_page/deneme_gider.html",content)
 
 def gider_ekle(request):

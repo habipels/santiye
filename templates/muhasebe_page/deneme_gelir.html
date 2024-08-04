@@ -13,11 +13,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Giderler</h4>
+                            <h4 class="mb-sm-0">Gelirler</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Giderler</li>
+                                    <li class="breadcrumb-item active">Gelirler</li>
                                 </ol>
                             </div>
                         </div>
@@ -41,20 +41,9 @@
                                         <div class="col-sm-4">
                                             <input type="date" name="tarih" value="{% if request.GET.tarih %}{{request.GET.tarih}}{% endif %}" class="form-control bg-light border-light" id="datepicker-range" placeholder="Tarih seçiniz">
                                         </div>
-                                        <!--end col-->
-                                        <div class="col-sm-1">
-                                            <button type="submit" class="btn btn-primary w-100">
-                                            Ara
-                                            </button>
+                                       
 
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <a href="{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
-                                                Temizle
-                                            </a>
-
-                                        </div>
-                                        <!--end col-->
+                   
 
                                         <!--end col-->
                                         <div class="col-sm-1 fatura-ekle">
@@ -266,40 +255,40 @@
     <div class="wrapper">
         <div class="modal-head">
             <div class="invoice-title">
-                <a>Fatura Adı</a>
+                <a>{% trans 'Fatura Adı' %}</a>
             </div>
             <div class="invoice-icons">
-                <div class="icon-item print-icon"><a href="{% url 'accounting:fatura_goster2' i.id %}"  title="Yazdır" class="mdi mdi-printer-outline"></a></div>
-                <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil{{i.id}}" title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
-                <a href="{% url 'accounting:gider_duzenle' i.id %}" class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></a>
-                <div class="icon-item close-icon"><span title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
+                <div class="icon-item print-icon"><a href="{% url 'accounting:fatura_goster' i.id %}" title="{% trans 'Yazdır' %}" class="mdi mdi-printer-outline"></a></div>
+                <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil{{i.id}}" title="{% trans 'İptal et' %}" class="mdi mdi-alert-circle-outline"></span></div>
+                <a href="{% url 'accounting:gelir_duzenle' i.id %}" class="icon-item edit-icon"><span title="{% trans 'Düzenle' %}" class="mdi mdi-pencil-circle-outline"></span></a>
+                <div class="icon-item close-icon"><span title="{% trans 'Kapat' %}" class="mdi mdi-close-circle-outline"></span></div>
             </div>
         </div>
         <div class="modal-body">
             <div class="top">
-                <div class="title"><h4>Satış Faturası</h4></div>
+                <div class="title"><h4>{% trans 'Satış Faturası' %}</h4></div>
                 <div class="category"><span>{{i.gelir_kategorisi.gelir_kategori_adi}}</span></div>
             </div>
             <div class="fatura-info">
                 <div class="info-item">
-                    <div class="title"><h5>Fatura no</h5></div>
+                    <div class="title"><h5>{% trans 'Fatura no' %}</h5></div>
                     <div class="value"><span>{{i.fatura_no}}</span></div>
                 </div>
                 <div class="info-item">
-                    <div class="title"><h5>DÖVİZ KURU</h5></div>
-                    <div class="value"><span>{{i.doviz}}</span></div>
+                    <div class="title"><h5>{% trans 'DÖVİZ KURU' %}</h5></div>
+                    <div class="value"><span>1400<span>IQN</span></span></div>
                 </div>
                 <div class="info-item">
-                    <div class="title"><h5>Düzenleme Tarihi</h5></div>
+                    <div class="title"><h5>{% trans 'Düzenleme Tarihi' %}</h5></div>
                     <div class="value"><span>{{i.fatura_tarihi}}</span></div>
                 </div>
                 <div class="info-item">
-                    <div class="title"><h5>VADE TARİHİ</h5></div>
+                    <div class="title"><h5>{% trans 'VADE TARİHİ' %}</h5></div>
                     <div class="value"><span>{{i.vade_tarihi}}</span></div>
                 </div>
             </div>
             <div class="fature-desc">
-                <div class="title"><h5>Açıklama</h5></div>
+                <div class="title"><h5>{% trans 'Açıklama' %}</h5></div>
                 <div class="value"><span>
                 {% if i.aciklama %}
                     {{i.aciklama}}
@@ -308,16 +297,16 @@
                 </span></div>
             </div>
             <div class="title">
-                <h5>Fatura Kalemleri</h5>
+                <h5>{% trans 'Fatura Kalemleri' %}</h5>
             </div>
             <div class="satis-table">
                 <div class="table-titles">
-                    <h5>Ürün</h5>
-                    <h5>Adet</h5>
-                    <h5>Fiyat</h5>
-                    <h5>Toplam</h5>
+                    <h5>{% trans 'Ürün' %}</h5>
+                    <h5>{% trans 'Adet' %}</h5>
+                    <h5>{% trans 'Fiyat' %}</h5>
+                    <h5>{% trans 'Toplam' %}</h5>
                 </div>
-                {% kalemleri_getir_gelir_faturasi_icini i as bilgi_getir %}
+                {% kalemleri_getir_gelir_faturasi_icin i as bilgi_getir %}
                 {% for j in bilgi_getir %}
                     <div class="table-item">
                         <div class="title"><span>{{j.urun_bilgisi.urun_adi}}</span></div>
@@ -326,7 +315,7 @@
                         <div class="toplam"><span>{% carpma_islemi j.urun_adeti j.urun_fiyati %}<span>$</span></span></div>
                     </div>
                 {% endfor %}
-                {% kalemleri_getir_gelir_faturasi_icin_toplam_flani i as topla %}
+                {% kalemleri_getir_gelir_faturasi_icin_toplam_flan i as topla %}
                 <div class="table-total">
                     <div class="fiyat"><span>{{topla.toplam}}<span>$</span></span></div>
                     <div class="toplam"><span>{{topla.genel}}<span>$</span></span></div>
@@ -335,42 +324,42 @@
             <div class="eklenen-kasa">
                 <div class="eklenen-item">
                     <div class="tarih">
-                        <span></span>
+
                     </div>
                     <div title="Makbuzu Görüntüle" class="makbuz">
                         <span id="{{i.id}}" class="mdi mdi-text-box-search-outline"></span>
-                        <span>Makbuzlar</span>
+                        <span>{% trans 'Makbuzlar' %}</span>
                     </div>
-                    <div class="fiyat"><span>{{topla.genel}}<span>$</span></div>
+                    <div class="fiyat"><span>{{topla.genel}} <span>$</span></div>
                 </div>
             </div>
             <div class="kalan">
                 <div class="wrapper">
                     <div title="ekle" class="ekle">
                         <span id="{{i.id}}" class="mdi mdi-plus-circle"></span>
-                        <span>KALAN</span>
+                        <span>{% trans 'KALAN' %}</span>
                     </div>
                     <div class="price">
                     <div id="g{{i.id}}">
-                        <span>{% kalan_tutuari i %} <span>$</span></span></div>
+                        <span >{% kalan_tutuar i %} <span>$</span></span></div>
                     </div>
                 </div>
             </div>
             <div class="tahsilatEkle" id="tahsilatEkle{{i.id}}">
-                <form method="post" action="{% url 'accounting:gider_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
+                <form method="post" action="{% url 'accounting:gelir_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="text" hidden value="{{i.id}}" name="faturabilgisi">
                     <div class="input-item">
-                        <label>TÜR</label>
+                        <label>{% trans 'TÜR' %}</label>
                         <select name="odemeturu">
-                            <option value="0">Nakit / Banka</option>
-                            <option value="1" disabled>ÇEK VEYA SENET</option>
-                            <option value="2">ÇEK</option>
-                            <option value="3">SENET</option>
+                            <option value="0">{% trans 'Nakit / Banka' %}</option>
+                            <option value="1" disabled>{% trans 'ÇEK VEYA SENET' %}</option>
+                            <option value="2">{% trans 'ÇEK' %}</option>
+                            <option value="3">{% trans 'SENET' %}</option>
                         </select>
                     </div>
                     <div class="input-item">
-                        <label>HESAP</label>
+                        <label>{% trans 'HESAP' %}</label>
                         <select name="kasabilgisi">
                             {% for m in kasa %}
                                 <option value="{{m.id}}">{{m.kasa_adi}}</option>
@@ -379,29 +368,29 @@
                         </select>
                     </div>
                     <div class="input-item">
-                        <label>TARİH</label>
+                        <label>{% trans 'TARİH' %}</label>
                         <input required name="islemtarihi" type="date" />
                     </div>
                     <div class="input-item">
-                        <label>TUTAR</label>
-                        <input type="number" required step="0.01" value="{% kalan_tutuari i %}" max="{% kalan_tutuari i %}" min="0"  name="islemtutari" placeholder="105000.41" />
+                        <label>{% trans 'TUTAR' %}</label>
+                        <input type="number" required step="0.01" value="{% kalan_tutuar i %}" max="{% kalan_tutuar i %}" min="0"  name="islemtutari" placeholder="105000.41" />
                         <span class="mdi mdi-currency-usd"></span>
                     </div>
                     <div class="input-item">
-                        <label>MAKBUZ NO</label>
+                        <label>{% trans 'MAKBUZ NO' %}</label>
                         <input name="makbuznumarasi" type="text" />
                     </div>
                     <div class="input-item">
-                        <label>AÇIKLAMA</label>
+                        <label>{% trans 'AÇIKLAMA' %}</label>
                         <input name="aciklama_bilgisi" type="text" />
                     </div>
                     <div class="input-item">
-                        <label>DOSYA</label>
+                        <label>{% trans 'DOSYA' %}</label>
                         <input name="dosya" type="file" />
                     </div>
                     <div class="buttons">
-                        <span id ="{{i.id}}">Vazgeç</span>
-                        <input type="submit" value="Tahsilat İşle" />
+                        <span id ="{{i.id}}">{% trans 'Vazgeç' %}</span>
+                        <input type="submit" value="{% trans 'Tahsilat İşle' %}" />
                     </div>
                 </form>
             </div>
@@ -414,13 +403,13 @@
     <div class="wrapper">
         <div class="modal-head">
             <div class="invoice-title">
-                <h2>Tahsilat Makbuzu</h2>
+                <h2>{% trans 'Tahsilat Makbuzu' %}</h2>
             </div>
             <div class="invoice-icons">
-                <div class="icon-item print-icon"><span title="Yazdır" class="mdi mdi-printer-outline"></span></div>
-                <div class="icon-item cancel-icon"><span title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
-                <div class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></div>
-                <div class="icon-item close-icon"><span id="{{i.id}}" title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
+                <div class="icon-item print-icon"><span title="{% trans 'Yazdır' %}" class="mdi mdi-printer-outline"></span></div>
+                <div class="icon-item cancel-icon"><span title="{% trans 'İptal et' %}" class="mdi mdi-alert-circle-outline"></span></div>
+                <div class="icon-item edit-icon"><span title="{% trans 'Düzenle' %}" class="mdi mdi-pencil-circle-outline"></span></div>
+                <div class="icon-item close-icon"><span id="{{i.id}}" title="{% trans 'Kapat' %}" class="mdi mdi-close-circle-outline"></span></div>
             </div>
         </div>
         <style>
@@ -433,11 +422,11 @@
             text-align: justify;
         }
     </style>
-        {% makbuzlari_getiri  i.id as gelen_makbuzlar %}
-        {% kalemleri_getir_gelir_faturasi_icin_toplam_flani i as topla %}
+        {% makbuzlari_getir i.id as gelen_makbuzlar %}
+        {% kalemleri_getir_gelir_faturasi_icin_toplam_flan i as topla %}
         <div id="guncelle{{i.id}}" class="modal-body scroll ">
             <div class="hesap">
-                <h2>CARİ HESABI</h2>
+                <h2>{% trans 'CARİ HESABI' %}</h2>
                 <span><a href="">{{i.cari_bilgisi.cari_adi}}</a></span>
             </div>
             {% for k in gelen_makbuzlar %}
@@ -451,11 +440,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ÖDEME TARİHİ</th>
-                        <th>KASA HESABI</th>
-                        <th>İŞLEM TARİHİ</th>
-                        <th>KULLANICI</th>
-                        <th>TUTAR</th>
+                        <th>{% trans 'ÖDEME TARİHİ' %}</th>
+                        <th>{% trans 'KASA HESABI' %}</th>
+                        <th>{% trans 'İŞLEM TARİHİ' %}</th>
+                        <th>{% trans 'KULLANICI' %}</th>
+                        <th>{% trans 'TUTAR' %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -471,12 +460,12 @@
                     </tr>
                     <tr>
                         {% if k.gelir_makbuzu %}
-                             <td colspan="2"><a target="_blank" href="{{k.gelir_makbuzu.url}}">Resmi Göster</a></td>
+                             <td colspan="2"><a target="_blank" href="{{k.gelir_makbuzu.url}}">{% trans 'Resmi Göster' %}</a></td>
                         {% else %}
-                        <td colspan="2">Resim Yok</td>
+                        <td colspan="2">{% trans 'Resim Yok' %}</td>
                         {% endif %}
 
-                        <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil{{k.id}}">SİL</button></td>
+                        <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil{{k.id}}">{% trans 'SİL' %}</button></td>
                         <td>{{k.tutar}} $</td>
                     </tr>
                 </tbody>
@@ -485,9 +474,9 @@
             {% endfor %}
             <div class="fatura-table">
                 <div class="table-head">
-                    <div class="item"><h2>İŞLENEN FATURA</h2></div>
-                    <div class="item"><h2>FATURA TUTARI</h2></div>
-                    <div class="item"><h2>MAHSUP TUTARI</h2></div>
+                    <div class="item"><h2>{% trans 'İŞLENEN FATURA' %}</h2></div>
+                    <div class="item"><h2>{% trans 'FATURA TUTARI' %}</h2></div>
+                    <div class="item"><h2>{% trans 'MAHSUP TUTARI' %}</h2></div>
                 </div>
                 <div class="table-body">
                     <div class="fatura-item">
@@ -499,7 +488,7 @@
             </div>
             <div class="kalan">
                 <h2>KALAN</h2>
-                <span>{% kalan_tutuari i %} $</span>
+                <span>{% kalan_tutuar i %} $</span>
             </div>
         </div>
     </div>
@@ -507,21 +496,21 @@
 {% endfor %}
 <div class="delete-fatura-modal">
     <div class="wrapper">
-        <div class="title"><h4>Satış Faturası Silme İşlemini Onaylayınız</h4></div>
-        <div class="uyari"><span class="mdi mdi-alert-circle"></span><span>Bu işlem geri alınamayacaktır.</span></div>
+        <div class="title"><h4>{% trans 'Satış Faturası Silme İşlemini Onaylayınız' %}</h4></div>
+        <div class="uyari"><span class="mdi mdi-alert-circle"></span><span>{% trans 'Bu işlem geri alınamayacaktır.' %}</span></div>
         <div class="buttons">
-            <span>Vazgeç</span>
-            <input type="button" value="Onayla ve Sil" />
+            <span>{% trans 'Vazgeç' %}</span>
+            <input type="button" value="{% trans 'Onayla ve Sil' %}" />
         </div>
     </div>
 </div>
 <div class="delete-makbuz-modal">
     <div class="wrapper">
-        <div class="title"><h4>Tahsilat Makbuzu Silme İşlemini Onaylayınız</h4></div>
-        <div class="uyari"><span class="mdi mdi-alert-circle"></span><span>Bu işlem geri alınamayacaktır.</span></div>
+        <div class="title"><h4>{% trans 'Tahsilat Makbuzu Silme İşlemini Onaylayınız' %}</h4></div>
+        <div class="uyari"><span class="mdi mdi-alert-circle"></span><span>{% trans 'Bu işlem geri alınamayacaktır.' %}</span></div>
         <div class="buttons">
-            <span>Vazgeç</span>
-            <input type="button" value="Onayla ve Sil" />
+            <span>{% trans 'Vazgeç' %}</span>
+            <input type="button" value="{% trans 'Onayla ve Sil' %}" />
         </div>
     </div>
 </div>
@@ -529,6 +518,8 @@
 <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
     <i class="ri-arrow-up-line"></i>
 </button>
+<!--end back-to-top-->
+<!--start back-to-top-->
 <!--end back-to-top-->
 
 <!-- JAVASCRIPT -->
