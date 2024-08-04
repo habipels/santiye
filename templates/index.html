@@ -610,7 +610,6 @@
                                                     {% basit_cikarma  gelir_bilgisi_cek.tutar gelir_bilgisi_cek.genel_odeme as gelir_islem_sonucu  %}
                                                     {% basit_cikarma  gider_bilgisicekeme.tutar gider_bilgisicekeme.genel_odeme as gider_islem_sonucu  %}
                                                     {% basit_cikarma  gelir_islem_sonucu gider_islem_sonucu as sonuc_Bilgisi  %}
-
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% mutlak_deger  sonuc_Bilgisi %}">0</span>
                                                         </h4>
                                                         <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
@@ -641,14 +640,20 @@
                                                     </div>
                                                 </div>
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                        {% basit_cikarma  gelir_bilgisi_cek.genel_odeme gider_bilgisicekeme.genel_odeme as sonuc_Bilgisi2  %}
-                                                        {% kasa_toplam kasa as bilgisis %}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% basit_toplama sonuc_Bilgisi2 bilgisis %}">0</span>
-                                                        </h4>
-
-                                                        <a href="{% url 'accounting:kasa' %}" class="text-decoration-underline text-muted">Virman</a>
-                                                    </div>
+                                                    
+                                                    <div class="card-body box mb-1">
+                                                       
+                                                            
+                                                        <ul class="list-group">
+                                                        {% for i in kasa %}
+                                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                     {{i.kasa_adi}}
+                                                                     <span class="badge badge-primary badge-pill">${% kasa_toplam i %}</span>
+                                                                 </li>
+                                                                {% endfor %}
+                                                                
+                                                             </ul>     
+                                                         </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-primary-subtle rounded fs-3">
                                                             <i class="bx bx-wallet text-primary"></i>

@@ -1619,7 +1619,7 @@ def giderler_sayfasi(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider.html",content)
+    return render(request,"muhasebe_page/deneme_gider.html",content)
 #
 def giderler_sayfasi_borc(request):
     content = sozluk_yapisi()
@@ -1671,7 +1671,7 @@ def giderler_sayfasi_borc(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider.html",content)
+    return render(request,"muhasebe_page/deneme_gider.html",content)
 #
 def giderler_sayfasi_borc_2(request,hash):
     content = sozluk_yapisi()
@@ -1740,7 +1740,7 @@ def giderler_sayfasi_borc_2(request,hash):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider.html",content)
+    return render(request,"muhasebe_page/deneme_gider.html",content)
 #
 def giderler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
@@ -1784,7 +1784,7 @@ def giderler_sayfasi_2(request,hash):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider.html",content)
+    return render(request,"muhasebe_page/deneme_gider.html",content)
 
 def gider_ekle(request):
     content = sozluk_yapisi()

@@ -2620,9 +2620,10 @@ def giderleri_excelden_ekle(request,id):
                             urun_fiyati = float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")),urun_indirimi = 0.0,urun_adeti = 1,
                             gider_bilgis =  get_object_or_404(Gider_Bilgisi,id = new_project.id),
                             aciklama = "")
-        Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+        bir = Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
                                      tutar =float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")),tarihi =i[2],
-                                       aciklama = "",makbuz_no =str(i[13] ) ,gelir_makbuzu = str(i[13] ) )
+                                       aciklama = "",makbuz_no =str(i[13] ) ,gelir_makbuzu = str(i[12] ) )
+        bir.set_gelir_makbuzu(str(i[13] ))
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
     return redirect("/")
 

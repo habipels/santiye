@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "muhasebe",
     "site_info",
 ]
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
 AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [

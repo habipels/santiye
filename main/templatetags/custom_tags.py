@@ -713,16 +713,17 @@ def toplama_yaptirma(bilgi):
     return toplama
 @register.simple_tag
 def kasa_toplam(bilgi):
-    toplam = 0
-    a = Gider_odemesi.objects.filter(kasa_bilgisi = bilgi,silinme_bilgisi = False)
-    b = Gelir_odemesi.objects.filter(kasa_bilgisi = bilgi,silinme_bilgisi = False)
-    for i in a : 
-        toplam = toplam - i.tutar
-    for i in b : 
-        toplam = toplam + i.tutar
-    toplam = toplam + bilgi.bakiye
-    return round(float(toplam),2)
-
+    if bilgi:
+        toplam = 0
+        a = Gider_odemesi.objects.filter(kasa_bilgisi = bilgi,silinme_bilgisi = False)
+        b = Gelir_odemesi.objects.filter(kasa_bilgisi = bilgi,silinme_bilgisi = False)
+        for i in a : 
+            toplam = toplam - i.tutar
+        for i in b : 
+            toplam = toplam + i.tutar
+        toplam = toplam + bilgi.bakiye
+        return round(float(toplam),2)
+    return 0
 """@register.simple_tag
 def generate_token(object_id):
     hash_input = force_bytes(object_id)
@@ -870,4 +871,5 @@ def mutlak_deger(a):
     if float(a) < 0:
         return round((float(a)*-1),2)
     elif float(a) > 0:
-        return round((float(a)),2)
+        return (round((float(a)),2))
+    return 0.0
