@@ -46,10 +46,11 @@ urlpatterns = [
     path("delexpensetag", views.gider_etiketi_sil, name="gider_etiketi_sil"),
     path("setexpensetag", views.gider_etiketi_duzenle, name="gider_etiketi_duzenle"),
     #gider etiketleri
-    #virman olayı
+    #virman olayı #
     path("maketransfer", views.virman_yapma, name="virman_yapma"),
     path("superadmintransfer/<int:id>", views.super_admin_virman, name="super_admin_virman"),
     path("transfer", views.virman_gondermeler, name="virman_gondermeler"),
+    path("control/transfer/<str:hash>", views.virman_gondermeler_2, name="virman_gondermeler_2"),
     #virman olayı
     #ürünler olayları
     path("control/products/<str:hash>", views.urun_viev_2, name="urun_viev_2"),

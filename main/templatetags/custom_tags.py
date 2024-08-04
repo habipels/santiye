@@ -714,9 +714,14 @@ def toplama_yaptirma(bilgi):
 @register.simple_tag
 def kasa_toplam(bilgi):
     toplam = 0
-    for i in bilgi:
-        toplam = toplam + i.bakiye
-    return toplam
+    a = Gider_odemesi.objects.filter(kasa_bilgisi = bilgi,silinme_bilgisi = False)
+    b = Gelir_odemesi.objects.filter(kasa_bilgisi = bilgi,silinme_bilgisi = False)
+    for i in a : 
+        toplam = toplam - i.tutar
+    for i in b : 
+        toplam = toplam + i.tutar
+    toplam = toplam + bilgi.bakiye
+    return round(float(toplam),2)
 
 """@register.simple_tag
 def generate_token(object_id):

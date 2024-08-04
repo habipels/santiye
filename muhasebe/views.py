@@ -920,16 +920,26 @@ def virman_gondermeler(request):
         profile =virman.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
+        content["kasalar"]  = Kasa.objects.filter(silinme_bilgisi = False)
     else:
         profile = virman.objects.filter(silinme_bilgisi = False,virman_ait_oldugu = request.user)
-    if request.GET.get("search"):
-        search = request.GET.get("search")
+        content["kasalar"]  = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET:
+        gonderen_kasa = request.GET.get("gonderen_kasa")
+        alici_kasa = request.GET.get("alici_kasa")
+        tarih = request.GET.get("tarih")
         if super_admin_kontrolu(request):
-            profile =virman.objects.filter(Q(kasa_kart_ait_bilgisi__first_name__icontains = search)|Q(kasa_adi__icontains = search))
+            profile =virman.objects.filter()
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = virman.objects.filter(Q(virman_ait_oldugu = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+            profile = virman.objects.filter(Q(virman_ait_oldugu = request.user) & Q(silinme_bilgisi = False))
+        if gonderen_kasa:
+            profile = profile.filter(gonderen_kasa= get_object_or_none(Kasa,id =gonderen_kasa ) )
+        if alici_kasa:
+            profile = profile.filter(alici_kasa=  get_object_or_none(Kasa,id =alici_kasa ))
+        if tarih :
+            profile = profile.filter(virman_tarihi = tarih)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -945,6 +955,57 @@ def virman_gondermeler(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/virman_raporu.html",content)
+
+def virman_gondermeler_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        content["hashler"] = hash
+        users = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = users
+        profile = virman.objects.filter(silinme_bilgisi = False,virman_ait_oldugu = users)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        content["kasalar"]  = Kasa.objects.filter(silinme_bilgisi = False)
+    else:
+        profile = virman.objects.filter(silinme_bilgisi = False,virman_ait_oldugu = request.user)
+        content["kasalar"]  = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+    if request.GET:
+        gonderen_kasa = request.GET.get("gonderen_kasa")
+        alici_kasa = request.GET.get("alici_kasa")
+        tarih = request.GET.get("tarih")
+        if super_admin_kontrolu(request):
+            d = decode_id(hash)
+            content["hashler"] = hash
+            users = get_object_or_404(CustomUser,id = d)
+            content["hash_bilgi"] = users
+            profile = virman.objects.filter(silinme_bilgisi = False,virman_ait_oldugu = users)
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = virman.objects.filter(Q(virman_ait_oldugu = request.user) & Q(silinme_bilgisi = False))
+        if gonderen_kasa:
+            profile = profile.filter(gonderen_kasa= get_object_or_none(Kasa,id =gonderen_kasa ) )
+        if alici_kasa:
+            profile = profile.filter(alici_kasa=  get_object_or_none(Kasa,id =alici_kasa ))
+        if tarih :
+            profile = profile.filter(virman_tarihi = tarih)
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/virman_raporu.html",content)
+#virman olayları
 #virman olayları
 #ürünler olayları
 def urun_viev(request):
@@ -1543,10 +1604,21 @@ def giderler_sayfasi(request):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-  
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
 
-    content["santiyeler"] = profile[:100]
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
 
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
     return render(request,"muhasebe_page/gider.html",content)
 #
 def giderler_sayfasi_borc(request):

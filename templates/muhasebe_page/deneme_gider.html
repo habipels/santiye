@@ -4,6 +4,14 @@
 {% load custom_tags %}
 {% load static %}
 {% block slider %}
+<style>
+    .dtsb-searchBuilder { padding: 10px; border: 1px solid #ccc; }
+    .dtsb-titleRow { display: flex; justify-content: space-between; }
+    .dtsb-logicContainer, .dtsb-criteria { display: flex; align-items: center; margin-bottom: 10px; }
+    .dtsb-criteria select, .dtsb-criteria input { margin-right: 10px; }
+    .dtsb-button { margin-right: 5px; cursor: pointer; }
+    .dtsb-buttonContainer, .dtsb-add { margin-top: 10px; }
+</style>
 <!-- ============================================================== -->
     <div class="main-content">
         <div class="page-content">
@@ -29,51 +37,53 @@
                     <div class="col-lg-12">
                         <div class="card" id="invoiceList">
                             <div class="card-header border-0">
-                                <form method="get">
-                                    <div class="row g-3 gelirler-filtre">
-                                        <div class="col-sm-4">
-                                            <div class="search-box">
-                                                <input type="text" name="search" value="{% if request.GET.search %}{{request.GET.search}}{% endif %}" class="form-control search bg-light border-light" placeholder="Cari adı, kategori veya etiket yazınız...">
-                                                <i class="ri-search-line search-icon"></i>
+                                <form id="search-form" method="post">
+                                    {% csrf_token %}
+                                    <div class="dtsb-searchBuilder">
+                                        <div class="dtsb-titleRow">
+                                            <div class="dtsb-title">Custom Search Builder (1)</div>
+                                            <button type="button" class="dtsb-clearAll dtsb-button">Clear All</button>
+                                        </div>
+                                        <div class="dtsb-group" style="margin-left: 46.045px;">
+                                            <div class="dtsb-logicContainer" style="width: 79.5625px; left: -69.3637px; top: 11.8062px;">
+                                                <button class="dtsb-logic dtsb-button" type="button"><div>And</div></button>
+                                                <button class="dtsb-button dtsb-clearGroup" type="button" style="height: 32.925px;">×</button>
                                             </div>
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-sm-4">
-                                            <input type="date" name="tarih" value="{% if request.GET.tarih %}{{request.GET.tarih}}{% endif %}" class="form-control bg-light border-light" id="datepicker-range" placeholder="Tarih seçiniz">
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-sm-1">
-                                            <button type="submit" class="btn btn-primary w-100">
-                                            Ara
-                                            </button>
-
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <a href="{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
-                                                Temizle
-                                            </a>
-
-                                        </div>
-                                        <!--end col-->
-
-                                        <!--end col-->
-                                        <div class="col-sm-1 fatura-ekle">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="d-flex gap-2 flex-wrap">
-                                                        <button class="btn btn-primary" id="remove-actions" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
-                                                        {% if hash_bilgi %}
-                                                        <a href="/{{dil}}{% url 'accounting:gider_ekle_2' hashler %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Fatura Oluştur' %}</a>
-                                                        {% else %}
-                                                        <a href="/{{dil}}{% url 'accounting:gider_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Fatura Oluştur' %}</a>
-                                                        {% endif %}
-                                                        </div>
+                                            <div class="dtsb-criteria">
+                                                <select name="search_conditions[data][]" class="dtsb-data dtsb-dropDown">
+                                                    <option value="" disabled selected hidden>Data</option>
+                                                    <option value="name" class="dtsb-option dtsb-notItalic">Name</option>
+                                                    <option value="position" class="dtsb-option dtsb-notItalic">Position</option>
+                                                    <option value="office" class="dtsb-option dtsb-notItalic">Office</option>
+                                                    <option value="extn" class="dtsb-option dtsb-notItalic">Extn.</option>
+                                                    <option value="start_date" class="dtsb-option dtsb-notItalic">Start date</option>
+                                                    <option value="salary" class="dtsb-option dtsb-notItalic">Salary</option>
+                                                </select>
+                                                <select name="search_conditions[condition][]" class="dtsb-condition dtsb-dropDown dtsb-italic">
+                                                    <option value="" disabled selected hidden>Condition</option>
+                                                    <option value="=" class="dtsb-option dtsb-notItalic">Equals</option>
+                                                    <option value="!=" class="dtsb-option dtsb-notItalic">Not</option>
+                                                    <option value="starts" class="dtsb-option dtsb-notItalic">Starts With</option>
+                                                    <option value="!starts" class="dtsb-option dtsb-notItalic">Does Not Start With</option>
+                                                    <option value="contains" class="dtsb-option dtsb-notItalic">Contains</option>
+                                                    <option value="!contains" class="dtsb-option dtsb-notItalic">Does Not Contain</option>
+                                                    <option value="ends" class="dtsb-option dtsb-notItalic">Ends With</option>
+                                                    <option value="!ends" class="dtsb-option dtsb-notItalic">Does Not End With</option>
+                                                    <option value="null" class="dtsb-option dtsb-notItalic">Empty</option>
+                                                    <option value="!null" class="dtsb-option dtsb-notItalic">Not Empty</option>
+                                                </select>
+                                                <input type="text" name="search_conditions[value][]" class="dtsb-value dtsb-dropDown dtsb-select dtsb-italic">
+                                                <div class="dtsb-inputCont"></div>
+                                                <div class="dtsb-buttonContainer">
+                                                    <button class="dtsb-delete dtsb-button" title="Delete filtering rule" type="button">×</button>
                                                 </div>
                                             </div>
+                                            <button class="dtsb-add dtsb-button" type="button">Add Condition</button>
                                         </div>
                                     </div>
-                                    <!--end row-->
+                                    <button type="submit" class="dtsb-submit dtsb-button">Submit</button>
                                 </form>
+                                
 
                             </div>
                             <div class="card-body bg-light-subtle border border-dashed border-start-0 border-end-0">
@@ -81,31 +91,61 @@
                             <div class="card-body">
                                 <div>
                                     <div class="table-responsive table-card">
-                                        <table id="example" class="display nowrap" style="width:100%">
-                                            <thead>
+                                        <table class="table align-middle table-nowrap" id="invoiceTable">
+                                            <thead class="text-muted">
                                                 <tr>
-                                                    <th>Fatura No</th>
-                                                    <th>Cari</th>
-                                                    <th>Açıklama</th>
-                                                    <th>Düzenleme Tarihi</th>
-                                                    <th>Vade Tarihi</th>
-                                                    <th>Fatura Bedeli</th>
-                                                    <th>Kalan Tutar</th>
-                                                    <th>DURUM</th>
+                                                {% if request.user.is_superuser %}
+                                                <th class="text-uppercase">Gider Kime Ait</th>
+                                                {% else %}
+                                                {% endif %}
+                                                    <th class="text-uppercase">Fatura No</th>
+                                                    <th class="text-uppercase">
+                                                        Cari</th>
+                                                    <th class="text-uppercase">
+                                                        Açıklma</th>
+                                                    <th class="text-uppercase">Düzenleme Tarihi</th>
+                                                    <th class="text-uppercase">Vade Tarihi</th>
+                                                    <th class="text-uppercase">Fatura Bedeli</th>
+                                                    <th class="text-uppercase">Kalan Tutar</th>
+                                                    <th class="text-uppercase">
+                                                        DURUM</th>
                                                 </tr>
                                             </thead>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>Fatura No</th>
-                                                    <th>Cari</th>
-                                                    <th>Açıklama</th>
-                                                    <th>Düzenleme Tarihi</th>
-                                                    <th>Vade Tarihi</th>
-                                                    <th>Fatura Bedeli</th>
-                                                    <th>Kalan Tutar</th>
-                                                    <th>DURUM</th>
+                                            <tbody class="list form-check-all" id="invoice-list-data">
+                                                {% for i in  santiyeler %}
+
+                                                <tr class="faturabilgisi" id="{{i.id}}">
+                                                {% if request.user.is_superuser %}
+                                                <td class="customer_name">{{i.gelir_kime_ait_oldugu.first_name}}
+                                                    </td>
+                                                {% else %}
+                                                {% endif %}
+                                                    <td><span>{{i.fatura_no}}</span></td>
+                                                    <td><span>{{i.cari_bilgisi.cari_adi}}</span></td>
+                                                    <td><span>{{i.aciklama}}</span></td>
+                                                    <td><span>{{i.fatura_tarihi| date:'d.m.Y'}}</span></td>
+                                                    <td><span>{{i.vade_tarihi| date:'d.m.Y'}}</span></td>
+                                                    <td><span>{% toplam_tutar_cikarmai i %} $</span></td>
+                                                    <td>
+                                                        <div id="ge{{i.id}}">
+                                                        <span>{% kalan_tutuari i %} $</span></div></td>
+
+                                                    {% if i.silinme_bilgisi %}
+                                                    <td class="cancel"><span>İPTAL</span></td>
+                                                    {% else %}
+                                                   {% toplam_tutar_cikarmai i as tutar %}
+                                                    {% toplam_odenme_tutari i as odeme %}
+                                                    {% if  odeme == tutar %}
+                                                        <td class="paid"><span>ÖDENDİ</span></td>
+                                                    {% elif odeme > 0 %}
+                                                    <td class="paidinparts"><span>PARÇALI ÖDENDİ</span></td>
+                                                    {% elif odeme == 0 %}
+                                                    <td class="unpaid"><span>ÖDENMEDİ</span></td>
+                                                    {% endif %}
+                                                     {% endif %}
                                                 </tr>
-                                            </tfoot>
+                                            {% endfor %}
+                                            </tbody>
                                         </table>
                                         <div class="noresult" style="display: none">
                                             <div class="text-center">
@@ -551,16 +591,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-         
-<link href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css" rel="stylesheet" type="text/css" />
-<link href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.css" rel="stylesheet" type="text/css" />
-<link href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css" rel="stylesheet" type="text/css" />
-
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.js"></script>
-<script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/searchBuilder.dataTables.js"></script>
-<script src="https://cdn.datatables.net/datetime/1.5.3/js/dataTables.dateTime.min.js"></script>
 <script>
     $(document).ready(function () {
   $(".makbuzsill").click(function (event) {
@@ -590,42 +620,64 @@
 });
 </script>
 <script>
-    new DataTable('#example', {
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchBuilder = document.querySelector('.dtsb-searchBuilder');
+        const form = document.getElementById('search-form');
 
-        
-  
-        
-  "data": [
-    {% for i in santiyeler %}
-    {
-      "id": "{{i.id}}",
-      "customer_name": "{% if request.user.is_superuser %}{{i.gelir_kime_ait_oldugu.first_name}}{% endif %}",
-      "fatura_no": "{{i.fatura_no}}",
-      "cari_adi": "{{i.cari_bilgisi.cari_adi}}",
-      "aciklama": "{{i.aciklama}}",
-      "fatura_tarihi": "{{i.fatura_tarihi|date:'d.m.Y'}}",
-      "vade_tarihi": "{{i.vade_tarihi|date:'d.m.Y'}}",
-      "toplam_tutar": "{% toplam_tutar_cikarmai i %} $",
-      "kalan_tutar": "{% kalan_tutuari i %} $",
-      "durum": "{% if i.silinme_bilgisi %}İPTAL{% else %}{% toplam_tutar_cikarmai i as tutar %}{% toplam_odenme_tutari i as odeme %}{% if odeme == tutar %}ÖDENDİ{% elif odeme > 0 %}PARÇALI ÖDENDİ{% elif odeme == 0 %}ÖDENMEDİ{% endif %}{% endif %}"
-    }{% if not forloop.last %},{% endif %}
-    {% endfor %}
-  ],
+        searchBuilder.addEventListener('click', (event) => {
+            if (event.target.classList.contains('dtsb-add')) {
+                addCondition(event.target.closest('.dtsb-group'));
+            } else if (event.target.classList.contains('dtsb-delete')) {
+                event.target.closest('.dtsb-criteria').remove();
+            } else if (event.target.classList.contains('dtsb-clearAll')) {
+                clearAllConditions();
+            } else if (event.target.classList.contains('dtsb-clearGroup')) {
+                event.target.closest('.dtsb-group').remove();
+            }
+        });
 
-  columns: [
-        { data: 'fatura_no' },
-        { data: 'cari' },
-        { data: 'aciklama' },
-        { data: 'duzenleme_tarihi' },
-        { data: 'vade_tarihi' },
-        { data: 'fatura_bedeli' },
-        { data: 'kalan_tutar' },
-        { data: 'durum' }
-    ],
-    layout: {
-        top1: 'searchBuilder'
-    }
-});
+        function addCondition(group) {
+            const criteriaTemplate = `
+                <div class="dtsb-criteria">
+                    <select name="search_conditions[data][]" class="dtsb-data dtsb-dropDown">
+                        <option value="" disabled selected hidden>Data</option>
+                        <option value="name" class="dtsb-option dtsb-notItalic">Name</option>
+                        <option value="position" class="dtsb-option dtsb-notItalic">Position</option>
+                        <option value="office" class="dtsb-option dtsb-notItalic">Office</option>
+                        <option value="extn" class="dtsb-option dtsb-notItalic">Extn.</option>
+                        <option value="start_date" class="dtsb-option dtsb-notItalic">Start date</option>
+                        <option value="salary" class="dtsb-option dtsb-notItalic">Salary</option>
+                    </select>
+                    <select name="search_conditions[condition][]" class="dtsb-condition dtsb-dropDown dtsb-italic">
+                        <option value="" disabled selected hidden>Condition</option>
+                        <option value="=" class="dtsb-option dtsb-notItalic">Equals</option>
+                        <option value="!=" class="dtsb-option dtsb-notItalic">Not</option>
+                        <option value="starts" class="dtsb-option dtsb-notItalic">Starts With</option>
+                        <option value="!starts" class="dtsb-option dtsb-notItalic">Does Not Start With</option>
+                        <option value="contains" class="dtsb-option dtsb-notItalic">Contains</option>
+                        <option value="!contains" class="dtsb-option dtsb-notItalic">Does Not Contain</option>
+                        <option value="ends" class="dtsb-option dtsb-notItalic">Ends With</option>
+                        <option value="!ends" class="dtsb-option dtsb-notItalic">Does Not End With</option>
+                        <option value="null" class="dtsb-option dtsb-notItalic">Empty</option>
+                        <option value="!null" class="dtsb-option dtsb-notItalic">Not Empty</option>
+                    </select>
+                    <input type="text" name="search_conditions[value][]" class="dtsb-value dtsb-dropDown dtsb-select dtsb-italic">
+                    <div class="dtsb-inputCont"></div>
+                    <div class="dtsb-buttonContainer">
+                        <button class="dtsb-delete dtsb-button" title="Delete filtering rule" type="button">×</button>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = criteriaTemplate;
+            group.insertBefore(div.firstChild, group.querySelector('.dtsb-add'));
+        }
+
+        function clearAllConditions() {
+            const groups = searchBuilder.querySelectorAll('.dtsb-group');
+            groups.forEach(group => group.remove());
+        }
+    });
 </script>
 {% endblock footer %}
 

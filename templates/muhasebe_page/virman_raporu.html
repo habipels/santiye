@@ -28,6 +28,66 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">Virman Raporları</h5>
+                                    <br>
+                                     <form method="get">
+                                    <div class="row g-3 gelirler-filtre">
+                                        <div class="col-sm-3">
+                                            <div class="search-box">
+                                                <select class="form-control search bg-light border-light" name="gonderen_kasa" id="gonderen_kasa">
+                                                    <option value="">Gönderen Kasayı Seçin</option>
+                                                    {% for i in kasalar %}
+                                                    {% if request.GET.gonderen_kasa == i.id %}
+                                                    <option selected value="{{request.GET.gonderen_kasa}}">{{i.kasa_adi}}</option>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    {% for i in kasalar %}
+                                                    <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="search-box">
+                                                <select class="form-control search bg-light border-light" name="alici_kasa" id="alici_kasa">
+                                                    <option value="">Alıcı Kasayı Seçin</option>
+                                                    {% for i in kasalar %}
+                                                    {% if request.GET.alici_kasa == i.id %}
+                                                    <option selected value="{{request.GET.alici_kasa}}">{{i.kasa_adi}}</option>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    
+                                                    
+                                                    {% for i in kasalar %}
+                                                    <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                        <div class="col-sm-3">
+                                            <input type="date" name="tarih" value="{% if request.GET.tarih %}{{request.GET.tarih}}{% endif %}" class="form-control bg-light border-light" id="datepicker-range" placeholder="Tarih seçiniz">
+                                        </div>
+                                        <!--end col-->
+                                        <div class="col-sm-1">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                            Ara
+                                            </button>
+
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <a href="{% url 'accounting:virman_gondermeler' %}" type="button" class="btn btn-primary w-100">
+                                                Temizle
+                                            </a>
+
+                                        </div>
+                                        <!--end col-->
+
+                                        <!--end col-->
+                                       
+                                    </div>
+                                    <!--end row-->
+                                </form>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -52,7 +112,7 @@
                                                  {% if request.user.is_superuser %}
                                                     <td>{{i.virman_ait_oldugu.first_name}}</td>
                                                     {% endif %}
-                                                    <td>{{i.virman_tarihi | date:"d-m-Y"}}</td>
+                                                    <td>{{i.virman_tarihi | date:"d.m.Y"}}</td>
                                                     <td>{{i.gonderen_kasa.kasa_adi}}</td>
                                                     <td>{{i.alici_kasa.kasa_adi}}</td>
                                                     <td>{{i.tutar}}</td>
@@ -162,12 +222,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
     <!--datatable js-->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
