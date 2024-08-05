@@ -40,6 +40,23 @@ def jhson_gonder(a):
     from django.http import JsonResponse
     data = []
     for i in a:
+        s = i.gelir_etiketi_sec.all()
+        
+        try:
+            j = s[0].gider_etiketi_adi
+            
+        except:
+            j = ""
+        try:
+            l = s[1].gider_etiketi_adi
+            
+        except:
+            l = ""
+        try:
+            v = s[2].gider_etiketi_adi
+            
+        except:
+            v = ""
         if i.silinme_bilgisi:
             b = "İPTAL"
         tutar = toplam_tutar_cikarmai(i)
@@ -53,7 +70,10 @@ def jhson_gonder(a):
         y =   {
         "fatura_no": str(i.fatura_no),
         "cari": str(i.cari_bilgisi.cari_adi),
-        "aciklama": str(i.aciklama),
+        "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
+        "etiket1": j ,
+        "etiket2": l,       
+        "etiket3": v ,
         "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
         "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
         "fatura_bedeli": "$"+str(toplam_tutar_cikarmai(i)),
@@ -1670,7 +1690,6 @@ def giderler_sayfasi(request):
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if tarih :
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-    
     content["santiyeler_i"] = jhson_gonder(profile)
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
