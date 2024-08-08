@@ -84,6 +84,7 @@
                                         <table id="example" class="display nowrap" style="width:100%">
                                             <thead>
                                                 <tr>
+                                                    <th>İncele</th>
                                                     <th>Fatura No</th>
                                                     <th>Cari</th>
                                                     <th>Açıklama</th>
@@ -99,6 +100,7 @@
                                             </thead>
                                             <tfoot>
                                                 <tr>
+                                                    <th>İncele</th>
                                                     <th>Fatura No</th>
                                                     <th>Cari</th>
                                                     <th>Açıklama</th>
@@ -266,9 +268,15 @@
     <!-- end main content-->
 {% endblock slider %}
 {% block footer %}
+{% for i in santiyeler %}
+<div id="invoice-detail-modal{{i.id}}" class="invoice-detail-modal">
+    <!-- Modal Content -->
+</div>
+
+{% endfor %}
 {% for i in  santiyeler %}
 <!-- END layout-wrapper -->
-<div class="invoice-detail-modal" id="invoice-detail-modal{{i.id}}">
+<div class="invoice-detail-modal" id="zinvoice-detail-modal{{i.id}}">
     <div class="wrapper">
         <div class="modal-head">
             <div class="invoice-title">
@@ -602,6 +610,7 @@
         
 
   columns: [
+        { data: 'incele' },
         { data: 'fatura_no' },
         { data: 'cari' },
         { data: 'aciklama' },
@@ -619,6 +628,85 @@
     }
 });
 </script>
+<script>
+    function loadFaturaDetails(faturaId) {
+        fetch(`/accounting/get_fatura/${faturaId}/details/`)
+            .then(response => response.json())
+            .then(data => {
+                // Modal elementini bulun
+                const modal = document.getElementById(`invoice-detail-modal${data.id}`);
+                
+                // Modal içeriğini dinamik olarak güncelleyin
+                modal.innerHTML = `
+                    <div class="modal-head">
+                        <div class="invoice-title">
+                            <a>Fatura Adı</a>
+                        </div>
+                        <div class="invoice-icons">
+                            <div class="icon-item print-icon"><a href="{% url 'accounting:fatura_goster2' data.id %}"  title="Yazdır" class="mdi mdi-printer-outline"></a></div>
+                            <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil${data.id}" title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
+                            <a href="{% url 'accounting:gider_duzenle' data.id %}" class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></a>
+                            <div class="icon-item close-icon"><span title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="top">
+                            <div class="title"><h4>Satış Faturası</h4></div>
+                            <div class="category"><span>${data.gelir_kategorisi}</span></div>
+                        </div>
+                        <div class="fatura-info">
+                            <div class="info-item">
+                                <div class="title"><h5>Fatura no</h5></div>
+                                <div class="value"><span>${data.fatura_no}</span></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="title"><h5>DÖVİZ KURU</h5></div>
+                                <div class="value"><span>${data.doviz}</span></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="title"><h5>Düzenleme Tarihi</h5></div>
+                                <div class="value"><span>${data.fatura_tarihi}</span></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="title"><h5>VADE TARİHİ</h5></div>
+                                <div class="value"><span>${data.vade_tarihi}</span></div>
+                            </div>
+                        </div>
+                        <div class="fature-desc">
+                            <div class="title"><h5>Açıklama</h5></div>
+                            <div class="value"><span>${data.aciklama || ''}</span></div>
+                        </div>
+                        <div class="title">
+                            <h5>Fatura Kalemleri</h5>
+                        </div>
+                        <div class="satis-table">
+                            <div class="table-titles">
+                                <h5>Ürün</h5>
+                                <h5>Adet</h5>
+                                <h5>Fiyat</h5>
+                                <h5>Toplam</h5>
+                            </div>
+                            ${data.kalemler.map(kalem => `
+                                <div class="table-item">
+                                    <div class="title"><span>${kalem.urun_adi}</span></div>
+                                    <div class="adet">${kalem.urun_adeti}</div>
+                                    <div class="fiyat"><span>${kalem.urun_fiyati}<span>$</span></span></div>
+                                    <div class="toplam"><span>${kalem.toplam}<span>$</span></span></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+    
+                // Modal'ı gösterin
+                $(`#invoice-detail-modal${data.id}`).modal('show');
+            })
+            .catch(error => {
+                console.error('Error fetching fatura details:', error);
+            });
+    }
+    </script>
+    
 {% endblock footer %}
 
 

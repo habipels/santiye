@@ -35,6 +35,21 @@ def kalan_tutuari(id):
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
         indirim = indirim+ i.urun_indirimi
     return round(float(genel_toplam - toplam -indirim),2)
+
+
+
+def get_fatura_gider(request, fatura_id):
+    print(fatura_id)
+    try:
+        fatura = get_object_or_none(Gider_Bilgisi , id = fatura_id)
+        fatura_data = {
+     
+        'fatura_no': fatura.fatura_no
+        }
+        print(fatura_data)
+        return JsonResponse(fatura_data)
+    except :
+        return JsonResponse({'error': 'Fatura not found'}, status=404)
 def jhson_gonder(a):
     from django.shortcuts import render
     from django.http import JsonResponse
@@ -67,7 +82,9 @@ def jhson_gonder(a):
             b  = "Parçalı Ödendi"
         elif odeme == 0:
             b = "Ödenmedi"
+        id = i.id
         y =   {
+            "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="fetchFatura({id})">İncele</button>',
         "fatura_no": str(i.fatura_no),
         "cari": str(i.cari_bilgisi.cari_adi),
         "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',

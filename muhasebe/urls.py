@@ -2,7 +2,8 @@ from django.urls import path
 from . import views
 app_name = "accounting"
 urlpatterns = [
-    #kasa işlemleri
+    #kasa işlemleri 
+    path('get_fatura/<int:fatura_id>/', views.get_fatura_gider, name='get_fatura_gider'),
     path("till", views.kasa_viev, name="kasa"),
     path("control/till/<str:hash>", views.a_kasa_viev, name="a_kasa_viev"),
     path("viewstill/<int:id>", views.kasa_tekli, name="kasa_tekli"),
