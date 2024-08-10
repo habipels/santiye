@@ -3,6 +3,8 @@ from . import views
 app_name = "accounting"
 urlpatterns = [
     #kasa işlemleri 
+    #get_fatura_gelir
+    path('get_fatura_gelir/<int:fatura_id>/', views.get_fatura_gelir, name='get_fatura_gelir'),
     path('get_fatura/<int:fatura_id>/', views.get_fatura_gider, name='get_fatura_gider'),
     path("till", views.kasa_viev, name="kasa"),
     path("control/till/<str:hash>", views.a_kasa_viev, name="a_kasa_viev"),

@@ -38,18 +38,117 @@ def kalan_tutuari(id):
 
 
 
-def get_fatura_gider(request, fatura_id):
+def get_fatura_gelir(request, fatura_id):
     print(fatura_id)
-    try:
-        fatura = get_object_or_none(Gider_Bilgisi , id = fatura_id)
+    if True:
+        fatura = get_object_or_none(Gelir_Bilgisi , id = fatura_id)
+        kalemler = gelir_urun_bilgisi.objects.filter(gider_bilgis = fatura)
+        makbuzlar = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = fatura)
+        kasalar = Kasa.objects.filter(kasa_kart_ait_bilgisi = fatura.gelir_kime_ait_oldugu,silinme_bilgisi = False)
+        toplam_fiyat  = 0
+        toplam_genel = 0
+        for j in kalemler:
+            toplam_fiyat = toplam_fiyat + j.urun_fiyati
+            toplam_genel = toplam_genel + (j.urun_adeti*j.urun_fiyati)
         fatura_data = {
-     
-        'fatura_no': fatura.fatura_no
+            'cari':fatura.cari_bilgisi.cari_adi,
+        'fatura_no': fatura.fatura_no,
+        'doviz': fatura.doviz,
+        'aciklama': fatura.aciklama,
+        "kategori" : fatura.gelir_kategorisi.gelir_kategori_adi if fatura.gelir_kategorisi else "Kategori Belirtilmemiş",
+        "fatura_tarihi" : fatura.fatura_tarihi.strftime("%d.%m.%Y"),
+        "vade_tarihi" : fatura.vade_tarihi.strftime("%d.%m.%Y"),
+        "kalemler": [
+            {
+                "urun_adi": kalem.urun_bilgisi.urun_adi,
+                "urun_adeti": kalem.urun_adeti,
+                "urun_fiyati": kalem.urun_fiyati,
+                "toplam": kalem.urun_adeti * kalem.urun_fiyati
+            } for kalem in kalemler
+        ],
+        "makbuzlar": [
+            {
+                "id": makbuz.id,
+                "tarihi": makbuz.tarihi.strftime("%d.%m.%Y"),
+                "kasa_adi": makbuz.kasa_bilgisi.kasa_adi,
+                "kayit_tarihi": makbuz.kayit_tarihi.strftime("%d.%m.%Y"),
+                "islemi_yapan": makbuz.islemi_yapan.last_name if makbuz.islemi_yapan else "",
+                "tutar": makbuz.tutar,
+                "resim":makbuz.gelir_makbuzu.url if makbuz.gelir_makbuzu else ""
+
+            } for makbuz in makbuzlar
+        ],"kasalar": [
+            {
+                "id": kasa.id,
+                "kasa_adi": kasa.kasa_adi
+
+            } for kasa in kasalar
+        ],
+        
+        "toplam_fiyat" : round(float(toplam_fiyat),2),
+        "genel_toplam" : round(float(toplam_genel),2),
+        "id" : fatura.id,
+        "kalan_tutar":str(kalan_tutuar(fatura))
         }
         print(fatura_data)
         return JsonResponse(fatura_data)
-    except :
-        return JsonResponse({'error': 'Fatura not found'}, status=404)
+
+
+def get_fatura_gider(request, fatura_id):
+    print(fatura_id)
+    if True:
+        fatura = get_object_or_none(Gider_Bilgisi , id = fatura_id)
+        kalemler = gider_urun_bilgisi.objects.filter(gider_bilgis = fatura)
+        makbuzlar = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = fatura)
+        kasalar = Kasa.objects.filter(kasa_kart_ait_bilgisi = fatura.gelir_kime_ait_oldugu,silinme_bilgisi = False)
+        toplam_fiyat  = 0
+        toplam_genel = 0
+        for j in kalemler:
+            toplam_fiyat = toplam_fiyat + j.urun_fiyati
+            toplam_genel = toplam_genel + (j.urun_adeti*j.urun_fiyati)
+        fatura_data = {
+            'cari':fatura.cari_bilgisi.cari_adi,
+        'fatura_no': fatura.fatura_no,
+        'doviz': fatura.doviz,
+        'aciklama': fatura.aciklama,
+        "kategori" : fatura.gelir_kategorisi.gider_kategori_adi if fatura.gelir_kategorisi else "Kategori Belirtilmemiş",
+        "fatura_tarihi" : fatura.fatura_tarihi.strftime("%d.%m.%Y"),
+        "vade_tarihi" : fatura.vade_tarihi.strftime("%d.%m.%Y"),
+        "kalemler": [
+            {
+                "urun_adi": kalem.urun_bilgisi.urun_adi,
+                "urun_adeti": kalem.urun_adeti,
+                "urun_fiyati": kalem.urun_fiyati,
+                "toplam": kalem.urun_adeti * kalem.urun_fiyati
+            } for kalem in kalemler
+        ],
+        "makbuzlar": [
+            {
+                "id": makbuz.id,
+                "tarihi": makbuz.tarihi.strftime("%d.%m.%Y"),
+                "kasa_adi": makbuz.kasa_bilgisi.kasa_adi,
+                "kayit_tarihi": makbuz.kayit_tarihi.strftime("%d.%m.%Y"),
+                "islemi_yapan": makbuz.islemi_yapan.last_name if makbuz.islemi_yapan else "",
+                "tutar": makbuz.tutar,
+                "resim":makbuz.gelir_makbuzu.url if makbuz.gelir_makbuzu else ""
+
+            } for makbuz in makbuzlar
+        ],"kasalar": [
+            {
+                "id": kasa.id,
+                "kasa_adi": kasa.kasa_adi
+
+            } for kasa in kasalar
+        ],
+        
+        "toplam_fiyat" : round(float(toplam_fiyat),2),
+        "genel_toplam" : round(float(toplam_genel),2),
+        "id" : fatura.id,
+        "kalan_tutar":str(kalan_tutuari(fatura))
+        }
+        print(fatura_data)
+        return JsonResponse(fatura_data)
+  
 def jhson_gonder(a):
     from django.shortcuts import render
     from django.http import JsonResponse
@@ -84,7 +183,7 @@ def jhson_gonder(a):
             b = "Ödenmedi"
         id = i.id
         y =   {
-            "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="fetchFatura({id})">İncele</button>',
+            "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="loadFaturaDetails({id})">İncele</button>',
         "fatura_no": str(i.fatura_no),
         "cari": str(i.cari_bilgisi.cari_adi),
         "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
@@ -112,15 +211,45 @@ def toplam_odenme_tutar(id):
     for i in a:
         topla = topla + i.tutar
     return topla
+def kalan_tutuar(id):
+    a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
+    toplam = 0
+    for i in a:
+        toplam = toplam+i.tutar
+    a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
+    genel_toplam = 0
+    indirim = 0
+    for i in a:
+        genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+        indirim = indirim+ i.urun_indirimi
+    return round(float(genel_toplam - toplam-indirim),2)
 def jhson_gonder_2(a):
     from django.shortcuts import render
     from django.http import JsonResponse
     data = []
     for i in a:
+        s = i.gelir_etiketi_sec.all()
+        
+        try:
+            j = s[0].gelir_etiketi_adi
+            
+        except:
+            j = ""
+        try:
+            l = s[1].gelir_etiketi_adi
+            
+        except:
+            l = ""
+        try:
+            v = s[2].gelir_etiketi_adi
+            
+        except:
+            v = ""
         if i.silinme_bilgisi:
             b = "İPTAL"
         tutar = toplam_tutar_cikarma(i)
         odeme = toplam_odenme_tutar(i)
+        id = i.id
         if odeme == tutar :
             b = "Ödendi"
         elif odeme > 0:
@@ -128,13 +257,17 @@ def jhson_gonder_2(a):
         elif odeme == 0:
             b = "Ödenmedi"
         y =   {
+        "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="loadFaturaDetails({id})">İncele</button>',
         "fatura_no": str(i.fatura_no),
         "cari": str(i.cari_bilgisi.cari_adi),
-        "aciklama": str(i.aciklama),
+        "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
+        "etiket1": j ,
+        "etiket2": l,       
+        "etiket3": v ,
         "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
         "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
-        "fatura_bedeli": "$"+str(toplam_tutar_cikarmai(i)),
-        "kalan_tutar": "$"+str(kalan_tutuari(i)),
+        "fatura_bedeli": "$"+str(toplam_tutar_cikarma(i)),
+        "kalan_tutar": "$"+str(kalan_tutuar(i)),
         "durum": b
         }
         data.append(y)
@@ -1293,7 +1426,7 @@ def gelirler_sayfasi(request):
     content["santiyeler_i"] = jhson_gonder_2(profile)
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/deneme_gelir.html",content)
+    return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
 def gelirler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -1326,7 +1459,7 @@ def gelirler_sayfasi_2(request,hash):
     content["santiyeler_i"] = jhson_gonder_2(profile)
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/deneme_gelir.html",content)
+    return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
 #
 def gelir_ekle(request):
     content = sozluk_yapisi()
