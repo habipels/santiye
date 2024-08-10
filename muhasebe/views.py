@@ -1517,6 +1517,12 @@ def gelir_duzenle(request ,id):
         profile =Kasa.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
+        urunler_bilgisi =  ""
+        cari_bilgileri = ""
+        kategori_bilgisi = ""
+        etiketler = ""
+        gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
+        urunleri = ""
     else:
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
