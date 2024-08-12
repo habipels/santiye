@@ -271,32 +271,7 @@
 <script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/searchBuilder.dataTables.js"></script>
 <script src="https://cdn.datatables.net/datetime/1.5.3/js/dataTables.dateTime.min.js"></script>
 <script>
-    $(document).ready(function () {
-  $(".makbuzsill").click(function (event) {
-    makbuz = "1",
-    y = this.id.split('-')[0],
-    makbuzidsi = y,
-
-    $.ajax({
-      type: "POST",
-      url: "{% url 'accounting:makbuz_sil' %}",
-      data: {
-        makbuz: makbuz,
-        makbuzidsi :makbuzidsi,
-        csrfmiddlewaretoken: '{{ csrf_token }}'
-      },
-      success: function (data) {
-
-        $("#guncelle"+ String(a) ).load(window.location.href + " #guncelle"+ String(a) );
-        $("#g"+ String(a) ).load(window.location.href + " #g"+ String(a) );
-        $("#ge"+ String(a) ).load(window.location.href + " #ge"+ String(a) );
-        $("#get"+ String(a) ).load(window.location.href + " #get"+ String(a) );
-        document.querySelector("#guncelle"+ String(a)).style.display="flex";
-    }
-    });
-    return false; //<---- move it here
-  });
-});
+ 
 </script>
 <script>
     new DataTable('#example', {
@@ -420,10 +395,12 @@
                         </div>
                     </div>
                     <div class="tahsilatEkle" id="tahsilatEkle">
-                        <form>
+                       <form method="post" action="{% url 'accounting:gider_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                <input type="text" hidden value="${data.id}" name="faturabilgisi">
                             <div class="input-item">
                                 <label>TÜR</label>
-                                <select>
+                                <select name="odemeturu">
                                     <option value="nakitBanka">Nakit / Banka</option>
                                     <option disabled>ÇEK VEYA SENET</option>
                                     <option value="cek">ÇEK</option>
@@ -432,7 +409,7 @@
                             </div>
                             <div class="input-item">
                                 <label>HESAP</label>
-                                <select>
+                                <select name="kasabilgisi">
                                      ${data.kasalar.map(kasa => `
                             <option value="${kasa.id}">${kasa.kasa_adi}</option>
                         `).join('')}
@@ -441,24 +418,24 @@
                             </div>
                             <div class="input-item">
                                 <label>TARİH</label>
-                                <input type="date" />
+                                <input name="islemtarihi" type="date" />
                             </div>
                             <div class="input-item">
                                 <label>TUTAR</label>
-                                <input type="text" value="${data.kalan_tutar}" max="${data.kalan_tutar}" placeholder="105000.41" />
+                                <input type="text"  name="islemtutari" value="${data.kalan_tutar}" max="${data.kalan_tutar}" placeholder="105000.41" />
                                 <span class="mdi mdi-currency-usd"></span>
                             </div>
                             <div class="input-item">
                                 <label>MAKBUZ NO</label>
-                                <input type="text" />
+                                <input name="makbuznumarasi" type="text" />
                             </div>
                             <div class="input-item">
                                 <label>AÇIKLAMA</label>
-                                <input type="text" />
+                                <input name="aciklama_bilgisi" type="text" />
                             </div>
                             <div class="input-item">
                                 <label>DOSYA</label>
-                                <input type="file" />
+                                <input name="dosya" type="file" />
                             </div>
                             <div class="buttons">
                                 <span type="button" onclick="tahsilat_kapat()">Vazgeç</span>
@@ -572,7 +549,7 @@
             </div>
             `;
             
-            modal_fatura.innerHTML = `
+             modal_fatura.innerHTML = `
             <div class="modal" id="faturasil">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -587,7 +564,7 @@
      
       <div class="modal-body">
         Faturayı iptal etmek istediğinizden emin misiniz ?
-        <input type="text" name="gelir_gider" value="1" hidden>
+        <input type="text" name="gelir_gider" value="0" hidden>
         <input type="text" name="idbilgisicek" value="${faturaId}" hidden>
       </div>
 
@@ -610,20 +587,21 @@
                     <h4 class="modal-title">Ödeme Sil</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
+                 <form action="{% url 'accounting:makbuz_sil' %}" method="post">
+                 {% csrf_token %}
                 <!-- Modal body -->
                 <div class="modal-body">
                     Ödemeyi Silmek İstediğinizden Emin Misiniz ?
-                    <input type="text" name="makbuz" value="0" hidden>
+                    <input type="text" name="makbuz" value="1" hidden>
                     <input type="text" name="makbuzidsi" value="${makbuz.id}" hidden>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
-                    <button type="button"  id="${makbuz.id}- type" data-bs-dismiss="modal" class="btn btn-danger makbuzsill" >Sil</button>
+                    <button type="submit"   id="${makbuz.id}- type" data-bs-dismiss="modal" class="btn btn-danger makbuzsill" >Sil</button>
                 </div>
-
+                </form >
                 </div>
             </div>
             </div>
@@ -817,7 +795,32 @@
                 console.error('Error fetching fatura details:', error);
             });
     }
+       $(document).ready(function () {
+  $(".makbuzsill").click(function (event) {
+    makbuz = "1",
+    y = this.id.split('-')[0],
+    makbuzidsi = y,
 
+    $.ajax({
+      type: "POST",
+      url: "{% url 'accounting:makbuz_sil' %}",
+      data: {
+        makbuz: makbuz,
+        makbuzidsi :makbuzidsi,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+
+        $("#guncelle"+ String(a) ).load(window.location.href + " #guncelle"+ String(a) );
+        $("#g"+ String(a) ).load(window.location.href + " #g"+ String(a) );
+        $("#ge"+ String(a) ).load(window.location.href + " #ge"+ String(a) );
+        $("#get"+ String(a) ).load(window.location.href + " #get"+ String(a) );
+        document.querySelector("#guncelle"+ String(a)).style.display="flex";
+    }
+    });
+    return false; //<---- move it here
+  });
+});
     
     </script>
     

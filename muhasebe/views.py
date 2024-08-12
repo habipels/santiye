@@ -107,7 +107,7 @@ def get_fatura_gider(request, fatura_id):
             toplam_fiyat = toplam_fiyat + j.urun_fiyati
             toplam_genel = toplam_genel + (j.urun_adeti*j.urun_fiyati)
         fatura_data = {
-            'cari':fatura.cari_bilgisi.cari_adi,
+            'cari': fatura.cari_bilgisi.cari_adi if fatura.cari_bilgisi.cari_adi else "",
         'fatura_no': fatura.fatura_no,
         'doviz': fatura.doviz,
         'aciklama': fatura.aciklama,
@@ -185,7 +185,7 @@ def jhson_gonder(a):
         y =   {
             "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="loadFaturaDetails({id})">İncele</button>',
         "fatura_no": str(i.fatura_no),
-        "cari": str(i.cari_bilgisi.cari_adi),
+        "cari": i.cari_bilgisi.cari_adi if i.cari_bilgisi.cari_adi else "",
         "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
         "etiket1": j ,
         "etiket2": l,       
@@ -256,10 +256,14 @@ def jhson_gonder_2(a):
             b  = "Parçalı Ödendi"
         elif odeme == 0:
             b = "Ödenmedi"
+        if i.cari_bilgisi:
+            cari_bilgi = i.cari_bilgisi.cari_adi
+        else:
+            cari_bilgi = ""
         y =   {
         "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="loadFaturaDetails({id})">İncele</button>',
         "fatura_no": str(i.fatura_no),
-        "cari": str(i.cari_bilgisi.cari_adi),
+        "cari": cari_bilgi,
         "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
         "etiket1": j ,
         "etiket2": l,       
@@ -1473,10 +1477,10 @@ def gelir_ekle(request):
         etiketler =  ""
     else:
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
-        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = request.user)
-        kategori_bilgisi = gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
-        etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
+        urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+        cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+        kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+        etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
     content["gelir_kategoerisi"] = kategori_bilgisi
     content["gelir_etiketi"] = etiketler
     content["kasa"] = profile
@@ -1494,16 +1498,16 @@ def gelir_ekle_2(request,hash):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = users)
-        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = users)
-        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = users)
-        kategori_bilgisi = gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = users)
-        etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = users)
+        urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = users)
+        cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = users)
+        kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = users)
+        etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = users)
     else:
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
-        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = request.user)
-        kategori_bilgisi = gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
-        etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
+        urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+        cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+        kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+        etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
     content["gelir_kategoerisi"] = kategori_bilgisi
     content["gelir_etiketi"] = etiketler
     content["kasa"] = profile
@@ -1525,12 +1529,12 @@ def gelir_duzenle(request ,id):
         urunleri = ""
     else:
         profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
-        cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = request.user)
-        kategori_bilgisi = gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
-        etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
+        urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+        cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+        kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+        etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
-        urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
+        urunleri = gelir_urun_bilgisi.objects.filter(silinme_bilgisi = False,gider_bilgis = gelir_bilgisi_ver)
     content["gelir_kategoerisi"] = kategori_bilgisi
     content["gelir_etiketi"] = etiketler
     content["kasa"] = profile

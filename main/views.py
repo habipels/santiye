@@ -2573,8 +2573,10 @@ def giderleri_excelden_ekle(request,id):
             sadece_etiket.append(i[6])
         if i[7] not in sadece_etiket:
             sadece_etiket.append(i[7])
-        if i[8] not in sadece_kategorisi:
-            sadece_kategorisi.append(i[8])
+        if i[8] not in sadece_etiket:
+            sadece_etiket.append(i[8])
+        if i[9] not in sadece_kategorisi:
+            sadece_kategorisi.append(i[9])
     for i in sadece_cari:
         l = cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                 ,cari_adi = i,aciklama = "",telefon_numarasi = 0.0)

@@ -99,8 +99,8 @@
 <div class="col-md-3">
     <div class="form-group">
         <label>Kategori</label>
-        <div class="input-group">
-            <select required id="kategori" name="gelir_kategorisi" class="form-select">
+        <div class="input-group" id="kategori">
+            <select required  name="gelir_kategorisi" class="form-select">
                 {% for i in gelir_kategoerisi %}
                 <option value="{{i.id}}">{{i.gider_kategori_adi}}</option>
                 {% endfor %}
@@ -528,7 +528,7 @@ var multiSelectInstance = initializeMultiSelectTag();
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function (data) {
-                    $("#kategorii").load(window.location.href + " #kategori");
+                    $("#kategori").load(window.location.href + " #kategori");
                 }
             });
             return false;
@@ -734,7 +734,7 @@ var multiSelectInstance = initializeMultiSelectTag();
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function (data) {
-                    $("#kategorii").load(window.location.href + " #kategori");
+                    $("#kategori").load(window.location.href + " #kategori");
                 }
             });
             return false;
