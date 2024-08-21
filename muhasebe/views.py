@@ -148,10 +148,10 @@ def get_fatura_gider(request, fatura_id):
         }
         print(fatura_data)
         return JsonResponse(fatura_data)
-  
+from django.shortcuts import render
+from django.http import JsonResponse
 def jhson_gonder(a):
-    from django.shortcuts import render
-    from django.http import JsonResponse
+    
     data = []
     for i in a:
         s = i.gelir_etiketi_sec.all()
@@ -199,6 +199,7 @@ def jhson_gonder(a):
         data.append(y)
     
     return data
+
 def toplam_tutar_cikarma(id):
     a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
     topla = 0
