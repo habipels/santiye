@@ -2138,6 +2138,7 @@ def gider_faturasi_kaydet(request):
         print(aciklama_id,"gelen id")
 
     return redirect("accounting:giderler_sayfasi")
+
 def gider_faturasi_kaydet_2(request,hash):
     print("kayıt")
     content = {}
@@ -2581,6 +2582,202 @@ def hesap_ekstra_durumu(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/hesap_eksta.html",content)
+def muhasebe_ayarlari(request):
+    content = sozluk_yapisi()
+    b = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = request.user).last()
+    if b : 
+        content["fatura_icerigi"] = b
+    else:
+        content["fatura_icerigi"] = "0"
+    if request.POST:
+        dark_logo = request.FILES.get("dark_logo")
+        gideretiketi = request.POST.get("gideretiketi")
+        gelir_etiketi = request.POST.get("gelir_etiketi")
+        if dark_logo:
+            faturalar_icin_logo.objects.create(gelir_makbuzu = dark_logo
+            ,gelir_kime_ait_oldugu  = request.user
+            )
+        fatura_etiketi  = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici  = request.user).last()
+        if fatura_etiketi:
+            if fatura_etiketi.gider_etiketi == gideretiketi and fatura_etiketi.gelir_etiketi == gelir_etiketi :
+                print("2 tane if pas geçti")
+            else:
+                faturalardaki_gelir_gider_etiketi_ozel.objects.create(
+                kullanici  = request.user,
+                gelir_etiketi = gelir_etiketi,
+                gider_etiketi = gideretiketi 
+                )
+                gelirlerim = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user)
+                for i in gelirlerim:
+                    fatura_no_bilgi = i.fatura_no
+                    
+                    # Etiket çıkarma işlemi
+                    tag = ""
+                    for j in fatura_no_bilgi:
+                        if j.isdigit():  # İlk rakamdan itibaren etiketin bittiğini varsayıyoruz
+                            break
+                        tag += j
+                    
+                    # Eski etiketi yeni etiketle değiştirme
+                    yeni_fatura_no = fatura_no_bilgi.replace(tag, gelir_etiketi, 1)
+                    
+                    # Güncelleme
+                    Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user, id=i.id).update(fatura_no=yeni_fatura_no)
+                gelirlerim = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user)
+                for i in gelirlerim:
+                    fatura_no_bilgi = i.fatura_no
+                    
+                    # Etiket çıkarma işlemi
+                    tag = ""
+                    for j in fatura_no_bilgi:
+                        if j.isdigit():  # İlk rakamdan itibaren etiketin bittiğini varsayıyoruz
+                            break
+                        tag += j
+                    
+                    # Eski etiketi yeni etiketle değiştirme
+                    yeni_fatura_no = fatura_no_bilgi.replace(tag, gideretiketi, 1)
+                    
+                    # Güncelleme
+                    Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user, id=i.id).update(fatura_no=yeni_fatura_no)
+        else:
+            faturalardaki_gelir_gider_etiketi_ozel.objects.create(
+            kullanici  = request.user,
+            gelir_etiketi = gelir_etiketi,
+            gider_etiketi = gideretiketi 
+            )
+            gelirlerim = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user)
+            for i in gelirlerim:
+                    fatura_no_bilgi = i.fatura_no
+                    
+                    # Etiket çıkarma işlemi
+                    tag = ""
+                    for j in fatura_no_bilgi:
+                        if j.isdigit():  # İlk rakamdan itibaren etiketin bittiğini varsayıyoruz
+                            break
+                        tag += j
+                    
+                    # Eski etiketi yeni etiketle değiştirme
+                    yeni_fatura_no = fatura_no_bilgi.replace(tag, gelir_etiketi, 1)
+                    
+                    # Güncelleme
+                    Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user, id=i.id).update(fatura_no=yeni_fatura_no)
+            gelirlerim = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user)
+            for i in gelirlerim:
+                    fatura_no_bilgi = i.fatura_no
+                    
+                    # Etiket çıkarma işlemi
+                    tag = ""
+                    for j in fatura_no_bilgi:
+                        if j.isdigit():  # İlk rakamdan itibaren etiketin bittiğini varsayıyoruz
+                            break
+                        tag += j
+                    
+                    # Eski etiketi yeni etiketle değiştirme
+                    yeni_fatura_no = fatura_no_bilgi.replace(tag, gideretiketi, 1)
+                    
+                    # Güncelleme
+                    Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user, id=i.id).update(fatura_no=yeni_fatura_no)
+    return render(request,"muhasebe_page/muhasebe_ayarlari.html",content)
+def muhasebe_ayarlari_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    b = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = users).last()
+    if b : 
+        content["fatura_icerigi"] = b
+    else:
+        content["fatura_icerigi"] = "0"
+    if request.POST:
+        dark_logo = request.FILES.get("dark_logo")
+        gideretiketi = request.POST.get("gideretiketi")
+        gelir_etiketi = request.POST.get("gelir_etiketi")
+        if dark_logo:
+            faturalar_icin_logo.objects.create(gelir_makbuzu = dark_logo
+            ,gelir_kime_ait_oldugu  = users
+            )
+        fatura_etiketi  = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici  = users).last()
+        if fatura_etiketi:
+            if fatura_etiketi.gider_etiketi == gideretiketi and fatura_etiketi.gelir_etiketi == gelir_etiketi :
+                print("2 tane if pas geçti")
+            else:
+                faturalardaki_gelir_gider_etiketi_ozel.objects.create(
+                kullanici  = users,
+                gelir_etiketi = gelir_etiketi,
+                gider_etiketi = gideretiketi 
+                )
+                gelirlerim = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users)
+                for i in gelirlerim:
+                    fatura_no_bilgi = i.fatura_no
+                    
+                    # Etiket çıkarma işlemi
+                    tag = ""
+                    for j in fatura_no_bilgi:
+                        if j.isdigit():  # İlk rakamdan itibaren etiketin bittiğini varsayıyoruz
+                            break
+                        tag += j
+                    
+                    # Eski etiketi yeni etiketle değiştirme
+                    yeni_fatura_no = fatura_no_bilgi.replace(tag, gelir_etiketi, 1)
+                    
+                    # Güncelleme
+                    Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=users, id=i.id).update(fatura_no=yeni_fatura_no)
+                gelirlerim = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users)
+                for i in gelirlerim:
+                    fatura_no_bilgi = i.fatura_no
+                    
+                    # Etiket çıkarma işlemi
+                    tag = ""
+                    for j in fatura_no_bilgi:
+                        if j.isdigit():  # İlk rakamdan itibaren etiketin bittiğini varsayıyoruz
+                            break
+                        tag += j
+                    
+                    # Eski etiketi yeni etiketle değiştirme
+                    yeni_fatura_no = fatura_no_bilgi.replace(tag, gideretiketi, 1)
+                    
+                    # Güncelleme
+                    Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=users, id=i.id).update(fatura_no=yeni_fatura_no)
+        else:
+            faturalardaki_gelir_gider_etiketi_ozel.objects.create(
+            kullanici  = users,
+            gelir_etiketi = gelir_etiketi,
+            gider_etiketi = gideretiketi 
+            )
+            gelirlerim = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users)
+            for i in gelirlerim:
+                    fatura_no_bilgi = i.fatura_no
+                    
+                    # Etiket çıkarma işlemi
+                    tag = ""
+                    for j in fatura_no_bilgi:
+                        if j.isdigit():  # İlk rakamdan itibaren etiketin bittiğini varsayıyoruz
+                            break
+                        tag += j
+                    
+                    # Eski etiketi yeni etiketle değiştirme
+                    yeni_fatura_no = fatura_no_bilgi.replace(tag, gelir_etiketi, 1)
+                    
+                    # Güncelleme
+                    Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=users, id=i.id).update(fatura_no=yeni_fatura_no)
+            gelirlerim = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users)
+            for i in gelirlerim:
+                    fatura_no_bilgi = i.fatura_no
+                    
+                    # Etiket çıkarma işlemi
+                    tag = ""
+                    for j in fatura_no_bilgi:
+                        if j.isdigit():  # İlk rakamdan itibaren etiketin bittiğini varsayıyoruz
+                            break
+                        tag += j
+                    
+                    # Eski etiketi yeni etiketle değiştirme
+                    yeni_fatura_no = fatura_no_bilgi.replace(tag, gideretiketi, 1)
+                    
+                    # Güncelleme
+                    Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=users, id=i.id).update(fatura_no=yeni_fatura_no)
+    return render(request,"muhasebe_page/muhasebe_ayarlari.html",content)
 
 def fatura_goster(request,id):
     content = sozluk_yapisi()

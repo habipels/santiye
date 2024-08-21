@@ -647,6 +647,9 @@
                                         <div class="collapse menu-dropdown" id="santiyeAyari">
                                             <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:muhasebe_ayarlari_2' hashler %}" class="nav-link"> Muhasebe Ayarları </a>
+                                                </li>
+                                            <li class="nav-item">
                                                     <a href="/{{dil}}{% url 'accounting:gelir_kategorisi_tipleri_2' hashler %}" class="nav-link"> Gelir Kategorileri </a>
                                                 </li>
                                                 <li class="nav-item">
@@ -1329,6 +1332,7 @@
                             <div class="collapse menu-dropdown" id="muhasebe">
 
                                 <ul class="nav nav-sm flex-column">
+                                
                                     <li class="nav-item">
                                         <a href="{% url 'accounting:gelirler_sayfasi' %}" class="nav-link">Gelirler</a>
                                     </li>
@@ -1348,9 +1352,14 @@
                                         <a href="#santiyeAyari" data-bs-toggle="collapse" class="nav-link"> Muhasebe Ayarları </a>
                                         <div class="collapse menu-dropdown" id="santiyeAyari">
                                             <ul class="nav nav-sm flex-column">
+                                            {% if request.user.is_superuser %}
+                                            {% else %}
                                             <li class="nav-item">
-                                                    <a href="/{{dil}}{% url 'accounting:gelir_kategorisi_tipleri' %}" class="nav-link"> Gelir Kategorileri </a>
+                                                    <a href="/{{dil}}{% url 'accounting:muhasebe_ayarlari' %}" class="nav-link"> Muhasebe Ayarları </a>
                                                 </li>
+                                            
+                                            {% endif %}
+                                            
                                                 <li class="nav-item">
                                                     <a href="/{{dil}}{% url 'accounting:gelir_etiketi_tipleri' %}" class="nav-link"> Gelir Etiketleri </a>
                                                 </li>

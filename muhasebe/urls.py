@@ -73,7 +73,7 @@ urlpatterns = [
     path("settheycome/<int:id>", views.gelir_duzenle, name="gelir_duzenle"),
     path("incomesummary", views.gelirler_ozeti, name="gelirler_ozeti"),
     path("viewcome/<int:id>", views.fatura_goster, name="fatura_goster"),
-    #gelirler Sayfası
+    #gelirler Sayfası#
     #giderler Sayfası#
     path("control/expenses/<str:hash>", views.giderler_sayfasi_2, name="giderler_sayfasi_2"),
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
@@ -95,13 +95,16 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('cari/', views.cariler_bilgisi, name='cariler_bilgisi'),
     path('delivon', views.fatura_sil, name='fatura_sil'),
-    
+
+    #
+    path("accountingsettings/<str:hash>", views.muhasebe_ayarlari_2, name="muhasebe_ayarlari_2"),
+    path("accountingsettings", views.muhasebe_ayarlari, name="muhasebe_ayarlari"),
     path('denme/', views.denme, name='denme'),
     path('kategoriekleme', views.gider_gelir_ekleme, name='gider_gelir_ekleme'),
     path('etiketekleme', views.gider_gelir_etiketekleme, name='gider_gelir_etiketekleme'),
-     path("accountextra", views.hesap_ekstra_durumu, name="hesap_ekstra_durumu"),
-      path('download-excel/', views.download_excel, name='download_excel'),
-      path('download-pdf/', views.download_pdf, name='download_pdf'),
+    path("accountextra", views.hesap_ekstra_durumu, name="hesap_ekstra_durumu"),
+    path('download-excel/', views.download_excel, name='download_excel'),
+    path('download-pdf/', views.download_pdf, name='download_pdf'),
     #qrfaturasıgöster
     path("viewcomeqr/<int:id>", views.fatura_gosterqr, name="fatura_gosterqr"),
     path("viewexpensesqr/<int:id>", views.fatura_goster2qr, name="fatura_goster2qr"),

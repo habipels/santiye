@@ -333,7 +333,10 @@ def gelir_faturasi_no(id):
     a = str(a)
     b = len(a)
     c = 8 - b
-    a = faturalardaki_gelir_gider_etiketi.objects.last().gelir_etiketi+(c*"0")+a
+    if faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici__id = id).last():
+        a = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici__id = id).last().gelir_etiketi+(c*"0")+a
+    else:
+        a = "E"+(c*"0")+a
     return a
 @register.simple_tag
 def gider_faturasi_no(id):
@@ -342,7 +345,10 @@ def gider_faturasi_no(id):
     a = str(a)
     b = len(a)
     c = 8 - b
-    a = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+a
+    if faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici__id  = id).last():
+        a = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici__id  = id).last().gider_etiketi+(c*"0")+a
+    else:
+        a = "I"+(c*"0")+a
     return a
 
 
