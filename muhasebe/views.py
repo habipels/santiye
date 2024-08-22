@@ -148,9 +148,10 @@ def get_fatura_gider(request, fatura_id):
         }
         print(fatura_data)
         return JsonResponse(fatura_data)
+import time
 
 def jhson_gonder(a):
-    
+    start_time = time.time()
     data = []
     for i in a:
         s = i.gelir_etiketi_sec.all()
@@ -196,7 +197,11 @@ def jhson_gonder(a):
         "durum": b
         }
         data.append(y)
-    
+    end_time = time.time()
+    duration = end_time - start_time
+
+    # Konsola yazdırma
+    print(f"View çalıştırma süresi: {duration:.2f} saniye")
     return data
 
 def toplam_tutar_cikarma(id):
