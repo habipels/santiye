@@ -148,8 +148,7 @@ def get_fatura_gider(request, fatura_id):
         }
         print(fatura_data)
         return JsonResponse(fatura_data)
-from django.shortcuts import render
-from django.http import JsonResponse
+
 def jhson_gonder(a):
     
     data = []
