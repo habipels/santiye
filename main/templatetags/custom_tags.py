@@ -350,7 +350,44 @@ def gider_faturasi_no(id):
     else:
         a = "I"+(c*"0")+a
     return a
+@register.simple_tag
+def jhson_gonder(i):
+    print(i)
+    if i.silinme_bilgisi:
+        pass
+    else:
+        s = i.gelir_etiketi_sec.all()
 
+        j = s[0].gider_etiketi_adi if len(s) > 0 else ""
+        l = s[1].gider_etiketi_adi if len(s) > 1 else ""
+        v = s[2].gider_etiketi_adi if len(s) > 2 else ""
+
+        tutar = toplam_tutar_cikarmai(i)
+        odeme = toplam_odenme_tutari(i)
+
+        if odeme == tutar:
+            b = "Ödendi"
+        elif odeme > 0:
+            b = "Parçalı Ödendi"
+        else:
+            b = "Ödenmedi"
+
+        y = {
+            "incele": f'<button class="faturabilgisi bg-sucsses" id="{i.id}" onclick="loadFaturaDetails({i.id})">İncele</button>',
+            "fatura_no": str(i.fatura_no),
+            "cari": i.cari_bilgisi.cari_adi if i.cari_bilgisi.cari_adi else "",
+            "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
+            "etiket1": j,
+            "etiket2": l,
+            "etiket3": v,
+            "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+            "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
+            "fatura_bedeli": "$" + str(toplam_tutar_cikarmai(i)),
+            "kalan_tutar": "$" + str(kalan_tutuari(i)),
+            "durum": b
+        }
+        
+        return mark_safe(y)
 
 @register.simple_tag
 def saat_bilgisi():
