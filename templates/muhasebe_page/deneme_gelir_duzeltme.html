@@ -274,7 +274,15 @@
 <script>
     new DataTable('#example', {
 
-        "data": {{santiyeler_i | safe }},
+        "data": [{% for i in santiyeler_i %}
+        {% jhson_gonder_2 i as sonuc  %}
+        {% if sonuc %}
+        {{sonuc|safe}}
+        {% if not forloop.last %},{% endif %}
+        {% else %}
+        {% endif %}
+        {% endfor %}];
+
         
 
   columns: [

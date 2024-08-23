@@ -317,12 +317,10 @@ $(document).ready(function () {
     var table = $('#example').DataTable({
         data: [
         {% for i in santiyeler_i %}
-        {% jhson_gonder i as sonuc  %}
-        {% if sonuc %}
-        {{sonuc|safe}}
+        
+        {'incele': '<button class="faturabilgisi bg-sucsses" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">İncele</button>', 'fatura_no': '{{i.fatura_no}}', 'cari': '{{i.cari_bilgisi.cari_adi}}', 'aciklama': '<span class="monospace-bold" title="Cüneyt Çelik\'e 20.07 tarihine kadar olan borç">Cüneyt Çelik\'e </span>', 'etiket1': 'Cüneyt Çelik Borcu', 'etiket2': '', 'etiket3': '', 'duzenleme_tarihi': '{{i.fatura_tarihi | date:'d.m.Y' }}', 'vade_tarihi': '{{i.vade_tarihi | date:'d.m.Y' }}', 'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 'durum': 'Ödenmedi'}
         {% if not forloop.last %},{% endif %}
-        {% else %}
-        {% endif %}
+        
         
         {% endfor %}],
         columns: [

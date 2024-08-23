@@ -1434,9 +1434,7 @@ def gelirler_sayfasi(request):
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
 
   
-    content["santiyeler_i"] = jhson_gonder_2(profile)
-    content["santiyeler"] = profile[:1]
-    content["giderler_bilgisi"] = profile
+    content["santiyeler_i"] = profile
     return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
 def gelirler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
@@ -1467,7 +1465,7 @@ def gelirler_sayfasi_2(request,hash):
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
 
 
-    content["santiyeler_i"] = jhson_gonder_2(profile)
+    content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
     return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
@@ -1679,6 +1677,11 @@ def gelir_faturasi_kaydet(request):
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
                         )
+        toplam_tutar = 0
+        gelir_urun_bilgisi_al =gelir_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id)) 
+        for i in gelir_urun_bilgisi_al:
+            toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
+        Gelir_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
         gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
     return redirect("accounting:gelirler_sayfasi")
 
@@ -1778,6 +1781,11 @@ def gelir_faturasi_kaydet_2(request,hash):
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
                         )
+        toplam_tutar = 0
+        gelir_urun_bilgisi_al =gelir_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id)) 
+        for i in gelir_urun_bilgisi_al:
+            toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
+        Gelir_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
         gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
     return redirect("accounting:gelirler_sayfasi")
 
@@ -1799,6 +1807,10 @@ def gelir_odemesi_ekle(request):
             tutar  =islemtutari,tarihi = islemtarihi,gelir_makbuzu = dosya,
             makbuz_no = makbuznumarasi,aciklama = aciklama_bilgisi
         )
+        toplam_tutar = 0
+        a = get_object_or_none(Gelir_Bilgisi, id = faturabilgisi)
+        toplam_tutar = a.kalan_tutar-float(islemtutari)
+        b = Gelir_Bilgisi.objects.filter(id =faturabilgisi ).update(kalan_tutar =toplam_tutar )
     return redirect("accounting:gelirler_sayfasi")
 def gider_duzenle(request ,id):
     content = sozluk_yapisi()
@@ -1828,11 +1840,22 @@ def makbuz_sil(request):
         gelir_gider = request.POST.get("makbuz")
         makbuz_bilgisi = request.POST.get("makbuzidsi")
         if gelir_gider == "0":
+            gider = get_object_or_none(Gelir_odemesi,id = makbuz_bilgisi ).gelir_kime_ait_oldugu
             Gelir_odemesi.objects.filter(id = makbuz_bilgisi).delete()
+            gider_odemelrei = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu =gider)
+            toplam_deger = gider.toplam_tutar
+            for i in gider_odemelrei:
+                toplam_deger -= i.tutar
+            Gelir_Bilgisi.objects.filter(id = gider.id).update(kalan_tutar = toplam_deger)
             return redirect("accounting:gelirler_sayfasi")
         elif gelir_gider == "1":
+            gider = get_object_or_none(Gider_odemesi,id = makbuz_bilgisi ).gelir_kime_ait_oldugu
             Gider_odemesi.objects.filter(id = makbuz_bilgisi).delete()
-
+            gider_odemelrei = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu =gider)
+            toplam_deger = gider.toplam_tutar
+            for i in gider_odemelrei:
+                toplam_deger -= i.tutar
+            Gider_Bilgisi.objects.filter(id = gider.id).update(kalan_tutar = toplam_deger)
             return redirect("accounting:giderler_sayfasi")
 #Gider Sayfası
 def giderler_sayfasi(request):
@@ -2139,6 +2162,12 @@ def gider_faturasi_kaydet(request):
                             gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
                         )
+        toplam_tutar = 0
+        gelir_urun_bilgisi_al =gider_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = new_project.id)) 
+        for i in gelir_urun_bilgisi_al:
+            toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
+        Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
+        
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         print(aciklama_id,"gelen id")
 
@@ -2242,6 +2271,12 @@ def gider_faturasi_kaydet_2(request,hash):
                             gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
                         )
+        toplam_tutar = 0
+        gelir_urun_bilgisi_al =gider_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = new_project.id)) 
+        for i in gelir_urun_bilgisi_al:
+            toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
+        Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
+        
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         print(aciklama_id,"gelen id")
 
@@ -2264,6 +2299,10 @@ def gider_odemesi_ekle(request):
             tutar  =islemtutari,tarihi = islemtarihi,gelir_makbuzu = dosya,
             makbuz_no = makbuznumarasi,aciklama = aciklama_bilgisi
         )
+        toplam_tutar = 0
+        a = get_object_or_none(Gider_Bilgisi, id = faturabilgisi)
+        toplam_tutar = a.kalan_tutar-float(islemtutari)
+        b = Gider_Bilgisi.objects.filter(id =faturabilgisi ).update(kalan_tutar =toplam_tutar )
     return redirect("accounting:giderler_sayfasi")
 
 
@@ -2338,7 +2377,16 @@ def gelir_gider_duzelt(request):
                         gider_bilgis=gelir_bilgisi,
                         aciklama=aciklama[i]
                     )
-
+            toplam_tutar = 0
+            gelir_urun_bilgisi_al =gelir_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = degisen)) 
+            for i in gelir_urun_bilgisi_al:
+                toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
+            kalan_bilgisi = toplam_tutar
+            gelir_odemeleri = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu =  get_object_or_none(Gelir_Bilgisi,id = degisen))
+            for i in gelir_odemeleri:
+                kalan_bilgisi -= i.tutar
+            Gelir_Bilgisi.objects.filter(id =degisen ).update(toplam_tutar =toplam_tutar,kalan_tutar =kalan_bilgisi )
+        
             return redirect("accounting:gelirler_sayfasi")
 
         elif bilgi == "1":
@@ -2377,7 +2425,15 @@ def gelir_gider_duzelt(request):
                         gider_bilgis=gider_bilgisi,
                         aciklama=aciklama[i]
                     )
-
+            gelir_urun_bilgisi_al =gider_urun_bilgisi.objects.filter(gider_bilgis =  get_object_or_none(Gider_Bilgisi,id = degisen)) 
+            for i in gelir_urun_bilgisi_al:
+                toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
+            kalan_bilgisi = toplam_tutar
+            gelir_odemeleri = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu =  get_object_or_none(Gider_Bilgisi,id = degisen))
+            for i in gelir_odemeleri:
+                kalan_bilgisi -= i.tutar
+            Gider_Bilgisi.objects.filter(id =degisen ).update(toplam_tutar =toplam_tutar,kalan_tutar =kalan_bilgisi )
+        
             return redirect("accounting:giderler_sayfasi")
 
     return redirect("accounting:giderler_sayfasi")
