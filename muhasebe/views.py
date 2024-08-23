@@ -11,7 +11,7 @@ from site_info.models import *
 from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki
 from .models import *
 from hashids import Hashids
-
+from asgiref.sync import async_to_sync
 # Salt değeri ve minimum hash uzunluğu belirleyin
 HASHIDS_SALT = "habip_elis_12345"
 HASHIDS_MIN_LENGTH = 32
@@ -148,61 +148,103 @@ def get_fatura_gider(request, fatura_id):
         }
         print(fatura_data)
         return JsonResponse(fatura_data)
-import time
+from asgiref.sync import async_to_sync, sync_to_async
 
-def jhson_gonder(a):
-    start_time = time.time()
+from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.db.models import Q
+
+from asgiref.sync import sync_to_async
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.db.models import Q
+
+def jhson_gonder_sync(a):
+    print("json_geldi")
     data = []
     for i in a:
-        s = i.gelir_etiketi_sec.all()
-        
-        try:
-            j = s[0].gider_etiketi_adi
-            
-        except:
-            j = ""
-        try:
-            l = s[1].gider_etiketi_adi
-            
-        except:
-            l = ""
-        try:
-            v = s[2].gider_etiketi_adi
-            
-        except:
-            v = ""
         if i.silinme_bilgisi:
-            b = "İPTAL"
+            continue
+        
+        s = list(i.gelir_etiketi_sec.all())
+        j = s[0].gider_etiketi_adi if len(s) > 0 else ""
+        l = s[1].gider_etiketi_adi if len(s) > 1 else ""
+        v = s[2].gider_etiketi_adi if len(s) > 2 else ""
+
         tutar = toplam_tutar_cikarmai(i)
         odeme = toplam_odenme_tutari(i)
-        if odeme == tutar :
+
+        if odeme == tutar:
             b = "Ödendi"
         elif odeme > 0:
-            b  = "Parçalı Ödendi"
-        elif odeme == 0:
+            b = "Parçalı Ödendi"
+        else:
             b = "Ödenmedi"
-        id = i.id
-        y =   {
-            "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="loadFaturaDetails({id})">İncele</button>',
-        "fatura_no": str(i.fatura_no),
-        "cari": i.cari_bilgisi.cari_adi if i.cari_bilgisi.cari_adi else "",
-        "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
-        "etiket1": j ,
-        "etiket2": l,       
-        "etiket3": v ,
-        "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
-        "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
-        "fatura_bedeli": "$"+str(toplam_tutar_cikarmai(i)),
-        "kalan_tutar": "$"+str(kalan_tutuari(i)),
-        "durum": b
+
+        y = {
+            "incele": f'<button class="faturabilgisi bg-sucsses" id="{i.id}" onclick="loadFaturaDetails({i.id})">İncele</button>',
+            "fatura_no": str(i.fatura_no),
+            "cari": i.cari_bilgisi.cari_adi if i.cari_bilgisi.cari_adi else "",
+            "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
+            "etiket1": j,
+            "etiket2": l,
+            "etiket3": v,
+            "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+            "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
+            "fatura_bedeli": "$" + str(tutar),
+            "kalan_tutar": "$" + str(kalan_tutuari(i)),
+            "durum": b
         }
         data.append(y)
-    end_time = time.time()
-    duration = end_time - start_time
 
-    # Konsola yazdırma
-    print(f"View çalıştırma süresi: {duration:.2f} saniye")
     return data
+
+async def giderler_sayfasi_2(request, hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    
+    if super_admin_kontrolu(request):
+        users = await sync_to_async(lambda: get_object_or_404(CustomUser, id=d))()
+        content["hashler"] = hash
+        content["hash_bilgi"] = users
+        profile = await sync_to_async(lambda: Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=users).order_by("-fatura_tarihi"))()
+        content["kasa"] = await sync_to_async(lambda: Kasa.objects.filter(silinme_bilgisi=False, kasa_kart_ait_bilgisi=users))()
+        kullanicilar = await sync_to_async(lambda: CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id"))()
+        content["kullanicilar"] = kullanicilar
+    else:
+        profile = await sync_to_async(lambda: Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-fatura_tarihi"))()
+        content["kasa"] = await sync_to_async(lambda: Kasa.objects.filter(silinme_bilgisi=False, kasa_kart_ait_bilgisi=request.user))()
+
+    if request.GET:
+        search = request.GET.get("search")
+        tarih = request.GET.get("tarih")
+        if search:
+            if super_admin_kontrolu(request):
+                profile = await sync_to_async(lambda: Gider_Bilgisi.objects.filter(
+                    Q(fatura_no__icontains=search) |
+                    Q(cari_bilgisi__cari_adi__icontains=search) |
+                    Q(gelir_kime_ait_oldugu__first_name__icontains=search) |
+                    Q(aciklama__icontains=search) |
+                    Q(gelir_kategorisi__gelir_kategori_adi__icontains=search)
+                ))()
+                content["kullanicilar"] = await sync_to_async(lambda: CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id"))()
+            else:
+                profile = await sync_to_async(lambda: Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).filter(
+                    Q(fatura_no__icontains=search) |
+                    Q(cari_bilgisi__cari_adi__icontains=search) |
+                    Q(aciklama__icontains=search) |
+                    Q(gelir_kategorisi__gider_kategori_adi__icontains=search)
+                ))()
+                content["kasa"] = await sync_to_async(lambda: Kasa.objects.filter(silinme_bilgisi=False, kasa_kart_ait_bilgisi=request.user))()
+        if tarih:
+            profile = await sync_to_async(lambda: profile.filter(Q(fatura_tarihi__lte=tarih) & Q(vade_tarihi__gte=tarih)))()
+
+    content["santiyeler_i"] = jhson_gonder_sync(profile)
+
+    return render(request, "muhasebe_page/deneme_gider.html", content)
 
 def toplam_tutar_cikarma(id):
     a = gelir_urun_bilgisi.objects.filter(gider_bilgis = id)
@@ -233,53 +275,56 @@ def jhson_gonder_2(a):
     from django.http import JsonResponse
     data = []
     for i in a:
-        s = i.gelir_etiketi_sec.all()
-        
-        try:
-            j = s[0].gelir_etiketi_adi
-            
-        except:
-            j = ""
-        try:
-            l = s[1].gelir_etiketi_adi
-            
-        except:
-            l = ""
-        try:
-            v = s[2].gelir_etiketi_adi
-            
-        except:
-            v = ""
         if i.silinme_bilgisi:
-            b = "İPTAL"
-        tutar = toplam_tutar_cikarma(i)
-        odeme = toplam_odenme_tutar(i)
-        id = i.id
-        if odeme == tutar :
-            b = "Ödendi"
-        elif odeme > 0:
-            b  = "Parçalı Ödendi"
-        elif odeme == 0:
-            b = "Ödenmedi"
-        if i.cari_bilgisi:
-            cari_bilgi = i.cari_bilgisi.cari_adi
+            pass
         else:
-            cari_bilgi = ""
-        y =   {
-        "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="loadFaturaDetails({id})">İncele</button>',
-        "fatura_no": str(i.fatura_no),
-        "cari": cari_bilgi,
-        "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
-        "etiket1": j ,
-        "etiket2": l,       
-        "etiket3": v ,
-        "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
-        "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
-        "fatura_bedeli": "$"+str(toplam_tutar_cikarma(i)),
-        "kalan_tutar": "$"+str(kalan_tutuar(i)),
-        "durum": b
-        }
-        data.append(y)
+            s = i.gelir_etiketi_sec.all()
+            
+            try:
+                j = s[0].gelir_etiketi_adi
+                
+            except:
+                j = ""
+            try:
+                l = s[1].gelir_etiketi_adi
+                
+            except:
+                l = ""
+            try:
+                v = s[2].gelir_etiketi_adi
+                
+            except:
+                v = ""
+            if i.silinme_bilgisi:
+                b = "İPTAL"
+            tutar = toplam_tutar_cikarma(i)
+            odeme = toplam_odenme_tutar(i)
+            id = i.id
+            if odeme == tutar :
+                b = "Ödendi"
+            elif odeme > 0:
+                b  = "Parçalı Ödendi"
+            elif odeme == 0:
+                b = "Ödenmedi"
+            if i.cari_bilgisi:
+                cari_bilgi = i.cari_bilgisi.cari_adi
+            else:
+                cari_bilgi = ""
+            y =   {
+            "incele":f'<button class="faturabilgisi bg-sucsses" id="{id}" onclick="loadFaturaDetails({id})">İncele</button>',
+            "fatura_no": str(i.fatura_no),
+            "cari": cari_bilgi,
+            "aciklama": f'<span class="monospace-bold" title="{str(i.aciklama)}">{str(i.aciklama)[:15]}</span>',
+            "etiket1": j ,
+            "etiket2": l,       
+            "etiket3": v ,
+            "duzenleme_tarihi": str(i.fatura_tarihi.strftime("%d.%m.%Y")),
+            "vade_tarihi": str(i.vade_tarihi.strftime("%d.%m.%Y")),
+            "fatura_bedeli": "$"+str(toplam_tutar_cikarma(i)),
+            "kalan_tutar": "$"+str(kalan_tutuar(i)),
+            "durum": b
+            }
+            data.append(y)
     
     return data
 
@@ -1959,39 +2004,6 @@ def giderler_sayfasi_borc_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     return render(request,"muhasebe_page/deneme_gider.html",content)
-#
-def giderler_sayfasi_2(request,hash):
-    content = sozluk_yapisi()
-    if super_admin_kontrolu(request):
-        d = decode_id(hash)
-        content["hashler"] = hash
-        users = get_object_or_404(CustomUser,id = d)
-        content["hash_bilgi"] = users
-        profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-fatura_tarihi")
-        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = users)
-        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-        content["kullanicilar"] =kullanicilar
-    else:
-        profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
-        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-    if request.GET:
-        search = request.GET.get("search")
-        tarih = request.GET.get("tarih")
-        if search:
-            if super_admin_kontrolu(request):
-                profile =Gider_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-                content["kullanicilar"] =kullanicilar
-            else:
-                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)|  Q(aciklama__icontains = search) | Q(gelir_kategorisi__gider_kategori_adi__icontains = search))
-                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        if tarih :
-            profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
-
-    content["santiyeler_i"] = jhson_gonder(profile)
-    content["santiyeler"] = profile
-    content["top"]  = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
 
 def gider_ekle(request):
     content = sozluk_yapisi()
@@ -2269,9 +2281,12 @@ def gider_odemesi_ekle(request):
 
 def fatura_sil(request):
     if request.POST:
+        print("Fatura sil Çalıştı")
         gelir_gider = request.POST.get("gelir_gider")
         id_bilgisi  = request.POST.get("idbilgisicek")
+        print(gelir_gider,"geldi",id_bilgisi)
         if gelir_gider == "0":
+            print("bura_çaılştı")
             Gelir_Bilgisi.objects.filter(id = id_bilgisi).update(silinme_bilgisi = True)
             Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu =get_object_or_404(Gelir_Bilgisi,id =id_bilgisi )).update(silinme_bilgisi = True)
             return redirect("accounting:gelirler_sayfasi")
