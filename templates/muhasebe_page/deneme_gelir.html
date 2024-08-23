@@ -4,6 +4,7 @@
 {% load custom_tags %}
 {% load static %}
 {% block slider %}
+
 <!-- ============================================================== -->
     <div class="main-content">
         <div class="page-content">
@@ -13,11 +14,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Gelirler</h4>
+                            <h4 class="mb-sm-0">Giderler</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Gelirler</li>
+                                    <li class="breadcrumb-item active">Giderler</li>
                                 </ol>
                             </div>
                         </div>
@@ -28,43 +29,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card" id="invoiceList">
-                            <div class="card-header border-0">
-                                <form method="get">
-                                    <div class="row g-3 gelirler-filtre">
-                                        <div class="col-sm-4">
-                                            <div class="search-box">
-                                                <input type="text" name="search" value="{% if request.GET.search %}{{request.GET.search}}{% endif %}" class="form-control search bg-light border-light" placeholder="Cari adı, kategori veya etiket yazınız...">
-                                                <i class="ri-search-line search-icon"></i>
-                                            </div>
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-sm-4">
-                                            <input type="date" name="tarih" value="{% if request.GET.tarih %}{{request.GET.tarih}}{% endif %}" class="form-control bg-light border-light" id="datepicker-range" placeholder="Tarih seçiniz">
-                                        </div>
-                                       
-
-                   
-
-                                        <!--end col-->
-                                        <div class="col-sm-1 fatura-ekle">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="d-flex gap-2 flex-wrap">
-                                                        <button class="btn btn-primary" id="remove-actions" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
-                                                        {% if hash_bilgi %}
-                                                        <a href="/{{dil}}{% url 'accounting:gider_ekle_2' hashler %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Fatura Oluştur' %}</a>
-                                                        {% else %}
-                                                        <a href="/{{dil}}{% url 'accounting:gider_ekle' %}" class="btn btn-danger"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Fatura Oluştur' %}</a>
-                                                        {% endif %}
-                                                        </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end row-->
-                                </form>
-
-                            </div>
+                            
                             <div class="card-body bg-light-subtle border border-dashed border-start-0 border-end-0">
                             </div>
                             <div class="card-body">
@@ -73,10 +38,14 @@
                                         <table id="example" class="display nowrap" style="width:100%">
                                             <thead>
                                                 <tr>
+                                                    <th>İncele</th>
                                                     <th>Fatura No</th>
                                                     <th>Cari</th>
                                                     <th>Açıklama</th>
-                                                    <th>Düzenleme Tarihi</th>
+                                                    <th>Etiket 1</th>
+                                                    <th>Etiket 2</th>
+                                                    <th>Etiket 3</th>
+                                                    <th>Fatura Tarihi</th>
                                                     <th>Vade Tarihi</th>
                                                     <th>Fatura Bedeli</th>
                                                     <th>Kalan Tutar</th>
@@ -85,10 +54,14 @@
                                             </thead>
                                             <tfoot>
                                                 <tr>
+                                                    <th>İncele</th>
                                                     <th>Fatura No</th>
                                                     <th>Cari</th>
                                                     <th>Açıklama</th>
-                                                    <th>Düzenleme Tarihi</th>
+                                                    <th>Etiket 1</th>
+                                                    <th>Etiket 2</th>
+                                                    <th>Etiket 3</th>
+                                                    <th>Fatura Tarihi</th>
                                                     <th>Vade Tarihi</th>
                                                     <th>Fatura Bedeli</th>
                                                     <th>Kalan Tutar</th>
@@ -173,64 +146,13 @@
                 <!--end row-->
             </div>
         </div>
-        {% for i in  santiyeler %}
-         <div class="modal" id="faturasil{{i.id}}">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title">Faturayı İptal Et</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-        <form action="{% url 'accounting:fatura_sil' %}" method="post">
-        {% csrf_token %}
-      <!-- Modal body -->
-      <div class="modal-body">
-        Faturayı iptal etmek istediğinizden emin misiniz ?
-        <input type="text" name="gelir_gider" value="1" hidden>
-        <input type="text" name="idbilgisicek" value="{{i.id}}" hidden>
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
-        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Sil</button>
-      </div>
-    </form>
-    </div>
-  </div>
-</div>
-        {% makbuzlari_getiri  i.id as gelen_makbuzlar %}
-        {% for k in gelen_makbuzlar %}
-        <div class="modal" id="makbuzsil{{k.id}}">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Ödeme Sil</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    Ödemeyi Silmek İstediğinizden Emin Misiniz ?
-                    <input type="text" name="makbuz" value="0" hidden>
-                    <input type="text" name="makbuzidsi" value="{{k.id}}" hidden>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
-                    <button type="button"  id="{{k.id}}-{{k.gelir_kime_ait_oldugu.id}}" data-bs-dismiss="modal" class="btn btn-danger makbuzsill" >Sil</button>
-                </div>
-
-                </div>
-            </div>
-            </div>
-            {% endfor %}
-            {% endfor %}
+        <div class="invoice-detail-modal" id="invoice-detail-modal">
+           
+        </div>
+        <div id="tahsilat-makbuzu-modal" class="tahsilat-makbuzu-modal">
+          
+        </div>
+      
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
@@ -247,312 +169,516 @@
         </footer>
     </div>
     <!-- end main content-->
+<div id="fatura_silme_divi">
+
+</div>
 {% endblock slider %}
 {% block footer %}
-{% for i in  santiyeler %}
-<!-- END layout-wrapper -->
-<div class="invoice-detail-modal" id="invoice-detail-modal{{i.id}}">
-    <div class="wrapper">
-        <div class="modal-head">
-            <div class="invoice-title">
-                <a>{% trans 'Fatura Adı' %}</a>
-            </div>
-            <div class="invoice-icons">
-                <div class="icon-item print-icon"><a href="{% url 'accounting:fatura_goster' i.id %}" title="{% trans 'Yazdır' %}" class="mdi mdi-printer-outline"></a></div>
-                <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil{{i.id}}" title="{% trans 'İptal et' %}" class="mdi mdi-alert-circle-outline"></span></div>
-                <a href="{% url 'accounting:gelir_duzenle' i.id %}" class="icon-item edit-icon"><span title="{% trans 'Düzenle' %}" class="mdi mdi-pencil-circle-outline"></span></a>
-                <div class="icon-item close-icon"><span title="{% trans 'Kapat' %}" class="mdi mdi-close-circle-outline"></span></div>
-            </div>
-        </div>
-        <div class="modal-body">
-            <div class="top">
-                <div class="title"><h4>{% trans 'Satış Faturası' %}</h4></div>
-                <div class="category"><span>{{i.gelir_kategorisi.gelir_kategori_adi}}</span></div>
-            </div>
-            <div class="fatura-info">
-                <div class="info-item">
-                    <div class="title"><h5>{% trans 'Fatura no' %}</h5></div>
-                    <div class="value"><span>{{i.fatura_no}}</span></div>
-                </div>
-                <div class="info-item">
-                    <div class="title"><h5>{% trans 'DÖVİZ KURU' %}</h5></div>
-                    <div class="value"><span>1400<span>IQN</span></span></div>
-                </div>
-                <div class="info-item">
-                    <div class="title"><h5>{% trans 'Düzenleme Tarihi' %}</h5></div>
-                    <div class="value"><span>{{i.fatura_tarihi}}</span></div>
-                </div>
-                <div class="info-item">
-                    <div class="title"><h5>{% trans 'VADE TARİHİ' %}</h5></div>
-                    <div class="value"><span>{{i.vade_tarihi}}</span></div>
-                </div>
-            </div>
-            <div class="fature-desc">
-                <div class="title"><h5>{% trans 'Açıklama' %}</h5></div>
-                <div class="value"><span>
-                {% if i.aciklama %}
-                    {{i.aciklama}}
-                {% else %}
-                {% endif %}
-                </span></div>
-            </div>
-            <div class="title">
-                <h5>{% trans 'Fatura Kalemleri' %}</h5>
-            </div>
-            <div class="satis-table">
-                <div class="table-titles">
-                    <h5>{% trans 'Ürün' %}</h5>
-                    <h5>{% trans 'Adet' %}</h5>
-                    <h5>{% trans 'Fiyat' %}</h5>
-                    <h5>{% trans 'Toplam' %}</h5>
-                </div>
-                {% kalemleri_getir_gelir_faturasi_icin i as bilgi_getir %}
-                {% for j in bilgi_getir %}
-                    <div class="table-item">
-                        <div class="title"><span>{{j.urun_bilgisi.urun_adi}}</span></div>
-                        <div class="adet">{{j.urun_adeti}}</div>
-                        <div class="fiyat"><span>{{j.urun_fiyati}}<span>$</span></span></div>
-                        <div class="toplam"><span>{% carpma_islemi j.urun_adeti j.urun_fiyati %}<span>$</span></span></div>
-                    </div>
-                {% endfor %}
-                {% kalemleri_getir_gelir_faturasi_icin_toplam_flan i as topla %}
-                <div class="table-total">
-                    <div class="fiyat"><span>{{topla.toplam}}<span>$</span></span></div>
-                    <div class="toplam"><span>{{topla.genel}}<span>$</span></span></div>
-                </div>
-            </div>
-            <div class="eklenen-kasa">
-                <div class="eklenen-item">
-                    <div class="tarih">
 
-                    </div>
-                    <div title="Makbuzu Görüntüle" class="makbuz">
-                        <span id="{{i.id}}" class="mdi mdi-text-box-search-outline"></span>
-                        <span>{% trans 'Makbuzlar' %}</span>
-                    </div>
-                    <div class="fiyat"><span>{{topla.genel}} <span>$</span></div>
-                </div>
-            </div>
-            <div class="kalan">
-                <div class="wrapper">
-                    <div title="ekle" class="ekle">
-                        <span id="{{i.id}}" class="mdi mdi-plus-circle"></span>
-                        <span>{% trans 'KALAN' %}</span>
-                    </div>
-                    <div class="price">
-                    <div id="g{{i.id}}">
-                        <span >{% kalan_tutuar i %} <span>$</span></span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="tahsilatEkle" id="tahsilatEkle{{i.id}}">
-                <form method="post" action="{% url 'accounting:gelir_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="text" hidden value="{{i.id}}" name="faturabilgisi">
-                    <div class="input-item">
-                        <label>{% trans 'TÜR' %}</label>
-                        <select name="odemeturu">
-                            <option value="0">{% trans 'Nakit / Banka' %}</option>
-                            <option value="1" disabled>{% trans 'ÇEK VEYA SENET' %}</option>
-                            <option value="2">{% trans 'ÇEK' %}</option>
-                            <option value="3">{% trans 'SENET' %}</option>
-                        </select>
-                    </div>
-                    <div class="input-item">
-                        <label>{% trans 'HESAP' %}</label>
-                        <select name="kasabilgisi">
-                            {% for m in kasa %}
-                                <option value="{{m.id}}">{{m.kasa_adi}}</option>
-                            {% endfor %}
 
-                        </select>
-                    </div>
-                    <div class="input-item">
-                        <label>{% trans 'TARİH' %}</label>
-                        <input required name="islemtarihi" type="date" />
-                    </div>
-                    <div class="input-item">
-                        <label>{% trans 'TUTAR' %}</label>
-                        <input type="number" required step="0.01" value="{% kalan_tutuar i %}" max="{% kalan_tutuar i %}" min="0"  name="islemtutari" placeholder="105000.41" />
-                        <span class="mdi mdi-currency-usd"></span>
-                    </div>
-                    <div class="input-item">
-                        <label>{% trans 'MAKBUZ NO' %}</label>
-                        <input name="makbuznumarasi" type="text" />
-                    </div>
-                    <div class="input-item">
-                        <label>{% trans 'AÇIKLAMA' %}</label>
-                        <input name="aciklama_bilgisi" type="text" />
-                    </div>
-                    <div class="input-item">
-                        <label>{% trans 'DOSYA' %}</label>
-                        <input name="dosya" type="file" />
-                    </div>
-                    <div class="buttons">
-                        <span id ="{{i.id}}">{% trans 'Vazgeç' %}</span>
-                        <input type="submit" value="{% trans 'Tahsilat İşle' %}" />
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-{% endfor %}
-{% for i in  santiyeler %}
-<div id="tahsilat-makbuzu-modal{{i.id}}" class="tahsilat-makbuzu-modal">
-    <div class="wrapper">
-        <div class="modal-head">
-            <div class="invoice-title">
-                <h2>{% trans 'Tahsilat Makbuzu' %}</h2>
-            </div>
-            <div class="invoice-icons">
-                <div class="icon-item print-icon"><span title="{% trans 'Yazdır' %}" class="mdi mdi-printer-outline"></span></div>
-                <div class="icon-item cancel-icon"><span title="{% trans 'İptal et' %}" class="mdi mdi-alert-circle-outline"></span></div>
-                <div class="icon-item edit-icon"><span title="{% trans 'Düzenle' %}" class="mdi mdi-pencil-circle-outline"></span></div>
-                <div class="icon-item close-icon"><span id="{{i.id}}" title="{% trans 'Kapat' %}" class="mdi mdi-close-circle-outline"></span></div>
-            </div>
-        </div>
-        <style>
-
-        div.scroll {
-            margin: 4px, 4px;
-            height: 400px;
-            overflow-x: hidden;
-            overflow-y: auto;
-            text-align: justify;
-        }
-    </style>
-        {% makbuzlari_getir i.id as gelen_makbuzlar %}
-        {% kalemleri_getir_gelir_faturasi_icin_toplam_flan i as topla %}
-        <div id="guncelle{{i.id}}" class="modal-body scroll ">
-            <div class="hesap">
-                <h2>{% trans 'CARİ HESABI' %}</h2>
-                <span><a href="">{{i.cari_bilgisi.cari_adi}}</a></span>
-            </div>
-            {% for k in gelen_makbuzlar %}
-                <!-- The Modal -->
-
-                   <style>.odeme-tarihi table, .odeme-tarihi th,.odeme-tarihi td {
-                    border: 1px solid black;
-                  }</style>
-            <div class="odeme-tarihi">
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>{% trans 'ÖDEME TARİHİ' %}</th>
-                        <th>{% trans 'KASA HESABI' %}</th>
-                        <th>{% trans 'İŞLEM TARİHİ' %}</th>
-                        <th>{% trans 'KULLANICI' %}</th>
-                        <th>{% trans 'TUTAR' %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{k.tarihi|date:'d-m-Y'}}</td>
-                        <td>{{k.kasa_bilgisi.kasa_adi}}</td>
-                        <td>{{k.kayit_tarihi|date:'d-m-Y'}}</td>
-                        <td>{% if k.islemi_yapan.last_name %}
-                            {{k.islemi_yapan.last_name}}
-                        {% else %}
-                        {% endif %}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        {% if k.gelir_makbuzu %}
-                             <td colspan="2"><a target="_blank" href="{{k.gelir_makbuzu.url}}">{% trans 'Resmi Göster' %}</a></td>
-                        {% else %}
-                        <td colspan="2">{% trans 'Resim Yok' %}</td>
-                        {% endif %}
-
-                        <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil{{k.id}}">{% trans 'SİL' %}</button></td>
-                        <td>{{k.tutar}} $</td>
-                    </tr>
-                </tbody>
-            </table>
-                </div>
-            {% endfor %}
-            <div class="fatura-table">
-                <div class="table-head">
-                    <div class="item"><h2>{% trans 'İŞLENEN FATURA' %}</h2></div>
-                    <div class="item"><h2>{% trans 'FATURA TUTARI' %}</h2></div>
-                    <div class="item"><h2>{% trans 'MAHSUP TUTARI' %}</h2></div>
-                </div>
-                <div class="table-body">
-                    <div class="fatura-item">
-                        <div class="item"><span>{{i.fatura_tarihi|date:'d-m-Y'}}</span></div>
-                        <div class="item"><span>{{topla.genel}} $</span></div>
-                        <div class="item"><span>{{topla.genel}} $</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="kalan">
-                <h2>KALAN</h2>
-                <span>{% kalan_tutuar i %} $</span>
-            </div>
-        </div>
-    </div>
-</div>
-{% endfor %}
-<div class="delete-fatura-modal">
-    <div class="wrapper">
-        <div class="title"><h4>{% trans 'Satış Faturası Silme İşlemini Onaylayınız' %}</h4></div>
-        <div class="uyari"><span class="mdi mdi-alert-circle"></span><span>{% trans 'Bu işlem geri alınamayacaktır.' %}</span></div>
-        <div class="buttons">
-            <span>{% trans 'Vazgeç' %}</span>
-            <input type="button" value="{% trans 'Onayla ve Sil' %}" />
-        </div>
-    </div>
-</div>
-<div class="delete-makbuz-modal">
-    <div class="wrapper">
-        <div class="title"><h4>{% trans 'Tahsilat Makbuzu Silme İşlemini Onaylayınız' %}</h4></div>
-        <div class="uyari"><span class="mdi mdi-alert-circle"></span><span>{% trans 'Bu işlem geri alınamayacaktır.' %}</span></div>
-        <div class="buttons">
-            <span>{% trans 'Vazgeç' %}</span>
-            <input type="button" value="{% trans 'Onayla ve Sil' %}" />
-        </div>
-    </div>
-</div>
 <!--start back-to-top-->
 <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
     <i class="ri-arrow-up-line"></i>
 </button>
 <!--end back-to-top-->
-<!--start back-to-top-->
-<!--end back-to-top-->
 
-<!-- JAVASCRIPT -->
+<!-- jQuery ve jQuery UI -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-<script src="{% static '' %}assets/libs/simplebar/simplebar.min.js"></script>
-<script src="{% static '' %}assets/libs/node-waves/waves.min.js"></script>
-<script src="{% static '' %}assets/libs/feather-icons/feather.min.js"></script>
-<script src="{% static '' %}assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
-<script src="{% static '' %}assets/js/plugins.js"></script>
-<script src="{% static '' %}assets/js/custom.js"></script>
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 
-<!-- list.js min js -->
-<script src="{% static '' %}assets/libs/list.js/list.min.js"></script>
-<!--list pagination js-->
-<script src="{% static '' %}assets/libs/list.pagination.js/list.pagination.min.js"></script>
-<!-- Sweet Alerts js -->
-<script src="{% static '' %}assets/libs/sweetalert2/sweetalert2.min.js"></script>
-<!-- App js -->
-<script src="{% static '' %}assets/js/app.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!-- DataTables Buttons CSS -->
+<link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
 
-         
-<link href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css" rel="stylesheet" type="text/css" />
-<link href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.css" rel="stylesheet" type="text/css" />
+<!-- DataTables SearchBuilder ve DateTime CSS -->
+<link href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.min.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css" rel="stylesheet" type="text/css" />
 
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.js"></script>
-<script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/searchBuilder.dataTables.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Buttons JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+
+<!-- Export işlemleri için JSZip ve pdfmake -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<!-- DataTables SearchBuilder ve DateTime JS -->
+<script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.min.js"></script>
 <script src="https://cdn.datatables.net/datetime/1.5.3/js/dataTables.dateTime.min.js"></script>
+
+<!-- Basit ve küçük kaydırma çubuğu -->
+<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+
+<!-- Dalgalanma efekti -->
+<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+
+<!-- Feather simgeleri -->
+<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+
+<!-- Lord ikon -->
+<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+
+<!-- Genel eklentiler -->
+<script src="{% static 'assets/js/plugins.js' %}"></script>
+
+<!-- Özel script dosyanız -->
+<script src="{% static 'assets/js/custom.js' %}"></script>
+
+<!-- Liste.js ve sayfalama -->
+<script src="{% static 'assets/libs/list.js/list.min.js' %}"></script>
+<script src="{% static 'assets/libs/list.pagination.js/list.pagination.min.js' %}"></script>
+
+<!-- SweetAlert eklentisi -->
+<script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
+
+<!-- Ana uygulama scripti -->
+<script src="{% static 'assets/js/app.js' %}"></script>
+
 <script>
+ 
+</script>
+<style>/* SearchBuilder'ın daha düzgün ve estetik görünümü */
+.dataTables_wrapper .searchBuilderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+.dataTables_wrapper .searchBuilderContainer .dt-buttons {
+    margin-left: 10px;
+}
+
+.dataTables_wrapper .searchBuilderContainer .searchBuilder {
+    flex-grow: 1;
+}
+
+.dataTables_wrapper .searchBuilderContainer .dt-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+/* Temizle butonunun SearchBuilder'ın yanına yerleşimi */
+.dataTables_wrapper .searchBuilderContainer .searchBuilder-clearAll {
+    margin-left: 10px;
+}
+
+/* Modal düzenlemeleri */
+.modal-content {
+    border-radius: 5px;
+}
+
+.modal-header {
+    background-color: #343a40;
+    color: white;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* DataTables tablolarının genel düzenlemeleri */
+table.dataTable {
+    width: 100% !important;
+    margin: 0 auto;
+    clear: both;
+    border-collapse: separate !important;
+    border-spacing: 0 10px !important;
+}
+
+table.dataTable thead th {
+    background-color: #003643;
+    color: white;
+    text-align: center;
+}
+
+table.dataTable tbody td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+</style>
+
+<script>
+$(document).ready(function () {
+    var table = $('#example').DataTable({
+        data: [
+        {% for i in santiyeler_i %}
+        
+        {'incele': '<button class="faturabilgisi bg-sucsses" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">İncele</button>', 'fatura_no': '{{i.fatura_no}}', 'cari': '{{i.cari_bilgisi.cari_adi}}', 'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gider_etiketi_adi|escapejs }}{% endif %}', 'duzenleme_tarihi': '{{i.fatura_tarihi | date:'d.m.Y' }}', 'vade_tarihi': '{{i.vade_tarihi | date:'d.m.Y' }}', 'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}Ödenmedi{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
+        {% if not forloop.last %},{% endif %}
+        
+        
+        {% endfor %}],
+        columns: [
+            { data: 'incele' },
+            { data: 'fatura_no' },
+            { data: 'cari' },
+            { data: 'aciklama' },
+            { data: 'etiket1' },
+            { data: 'etiket2' },
+            { data: 'etiket3' },
+            { data: 'duzenleme_tarihi' },
+            { data: 'vade_tarihi' },
+            { data: 'fatura_bedeli' },
+            { data: 'kalan_tutar' },
+            { data: 'durum' }
+        ],
+        dom: '<"row align-items-center"' +
+                '<"col-sm-3 d-flex gap-2"B>' +  // Butonlar
+                '<"col-sm-4"Q>' +              // Custom Search
+                '<"col-sm-2"l>' +              // Satır Gösterme
+                '<"col-sm-3"f>' +              // Arama Kutusu
+             '>' +
+             'rt' +
+             '<"row"<"col-sm-5"i><"col-sm-7"p>>',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print',
+            {
+                text: 'Fatura Ekle',
+                className: 'btn btn-danger',
+                action: function () {
+                    window.location.href = "{% url 'accounting:gider_ekle' %}";
+                }
+            }
+        ],
+        searchBuilder: {
+    conditions: {
+        string: {
+            contains: 'İçerir',
+            empty: 'Boş',
+            equals: 'Eşittir',
+            not: 'Eşit Değildir',
+            notEmpty: 'Boş Değil',
+            startsWith: 'Başlar',
+            endsWith: 'Biter'
+        },
+        number: {
+            between: 'Arasında',
+            empty: 'Boş',
+            equals: 'Eşittir',
+            gt: 'Büyüktür',
+            gte: 'Büyük veya Eşittir',
+            lt: 'Küçüktür',
+            lte: 'Küçük veya Eşittir',
+            not: 'Eşit Değildir',
+            notBetween: 'Arasında Değildir',
+            notEmpty: 'Boş Değil'
+        },
+        date: {
+            after: 'Sonra',
+            before: 'Önce',
+            between: 'Arasında',
+            equals: 'Eşittir',
+            not: 'Eşit Değildir',
+            notBetween: 'Arasında Değildir',
+            notEmpty: 'Boş Değil'
+        }
+            },
+            language: {
+                title: 'Gelişmiş Filtreleme',
+                add: 'Filtre Ekle',
+                condition: 'Koşul',
+                data: 'Veri',
+                deleteTitle: 'Filtreyi Sil',
+                logicAnd: 've',
+                logicOr: 'veya',
+                value: 'Değer',
+                button: {
+                    add: 'Koşul Ekle',
+                    clearAll: 'Tümünü Temizle',
+                    delete: 'Sil'
+                }
+            },
+            width: '300px',
+            background: '#f8f9fa'
+        },
+        language: {
+            search: "Tabloda Ara:",
+            paginate: {
+                first: "İlk",
+                last: "Son",
+                next: "Sonraki",
+                previous: "Önceki"
+            },
+            lengthMenu: "Her sayfada _MENU_ kayıt göster",
+            info: "Toplam _TOTAL_ kayıttan _START_ ile _END_ arasındaki kayıtlar gösteriliyor",
+            infoEmpty: "Gösterilecek kayıt yok",
+            zeroRecords: "Eşleşen kayıt bulunamadı",
+            infoFiltered: "(toplam _MAX_ kayıt içinden filtrelendi)",
+            loadingRecords: "Yükleniyor...",
+            processing: "İşleniyor..."
+        }
+    });
+});
+
+
+</script>
+
+
+
+<script>
+    function loadFaturaDetails(faturaId) {
+        fetch(`/accounting/get_fatura_gelir/${faturaId}/`)
+            .then(response => response.json())
+            .then(data => {
+               // Modal içeriğini dinamik olarak güncelleyin
+               const modal = document.getElementById(`invoice-detail-modal`);
+               const modal_fatura = document.getElementById("fatura_silme_divi"); 
+               const makbuzlar_goster = document.getElementById("tahsilat-makbuzu-modal"); 
+            modal.innerHTML = `
+                 <div class="wrapper">
+                <div class="modal-head">
+                    <div class="invoice-title">
+                        <a>Fatura Adı : ${data.cari}</a>
+                    </div>
+                    <div class="invoice-icons">
+                        <div class="icon-item print-icon"><a href="/accounting/viewcome/${data.id}"><span title="Yazdır" class="mdi mdi-printer-outline"></a></span></div>
+                        <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
+                        <div class="icon-item edit-icon"><a href="/accounting/settheycome/${data.id}"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></a></span></div>
+                        <div class="icon-item close-icon"><span type="button" onclick="kapat()" data-close title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="top">
+                        <div class="title"><h4>Satış Faturası</h4></div>
+                        <div class="category"><span>${data.kategori}</span></div>
+                    </div>
+                    <div class="fatura-info">
+                        <div class="info-item">
+                            <div class="title"><h5>Fatura no</h5></div>
+                            <div class="value"><span>${data.fatura_no}</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="title"><h5>DÖVİZ KURU</h5></div>
+                            <div class="value">${data.doviz}</span></span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="title"><h5>Düzenleme Tarihi</h5></div>
+                            <div class="value"><span>${data.fatura_tarihi}</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="title"><h5>VADE TARİHİ</h5></div>
+                            <div class="value"><span>${data.vade_tarihi}</span></div>
+                        </div>
+                    </div>
+                    <div class="fature-desc">
+                        <div class="title"><h5>Açıklama</h5></div>
+                        <div class="value"><span>${data.aciklama}</span></div>
+                    </div>
+                    <div class="title">
+                        <h5>Fatura Kalemleri</h5>
+                    </div>
+                    <div class="satis-table">
+                        <div class="table-titles">
+                            <h5>Ürün</h5>
+                            <h5>Adet</h5>
+                            <h5>Fiyat</h5>
+                            <h5>Toplam</h5>
+                        </div>
+                        ${data.kalemler.map(kalem => `
+                            <div class="table-item">
+                                <div class="title"><span>${kalem.urun_adi}</span></div>
+                                <div class="adet">${kalem.urun_adeti}</div>
+                                <div class="fiyat"><span>${kalem.urun_fiyati}<span>$</span></span></div>
+                                <div class="toplam"><span>${kalem.toplam}<span>$</span></span></div>
+                            </div>
+                        `).join('')}
+                        <div class="table-total">
+                            <div class="fiyat"><span>${data.toplam_fiyat}<span>$</span></span></div>
+                            <div class="toplam"><span>${data.genel_toplam}<span>$</span></span></div>
+                        </div>
+                    </div>
+                    <div class="eklenen-kasa">
+                        <div class="eklenen-item">
+                            <div class="tarih">
+                                <span></span>
+                            </div>
+                            <div title="Makbuzu Görüntüle" class="makbuz">
+                                <span type="button" onclick="makbuzlari_goruntule()" id="${data.id}" class="mdi mdi-text-box-search-outline"></span>
+                                <span>Kasa Hesabı</span>
+                            </div>
+                            <div class="fiyat"><span>${data.genel_toplam}<span>$</span></div>
+                        </div>
+                    </div>
+                    <div class="kalan">
+                        <div class="wrapper">
+                            <div title="ekle" class="ekle">
+                                <span type="button" onclick="tahsilat_ekleme()"  class="mdi mdi-plus-circle"></span>
+                                <span>KALAN</span>
+                            </div>
+                            <div class="price">
+                                <span>${data.kalan_tutar}<span>$</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tahsilatEkle" id="tahsilatEkle">
+                        <form method="post" action="{% url 'accounting:gelir_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                            <input type="text" hidden value="${data.id}" name="faturabilgisi">
+                            <div class="input-item">
+                                <label>TÜR</label>
+                                <select name="odemeturu">
+                                    <option value="nakitBanka">Nakit / Banka</option>
+                                    <option disabled>ÇEK VEYA SENET</option>
+                                    <option value="cek">ÇEK</option>
+                                    <option value="senet">SENET</option>
+                                </select>
+                            </div>
+                            <div class="input-item">
+                                <label>HESAP</label>
+                                <select name="kasabilgisi">
+                                     ${data.kasalar.map(kasa => `
+                            <option value="${kasa.id}">${kasa.kasa_adi}</option>
+                        `).join('')}
+                                  
+                                </select>
+                            </div>
+                            <div class="input-item">
+                                <label>TARİH</label>
+                                <input name="islemtarihi" type="date" />
+                            </div>
+                            <div class="input-item">
+                                <label>TUTAR</label>
+                                <input type="text" name="islemtutari" value="${data.kalan_tutar}" max="${data.kalan_tutar}" placeholder="105000.41" />
+                                <span class="mdi mdi-currency-usd"></span>
+                            </div>
+                            <div class="input-item">
+                                <label>MAKBUZ NO</label>
+                                <input name="makbuznumarasi" type="text" />
+                            </div>
+                            <div class="input-item">
+                                <label>AÇIKLAMA</label>
+                                <input name="aciklama_bilgisi" type="text" />
+                            </div>
+                            <div class="input-item">
+                                <label>DOSYA</label>
+                                <input name="dosya"  type="file" />
+                            </div>
+                            <div class="buttons">
+                                <span type="button" onclick="tahsilat_kapat()">Vazgeç</span>
+                                <input type="submit" value="Tahsilat İşle" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            `;
+            makbuzlar_goster.innerHTML = `
+                   <div class="wrapper">
+                <div class="modal-head">
+                    <div class="invoice-title">
+                        <h2>Tahsilat Makbuzu</h2>
+                    </div>
+                    <div class="invoice-icons">
+                        <div class="icon-item print-icon"><span title="Yazdır" class="mdi mdi-printer-outline"></span></div>
+                        <div class="icon-item cancel-icon"><span title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
+                        <div class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></div>
+                        <div class="icon-item close-icon"><span id="{{i.id}}" type="button" onclick="makbuzlari_kapat()" title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
+                    </div>
+                </div>
+                <style>
+        
+                div.scroll {
+                    margin: 4px, 4px;
+                    height: 400px;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                    text-align: justify;
+                }
+            </style>
+                
+                <div id="guncelle{{i.id}}" class="modal-body scroll ">
+                    <div class="hesap">
+                        <h2>CARİ HESABI</h2>
+                        <span><a href="">${data.cari}</a></span>
+                    </div>
+                    
+                        <!-- The Modal -->
+        
+                           <style>.odeme-tarihi table, .odeme-tarihi th,.odeme-tarihi td {
+                            border: 1px solid black;
+                          }</style>
+                    <div class="odeme-tarihi">
+        
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ÖDEME TARİHİ</th>
+                                <th>KASA HESABI</th>
+                                <th>İŞLEM TARİHİ</th>
+                                <th>KULLANICI</th>
+                                <th>TUTAR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             <td>{{k.tarihi|date:'d-m-Y'}}</td>
+                                <td>{{k.kasa_bilgisi.kasa_adi}}</td>
+                                <td>{{k.kayit_tarihi|date:'d-m-Y'}}</td>
+                                <td>{% if k.islemi_yapan.last_name %}
+                                    {{k.islemi_yapan.last_name}}
+                                {% else %}
+                                {% endif %}</td>
+                                <td></td>
+                               
+                            ${data.makbuzlar.map(makbuz => `
+                            <tr>
+                                
+                                <td>${makbuz.tarihi}</td>
+                                <td>${makbuz.kasa_adi}</td>
+                                <td${makbuz.kayit_tarihi}</td>
+                                <td>${makbuz.islemi_yapan}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                
+                                     <td colspan="2"><a target="_blank" href="${makbuz.resim}">Resmi Göster</a></td>
+                                
+        
+                                <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">SİL</button></td>
+                                <td>${makbuz.tutar} $</td>
+                            </tr>
+                           
+                        `).join('')}
+                            
+                        </tbody>
+                    </table>
+                        </div>
+                    
+                    <div class="fatura-table">
+                        <div class="table-head">
+                            <div class="item"><h2>İŞLENEN FATURA</h2></div>
+                            <div class="item"><h2>FATURA TUTARI</h2></div>
+                            <div class="item"><h2>MAHSUP TUTARI</h2></div>
+                        </div>
+                        <div class="table-body">
+                            <div class="fatura-item">
+                                <div class="item"><span>${data.fatura_tarihi}</span></div>
+                                <div class="item"><span>${data.genel_toplam} $</span></div>
+                                <div class="item"><span>${data.genel_toplam} $</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kalan">
+                        <h2>KALAN</h2>
+                        <span> $</span>
+                    </div>
+                </div>
+            </div>
+            <script>
     $(document).ready(function () {
   $(".makbuzsill").click(function (event) {
     makbuz = "1",
@@ -579,28 +705,105 @@
     return false; //<---- move it here
   });
 });
-</script>
-<script>
-    new DataTable('#example', {
+</script>`;
+            
+            modal_fatura.innerHTML = `
+            <div class="modal" id="faturasil">
+  <div class="modal-dialog">
+    <div class="modal-content">
 
-        "data": {{santiyeler_i | safe }},
+  
+      <div class="modal-header">
+        <h4 class="modal-title">Faturayı İptal Et</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+        <form action="{% url 'accounting:fatura_sil' %}" method="post">
+        {% csrf_token %}
+     
+      <div class="modal-body">
+        Faturayı iptal etmek istediğinizden emin misiniz ?
+        <input type="text" name="gelir_gider" value="0" hidden>
+        <input type="text" name="idbilgisicek" value="${faturaId}" hidden>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Sil</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>    
+            ${data.makbuzlar.map(makbuz => `
+            <div class="modal" id="makbuzsil${makbuz.id}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Ödeme Sil</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    Ödemeyi Silmek İstediğinizden Emin Misiniz ?
+                    <input type="text" name="makbuz" value="0" hidden>
+                    <input type="text" name="makbuzidsi" value="${makbuz.id}" hidden>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">İptal</button>
+                    <button type="button"  id="${makbuz.id}- type" data-bs-dismiss="modal" class="btn btn-danger makbuzsill" >Sil</button>
+                </div>
+
+                </div>
+            </div>
+            </div>
+            `).join('')}
+            `;
         
-
-  columns: [
-        { data: 'fatura_no' },
-        { data: 'cari' },
-        { data: 'aciklama' },
-        { data: 'duzenleme_tarihi' },
-        { data: 'vade_tarihi' },
-        { data: 'fatura_bedeli' },
-        { data: 'kalan_tutar' },
-        { data: 'durum' }
-    ],
-    layout: {
-        top1: 'searchBuilder'
+                
+         
+                // Modal'ı gösterin
+                modal.style.display = "flex";
+                
+            })
+            .catch(error => {
+                console.error('Error fetching fatura details:', error);
+            });
     }
-});
-</script>
+    function kapat() {
+        document.getElementById(`invoice-detail-modal`).style.display = "none";
+        
+    
+    }
+    function makbuzlari_goruntule() {
+        document.getElementById(`tahsilat-makbuzu-modal`).style.display = "flex";;
+        
+    
+    }
+    function makbuzlari_kapat() {
+        document.getElementById(`tahsilat-makbuzu-modal`).style.display = "none";;
+        
+    
+    }
+    function tahsilat_ekleme() {
+        document.getElementById(`tahsilatEkle`).style.display = "flex";;
+        
+    
+    }
+    function tahsilat_kapat() {
+        document.getElementById(`tahsilatEkle`).style.display = "none";;
+        
+    
+    }
+
+    
+    
+    </script>
 {% endblock footer %}
 
 

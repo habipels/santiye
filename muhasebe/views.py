@@ -1539,7 +1539,7 @@ def gelir_duzenle(request ,id):
         kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
         etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
-        urunleri = gelir_urun_bilgisi.objects.filter(silinme_bilgisi = False,gider_bilgis = gelir_bilgisi_ver)
+        urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
     content["gelir_kategoerisi"] = kategori_bilgisi
     content["gelir_etiketi"] = etiketler
     content["kasa"] = profile
