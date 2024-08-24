@@ -318,7 +318,7 @@ $(document).ready(function () {
         data: [
         {% for i in santiyeler_i %}
         
-        {'incele': '<button class="faturabilgisi bg-sucsses" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">İncele</button>', 'fatura_no': '{{i.fatura_no}}', 'cari': '{{i.cari_bilgisi.cari_adi}}', 'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gider_etiketi_adi|escapejs }}{% endif %}', 'duzenleme_tarihi': '{{i.fatura_tarihi | date:'d.m.Y' }}', 'vade_tarihi': '{{i.vade_tarihi | date:'d.m.Y' }}', 'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}Ödenmedi{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
+        {'incele': '<button class="faturabilgisi bg-sucsses" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">İncele</button>', 'fatura_no': '{{i.fatura_no}}', 'cari': '{{i.cari_bilgisi.cari_adi}}', 'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gelir_etiketi_adi|escapejs }}{% endif %}', 'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gelir_etiketi_adi|escapejs }}{% endif %}', 'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gelir_etiketi_adi|escapejs }}{% endif %}', 'duzenleme_tarihi': '{{i.fatura_tarihi | date:'d.m.Y' }}', 'vade_tarihi': '{{i.vade_tarihi | date:'d.m.Y' }}', 'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}Ödenmedi{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
         {% if not forloop.last %},{% endif %}
         
         
@@ -527,7 +527,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                     <div class="tahsilatEkle" id="tahsilatEkle">
-                       <form method="post" action="{% url 'accounting:gider_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
+                       <form method="post" action="{% url 'accounting:gelir_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                 <input type="text" hidden value="${data.id}" name="faturabilgisi">
                             <div class="input-item">
@@ -645,8 +645,10 @@ $(document).ready(function () {
                                 <td></td>
                             </tr>
                             <tr>
-                                
-                                     <td colspan="2"><a target="_blank" href="${makbuz.resim}">Resmi Göster</a></td>
+                                   ${makbuz.resim ? `
+                            <td colspan="2"><a target="_blank" href="${makbuz.resim}">Resmi Göster</a></td>
+                            ` : '<td colspan="2"><a >Resmi Yok</a></td>'}  
+                                    
                                 
         
                                 <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">SİL</button></td>
@@ -696,7 +698,7 @@ $(document).ready(function () {
      
       <div class="modal-body">
         Faturayı iptal etmek istediğinizden emin misiniz ?
-        <input type="text" name="gelir_gider" value="0" hidden>
+        <input type="text" name="gelir_gider" value="1" hidden>
         <input type="text" name="idbilgisicek" value="${faturaId}" hidden>
       </div>
 
@@ -724,7 +726,7 @@ $(document).ready(function () {
                 <!-- Modal body -->
                 <div class="modal-body">
                     Ödemeyi Silmek İstediğinizden Emin Misiniz ?
-                    <input type="text" name="makbuz" value="0" hidden>
+                    <input type="text" name="makbuz" value="1" hidden>
                     <input type="text" name="makbuzidsi" value="${makbuz.id}" hidden>
                 </div>
 

@@ -55,7 +55,7 @@ def get_fatura_gelir(request, fatura_id):
         'fatura_no': fatura.fatura_no,
         'doviz': fatura.doviz,
         'aciklama': fatura.aciklama,
-        "kategori" : fatura.gelir_kategorisi.gelir_kategori_adi if fatura.gelir_kategorisi else "Kategori Belirtilmemiş",
+        "kategori" : fatura.gelir_kategorisii.gelir_kategori_adi if fatura.gelir_kategorisii else "Kategori Belirtilmemiş",
         "fatura_tarihi" : fatura.fatura_tarihi.strftime("%d.%m.%Y"),
         "vade_tarihi" : fatura.vade_tarihi.strftime("%d.%m.%Y"),
         "kalemler": [
@@ -2403,7 +2403,7 @@ def gelir_gider_duzelt(request):
 
             gider_bilgisi.fatura_tarihi = fatura_tarihi
             gider_bilgisi.vade_tarihi = vade_tarihi
-            gider_bilgisi.fatura_no = faturano
+            #gider_bilgisi.fatura_no = faturano
             gider_bilgisi.gelir_kategorisii = get_object_or_none(gider_kategorisi, id=gelir_kategorisii)
             gider_bilgisi.doviz = doviz_kuru
             gider_bilgisi.save()
