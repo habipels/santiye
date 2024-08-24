@@ -1595,7 +1595,7 @@ def gelir_faturasi_kaydet(request):
         indirim = request.POST.getlist("indirim")
         aciklama = request.POST.getlist("aciklama")
         doviz_kuru = request.POST.get("doviz_kuru")
-
+        profile = request.FILES.get("fatura_belgesi")
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -1683,6 +1683,10 @@ def gelir_faturasi_kaydet(request):
             toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
         Gelir_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
         gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
+        if profile:
+            u = Gelir_Bilgisi.objects.get(id = new_project.id )
+            u.fatura_gorseli = profile
+            u.save()
     return redirect("accounting:gelirler_sayfasi")
 
 def gelir_faturasi_kaydet_2(request,hash):
@@ -1699,7 +1703,7 @@ def gelir_faturasi_kaydet_2(request,hash):
         indirim = request.POST.getlist("indirim")
         aciklama = request.POST.getlist("aciklama")
         doviz_kuru = request.POST.get("doviz_kuru")
-
+        profile = request.FILES.get("fatura_belgesi")
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -1787,6 +1791,10 @@ def gelir_faturasi_kaydet_2(request,hash):
             toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
         Gelir_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
         gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
+        if profile:
+            u = Gelir_Bilgisi.objects.get(id = new_project.id )
+            u.fatura_gorseli = profile
+            u.save()
     return redirect("accounting:gelirler_sayfasi")
 
 
@@ -2085,6 +2093,7 @@ def gider_faturasi_kaydet(request):
         aciklama = request.POST.getlist("aciklama")
         aciklama_id = request.POST.getlist('aciklama_id')
         doviz_kuru = request.POST.get("doviz_kuru")
+        profile = request.FILES.get("fatura_belgesi")
         print(gelir_kategorisii,"veri verme")
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
         if cari_bilgisi:
@@ -2171,7 +2180,10 @@ def gider_faturasi_kaydet(request):
         
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         print(aciklama_id,"gelen id")
-
+        if profile:
+            u = Gider_Bilgisi.objects.get(id = new_project.id )
+            u.fatura_gorseli = profile
+            u.save()
     return redirect("accounting:giderler_sayfasi")
 
 def gider_faturasi_kaydet_2(request,hash):
@@ -2195,6 +2207,7 @@ def gider_faturasi_kaydet_2(request,hash):
         aciklama = request.POST.getlist("aciklama")
         aciklama_id = request.POST.getlist('aciklama_id')
         doviz_kuru = request.POST.get("doviz_kuru")
+        profile = request.FILES.get("fatura_belgesi")
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = users)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -2280,7 +2293,10 @@ def gider_faturasi_kaydet_2(request,hash):
         
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         print(aciklama_id,"gelen id")
-
+        if profile:
+            u = Gider_Bilgisi.objects.get(id = new_project.id )
+            u.fatura_gorseli = profile
+            u.save()
     return redirect("accounting:giderler_sayfasi")
 #
 def gider_odemesi_ekle(request):
@@ -2342,7 +2358,7 @@ def gelir_gider_duzelt(request):
         indirim = request.POST.getlist("indirim")
         aciklama = request.POST.getlist("aciklama")
         doviz_kuru = request.POST.get("doviz_kuru")
-
+        profile = request.FILES.get("fatura_belgesi")
         if bilgi == "0":
             gelir_bilgisi = get_object_or_404(Gelir_Bilgisi, id=degisen)
             gelir_bilgisi.gelir_kime_ait_oldugu = request.user
@@ -2353,7 +2369,9 @@ def gelir_gider_duzelt(request):
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
             fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
             vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
-
+            if profile:
+                gelir_bilgisi.fatura_gorseli = profile
+            
             gelir_bilgisi.fatura_tarihi = fatura_tarihi
             gelir_bilgisi.vade_tarihi = vade_tarihi
             #gelir_bilgisi.fatura_no = faturano
@@ -2404,6 +2422,8 @@ def gelir_gider_duzelt(request):
             gider_bilgisi.fatura_tarihi = fatura_tarihi
             gider_bilgisi.vade_tarihi = vade_tarihi
             #gider_bilgisi.fatura_no = faturano
+            if profile:
+                gider_bilgisi.fatura_gorseli = profile
             gider_bilgisi.gelir_kategorisii = get_object_or_none(gider_kategorisi, id=gelir_kategorisii)
             gider_bilgisi.doviz = doviz_kuru
             gider_bilgisi.save()

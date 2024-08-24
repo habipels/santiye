@@ -30,7 +30,7 @@
     {% endblock head %}
 {% block sidebar %}
 <!-- ============================================================== -->
-<form method="post" action="{% url 'accounting:gelir_gider_duzelt' %}">
+<form method="post" action="{% url 'accounting:gelir_gider_duzelt' %}" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="text" name="bilgi" value="1">
     <input type="text" name="degisen" value="{{bilgi.id}}">
@@ -168,7 +168,12 @@
                 </div>
             </div>
         </div>
-
+        <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Belge Yükle</label>
+                        <input type="file"  name="fatura_belgesi" class="form-control" />
+                    </div>
+                </div>
     </div>
 </div>
 

@@ -66,6 +66,7 @@ class Gelir_Bilgisi(models.Model):
     toplam_tutar = models.FloatField(verbose_name="Toplam Tutar",default=0)
     kalan_tutar = models.FloatField(verbose_name="Kalan Tutar",default=0)
     silinme_bilgisi = models.BooleanField(default=False)
+    fatura_gorseli = models.FileField(upload_to='fatura_gorseli/',verbose_name="fatura Görseli",blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class Gider_Bilgisi(models.Model):
@@ -81,6 +82,7 @@ class Gider_Bilgisi(models.Model):
     toplam_tutar = models.FloatField(verbose_name="Toplam Tutar",default=0)
     kalan_tutar = models.FloatField(verbose_name="Kalan Tutar",default=0)
     silinme_bilgisi = models.BooleanField(default=False)
+    fatura_gorseli = models.FileField(upload_to='fatura_gorseli/',verbose_name="fatura Görseli",blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
