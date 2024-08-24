@@ -756,7 +756,7 @@ def kategori_bilgi_ver(b):
     for i in bilgi:
         isimleri.append(str(i.gider_kategori_adi))
         renk.append(str(i.gider_kategorisi_renk))
-        a.append(Gider_Bilgisi.objects.filter(gelir_kategorisi_id = i.id).count())
+        a.append(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id).count())
     print(isimleri)
     return {"isimleri":isimleri,"a":a,"renk":renk}
 @register.simple_tag

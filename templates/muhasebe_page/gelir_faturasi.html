@@ -116,8 +116,8 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label>Fatura No</label>
-                <input type="text" required name="faturano" class="form-control" value="{% gider_faturasi_no request.user.id %}" disabled />
-                <input type="text" required name="faturano_hidden" hidden class="form-control" value="{% gider_faturasi_no request.user.id %}" />
+                <input type="text" required name="faturano" class="form-control" value="{% gelir_faturasi_no request.user.id %}" disabled />
+                <input type="text" required name="faturano" hidden class="form-control" value="{% gelir_faturasi_no request.user.id %}" />
             </div>
         </div>
 
@@ -185,7 +185,7 @@
                     <input class="miktarInput" name="miktari" type="number" value="1" oninput="hesaplama_islemi()" />
                 </div>
                 <div class="bfiyat">
-                    <input id="bfiyat_usd" name="bfiyat_usd" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                    <input id="bfiyatInput" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
                     <span class="mdi mdi-currency-usd"></span>
                 </div>
                 <div class="toplam">
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Birim fiyat (USD) değiştiğinde IQD'yi hesapla
-    document.getElementById('bfiyat_usd').addEventListener('input', function() {
+    document.getElementById('bfiyatInput').addEventListener('input', function() {
         hesaplama_islemi();
     });
 
@@ -356,7 +356,7 @@ function updateTotals() {
 
 function hesaplama_islemi() {
     var dovizKuru = parseFloat(document.getElementById('doviz_kuru').value) || 0;
-    var bfiyatUSD = parseFloat(document.getElementById('bfiyat_usd').value) || 0;
+    var bfiyatUSD = parseFloat(document.getElementById('bfiyatInput').value) || 0;
     var bfiyatIQD = parseFloat(document.getElementById('bfiyat_iqd').value) || 0;
 
     // USD'den IQD'ye çeviri
@@ -366,7 +366,7 @@ function hesaplama_islemi() {
 
     // IQD'den USD'ye çeviri
     if (bfiyatIQD && dovizKuru) {
-        document.getElementById('bfiyat_usd').value = (bfiyatIQD / dovizKuru).toFixed(2);
+        document.getElementById('bfiyatInput').value = (bfiyatIQD / dovizKuru).toFixed(2);
     }
 }
 
@@ -792,7 +792,7 @@ var multiSelectInstance = initializeMultiSelectTag();
       },
       success: function (data) {
 
-        $("#etkett").load(window.location.href + " .etkett", function() {
+        $("#etkett").load(window.location.href + " #etkett", function() {
         multiSelectInstance = initializeMultiSelectTag() });
 
       }
@@ -998,7 +998,7 @@ var multiSelectInstance = initializeMultiSelectTag();
       },
       success: function (data) {
 
-        $("#etkett").load(window.location.href + " .etkett", function() {
+        $("#etkett").load(window.location.href + " #etkett", function() {
         multiSelectInstance = initializeMultiSelectTag() });
 
       }
