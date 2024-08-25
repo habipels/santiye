@@ -2311,6 +2311,7 @@ def yapilacalar_ekle(request):
                 bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
             new_project.yapacaklar.add(*bloglar_bilgisi)
             images = request.FILES.getlist('file')
+            print(images)
             isim = 1
             for images in images:
                 IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -2344,6 +2345,7 @@ def yapilacalar_ekle_toplu(request):
                     new_project.yapacaklar.add(*bloglar_bilgisi)
                     images = request.FILES.getlist('file')
                     isim = 1
+                    print(images,"resim geldi")
                     for images in images:
                         IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                         isim = isim+1

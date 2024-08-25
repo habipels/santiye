@@ -481,8 +481,11 @@ def isplani_durumu_kontrol(id):
 def dosya_varsa_indirme_isplani(id):
 
     z = ""
-    veri = IsplaniDosyalari.objects.filter(proje_ait_bilgisi__id = id)
+    veri = IsplaniDosyalari.objects.filter(proje_ait_bilgisi__id = id.id)
+    print("dosya Getir",id)
     for i in veri:
+        print(i.proje_ait_bilgisi.title,"adi")
+        print(str(i.dosya.url),"dosyalar")
         k = str(i.dosya.url).split("/")
         k = k[ -1]
 
@@ -499,10 +502,11 @@ def dosya_varsa_indirme_isplani_ilerleme(id):
     z = ""
     veri = IsplaniIlerlemeDosyalari.objects.filter(proje_ait_bilgisi__id = id)
     for i in veri:
-        k = str(i.dosya.url).split("/")
-        k = k[ -1]
+        print(str(i.dosya.url), "veriler")
+        a = str(i.dosya.url).split("/")
 
-        z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small>{} KB</small></div></div>'.format(i.dosya.url,k,round(float(i.dosya.size/1024),2))
+        z = z+ '<div class="d-flex border border-dashed p-2 rounded position-relative"><div class="flex-shrink-0 avatar-xs"><div class="avatar-title bg-info-subtle text-info fs-15 rounded"><i class="ri-file-zip-line"></i></div></div><div class="flex-grow-1 overflow-hidden ms-2"><h6 class="text-truncate mb-0"><a href="{}" download class="stretched-link">{}</a></h6><small></small></div></div>'.format(i.dosya.url,a[-1])
+        
     return mark_safe(z)
 
 @register.simple_tag
