@@ -24,59 +24,71 @@
                             </ol>
                         </div>
                     </div>
-                    <h5 class="text-primary">Cari Adı: {{ cari_adi }}</h5>
+                    <div class="card ribbon-box border shadow-none mb-lg-0" style="background-color: #013744;">
+                        <div class="card-body">
+                            <div class="ribbon ribbon-success ribbon-shape">{{cari.cari_adi}}</div>
+                            <h5 class="fs-14 text-end" style="color: #ffffff;">{% trans "Cari Bakiyesi:" %} {% sorgu cari.bakiye %}$</h5>
+                            <div class="ribbon-content text-muted mt-4">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- end page title -->
             <div class="row">
                 <div class="col-12">
-                    <table id="cariTable" class="display nowrap table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>{% trans "İŞLEM TARİHİ" %}</th>
-                                <th>{% trans "BİLGİ" %}</th>
-                                <th>{% trans "TUTAR" %}</th>
-                                <th>{% trans "BAKİYE" %}</th>
-                                <th>{% trans "İncele" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% cari_islemleri_bilgi cari as bilgi_veriyor %}
-                            {% sorgu cari.bakiye as bakiye %}
-                            {% for i in bilgi_veriyor %}
-                            <tr>
-                                <td><input type="checkbox" class="select-row"></td>
-                                <td>{{i.tarihi| date:'d.m.Y'}}</td>
-                                <td>{{i.aciklama}}</td>
-                                {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
-                                <td style="color: {% if bilgisicek == 0 %}blue{% else %}orange{% endif %};">
-                                    {% if bilgisicek == 0 %}
-                                    + ${{i.tutar}}
-                                    {% else %}
-                                    - ${{i.tutar}}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if bilgisicek == 0 %}
-                                    $ {% basit_toplama bakiye i.tutar %}
-                                    {% basit_toplama bakiye i.tutar as bakiye%}
-                                    {% else %}
-                                    $ {% basit_cikarma bakiye i.tutar %}
-                                    {% basit_cikarma bakiye i.tutar as bakiye %}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if bilgisicek == 0 %}
-                                    <a href="{% url 'accounting:fatura_goster' i.gelir_kime_ait_oldugu.id %}" class="btn btn-primary btn-sm">İncele</a>
-                                    {% else %}
-                                    <a href="{% url 'accounting:fatura_goster2' i.gelir_kime_ait_oldugu.id %}" class="btn btn-primary btn-sm">İncele</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <!-- Mobil uyumlu tablo -->
+                    <div class="table-responsive">
+                        <table id="cariTable" class="display nowrap table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "İŞLEM TARİHİ" %}</th>
+                                    <th>{% trans "BİLGİ" %}</th>
+                                    <th>{% trans "TUTAR" %}</th>
+                                    <th>{% trans "BAKİYE" %}</th>
+                                    <th>{% trans "İncele" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% cari_islemleri_bilgi cari as bilgi_veriyor %}
+                                {% sorgu cari.bakiye as bakiye %}
+                                {% for i in bilgi_veriyor %}
+                                <tr>
+                                    <td>{{i.tarihi| date:'d.m.Y'}}</td>
+                                    <td>{{i.aciklama}}</td>
+                                    {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                    <td style="color: {% if bilgisicek == 0 %}blue{% else %}orange{% endif %};">
+                                        {% if bilgisicek == 0 %}
+                                        + ${{i.tutar}}
+                                        {% else %}
+                                        - ${{i.tutar}}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if bilgisicek == 0 %}
+                                        $ {% basit_toplama bakiye i.tutar %}
+                                        {% basit_toplama bakiye i.tutar as bakiye%}
+                                        {% else %}
+                                        $ {% basit_cikarma bakiye i.tutar %}
+                                        {% basit_cikarma bakiye i.tutar as bakiye %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if bilgisicek == 0 %}
+                                        <a href="{% url 'accounting:fatura_goster' i.gelir_kime_ait_oldugu.id %}" class="btn btn-icon btn-sm" style="background-color: #013744; color: #ffffff; border-radius: 50%; padding: 0.375rem; display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem;">
+                                            <i data-feather="file"></i>
+                                        </a>
+                                        {% else %}
+                                        <a href="{% url 'accounting:fatura_goster2' i.gelir_kime_ait_oldugu.id %}" class="btn btn-icon btn-sm" style="background-color: #013744; color: #ffffff; border-radius: 50%; padding: 0.375rem; display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem;">
+                                            <i data-feather="file"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive -->
                 </div>
             </div>
         </div>
@@ -110,95 +122,124 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <!-- DataTables Select JS -->
 <script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
-
-
 <script>
-$(document).ready(function() {
-    var table = $('#cariTable').DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'copy',
-                text: 'Kopyala',
-                exportOptions: {
-                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
-                    modifier: {
-                        selected: true // Sadece seçilen satırları export eder
+    var cariAdi = "{{ cari.cari_adi }}";
+
+    $(document).ready(function() {
+        var table = $('#cariTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Kopyala',
+                    title: function() {
+                        return cariAdi + ' Hesap Bakiyesi';
+                    },
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)' // "İncele" sütununu export etmiyoruz
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: function() {
+                        return cariAdi + ' Hesap Bakiyesi';
+                    },
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)' // "İncele" sütununu export etmiyoruz
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: function() {
+                        return cariAdi + ' Hesap Bakiyesi';
+                    },
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)' // "İncele" sütununu export etmiyoruz
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: function() {
+                        return cariAdi + ' Hesap Bakiyesi';
+                    },
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)' // "İncele" sütununu export etmiyoruz
+                    },
+                    customize: function (doc) {
+                        doc.content.splice(0, 1, {
+                            text: cariAdi + ' Hesap Bakiyesi',
+                            fontSize: 14,
+                            alignment: 'center',
+                            margin: [0, 0, 0, 12] // Başlık ve tablo arasındaki boşluk
+                        });
+                        var objLayout = {};
+                        objLayout['hLineWidth'] = function(i) { return 0.5; };
+                        objLayout['vLineWidth'] = function(i) { return 0.5; };
+                        objLayout['hLineColor'] = function(i) { return '#aaa'; };
+                        objLayout['vLineColor'] = function(i) { return '#aaa'; };
+                        objLayout['paddingLeft'] = function(i) { return 4; };
+                        objLayout['paddingRight'] = function(i) { return 4; };
+                        objLayout['paddingTop'] = function(i) { return 2; };
+                        objLayout['paddingBottom'] = function(i) { return 2; };
+                        doc.content[1].layout = objLayout;
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Yazdır',
+                    title: function() {
+                        return cariAdi + ' Hesap Bakiyesi';
+                    },
+                    customize: function (win) {
+                        $(win.document.body)
+                            .prepend('<h3>' + cariAdi + ' Hesap Bakiyesi</h3>')
+                            .find('h1')
+                            .remove(); // Varsayılan başlığı kaldır
+                    },
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)' // "İncele" sütununu export etmiyoruz
                     }
                 }
+            ],
+            select: {
+                style: 'multi'  // Çoklu seçim için özelliği aktif ettik
             },
-            {
-                extend: 'csv',
-                text: 'CSV',
-                exportOptions: {
-                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
-                    modifier: {
-                        selected: true // Sadece seçilen satırları export eder
-                    }
-                }
-            },
-            {
-                extend: 'excel',
-                text: 'Excel',
-                exportOptions: {
-                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
-                    modifier: {
-                        selected: true // Sadece seçilen satırları export eder
-                    }
-                }
-            },
-            {
-                extend: 'pdf',
-                text: 'PDF',
-                exportOptions: {
-                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
-                    modifier: {
-                        selected: true // Sadece seçilen satırları export eder
-                    }
-                }
-            },
-            {
-                extend: 'print',
-                text: 'Yazdır',
-                exportOptions: {
-                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
-                    modifier: {
-                        selected: true // Sadece seçilen satırları export eder
+            paging: true,
+            pageLength: 25,
+            lengthMenu: [ [25, 50, 100, -1], [25, 50, 100, "Hepsi"] ],
+            ordering: true,
+            order: [[ 1, "desc" ]],
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.10.21/i18n/Turkish.json",
+                buttons: {
+                    copyTitle: 'Kopyalandı',
+                    copySuccess: {
+                        _: '%d satır panoya kopyalandı',
+                        1: '1 satır panoya kopyalandı'
                     }
                 }
             }
-        ],
-        select: {
-            style: 'multi'  // Çoklu seçim için özelliği aktif ettik
-        },
-        paging: true,
-        pageLength: 25,
-        lengthMenu: [ [25, 50, 100, -1], [25, 50, 100, "Hepsi"] ],
-        ordering: true,
-        order: [[ 1, "desc" ]],
+        });
+
+        // Export işleminden önce seçim yapılmadıysa tüm satırları export eder
+        table.on('buttons-action', function(e, buttonApi, dataTable, node, config) {
+            var selectedRows = table.rows({ selected: true }).count();
+            if (selectedRows === 0) {
+                // Seçim yoksa tüm veriyi export eder
+                table.button(buttonApi.node).action().modifier({ selected: null });
+            } else {
+                // Seçim varsa sadece seçilen satırları export eder
+                table.button(buttonApi.node).action().modifier({ selected: true });
+            }
+        });
 
     });
-
-    // Export işleminden önce seçim yapılmadıysa tüm satırları export eder
-    table.on('buttons-action', function(e, buttonApi, dataTable, node, config) {
-        var selectedRows = table.rows({ selected: true }).count();
-        if (selectedRows === 0) {
-            table.button(buttonApi).action().modifier({ selected: null });
-        }
-    });
-
-    // Her bir satır için checkbox seçim işlemi
-    $('#cariTable tbody').on('click', 'input.select-row', function(){
-        var tr = $(this).closest('tr');
-        if (this.checked) {
-            table.row(tr).select();
-        } else {
-            table.row(tr).deselect();
-        }
-    });
-});
-
 </script>
+
+
 
 
 {% endblock javascriptcodeadd %}
