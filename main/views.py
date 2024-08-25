@@ -927,9 +927,9 @@ def santtiye_kalemleri(request,id):
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
             profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id))
-            content["santiyeler_bilgileri"] = santiye.objects.all()
+            content["santiyeler_bilgileri"] = bloglar.objects.all()
         else:
-            content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+            content["santiyeler_bilgileri"] = bloglar.objects.filter(proje_ait_bilgisi = request.user,proje_santiye_Ait_id = id )
             profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user)
 
         if request.GET.get("search"):
@@ -966,31 +966,45 @@ def santiyeye_kalem_ekle(request):
             kullanici = request.POST.get("kullanici")
             return redirect("main:santiye_kalem_ekle_admin",kullanici)
         else:
-            projetipi = request.POST.get("projetipi")
+            projetipi = request.POST.getlist("projetipi")
             yetkili_adi = request.POST.get("yetkili_adi")
             santiye_agirligi = request.POST.get("katsayisi")
             finansal_agirlik = request.POST.get("blogsayisi")
             metraj = request.POST.get("metraj")
             tutar = request.POST.get("tutar")
             birim_bilgisi = request.POST.get("birim_bilgisi")
+            kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
+            id = bloglar.objects.filter(id__in = projetipi).first()
             kalem = santiye_kalemleri.objects.create(
                 proje_ait_bilgisi = request.user,
-                proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
+                proje_santiye_Ait =id.proje_santiye_Ait,
                 kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
                 santiye_finansal_agirligi = finansal_agirlik,
                 birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
                 tutari = tutar
             )
-            blog_lar = bloglar.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ))
-            for i in blog_lar:
-                for j in range(0,int(i.kat_sayisi)):
-                    santiye_kalemlerin_dagilisi.objects.create(
-                        proje_ait_bilgisi = request.user,
-                        proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
-                        kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
-                        kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
-                    )
-    return redirect("main:santtiye_kalemleri",projetipi)
+            if kata_veya_binaya_daihil == "0":
+                blog_lar = bloglar.objects.filter(id__in = projetipi)
+                for i in blog_lar:
+                    for j in range(0,int(i.kat_sayisi)):
+                        santiye_kalemlerin_dagilisi.objects.create(
+                            proje_ait_bilgisi = request.user,
+                            proje_santiye_Ait = id.proje_santiye_Ait,
+                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                            kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                        )
+            else:
+                blog_lar = bloglar.objects.filter(id__in = projetipi)
+                for i in blog_lar:
+                    for j in range(0,int(i.kat_sayisi)):
+                        santiye_kalemlerin_dagilisi.objects.create(
+                            proje_ait_bilgisi = request.user,
+                            proje_santiye_Ait = id.proje_santiye_Ait,
+                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                            kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                        )
+                        break
+    return redirect("main:santtiye_kalemleri",id.proje_santiye_Ait.id)
 
 def kalem_sil(request):
     if request.POST:

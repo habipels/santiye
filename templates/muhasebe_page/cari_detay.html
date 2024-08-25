@@ -1,155 +1,204 @@
 {% extends "homebase.html" %}
-{% load static  %}
+{% load static %}
 {% load i18n %}
 {% load custom_tags %}
 {% block head %}
-
 <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css" />
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+<link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
 {% endblock head %}
 {% block sidebar %}
 <div class="main-content">
-        <div class="page-content">
-            <div class="container-fluid">
-
-                <!-- start page title -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">{% trans "Cari Detayı" %}</h4>
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans "Dashboard" %}</a></li>
-                                    <li class="breadcrumb-item active">{% trans "Cari Detay" %}</li>
-                                </ol>
-                            </div>
+    <div class="page-content">
+        <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">{% trans "Cari Detayı" %}</h4>
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans "Dashboard" %}</a></li>
+                                <li class="breadcrumb-item active">{% trans "Cari Detay" %}</li>
+                            </ol>
                         </div>
                     </div>
+                    <h5 class="text-primary">Cari Adı: {{ cari_adi }}</h5>
                 </div>
-                <!-- end page title -->
-                <div class="row">
-                    <div class="cari-details-container">
-                        <div class="row">
-                            <div class="cariler-container">
-                                <div class="cariler-table">
-                                    <div class="table-head">
-                                        <div class="icon"></div>
-                                        <h2 class="title-tahsilat">{% trans "İŞLEM TARİHİ" %}</h2>
-                                        <h2 class="title-bilgi">{% trans "BİLGİ" %}</h2>
-                                        <h2 class="title-tutar">{% trans "TUTAR" %}</h2>
-                                        <h2 class="title-bakiye">{% trans "BAKİYE" %}</h2>
-                                    </div>
-                                    <div class="table-body">
-
-                {% cari_islemleri_bilgi cari as bilgi_veriyor %}
-                {% sorgu cari.bakiye as bakiye  %}
-                    {% for i in bilgi_veriyor %}
-                    <div class="table-item">
-                        {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
-                                                        {% if bilgisicek == 0 %}
-                                                       <a href="{% url 'accounting:fatura_goster' i.gelir_kime_ait_oldugu.id %}">
-                                                <div class="icon-value"><span class="mdi mdi-cash-check"></span></div>
-                                                <h2 class="tahsilat-value">{{i.tarihi| date:'d.m.Y'}}</h2>
-                                                <p class="bilgi-value">{{i.aciklama}}</p>
-                                                {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
-                                                        {% if bilgisicek == 0 %}
-                                                        <h2 class="tutar-value"><span style="color:blue;" > + $ {{i.tutar}}<span>$</span></h2>
-                                                        {% else %}
-                                                        <h2 class="tutar-value"><span style="color:orange;" > - $ {{i.tutar}}<span>$</span></h2>
-                                                        {% endif %}
-                                               <h2 class="bakiye-value">
-                                               {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
-                                                        {% if bilgisicek == 0 %}
-                                                       <span  > $ {% basit_toplama bakiye i.tutar %}
-                                                       {% basit_toplama bakiye i.tutar  as bakiye%}</span>
-                                                        {% else %}
-
-                                                         <span > $ {% basit_cikarma bakiye i.tutar %}
-                                                         {% basit_cikarma bakiye i.tutar as bakiye %}</span>
-                                                        {% endif %}
-                                                        </h2>
-                                            </a>
-                                                        {% else %}
-                                                        <a href="{% url 'accounting:fatura_goster2' i.gelir_kime_ait_oldugu.id %}">
-                                                <div class="icon-value"><span class="mdi mdi-cash-check"></span></div>
-                                                <h2 class="tahsilat-value">{{i.tarihi| date:'d.m.Y'}}</h2>
-                                                <p class="bilgi-value">{{i.aciklama}}</p>
-                                                {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
-                                                        {% if bilgisicek == 0 %}
-                                                        <h2 class="tutar-value"><span style="color:blue;" > + $ {{i.tutar}}<span>$</span></h2>
-                                                        {% else %}
-                                                        <h2 class="tutar-value"><span style="color:orange;" > - $ {{i.tutar}}<span>$</span></h2>
-                                                        {% endif %}
-                                               <h2 class="bakiye-value">
-                                               {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
-                                                        {% if bilgisicek == 0 %}
-                                                       <span  > $ {% basit_toplama bakiye i.tutar %}
-                                                       {% basit_toplama bakiye i.tutar  as bakiye%}</span>
-                                                        {% else %}
-
-                                                         <span > $ {% basit_cikarma bakiye i.tutar %}
-                                                         {% basit_cikarma bakiye i.tutar as bakiye %}</span>
-                                                        {% endif %}
-                                                        </h2>
-                                            </a>
-                                                        {% endif %}
-
-                                        </div>
-                    {% endfor %}
-
-
-
-
-                                    </div>
-                                </div>
-                                <div class="footer">
-                                    <div class="export"><span class="mdi mdi-file-export-outline">{% trans "DIŞA AKTAR" %}</span></div>
-                                    <div class="table-count"><span> </span> {% trans "CARİ KARTI" %}</div>
-                                    <div class="paginations">
-                                        <div class="listelemeSayisi">
-                                            <div class="listelemeSecimCont">
-                                                <ul>
-                                                    <li>25/SAYFA</li>
-                                                    <li>50/SAYFA</li>
-                                                    <li>100/SAYFA</li>
-                                                    <li>150/SAYFA</li>
-                                                </ul>
-                                            </div>
-                                            <span>25/SAYFA</span>
-                                        </div>
-                                        <div class="pageArrows">
-                                            <div class="prev"><span class="mdi mdi-chevron-left"></span></div>
-                                            <span>1</span>
-                                            <div class="next"><span class="mdi mdi-chevron-right"></span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="rightMenu">
-                                <h2></h2>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+            <!-- end page title -->
+            <div class="row">
+                <div class="col-12">
+                    <table id="cariTable" class="display nowrap table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>{% trans "İŞLEM TARİHİ" %}</th>
+                                <th>{% trans "BİLGİ" %}</th>
+                                <th>{% trans "TUTAR" %}</th>
+                                <th>{% trans "BAKİYE" %}</th>
+                                <th>{% trans "İncele" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% cari_islemleri_bilgi cari as bilgi_veriyor %}
+                            {% sorgu cari.bakiye as bakiye %}
+                            {% for i in bilgi_veriyor %}
+                            <tr>
+                                <td><input type="checkbox" class="select-row"></td>
+                                <td>{{i.tarihi| date:'d.m.Y'}}</td>
+                                <td>{{i.aciklama}}</td>
+                                {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                <td style="color: {% if bilgisicek == 0 %}blue{% else %}orange{% endif %};">
+                                    {% if bilgisicek == 0 %}
+                                    + ${{i.tutar}}
+                                    {% else %}
+                                    - ${{i.tutar}}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if bilgisicek == 0 %}
+                                    $ {% basit_toplama bakiye i.tutar %}
+                                    {% basit_toplama bakiye i.tutar as bakiye%}
+                                    {% else %}
+                                    $ {% basit_cikarma bakiye i.tutar %}
+                                    {% basit_cikarma bakiye i.tutar as bakiye %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if bilgisicek == 0 %}
+                                    <a href="{% url 'accounting:fatura_goster' i.gelir_kime_ait_oldugu.id %}" class="btn btn-primary btn-sm">İncele</a>
+                                    {% else %}
+                                    <a href="{% url 'accounting:fatura_goster2' i.gelir_kime_ait_oldugu.id %}" class="btn btn-primary btn-sm">İncele</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <!--end row-->
             </div>
         </div>
 
         <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-
-                            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
                         </div>
                     </div>
                 </div>
-            </footer>
+            </div>
+        </footer>
     </div>
 {% endblock sidebar %}
 
+{% block javascriptcodeadd %}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<!-- DataTables Select JS -->
+<script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+
+
+<script>
+$(document).ready(function() {
+    var table = $('#cariTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                extend: 'copy',
+                text: 'Kopyala',
+                exportOptions: {
+                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
+                    modifier: {
+                        selected: true // Sadece seçilen satırları export eder
+                    }
+                }
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                exportOptions: {
+                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
+                    modifier: {
+                        selected: true // Sadece seçilen satırları export eder
+                    }
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
+                    modifier: {
+                        selected: true // Sadece seçilen satırları export eder
+                    }
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                exportOptions: {
+                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
+                    modifier: {
+                        selected: true // Sadece seçilen satırları export eder
+                    }
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Yazdır',
+                exportOptions: {
+                    columns: ':visible:not(:first-child)', // Select sütununu export etmiyoruz
+                    modifier: {
+                        selected: true // Sadece seçilen satırları export eder
+                    }
+                }
+            }
+        ],
+        select: {
+            style: 'multi'  // Çoklu seçim için özelliği aktif ettik
+        },
+        paging: true,
+        pageLength: 25,
+        lengthMenu: [ [25, 50, 100, -1], [25, 50, 100, "Hepsi"] ],
+        ordering: true,
+        order: [[ 1, "desc" ]],
+
+    });
+
+    // Export işleminden önce seçim yapılmadıysa tüm satırları export eder
+    table.on('buttons-action', function(e, buttonApi, dataTable, node, config) {
+        var selectedRows = table.rows({ selected: true }).count();
+        if (selectedRows === 0) {
+            table.button(buttonApi).action().modifier({ selected: null });
+        }
+    });
+
+    // Her bir satır için checkbox seçim işlemi
+    $('#cariTable tbody').on('click', 'input.select-row', function(){
+        var tr = $(this).closest('tr');
+        if (this.checked) {
+            table.row(tr).select();
+        } else {
+            table.row(tr).deselect();
+        }
+    });
+});
+
+</script>
+
+
+{% endblock javascriptcodeadd %}

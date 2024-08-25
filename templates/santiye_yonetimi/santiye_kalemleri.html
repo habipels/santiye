@@ -1,7 +1,27 @@
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load custom_tags %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static '' %}assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static '' %}assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static '' %}assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static '' %}assets/css/app.min.css" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static '' %}assets/css/custom.min.css" rel="stylesheet" type="text/css">
+    <link href="{% static '' %}assets/css/custom.css" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+{% endblock head %}
 {% block sidebar %}
+
 <div class="main-content">
         <div class="page-content">
             <div class="container-fluid">
@@ -338,17 +358,28 @@
                                             </select>
                                         </div>
                                         {% else %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Bilgisi</label>
-                                            <select class="form-control" name="projetipi" id="date-field">
+                                            
+                                            <div class="col-md-3">
 
-                                                {% for j in santiyeler_bilgileri %}
-                                                    <option value="{{j.id}}">{{j.proje_adi}}</option>
-                                                {% endfor %}
-
-
-                                            </select>
-                                        </div>
+                                            <label for="date-field" class="form-label">Yapılar</label>
+                                           
+                                       
+                                    <select name="projetipi" required id="cokluetiket"  class="etkett me-2" multiple>
+                                        {% for j in santiyeler_bilgileri %}
+                                            <option value="{{j.id}}">{{j.blog_adi}}</option>
+                                            {% endfor %}
+                                    </select>
+                                    
+                                </div>
+                                <div class="mb-3">
+                                    <label for="date-field" class="form-label">Kalemin Tercihi</label>
+                                    <select class="form-control" required name="kata_veya_binaya_daihil" id="date-field">
+                                        <option >Lütfen Seçiniz</option>
+                                        <option value="0">Kata Dahil</option>
+                                        <option value="1">Binaya Dahil</option>
+                                    </select>
+                                </div> 
+                                        
 
                                         <div class="mb-3">
                                             <label for="date-field" class="form-label">Kalem Adı</label>
@@ -396,5 +427,23 @@
                         </div>
                     </div>
                 </div>
+<script>
+     function initializeMultiSelectTag() {
+        return new MultiSelectTag('cokluetiket', {
+            rounded: true,
+            shadow: true,
+            placeholder: 'Search',
+            tagColor: {
+                textColor: '#327b2c',
+                borderColor: '#92e681',
+                bgColor: '#eaffe6',
+            },
+            onChange: function(values) {
+                console.log(values);
+            }
+        });
+    }
+    var multiSelectInstance = initializeMultiSelectTag();
+</script>
 {% endblock sidebar %}
 

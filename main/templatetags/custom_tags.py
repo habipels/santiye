@@ -62,7 +62,10 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri(id,k_b):
         toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id = i.id).count()
         toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
         toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
-        genel_toplam = ((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)+genel_toplam
+        try:
+            genel_toplam = ((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)+genel_toplam
+        except:
+            genel_toplam = genel_toplam
     return round(genel_toplam,2)
 @register.simple_tag
 def bloglar_daireleri_kalemleri_finansal_bilgileri(id,k_b):
@@ -71,7 +74,10 @@ def bloglar_daireleri_kalemleri_finansal_bilgileri(id,k_b):
         toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id = i.id).count()
         toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
         toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
-        genel_toplam = ((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)+genel_toplam
+        try:
+            genel_toplam = ((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)+genel_toplam
+        except:
+            genel_toplam = genel_toplam
     return round(genel_toplam,2)
 @register.simple_tag
 def bloglar_daireleri_kalemleri_fiziksel_bilgileri_genel(k_b):
@@ -94,12 +100,17 @@ def bloglar_daireleri_kalemleri_finansal_bilgileri_genel(k_b):
 @register.simple_tag
 def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme(id,k_b):
     genel_toplam = []
+    a = 0
+    b = 0
     for i in k_b:
         toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id = i.id).count()
         toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
         toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
-        a = round(((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)*100/(i.santiye_agirligi),2)
-        b =round(((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)*100/(i.santiye_finansal_agirligi),2)
+        try:
+            a = round(((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)*100/(i.santiye_agirligi),2)
+            b =round(((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)*100/(i.santiye_finansal_agirligi),2)
+        except:
+            pass
         genel_toplam.append({"isim":i.kalem_adi,"ilerleme1":a,"ilerleme2":b})
 
     return genel_toplam
@@ -107,10 +118,10 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme(id,k_b):
 def days_until(bitis_tarihi):
     from django.utils import timezone
     now = timezone.now()
-    if bitis_tarihi > now:
-        delta = bitis_tarihi - now
-        return delta.days
-    return 0  # Eğer bitiş tarihi geçmişse 0 döndür
+    
+    delta = bitis_tarihi - now
+    return delta.days
+    #return 0  # Eğer bitiş tarihi geçmişse 0 döndür
 @register.simple_tag
 def proje_dosyalarini(id):
     a = proje_dosyalari.objects.filter(proje_ait_bilgisi__id = id).count()
