@@ -2,7 +2,24 @@
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
-
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static '' %}assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static '' %}assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static '' %}assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static '' %}assets/css/app.min.css" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static '' %}assets/css/custom.min.css" rel="stylesheet" type="text/css">
+    <link href="{% static '' %}assets/css/custom.css" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+{% endblock head %}
 {% block sidebar %}
 <div class="main-content">
         <div class="page-content">
@@ -222,7 +239,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="date-field" class="form-label">Tarih</label>
-                                        <input name="tarih_bilgisi" value="{{i.tarih | date:'d.m.Y'}}" type="date" id="date-field" class="form-control" placeholder="Select Date" required />
+                                        <input name="tarih_bilgisi" value="{{i.tarih | date:'Y-m-d'}}" type="date" id="date-field" class="form-control" placeholder="Select Date" required />
                                         <div class="invalid-feedback">Please select a date.</div>
                                     </div>
                                     <div class="mb-3">
@@ -245,7 +262,7 @@
                                     </div>
                                     <div>
                                         <label for="status-field" class="form-label">Bloglar</label>
-                                        <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
+                                        <select name="blogbilgisi" class="form-control " hidden id="cokluetiket{{i.id}}"  multiple required>
                                            {% for yazar in i.blog_bilgisi.all %}
                                                        {{ yazar.blog_adi }}{{ yazar.blog_numarasi }},
                                             {% endfor %}
@@ -259,60 +276,11 @@
                                             {% endfor %}
                                         </select>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h4 class="card-title mb-0">Dosya Yükle</h4>
-                                                </div><!-- end card header -->
-                                            
-                                                <div class="card-body">
-                                                    <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
-                                                
-                                                    <div class="dropzone">
-                                                        <div class="fallback">
-                                                            {% proje_dosyalarini_bilgi i.id  as veriler %}
-                                                            <input name="file"  type="file" multiple="multiple">
-                                                        </div>
-                                                        <div class="dz-message needsclick">
-                                                            <div class="mb-3">
-                                                                <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
-                                                            </div>
-                                                        
-                                                            <h4>Drop files here or click to upload.</h4>
-                                                        </div>
-                                                    </div>
-                                                
-                                                    <ul class="list-unstyled mb-0" id="dropzone-preview">
-                                                        <li class="mt-2" id="dropzone-preview-list">
-                                                            <!-- This is used as the file preview template -->
-                                                            <div class="border rounded">
-                                                                <div class="d-flex p-2">
-                                                                    <div class="flex-shrink-0 me-3">
-                                                                        <div class="avatar-sm bg-light rounded">
-                                                                            <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="flex-grow-1">
-                                                                        <div class="pt-1">
-                                                                            <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
-                                                                            <p class="fs-13 text-muted mb-0" data-dz-size></p>
-                                                                            <strong class="error text-danger" data-dz-errormessage></strong>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="flex-shrink-0 ms-3">
-                                                                        <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                    <!-- end dropzon-preview -->
-                                                </div>
-                                                <!-- end card body -->
-                                            </div>
-                                            <!-- end card -->
-                                        </div> <!-- end col -->
+                                    <div class="md-4">
+                                        <div class="form-group">
+                                            <label>Dosya Yükle</label>
+                                            <input name="file" type="file" multiple="multiple" class="form-control" />
+                                        </div>
                                     </div>{% if request.user.is_superuser %}
                                             <div class="mb-3">
                                             <label for="date-field" class="form-label">Proje Silinme Durumu</label>
@@ -442,67 +410,19 @@
                                     </div>
                                     <div>
                                         <label for="status-field" class="form-label">Bloglar</label>
-                                        <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
-                                            <option value=""></option>
+                                        <select name="blogbilgisi" required id = "cokluetiket"   class=" me-2" multiple>
                                             {% for blog in blog_bilgisi %}
                                             <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.blog_adi}}{{blog.blog_numarasi}}</option>
                                             {% endfor %}
                                         </select>
+                                       
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h4 class="card-title mb-0">Dosya Yükle</h4>
-                                                </div><!-- end card header -->
-                                            
-                                                <div class="card-body">
-                                                    <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
-                                                
-                                                    <div class="dropzone">
-                                                        <div class="fallback">
-                                                            <input name="file" type="file" multiple="multiple">
-                                                        </div>
-                                                        <div class="dz-message needsclick">
-                                                            <div class="mb-3">
-                                                                <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
-                                                            </div>
-                                                        
-                                                            <h4>Drop files here or click to upload.</h4>
-                                                        </div>
-                                                    </div>
-                                                
-                                                    <ul class="list-unstyled mb-0" id="dropzone-preview">
-                                                        <li class="mt-2" id="dropzone-preview-list">
-                                                            <!-- This is used as the file preview template -->
-                                                            <div class="border rounded">
-                                                                <div class="d-flex p-2">
-                                                                    <div class="flex-shrink-0 me-3">
-                                                                        <div class="avatar-sm bg-light rounded">
-                                                                            <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="flex-grow-1">
-                                                                        <div class="pt-1">
-                                                                            <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
-                                                                            <p class="fs-13 text-muted mb-0" data-dz-size></p>
-                                                                            <strong class="error text-danger" data-dz-errormessage></strong>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="flex-shrink-0 ms-3">
-                                                                        <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                    <!-- end dropzon-preview -->
-                                                </div>
-                                                <!-- end card body -->
-                                            </div>
-                                            <!-- end card -->
-                                        </div> <!-- end col -->
-                                    </div>
+                                    <div class="md-4">
+                    <div class="form-group">
+                        <label>Dosya Yükle</label>
+                        <input name="file" type="file" multiple="multiple" class="form-control" />
+                    </div>
+                </div>
                                     {% endif %}
                                 </div>
                                 <div class="modal-footer">
@@ -516,6 +436,40 @@
                         </div>
                     </div>
                 </div>
-
-
+                <script>
+                    function initializeMultiSelectTag() {
+                       return new MultiSelectTag('cokluetiket', {
+                           rounded: true,
+                           shadow: true,
+                           placeholder: 'Search',
+                           tagColor: {
+                               textColor: '#327b2c',
+                               borderColor: '#92e681',
+                               bgColor: '#eaffe6',
+                           },
+                           onChange: function(values) {
+                               console.log(values);
+                           }
+                       });
+                   }
+                   {% for  i in santiyeler %}
+                    function initializeMultiSelectTag{{i.id}}() {
+                       return new MultiSelectTag('cokluetiket{{i.id}}', {
+                           rounded: true,
+                           shadow: true,
+                           placeholder: 'Search',
+                           tagColor: {
+                               textColor: '#327b2c',
+                               borderColor: '#92e681',
+                               bgColor: '#eaffe6',
+                           },
+                           onChange: function(values) {
+                               console.log(values);
+                           }
+                       });
+                   }
+                    var multiSelectInstance{{i.id}} = initializeMultiSelectTag{{i.id}}();
+                   {% endfor %}
+                   var multiSelectInstance = initializeMultiSelectTag();
+               </script>
 {% endblock sidebar %}
