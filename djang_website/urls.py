@@ -25,6 +25,7 @@ urlpatterns = [
     path("accounting/", include('muhasebe.urls', namespace='muhasebe')),
     path('admin/', admin.site.urls),
     path('users/',include("users.urls", namespace='users')),
+    path('biadago/api/',include("api.urls", namespace='api')),
 ]
 
 
@@ -32,6 +33,7 @@ urlpatterns += i18n_patterns (
     path("", include('main.urls', namespace='main')),
     path('users/',include("users.urls", namespace='users')),
     path("accounting/", include('muhasebe.urls', namespace='muhasebe')),
+    path('biadago/api/',include("api.urls", namespace='api')),
 )
 if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += [

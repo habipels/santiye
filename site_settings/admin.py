@@ -27,3 +27,5 @@ admin.site.register(sidebar_boyutu)
 admin.site.register(sidebar_rengi)
 admin.site.register(layout_uzunlugu)
 admin.site.register(layout_sitili)
+admin.site.register(ApiKey)
+

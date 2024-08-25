@@ -156,4 +156,18 @@ class sidebar_rengi(models.Model):
     aktiflik = models.BooleanField(default = False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
-#
+from django.utils.crypto import get_random_string
+import hashlib
+
+class ApiKey(models.Model):
+    key = models.CharField(max_length=40, unique=True,blank = True,null = True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = self.generate_key()
+
+        return super(ApiKey, self).save(*args, **kwargs)
+
+    def generate_key(self):
+        return get_random_string(length=40)

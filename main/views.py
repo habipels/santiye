@@ -993,7 +993,7 @@ def santiyeye_kalem_ekle(request):
                             kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
                             kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
                         )
-            else:
+            elif kata_veya_binaya_daihil == "1":
                 blog_lar = bloglar.objects.filter(id__in = projetipi)
                 for i in blog_lar:
                     for j in range(0,int(i.kat_sayisi)):
@@ -1004,6 +1004,17 @@ def santiyeye_kalem_ekle(request):
                             kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
                         )
                         break
+            elif kata_veya_binaya_daihil == "2":
+                blog_lar = bloglar.objects.filter(id__in = projetipi)
+                for i in blog_lar:
+                    for j in range(0,4):
+                        santiye_kalemlerin_dagilisi.objects.create(
+                            proje_ait_bilgisi = request.user,
+                            proje_santiye_Ait = id.proje_santiye_Ait,
+                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                            kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                        )
+                        
     return redirect("main:santtiye_kalemleri",id.proje_santiye_Ait.id)
 
 def kalem_sil(request):
