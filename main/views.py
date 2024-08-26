@@ -200,6 +200,7 @@ def homepage(request):
         return redirect("/users/login/")
 
     return render(request,"index.html",content)
+
 def homepage_2(request,hash):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
