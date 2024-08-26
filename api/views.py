@@ -142,9 +142,6 @@ def proje_adi_sil(request):
     if not request.user.is_authenticated:
         return Response({'detail': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
     
-    if not super_admin_kontrolu(request):
-        return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
-
     id = request.data.get("id")
     
     if not id:
@@ -160,9 +157,50 @@ def proje_adi_sil(request):
         proje.save()
         return Response({'status': 'Project type marked as deleted.'}, status=status.HTTP_200_OK)
     else:
-        if proje.proje_ait_bilgisi != request.user:
-            return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+        if proje.proje_ait_bilgisi!= request.user:
+            return Response({'detail': f'{proje.proje_ait_bilgisi}'}, status=status.HTTP_403_FORBIDDEN)
         
         proje.silinme_bilgisi = True
         proje.save()
         return Response({'status': 'Project type marked as deleted.'}, status=status.HTTP_200_OK)
+@api_view(['PATCH'])
+def proje_duzenle(request):
+    if not request.user.is_authenticated:
+        return Response({'detail': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    id = request.data.get("buttonId")
+    if not id:
+        return Response({'detail': 'ID not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        proje = proje_tipi.objects.get(id=id)
+    except proje_tipi.DoesNotExist:
+        return Response({'detail': 'Project type not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi = request.data.get("kullanici")
+        proje_tip_adi = request.data.get("yetkili_adi")
+        silinmedurumu = request.data.get("silinmedurumu")
+        
+        if silinmedurumu == "1":
+            silinmedurumu = False
+        elif silinmedurumu == "2":
+            silinmedurumu = True
+        else:
+            return Response({'detail': 'Invalid silinmedurumu value.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        proje.proje_ait_bilgisi = get_object_or_404(CustomUser, id=kullanici_bilgisi)
+        proje.Proje_tipi_adi = proje_tip_adi
+        proje.silinme_bilgisi = silinmedurumu
+        proje.save()
+
+        return Response({'status': 'Project type updated successfully.'}, status=status.HTTP_200_OK)
+    else:
+        proje_tip_adi = request.data.get("yetkili_adi")
+        if proje.proje_ait_bilgisi != request.user:
+            return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+
+        proje.Proje_tipi_adi = proje_tip_adi
+        proje.save()
+        
+        return Response({'status': 'Project type updated successfully.'}, status=status.HTTP_200_OK)

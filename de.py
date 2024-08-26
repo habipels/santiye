@@ -1,12 +1,15 @@
 import requests
 
 # API URL'sini ve Authorization Token'ını tanımlayın
-url = "http://localhost:8000/biadago/api/del/projecttype/"  # URL'yi kendi API yolunuza göre güncelleyin
+url = "http://localhost:8000/biadago/api/update/projecttype/"  # URL'yi kendi API yolunuza göre güncelleyin
 token = "2afd5cfac3ca06bbad66500169c69a62e114ed7d"  # Kendi token bilginizi buraya girin
 
 # Gönderilecek veriler
 data = {
-    "id": 5  # Silinecek proje türü ID'sini buraya yazın
+    "buttonId": 6,  # Güncellenecek proje türü ID'sini buraya yazın
+    "yetkili_adi": "Güncellenmiş Proje Tipi",  # Yeni proje tipi adını buraya yazın
+    "silinmedurumu": "1",  # Silinme durumu: "1" False, "2" True
+    "kullanici": 2  # Kullanıcı ID'sini buraya yazın (sadece super admin için)
 }
 
 # Header bilgisi
@@ -15,11 +18,12 @@ headers = {
     "Content-Type": "application/json"
 }
 
-response = requests.get(url, json=data, headers=headers)
+# API'ye PATCH isteği gönder
+response = requests.patch(url, json=data, headers=headers)
 
 # Yanıtı kontrol et
 if response.status_code == 200:
-    print("Proje tipi başarıyla silindi:", response.json())
+    print("Proje tipi başarıyla güncellendi:", response.json())
 elif response.status_code == 400:
     print("Hata oluştu:", response.json())
 else:
