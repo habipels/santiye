@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 app_name = "main"
 urlpatterns = [#
+    path("get-csrf-token/", views.get_csrf_token, name="get_csrf_token"),
     path("", views.homepage, name="homepage"),
     path("control/<str:hash>", views.homepage_2, name="homepage_2"),
     path("logs", views.loglar, name="loglar"),

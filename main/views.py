@@ -11,7 +11,13 @@ from site_info.models import *
 from muhasebe.models import *
 from django.contrib.admin.models import LogEntry
 from hashids import Hashids
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
 
+def get_csrf_token(request):
+    token = get_token(request)
+    print(token)
+    return JsonResponse({'csrfToken': token})
 # Salt değeri ve minimum hash uzunluğu belirleyin
 HASHIDS_SALT = "habip_elis_12345"
 HASHIDS_MIN_LENGTH = 32
