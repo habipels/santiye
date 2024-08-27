@@ -65,4 +65,10 @@ class TaseronHakedislesSerializer(serializers.ModelSerializer):
     class Meta:
         model = taseron_hakedisles
         fields = '__all__'
-    
+
+class KlasorlerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = klasorler
+        fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
+
+

@@ -54,9 +54,16 @@ urlpatterns = [#
  #######
  path('progresspayment/', views.hakedis_sayfasi_api, name='hakedis_sayfasi_api'),
  #######
- #path('create/contracts/', views.sozlesme_ekle_api, name='sozlesme_ekle_api'),
- #path('update/contracts/', views.sozlesme_duzenle_api, name='sozlesme_duzenle_api'),
- #path('del/contracts/', views.sozlesme_silme_api, name='sozlesme_silme_api'),
+ path('create/progresspayment/', views.hakedis_ekle_api, name='hakedis_ekle_api'),
+ path('update/progresspayment/', views.hakedis_duzenle_api, name='hakedis_duzenle_api'),
+ path('del/progresspayment/', views.hakedis_silme_api, name='hakedis_silme_api'),
+ #######
+ #######
+ path('myfiles/', views.depolama_sistemim, name='depolama_sistemim'),
+ #######
+ path('create/myfiles/', views.klasor_olustur, name='klasor_olustur'),
+ #path('update/progresspayment/', views.hakedis_duzenle_api, name='hakedis_duzenle_api'),
+ #path('del/progresspayment/', views.hakedis_silme_api, name='hakedis_silme_api'),
  #######
 ]
 #

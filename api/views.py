@@ -1104,6 +1104,176 @@ def hakedis_sayfasi_api(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def hakedis_ekle_api(request):
+    try:
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                # Superuser için özel işlem
+                kullanici = request.data.get("kullanici")
+                return Response({"message": "Superuser işlemi yapılacak."}, status=status.HTTP_200_OK)
+            else:
+                # Normal kullanıcı işlemi
+                taseron = request.data.get("taseron")
+                dosyaadi = request.data.get("yetkili_adi")
+                tarih = request.data.get("tarih_bilgisi")
+                aciklama = request.data.get("aciklama")
+                durumu = request.data.get("durumu")
+                file = request.FILES.get("file")
+                tutar = request.data.get("tutar")
+                fatura_no = request.data.get("fatura_no")
+
+                durumu = True if durumu == "1" else False
+
+                taseron_hakedisles.objects.create(
+                    proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron),
+                    dosya=file,
+                    dosya_adi=dosyaadi,
+                    tarih=tarih,
+                    aciklama=aciklama,
+                    durum=durumu,
+                    tutar=tutar,
+                    fatura_numarasi=fatura_no
+                )
+
+                return Response({"message": "Hakediş başarıyla eklendi."}, status=status.HTTP_201_CREATED)
+
+        return Response({"error": "Yetkisiz erişim."}, status=status.HTTP_403_FORBIDDEN)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def hakedis_silme_api(request):
+    try:
+        if request.user.is_authenticated:
+            # POST verilerini al
+            button_id = request.data.get("buttonId")
+
+            # Kayıtları güncelle
+            updated_count = taseron_hakedisles.objects.filter(id=button_id).update(silinme_bilgisi=True)
+
+            if updated_count > 0:
+                return Response({"message": "Hakediş başarıyla silindi."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Hakediş bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({"error": "Yetkisiz erişim."}, status=status.HTTP_403_FORBIDDEN)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def hakedis_duzenle_api(request):
+    try:
+        if request.user.is_authenticated:
+            button_id = request.data.get("buttonId")
+            taseron_id = request.data.get("taseron")
+            dosya_adi = request.data.get("yetkili_adi")
+            tarih = request.data.get("tarih_bilgisi")
+            aciklama = request.data.get("aciklama")
+            durumu = request.data.get("durumu")
+            file = request.FILES.get("file")
+            tutar = request.data.get("tutar")
+            fatura_no = request.data.get("fatura_no")
+            silinme_durumu = request.data.get("silinmedurumu")
+
+            # Durum ve silinme bilgisi ayarları
+            durumu = True if durumu == "1" else False
+            silinme_durumu = True if silinme_durumu == "2" else False
+
+            # Veritabanı güncellemeleri
+            if request.user.is_superuser:
+                if silinme_durumu:
+                    taseron_hakedisles.objects.filter(id=button_id).update(
+                        proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron_id),
+                        dosya=file,
+                        dosya_adi=dosya_adi,
+                        tarih=tarih,
+                        aciklama=aciklama,
+                        durum=durumu,
+                        tutar=tutar,
+                        fatura_numarasi=fatura_no,
+                        silinme_bilgisi=silinme_durumu
+                    )
+                else:
+                    taseron_hakedisles.objects.filter(id=button_id).update(
+                        proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron_id),
+                        dosya=file,
+                        dosya_adi=dosya_adi,
+                        tarih=tarih,
+                        aciklama=aciklama,
+                        durum=durumu,
+                        tutar=tutar,
+                        fatura_numarasi=fatura_no,
+                        silinme_bilgisi=False
+                    )
+            else:
+                taseron_hakedisles.objects.filter(id=button_id).update(
+                    proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron_id),
+                    dosya=file,
+                    dosya_adi=dosya_adi,
+                    tarih=tarih,
+                    aciklama=aciklama,
+                    durum=durumu,
+                    tutar=tutar,
+                    fatura_numarasi=fatura_no
+                )
+
+            return Response({"message": "Hakediş başarıyla güncellendi."}, status=status.HTTP_200_OK)
+
+        return Response({"error": "Yetkisiz erişim."}, status=status.HTTP_403_FORBIDDEN)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def depolama_sistemim(request):
+    if request.user.is_superuser:
+        pass
+    else:
+        profile = klasorler.objects.filter(klasor_adi_db=None, silinme_bilgisi=False, dosya_sahibi=request.user)
+
+    
+    content = {}
+
+    
+    content.update({
+        "santiyeler": KlasorlerSerializer(profile, many=True).data
+    })
+
+    return Response(content, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def klasor_olustur(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser cannot create folders."}, status=status.HTTP_403_FORBIDDEN)
+    
+    ust_klasor = request.data.get("ust_klasor")
+    klasor = request.data.get("klasor")
+    
+    if ust_klasor:
+        ust_klasor_instance = get_object_or_404(klasorler, id=ust_klasor)
+        new_klasor = klasorler.objects.create(
+            dosya_sahibi=request.user,
+            klasor_adi=klasor,
+            klasor_adi_db=ust_klasor_instance
+        )
+    else:
+        new_klasor = klasorler.objects.create(
+            dosya_sahibi=request.user,
+            klasor_adi=klasor
+        )
+    
+    serializer = KlasorlerSerializer(new_klasor)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
