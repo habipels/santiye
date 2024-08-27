@@ -5,13 +5,13 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from muhasebe.models import Gelir_Bilgisi, Gider_Bilgisi, Kasa, CustomUser, gider_urun_bilgisi, Gider_odemesi
 from site_info.models import *
 from django.db.models import Q
 from main.views import sozluk_yapisi
 from rest_framework import serializers
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from muhasebe.models import Gelir_Bilgisi, Gider_Bilgisi, CustomUser, Kasa, gider_urun_bilgisi, Gider_odemesi
+from muhasebe.models import *
+from site_info.models import *
 from .serializers import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -615,3 +615,495 @@ def blogtan_kaleme_ilerleme_takibi_api(request, id):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def ilerleme_kaydet_api(request):
+    try:
+        kalem = request.data.getlist("kalem")
+        tumbilgi = request.data.getlist("tumbilgi")
+        
+        a = []
+        for i in tumbilgi:
+            k = i.split(",")
+            for j in k:
+                a.append(j)
+
+        # Seçilen kalemleri tamamlandı olarak işaretle
+        for i in kalem:
+            a.remove(i)
+            dagilis = santiye_kalemlerin_dagilisi.objects.filter(id=int(i)).update(tamamlanma_bilgisi=True)
+            # Güncellenen nesneleri serileştir
+            updated_item = santiye_kalemlerin_dagilisi.objects.get(id=int(i))
+            updated_serializer = SantiyeKalemlerinDagilisiSerializer(updated_item)
+
+        # Seçilmeyen kalemleri tamamlanmadı olarak işaretle
+        for i in a:
+            if i != "":
+                dagilis = santiye_kalemlerin_dagilisi.objects.filter(id=int(i)).update(tamamlanma_bilgisi=False)
+                # Güncellenen nesneleri serileştir
+                updated_item = santiye_kalemlerin_dagilisi.objects.get(id=int(i))
+                updated_serializer = SantiyeKalemlerinDagilisiSerializer(updated_item)
+
+        return Response({
+            "success": True,
+            "updated_items": updated_serializer.data
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Eğer bir yönlendirme gerekiyorsa (API olmadığı durumlarda)
+    # return redirect("main:blogtan_kaleme_ilerleme_takibi", geri_don, veri_cek)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def projeler_sayfasi_api(request):
+    content = {}
+    
+    try:
+        # Superadmin kontrolü
+        if request.user.is_superuser:
+            pass
+        else:
+            profile = projeler.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user)
+        content["santiyeler"] = ProjelerSerializer(profile, many=True).data
+        content["blog_bilgisi"] = BloglarSerializer(
+            bloglar.objects.filter(proje_ait_bilgisi=request.user, proje_santiye_Ait__silinme_bilgisi=False), 
+            many=True
+        ).data
+        
+        return Response(content, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def proje_ekle_api(request):
+    try:
+        if request.user.is_superuser:
+            kullanici = request.data.get("kullanici")
+            return redirect("main:proje_ekle_admin", id=kullanici)
+        else:
+            yetkili_adi = request.data.get("yetkili_adi")
+            tarih_bilgisi = request.data.get("tarih_bilgisi")
+            aciklama = request.data.get("aciklama")
+            durumu = request.data.get("durumu")
+            durumu = True if durumu == "1" else False
+            blogbilgisi = request.data.getlist("blogbilgisi")
+            
+            # Yeni proje oluşturma
+            new_project = projeler(
+                proje_ait_bilgisi=request.user,
+                proje_Adi=yetkili_adi,
+                tarih=tarih_bilgisi,
+                aciklama=aciklama,
+                durum=durumu,
+                silinme_bilgisi=False
+            )
+            new_project.save()
+            
+            # Blog bilgilerini ekleme
+            bloglar_bilgisi = [get_object_or_404(bloglar, id=int(i)) for i in blogbilgisi]
+            new_project.blog_bilgisi.add(*bloglar_bilgisi)
+            
+            # Resim dosyalarını kaydetme
+            images = request.FILES.getlist('file')
+            for image in images:
+                proje_dosyalari.objects.create(dosya=image, proje_ait_bilgisi=new_project)
+            
+            return Response({"message": "Proje başarıyla eklendi."}, status=status.HTTP_201_CREATED)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def proje_silme_api(request):
+    try:
+        button_id = request.data.get("buttonId")
+        
+        # Proje ID'sinin mevcut olup olmadığını kontrol et
+        proje = get_object_or_404(projeler, id=button_id)
+        
+        # Projeyi silinmiş olarak işaretle
+        proje.silinme_bilgisi = True
+        proje.save()
+        
+        return Response({"message": "Proje başarıyla silindi."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def proje_duzenle_bilgi_api(request):
+    try:
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                kullanici = request.data.get("kullanici")
+                yetkili_adi = request.data.get("yetkili_adi")
+                tarih_bilgisi = request.data.get("tarih_bilgisi")
+                aciklama = request.data.get("aciklama")
+                durumu = request.data.get("durumu")
+                buttonIdInput = request.data.get("buttonId")
+
+                durumu = True if durumu == "1" else False
+                blogbilgisi = request.data.getlist("blogbilgisi")
+
+                projeler.objects.filter(id=buttonIdInput).update(
+                    proje_ait_bilgisi=get_object_or_404(CustomUser, id=kullanici),
+                    proje_Adi=yetkili_adi,
+                    tarih=tarih_bilgisi,
+                    aciklama=aciklama,
+                    durum=durumu,
+                    silinme_bilgisi=False
+                )
+                z = get_object_or_404(projeler, id=buttonIdInput)
+                bloglar_bilgisi = [get_object_or_404(bloglar, id=int(i)) for i in blogbilgisi]
+                z.blog_bilgisi.set(bloglar_bilgisi)
+                
+                # Resim dosyalarını işleme
+                files = request.FILES.getlist('file')
+                for file in files:
+                    proje_dosyalari.objects.create(dosya=file, proje_ait_bilgisi=z)
+                
+            else:
+                yetkili_adi = request.data.get("yetkili_adi")
+                tarih_bilgisi = request.data.get("tarih_bilgisi")
+                aciklama = request.data.get("aciklama")
+                durumu = request.data.get("durumu")
+                buttonIdInput = request.data.get("buttonId")
+
+                durumu = True if durumu == "1" else False
+                blogbilgisi = request.data.getlist("blogbilgisi")
+
+                projeler.objects.filter(id=buttonIdInput).update(
+                    proje_Adi=yetkili_adi,
+                    tarih=tarih_bilgisi,
+                    aciklama=aciklama,
+                    durum=durumu,
+                    silinme_bilgisi=False
+                )
+                z = get_object_or_404(projeler, id=buttonIdInput)
+                bloglar_bilgisi = [get_object_or_404(bloglar, id=int(i)) for i in blogbilgisi]
+                z.blog_bilgisi.set(bloglar_bilgisi)
+                
+                # Resim dosyalarını işleme
+                files = request.FILES.getlist('file')
+                for file in files:
+                    proje_dosyalari.objects.create(dosya=file, proje_ait_bilgisi=z)
+
+        return Response({"message": "Proje başarıyla güncellendi."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def taseron_sayfasi_api(request):
+    content = {}
+    
+    try:
+        # Superadmin kontrolü
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            profile = taseronlar.objects.filter(silinme_bilgisi=False, taseron_ait_bilgisi=request.user)
+        
+        
+        content["santiyeler"] = TaseronlarSerializer(profile, many=True).data
+        content["blog_bilgisi"] = ProjelerSerializer(projeler.objects.filter(proje_ait_bilgisi=request.user, silinme_bilgisi=False), many=True).data
+        
+        return Response(content, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def taseron_ekle_api(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            kullanici = request.data.get("kullanici")
+            return Response({"message": "Redirect to admin page"}, status=status.HTTP_302_FOUND)
+        else:
+            taseron_adi = request.data.get("taseron_adi")
+            telefonnumarasi = request.data.get("telefonnumarasi")
+            email_adresi = request.data.get("email_adresi")
+            blogbilgisi = request.data.getlist("blogbilgisi")
+            aciklama = request.data.get("aciklama")
+            
+            new_taseron = taseronlar(
+                taseron_ait_bilgisi=request.user,
+                taseron_adi=taseron_adi,
+                email=email_adresi,
+                aciklama=aciklama,
+                telefon_numarasi=telefonnumarasi,
+                silinme_bilgisi=False
+            )
+            new_taseron.save()
+            
+            bloglar_bilgisi = [projeler.objects.get(id=int(i)) for i in blogbilgisi]
+            new_taseron.proje_bilgisi.add(*bloglar_bilgisi)
+            
+            # Handle file uploads
+            files = request.FILES.getlist('file')
+            for idx, file in enumerate(files, start=1):
+                taseron_sozlesme_dosyalari.objects.create(
+                    aciklama="",
+                    dosya_adi=idx,
+                    dosya=file,
+                    proje_ait_bilgisi=new_taseron
+                )
+            
+            car = cari.objects.create(
+                cari_kart_ait_bilgisi=request.user,
+                cari_adi=taseron_adi,
+                telefon_numarasi=telefonnumarasi,
+                aciklama=aciklama
+            )
+            
+            cari_taseron_baglantisi.objects.create(
+                gelir_kime_ait_oldugu=new_taseron,
+                cari_bilgisi=car
+            )
+            
+            return Response({"message": "Taseron başarıyla eklendi"}, status=status.HTTP_201_CREATED)
+    else:
+        return Response({"error": "Kullanıcı giriş yapmamış."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def taseron_silme_api(request):
+    try:
+        button_id = request.data.get("buttonId")
+        
+        # Proje ID'sinin mevcut olup olmadığını kontrol et
+        proje = get_object_or_404(taseronlar, id=button_id)
+        
+        # Projeyi silinmiş olarak işaretle
+        proje.silinme_bilgisi = True
+        proje.save()
+        
+        return Response({"message": "Taşeron başarıyla silindi."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def taseron_duzelt_api(request):
+    try:
+        if request.user.is_authenticated:
+            id_bilgisi = request.data.get("id_bilgisi")
+            taseron_adi = request.data.get("taseron_adi")
+            telefonnumarasi = request.data.get("telefonnumarasi")
+            email_adresi = request.data.get("email_adresi")
+            blogbilgisi = request.data.getlist("blogbilgisi")
+            aciklama = request.data.get("aciklama")
+            silinmedurumu = request.data.get("silinmedurumu")
+
+            # Silinme durumuna göre güncelleme yap
+            if silinmedurumu == "1":
+                taseronlar.objects.filter(id=id_bilgisi).update(
+                    taseron_adi=taseron_adi,
+                    email=email_adresi,
+                    aciklama=aciklama,
+                    telefon_numarasi=telefonnumarasi,
+                    silinme_bilgisi=False
+                )
+            elif silinmedurumu == "2":
+                taseronlar.objects.filter(id=id_bilgisi).update(
+                    taseron_adi=taseron_adi,
+                    email=email_adresi,
+                    aciklama=aciklama,
+                    telefon_numarasi=telefonnumarasi,
+                    silinme_bilgisi=True
+                )
+            else:
+                taseronlar.objects.filter(id=id_bilgisi).update(
+                    taseron_adi=taseron_adi,
+                    email=email_adresi,
+                    aciklama=aciklama,
+                    telefon_numarasi=telefonnumarasi
+                )
+
+            # Blog bilgilerini güncelle
+            taseron = get_object_or_404(taseronlar, id=id_bilgisi)
+            bloglar_bilgisi = [get_object_or_404(projeler, id=int(i)) for i in blogbilgisi]
+            taseron.proje_bilgisi.set(bloglar_bilgisi)
+
+            # Dosyaları işleme
+            files = request.FILES.getlist('file')
+            for i, file in enumerate(files, start=1):
+                taseron_sozlesme_dosyalari.objects.create(
+                    aciklama="",
+                    dosya_adi=i,
+                    dosya=file,
+                    proje_ait_bilgisi=taseron
+                )
+
+            return Response({"message": "Taseron başarıyla güncellendi."}, status=status.HTTP_200_OK)
+        
+        return Response({"error": "Yetkisiz erişim."}, status=status.HTTP_403_FORBIDDEN)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sozlesmeler_sayfasi_api(request):
+    try:
+        # Sözlük oluşturma fonksiyonunu çağır
+        content = {}
+
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi__taseron_ait_bilgisi=request.user)
+
+
+        content["santiyeler"] = SozlesmeSerializer(profile, many=True).data
+        content["blog_bilgisi"] = ProjelerSerializer( projeler.objects.filter(proje_ait_bilgisi=request.user, silinme_bilgisi=False),many =True).data
+        content["taseronlar"] = TaseronlarSerializer(taseronlar.objects.filter(taseron_ait_bilgisi=request.user, silinme_bilgisi=False),many =True).data
+
+        return Response(content, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sozlesme_ekle_api(request):
+    try:
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                kullanici = request.data.get("kullanici")
+                return Response({"message": "Redirect to admin page"}, status=status.HTTP_302_FOUND)
+            else:
+                taseron = request.data.get("taseron")
+                dosyaadi = request.data.get("dosyaadi")
+                tarih = request.data.get("tarih")
+                aciklama = request.data.get("aciklama")
+                durumu = request.data.get("durumu") == "1"
+                file = request.FILES.get("file")
+                
+                taseron_sozlesme_dosyalari.objects.create(
+                    proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron),
+                    dosya=file,
+                    dosya_adi=dosyaadi,
+                    tarih=tarih,
+                    aciklama=aciklama,
+                    durum=durumu
+                )
+                return Response({"message": "Sözleşme başarıyla eklendi."}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sozlesme_duzenle_api(request):
+    try:
+        if request.user.is_authenticated:
+            id_bilgisi = request.data.get("id_bilgisi")
+            taseron = request.data.get("taseron")
+            dosyaadi = request.data.get("dosyaadi")
+            tarih = request.data.get("tarih")
+            aciklama = request.data.get("aciklama")
+            durumu = request.data.get("durumu") == "1"
+            file = request.FILES.get("file")
+            
+            if request.user.is_superuser:
+                silinmedurumu = request.data.get("silinmedurumu")
+                if silinmedurumu == "3":
+                    taseron_sozlesme_dosyalari.objects.filter(id=id_bilgisi).update(
+                        proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron),
+                        dosya=file,
+                        dosya_adi=dosyaadi,
+                        tarih=tarih,
+                        aciklama=aciklama,
+                        durum=durumu
+                    )
+                elif silinmedurumu == "2":
+                    taseron_sozlesme_dosyalari.objects.filter(id=id_bilgisi).update(
+                        proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron),
+                        dosya=file,
+                        dosya_adi=dosyaadi,
+                        tarih=tarih,
+                        aciklama=aciklama,
+                        durum=durumu,
+                        silinme_bilgisi=True
+                    )
+                elif silinmedurumu == "1":
+                    taseron_sozlesme_dosyalari.objects.filter(id=id_bilgisi).update(
+                        proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron),
+                        dosya=file,
+                        dosya_adi=dosyaadi,
+                        tarih=tarih,
+                        aciklama=aciklama,
+                        durum=durumu,
+                        silinme_bilgisi=False
+                    )
+            else:
+                taseron_sozlesme_dosyalari.objects.filter(id=id_bilgisi).update(
+                    proje_ait_bilgisi=get_object_or_404(taseronlar, id=taseron),
+                    dosya=file,
+                    dosya_adi=dosyaadi,
+                    tarih=tarih,
+                    aciklama=aciklama,
+                    durum=durumu
+                )
+            
+            return Response({"message": "Sözleşme başarıyla güncellendi."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sozlesme_silme_api(request):
+    try:
+        if request.user.is_authenticated:
+            buttonId = request.data.get("buttonId")
+            if not buttonId:
+                return Response({"error": "Button ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+            sozlesme = get_object_or_404(taseron_sozlesme_dosyalari, id=buttonId)
+            sozlesme.silinme_bilgisi = True
+            sozlesme.save()
+
+            return Response({"message": "Sözleşme başarıyla silindi."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def hakedis_sayfasi_api(request):
+    try:
+        # Kullanıcı yetkisini kontrol et
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            profile = taseron_hakedisles.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi__taseron_ait_bilgisi=request.user)
+            content = {}
+
+
+        # İçeriği hazırlama
+        content["santiyeler"] = TaseronHakedislesSerializer(profile,many = True).data
+        content["taseronlar"] =TaseronlarSerializer(taseronlar.objects.filter(taseron_ait_bilgisi=request.user, silinme_bilgisi=False),many = True).data
+
+        return Response(content, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+

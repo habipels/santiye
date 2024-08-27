@@ -30,5 +30,33 @@ urlpatterns = [#
  #######
  path('siteblogconstruction/', views.santiye_kalem_ve_blog_api, name='santiye_kalem_ve_blog_api'),
  path('progresstracking/<int:id>/', views.blogtan_kaleme_ilerleme_takibi_api, name='blogtan_kaleme_ilerleme_takibi_api'),
+ path('saveprogresstracking/', views.ilerleme_kaydet_api, name='ilerleme_kaydet_api'),
+ ##
+ path('projectpage/', views.projeler_sayfasi_api, name='projeler_sayfasi_api'),
+ #######
+ path('create/projectpage/', views.proje_ekle_api, name='proje_ekle_api'),
+ path('update/projectpage/', views.proje_duzenle_bilgi_api, name='proje_duzenle_bilgi_api'),
+ path('del/projectpage/', views.proje_silme_api, name='proje_silme_api'),
+ #######
+  ##
+ path('subcontractors/', views.taseron_sayfasi_api, name='taseron_sayfasi_api'),
+ #######
+ path('create/subcontractors/', views.taseron_ekle_api, name='taseron_ekle_api'),
+ path('update/subcontractors/', views.taseron_duzelt_api, name='taseron_duzelt_api'),
+ path('del/subcontractors/', views.taseron_silme_api, name='taseron_silme_api'),
+ #######
+   ##
+ path('contracts/', views.sozlesmeler_sayfasi_api, name='sozlesmeler_sayfasi_api'),
+ #######
+ path('create/contracts/', views.sozlesme_ekle_api, name='sozlesme_ekle_api'),
+ path('update/contracts/', views.sozlesme_duzenle_api, name='sozlesme_duzenle_api'),
+ path('del/contracts/', views.sozlesme_silme_api, name='sozlesme_silme_api'),
+ #######
+ path('progresspayment/', views.hakedis_sayfasi_api, name='hakedis_sayfasi_api'),
+ #######
+ #path('create/contracts/', views.sozlesme_ekle_api, name='sozlesme_ekle_api'),
+ #path('update/contracts/', views.sozlesme_duzenle_api, name='sozlesme_duzenle_api'),
+ #path('del/contracts/', views.sozlesme_silme_api, name='sozlesme_silme_api'),
+ #######
 ]
 #

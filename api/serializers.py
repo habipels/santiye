@@ -43,5 +43,26 @@ class SantiyeKalemleriSerializer(serializers.ModelSerializer):
     class Meta:
         model = santiye_kalemleri
         fields = '__all__'
+class SantiyeKalemlerinDagilisiSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = santiye_kalemlerin_dagilisi
+        fields = '__all__'
 
-        
+class ProjelerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = projeler
+        fields = '__all__'
+
+class TaseronlarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = taseronlar
+        fields = '__all__'
+class SozlesmeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = taseron_sozlesme_dosyalari
+        fields = '__all__'
+class TaseronHakedislesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = taseron_hakedisles
+        fields = '__all__'
+    

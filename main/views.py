@@ -1506,6 +1506,7 @@ def taseron_ekle(request):
                 cari_bilgisi = get_object_or_404(cari,id = car.id)
             )
     return redirect("main:taseron_sayfasi")
+
 def taseron_ekle_admin(request,id):
     content = sozluk_yapisi()
     content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi__id = id,silinme_bilgisi = False)
@@ -1683,6 +1684,7 @@ def sozlesme_ekle(request):
                 durum = durumu
             )
     return redirect("main:sozlesmler_sayfasi")
+
 def sozlesme_ekle_admin(request,id):
     content = sozluk_yapisi()
     content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi__id= id,silinme_bilgisi = False)
