@@ -52,13 +52,13 @@ def loginUser(request):
 
     context = sozluk_yapisi()
     context ["form"] = form
-
-    if form.is_valid():
-        username = form.cleaned_data.get("username")
-        password = form.cleaned_data.get("password")
+    print("FORM GELDİ",request.POST.get("username"),request.POST.get("password"))
+    if request.POST:
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
         user = authenticate(username = username,password = password)
-
+        print("FORM GELDİ")
         if user is None:
             messages.info(request,"Kullanıcı Adı veya Parola Hatalı")
             return render(request,"account/login.html",context)
@@ -73,6 +73,8 @@ def loginUser(request):
             lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=False)
 
         return redirect("/")
+    else:
+        print("form valid çalışmadı")
     return render(request,"account/login.html",context)
 @login_required
 def logoutUser(request):
