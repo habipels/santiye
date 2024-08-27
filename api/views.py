@@ -330,3 +330,45 @@ def blog_ekle_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def blog_duzenle_api(request):
+    try:
+        santiye_bilgisi = request.data.get("santiye_bilgisi")
+        blog_id = request.data.get("blog")
+        blok_adi = request.data.get("blok_adi")
+        kat_sayisi = request.data.get("kat_sayisi")
+        baslangictarihi = request.data.get("baslangictarihi")
+        bitistarihi = request.data.get("bitistarihi")
+        
+        blog = get_object_or_404(bloglar, id=blog_id)
+        santiye_obj = get_object_or_404(santiye, id=santiye_bilgisi)
+        
+        blog.proje_ait_bilgisi = santiye_obj.proje_ait_bilgisi
+        blog.proje_santiye_Ait = santiye_obj
+        blog.blog_adi = blok_adi
+        blog.kat_sayisi = kat_sayisi
+        blog.baslangic_tarihi = baslangictarihi
+        blog.bitis_tarihi = bitistarihi
+        blog.save()
+
+        serializer = BloglarSerializer(blog)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def blog_sil_api(request):
+    try:
+        button_id = request.data.get("buttonId")
+        blog = get_object_or_404(bloglar, id=button_id)
+        blog.delete()
+        
+        return Response({"message": "Blog başarıyla silindi"}, status=status.HTTP_204_NO_CONTENT)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

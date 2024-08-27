@@ -19,8 +19,8 @@ urlpatterns = [#
  path('sitebloglist/<int:id>/', views.santiye_projesi_bloklar_ekle_api, name='santiye_projesi_bloklar_ekle_api'),
  #######
  path('create/sitebloglist/', views.blog_ekle_api, name='blog_ekle_api'),
- #path('del/siteprojectlist/', views.santiye_projesi_sil_api, name='santiye_projesi_sil_api'),
- #path('update/siteprojectlist/', views.santiye_projesi_duzenle_api, name='santiye_projesi_duzenle_api'),
+ path('update/sitebloglist/', views.blog_duzenle_api, name='blog_duzenle_api'),
+ path('del/sitebloglist/', views.blog_sil_api, name='blog_sil_api'),
  #######
 ]
 #

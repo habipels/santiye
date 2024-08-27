@@ -1,14 +1,10 @@
 import requests
 
-url = "http://localhost:8000/biadago/api/create/sitebloglist/"
+url = "http://localhost:8000/biadago/api/del/sitebloglist/"
 token = "2afd5cfac3ca06bbad66500169c69a62e114ed7d"  # Kendi token bilginizi buraya girin
 
 data = {
-    "santiye_bilgisi": 6,  # Santiye ID'si
-    "blok_adi": "Yeni Blok Adı",
-    "kat_sayisi": 25,
-    "baslangictarihi": "2024-01-01",
-    "bitistarihi": "2024-12-31"
+    "buttonId": 15,  # Silinecek Blog ID'si
 }
 
 headers = {
@@ -16,9 +12,11 @@ headers = {
     "Content-Type": "application/json"
 }
 
-response = requests.post(url, headers=headers, json=data)
+response = requests.get(url, headers=headers, json=data)
 
-if response.status_code == 201:
-    print("Blog başarıyla oluşturuldu:", response.json())
+if response.status_code == 204:
+    print("Blog başarıyla silindi.")
+    # Yönlendirme URL'sini alıp, işleminiz için kullanabilirsiniz
+    print("Başarıyla Silindi:", response.status_code)
 else:
-    print("Hata oluştu:", response.status_code, response.text)
+    print("Hata oluştu:", response.status_code)
