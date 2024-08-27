@@ -34,3 +34,14 @@ class BloglarSerializer(serializers.ModelSerializer):
     class Meta:
         model = bloglar
         fields = '__all__'
+
+class BirimlerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = birimler
+        fields = '__all__'
+class SantiyeKalemleriSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = santiye_kalemleri
+        fields = '__all__'
+
+        

@@ -22,5 +22,11 @@ urlpatterns = [#
  path('update/sitebloglist/', views.blog_duzenle_api, name='blog_duzenle_api'),
  path('del/sitebloglist/', views.blog_sil_api, name='blog_sil_api'),
  #######
+  path('constructionsite/<int:id>/', views.santiye_kalemleri_api, name='santiye_kalemleri_api'),
+ #######
+ #path('create/sitebloglist/', views.blog_ekle_api, name='blog_ekle_api'),
+ #path('update/sitebloglist/', views.blog_duzenle_api, name='blog_duzenle_api'),
+ #path('del/sitebloglist/', views.blog_sil_api, name='blog_sil_api'),
+ #######
 ]
 #

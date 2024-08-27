@@ -372,3 +372,32 @@ def blog_sil_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def santiye_kalemleri_api(request, id):
+    content = {}
+    
+    # Birim bilgilerini al
+    birim_bilgisi = birimler.objects.filter(silinme_bilgisi=False)
+    content["birim_bilgisi"] = BirimlerSerializer(birim_bilgisi, many=True).data
+    
+    # Kullanıcı süperuser mı değil mi kontrol et
+    if request.user.is_superuser:
+        # Süperuser ile ilgili işlemler burada yapılabilir
+        pass
+    else:
+        profile = santiye_kalemleri.objects.filter(
+            proje_santiye_Ait=get_object_or_404(santiye, id=id), 
+            silinme_bilgisi=False, 
+            proje_ait_bilgisi=request.user
+        )
+        content["santiyeler_bilgileri"] = BloglarSerializer(
+            bloglar.objects.filter(proje_ait_bilgisi=request.user, proje_santiye_Ait_id=id), 
+            many=True
+        ).data
+
+    # Serializing the data
+    content["profile"] = SantiyeKalemleriSerializer(profile, many=True).data
+    
+    return Response(content, status=status.HTTP_200_OK)
