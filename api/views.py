@@ -401,3 +401,217 @@ def santiye_kalemleri_api(request, id):
     content["profile"] = SantiyeKalemleriSerializer(profile, many=True).data
     
     return Response(content, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def santiyeye_kalem_ekle_api(request):
+    if request.user.is_superuser:
+        kullanici = request.data.get("kullanici")
+        return redirect("main:santiye_kalem_ekle_admin", kullanici)
+    else:
+        projetipi = request.data.get("projetipi", [])
+        yetkili_adi = request.data.get("yetkili_adi")
+        santiye_agirligi = request.data.get("katsayisi")
+        finansal_agirlik = request.data.get("blogsayisi")
+        metraj = request.data.get("metraj")
+        tutar = request.data.get("tutar")
+        birim_bilgisi = request.data.get("birim_bilgisi")
+        kata_veya_binaya_daihil = request.data.get("kata_veya_binaya_daihil")
+        id = bloglar.objects.filter(id__in=projetipi).first()
+        
+        # Yeni kalem oluştur
+        kalem = santiye_kalemleri.objects.create(
+            proje_ait_bilgisi=request.user,
+            proje_santiye_Ait=id.proje_santiye_Ait,
+            kalem_adi=yetkili_adi,
+            santiye_agirligi=santiye_agirligi,
+            santiye_finansal_agirligi=finansal_agirlik,
+            birimi=get_object_or_404(birimler, id=birim_bilgisi),
+            metraj=metraj,
+            tutari=tutar
+        )
+
+        blog_lar = bloglar.objects.filter(id__in=projetipi)
+
+        if kata_veya_binaya_daihil == "0":
+            for i in blog_lar:
+                for j in range(0, int(i.kat_sayisi)):
+                    santiye_kalemlerin_dagilisi.objects.create(
+                        proje_ait_bilgisi=request.user,
+                        proje_santiye_Ait=id.proje_santiye_Ait,
+                        kalem_bilgisi=kalem,
+                        kat=j,
+                        blog_bilgisi=i
+                    )
+        elif kata_veya_binaya_daihil == "1":
+            for i in blog_lar:
+                santiye_kalemlerin_dagilisi.objects.create(
+                    proje_ait_bilgisi=request.user,
+                    proje_santiye_Ait=id.proje_santiye_Ait,
+                    kalem_bilgisi=kalem,
+                    kat=0,
+                    blog_bilgisi=i
+                )
+        elif kata_veya_binaya_daihil == "2":
+            for i in blog_lar:
+                for j in range(0, 4):
+                    santiye_kalemlerin_dagilisi.objects.create(
+                        proje_ait_bilgisi=request.user,
+                        proje_santiye_Ait=id.proje_santiye_Ait,
+                        kalem_bilgisi=kalem,
+                        kat=j,
+                        blog_bilgisi=i
+                    )
+
+        return Response({"message": "Kalem başarıyla eklendi."}, status=status.HTTP_201_CREATED)
+
+    return Response({"error": "Yetkisiz erişim."}, status=status.HTTP_403_FORBIDDEN)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def kalem_sil_api(request, id):
+    kalem = get_object_or_404(santiye_kalemleri, id=id)
+
+    # Kullanıcının silme yetkisi olup olmadığını kontrol et
+    if request.user != kalem.proje_ait_bilgisi and not request.user.is_superuser:
+        return Response({"error": "Yetkisiz erişim."}, status=status.HTTP_403_FORBIDDEN)
+    
+    kalem.silinme_bilgisi = True
+    kalem.save()
+
+    return Response({"message": "Kalem başarıyla silindi."}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def santiye_kalemleri_duzenle_api(request,id):
+    try:
+        # Verileri al
+        yetkili_adi = request.data.get("yetkili_adi")
+        santiye_agirligi = request.data.get("katsayisi")
+        finansal_agirlik = request.data.get("blogsayisi")
+        metraj = request.data.get("metraj")
+        tutar = request.data.get("tutar")
+        birim_bilgisi = request.data.get("birim_bilgisi")
+        silinmedurumu = request.data.get("silinmedurumu")
+
+        # Kalemi al
+        kalem = get_object_or_404(santiye_kalemleri, id=id)
+
+        # Verileri güncelle
+        if request.user.is_superuser:
+            if silinmedurumu == "3":
+                kalem.kalem_adi = yetkili_adi
+                kalem.santiye_agirligi = santiye_agirligi
+                kalem.santiye_finansal_agirligi = finansal_agirlik
+                kalem.birimi = get_object_or_404(birimler, id=birim_bilgisi)
+                kalem.metraj = metraj
+                kalem.tutari = tutar
+                kalem.save()
+
+            elif silinmedurumu == "2":
+                kalem.kalem_adi = yetkili_adi
+                kalem.santiye_agirligi = santiye_agirligi
+                kalem.santiye_finansal_agirligi = finansal_agirlik
+                kalem.silinme_bilgisi = True
+                kalem.birimi = get_object_or_404(birimler, id=birim_bilgisi)
+                kalem.metraj = metraj
+                kalem.tutari = tutar
+                kalem.save()
+
+            elif silinmedurumu == "1":
+                kalem.kalem_adi = yetkili_adi
+                kalem.santiye_agirligi = santiye_agirligi
+                kalem.santiye_finansal_agirligi = finansal_agirlik
+                kalem.silinme_bilgisi = False
+                kalem.birimi = get_object_or_404(birimler, id=birim_bilgisi)
+                kalem.metraj = metraj
+                kalem.tutari = tutar
+                kalem.save()
+
+        else:
+            kalem.proje_ait_bilgisi = request.user
+            kalem.kalem_adi = yetkili_adi
+            kalem.santiye_agirligi = santiye_agirligi
+            kalem.santiye_finansal_agirligi = finansal_agirlik
+            kalem.birimi = get_object_or_404(birimler, id=birim_bilgisi)
+            kalem.metraj = metraj
+            kalem.tutari = tutar
+            kalem.save()
+
+        return Response({"message": "Kalem başarıyla güncellendi."}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def kalem_blog_dagilis_sil_api(request, id, ik):
+    try:
+        # İlgili kayıtları al
+        dagilis = get_object_or_404(santiye_kalemlerin_dagilisi, blog_bilgisi__id=id)
+        proje_santiye_id = dagilis.proje_santiye_Ait.id
+
+        # Kayıtları sil
+        santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id=ik, blog_bilgisi__id=id).delete()
+
+        return Response({"message": "Kalem ve blog dağılımı başarıyla silindi."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def santiye_kalem_ve_blog_api(request):
+    content = {}
+    
+    try:
+        # Proje tiplerini al
+        proje_tipleri = proje_tipi.objects.filter(proje_ait_bilgisi=request.user)
+        content["proje_tipleri"] = ProjeTipiSerializer(proje_tipleri, many=True).data
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        if request.user.is_superuser:
+            profile = bloglar.objects.all()  # Superuser tüm blogları görebilir
+        else:
+            profile = bloglar.objects.filter(proje_ait_bilgisi=request.user)
+        
+        content["santiyeler"] = BloglarSerializer(profile, many=True).data
+        return Response(content, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def blogtan_kaleme_ilerleme_takibi_api(request, id):
+    content = {}
+    
+    try:
+        # Blog bilgisi al
+        #content["id"] =BloglarSerializer (get_object_or_404(bloglar, id=id),many = True).data
+        #content["blog_id"] = id
+        
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                # Superuser için santiye bilgileri ve kalemler
+                pass
+            else:
+                # Normal kullanıcı için santiye bilgileri ve kalemler
+                content["santiyeler_bilgileri"] = SantiyeSerializer(santiye.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user), many=True).data
+                kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id=id)
+            
+            kalem_id = list(set(i.kalem_bilgisi.id for i in kalemler))
+            profile =santiye_kalemleri.objects.filter(id__in=kalem_id, silinme_bilgisi=False)  
+            content["santiyeler"] = SantiyeKalemleriSerializer(profile, many=True).data
+        
+        else:
+            return Response({"error": "Kullanıcı giriş yapmamış."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        return Response(content, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

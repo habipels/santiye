@@ -1203,6 +1203,7 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     else:
         return redirect("/users/login/")
     return render(request,"santiye_yonetimi/ilerleme_takibi.html",content)
+
 def ilerleme_kaydet(request):
     if request.POST:
         geri_don = request.POST.get("geri_don")

@@ -24,9 +24,11 @@ urlpatterns = [#
  #######
   path('constructionsite/<int:id>/', views.santiye_kalemleri_api, name='santiye_kalemleri_api'),
  #######
- #path('create/sitebloglist/', views.blog_ekle_api, name='blog_ekle_api'),
- #path('update/sitebloglist/', views.blog_duzenle_api, name='blog_duzenle_api'),
- #path('del/sitebloglist/', views.blog_sil_api, name='blog_sil_api'),
+ path('create/constructionsite/', views.santiyeye_kalem_ekle_api, name='santiyeye_kalem_ekle_api'),
+ path('update/constructionsite/<int:id>/', views.santiye_kalemleri_duzenle_api, name='santiye_kalemleri_duzenle_api'),
+ path('del/constructionsite/<int:id>/', views.kalem_sil_api, name='kalem_sil_api'),
  #######
+ path('siteblogconstruction/', views.santiye_kalem_ve_blog_api, name='santiye_kalem_ve_blog_api'),
+ path('progresstracking/<int:id>/', views.blogtan_kaleme_ilerleme_takibi_api, name='blogtan_kaleme_ilerleme_takibi_api'),
 ]
 #
