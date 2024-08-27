@@ -831,6 +831,7 @@ def blog_ekle(request):
         )
         y = "/siteblog/"+santiye_bilgisi+"/"
     return redirect(y)
+
 def blog_duzenle(request):
     if request.POST:
         santiye_bilgisi = request.POST.get("santiye_bilgisi")

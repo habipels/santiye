@@ -204,3 +204,129 @@ def proje_duzenle(request):
         proje.save()
         
         return Response({'status': 'Project type updated successfully.'}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def santiye_projesi_liste(request):
+    content = {}
+
+    if super_admin_kontrolu(request):
+        profile = santiye.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
+        content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
+    else:
+        profile = santiye.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user)
+        content["proje_tipleri"] = ProjeTipiSerializer(proje_tipi.objects.filter(proje_ait_bilgisi=request.user), many=True).data
+
+    content["santiyeler"] = SantiyeSerializer(profile, many=True).data
+    content["top"] = profile.count()
+
+    return Response(content, status=status.HTTP_200_OK)
+
+from rest_framework.decorators import api_view, permission_classes
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def santiye_ekleme_api(request):
+    if request.method == 'GET':    
+        projetipi = request.data.get("projetipi")
+        proje_adi = request.data.get("yetkili_adi")
+
+        santiye.objects.create(
+            proje_ait_bilgisi=request.user,
+            proje_tipi=get_object_or_404(proje_tipi, id=projetipi),
+            proje_adi=proje_adi
+        )
+        return Response({"message": "Santiye başarıyla eklendi."}, status=status.HTTP_201_CREATED)
+
+    return Response({"error": "Geçersiz istek."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def santiye_projesi_sil_api(request):
+    if request.method == 'POST':
+        id = request.data.get("id")
+
+        if super_admin_kontrolu(request):
+            santiye.objects.filter(id=id).update(silinme_bilgisi=True)
+        else:
+            santiye.objects.filter(proje_ait_bilgisi=request.user, id=id).update(silinme_bilgisi=True)
+
+        return Response({"message": "Şantiye başarıyla silindi."}, status=status.HTTP_200_OK)
+
+    return Response({"error": "Geçersiz istek."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def santiye_projesi_duzenle_api(request):
+    if request.method == 'GET':
+        id = request.data.get("buttonId")
+
+        if super_admin_kontrolu(request):
+            proje_tip_adi = request.data.get("yetkili_adi")
+            silinmedurumu = request.data.get("silinmedurumu")
+
+            if silinmedurumu == "1":
+                silinmedurumu = False
+                santiye.objects.filter(id=id).update(proje_adi=proje_tip_adi, silinme_bilgisi=silinmedurumu)
+            elif silinmedurumu == "2":
+                silinmedurumu = True
+                santiye.objects.filter(id=id).update(proje_adi=proje_tip_adi, silinme_bilgisi=silinmedurumu)
+        else:
+            proje_tip_adi = request.data.get("yetkili_adi")
+            santiye.objects.filter(proje_ait_bilgisi=request.user, id=id).update(proje_adi=proje_tip_adi)
+
+        return Response({"message": "Şantiye başarıyla güncellendi."}, status=status.HTTP_200_OK)
+
+    return Response({"error": "Geçersiz istek."}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def santiye_projesi_bloklar_ekle_api(request, id):
+    try:
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            profile = bloglar.objects.filter(proje_santiye_Ait__id=id)
+            content = {
+                "id_bilgisi": id,
+                "proje_tipleri": ProjeTipiSerializer(proje_tipi.objects.filter(proje_ait_bilgisi=request.user), many=True).data,
+            }
+        content["santiyeler"] = BloglarSerializer(profile, many=True).data
+        return Response(content, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def blog_ekle_api(request):
+    try:
+        santiye_bilgisi = request.data.get("santiye_bilgisi")
+        blok_adi = request.data.get("blok_adi")
+        kat_sayisi = request.data.get("kat_sayisi")
+        baslangictarihi = request.data.get("baslangictarihi")
+        bitistarihi = request.data.get("bitistarihi")
+        
+        if not santiye_bilgisi or not blok_adi:
+            return Response({"error": "Eksik bilgi"}, status=status.HTTP_400_BAD_REQUEST)
+
+        santiye_obj = get_object_or_404(santiye, id=santiye_bilgisi)
+        blog = bloglar.objects.create(
+            proje_ait_bilgisi=santiye_obj.proje_ait_bilgisi,
+            proje_santiye_Ait=santiye_obj,
+            blog_adi=blok_adi,
+            kat_sayisi=kat_sayisi,
+            baslangic_tarihi=baslangictarihi,
+            bitis_tarihi=bitistarihi
+        )
+        
+        serializer = BloglarSerializer(blog)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

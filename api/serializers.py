@@ -24,3 +24,13 @@ class ProjeTipiSerializer(serializers.ModelSerializer):
     class Meta:
         model = proje_tipi
         fields = '__all__'
+
+class SantiyeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = santiye
+        fields = '__all__'
+
+class BloglarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = bloglar
+        fields = '__all__'
