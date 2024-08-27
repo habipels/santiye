@@ -27,10 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://cloud.biadago.com',
-    'http://cloud.biadago.com'
-]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,6 +41,8 @@ INSTALLED_APPS = [
       #rosetta çeviri için
     'rosetta',
     'simple_history',
+    'rest_framework',
+    'rest_framework.authtoken',
     #
     'main',
     'users',
@@ -62,7 +61,7 @@ MIDDLEWARE = [
     #
     'django.middleware.locale.LocaleMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-
+    
     #
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -95,41 +94,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djang_website.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'biadagov',
-        'USER': 'biadagov',
-        'PASSWORD': 'bjDykdA5F24nWiJW',
-        'HOST': 'localhost',
-        'PORT': '887',
-        'OPTIONS': {
-            'unix_socket': '/tmp/mysql.sock',
-        },
-    }
-}
 
 # Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#database
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'biadagopost',
-        'USER': 'biadagopost',
-        'PASSWORD': '64wizEeBZ6Y4',
-        'HOST': 'localhost',  # Replace with your PostgreSQL server's address if necessary
-        'PORT': '5432',          # Leave empty to use the default PostgreSQL port (usually 5432)
-    }
-}"""
-"""
+# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-"""
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000','http://127.0.0.1:8000',]
+CSRF_COOKIE_SECURE = False
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
