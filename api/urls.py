@@ -91,5 +91,13 @@ urlpatterns = [#
  path('statusset/thingstodo/', views.yapilacak_durumu_yenileme, name='yapilacak_durumu_yenileme'),
  path('update/thingstodo/', views.yapilacalar_duzenle_api, name='yapilacalar_duzenle_api'),
  #######
+   #######
+ path('todo/', views.yapilacaklar_timeline_api, name='yapilacaklar_timeline_api'),
+ #######
+ path('create/todo/', views.yapilacalar_time_line_ekle_api, name='yapilacalar_time_line_ekle_api'),
+ path('del/todo/', views.yapilacalar_time_line_sil_api, name='yapilacalar_time_line_sil_api'),
+ path('update/todo/', views.yapilacaklar_time_line_duzenle_api, name='yapilacaklar_time_line_duzenle_api'),
+ #######
+ path('report/<int:id>', views.santiye_raporu_api, name='santiye_raporu_api'),
 ]#
 #
