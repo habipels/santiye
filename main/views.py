@@ -2568,6 +2568,11 @@ def santiye_raporu(request,id):
     content["santiye"] = profile
     return render(request,"santiye_yonetimi/santiye_raporu.html",content)
 
+def kullanici_yetkileri(request):
+    content = sozluk_yapisi()
+
+    return render(request,"kullanici_yetkileri/yetkiler.html",content)
+
 
 def cari_history_view(request, cari_id):
     cari_instance = cari.objects.get(id=cari_id)
