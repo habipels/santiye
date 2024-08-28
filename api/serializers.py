@@ -70,5 +70,14 @@ class KlasorlerSerializer(serializers.ModelSerializer):
     class Meta:
         model = klasorler
         fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
+class KlasorDosyalariSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = klasor_dosyalari
+        fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
+
+class IsplaniPlanlariSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IsplaniPlanlari
+        fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
 
 
