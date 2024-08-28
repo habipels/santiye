@@ -1694,22 +1694,120 @@ def yapilacaklar_timeline_api(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
     else:
         profile = YapilacakPlanlari.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user).order_by("teslim_tarihi")
-
-
-
     content = {
         "santiyeler": YapilacakPlanlariSerializer(profile, many=True).data,
         "kullanicilarim": CustomUserSerializer(CustomUser.objects.filter(kullanicilar_db=request.user, kullanici_silme_bilgisi=False, is_active=True), many=True).data
     }
 
     return Response(content, status=status.HTTP_200_OK)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacalar_time_line_ekle_api(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser cannot add tasks."}, status=status.HTTP_403_FORBIDDEN)
+
+    serializer = YapilacakPlanlariSerializer(data=request.data)
+    if serializer.is_valid():
+        baslik = serializer.validated_data.get("baslik")
+        durum = serializer.validated_data.get("durum")
+        aciliyet = serializer.validated_data.get("aciliyet")
+        teslim_tarihi = serializer.validated_data.get("teslim_tarihi")
+        aciklama = serializer.validated_data.get("aciklama")
+        blogbilgisi = request.data.getlist("kullanicilari")
+        images = request.FILES.getlist('file')
+
+        new_project = YapilacakPlanlari(
+            proje_ait_bilgisi=request.user,
+            title=baslik,
+            status=durum,
+            aciklama=aciklama,
+            oncelik_durumu=aciliyet,
+            teslim_tarihi=teslim_tarihi,
+            silinme_bilgisi=False
+        )
+        new_project.save()
+
+        bloglar_bilgisi = [get_object_or_404(CustomUser, id=int(i)) for i in blogbilgisi]
+        new_project.yapacaklar.add(*bloglar_bilgisi)
+
+        for image in images:
+            YapilacakDosyalari.objects.create(
+                proje_ait_bilgisi=new_project,
+                dosya_sahibi=request.user,
+                dosya=image
+            )
+
+        return Response(YapilacakPlanlariSerializer(new_project).data, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacalar_time_line_sil_api(request):
+    id_bilgisi = request.data.get('id_bilgisi')
+
+    if not id_bilgisi:
+        return Response({'error': 'ID bilgisi sağlanmalı'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Görevi güncelle
+        YapilacakPlanlari.objects.filter(id=id_bilgisi).update(silinme_bilgisi=True)
+        return Response({'message': 'Yapılacak başarıyla silindi'}, status=status.HTTP_200_OK)
+    except YapilacakPlanlari.DoesNotExist:
+        return Response({'error': 'Yapılacak bulunamadı'}, status=status.HTTP_404_NOT_FOUND)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacaklar_time_line_duzenle_api(request):
+    id = request.data.get("id")
+    baslik = request.data.get("baslik")
+    durum = request.data.get("durum")
+    aciliyet = request.data.get("aciliyet")
+    teslim_tarihi = request.data.get("teslim_tarihi")
+    aciklama = request.data.get("aciklama")
+    blogbilgisi = request.data.get("kullanicilari", [])
+
+    # Belirtilen ID'ye sahip YapilacakPlanlari nesnesini güncelle
+    yapilacak = get_object_or_404(YapilacakPlanlari, id=id)
+
+    if not request.user.is_superuser:
+        yapilacak.proje_ait_bilgisi = request.user
+    
+    yapilacak.title = baslik
+    yapilacak.status = durum
+    yapilacak.aciklama = aciklama
+    yapilacak.oncelik_durumu = aciliyet
+    yapilacak.teslim_tarihi = teslim_tarihi
+    yapilacak.silinme_bilgisi = False
+    yapilacak.save()
+
+    # Blog bilgilerini güncelle
+    if blogbilgisi:
+        bloglar_bilgisi = CustomUser.objects.filter(id__in=blogbilgisi)
+        yapilacak.yapacaklar.set(bloglar_bilgisi)
+
+    # Dosyaları ekle
+    images = request.FILES.getlist('file')
+    for image in images:
+        YapilacakDosyalari.objects.create(
+            proje_ait_bilgisi=yapilacak,
+            dosya_sahibi=request.user,
+            dosya=image
+        )
+    
+    return Response({"detail": "Yapılacak plan başarıyla güncellendi."}, status=status.HTTP_200_OK)
 
 
-
-
-
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def santiye_raporu_api(request, id):
+    try:
+        profile = get_object_or_404(bloglar, proje_ait_bilgisi=request.user, id=id)
+        content = {
+            "santiye": BloglarSerializer(profile).data 
+        }
+        return Response(content, status=status.HTTP_200_OK)
+    except bloglar.DoesNotExist:
+        return Response({"detail": "Santiye raporu bulunamadı."}, status=status.HTTP_404_NOT_FOUND)

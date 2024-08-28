@@ -1,7 +1,7 @@
 import requests
 
 # API URL
-url = "http://localhost:8000/biadago/api/update/thingstodo/"  # API URL'nizi buraya yazın
+url = "http://localhost:8000/biadago/api/report/16"  # API URL'nizi buraya yazın
 
 # Kullanıcıya ait JWT veya diğer kimlik doğrulama bilgileri
 headers = {
@@ -10,13 +10,13 @@ headers = {
 # API'ye gönderilecek veri
 # Gönderilecek veri
 data = {
-    'id_bilgisi': 1,  # Güncellenecek proje ID'si
+    'id': 1,  # Güncellenmek istenen YapilacakPlanlari nesnesinin ID'si
     'baslik': 'Yeni Başlık',
     'durum': 'Tamamlandı',
     'aciliyet': 'Yüksek',
     'teslim_tarihi': '2024-09-01',
-    'kullanicilari': [14],  # Atanacak kullanıcı ID'leri
-    'aciklama': 'Yeni açıklama'
+    'aciklama': 'Güncellenmiş açıklama',
+    'kullanicilari': [14],  # İlgili kullanıcı ID'leri
 }
 
 # Dosyalar
@@ -27,7 +27,7 @@ files = {
 
 
 # POST isteği gönder
-response = requests.get(url, data=data, files=files, headers=headers)
+response = requests.get(url, headers=headers)
 
 # Yanıtı kontrol et
 if response.status_code == 201:
