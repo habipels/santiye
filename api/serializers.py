@@ -80,4 +80,9 @@ class IsplaniPlanlariSerializer(serializers.ModelSerializer):
         model = IsplaniPlanlari
         fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
 
+class YapilacakPlanlariSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = YapilacakPlanlari
+        fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
+
 

@@ -1686,7 +1686,23 @@ def yapilacalar_duzenle_api(request):
     return Response({"message": "Task başarıyla Güncellendi."}, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacaklar_timeline_api(request):
+    if super_admin_kontrolu(request):
+        profile = YapilacakPlanlari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
+    else:
+        profile = YapilacakPlanlari.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user).order_by("teslim_tarihi")
 
+
+
+    content = {
+        "santiyeler": YapilacakPlanlariSerializer(profile, many=True).data,
+        "kullanicilarim": CustomUserSerializer(CustomUser.objects.filter(kullanicilar_db=request.user, kullanici_silme_bilgisi=False, is_active=True), many=True).data
+    }
+
+    return Response(content, status=status.HTTP_200_OK)
 
 
 
