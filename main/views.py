@@ -2104,6 +2104,7 @@ def dosya_sil(request):
         return redirect(z)
     else:
         return redirect("main:depolama_sistemim")
+
 def dosya_geri_getir(request):
     if request.POST:
         if request.user.is_superuser:
@@ -2339,6 +2340,7 @@ def yapilacalar_ekle(request):
                 IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect("main:yapilacaklar")
+
 def yapilacalar_ekle_toplu(request):
     if request.POST:
         if request.user.is_superuser:
@@ -2399,6 +2401,7 @@ def yapilacak_durumu_yenileme(request):
             IsplaniIlerlemeDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlariIlerleme,id = new_project.id),yapan_kisi = request.user,dosya=images,dosya_sahibi = get_object_or_404(IsplaniPlanlari,id =yenilenecekeklemeyapilacak))  # Urun_resimleri modeline resimleri kaydet
             isim = isim+1
     return redirect("main:yapilacaklar")
+
 def yapilacalar_duzenle(request):
     if request.POST:
         if request.user.superuser:

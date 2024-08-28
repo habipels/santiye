@@ -1276,4 +1276,424 @@ def klasor_olustur(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def klasor_yeniden_adlandir_api(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser yetkisi ile bu işlem yapılamaz."}, status=status.HTTP_403_FORBIDDEN)
+    
+    klasor = request.data.get("klasor")
+    idbilgisi = request.data.get("idbilgisi")
+
+    if not klasor or not idbilgisi:
+        return Response({"detail": "Gerekli tüm alanlar doldurulmalıdır."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        klasor_obj = klasorler.objects.filter(id=idbilgisi, dosya_sahibi=request.user).update(
+            klasor_adi=klasor
+        )
+        if klasor_obj:
+            return Response({"detail": "Klasör başarıyla yeniden adlandırıldı."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Klasör bulunamadı veya yetkiniz yok."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def klasor_sil_api(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser yetkisi ile bu işlem yapılamaz."}, status=status.HTTP_403_FORBIDDEN)
+    
+    idbilgisi = request.data.get("idbilgisi")
+
+    if not idbilgisi:
+        return Response({"detail": "ID bilgisi sağlanmalı."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        klasor = klasorler.objects.filter(id=idbilgisi, dosya_sahibi=request.user).update(
+            silinme_bilgisi=True
+        )
+        if klasor:
+            return Response({"detail": "Klasör başarıyla silindi."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Klasör bulunamadı veya yetkiniz yok."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def klasore_gir_api(request, id):
+    content = {}
+    content["id_bilgisi"] = id
+
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        profile = klasorler.objects.filter(klasor_adi_db__id=id, silinme_bilgisi=False, dosya_sahibi=request.user)
+        dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi=False, dosya_sahibi=request.user, proje_ait_bilgisi__id=id)
+    
+    content["santiyeler"] = KlasorlerSerializer(profile,many=True).data
+    content["dosyalarim"] = KlasorDosyalariSerializer(dosyalarim,many = True).data
+
+    # Verileri JSON formatında döndür
+    return Response(content, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def dosya_ekle_api(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser has no permission to upload files."}, status=status.HTTP_403_FORBIDDEN)
+
+    ust_klasor = request.data.get("ust_klasor")
+    dosya_adi = request.data.get("dosya_adi")
+    tarih = request.data.get("tarih")
+    aciklama = request.data.get("aciklama")
+    dosya = request.FILES.get("file")
+
+    if not ust_klasor or not dosya:
+        return Response({"detail": "Ust klasor ID and file are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    ust_klasor_instance = get_object_or_404(klasorler, id=ust_klasor)
+
+    yeni_dosya = klasor_dosyalari.objects.create(
+        dosya_sahibi=request.user,
+        proje_ait_bilgisi=ust_klasor_instance,
+        dosya=dosya,
+        dosya_adi=dosya_adi,
+        tarih=tarih,
+        aciklama=aciklama
+    )
+
+
+
+    return Response("Dosya Başarıyla Eklendi", status=status.HTTP_201_CREATED)
+
+@api_view(['get'])
+@permission_classes([IsAuthenticated])
+def dosya_sil_api(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser yetkisi ile bu işlem yapılamaz."}, status=status.HTTP_403_FORBIDDEN)
+    
+    idbilgisi = request.data.get("klasor")
+
+    if not idbilgisi:
+        return Response({"detail": "ID bilgisi sağlanmalı."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        klasor = klasor_dosyalari.objects.filter(id=idbilgisi).update(
+            silinme_bilgisi=True
+        )
+        if klasor:
+            return Response({"detail": "Dosya başarıyla silindi."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Dosya bulunamadı veya yetkiniz yok."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['get'])
+@permission_classes([IsAuthenticated])
+def dosya_geri_getir_api(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser yetkisi ile bu işlem yapılamaz."}, status=status.HTTP_403_FORBIDDEN)
+    
+    idbilgisi = request.data.get("klasor")
+
+    if not idbilgisi:
+        return Response({"detail": "ID bilgisi sağlanmalı."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        klasor = klasor_dosyalari.objects.filter(id=idbilgisi).update(
+            silinme_bilgisi=False
+        )
+        if klasor:
+            return Response({"detail": "Dosya başarıyla Geri Getirildi."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Dosya bulunamadı veya yetkiniz yok."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+from functools import reduce
+import operator
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def dokumanlar_api(request):
+    content= {}
+    dosya_turu = [".xlsx", ".pdf", ".xlx", ".txt", ".docx", ".doc", ".ppt", ".pptx"]
+
+    if super_admin_kontrolu(request):
+        profile = klasor_dosyalari.objects.all()  # Super admin için tüm veriyi getir
+    else:
+        profile = klasor_dosyalari.objects.filter(
+            dosya_sahibi=request.user,silinme_bilgisi = False
+        ).filter(reduce(operator.or_, (Q(dosya__icontains=x) for x in dosya_turu)))
+    content["santiyeler"]= KlasorDosyalariSerializer(profile, many=True).data
+    
+
+    return Response(content, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def media_dosyalari_api(request):
+    content= {}
+    dosya_turu = [".jpg",".jpeg",".png",".ico",".css",".JFIF",".GIF",".WEBP"]
+
+    if super_admin_kontrolu(request):
+        profile = klasor_dosyalari.objects.all()  # Super admin için tüm veriyi getir
+    else:
+        profile = klasor_dosyalari.objects.filter(
+            dosya_sahibi=request.user,silinme_bilgisi = False
+        ).filter(reduce(operator.or_, (Q(dosya__icontains=x) for x in dosya_turu)))
+    content["santiyeler"]= KlasorDosyalariSerializer(profile, many=True).data
+    
+
+    return Response(content, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def zamana_dosyalari_api(request):
+    content= {}
+    dosya_turu = [".jpg",".jpeg",".png",".ico",".css",".JFIF",".GIF",".WEBP"]
+
+    if super_admin_kontrolu(request):
+        profile = klasor_dosyalari.objects.all()  # Super admin için tüm veriyi getir
+    else:
+        profile = klasor_dosyalari.objects.filter(
+            dosya_sahibi=request.user,silinme_bilgisi = False
+        ).order_by("-id")
+    content["santiyeler"]= KlasorDosyalariSerializer(profile, many=True).data
+    
+
+    return Response(content, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def silinen_dosyalari_api(request):
+    content= {}
+    dosya_turu = [".jpg",".jpeg",".png",".ico",".css",".JFIF",".GIF",".WEBP"]
+
+    if super_admin_kontrolu(request):
+        profile = klasor_dosyalari.objects.all()  # Super admin için tüm veriyi getir
+    else:
+        profile = klasor_dosyalari.objects.filter(
+            dosya_sahibi=request.user,silinme_bilgisi = True
+        )
+    content["santiyeler"]= KlasorDosyalariSerializer(profile, many=True).data
+    
+
+    return Response(content, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacaklar_api(request):
+    content = {}
+    # Süper admin kontrolü
+    if super_admin_kontrolu(request):
+        profile = IsplaniPlanlari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
+        content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
+    else:
+        profile = IsplaniPlanlari.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user)
+    content["santiyeler"] = IsplaniPlanlariSerializer(profile, many=True).data
+    content["kullanicilari"] =CustomUserSerializer( CustomUser.objects.filter(
+        kullanicilar_db=request.user,
+        kullanici_silme_bilgisi=False,
+        is_active=True
+    ),many = True).data
+    
+    return Response(content, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacalar_ekle_api(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser access is restricted for this endpoint."}, status=status.HTTP_403_FORBIDDEN)
+    
+    serializer = IsplaniPlanlariSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        baslik = request.data.get("baslik")
+        durum = request.data.get("durum")
+        aciliyet = request.data.get("aciliyet")
+        teslim_tarihi = request.data.get("teslim_tarihi")
+        blogbilgisi = request.data.getlist("kullanicilari")
+        aciklama = request.data.get("aciklama")
+        
+        new_project = IsplaniPlanlari(
+            proje_ait_bilgisi=request.user,
+            title=baslik,
+            status=durum,
+            aciklama=aciklama,
+            oncelik_durumu=aciliyet,
+            teslim_tarihi=teslim_tarihi,
+            silinme_bilgisi=False
+        )
+        new_project.save()
+        
+        bloglar_bilgisi = [CustomUser.objects.get(id=int(i)) for i in blogbilgisi]
+        new_project.yapacaklar.add(*bloglar_bilgisi)
+        
+        files = request.FILES.getlist('file')
+        for file in files:
+            IsplaniDosyalari.objects.create(
+                proje_ait_bilgisi=new_project,
+                dosya_sahibi=request.user,
+                dosya=file
+            )
+        
+        return Response({"detail": "Task successfully created."}, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacalar_ekle_toplu_api(request):
+    if request.user.is_superuser:
+        return Response({"detail": "Superuser cannot create tasks."}, status=status.HTTP_403_FORBIDDEN)
+    
+    baslik = request.data.get("baslik")
+    durum = request.data.get("durum")
+    aciliyet = request.data.get("aciliyet")
+    teslim_tarihi = request.data.get("teslim_tarihi")
+    blogbilgisi = request.data.getlist("kullanicilari")
+    aciklama = request.data.getlist("aciklama")
+    
+    for i in range(len(aciklama)):
+        if aciklama[i]:
+            new_project = IsplaniPlanlari(
+                proje_ait_bilgisi=request.user,
+                title=baslik,
+                status=durum,
+                aciklama=aciklama[i],
+                oncelik_durumu=aciliyet,
+                teslim_tarihi=teslim_tarihi,
+                silinme_bilgisi=False
+            )
+            new_project.save()
+            
+            bloglar_bilgisi = [get_object_or_404(CustomUser, id=int(user_id)) for user_id in blogbilgisi]
+            new_project.yapacaklar.add(*bloglar_bilgisi)
+            
+            files = request.FILES.getlist('file')
+            for file in files:
+                IsplaniDosyalari.objects.create(
+                    proje_ait_bilgisi=new_project,
+                    dosya_sahibi=request.user,
+                    dosya=file
+                )
+    
+    return Response({"detail": "Tasks successfully created."}, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacalar_sil(request):
+    # id bilgisini al
+    id_bilgisi = request.data.get('id_bilgisi')
+
+    if not id_bilgisi:
+        return Response({'error': 'ID bilgisi sağlanmalı'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Görevi güncelle
+        IsplaniPlanlari.objects.filter(id=id_bilgisi).update(silinme_bilgisi=True)
+        return Response({'message': 'Görev başarıyla silindi'}, status=status.HTTP_200_OK)
+    except IsplaniPlanlari.DoesNotExist:
+        return Response({'error': 'Görev bulunamadı'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacak_durumu_yenileme(request):
+    # POST verilerini al
+    yenilenecek_ekleme_id = request.data.get("yenilenecekeklemeyapilacak")
+    aciklama = request.data.get("aciklama")
+    durum = request.data.get("durum")
+    teslim_tarihi = request.data.get("teslim_tarihi")
+
+    # ID bilgisinin geçerli olup olmadığını kontrol et
+    if not yenilenecek_ekleme_id:
+        return Response({"error": "ID bilgisi eksik"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # IsplaniPlanlari nesnesini bul
+    proje = get_object_or_404(IsplaniPlanlari, id=yenilenecek_ekleme_id)
+
+    # Yeni ilerleme kaydını oluştur
+    new_project = IsplaniPlanlariIlerleme(
+        proje_ait_bilgisi=proje,
+        status=durum,
+        aciklama=aciklama,
+        teslim_tarihi=teslim_tarihi,
+        silinme_bilgisi=False,
+        yapan_kisi=request.user
+    )
+    new_project.save()
+
+    # Dosyaları al ve kaydet
+    files = request.FILES.getlist('file')
+    for file in files:
+        IsplaniIlerlemeDosyalari.objects.create(
+            proje_ait_bilgisi=new_project,
+            yapan_kisi=request.user,
+            dosya=file,
+            dosya_sahibi=proje
+        )
+
+    return Response({"message": "Durum başarıyla güncellendi"}, status=status.HTTP_200_OK)
+
+@api_view(['Get'])
+@permission_classes([IsAuthenticated])
+def yapilacalar_duzenle_api(request):
+    if request.user.is_superuser:
+        return Response({"error": "Superusers are not allowed to modify tasks."}, status=status.HTTP_403_FORBIDDEN)
+
+    id = request.data.get("id_bilgisi")
+    baslik = request.data.get("baslik")
+    durum = request.data.get("durum")
+    aciliyet = request.data.get("aciliyet")
+    teslim_tarihi = request.data.get("teslim_tarihi")
+    blogbilgisi = request.data.getlist("kullanicilari")
+    aciklama = request.data.get("aciklama")
+
+    # Get the task and update
+    project = get_object_or_404(IsplaniPlanlari, id=id)
+    project.proje_ait_bilgisi = request.user
+    project.title = baslik
+    project.status = durum
+    project.aciklama = aciklama
+    project.oncelik_durumu = aciliyet
+    project.teslim_tarihi = teslim_tarihi
+    project.silinme_bilgisi = False
+    project.save()
+
+    # Update the users assigned to the task
+    bloglar_bilgisi = [CustomUser.objects.get(id=int(user_id)) for user_id in blogbilgisi]
+    project.yapacaklar.set(bloglar_bilgisi)
+
+    # Handle file uploads
+    files = request.FILES.getlist('file')
+    for file in files:
+        IsplaniDosyalari.objects.create(
+            proje_ait_bilgisi=project,
+            dosya_sahibi=request.user,
+            dosya=file
+        )
+
+    return Response({"message": "Task başarıyla Güncellendi."}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
 
