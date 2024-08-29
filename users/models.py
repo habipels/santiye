@@ -188,6 +188,7 @@ class personel_izinleri(models.Model):
     virman_raporu_gorme = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     virman_raporu_duzenleme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
 class bagli_kullanicilar(models.Model):
     #bu izinler kime ait
     izinler = models.ForeignKey(personel_izinleri, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")

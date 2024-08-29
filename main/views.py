@@ -2595,70 +2595,312 @@ def kullanici_yetki_olustur(request):
     return redirect("main:kullanici_yetkileri")
 def kullanici_yetki_alma(request):
     if request.POST:
+        guncellenen = request.POST.get("guncellenen")
+        izinler = get_object_or_404(personel_izinleri,id = guncellenen) 
+        ##
+        #izinleri Sıfırla
+        izinler.dashboard_gorme = False
+        izinler.dashboard_silme = False
+        izinler.dashboard_duzenleme = False
+        izinler.dashboard_olusturma = False
+        #
+        izinler.gelir_ozeti_gorme = False
+        izinler.gelir_ozeti_olusturma = False
+        izinler.gelir_ozeti_duzenleme =False
+        izinler.gelir_ozeti_silme = False
+        #
+        izinler.gider_ozeti_gorme = False
+        izinler.gider_ozeti_olusturma = False
+        izinler.gider_ozeti_duzenleme = False
+        izinler.gider_ozeti_silme = False
+        #
+        izinler.hesap_ekstra_gorme = False
+        izinler.hesap_ekstra_olusturma = False
+        izinler.hesap_ekstra_duzenleme = False
+        izinler.hesap_ekstra_silme = False
+        #
+        izinler.virman_raporu_gorme = False
+        izinler.virman_raporu_olusturma = False
+        #
+        izinler.ilerleme_takibi_gorme = False
+        izinler.ilerleme_takibi_olusturma = False
+        izinler.ilerleme_takibi_duzenleme = False
+        izinler.ilerleme_takibi_silme = False
+        #
+        izinler.is_plani_gorme = False
+        izinler.is_plani_olusturma = False
+        izinler.is_plani_duzenleme = False
+        izinler.is_plani_silme = False
+        #
+        izinler.yapilacaklar_gorme = False
+        izinler.yapilacaklar_olusturma = False
+        izinler.yapilacaklar_duzenleme = False
+        izinler.yapilacaklar_silme = False
+        #
+        izinler.dosya_yoneticisi_gorme = False
+        izinler.dosya_yoneticisi_olusturma = False
+        izinler.dosya_yoneticisi_duzenleme = False
+        izinler.dosya_yoneticisi_silme = False
+        #
+        izinler.projeler_gorme = False
+        izinler.projeler_olusturma = False
+        izinler.projeler_duzenleme = False
+        izinler.projeler_silme =False
+        #
+        izinler.personeller_gorme = False
+        izinler.personeller_olusturma = False
+        izinler.personeller_duzenleme = False
+        izinler.personeller_silme = False
+        #
+        izinler.gelir_faturasi_gorme_izni = False
+        izinler.gelir_faturasi_kesme_izni = False
+        izinler.gelir_faturasi_duzenleme_izni = False
+        izinler.gelir_faturasi_silme_izni = False
+        #
+        izinler.gider_faturasi_gorme_izni = False
+        izinler.gider_faturasi_kesme_izni = False
+        izinler.gider_faturasi_duzenleme_izni = False
+        izinler.gider_faturasi_silme_izni = False
+        #
+        izinler.virman_raporu_gorme = False
+        izinler.virman_raporu_olusturma = False
+        izinler.virman_raporu_duzenleme = False
+        izinler.virman_raporu_silme = False
+        #
+        izinler.kasa_gosterme_izni = False
+        izinler.kasa_olusturma_izni = False
+        izinler.kasa_guncelleme_izni = False
+        izinler.Kasa_silme_izni = False
+        #
+        izinler.cari_gosterme_izni = False
+        izinler.cari_olusturma = False
+        izinler.cari_guncelleme_izni = False
+        izinler.cari_silme_izni = False
+        #
+        izinler.personeller_gorme = False
+        izinler.personeller_olusturma = False
+        izinler.personeller_duzenleme = False
+        izinler.personeller_silme = False
+        izinler.save()
+        ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
+        if dashboard_gorme:
+            izinler.dashboard_gorme = True
         dashboard_silme = request.POST.get("dashboard_silme")
+        if dashboard_silme:
+            izinler.dashboard_silme = True
         dashboard_duzenleme = request.POST.get("dashboard_duzenleme")
+        if dashboard_duzenleme:
+            izinler.dashboard_duzenleme = True
         dashboard_olusturma = request.POST.get("dashboard_olusturma")
+        if dashboard_olusturma:
+            izinler.dashboard_olusturma = True
         #
         gelir_ozeti_gorme = request.POST.get("gelir_ozeti_gorme")
+        if gelir_ozeti_gorme:
+            izinler.gelir_ozeti_gorme = True
         gelir_ozeti_olusturma = request.POST.get("gelir_ozeti_olusturma")
+        if gelir_ozeti_olusturma:
+            izinler.gelir_ozeti_olusturma = True
         gelir_ozeti_duzenleme = request.POST.get("gelir_ozeti_duzenleme")
-        gelir_ozeti_silme = request.POT.get("gelir_ozeti_silme")
+        if gelir_ozeti_duzenleme:
+            izinler.gelir_ozeti_duzenleme = True
+        gelir_ozeti_silme = request.POST.get("gelir_ozeti_silme")
+        if gelir_ozeti_silme:
+            izinler.gelir_ozeti_silme = True
         #
         gider_ozeti_gorme = request.POST.get("gider_ozeti_gorme")
+        if gider_ozeti_gorme:
+            izinler.gider_ozeti_gorme = True
         gider_ozeti_olusturma = request.POST.get("gider_ozeti_olusturma")
+        if gider_ozeti_olusturma:
+            izinler.gider_ozeti_olusturma = True
         gider_ozeti_duzenleme = request.POST.get("gider_ozeti_duzenleme")
+        if gider_ozeti_duzenleme:
+            izinler.gider_ozeti_duzenleme = True
         gider_ozeti_silme = request.POST.get("gider_ozeti_silme")
+        if gider_ozeti_silme:
+            izinler.gider_ozeti_silme = True
         #
         hesap_ekstra_gorme = request.POST.get("hesap_ekstra_gorme")
+        if hesap_ekstra_gorme:
+            izinler.hesap_ekstra_gorme = True
         hesap_ekstra_olusturma = request.POST.get("hesap_ekstra_olusturma")
+        if hesap_ekstra_olusturma:
+            izinler.hesap_ekstra_olusturma = True
         hesap_ekstra_duzenleme = request.POST.get("hesap_ekstra_duzenleme")
+        if hesap_ekstra_duzenleme:
+            izinler.hesap_ekstra_duzenleme = True
         hesap_ekstra_silme = request.POST.get("hesap_ekstra_silme")
+        if hesap_ekstra_silme:
+            izinler.hesap_ekstra_silme = True
         #
         virman_raporu_gorme = request.POST.get("virman_raporu_gorme")
+        if virman_raporu_gorme:
+            izinler.virman_raporu_gorme = True
         virman_raporu_olusturma = request.POST.get("virman_raporu_olusturma")
+        if virman_raporu_olusturma:
+            izinler.virman_raporu_olusturma = True
         #
         ilerleme_takibi_gorme = request.POST.get("ilerleme_takibi_gorme")
+        if ilerleme_takibi_gorme:
+            izinler.ilerleme_takibi_gorme = True
         ilerleme_takibi_olusturma = request.POST.get("ilerleme_takibi_olusturma")
+        if ilerleme_takibi_olusturma:
+            izinler.ilerleme_takibi_olusturma = True
         ilerleme_takibi_duzenleme = request.POST.get("ilerleme_takibi_duzenleme")
+        if ilerleme_takibi_duzenleme:
+            izinler.ilerleme_takibi_duzenleme = True
         ilerleme_takibi_silme = request.POST.get("ilerleme_takibi_silme")
+        if ilerleme_takibi_silme:
+            izinler.ilerleme_takibi_silme = True
         #
         is_plani_gorme = request.POST.get("is_plani_gorme")
+        if is_plani_gorme:
+            izinler.is_plani_gorme = True
         is_plani_olusturma = request.POST.get("is_plani_olusturma")
+        if is_plani_olusturma:
+            izinler.is_plani_olusturma = True
         is_plani_duzenleme = request.POST.get("is_plani_duzenleme")
+        if is_plani_duzenleme:
+            izinler.is_plani_duzenleme = True
         is_plani_silme = request.POST.get("is_plani_silme")
+        if is_plani_silme:
+            izinler.is_plani_silme = True
         #
         yapilacaklar_gorme = request.POST.get("yapilacaklar_gorme")
+        if yapilacaklar_gorme:
+            izinler.yapilacaklar_gorme = True
         yapilacaklar_olusturma = request.POST.get("yapilacaklar_olusturma")
+        if yapilacaklar_olusturma:
+            izinler.yapilacaklar_olusturma = True
         yapilacaklar_duzenleme = request.POST.get("yapilacaklar_duzenleme")
+        if yapilacaklar_duzenleme:
+            izinler.yapilacaklar_duzenleme = True
         yapilacaklar_silme = request.POST.get("yapilacaklar_silme")
+        if yapilacaklar_silme:
+            izinler.yapilacaklar_silme = True
         #
         dosya_yoneticisi_gorme = request.POST.get("dosya_yoneticisi_gorme")
+        if dosya_yoneticisi_gorme:
+            izinler.dosya_yoneticisi_gorme = True
         dosya_yoneticisi_olusturma = request.POST.get("dosya_yoneticisi_olusturma")
+        if dosya_yoneticisi_olusturma:
+            izinler.dosya_yoneticisi_olusturma = True
         dosya_yoneticisi_duzenleme = request.POST.get("dosya_yoneticisi_duzenleme")
+        if dosya_yoneticisi_duzenleme:
+            izinler.dosya_yoneticisi_duzenleme = True
         dosya_yoneticisi_silme = request.POST.get("dosya_yoneticisi_silme")
+        if dosya_yoneticisi_silme:
+            izinler.dosya_yoneticisi_silme = True
         #
         projeler_gorme = request.POST.get("projeler_gorme")
+        if projeler_gorme:
+            izinler.projeler_gorme = True
         projeler_olusturma = request.POST.get("projeler_olusturma")
+        if projeler_olusturma:
+            izinler.projeler_olusturma = True
         projeler_duzenleme = request.POST.get("projeler_duzenleme")
+        if projeler_duzenleme:
+            izinler.projeler_duzenleme = True
         projeler_silme = request.POST.get("projeler_silme")
+        if projeler_silme:
+            izinler.projeler_silme = True
+
         #
         personeller_gorme = request.POST.get("personeller_gorme")
+        if personeller_gorme:
+            izinler.personeller_gorme = True
         personeller_olusturma = request.POST.get("personeller_olusturma")
+        if personeller_olusturma:
+            izinler.personeller_olusturma = True
         personeller_duzenleme = request.POST.get("personeller_duzenleme")
+        if personeller_duzenleme:
+            izinler.personeller_duzenleme = True
         personeller_silme = request.POST.get("personeller_silme")
+        if personeller_silme:
+            izinler.personeller_silme = True
         #
         gelir_faturasi_gorme_izni = request.POST.get("gelir_faturasi_gorme_izni")
+        if gelir_faturasi_gorme_izni:
+            izinler.gelir_faturasi_gorme_izni = True
         gelir_faturasi_kesme_izni = request.POST.get("gelir_faturasi_kesme_izni")
+        if gelir_faturasi_kesme_izni:
+            izinler.gelir_faturasi_kesme_izni = True
         gelir_faturasi_duzenleme_izni = request.POST.get("gelir_faturasi_duzenleme_izni")
+        if gelir_faturasi_duzenleme_izni:
+            izinler.gelir_faturasi_duzenleme_izni = True
         gelir_faturasi_silme_izni = request.POST.get("gelir_faturasi_silme_izni")
+        if gelir_faturasi_silme_izni:
+            izinler.gelir_faturasi_silme_izni = True
         #
         gider_faturasi_gorme_izni = request.POST.get("gider_faturasi_gorme_izni")
+        if gider_faturasi_gorme_izni:
+            izinler.gider_faturasi_gorme_izni = True
         gider_faturasi_kesme_izni = request.POST.get("gider_faturasi_kesme_izni")
+        if gider_faturasi_kesme_izni:
+            izinler.gider_faturasi_kesme_izni = True
         gider_faturasi_duzenleme_izni = request.POST.get("gider_faturasi_duzenleme_izni")
+        if gider_faturasi_duzenleme_izni:
+            izinler.gider_faturasi_duzenleme_izni = True
         gider_faturasi_silme_izni = request.POST.get("gider_faturasi_silme_izni")
-        print(request.POST)
+        if gider_faturasi_silme_izni:
+            izinler.gider_faturasi_silme_izni = True
+        #
+        virman_raporu_gorme = request.POST.get("virman_raporu_gorme")
+        if virman_raporu_gorme:
+            izinler.virman_raporu_gorme = True
+        virman_raporu_olusturma = request.POST.get("virman_raporu_olusturma")
+        if virman_raporu_olusturma:
+            izinler.virman_raporu_olusturma = True
+        virman_raporu_duzenleme = request.POST.get("virman_raporu_duzenleme")
+        if virman_raporu_duzenleme:
+            izinler.virman_raporu_duzenleme = True
+        virman_raporu_silme = request.POST.get("virman_raporu_silme")
+        if virman_raporu_silme:
+            izinler.virman_raporu_silme = True
+        #
+        kasa_gosterme_izni = request.POST.get("kasa_gosterme_izni")
+        if kasa_gosterme_izni:
+            izinler.kasa_gosterme_izni = True
+        kasa_olusturma_izni = request.POST.get("kasa_olusturma_izni")
+        if kasa_olusturma_izni:
+            izinler.kasa_olusturma_izni = True
+        kasa_guncelleme_izni = request.POST.get("kasa_guncelleme_izni")
+        if kasa_guncelleme_izni:
+            izinler.kasa_guncelleme_izni = True
+        Kasa_silme_izni = request.POST.get("Kasa_silme_izni")
+        if Kasa_silme_izni:
+            izinler.Kasa_silme_izni = True
+        #
+        cari_gosterme_izni = request.POST.get("cari_gosterme_izni")
+        if cari_gosterme_izni:
+            izinler.cari_gosterme_izni = True
+        cari_olusturma = request.POST.get("cari_olusturma")
+        if cari_olusturma:
+            izinler.cari_olusturma = True
+        cari_guncelleme_izni = request.POST.get("cari_guncelleme_izni")
+        if cari_guncelleme_izni:
+            izinler.cari_guncelleme_izni = True
+        cari_silme_izni = request.POST.get("cari_silme_izni")
+        if cari_silme_izni:
+            izinler.cari_silme_izni = True
+        #
+        personeller_gorme = request.POST.get("personeller_gorme")
+        if personeller_gorme:
+            izinler.personeller_gorme = True
+        personeller_olusturma = request.POST.get("personeller_olusturma")
+        if personeller_olusturma:
+            izinler.personeller_olusturma = True
+        personeller_duzenleme = request.POST.get("personeller_duzenleme")
+        if personeller_duzenleme:
+            izinler.personeller_duzenleme = True
+        personeller_silme = request.POST.get("personeller_silme")
+        if personeller_silme:
+            izinler.personeller_silme = True
+        izinler.save()
     return redirect("main:kullanici_yetkileri")
+
 def cari_history_view(request, cari_id):
     cari_instance = cari.objects.get(id=cari_id)
     history = cari_instance.history.all()

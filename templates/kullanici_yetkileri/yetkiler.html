@@ -30,8 +30,9 @@
             <!-- İzin Detayları -->
             
             <div class="col-md-9 permissions-panel">
-                <form action="{% url 'main:kullanici_yetki_alma' %}" method="post">
+                <form autocomplete="off"action="{% url 'main:kullanici_yetki_alma' %}" method="post">
                     {% csrf_token %}
+                    <input type="text" name="guncellenen" hidden value="{{secili_grup.id}}">
                 {% if secili_grup %}
                     <h5>Seçilen Grup: {{secili_grup.isim}}</h5>
                 {% else %}
@@ -446,23 +447,74 @@
                                 <tr>
                                     <td>Virman</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% if secili_grup.virman_raporu_gorme %}
+                                        <td><div class="form-check form-switch"><input name="virman_raporu_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="virman_raporu_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.virman_raporu_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="virman_raporu_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="virman_raporu_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.virman_raporu_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="virman_raporu_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="virman_raporu_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.virman_raporu_silme %}
+                                        <td><div class="form-check form-switch"><input name="virman_raporu_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="virman_raporu_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
                                 </tr>
                                 <tr>
                                     <td>Kasa</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% if secili_grup.kasa_gosterme_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_gosterme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_gosterme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.kasa_olusturma_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_olusturma_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_olusturma_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.kasa_guncelleme_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_guncelleme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_guncelleme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.Kasa_silme_izni %}
+                                        <td><div class="form-check form-switch"><input name="Kasa_silme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="Kasa_silme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
                                 </tr>
                                 <tr>
                                     <td>Cari Hesapları</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% if secili_grup.cari_gosterme_izni %}
+                                        <td><div class="form-check form-switch"><input name="cari_gosterme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_gosterme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.cari_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="cari_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.cari_guncelleme_izni %}
+                                        <td><div class="form-check form-switch"><input name="cari_guncelleme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_guncelleme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.cari_silme_izni %}
+                                        <td><div class="form-check form-switch"><input name="cari_silme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_silme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
                                 </tr>
                             </tbody>
                         </table>
@@ -488,19 +540,30 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Personel Listeleme</td>
+                                    <td>Personel</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% if secili_grup.personeller_gorme %}
+                                        <td><div class="form-check form-switch"><input name="personeller_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="personeller_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.personeller_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="personeller_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="personeller_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.personeller_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="personeller_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="personeller_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.personeller_silme %}
+                                        <td><div class="form-check form-switch"><input name="personeller_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="personeller_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
                                 </tr>
-                                <tr>
-                                    <td>Personel Düzenleme</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
+                               
                             </tbody>
                         </table>
                     </div>
@@ -520,7 +583,7 @@
                     <h5 class="modal-title" id="addGroupModalLabel">Yeni Grup Ekle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{% url 'main:kullanici_yetki_olustur' %}" method="post">
+                <form autocomplete="off"action="{% url 'main:kullanici_yetki_olustur' %}" method="post">
                     {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
