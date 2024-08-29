@@ -171,3 +171,14 @@ STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
 
 MEDIA_URL = ''
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+#Sunucuda Güncelleme Atarken Dosyaların Kabolmasını Sağlar
+"""
+# BASE_DIR bir üst dizini referans alır
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# MEDIA_ROOT'u BASE_DIR'in bir üst dizininde 'uploads' klasörü olarak ayarlar
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'uploads')
+
+# MEDIA_URL'yi tanımlarsınız, örneğin:
+MEDIA_URL = '/uploads/'
+"""
