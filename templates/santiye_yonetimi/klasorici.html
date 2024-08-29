@@ -120,7 +120,12 @@
                                                                 <i class="ri-more-2-fill fs-16 align-bottom"></i>
                                                             </button>
                                                             <ul class="dropdown-menu dropdown-menu-end">
+                                                            {% if  i.klasor_adi %}
                                                                 <li><a class="dropdown-item view-item-btn" href="{% url 'main:klasore_gir' i.id i.klasor_adi %}">Klasörü Aç</a></li>
+                                                            {% else %}
+                                                            <li><a class="dropdown-item view-item-btn" href="{% url 'main:klasore_gir' i.id 'untitle' %}">Klasörü Aç</a></li>
+                                                            {% endif %}
+                                                                
                                                                 <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#createFolderModal{{i.id}}" role="button">Yeniden Adlandır</a></li>
                                                                 <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#removeFileItemModal{{i.id}}" role="button">Sil</a></li>
 
@@ -420,19 +425,19 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="date-field" class="form-label">Dosya Adı</label>
-                                    <input type="tel" name="klasor" id="date-field" class="form-control" placeholder="Dosya Adı"  />
+                                    <label for="date-field"  class="form-label">Dosya Adı</label>
+                                    <input type="tel" name="klasor" required id="date-field" class="form-control" placeholder="Dosya Adı"  />
                                     <div class="invalid-feedback">Lütfen telefon alanını boş bırakmayınız.</div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="email-field" class="form-label">Tarih</label>
-                                    <input type="date" name="tarih" class="form-control" placeholder="E-Posta giriniz" >
+                                    <input type="date" required name="tarih" class="form-control" placeholder="E-Posta giriniz" >
                                     <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="email-field" class="form-label">Açıklama</label>
-                                    <textarea name="aciklama" class="form-control" placeholder="Enter Description" ></textarea>
+                                    <textarea name="aciklama" required class="form-control" placeholder="Enter Description" ></textarea>
                                     <div class="invalid-feedback">Please enter an email.</div>
                                 </div>
                                 
@@ -440,7 +445,7 @@
                            <div class="md-4">
                     <div class="form-group">
                         <label>Dosya Yükle</label>
-                        <input name="file" type="file" class="form-control" />
+                        <input required name="file" type="file" class="form-control" />
                     </div>
                 </div>
                             </div>
@@ -469,8 +474,8 @@
                             <form autocomplete="off" method="post" action="{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
                                  {% csrf_token %}
                                 <div class="mb-4">
-                                    <label for="foldername-input" class="form-label">Klasör Adı</label>
-                                    <input type="text" name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
+                                    <label for="foldername-input"  class="form-label">Klasör Adı</label>
+                                    <input type="text" name="klasor" required class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
                                     <div class="invalid-feedback">Please enter a folder name.</div>
                                     <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
                                 </div>
@@ -498,7 +503,7 @@
                                  {% csrf_token %}
                                 <div class="mb-4">
                                     <label for="foldername-input" class="form-label">Klasör Adı</label>
-                                    <input type="text" value="{{i.klasor_adi}}" name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
+                                    <input type="text" value="{{i.klasor_adi}}" required name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
                                     <div class="invalid-feedback">Please enter a folder name.</div>
                                     <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
                                 </div>
@@ -525,7 +530,7 @@
                             <form autocomplete="off"autocomplete="off" class="needs-validation createfile-form" id="createfile-form" novalidate>
                                 <div class="mb-4">
                                     <label for="filename-input" class="form-label">File Name</label>
-                                    <input type="text" class="form-control" id="filename-input" value="" required placeholder="Enter file name" />
+                                    <input type="text" class="form-control" required id="filename-input" value="" required placeholder="Enter file name" />
                                     <div class="invalid-feedback">Please enter a file name.</div>
                                     <input type="hidden" class="form-control" id="fileid-input" value="" placeholder="Enter file name">
                                 </div>

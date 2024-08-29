@@ -711,7 +711,7 @@ def proje_duzenle(request):
 #Şantiye Projesi Ekleme
 def santiye_projesi_ekle_(request):
     content = sozluk_yapisi()
-    content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
+    content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user)
     if super_admin_kontrolu(request):
         profile =santiye.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
@@ -743,7 +743,7 @@ def santiye_projesi_ekle_(request):
     return render(request,"santiye_yonetimi/santiye_projesi.html",content)
 def santiye_projesi_ekle_2(request,hash):
     content = sozluk_yapisi()
-    content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
+    content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user)
     if super_admin_kontrolu(request):
         d = decode_id(hash)
         users = get_object_or_404(CustomUser,id = d)
