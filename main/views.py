@@ -2570,10 +2570,95 @@ def santiye_raporu(request,id):
 
 def kullanici_yetkileri(request):
     content = sozluk_yapisi()
-
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        profile = personel_izinleri.objects.filter(izinlerin_sahibi_kullanici = request.user)
+        content["izinler"] = profile
     return render(request,"kullanici_yetkileri/yetkiler.html",content)
-
-
+def kullanici_yetkileri_duzenle(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        profile = personel_izinleri.objects.filter(izinlerin_sahibi_kullanici = request.user)
+        content["izinler"] = profile
+        content["secili_grup"] = get_object_or_404(personel_izinleri,id = id)
+    return render(request,"kullanici_yetkileri/yetkiler.html",content)
+def kullanici_yetki_olustur(request):
+    if request.POST:
+        grup_adi = request.POST.get("grup_adi")
+        personel_izinleri.objects.create(
+            isim = grup_adi,
+            izinlerin_sahibi_kullanici = request.user
+        )
+    return redirect("main:kullanici_yetkileri")
+def kullanici_yetki_alma(request):
+    if request.POST:
+        dashboard_gorme = request.POST.get("dashboard_gorme")
+        dashboard_silme = request.POST.get("dashboard_silme")
+        dashboard_duzenleme = request.POST.get("dashboard_duzenleme")
+        dashboard_olusturma = request.POST.get("dashboard_olusturma")
+        #
+        gelir_ozeti_gorme = request.POST.get("gelir_ozeti_gorme")
+        gelir_ozeti_olusturma = request.POST.get("gelir_ozeti_olusturma")
+        gelir_ozeti_duzenleme = request.POST.get("gelir_ozeti_duzenleme")
+        gelir_ozeti_silme = request.POT.get("gelir_ozeti_silme")
+        #
+        gider_ozeti_gorme = request.POST.get("gider_ozeti_gorme")
+        gider_ozeti_olusturma = request.POST.get("gider_ozeti_olusturma")
+        gider_ozeti_duzenleme = request.POST.get("gider_ozeti_duzenleme")
+        gider_ozeti_silme = request.POST.get("gider_ozeti_silme")
+        #
+        hesap_ekstra_gorme = request.POST.get("hesap_ekstra_gorme")
+        hesap_ekstra_olusturma = request.POST.get("hesap_ekstra_olusturma")
+        hesap_ekstra_duzenleme = request.POST.get("hesap_ekstra_duzenleme")
+        hesap_ekstra_silme = request.POST.get("hesap_ekstra_silme")
+        #
+        virman_raporu_gorme = request.POST.get("virman_raporu_gorme")
+        virman_raporu_olusturma = request.POST.get("virman_raporu_olusturma")
+        #
+        ilerleme_takibi_gorme = request.POST.get("ilerleme_takibi_gorme")
+        ilerleme_takibi_olusturma = request.POST.get("ilerleme_takibi_olusturma")
+        ilerleme_takibi_duzenleme = request.POST.get("ilerleme_takibi_duzenleme")
+        ilerleme_takibi_silme = request.POST.get("ilerleme_takibi_silme")
+        #
+        is_plani_gorme = request.POST.get("is_plani_gorme")
+        is_plani_olusturma = request.POST.get("is_plani_olusturma")
+        is_plani_duzenleme = request.POST.get("is_plani_duzenleme")
+        is_plani_silme = request.POST.get("is_plani_silme")
+        #
+        yapilacaklar_gorme = request.POST.get("yapilacaklar_gorme")
+        yapilacaklar_olusturma = request.POST.get("yapilacaklar_olusturma")
+        yapilacaklar_duzenleme = request.POST.get("yapilacaklar_duzenleme")
+        yapilacaklar_silme = request.POST.get("yapilacaklar_silme")
+        #
+        dosya_yoneticisi_gorme = request.POST.get("dosya_yoneticisi_gorme")
+        dosya_yoneticisi_olusturma = request.POST.get("dosya_yoneticisi_olusturma")
+        dosya_yoneticisi_duzenleme = request.POST.get("dosya_yoneticisi_duzenleme")
+        dosya_yoneticisi_silme = request.POST.get("dosya_yoneticisi_silme")
+        #
+        projeler_gorme = request.POST.get("projeler_gorme")
+        projeler_olusturma = request.POST.get("projeler_olusturma")
+        projeler_duzenleme = request.POST.get("projeler_duzenleme")
+        projeler_silme = request.POST.get("projeler_silme")
+        #
+        personeller_gorme = request.POST.get("personeller_gorme")
+        personeller_olusturma = request.POST.get("personeller_olusturma")
+        personeller_duzenleme = request.POST.get("personeller_duzenleme")
+        personeller_silme = request.POST.get("personeller_silme")
+        #
+        gelir_faturasi_gorme_izni = request.POST.get("gelir_faturasi_gorme_izni")
+        gelir_faturasi_kesme_izni = request.POST.get("gelir_faturasi_kesme_izni")
+        gelir_faturasi_duzenleme_izni = request.POST.get("gelir_faturasi_duzenleme_izni")
+        gelir_faturasi_silme_izni = request.POST.get("gelir_faturasi_silme_izni")
+        #
+        gider_faturasi_gorme_izni = request.POST.get("gider_faturasi_gorme_izni")
+        gider_faturasi_kesme_izni = request.POST.get("gider_faturasi_kesme_izni")
+        gider_faturasi_duzenleme_izni = request.POST.get("gider_faturasi_duzenleme_izni")
+        gider_faturasi_silme_izni = request.POST.get("gider_faturasi_silme_izni")
+        print(request.POST)
+    return redirect("main:kullanici_yetkileri")
 def cari_history_view(request, cari_id):
     cari_instance = cari.objects.get(id=cari_id)
     history = cari_instance.history.all()
