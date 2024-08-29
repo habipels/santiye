@@ -1812,9 +1812,7 @@ def hakedis_ekle(request):
             dosyaadi = request.POST.get("yetkili_adi")
             tarih = request.POST.get("tarih_bilgisi")
             aciklama = request.POST.get("aciklama")
-            durumu = request.POST.get("durumu")
             file = request.FILES.get("file")
-            tutar = request.POST.get("tutar")
             fatura_no = request.POST.get("fatura_no")
             if durumu == "1":
                 durumu = True
@@ -1825,8 +1823,6 @@ def hakedis_ekle(request):
                 dosya = file,
                 dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
-                durum = durumu,
-                tutar = tutar,
                 fatura_numarasi = fatura_no
             )
     return redirect("main:hakedis_sayfasi")
@@ -1875,43 +1871,60 @@ def hakedis_duzenle(request):
             dosyaadi = request.POST.get("yetkili_adi")
             tarih = request.POST.get("tarih_bilgisi")
             aciklama = request.POST.get("aciklama")
-            durumu = request.POST.get("durumu")
             file = request.FILES.get("file")
-            tutar = request.POST.get("tutar")
             fatura_no = request.POST.get("fatura_no")
             silinmedurumu = request.POST.get("silinmedurumu")
-            if durumu == "1":
-                durumu = True
-            else:
-                durumu = False
             if silinmedurumu == "3":
-                taseron_hakedisles.objects.filter(id=buttonId).update(
-                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
-                    dosya = file,
-                    dosya_adi = dosyaadi,
-                    tarih = tarih,aciklama = aciklama,
-                    durum = durumu,
-                    tutar = tutar,
-                    fatura_numarasi = fatura_no
-                )
+                if file:
+                    taseron_hakedisles.objects.filter(id=buttonId).update(
+                        proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                        dosya = file,
+                        dosya_adi = dosyaadi,
+                        tarih = tarih,aciklama = aciklama,
+                        fatura_numarasi = fatura_no
+                    )
+                else:
+                    taseron_hakedisles.objects.filter(id=buttonId).update(
+                        proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                        
+                        dosya_adi = dosyaadi,
+                        tarih = tarih,aciklama = aciklama,
+                        fatura_numarasi = fatura_no
+                    )
             elif silinmedurumu == "2":
-                taseron_hakedisles.objects.filter(id=buttonId).update(
-                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
-                    dosya = file,
-                    dosya_adi = dosyaadi,
-                    tarih = tarih,aciklama = aciklama,
-                    durum = durumu,
-                    tutar = tutar,
-                    fatura_numarasi = fatura_no,silinme_bilgisi = True
-                )
+                if file:
+                    taseron_hakedisles.objects.filter(id=buttonId).update(
+                        proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                        dosya = file,
+                        dosya_adi = dosyaadi,
+                        tarih = tarih,aciklama = aciklama,
+                        
+                        fatura_numarasi = fatura_no,silinme_bilgisi = True
+                    )
+                else:
+                    taseron_hakedisles.objects.filter(id=buttonId).update(
+                        proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                        
+                        dosya_adi = dosyaadi,
+                        tarih = tarih,aciklama = aciklama,
+                        
+                        fatura_numarasi = fatura_no,silinme_bilgisi = True
+                    )
             elif silinmedurumu == "1":
-                taseron_hakedisles.objects.filter(id=buttonId).update(
+                if file:
+                    taseron_hakedisles.objects.filter(id=buttonId).update(
+                        proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                        dosya = file,
+                        dosya_adi = dosyaadi,
+                        tarih = tarih,aciklama = aciklama,
+                        fatura_numarasi = fatura_no,silinme_bilgisi = False
+                    )
+                else:
+                    taseron_hakedisles.objects.filter(id=buttonId).update(
                     proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
-                    dosya = file,
+                    
                     dosya_adi = dosyaadi,
                     tarih = tarih,aciklama = aciklama,
-                    durum = durumu,
-                    tutar = tutar,
                     fatura_numarasi = fatura_no,silinme_bilgisi = False
                 )
 
@@ -1921,23 +1934,26 @@ def hakedis_duzenle(request):
             dosyaadi = request.POST.get("yetkili_adi")
             tarih = request.POST.get("tarih_bilgisi")
             aciklama = request.POST.get("aciklama")
-            durumu = request.POST.get("durumu")
             file = request.FILES.get("file")
-            tutar = request.POST.get("tutar")
             fatura_no = request.POST.get("fatura_no")
-            if durumu == "1":
-                durumu = True
+            if file:
+                taseron_hakedisles.objects.filter(id=buttonId).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,
+                    dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                
+                    fatura_numarasi = fatura_no
+                )
             else:
-                durumu = False
-            taseron_hakedisles.objects.filter(id=buttonId).update(
-                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
-                dosya = file,
-                dosya_adi = dosyaadi,
-                tarih = tarih,aciklama = aciklama,
-                durum = durumu,
-                tutar = tutar,
-                fatura_numarasi = fatura_no
-            )
+                taseron_hakedisles.objects.filter(id=buttonId).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                   
+                    dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                
+                    fatura_numarasi = fatura_no
+                )
     return redirect("main:hakedis_sayfasi")
 
 
@@ -2261,6 +2277,79 @@ def silinen_dosyalari(request):
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
 
+#sözleşme olaylari
+def sozlesmler_depolamam(request):
+    content = sozluk_yapisi()
+
+    if super_admin_kontrolu(request):
+        profile = taseron_sozlesme_dosyalari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
+
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
+    return render(request,"santiye_yonetimi/sozlesmeler_depo.html",content)
+def hakedis_depolamam(request):
+    content = sozluk_yapisi()
+
+    if super_admin_kontrolu(request):
+        profile = taseron_hakedisles.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        profile = taseron_hakedisles.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
+
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi__last_name__icontains = search)|Q(dosya_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            profile = taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi = request.user) & Q(proje_ait_bilgisi__taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
+    return render(request,"santiye_yonetimi/hakedis_depo.html",content)
+
+#sözleşme olaylari
 #dokumanlari_gosterme
 
 def yapilacaklar(request):

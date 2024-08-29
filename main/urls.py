@@ -106,9 +106,11 @@ urlpatterns = [#
     path("storage/mydir/document", views.dokumanlar, name="dokumanlar"),
     path("storage/mydir/media", views.media_dosyalari, name="media_dosyalari"),
     path("storage/mydir/history", views.zamana_dosyalari, name="zamana_dosyalari"),
+    path("storage/mydir/contracts", views.sozlesmler_depolamam, name="sozlesmler_depolamam"),
+    path("storage/mydir/progresspayment", views.hakedis_depolamam, name="hakedis_depolamam"),
     path("storage/mydir/deletedfile", views.silinen_dosyalari, name="silinen_dosyalari"),
     #depolama sistemim
-    #iş planı
+    #iş planı #
     path("thingstodo", views.yapilacaklar, name="yapilacaklar"),
     path("addthingstodo", views.yapilacalar_ekle, name="yapilacalar_ekle"),
     path("delthingstodo", views.yapilacalar_sil, name="yapilacalar_sil"),

@@ -65,9 +65,9 @@
                                                     <th class="sort" data-sort="email">Dosya Adı</th>
                                                     <th class="sort" data-sort="phone">Tarihi</th>
                                                     <th class="sort" data-sort="date">Açıklama</th>
-                                                    <th class="sort" data-sort="date">Durum</th>
-                                                    <th class="sort" data-sort="date">Tutar</th>
                                                     <th class="sort" data-sort="date">Fatura Numarası</th>
+                                                    <th class="sort" data-sort="date">Tutar</th>
+                                                    <th class="sort" data-sort="date">Kalan Tutar</th>
                                                     <th class="sort" data-sort="date">Dosya</th>
                                                     <th class="sort" data-sort="date"></th>
                                                 </tr>
@@ -101,20 +101,16 @@
                                                     <td class="email">
                                                     {{ i.aciklama }} </td>
                                                     <td class="date">
-                                                        {% if i.durum %}
-                                                         Aktif
-                                                        {% else %}
-                                                        Pasif
-                                                        {% endif %}
+                                                        {{i.fatura_numarasi}}
                                                         
                                                     
                                                     </td>
                                                     <td class="date">
-                                                        {{i.tutar}}
+                                                      
                                                     
                                                     </td>
                                                     <td class="date">
-                                                        {{i.fatura_numarasi}}
+                                                        
                                                     
                                                     </td>
                                                     
@@ -248,24 +244,8 @@
                                         <textarea name="aciklama"  class="form-control" placeholder="Enter Description" required>{{i.aciklama}}</textarea>
                                         <div class="invalid-feedback">Please enter an email.</div>
                                     </div>
-                                    <div>
-                                        <label for="status-field" class="form-label">Durum</label>
-                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
-                                            {% if i.durum %}
-                                                <option value="1">Active</option>
-                                            {% else %}
-                                                <option value="0">Block</option>
-                                            {% endif %}
-                                            <option value="">Durum</option>
-                                            <option value="1">Active</option>
-                                            <option value="0">Block</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label for="status-field" class="form-label">Tutar</label>
-                                        <input name="tutar" value="{{i.tutar | stringformat:'.2F' }}" step="0.01" type="number" id="date-field" class="form-control" placeholder="Select Date" required />
-                                        <div class="invalid-feedback">Please select a date.</div>
-                                    </div>
+                                    
+                                    
                                     <div class="mb-3">
                                         <label for="date-field" class="form-label">Fatura No</label>
                                         <input type="text"  value="{{i.fatura_numarasi }}" name="fatura_no" id="date-field" class="form-control" placeholder="Fatura No" />
@@ -406,19 +386,8 @@
                                         <textarea name="aciklama" class="form-control" placeholder="Enter Description" required></textarea>
                                         <div class="invalid-feedback">Please enter an email.</div>
                                     </div>
-                                    <div>
-                                        <label for="status-field" class="form-label">Durum</label>
-                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
-                                            <option value="">Durum</option>
-                                            <option value="Active">Active</option>
-                                            <option value="Block">Block</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label for="status-field" class="form-label">Tutar</label>
-                                        <input name="tutar" value="0" step="0.01" type="number" id="date-field" class="form-control" placeholder="Select Date" required />
-                                        <div class="invalid-feedback">Please select a date.</div>
-                                    </div>
+                                    
+                                   
                                     <div class="mb-3">
                                         <label for="date-field" class="form-label">Fatura No</label>
                                         <input type="text"  name="fatura_no" id="date-field" class="form-control" placeholder="Fatura No" />

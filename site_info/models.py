@@ -118,8 +118,6 @@ class taseron_hakedisles(models.Model):
     dosya_adi = models.CharField(max_length = 400,verbose_name="Sözleşme Adı",blank = True,null = True)
     tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
     aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
-    durum = models.BooleanField(default = True,verbose_name = "Durum",blank = True,null = True)
-    tutar = models.FloatField(default = 0,verbose_name = "Tutar")
     fatura_numarasi = models.CharField(max_length = 200,verbose_name = "Fatura Numarası " ,blank = True,null = True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
