@@ -985,3 +985,19 @@ def mutlak_deger(a):
     elif float(a) > 0:
         return (round((float(a)),2))
     return 0.0
+@register.simple_tag
+def get_object_or_none(model, *args, **kwargs):
+    try:
+        return model.objects.get(*args, **kwargs)
+    except :
+        return None
+@register.simple_tag
+def fatura_hakedis_baglama(fatura_numari,fatura_kime_ait):
+    a = get_object_or_none(Gider_Bilgisi,fatura_no = fatura_numari , gelir_kime_ait_oldugu = fatura_kime_ait)
+    b = get_object_or_none(Gelir_Bilgisi,fatura_no = fatura_numari , gelir_kime_ait_oldugu = fatura_kime_ait)
+    if a:
+        return {"tutar" : a.toplam_tutar,"kalan_tuar":a.kalan_tutar}
+    elif b:
+        return {"tutar" : b.toplam_tutar,"kalan_tuar":b.kalan_tutar}
+    else:
+        return 0

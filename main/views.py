@@ -1948,7 +1948,7 @@ def hakedis_duzenle(request):
             else:
                 taseron_hakedisles.objects.filter(id=buttonId).update(
                     proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
-                   
+
                     dosya_adi = dosyaadi,
                     tarih = tarih,aciklama = aciklama,
                 
