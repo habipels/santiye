@@ -1130,8 +1130,19 @@ def santtiye_kalemleri(request,id):
             profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id))
             content["santiyeler_bilgileri"] = bloglar.objects.all()
         else:
-            content["santiyeler_bilgileri"] = bloglar.objects.filter(proje_ait_bilgisi = request.user,proje_santiye_Ait_id = id )
-            profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kalemleri_gorme:
+                            content["santiyeler_bilgileri"] = bloglar.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,proje_santiye_Ait_id = id )
+                            profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                content["santiyeler_bilgileri"] = bloglar.objects.filter(proje_ait_bilgisi = request.user,proje_santiye_Ait_id = id )
+                profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user)
 
         if request.GET.get("search"):
             search = request.GET.get("search")
@@ -1141,8 +1152,19 @@ def santtiye_kalemleri(request,id):
                 profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id)).filter(Q(proje_ait_bilgisi__last_name__icontains =search)| Q(kalem_adi__icontains =search)|  Q(proje_santiye_Ait__proje_adi__icontains =search))
                 content["santiyeler_bilgileri"] = santiye.objects.all()
             else:
-                content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
-                profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user).filter(Q(kalem_adi__icontains =search) | Q(proje_santiye_Ait__proje_adi__icontains =search))
+                if request.user.kullanicilar_db:
+                    a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                    if a:
+                        if a.izinler.kalemleri_gorme:
+                                content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
+                                profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db).filter(Q(kalem_adi__icontains =search) | Q(proje_santiye_Ait__proje_adi__icontains =search))
+                        else:
+                            return redirect("main:yetkisiz")
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+                    profile = santiye_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id) ,silinme_bilgisi = False,proje_ait_bilgisi = request.user).filter(Q(kalem_adi__icontains =search) | Q(proje_santiye_Ait__proje_adi__icontains =search))
 
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 10) # 6 employees per page
