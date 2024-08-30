@@ -2,7 +2,24 @@
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
-
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static '' %}assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static '' %}assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static '' %}assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static '' %}assets/css/app.min.css" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static '' %}assets/css/custom.min.css" rel="stylesheet" type="text/css">
+    <link href="{% static '' %}assets/css/custom.css" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+{% endblock head %}
 {% block sidebar %}
 <style>
     .gosterme{
@@ -19,10 +36,23 @@
                 <div class="file-manager-sidebar">
                             <div class="p-4 d-flex flex-column h-100">
                                 <div class="mb-3">
-                                    <button class="btn btn-primary w-100 createTask" type="button" data-bs-toggle="modal"
+                                {% if request.user.kullanicilar_db %}
+                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                {% if yetki.yapilacaklar_olusturma %}
+                                       <button class="btn btn-primary w-100 createTask" type="button" data-bs-toggle="modal"
                                     data-bs-target="#createTask">
                                     <i class="ri-add-fill align-bottom"></i> Görev Ata
-                                </button>
+                                </button>                                                 
+                                {% else %}
+                                                                                                
+                                {% endif %}
+                                {% else %}
+                                       <button class="btn btn-primary w-100 createTask" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#createTask">
+                                    <i class="ri-add-fill align-bottom"></i> Görev Ata
+                                </button>                                                 
+                                {% endif %}
+                                    
                                 </div>
 
                                 <div class="px-4 mx-n4 simplebar-scrollable-y" data-simplebar="init" style="height: calc(100vh - 468px);"><div class="simplebar-wrapper" style="margin: 0px -24px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;"><div class="simplebar-content" style="padding: 0px 24px;">
@@ -122,15 +152,39 @@
                             <a href="{% url 'main:yapilacaklar' %}" class="btn btn-success createTask" >
                                     <i class="ri-search align-bottom"></i> Filtreyi Temizle
                                 </a>
-                                
-                                <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
+                                {% if request.user.kullanicilar_db %}
+                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                {% if yetki.yapilacaklar_olusturma %}
+                                       <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
                                     data-bs-target="#createTasktoplu">
                                     <i class="ri-add-fill align-bottom"></i> Görev Ata
-                                </button>
-                                <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
+                                </button>                                                
+                                {% else %}
+                                                                                                
+                                {% endif %}
+                                {% else %}
+                                    <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#createTasktoplu">
+                                    <i class="ri-add-fill align-bottom"></i> Görev Ata
+                                </button>                                                
+                                {% endif %}
+                                {% if request.user.kullanicilar_db %}
+                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                {% if yetki.yapilacaklar_olusturma %}
+                                       <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
                                     data-bs-target="#createTasktoplu">
                                     <i class="ri-add-fill align-bottom"></i> Toplu Görev Ata
-                                </button>
+                                </button>                                               
+                                {% else %}
+                                                                                                
+                                {% endif %}
+                                {% else %}
+                                   <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#createTasktoplu">
+                                    <i class="ri-add-fill align-bottom"></i> Toplu Görev Ata
+                                </button>                                               
+                                {% endif %}
+                                
                             </div>
                         </div>
                     </form>
@@ -157,8 +211,245 @@
 
                                     <tbody id="task-list">
                                         {% for i in santiyeler %}
+                                        {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.yapilacaklar_olusturma %}
+                                                       <tr>
+                                            <td>
+                                                <div class="d-flex align-items-start">
+                                                    
+                                                    <div class="flex-grow-1">
+                                                        <div class="form-check"> <input class="form-check-input"
+                                                                type="checkbox" value="15" id="todo15"> <label
+                                                                class="form-check-label" for="todo15">{{i.title}}</label> </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {{i.aciklama}}
+                                            </td>
+                                            <td>
+                                                <div class="avatar-group flex-nowrap">
+                                                {% for yazar in i.yapacaklar.all %}
+                                                       <a href="javascript: void(0);"
+                                                        class="avatar-group-item"
+                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        data-bs-title="{{yazar.last_name}}"> <img
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            class="rounded-circle avatar-xxs"> </a>
+                                                {% endfor %}
+                                               </div>
+                                            </td>
+                                            <td>{{i.teslim_tarihi}}</td>
+                                            <td>
+                                                {% isplani_durumu_kontrol i.id as b %}
+                                                {% if b == "Inprogress" %}
+                                                    <span
+                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                {% elif b == "New" %}
+                                                <span
+                                                    class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
+                                                {% elif b == "Pending" %}
+                                                <span
+                                                    class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
+                                                 {% elif b == "Completed" %}
+                                                 <span
+                                                    class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
+                                                {% else %}
+                                                {% if i.status == "Inprogress" %}
+                                                    <span
+                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "New" %}
+                                                <span
+                                                    class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "Pending" %}
+                                                <span
+                                                    class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
+                                                 {% elif i.status == "Completed" %}
+                                                 <span
+                                                    class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            
+                                            </td>
+                                            <td>
+                                            {% if i.oncelik_durumu == "High" %}
+                                            <span class="badge bg-danger text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Medium" %}
+                                            <span class="badge bg-warning text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Low" %}
+                                            <span class="badge bg-success text-uppercase">{{i.oncelik_durumu}}</span>
+                                            {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="hstack gap-2">
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.yapilacaklar_silme %}
+                                                       <button
+                                                        class="btn btn-sm btn-soft-danger remove-list"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
+                                                        data-remove-id="15"><i
+                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>                                                  
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                      <button
+                                                        class="btn btn-sm btn-soft-danger remove-list"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
+                                                        data-remove-id="15"><i
+                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>                                                   
+                                                {% endif %}
+                                                
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.yapilacaklar_duzenleme %}
+                                                       <button class="btn btn-sm btn-soft-info edit-list"
+                                                        data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}"
+                                                        data-edit-id="15"><i
+                                                            class="ri-pencil-fill align-bottom"></i></button>                                                 
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                       <button class="btn btn-sm btn-soft-info edit-list"
+                                                        data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}}"
+                                                        data-edit-id="15"><i
+                                                            class="ri-pencil-fill align-bottom"></i></button>                                                 
+                                                {% endif %}
+                                                    
+                                                            <button class="btn btn-sm btn-soft-success edit-list"
+                                                            data-bs-toggle="modal" data-bs-target="#durumyenile{{i.id}}"
+                                                            data-edit-id="15">Durum yenile</button>
+                                                            
+                                                                <button class="btn btn-sm btn-soft-warning edit-list"
+                                                                data-bs-toggle="modal" data-bs-target="#ilerleme{{i.id}}"
+                                                                data-edit-id="15">İlerleme Durumu</button></div>
+                                            </td>
+                                        </tr>
+                                                {% else %}
+                                                {% if request.user in i.yapacaklar.all %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-start">
+                                                            
+                                                            <div class="flex-grow-1">
+                                                                <div class="form-check"> <input class="form-check-input"
+                                                                        type="checkbox" value="15" id="todo15"> <label
+                                                                        class="form-check-label" for="todo15">{{i.title}}</label> </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {{i.aciklama}}
+                                                    </td>
+                                                    <td>
+                                                        <div class="avatar-group flex-nowrap">
+                                                        {% for yazar in i.yapacaklar.all %}
+                                                               <a href="javascript: void(0);"
+                                                                class="avatar-group-item"
+                                                                data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                data-bs-title="{{yazar.last_name}}"> <img
+                                                                    src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                                    class="rounded-circle avatar-xxs"> </a>
+                                                        {% endfor %}
+                                                       </div>
+                                                    </td>
+                                                    <td>{{i.teslim_tarihi}}</td>
+                                                    <td>
+                                                        {% isplani_durumu_kontrol i.id as b %}
+                                                        {% if b == "Inprogress" %}
+                                                            <span
+                                                            class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                        {% elif b == "New" %}
+                                                        <span
+                                                            class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
+                                                        {% elif b == "Pending" %}
+                                                        <span
+                                                            class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
+                                                         {% elif b == "Completed" %}
+                                                         <span
+                                                            class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
+                                                        {% else %}
+                                                        {% if i.status == "Inprogress" %}
+                                                            <span
+                                                            class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                        {% elif i.status == "New" %}
+                                                        <span
+                                                            class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
+                                                        {% elif i.status == "Pending" %}
+                                                        <span
+                                                            class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
+                                                         {% elif i.status == "Completed" %}
+                                                         <span
+                                                            class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    
+                                                    </td>
+                                                    <td>
+                                                    {% if i.oncelik_durumu == "High" %}
+                                                    <span class="badge bg-danger text-uppercase">{{i.oncelik_durumu}}</span>
+                                                    {% elif i.oncelik_durumu == "Medium" %}
+                                                    <span class="badge bg-warning text-uppercase">{{i.oncelik_durumu}}</span>
+                                                    {% elif i.oncelik_durumu == "Low" %}
+                                                    <span class="badge bg-success text-uppercase">{{i.oncelik_durumu}}</span>
+                                                    {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <div class="hstack gap-2">
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.yapilacaklar_silme %}
+                                                               <button
+                                                                class="btn btn-sm btn-soft-danger remove-list"
+                                                                data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
+                                                                data-remove-id="15"><i
+                                                                    class="ri-delete-bin-5-fill align-bottom"></i></button>                                                  
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                              <button
+                                                                class="btn btn-sm btn-soft-danger remove-list"
+                                                                data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
+                                                                data-remove-id="15"><i
+                                                                    class="ri-delete-bin-5-fill align-bottom"></i></button>                                                   
+                                                        {% endif %}
+                                                        
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.yapilacaklar_duzenleme %}
+                                                               <button class="btn btn-sm btn-soft-info edit-list"
+                                                                data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}"
+                                                                data-edit-id="15"><i
+                                                                    class="ri-pencil-fill align-bottom"></i></button>                                                 
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                               <button class="btn btn-sm btn-soft-info edit-list"
+                                                                data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}}"
+                                                                data-edit-id="15"><i
+                                                                    class="ri-pencil-fill align-bottom"></i></button>                                                 
+                                                        {% endif %}
+                                                            
+                                                                    <button class="btn btn-sm btn-soft-success edit-list"
+                                                                    data-bs-toggle="modal" data-bs-target="#durumyenile{{i.id}}"
+                                                                    data-edit-id="15">Durum yenile</button>
+                                                                    
+                                                                        <button class="btn btn-sm btn-soft-warning edit-list"
+                                                                        data-bs-toggle="modal" data-bs-target="#ilerleme{{i.id}}"
+                                                                        data-edit-id="15">İlerleme Durumu</button></div>
+                                                    </td>
+                                                </tr>  
+                                                {% endif %}                                                        
+                                                {% endif %}
                                         
-                                        
+                                        {% else %}
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-start">
@@ -228,15 +519,43 @@
                                             {% endif %}
                                             </td>
                                             <td>
-                                                <div class="hstack gap-2"> <button
+                                                <div class="hstack gap-2">
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.yapilacaklar_silme %}
+                                                       <button
                                                         class="btn btn-sm btn-soft-danger remove-list"
                                                         data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
                                                         data-remove-id="15"><i
-                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>
-                                                    <button class="btn btn-sm btn-soft-info edit-list"
-                                                        data-bs-toggle="modal" data-bs-target="#createTask"
+                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>                                                  
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                      <button
+                                                        class="btn btn-sm btn-soft-danger remove-list"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
+                                                        data-remove-id="15"><i
+                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>                                                   
+                                                {% endif %}
+                                                
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.yapilacaklar_duzenleme %}
+                                                       <button class="btn btn-sm btn-soft-info edit-list"
+                                                        data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}"
                                                         data-edit-id="15"><i
-                                                            class="ri-pencil-fill align-bottom"></i></button>
+                                                            class="ri-pencil-fill align-bottom"></i></button>                                                 
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                       <button class="btn btn-sm btn-soft-info edit-list"
+                                                        data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}}"
+                                                        data-edit-id="15"><i
+                                                            class="ri-pencil-fill align-bottom"></i></button>                                                 
+                                                {% endif %}
+                                                    
                                                             <button class="btn btn-sm btn-soft-success edit-list"
                                                             data-bs-toggle="modal" data-bs-target="#durumyenile{{i.id}}"
                                                             data-edit-id="15">Durum yenile</button>
@@ -246,6 +565,7 @@
                                                                 data-edit-id="15">İlerleme Durumu</button></div>
                                             </td>
                                         </tr>
+                                        {% endif %}
                                         {% endfor %}
                                     </tbody>
                                 </table>
@@ -447,8 +767,7 @@
                         </div>
                         <div>
                             <label for="status-field" class="form-label">Kişiler</label>
-                            <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
-                                <option value=""></option>
+                            <select name="blogbilgisi" hidden class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
                                 {% endfor %}
@@ -608,7 +927,7 @@
                         </div>
                         <div>
                             <label for="status-field" class="form-label">Kişiler</label>
-                            <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
+                            <select name="blogbilgisi" hidden class="form-control cokluetiketa" data-trigger multiple  id="cokluetiketa" >
                                 <option value=""></option>
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -623,6 +942,85 @@
                     <div class="form-group">
                         <label>Dosya Yükle</label>
                         <input name="file" type="file" multiple="multiple" class="form-control" />
+                    </div>
+                </div>
+
+                        <div class="hstack gap-2 justify-content-end">
+                            <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-fill align-bottom"></i> Close</button>
+                            <button type="submit" class="btn btn-primary" id="addNewTodo">Add Task</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% for i in santiyeler %}
+<div class="modal fade" id="duzenleme{{i.id}}" tabindex="-1" aria-labelledby="createTaskLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header p-3 bg-success-subtle">
+                    <h5 class="modal-title" id="createTaskLabel">Düzenleme</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="createTaskBtn-close" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="task-error-msg" class="alert alert-danger py-2"></div>
+                    <form autocomplete="off"class="tablelist-form" action="{% url 'main:yapilacalar_ekle_duzenleme' %}" method="post" enctype="multipart/form-data" >
+                        {% csrf_token %}
+                        <input type="hidden" id="taskid-input" value="{{i.id}}" name="id" class="form-control">
+                        <div class="mb-3">
+                            <label for="task-title-input" class="form-label">Başlık Ekle</label>
+                            <input type="text" value="{{i.title}}" name="baslik" id="task-title-input" class="form-control" placeholder="Enter task title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email-field" class="form-label">Açıklama</label>
+                            <textarea name="aciklama" class="form-control" placeholder="Enter Description" >{{i.aciklama}}</textarea>
+                            <div class="invalid-feedback">Please enter an email.</div>
+                        </div>
+                        <div class="row g-4 mb-3">
+                            <div class="col-lg-6">
+                                <label for="task-status" class="form-label">Durum</label>
+                                <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
+                                    <option value="{{i.status}}">{{i.status}}</option>
+                                    <option value="New" selected>New</option>
+                                    <option value="Inprogress">Inprogress</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <!--end col-->
+                            <div class="col-lg-6">
+                                <label for="priority-field" class="form-label">Priority</label>
+                                <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
+                                    <option value="{{i.oncelik_durumu}}">{{i.oncelik_durumu}}</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <div>
+                            <label for="status-field" class="form-label">Kişiler</label>
+                            <select name="blogbilgisi" hidden class="form-control cokluetiket{{i.id}}" data-trigger multiple  id="cokluetiket{{i.id}}" >
+                                
+                                {% for blog in blog_bilgisi %}
+                                    {% if blog in  i.yapacaklar.all %}
+                                        <option selected value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
+                                    {% else %}
+                                        <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
+                                    {% endif %}
+                                
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="task-duedate-input" class="form-label">Due Date:</label>
+                            <input type="date" name="teslim_tarihi" value="{{i.teslim_tarihi | date:'Y-m-d'}}" id="task-duedate-input" class="form-control" placeholder="Due date">
+                        </div>
+                        <div class="md-4">
+                    <div class="form-group">
+                        <label>Dosya Yükle</label>
+                        <input name="file" type="file" multiple="multiple"  class="form-control" />
                     </div>
                 </div>
 
@@ -794,6 +1192,61 @@
     </div>
     {% endfor %}
 </div>
+{% endfor %}
+<script>
+                    function initializeMultiSelectTaga() {
+                       return new MultiSelectTag('cokluetiketa', {
+                           rounded: true,
+                           shadow: true,
+                           placeholder: 'Search',
+                           tagColor: {
+                               textColor: '#327b2c',
+                               borderColor: '#92e681',
+                               bgColor: '#eaffe6',
+                           },
+                           onChange: function(values) {
+                               console.log(values);
+                           }
+                       });
+                   }
+                   function initializeMultiSelectTagb() {
+                       return new MultiSelectTag('cokluetiketb', {
+                           rounded: true,
+                           shadow: true,
+                           placeholder: 'Search',
+                           tagColor: {
+                               textColor: '#327b2c',
+                               borderColor: '#92e681',
+                               bgColor: '#eaffe6',
+                           },
+                           onChange: function(values) {
+                               console.log(values);
+                           }
+                       });
+                   }
+                   
+                   var multiSelectInstancea = initializeMultiSelectTaga();
+                   var multiSelectInstanceb = initializeMultiSelectTagb();
+                   {% for  i in santiyeler %}
+                    function initializeMultiSelectTag{{i.id}}() {
+                       return new MultiSelectTag('cokluetiket{{i.id}}', {
+                           rounded: true,
+                           shadow: true,
+                           placeholder: 'Search',
+                           tagColor: {
+                               textColor: '#327b2c',
+                               borderColor: '#92e681',
+                               bgColor: '#eaffe6',
+                           },
+                           onChange: function(values) {
+                               console.log(values);
+                           }
+                       });
+                   }
+                    var multiSelectInstance{{i.id}} = initializeMultiSelectTag{{i.id}}();
+                   {% endfor %}
+               </script>
+
 <!-- end main content-->
 <script>
 let z = 0;
@@ -837,8 +1290,7 @@ let z = 0;
     <script src="{% static 'assets/js/app.js' %}"></script>
         <!-- JAVASCRIPT -->
 
-    <!-- dropzone min -->
-    <script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
+    
 
     <!--file Upload-->
     <script src="{% static 'assets/js/pages/form-file-upload.init.js' %}"></script>
@@ -849,6 +1301,5 @@ let z = 0;
 
     <!-- Sweet Alerts js -->
     <script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
-
 
 {% endblock javascriptcode %}

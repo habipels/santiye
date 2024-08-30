@@ -113,6 +113,7 @@ urlpatterns = [#
     #iş planı #
     path("thingstodo", views.yapilacaklar, name="yapilacaklar"),
     path("addthingstodo", views.yapilacalar_ekle, name="yapilacalar_ekle"),
+    path("setthingstodo", views.yapilacalar_ekle_duzenleme, name="yapilacalar_ekle_duzenleme"),
     path("delthingstodo", views.yapilacalar_sil, name="yapilacalar_sil"),
     path("setthingstodo", views.yapilacalar_duzenle, name="yapilacalar_duzenle"),
     path("allthingstodo", views.yapilacalar_ekle_toplu, name="yapilacalar_ekle_toplu"),
