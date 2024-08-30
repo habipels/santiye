@@ -4424,3 +4424,6 @@ def gelirleri_excelden_ekle(request,id):
                                        aciklama = "deneme"  )
     return redirect("/")
 
+def sayfa_denemeleri(request):
+    content = sozluk_yapisi()
+    return render(request,"account/xxanasayfa.html",content)
