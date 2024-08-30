@@ -1001,3 +1001,11 @@ def fatura_hakedis_baglama(fatura_numari,fatura_kime_ait):
         return {"tutar" : b.toplam_tutar,"kalan_tuar":b.kalan_tutar}
     else:
         return 0
+
+@register.simple_tag
+def kulanici_yetkileri_goster(kullanici):
+    a = get_object_or_none(bagli_kullanicilar,kullanicilar = kullanici)
+    if a:
+        return a.izinler
+    else: 
+        return 0

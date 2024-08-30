@@ -104,7 +104,8 @@ def kullanicilarim(request):
         content["kullanicilar"] =kullanicilar
     else:
         profile = CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False).order_by("-id")
-
+        kullanic_izinlerim = personel_izinleri.objects.filter(izinlerin_sahibi_kullanici = request.user)
+        content["kullanici_izinlerim"] = kullanic_izinlerim
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -113,6 +114,8 @@ def kullanicilarim(request):
             content["kullanicilar"] =kullanicilar
         else:
             profile = CustomUser.objects.filter(Q(last_name__icontains = search) & Q(kullanici_silme_bilgisi = False))
+            kullanic_izinlerim = personel_izinleri.objects.filter(izinlerin_sahibi_kullanici = request.user)
+            content["kullanici_izinlerim"] = kullanic_izinlerim
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -142,6 +145,7 @@ def kullanici_ekleme(request):
             durumu = request.POST.get("durumu")
             parola = request.POST.get("parola")
             file = request.POST.getlist("file")
+            izinler = request.POST.get("izinler")
             if durumu == "1":
                 durumu = True
             else:
@@ -160,6 +164,8 @@ def kullanici_ekleme(request):
             a.save()
             for images in file:
                 personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
+            if izinler:
+                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
         return redirect("users:kullanicilarim")
 
 
@@ -174,12 +180,15 @@ def kullanici_bilgileri_duzenle(request):
         if request.user.is_superuser:
             pass
         else:
+            
             buttonId = request.POST.get("buttonId")
             yetkili_adi = request.POST.get("yetkili_adi")
             email = request.POST.get("email")
             gorevi = request.POST.get("gorevi")
             durumu = request.POST.get("durumu")
             file = request.POST.getlist("file")
+            izinler = request.POST.get("izinler")
+            bagli_kullanicilar.objects.filter(kullanicilar =get_object_or_404(CustomUser, id = buttonId)).delete()
             if durumu == "1":
                 durumu = True
             else:
@@ -196,6 +205,8 @@ def kullanici_bilgileri_duzenle(request):
             if len(file)> 1:
                 for images in file:
                     personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
+            if izinler:
+                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
         return redirect("users:kullanicilarim")
 
 @login_required

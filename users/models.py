@@ -191,8 +191,8 @@ class personel_izinleri(models.Model):
 
 class bagli_kullanicilar(models.Model):
     #bu izinler kime ait
-    izinler = models.ForeignKey(personel_izinleri, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
-    kullanicilar = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
+    izinler = models.ForeignKey(personel_izinleri, on_delete = models.CASCADE,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
+    kullanicilar = models.ForeignKey(CustomUser, on_delete = models.CASCADE,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
 
 from datetime import datetime
 from simple_history.models import HistoricalRecords
