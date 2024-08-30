@@ -2085,8 +2085,21 @@ def sozlesmler_sayfasi(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
-
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.sozlesmeler_gorme:
+                    profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user.kullanicilar_db)
+                    #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,silinme_bilgisi = False)
+                    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user.kullanicilar_db,silinme_bilgisi = False)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
+            #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+            content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -2094,7 +2107,19 @@ def sozlesmler_sayfasi(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.sozlesmeler_gorme:
+                        profile = taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user.kullanicilar_db) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                
+           
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -2109,8 +2134,7 @@ def sozlesmler_sayfasi(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
-    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
+    
     return render(request,"santiye_yonetimi/sozlesmler.html",content)
 #sözleşme olaylari
 
@@ -2120,6 +2144,15 @@ def sozlesme_ekle(request):
             kullanici = request.POST.get("kullanici")
             return redirect("main:sozlesme_ekle_admin",kullanici)
         else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.sozlesmeler_olusturma:
+                        pass
+                    else:
+                        return redirect("main:yetkisiz")
+            else:
+                pass
             taseron = request.POST.get("taseron")
             dosyaadi = request.POST.get("dosyaadi")
             tarih = request.POST.get("tarih")
@@ -2164,6 +2197,17 @@ def sozlesme_ekle_admin(request,id):
 #sözleşme düzenleme
 
 def sozlesme_duzenle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.sozlesmeler_duzenleme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
     if request.POST:
         id_bilgisi = request.POST.get("id_bilgisi")
         taseron = request.POST.get("taseron")
@@ -2211,6 +2255,17 @@ def sozlesme_duzenle(request):
 
 #sözleşmeler sil
 def sozlesme_silme(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.sozlesmeler_silme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
     if request.POST:
         buttonId = request.POST.get("buttonId")
         taseron_sozlesme_dosyalari.objects.filter(id = buttonId).update(silinme_bilgisi = True)
@@ -3204,10 +3259,10 @@ def kullanici_yetki_alma(request):
         izinler.ilerleme_takibi_duzenleme = False
         izinler.ilerleme_takibi_silme = False
         #
-        izinler.is_plani_gorme = False
-        izinler.is_plani_olusturma = False
-        izinler.is_plani_duzenleme = False
-        izinler.is_plani_silme = False
+        izinler.sozlesmeler_gorme = False
+        izinler.sozlesmeler_olusturma = False
+        izinler.sozlesmeler_duzenleme = False
+        izinler.sozlesmeler_silme = False
         #
         izinler.yapilacaklar_gorme = False
         izinler.yapilacaklar_olusturma = False
@@ -3357,18 +3412,18 @@ def kullanici_yetki_alma(request):
         if ilerleme_takibi_silme:
             izinler.ilerleme_takibi_silme = True
         #
-        is_plani_gorme = request.POST.get("is_plani_gorme")
-        if is_plani_gorme:
-            izinler.is_plani_gorme = True
-        is_plani_olusturma = request.POST.get("is_plani_olusturma")
-        if is_plani_olusturma:
-            izinler.is_plani_olusturma = True
-        is_plani_duzenleme = request.POST.get("is_plani_duzenleme")
-        if is_plani_duzenleme:
-            izinler.is_plani_duzenleme = True
-        is_plani_silme = request.POST.get("is_plani_silme")
-        if is_plani_silme:
-            izinler.is_plani_silme = True
+        sozlesmeler_gorme = request.POST.get("sozlesmeler_gorme")
+        if sozlesmeler_gorme:
+            izinler.sozlesmeler_gorme = True
+        sozlesmeler_olusturma = request.POST.get("sozlesmeler_olusturma")
+        if sozlesmeler_olusturma:
+            izinler.sozlesmeler_olusturma = True
+        sozlesmeler_duzenleme = request.POST.get("sozlesmeler_duzenleme")
+        if sozlesmeler_duzenleme:
+            izinler.sozlesmeler_duzenleme = True
+        sozlesmeler_silme = request.POST.get("sozlesmeler_silme")
+        if sozlesmeler_silme:
+            izinler.sozlesmeler_silme = True
         #
         yapilacaklar_gorme = request.POST.get("yapilacaklar_gorme")
         if yapilacaklar_gorme:
