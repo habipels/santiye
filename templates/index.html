@@ -540,7 +540,12 @@
                                                 </div>
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
+                                                    {% if request.user.kullanicilar_db %}
+                                                        {% gelirler_tutari request.user.kullanicilar_db as gelir_bilgisi_cek %}
+                                                    {% else %}
                                                     {% gelirler_tutari request.user as gelir_bilgisi_cek %}
+                                                    {% endif %}
+                                                    
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
                                                         </h4>
                                                         <a href="{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">Gelirleri Görüntüle</a>
@@ -573,7 +578,12 @@
                                                 </div>
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
+                                                    {% if request.user.kullanicilar_db %}
+                                                        {% giderler_tutari request.user.kullanicilar_db  as gider_bilgisicekeme %}
+                                                    {% else %}
                                                     {% giderler_tutari request.user  as gider_bilgisicekeme %}
+                                                    {% endif %}
+                                                    
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
                                                         <a href="{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">Giderleri Görüntüle</a>
                                                     </div>
@@ -907,7 +917,12 @@
 
     </div>
     <!-- end main content-->
-    {% ozellikler request.user as ozellikleri %}
+    {% if request.user.kullanicilar_db %}
+         {% ozellikler request.user.kullanicilar_db as ozellikleri %}      
+    {% else %}
+       {% ozellikler request.user as ozellikleri %}                                            
+    {% endif %}
+    
     <script>
         // Django şablon etiketlerini JavaScript değişkenlerine atayın
 
