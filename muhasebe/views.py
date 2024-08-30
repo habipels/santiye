@@ -304,7 +304,17 @@ def kasa_viev(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.kasa_gosterme_izni:
+                    profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -312,7 +322,17 @@ def kasa_viev(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kasa_gosterme_izni:
+                        profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -371,8 +391,19 @@ def kasa_tekli(request,id):
         content["kullanicilar"] =kullanicilar
         k_gonder = get_object_or_404(Kasa,id = id)
     else:
-        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        k_gonder = get_object_or_404(Kasa,id = id)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.kasa_detay_izni:
+                    profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    k_gonder = get_object_or_404(Kasa,id = id)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            k_gonder = get_object_or_404(Kasa,id = id)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -380,7 +411,17 @@ def kasa_tekli(request,id):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kasa_detay_izni:
+                        profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -412,11 +453,25 @@ def kasa_ekle(request):
 
                                 )
         else:
-            kasa_Adi   = request.POST.get("kasaadi")
-            bakiye = request.POST.get("bakiye")
-            konumu = request.POST.get("konumu")
-            Kasa.objects.create(kasa_kart_ait_bilgisi = request.user
-                ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kasa_olusturma_izni:
+                        kasa_Adi   = request.POST.get("kasaadi")
+                        bakiye = request.POST.get("bakiye")
+                        konumu = request.POST.get("konumu")
+                        Kasa.objects.create(kasa_kart_ait_bilgisi = request.user.kullanicilar_db
+                            ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kasa_Adi   = request.POST.get("kasaadi")
+                bakiye = request.POST.get("bakiye")
+                konumu = request.POST.get("konumu")
+                Kasa.objects.create(kasa_kart_ait_bilgisi = request.user
+                    ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye)
 
     return redirect("accounting:kasa")
 
@@ -430,7 +485,17 @@ def kasa_sil(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         Kasa.objects.filter(id = id).update(silinme_bilgisi = True)
     else:
-        Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.Kasa_silme_izni:
+                    Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("accounting:kasa")
 
 
@@ -453,10 +518,23 @@ def kasa_duzenle(request):
         else:
             Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu)
     else:
-        proje_tip_adi   = request.POST.get("yetkili_adi")
-        konumu = request.POST.get("konumu")
-        Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(kasa_adi = proje_tip_adi
-                ,aciklama = konumu)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.kasa_guncelleme_izni:
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    konumu = request.POST.get("konumu")
+                    Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(kasa_adi = proje_tip_adi
+                            ,aciklama = konumu)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            konumu = request.POST.get("konumu")
+            Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(kasa_adi = proje_tip_adi
+                    ,aciklama = konumu)
     return redirect("accounting:kasa")
 
 #Gelir Kategorisi

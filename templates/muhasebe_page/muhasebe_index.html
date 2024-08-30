@@ -41,12 +41,36 @@
                                                 </div>
                                             </div>
                                         </div>
-                                                <div class="addKasaBtn">
+                                        {% if request.user.kullanicilar_db %}
+                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                        {% if yetki.kasa_olusturma_izni %}
+                                                 <div class="addKasaBtn">
                                                     <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#kasaEkleModal"><i class="ri-add-line align-bottom me-1"></i>Kasa Ekle</button>
-                                                </div>
-                                                <div class="virmanBtn">
+                                                </div>                                                
+                                        {% else %}
+                                                                                                        
+                                        {% endif %}
+                                        {% else %}
+                                                 <div class="addKasaBtn">
+                                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#kasaEkleModal"><i class="ri-add-line align-bottom me-1"></i>Kasa Ekle</button>
+                                                </div>                                                
+                                        {% endif %}
+                                               
+                                            {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.kasa_virman_olusturma_izni %}
+                                                     <div class="virmanBtn">
                                                     <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#virmanEkleModal">VİRMAN</button>
-                                                </div>
+                                                </div>                                               
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                                   <div class="virmanBtn">
+                                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#virmanEkleModal">VİRMAN</button>
+                                                </div>                                                 
+                                            {% endif %}
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -87,15 +111,51 @@
                                                     <td class="konum">{{i.kayit_tarihi}}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-end">
-                                                            <div class="edit" >
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.kasa_detay_izni %}
+                                                                <div class="edit" >
                                                                 <a href="{% url 'accounting:kasa_tekli' i.id %}" class="btn btn-sm btn-success edit-item-btn" >Detay</a>
-                                                            </div>
-                                                            <div class="edit" style="margin-left:10px;">
+                                                            </div>                                                
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                              <div class="edit" >
+                                                                <a href="{% url 'accounting:kasa_tekli' i.id %}" class="btn btn-sm btn-success edit-item-btn" >Detay</a>
+                                                            </div>                                                  
+                                                        {% endif %}
+                                                            
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.kasa_guncelleme_izni %}
+                                                               <div class="edit" style="margin-left:10px;">
                                                                 <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
-                                                            </div>
-                                                            <div class="remove" style="margin-left:10px;">
+                                                            </div>                                                 
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                               <div class="edit" style="margin-left:10px;">
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">Edit</button>
+                                                            </div>                                                 
+                                                        {% endif %}
+                                                            
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.Kasa_silme_izni %}
+                                                                 <div class="remove" style="margin-left:10px;">
                                                                 <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">Remove</button>
-                                                            </div>
+                                                            </div>                                               
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                               <div class="remove" style="margin-left:10px;">
+                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">Remove</button>
+                                                            </div>                                                 
+                                                        {% endif %}
+                                                            
                                                         </div>
                                                     </td>
                                                 </tr>

@@ -3750,9 +3750,6 @@ def kullanici_yetki_alma(request):
         izinler.hesap_ekstra_duzenleme = False
         izinler.hesap_ekstra_silme = False
         #
-        izinler.virman_raporu_gorme = False
-        izinler.virman_raporu_olusturma = False
-        #
         izinler.ilerleme_takibi_gorme = False
         izinler.ilerleme_takibi_olusturma = False
         izinler.ilerleme_takibi_duzenleme = False
@@ -3793,10 +3790,8 @@ def kullanici_yetki_alma(request):
         izinler.gider_faturasi_duzenleme_izni = False
         izinler.gider_faturasi_silme_izni = False
         #
-        izinler.virman_raporu_gorme = False
-        izinler.virman_raporu_olusturma = False
-        izinler.virman_raporu_duzenleme = False
-        izinler.virman_raporu_silme = False
+        izinler.kasa_virman_olusturma_izni = False
+        izinler.kasa_virman_gorme_izni = False
         #
         izinler.kasa_gosterme_izni = False
         izinler.kasa_olusturma_izni = False
@@ -3842,6 +3837,9 @@ def kullanici_yetki_alma(request):
         izinler.hakedisler_olusturma = False
         izinler.hakedisler_duzenleme = False
         izinler.hakedisler_silme = False
+        #
+        izinler.kasa_detay_izni = False
+        izinler.cari_detay_izni = False
         izinler.save()
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
@@ -3896,12 +3894,12 @@ def kullanici_yetki_alma(request):
         if hesap_ekstra_silme:
             izinler.hesap_ekstra_silme = True
         #
-        virman_raporu_gorme = request.POST.get("virman_raporu_gorme")
-        if virman_raporu_gorme:
-            izinler.virman_raporu_gorme = True
-        virman_raporu_olusturma = request.POST.get("virman_raporu_olusturma")
-        if virman_raporu_olusturma:
-            izinler.virman_raporu_olusturma = True
+        kasa_virman_olusturma_izni = request.POST.get("kasa_virman_olusturma_izni")
+        if kasa_virman_olusturma_izni:
+            izinler.kasa_virman_olusturma_izni = True
+        kasa_virman_gorme_izni = request.POST.get("kasa_virman_gorme_izni")
+        if kasa_virman_gorme_izni:
+            izinler.kasa_virman_gorme_izni = True
         #
         ilerleme_takibi_gorme = request.POST.get("ilerleme_takibi_gorme")
         if ilerleme_takibi_gorme:
@@ -4008,19 +4006,7 @@ def kullanici_yetki_alma(request):
         if gider_faturasi_silme_izni:
             izinler.gider_faturasi_silme_izni = True
         #
-        virman_raporu_gorme = request.POST.get("virman_raporu_gorme")
-        if virman_raporu_gorme:
-            izinler.virman_raporu_gorme = True
-        virman_raporu_olusturma = request.POST.get("virman_raporu_olusturma")
-        if virman_raporu_olusturma:
-            izinler.virman_raporu_olusturma = True
-        virman_raporu_duzenleme = request.POST.get("virman_raporu_duzenleme")
-        if virman_raporu_duzenleme:
-            izinler.virman_raporu_duzenleme = True
-        virman_raporu_silme = request.POST.get("virman_raporu_silme")
-        if virman_raporu_silme:
-            izinler.virman_raporu_silme = True
-        #
+        
         kasa_gosterme_izni = request.POST.get("kasa_gosterme_izni")
         if kasa_gosterme_izni:
             izinler.kasa_gosterme_izni = True
@@ -4137,6 +4123,13 @@ def kullanici_yetki_alma(request):
         hakedisler_silme = request.POST.get("hakedisler_silme")
         if hakedisler_silme:
             izinler.hakedisler_silme = True
+        #
+        kasa_detay_izni = request.POST.get("kasa_detay_izni")
+        if kasa_detay_izni:
+            izinler.kasa_detay_izni = True
+        cari_detay_izni = request.POST.get("cari_detay_izni")
+        if cari_detay_izni:
+            izinler.cari_detay_izni = True
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 

@@ -56,6 +56,9 @@ class personel_izinleri(models.Model):
     kasa_olusturma_izni = models.BooleanField(default = False,verbose_name = "Kasa Oluştuma İzni")
     kasa_guncelleme_izni = models.BooleanField(default = False,verbose_name = "Kasa Oluştuma İzni")
     Kasa_silme_izni = models.BooleanField(default = False,verbose_name = "Cari Silme İzni")
+    #kasada işlem yapma özelliği
+    kasa_detay_izni = models.BooleanField(default = False)
+    cari_detay_izni = models.BooleanField(default = False)
     #cari hesaplarda işlem yapmöa özelliği
     cari_gosterme_izni = models.BooleanField(default = False,verbose_name = "Kasa Oluştuma İzni")
     cari_guncelleme_izni = models.BooleanField(default = False,verbose_name = "Cari Silme İzni")
