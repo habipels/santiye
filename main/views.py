@@ -126,8 +126,19 @@ def homepage(request):
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
-            content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dashboard_gorme:
+                        profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")
+                        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
+                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if request.GET:
             search = request.GET.get("search")
             tarih = request.GET.get("tarih")
@@ -159,8 +170,19 @@ def homepage(request):
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
-            content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dashboard_gorme:
+                        profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")
+                        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
+                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         if request.GET:
             search = request.GET.get("search")
             tarih = request.GET.get("tarih")
@@ -185,8 +207,19 @@ def homepage(request):
         except EmptyPage:
                 # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
-        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
-        sonuc = []
+        if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dashboard_gorme:
+                        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
+                        sonuc = []
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+        else:
+            bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+            sonuc = []
         for i in bilgi_ver:
             y =  gider_urun_bilgisi.objects.filter(gider_bilgis = i)
             urun_tutari = 0
@@ -200,8 +233,19 @@ def homepage(request):
                 sonuc.append(i)
             if len(sonuc) >= 5 :
                 break
-        content["gider"] = sonuc
-        content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.dashboard_gorme:
+                    content["gider"] = sonuc
+                    content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")[:5]
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            content["gider"] = sonuc
+            content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
     else:
         return redirect("/users/login/")
 

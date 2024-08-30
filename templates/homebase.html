@@ -89,7 +89,12 @@
     <script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
     <script>
     {% if request.user.is_authenticated %}
-         {% kategori_bilgi_ver request.user as bilgi_cagir %}
+        {% if request.user.kullanicilar_db %}
+         {% kategori_bilgi_ver request.user.kullanicilar_db as bilgi_cagir %}    
+    {% else %}
+       {% kategori_bilgi_ver request.user as bilgi_cagir %}                                           
+    {% endif %}
+         
          {% endif %}
 function getChartColorsArray(e) {
     if (null !== document.getElementById(e))
