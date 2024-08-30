@@ -1,13 +1,9 @@
-#
-        santiye_raporu_gorme = request.POST.get("santiye_raporu_gorme")
-        if santiye_raporu_gorme:
-            izinler.santiye_raporu_gorme = True
-        santiye_raporu_olusturma  = request.POST.get("santiye_raporu_olusturma")
-        if santiye_raporu_olusturma:
-            izinler.santiye_raporu_olusturma = True
-        santiye_raporu_duzenleme = request.POST.get("santiye_raporu_duzenleme")
-        if santiye_raporu_duzenleme:
-            izinler.santiye_raporu_duzenleme = True
-        santiye_raporu_silme = request.POST.get("santiye_raporu_silme")
-        if santiye_raporu_silme:
-            izinler.santiye_raporu_silme = True
+if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.blog_olusturma:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")

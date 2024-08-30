@@ -1787,7 +1787,17 @@ def taseron_sayfasi(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.taseronlar_gorme:
+                    profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user)
 
     if request.GET.get("search"):
         search = request.GET.get("search")
@@ -3001,8 +3011,17 @@ def takvim_olaylari(request):
 
 def santiye_raporu(request,id):
     content = sozluk_yapisi()
-
-    profile =  get_object_or_404(bloglar,proje_ait_bilgisi = request.user,id = id )
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.santiye_raporu_gorme:
+                profile =  get_object_or_404(bloglar,proje_ait_bilgisi = request.user.kullanicilar_db,id = id )
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        profile =  get_object_or_404(bloglar,proje_ait_bilgisi = request.user,id = id )
     content["santiye"] = profile
     return render(request,"santiye_yonetimi/santiye_raporu.html",content)
 
@@ -3011,6 +3030,8 @@ def kullanici_yetkileri(request):
     if super_admin_kontrolu(request):
         pass
     else:
+        if request.user.kullanicilar_db:
+            return redirect("main:yetkisiz")
         profile = personel_izinleri.objects.filter(izinlerin_sahibi_kullanici = request.user)
         content["izinler"] = profile
     return render(request,"kullanici_yetkileri/yetkiler.html",content)
@@ -3019,11 +3040,15 @@ def kullanici_yetkileri_duzenle(request,id):
     if super_admin_kontrolu(request):
         pass
     else:
+        if request.user.kullanicilar_db:
+            return redirect("main:yetkisiz")
         profile = personel_izinleri.objects.filter(izinlerin_sahibi_kullanici = request.user)
         content["izinler"] = profile
         content["secili_grup"] = get_object_or_404(personel_izinleri,id = id)
     return render(request,"kullanici_yetkileri/yetkiler.html",content)
 def kullanici_yetki_olustur(request):
+    if request.user.kullanicilar_db:
+        return redirect("main:yetkisiz")
     if request.POST:
         grup_adi = request.POST.get("grup_adi")
         personel_izinleri.objects.create(
@@ -3032,6 +3057,8 @@ def kullanici_yetki_olustur(request):
         )
     return redirect("main:kullanici_yetkileri")
 def kullanici_yetki_adi_duzenle(request):
+    if request.user.kullanicilar_db:
+        return redirect("main:yetkisiz")
     if request.POST:
         grup_adi = request.POST.get("grup_adi")
         id  = request.POST.get("id")
@@ -3041,11 +3068,15 @@ def kullanici_yetki_adi_duzenle(request):
         )
     return redirect("main:kullanici_yetkileri")
 def kullanici_yetki_sil(request):
+    if request.user.kullanicilar_db:
+        return redirect("main:yetkisiz")
     if request.POST:
         id  = request.POST.get("id")
         personel_izinleri.objects.filter(id = id,izinlerin_sahibi_kullanici = request.user).delete()
     return redirect("main:kullanici_yetkileri")
 def kullanici_yetki_alma(request):
+    if request.user.kullanicilar_db:
+        return redirect("main:yetkisiz")
     if request.POST:
         guncellenen = request.POST.get("guncellenen")
         izinler = get_object_or_404(personel_izinleri,id = guncellenen) 
@@ -3153,6 +3184,11 @@ def kullanici_yetki_alma(request):
         izinler.santiye_raporu_silme = False
         izinler.santiye_raporu_gorme = False
         izinler.santiye_raporu_duzenleme = False
+        #
+        izinler.taseronlar_gorme = False
+        izinler.taseronlar_olusturma = False
+        izinler.taseronlar_duzenleme = False
+        izinler.taseronlar_silme =False
         izinler.save()
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
@@ -3422,6 +3458,19 @@ def kullanici_yetki_alma(request):
         santiye_raporu_silme = request.POST.get("santiye_raporu_silme")
         if santiye_raporu_silme:
             izinler.santiye_raporu_silme = True
+        #
+        taseronlar_gorme = request.POST.get("taseronlar_gorme")
+        if taseronlar_gorme:
+            izinler.taseronlar_gorme = True
+        taseronlar_olusturma = request.POST.get("taseronlar_olusturma")
+        if taseronlar_olusturma:
+            izinler.taseronlar_olusturma = True
+        taseronlar_duzenleme = request.POST.get("taseronlar_duzenleme")
+        if taseronlar_duzenleme:
+            izinler.taseronlar_duzenleme = True
+        taseronlar_silme = request.POST.get("taseronlar_silme")
+        if taseronlar_silme:
+            izinler.taseronlar_silme = True
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 
