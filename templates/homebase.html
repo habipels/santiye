@@ -151,28 +151,59 @@ var upadatedonutchart,
 document.addEventListener('keydown', function(event) {
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
-    // MacOS için Command + Shift + F
-    if (isMac && event.metaKey && event.shiftKey && event.key.toLowerCase() === 'f') {
+    // Fatura Ekle (Command/Ctrl + Shift + F)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'f') {
         event.preventDefault();
         window.location.href = '/{{dil}}{% url "accounting:gider_ekle" %}';
     }
 
-    // MacOS için Command + Shift + B
-    if (isMac && event.metaKey && event.shiftKey && event.key.toLowerCase() === 'b') {
+    // Borçlar Sayfası (Command/Ctrl + Shift + B)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'b') {
         event.preventDefault();
         window.location.href = '/{{dil}}{% url "accounting:giderler_sayfasi_borc" %}';
     }
 
-    // Windows/Linux için Ctrl + Shift + F
-    if (!isMac && event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'f') {
+    // Geri Git (Command/Ctrl + Shift + G)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'g') {
         event.preventDefault();
-        window.location.href = '/{{dil}}{% url "accounting:gider_ekle" %}';
+        history.back();
     }
 
-    // Windows/Linux için Ctrl + Shift + B
-    if (!isMac && event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'b') {
+    // Dosya Yöneticisi (Command/Ctrl + Shift + D)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'd') {
         event.preventDefault();
-        window.location.href = '/{{dil}}{% url "accounting:giderler_sayfasi_borc" %}';
+        window.location.href = '/{{dil}}{% url "main:depolama_sistemim" %}';
+    }
+
+    // Gider Raporu (Command/Ctrl + Shift + R)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'r') {
+        event.preventDefault();
+        window.location.href = '/{{dil}}{% url "accounting:giderler_ozeti" %}';
+    }
+
+
+});
+
+</script>
+<script>//sesion ile verileri tutuyoruz
+document.querySelector('form').addEventListener('input', function() {
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+    sessionStorage.setItem('formData', JSON.stringify(data));
+});
+
+</script>
+<script>// sesionda tutulan verileri getiriyoruz
+document.addEventListener('DOMContentLoaded', function() {
+    const savedData = JSON.parse(sessionStorage.getItem('formData'));
+    if (savedData) {
+        Object.keys(savedData).forEach(key => {
+            const input = document.querySelector(`[name="${key}"]`);
+            if (input) input.value = savedData[key];
+        });
     }
 });
 
