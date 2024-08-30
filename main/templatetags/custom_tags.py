@@ -15,7 +15,7 @@ def bloglar_getir(veri):
     deger = bloglar.objects.filter(proje_santiye_Ait = veri)
     veri_esiti = ""
     for i in  deger:
-        veri_esiti = veri_esiti + str(i.blog_adi)+str(i.blog_numarasi)+" ,"
+        veri_esiti = veri_esiti + str(i.blog_adi)+" ,"
     return str(veri_esiti)
 
 @register.simple_tag
@@ -1005,6 +1005,14 @@ def fatura_hakedis_baglama(fatura_numari,fatura_kime_ait):
 @register.simple_tag
 def kulanici_yetkileri_goster(kullanici):
     a = get_object_or_none(bagli_kullanicilar,kullanicilar = kullanici)
+    if a:
+        return a.izinler
+    else: 
+        return 0
+
+@register.simple_tag
+def kulanici_yetkileri_kullandirt(kullanici,ust_kullanici):
+    a = get_object_or_none(bagli_kullanicilar,kullanicilar = kullanici,izinler__izinlerin_sahibi_kullanici = ust_kullanici)
     if a:
         return a.izinler
     else: 

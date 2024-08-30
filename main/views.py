@@ -644,7 +644,17 @@ def proje_tipi_(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.projeler_gorme:
+                    profile = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -652,7 +662,18 @@ def proje_tipi_(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = proje_tipi.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.projeler_gorme:
+                        profile = proje_tipi.objects.filter(Q(proje_ait_bilgisi = request.user.kullanicilar_db) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = proje_tipi.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -717,8 +738,19 @@ def proje_ekleme(request):
             proje_tip_adi   = request.POST.get("yetkili_adi")
             proje_tipi.objects.create(proje_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,Proje_tipi_adi = proje_tip_adi)
         else:
-            proje_tip_adi   = request.POST.get("yetkili_adi")
-            proje_tipi.objects.create(proje_ait_bilgisi = request.user,Proje_tipi_adi = proje_tip_adi)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.projeler_olusturma:
+                        proje_tip_adi   = request.POST.get("yetkili_adi")
+                        proje_tipi.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,Proje_tipi_adi = proje_tip_adi)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                proje_tip_adi   = request.POST.get("yetkili_adi")
+                proje_tipi.objects.create(proje_ait_bilgisi = request.user,Proje_tipi_adi = proje_tip_adi)
     return redirect("main:proje_tipi_")
 #Proje Adı Silme
 def proje_Adi_sil(request):
@@ -730,7 +762,17 @@ def proje_Adi_sil(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         proje_tipi.objects.filter(id = id).update(silinme_bilgisi = True)
     else:
-        proje_tipi.objects.filter(proje_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.projeler_silme:
+                    proje_tipi.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tipi.objects.filter(proje_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("main:proje_tipi_")
 #Proje Düzenlme
 def proje_duzenle(request):
@@ -749,8 +791,19 @@ def proje_duzenle(request):
             proje_tipi.objects.filter(id = id).update(proje_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,Proje_tipi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
 
     else:
-        proje_tip_adi   = request.POST.get("yetkili_adi")
-        proje_tipi.objects.filter(proje_ait_bilgisi = request.user,id = id).update(Proje_tipi_adi = proje_tip_adi)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.projeler_duzenleme:
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    proje_tipi.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,id = id).update(Proje_tipi_adi = proje_tip_adi)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            proje_tipi.objects.filter(proje_ait_bilgisi = request.user,id = id).update(Proje_tipi_adi = proje_tip_adi)
     return redirect("main:proje_tipi_")
 #Şantiye Projesi Ekleme
 def santiye_projesi_ekle_(request):
@@ -761,7 +814,19 @@ def santiye_projesi_ekle_(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_gorme:
+                    profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
+                    content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+            content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -769,7 +834,17 @@ def santiye_projesi_ekle_(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.santiye_gorme:
+                        profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user.kullanicilar_db) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -835,7 +910,17 @@ def santiye_projesi_bloklar_ekle_(request,id):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = bloglar.objects.filter(proje_santiye_Ait__id = id)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.blog_gorme:
+                    profile = bloglar.objects.filter(proje_santiye_Ait__id = id)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = bloglar.objects.filter(proje_santiye_Ait__id = id)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -861,6 +946,16 @@ def santiye_projesi_bloklar_ekle_(request,id):
     return render(request,"santiye_yonetimi/santiye_projesi_blok_ekle.html",content)
 
 def blog_ekle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.blog_olusturma:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    
     if request.POST:
         santiye_bilgisi = request.POST.get("santiye_bilgisi")
         blok_adi = request.POST.get("blok_adi")
@@ -877,6 +972,15 @@ def blog_ekle(request):
     return redirect(y)
 
 def blog_duzenle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.blog_duzenleme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
     if request.POST:
         santiye_bilgisi = request.POST.get("santiye_bilgisi")
         blog = request.POST.get("blog")
@@ -893,6 +997,15 @@ def blog_duzenle(request):
         y = "/siteblog/"+santiye_bilgisi+"/"
     return redirect(y)
 def blog_sil(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.blog_silme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
     if request.POST:
         buttonId = request.POST.get("buttonId")
         geri = request.POST.get("geri")
@@ -906,13 +1019,28 @@ def santiye_ekleme_sahibi(request):
             kullanici = request.POST.get("kullanici")
             link = "/addsitesuperadmin/"+kullanici
             return redirect(link)
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.santiye_olusturma:
+                            projetipi = request.POST.get("projetipi")
+                            proje_adi = request.POST.get("yetkili_adi")
 
-        projetipi = request.POST.get("projetipi")
-        proje_adi = request.POST.get("yetkili_adi")
+                            a = santiye.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                                                proje_adi = proje_adi
+                                                )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                projetipi = request.POST.get("projetipi")
+                proje_adi = request.POST.get("yetkili_adi")
 
-        a = santiye.objects.create(proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
-                               proje_adi = proje_adi
-                               )
+                a = santiye.objects.create(proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                                    proje_adi = proje_adi
+                                    )
     return redirect("main:santiye_projesi_ekle_")
 
 def santiye_ekleme_super_admin(request,id):
@@ -946,7 +1074,17 @@ def santiye_projesi_sil(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         santiye.objects.filter(id = id).update(silinme_bilgisi = True)
     else:
-        santiye.objects.filter(proje_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_silme:
+                    santiye.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            santiye.objects.filter(proje_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("main:santiye_projesi_ekle_")
 
 
@@ -966,8 +1104,19 @@ def santiye_projesi_duzenle(request):
             santiye.objects.filter(id = id).update(proje_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
 
     else:
-        proje_tip_adi   = request.POST.get("yetkili_adi")
-        santiye.objects.filter(proje_ait_bilgisi = request.user,id = id).update(proje_adi = proje_tip_adi)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_duzenleme:
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    santiye.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,id = id).update(proje_adi = proje_tip_adi)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            santiye.objects.filter(proje_ait_bilgisi = request.user,id = id).update(proje_adi = proje_tip_adi)
     return redirect("main:santiye_projesi_ekle_")
 
 #şantiye Kalemleri
@@ -2828,6 +2977,21 @@ def kullanici_yetki_alma(request):
         izinler.personeller_olusturma = False
         izinler.personeller_duzenleme = False
         izinler.personeller_silme = False
+        #
+        izinler.santiye_olusturma = False
+        izinler.santiye_silme = False
+        izinler.santiye_gorme = False
+        izinler.santiye_duzenleme = False
+        #
+        izinler.blog_olusturma = False
+        izinler.blog_silme = False
+        izinler.blog_gorme = False
+        izinler.blog_duzenleme = False
+        #
+        izinler.kalemleri_olusturma = False
+        izinler.kalemleri_silme = False
+        izinler.kalemleri_gorme = False
+        izinler.kalemleri_duzenleme = False
         izinler.save()
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
@@ -3045,6 +3209,45 @@ def kullanici_yetki_alma(request):
         personeller_silme = request.POST.get("personeller_silme")
         if personeller_silme:
             izinler.personeller_silme = True
+        #
+        santiye_gorme = request.POST.get("santiye_gorme")
+        if santiye_gorme:
+            izinler.santiye_gorme = True
+        santiye_olusturma  = request.POST.get("santiye_olusturma")
+        if santiye_olusturma:
+            izinler.santiye_olusturma = True
+        santiye_duzenleme = request.POST.get("santiye_duzenleme")
+        if santiye_duzenleme:
+            izinler.santiye_duzenleme = True
+        santiye_silme = request.POST.get("santiye_silme")
+        if santiye_silme:
+            izinler.santiye_silme = True
+        #
+        blog_gorme = request.POST.get("blog_gorme")
+        if blog_gorme:
+            izinler.blog_gorme = True
+        blog_olusturma  = request.POST.get("blog_olusturma")
+        if blog_olusturma:
+            izinler.blog_olusturma = True
+        blog_duzenleme = request.POST.get("blog_duzenleme")
+        if blog_duzenleme:
+            izinler.blog_duzenleme = True
+        blog_silme = request.POST.get("blog_silme")
+        if blog_silme:
+            izinler.blog_silme = True
+        #
+        kalemleri_gorme = request.POST.get("kalemleri_gorme")
+        if kalemleri_gorme:
+            izinler.kalemleri_gorme = True
+        kalemleri_olusturma  = request.POST.get("kalemleri_olusturma")
+        if kalemleri_olusturma:
+            izinler.kalemleri_olusturma = True
+        kalemleri_duzenleme = request.POST.get("kalemleri_duzenleme")
+        if kalemleri_duzenleme:
+            izinler.kalemleri_duzenleme = True
+        kalemleri_silme = request.POST.get("kalemleri_silme")
+        if kalemleri_silme:
+            izinler.kalemleri_silme = True
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 

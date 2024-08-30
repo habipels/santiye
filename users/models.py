@@ -112,11 +112,16 @@ class personel_izinleri(models.Model):
     santiye_silme = models.BooleanField(default = False,verbose_name = "Şantiye Silme İzni ")
     santiye_gorme = models.BooleanField(default = False,verbose_name = "Şantiye Oluşturma İzni")
     santiye_duzenleme = models.BooleanField(default = False,verbose_name = "Şantiye Silme İzni ")
-    #Şantiye Kategorileri
-    santiye_kategoriler_olusturma = models.BooleanField(default = False,verbose_name = "Şantiye Kategorileri Oluşturma İzni")
-    santiye_kategoriler_silme = models.BooleanField(default = False,verbose_name = "Şantiye Kategorileri Silme İzni ")
-    santiye_kategoriler_gorme = models.BooleanField(default = False,verbose_name = "Şantiye Kategorileri Oluşturma İzni")
-    santiye_kategoriler_duzenleme = models.BooleanField(default = False,verbose_name = "Şantiye Kategorileri Silme İzni ")
+    #Şantiye Blogları
+    blog_olusturma = models.BooleanField(default = False)
+    blog_silme = models.BooleanField(default = False)
+    blog_gorme = models.BooleanField(default = False)
+    blog_duzenleme = models.BooleanField(default = False)
+    #Şantiye Kalemleri
+    kalemleri_olusturma = models.BooleanField(default = False)
+    kalemleri_silme = models.BooleanField(default = False)
+    kalemleri_gorme = models.BooleanField(default = False)
+    kalemleri_duzenleme = models.BooleanField(default = False)
     #Sözleşmeler Kategorileri
     sozlesmeler_olusturma = models.BooleanField(default = False,verbose_name = "Sözleşmeler Oluşturma İzni")
     sozlesmeler_silme = models.BooleanField(default = False,verbose_name = "Sözleşmeler Silme İzni ")
@@ -153,10 +158,10 @@ class personel_izinleri(models.Model):
     dosya_yoneticisi_gorme = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     dosya_yoneticisi_duzenleme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
     #Projeler Kategorileri
-    projeler_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
-    projeler_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
-    projeler_gorme = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
-    projeler_duzenleme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
+    projeler_olusturma = models.BooleanField(default = False)
+    projeler_silme = models.BooleanField(default = False)
+    projeler_gorme = models.BooleanField(default = False)
+    projeler_duzenleme = models.BooleanField(default = False)
     #Personeller Kategorileri
     personeller_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     personeller_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
