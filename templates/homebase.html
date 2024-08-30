@@ -96,9 +96,66 @@
             margin-bottom: 15px;
             color: #555;
         }
+                .custom-context-menu {
+            display: none;
+            position: absolute;
+            background-color: #2c2c2c;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            min-width: 160px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+         .custom-context-menu {
+            display: none;
+            position: absolute;
+            background-color: #2c2c2c;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            min-width: 160px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .custom-context-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-context-menu ul li {
+            padding: 10px 15px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .custom-context-menu ul li:hover {
+            background-color: #24d6b6;
+            color: #fff;
+        }
+
+        .custom-context-menu ul li:active {
+            background-color: #1ba892;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
+<div class="custom-context-menu" id="contextMenu">
+        <ul>
+            <li onclick="history.back()">Geri Git</li>
+            <li onclick="window.location.href='/'">Anasayfa</li>
+            <li onclick="copyText()">Kopyala</li>
+            <li onclick="pasteText()">Yapıştır</li>
+            <li onclick="cutText()">Kes</li>
+            <li onclick="window.print()">Yazdır</li>
+        </ul>
+    </div>
   <!-- Modal -->
     <div id="shortcutModal" class="modal" tabindex="-1">
         <div class="modal-dialog">
@@ -165,6 +222,51 @@
                 closeShortcutModal();
             }
         });
+    </script>
+<script>
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            const contextMenu = document.getElementById('contextMenu');
+            contextMenu.style.top = `${e.clientY}px`;
+            contextMenu.style.left = `${e.clientX}px`;
+            contextMenu.style.display = 'block';
+        });
+
+        document.addEventListener('click', function() {
+            const contextMenu = document.getElementById('contextMenu');
+            contextMenu.style.display = 'none';
+        });
+
+        // Menüyü kapatmak için Escape tuşu
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                const contextMenu = document.getElementById('contextMenu');
+                contextMenu.style.display = 'none';
+            }
+        });
+
+        // Kopyala işlevi
+        function copyText() {
+            const editableContent = document.getElementById('editableContent');
+            editableContent.focus();
+            document.execCommand('selectAll');
+            document.execCommand('copy');
+        }
+
+        // Yapıştır işlevi
+        function pasteText() {
+            const editableContent = document.getElementById('editableContent');
+            editableContent.focus();
+            document.execCommand('paste');
+        }
+
+        // Kes işlevi
+        function cutText() {
+            const editableContent = document.getElementById('editableContent');
+            editableContent.focus();
+            document.execCommand('selectAll');
+            document.execCommand('cut');
+        }
     </script>
 
 
