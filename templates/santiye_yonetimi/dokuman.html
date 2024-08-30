@@ -158,14 +158,37 @@
                                                 <td>
                                                     <div class="d-flex justify-content-start">
                                                         {% if i.silinme_bilgisi %}
-                                                          
-                                                        <div class="remove" style="margin-left:10px;">
+                                                          {% if request.user.kullanicilar_db %}
+                                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                            {% if yetki.dosya_yoneticisi_duzenleme %}
+                                                                   <div class="remove" style="margin-left:10px;">
                                                             <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#geri_getir{{i.id}}">Geri Getir</button>
-                                                        </div>
+                                                        </div>                                                 
+                                                            {% else %}
+                                                                                                                            
+                                                            {% endif %}
+                                                            {% else %}
+                                                                     <div class="remove" style="margin-left:10px;">
+                                                            <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#geri_getir{{i.id}}">Geri Getir</button>
+                                                        </div>                                               
+                                                            {% endif %}
+                                                        
                                                         {% else %}
-                                                          <div class="remove" style="margin-left:10px;">
+                                                            {% if request.user.kullanicilar_db %}
+                                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                            {% if yetki.dosya_yoneticisi_silme %}
+                                                                       <div class="remove" style="margin-left:10px;">
+                                                                    <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">Remove</button>
+                                                                </div>                                             
+                                                            {% else %}
+                                                                                                                            
+                                                            {% endif %}
+                                                            {% else %}
+                                                                   <div class="remove" style="margin-left:10px;">
                                                             <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">Remove</button>
-                                                        </div>
+                                                        </div>                                                 
+                                                            {% endif %}
+                                                          
                                                         {% endif %}
                                                         
                                                        

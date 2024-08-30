@@ -2282,8 +2282,19 @@ def hakedis_sayfasi(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = taseron_hakedisles.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
-
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.hakedisler_gorme:
+                    profile = taseron_hakedisles.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user.kullanicilar_db)
+                    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user.kullanicilar_db,silinme_bilgisi = False)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = taseron_hakedisles.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
+            content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -2291,7 +2302,17 @@ def hakedis_sayfasi(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi = request.user) & Q(proje_ait_bilgisi__taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.hakedisler_gorme:
+                        profile = taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi = request.user.kullanicilar_db) & Q(proje_ait_bilgisi__taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = taseron_hakedisles.objects.filter(Q(proje_ait_bilgisi__taseron_ait_bilgisi = request.user) & Q(proje_ait_bilgisi__taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -2307,7 +2328,7 @@ def hakedis_sayfasi(request):
     content["top"]  = profile
     content["medya"] = page_obj
     #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
-    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
+    
     return render(request,"santiye_yonetimi/hakedis.html",content)
 
 def hakedis_ekle(request):
@@ -2316,26 +2337,57 @@ def hakedis_ekle(request):
             kullanici = request.POST.get("kullanici")
             return redirect("main:hakedis_ekle_admin",kullanici)
         else:
-            taseron = request.POST.get("taseron")
-            dosyaadi = request.POST.get("yetkili_adi")
-            tarih = request.POST.get("tarih_bilgisi")
-            aciklama = request.POST.get("aciklama")
-            file = request.FILES.get("file")
-            fatura_no = request.POST.get("fatura_no")
-            if durumu == "1":
-                durumu = True
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.hakedisler_olusturma:
+                        taseron = request.POST.get("taseron")
+                        dosyaadi = request.POST.get("yetkili_adi")
+                        tarih = request.POST.get("tarih_bilgisi")
+                        aciklama = request.POST.get("aciklama")
+                        file = request.FILES.get("file")
+                        fatura_no = request.POST.get("fatura_no")
+                       
+                        taseron_hakedisles.objects.create(
+                            proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                            dosya = file,
+                            dosya_adi = dosyaadi,
+                            tarih = tarih,aciklama = aciklama,
+                            fatura_numarasi = fatura_no
+                        )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
             else:
-                durumu = False
-            taseron_hakedisles.objects.create(
-                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
-                dosya = file,
-                dosya_adi = dosyaadi,
-                tarih = tarih,aciklama = aciklama,
-                fatura_numarasi = fatura_no
-            )
+                taseron = request.POST.get("taseron")
+                dosyaadi = request.POST.get("yetkili_adi")
+                tarih = request.POST.get("tarih_bilgisi")
+                aciklama = request.POST.get("aciklama")
+                file = request.FILES.get("file")
+                fatura_no = request.POST.get("fatura_no")
+                
+                taseron_hakedisles.objects.create(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,
+                    dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    fatura_numarasi = fatura_no
+                )
     return redirect("main:hakedis_sayfasi")
 #hakedisekle
 def hakedis_silme(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.hakedisler_silme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
     if request.POST:
         buttonId = request.POST.get("buttonId")
         taseron_hakedisles.objects.filter(id = buttonId).update(silinme_bilgisi = True)
@@ -2437,6 +2489,17 @@ def hakedis_duzenle(request):
                 )
 
         else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.hakedisler_duzenleme:
+                        pass
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")    
+            else:
+                pass
             buttonId = request.POST.get("buttonId")
             taseron = request.POST.get("taseron")
             dosyaadi = request.POST.get("yetkili_adi")
@@ -2472,7 +2535,17 @@ def depolama_sistemim(request):
         profile = klasorler.objects.all()
 
     else:
-        profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.dosya_yoneticisi_gorme:
+                    profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = request.user)
 
     if request.GET.get("search"):
         search = request.GET.get("search")
@@ -2481,7 +2554,19 @@ def depolama_sistemim(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_gorme:
+                        profile = klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi = request.user.kullanicilar_db) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+
+            
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
 
@@ -2505,22 +2590,47 @@ def klasor_olustur(request):
         if request.user.is_superuser:
             pass
         else:
-            ust_klasor = request.POST.get("ust_klasor")
-            if ust_klasor:
-                klasor = request.POST.get("klasor")
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_olusturma:
+                        ust_klasor = request.POST.get("ust_klasor")
+                        if ust_klasor:
+                            klasor = request.POST.get("klasor")
 
-                klasorler.objects.create(
-                    dosya_sahibi = request.user,
-                    klasor_adi = klasor,
-                    klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
-                )
+                            klasorler.objects.create(
+                                dosya_sahibi = request.user.kullanicilar_db,
+                                klasor_adi = klasor,
+                                klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
+                            )
+                        else:
+                            klasor = request.POST.get("klasor")
+
+                            klasorler.objects.create(
+                                dosya_sahibi = request.user.kullanicilar_db,
+                                klasor_adi = klasor
+                            )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
             else:
-                klasor = request.POST.get("klasor")
+                ust_klasor = request.POST.get("ust_klasor")
+                if ust_klasor:
+                    klasor = request.POST.get("klasor")
 
-                klasorler.objects.create(
-                    dosya_sahibi = request.user,
-                    klasor_adi = klasor
-                )
+                    klasorler.objects.create(
+                        dosya_sahibi = request.user,
+                        klasor_adi = klasor,
+                        klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
+                    )
+                else:
+                    klasor = request.POST.get("klasor")
+
+                    klasorler.objects.create(
+                        dosya_sahibi = request.user,
+                        klasor_adi = klasor
+                    )
     return redirect("main:depolama_sistemim")
 
 def klasor__yeniden_adlandir(request):
@@ -2528,19 +2638,46 @@ def klasor__yeniden_adlandir(request):
         if request.user.is_superuser:
             pass
         else:
-            klasor = request.POST.get("klasor")
-            idbilgisi = request.POST.get("idbilgisi")
-            klasorler.objects.filter(id = idbilgisi).update(
-                dosya_sahibi = request.user,
-                klasor_adi = klasor
-            )
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_duzenleme:
+                        klasor = request.POST.get("klasor")
+                        idbilgisi = request.POST.get("idbilgisi")
+                        klasorler.objects.filter(id = idbilgisi).update(
+                            dosya_sahibi = request.user.kullanicilar_db,
+                            klasor_adi = klasor
+                        )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                klasor = request.POST.get("klasor")
+                idbilgisi = request.POST.get("idbilgisi")
+                klasorler.objects.filter(id = idbilgisi).update(
+                    dosya_sahibi = request.user,
+                    klasor_adi = klasor
+                )
     return redirect("main:depolama_sistemim")
 
 def klasor_sil(request):
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.dosya_yoneticisi_silme:
+                    pass
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:
+        pass
     if request.POST:
         if request.user.is_superuser:
             pass
         else:
+            
             idbilgisi = request.POST.get("idbilgisi")
             klasorler.objects.filter(id = idbilgisi).update(
                 silinme_bilgisi = True
@@ -2556,8 +2693,19 @@ def klasore_gir(request,id,slug):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = klasorler.objects.filter(klasor_adi_db__id =id,silinme_bilgisi = False,dosya_sahibi = request.user)
-        dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.dosya_yoneticisi_gorme:
+                    profile = klasorler.objects.filter(klasor_adi_db__id =id,silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db)
+                    dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db,proje_ait_bilgisi__id =id)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = klasorler.objects.filter(klasor_adi_db__id =id,silinme_bilgisi = False,dosya_sahibi = request.user)
+            dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -2565,8 +2713,19 @@ def klasore_gir(request,id,slug):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = klasorler.objects.filter(klasor_adi_db__id =id).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
-            dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id).filter(__icontains = search)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_gorme:
+                        profile = klasorler.objects.filter(klasor_adi_db__id =id).filter(Q(dosya_sahibi = request.user.kullanicilar_db) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+                        dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db,proje_ait_bilgisi__id =id).filter(__icontains = search)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = klasorler.objects.filter(klasor_adi_db__id =id).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+                dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id).filter(__icontains = search)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
 
@@ -2592,21 +2751,43 @@ def dosya_ekle(request):
         if request.user.is_superuser:
             pass
         else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_olusturma:
+                        ust_klasor = request.POST.get("ust_klasor")
+                        dosya_Adi = request.POST.get("klasor")
+                        tarih = request.POST.get("tarih")
+                        aciklama = request.POST.get("aciklama")
+                        dosya = request.FILES.get("file")
 
-            ust_klasor = request.POST.get("ust_klasor")
-            dosya_Adi = request.POST.get("klasor")
-            tarih = request.POST.get("tarih")
-            aciklama = request.POST.get("aciklama")
-            dosya = request.FILES.get("file")
+                        klasor_dosyalari.objects.create(
+                            dosya_sahibi=request.user.kullanicilar_db,
+                            proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
+                            dosya=dosya,
+                            dosya_adi=dosya_Adi,
+                            tarih=tarih,
+                            aciklama=aciklama
+                        )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                ust_klasor = request.POST.get("ust_klasor")
+                dosya_Adi = request.POST.get("klasor")
+                tarih = request.POST.get("tarih")
+                aciklama = request.POST.get("aciklama")
+                dosya = request.FILES.get("file")
 
-            klasor_dosyalari.objects.create(
-                dosya_sahibi=request.user,
-                proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
-                dosya=dosya,
-                dosya_adi=dosya_Adi,
-                tarih=tarih,
-                aciklama=aciklama
-            )
+                klasor_dosyalari.objects.create(
+                    dosya_sahibi=request.user,
+                    proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
+                    dosya=dosya,
+                    dosya_adi=dosya_Adi,
+                    tarih=tarih,
+                    aciklama=aciklama
+                )
     z = "/storage/mydir/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
     return redirect(z)
 
@@ -2618,7 +2799,17 @@ def dosya_sil(request):
         if request.user.is_superuser:
             pass
         else:
-
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_silme:
+                        pass
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                pass
             ust_klasor = request.POST.get("ust_klasor")
             dosya_Adi = request.POST.get("klasor")
 
@@ -2634,7 +2825,17 @@ def dosya_geri_getir(request):
         if request.user.is_superuser:
             pass
         else:
-
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_duzenleme:
+                        pass
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                pass
             ust_klasor = request.POST.get("ust_klasor")
             dosya_Adi = request.POST.get("klasor")
 
@@ -2652,7 +2853,17 @@ def dokumanlar(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(reduce(operator.or_, (Q(dosya__icontains = x) for x in dosya_turu)))
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.dosya_yoneticisi_gorme:
+                    profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db).filter(reduce(operator.or_, (Q(dosya__icontains = x) for x in dosya_turu)))
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(reduce(operator.or_, (Q(dosya__icontains = x) for x in dosya_turu)))
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -2660,7 +2871,17 @@ def dokumanlar(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(__icontains = search)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_gorme:
+                        profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db).filter(__icontains = search)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user).filter(__icontains = search)
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 25) # 6 employees per page
 
@@ -3338,6 +3559,11 @@ def kullanici_yetki_alma(request):
         izinler.taseronlar_olusturma = False
         izinler.taseronlar_duzenleme = False
         izinler.taseronlar_silme =False
+        #
+        izinler.hakedisler_gorme = False
+        izinler.hakedisler_olusturma = False
+        izinler.hakedisler_duzenleme = False
+        izinler.hakedisler_silme = False
         izinler.save()
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
@@ -3620,6 +3846,19 @@ def kullanici_yetki_alma(request):
         taseronlar_silme = request.POST.get("taseronlar_silme")
         if taseronlar_silme:
             izinler.taseronlar_silme = True
+        #
+        hakedisler_gorme = request.POST.get("hakedisler_gorme")
+        if hakedisler_gorme:
+            izinler.hakedisler_gorme = True
+        hakedisler_olusturma = request.POST.get("hakedisler_olusturma")
+        if hakedisler_olusturma:
+            izinler.hakedisler_olusturma = True
+        hakedisler_duzenleme = request.POST.get("hakedisler_duzenleme")
+        if hakedisler_duzenleme:
+            izinler.hakedisler_duzenleme = True
+        hakedisler_silme = request.POST.get("hakedisler_silme")
+        if hakedisler_silme:
+            izinler.hakedisler_silme = True
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 

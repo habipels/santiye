@@ -97,9 +97,19 @@
                                         <div class="col-auto">
                                             <div class="d-flex gap-2 align-items-start">
                                                
-    
-                                                <button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i> Klasör Oluştur</button>
-                                            </div>
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.dosya_yoneticisi_olusturma %}
+                                                          <button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i> Klasör Oluştur</button>
+                                                                                          
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                         <button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i> Klasör Oluştur</button>
+                                                                                           
+                                                {% endif %}
+                                                </div>
                                         </div>
                                         <!--end col-->
                                     </div>
@@ -120,8 +130,28 @@
                                                             </button>
                                                             <ul class="dropdown-menu dropdown-menu-end">
                                                                 <li><a class="dropdown-item view-item-btn" href="{% url 'main:klasore_gir' i.id i.klasor_adi %}">Klasörü Aç</a></li>
-                                                                <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#createFolderModal{{i.id}}" role="button">Yeniden Adlandır</a></li>
-                                                                <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#removeFileItemModal{{i.id}}" role="button">Sil</a></li>
+                                                                {% if request.user.kullanicilar_db %}
+                                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                                {% if yetki.dosya_yoneticisi_duzenleme %}
+                                                                       <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#createFolderModal{{i.id}}" role="button">Yeniden Adlandır</a></li>                                                 
+                                                                {% else %}
+                                                                                                                                
+                                                                {% endif %}
+                                                                {% else %}
+                                                                       <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#createFolderModal{{i.id}}" role="button">Yeniden Adlandır</a></li>                                                 
+                                                                {% endif %}
+                                                                
+                                                                {% if request.user.kullanicilar_db %}
+                                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                                {% if yetki.dosya_yoneticisi_silme %}
+                                                                        <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#removeFileItemModal{{i.id}}" role="button">Sil</a></li>                                                
+                                                                {% else %}
+                                                                                                                                
+                                                                {% endif %}
+                                                                {% else %}
+                                                                          <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#removeFileItemModal{{i.id}}" role="button">Sil</a></li>                                              
+                                                                {% endif %}
+                                                                
 
                                                             </ul>
                                                         </div>
