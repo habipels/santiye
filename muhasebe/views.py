@@ -1069,11 +1069,25 @@ def cari_ekle(request):
 
                                 )
         else:
-            cari_Adi   = request.POST.get("cariadi")
-            bakiye = request.POST.get("bakiye")
-            konumu = request.POST.get("konumu")
-            cari.objects.create(cari_kart_ait_bilgisi = request.user
-                ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.cari_olusturma:
+                        cari_Adi   = request.POST.get("cariadi")
+                        bakiye = request.POST.get("bakiye")
+                        konumu = request.POST.get("konumu")
+                        cari.objects.create(cari_kart_ait_bilgisi = request.user.kullanicilar_db
+                            ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                cari_Adi   = request.POST.get("cariadi")
+                bakiye = request.POST.get("bakiye")
+                konumu = request.POST.get("konumu")
+                cari.objects.create(cari_kart_ait_bilgisi = request.user
+                    ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye)
 
     return redirect("accounting:cari")
 
@@ -1087,7 +1101,17 @@ def cari_sil(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         cari.objects.filter(id = id).update(silinme_bilgisi = True)
     else:
-        cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.cari_silme_izni:
+                    cari.objects.filter(cari_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("accounting:cari")
 
 
@@ -1110,10 +1134,23 @@ def cari_duzenle(request):
         else:
             cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu)
     else:
-        proje_tip_adi   = request.POST.get("yetkili_adi")
-        konumu = request.POST.get("konumu")
-        cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(cari_adi = proje_tip_adi
-                ,aciklama = konumu)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.cari_guncelleme_izni:
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    konumu = request.POST.get("konumu")
+                    cari.objects.filter(cari_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(cari_adi = proje_tip_adi
+                            ,aciklama = konumu)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            konumu = request.POST.get("konumu")
+            cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(cari_adi = proje_tip_adi
+                    ,aciklama = konumu)
     return redirect("accounting:cari")
 #cari işlemler
 
