@@ -5,393 +5,318 @@
 {% block sidebar %}
 {% if hash_bilgi %}
 
-    <div class="container-fluid">
+<div class="container-fluid">
         <div class="row">
-            <!-- Gruplar Listesi -->
+            <!-- Sözleşme Kategorileri -->
             <div class="col-md-3 group-list">
-                <h5>Gruplar</h5>
-                <div class="group-item">
-                    <span>Süper Admin</span>
+                <h5>Sözleşmeler</h5>
+                <div class="group-item" onclick="switchCategory('anaFirma')">
+                    <span>Ana Firma Sözleşmeleri</span>
                     <div class="action-icons">
-                        <i class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#editGroupModal"></i>
-                        <i class="fas fa-trash-alt" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"></i>
+                        <i class="fas fa-edit" onclick="openModal('editCategoryModal')"></i>
+                        <i class="fas fa-trash" onclick="openModal('deleteCategoryModal')"></i>
                     </div>
                 </div>
-                <div class="group-item">
-                    <span>Proje Müdürü</span>
+                <div class="group-item" onclick="switchCategory('altYuklenici')">
+                    <span>Alt Yüklenici Sözleşmeleri</span>
                     <div class="action-icons">
-                        <i class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#editGroupModal"></i>
-                        <i class="fas fa-trash-alt" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"></i>
+                        <i class="fas fa-edit" onclick="openModal('editCategoryModal')"></i>
+                        <i class="fas fa-trash" onclick="openModal('deleteCategoryModal')"></i>
                     </div>
                 </div>
-                <!-- Diğer gruplar burada listelenecek -->
-                <button class="btn btn-primary mt-3 w-100" data-bs-toggle="modal" data-bs-target="#addGroupModal">Yeni Grup Ekle</button>
+                <button class="btn btn-primary mt-3 w-100" onclick="openModal('contractModal')">+ Sözleşme Ekle</button>
             </div>
 
-            <!-- İzin Detayları -->
+            <!-- Sözleşme Detayları -->
             <div class="col-md-9 permissions-panel">
-                <h5>Seçilen Grup: Muhasebe Müdür</h5>
+                <h5>Seçilen Kategori: <span id="currentCategory">Ana Firma Sözleşmeleri</span></h5>
+
+                <!-- Filtreleme ve Hesaplamalar -->
+                <div class="mb-4">
+                    <input type="text" id="filterInput" class="form-control mb-2" placeholder="Filtrele...">
+                    <div class="d-flex justify-content-between">
+                        <div class="stats-box">
+                            <span>Aktif Taşeron:</span> <span id="activeTasaronCount">0</span>
+                        </div>
+                        <div class="stats-box">
+                            <span>Aktif Sözleşme:</span> <span id="activeContractCount">0</span>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="permission-matrix">
-                    <!-- Dashboard Grubu -->
-                    <div class="permission-group">
-                        <h6>
-                            Dashboard
-                            <div class="form-check form-switch">
-                                <input class="form-check-input toggle-group" type="checkbox">
-                            </div>
-                        </h6>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Dashboard Görüntüleme</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Raporlar Grubu -->
-                    <div class="permission-group">
-                        <h6>
-                            Raporlar
-                            <div class="form-check form-switch">
-                                <input class="form-check-input toggle-group" type="checkbox">
-                            </div>
-                        </h6>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Gelir Özeti</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Gider Özeti</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Hesap Ekstresi</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Virman Raporu</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Şantiye Yönetimi Grubu -->
-                    <div class="permission-group">
-                        <h6>
-                            Şantiye Yönetimi
-                            <div class="form-check form-switch">
-                                <input class="form-check-input toggle-group" type="checkbox">
-                            </div>
-                        </h6>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>İlerleme Takibi</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>İş Planı</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Yapılacaklar</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Takvim</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Dosya Yönetici</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Projeler</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Personeller</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Muhasebe Grubu -->
-                    <div class="permission-group">
-                        <h6>
-                            Muhasebe
-                            <div class="form-check form-switch">
-                                <input class="form-check-input toggle-group" type="checkbox">
-                            </div>
-                        </h6>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Gelirler</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Giderler</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Virman</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Kasa</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Cari Hesapları</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Personel Grubu -->
-                    <div class="permission-group">
-                        <h6>
-                            Personel
-                            <div class="form-check form-switch">
-                                <input class="form-check-input toggle-group" type="checkbox">
-                            </div>
-                        </h6>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Personel Listeleme</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td>Personel Düzenleme</td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-individual" type="checkbox"></div></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Adding Group -->
-    <div class="modal fade" id="addGroupModal" tabindex="-1" aria-labelledby="addGroupModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addGroupModalLabel">Yeni Grup Ekle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="group-name" class="form-label">Grup Adı</label>
-                        <input type="text" class="form-control" id="group-name">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                    <button type="button" class="btn btn-primary">Kaydet</button>
+                    <table class="table contract-table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Taşeron</th>
+                                <th>Projeler</th>
+                                <th>İmalat</th>
+                                <th>Eklenme Tarihi</th>
+                                <th>Açıklama</th>
+                                <th>Durum</th>
+                                <th></th> <!-- Iconlar için boş sütun -->
+                            </tr>
+                        </thead>
+                        <tbody id="contractList">
+                            <!-- Örnek Sözleşmeler -->
+                            <tr>
+                                <td>Firma A</td>
+                                <td>Proje X</td>
+                                <td>İmalat Y</td>
+                                <td>01.09.2024</td>
+                                <td>Örnek açıklama</td>
+                                <td>Aktif</td>
+                                <td class="icon-cell">
+                                    <i class="fas fa-file-alt" onclick="openModal('viewContractsModal')"></i>
+                                    <div class="actions">
+                                        <i class="fas fa-edit" onclick="openModal('editContractModal', event)"></i>
+                                        <i class="fas fa-trash" onclick="openModal('deleteConfirmationModal', event)"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Firma B</td>
+                                <td>Proje Y</td>
+                                <td>İmalat Z</td>
+                                <td>15.09.2024</td>
+                                <td>Örnek açıklama 2</td>
+                                <td>Pasif</td>
+                                <td class="icon-cell">
+                                    <i class="fas fa-file-alt" onclick="openModal('viewContractsModal')"></i>
+                                    <div class="actions">
+                                        <i class="fas fa-edit" onclick="openModal('editContractModal', event)"></i>
+                                        <i class="fas fa-trash" onclick="openModal('deleteConfirmationModal', event)"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for Editing Group -->
-    <div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editGroupModalLabel">Grup Adını Düzenle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Add Contract Modal -->
+    <div id="contractModal" class="modal">
+        <div class="modal-content small-modal">
+            <span class="close" onclick="closeModal('contractModal')">&times;</span>
+            <h2>Sözleşme Ekle</h2>
+            <form id="contractForm">
+                <div class="form-group">
+                    <label for="tasaron">Taşeron</label>
+                    <input type="text" id="tasaron" name="tasaron" class="form-control" required>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="edit-group-name" class="form-label">Grup Adı</label>
-                        <input type="text" class="form-control" id="edit-group-name" value="Muhasebe Müdür">
+                <div class="form-group">
+                    <label for="projeler">Projeler</label>
+                    <input type="text" id="projeler" name="projeler" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="imalat">İmalat</label>
+                    <input type="text" id="imalat" name="imalat" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="dosyaAdi">Dosya Adı</label>
+                    <input type="text" id="dosyaAdi" name="dosyaAdi" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="aciklama">Açıklama</label>
+                    <textarea id="aciklama" name="aciklama" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="durum">Durum</label>
+                    <input type="text" id="durum" name="durum" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="sozlesmeler">Sözleşmeler</label>
+                    <div class="file-drop-area">
+                        <span class="fake-btn">Dosyaları Seç</span>
+                        <span class="file-msg">veya buraya sürükleyip bırakın</span>
+                        <input class="file-input" type="file" id="sozlesmeler" name="sozlesmeler" multiple>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                    <button type="button" class="btn btn-primary">Güncelle</button>
-                </div>
-            </div>
+                <button type="submit" class="btn btn-primary btn-block">Sözleşme Ekle</button>
+            </form>
         </div>
     </div>
 
-    <!-- Modal for Deleting Group -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteConfirmModalLabel">Grubu Sil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Edit Contract Modal -->
+    <div id="editContractModal" class="modal">
+        <div class="modal-content small-modal">
+            <span class="close" onclick="closeModal('editContractModal')">&times;</span>
+            <h2>Sözleşme Düzenle</h2>
+            <form id="editContractForm">
+                <!-- Edit form content -->
+                <div class="form-group">
+                    <label for="editTasaron">Taşeron</label>
+                    <input type="text" id="editTasaron" name="editTasaron" class="form-control" required>
                 </div>
-                <div class="modal-body">
-                    Bu grubu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                <div class="form-group">
+                    <label for="editProjeler">Projeler</label>
+                    <input type="text" id="editProjeler" name="editProjeler" class="form-control" required>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hayır</button>
-                    <button type="button" class="btn btn-danger">Evet, Sil</button>
+                <div class="form-group">
+                    <label for="editImalat">İmalat</label>
+                    <input type="text" id="editImalat" name="editImalat" class="form-control" required>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label for="editDosyaAdi">Dosya Adı</label>
+                    <input type="text" id="editDosyaAdi" name="editDosyaAdi" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAciklama">Açıklama</label>
+                    <textarea id="editAciklama" name="editAciklama" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editDurum">Durum</label>
+                    <input type="text" id="editDurum" name="editDurum" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editSozlesmeler">Sözleşmeler</label>
+                    <div class="file-drop-area">
+                        <span class="fake-btn">Dosyaları Seç</span>
+                        <span class="file-msg">veya buraya sürükleyip bırakın</span>
+                        <input class="file-input" type="file" id="editSozlesmeler" name="editSozlesmeler" multiple>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Güncelle</button>
+            </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script>
-        // Toggle All Functionality
-        document.querySelectorAll('.toggle-all').forEach(function (toggle) {
-            toggle.addEventListener('change', function () {
-                let row = this.closest('tr');
-                row.querySelectorAll('.toggle-individual').forEach(function (individualToggle) {
-                    individualToggle.checked = toggle.checked;
-                });
-            });
-        });
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmationModal" class="modal">
+        <div class="modal-content small-modal">
+            <span class="close" onclick="closeModal('deleteConfirmationModal')">&times;</span>
+            <h2>Sözleşmeyi Sil</h2>
+            <p>Bu sözleşmeyi silmek istediğinize emin misiniz?</p>
+            <button class="btn btn-danger btn-block" onclick="confirmDelete()">Evet, Sil</button>
+            <button class="btn btn-secondary btn-block" onclick="closeModal('deleteConfirmationModal')">Vazgeç</button>
+        </div>
+    </div>
 
-        // Group Toggle Functionality
-        document.querySelectorAll('.toggle-group').forEach(function (groupToggle) {
-            groupToggle.addEventListener('change', function () {
-                let group = this.closest('.permission-group');
-                group.querySelectorAll('.toggle-individual').forEach(function (individualToggle) {
-                    individualToggle.checked = groupToggle.checked;
-                });
-            });
-        });
-
-        // Individual Toggle Functionality
-        document.querySelectorAll('.toggle-individual').forEach(function (individualToggle) {
-            individualToggle.addEventListener('change', function () {
-                let group = this.closest('.permission-group');
-                let allToggledOn = Array.from(group.querySelectorAll('.toggle-individual')).every(function (toggle) {
-                    return toggle.checked;
-                });
-                group.querySelector('.toggle-group').checked = allToggledOn;
-
-                let row = this.closest('tr');
-                let allRowToggledOn = Array.from(row.querySelectorAll('.toggle-individual')).every(function (toggle) {
-                    return toggle.checked;
-                });
-                row.querySelector('.toggle-all').checked = allRowToggledOn;
-            });
-        });
-    </script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- View Contracts Modal -->
+    <div id="viewContractsModal" class="modal">
+        <div class="modal-content small-modal">
+            <span class="close" onclick="closeModal('viewContractsModal')">&times;</span>
+            <h2>Yüklü Sözleşmeler</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Dosya Adı</th>
+                        <th>İndirme</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sözleşme_1.pdf</td>
+                        <td><a href="#" class="btn btn-sm btn-secondary">İndir</a></td>
+                    </tr>
+                    <tr>
+                        <td>Sözleşme_2.pdf</td>
+                        <td><a href="#" class="btn btn-sm btn-secondary">İndir</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #24d6b6;
+            color: #fff;
+        }
+
+        .table th {
+            background-color: #24d6b6;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background-color: #24d6b6;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #1ba892;
+        }
+
+        .btn-secondary {
+            background-color: #dbf226;
+            border: none;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #c4d51f;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        .file-drop-area {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            background-color: #fafafa;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-drop-area:hover {
+            background-color: #f1f1f1;
+        }
+
+        .fake-btn {
+            background-color: #24d6b6;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .file-msg {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .icon-cell i {
+            color: #6c757d;
+            cursor: pointer;
+        }
+
+        .icon-cell i:hover {
+            color: #333;
+        }
+
+        .contract-table tr:hover .actions i {
+            visibility: visible;
+        }
+
         .container-fluid {
             padding: 20px;
         }
@@ -446,25 +371,6 @@
             overflow-y: auto;
         }
 
-        .btn-primary {
-            background-color: #24d6b6;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #1ba892;
-        }
-
-        .btn-secondary {
-            background-color: #dbf226;
-            border: none;
-            color: black;
-        }
-
-        .btn-secondary:hover {
-            background-color: #c4d51f;
-        }
-
         .permission-matrix {
             margin-top: 20px;
         }
@@ -510,6 +416,259 @@
             padding-left: 10px;
             background-color: #f8f9fa;
         }
+
+        .icon-cell {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+        }
+
+        .icon-cell i {
+            margin-right: 10px;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .icon-cell i:hover {
+            color: #555;
+        }
+
+        .actions i {
+            visibility: hidden;
+        }
+
+        .contract-table tr:hover .actions i {
+            visibility: visible;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .small-modal {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 550px;
+            /* Daha küçük modal boyutu */
+            max-width: 90%;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+        }
+
+        .modal-content .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .table-bordered {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table-bordered th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table-hover tbody tr:hover .icon-cell i {
+            visibility: visible;
+        }
+
+        /* File upload styling */
+        .file-drop-area {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            background-color: #fafafa;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-drop-area:hover {
+            background-color: #f1f1f1;
+        }
+
+        .fake-btn {
+            background-color: #24d6b6;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .file-msg {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Stats box styling */
+        .stats-box {
+            padding: 10px;
+            background-color: #e9f7f3;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            width: 49%; /* Stats box genişliği */
+            justify-content: center;
+        }
+
+        /* Tablo stil güncellemeleri */
+        .table {
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th {
+            background-color: #24d6b6;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .table td {
+            background-color: #fff;
+            color: #333;
+        }
+
+        .btn-primary.btn-block {
+            display: block;
+            width: 50%;
+            /* Buton genişliğini ayarlayabilirsiniz */
+            margin: 20px auto 0 auto;
+            /* Üstten 20px boşluk, sağ ve sol ortalama */
+            padding: 10px 0;
+            /* Butonun içindeki yazının yukarıdan ve aşağıdan boşluğu */
+            text-align: center;
+        }
     </style>
+    <script>
+        // Category switch functionality
+        function switchCategory(category) {
+            const currentCategory = document.getElementById('currentCategory');
+            if (category === 'anaFirma') {
+                currentCategory.textContent = 'Ana Firma Sözleşmeleri';
+            } else {
+                currentCategory.textContent = 'Alt Yüklenici Sözleşmeleri';
+            }
+        }
+
+        // Modal functionality
+        function openModal(modalId, event) {
+            if (event) event.stopPropagation(); // Sadece iconlara tıklandığında tetiklenmesi için
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function confirmDelete() {
+            alert('Sözleşme silindi!');
+            closeModal('deleteConfirmationModal');
+        }
+
+        // File upload handling
+        document.querySelectorAll('.file-drop-area').forEach(area => {
+            const input = area.querySelector('.file-input');
+            const msg = area.querySelector('.file-msg');
+
+            area.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                area.classList.add('dragging');
+            });
+
+            area.addEventListener('dragleave', () => {
+                area.classList.remove('dragging');
+            });
+
+            area.addEventListener('drop', (event) => {
+                event.preventDefault();
+                input.files = event.dataTransfer.files;
+                msg.textContent = input.files.length > 1 ? `${input.files.length} dosya seçildi` : input.files[0].name;
+                area.classList.remove('dragging');
+            });
+
+            input.addEventListener('change', () => {
+                msg.textContent = input.files.length > 1 ? `${input.files.length} dosya seçildi` : input.files[0].name;
+            });
+        });
+
+        // Filtering functionality
+        document.getElementById('filterInput').addEventListener('input', function() {
+            const filterValue = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.contract-table tbody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+                row.style.display = rowText.includes(filterValue) ? '' : 'none';
+            });
+        });
+
+        // Stats calculation
+        function calculateStats() {
+            const rows = document.querySelectorAll('.contract-table tbody tr');
+            let activeTasaronCount = 0;
+            let activeContractCount = 0;
+
+            rows.forEach(row => {
+                const statusCell = row.querySelector('td:nth-child(6)').textContent.toLowerCase();
+                if (statusCell === 'aktif') {
+                    activeTasaronCount++;
+                    activeContractCount += parseInt(row.querySelector('td:nth-child(7)').textContent);
+                }
+            });
+
+            document.getElementById('activeTasaronCount').textContent = activeTasaronCount;
+            document.getElementById('activeContractCount').textContent = activeContractCount;
+        }
+
+        document.addEventListener('DOMContentLoaded', calculateStats);
+    </script>
 
 {% endblock sidebar %}
