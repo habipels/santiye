@@ -917,7 +917,17 @@ def cari_viev(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.cari_gosterme_izni:
+                    profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -925,7 +935,17 @@ def cari_viev(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.cari_gosterme_izni:
+                        profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -986,8 +1006,19 @@ def cari_views_details(request,id):
         content["kullanicilar"] =kullanicilar
         k_gonder = get_object_or_404(cari,id = id)
     else:
-        profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
-        k_gonder = get_object_or_404(cari,id = id)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.cari_detay_izni:
+                    profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    k_gonder = get_object_or_404(cari,id = id)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+            k_gonder = get_object_or_404(cari,id = id)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -995,7 +1026,18 @@ def cari_views_details(request,id):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.cari_detay_izni:
+                        profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
+                        k_gonder = get_object_or_404(cari,id = id)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
