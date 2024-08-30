@@ -60,7 +60,7 @@
                                                     <th class="sort" data-sort="email">Giriş Tarihi</th>
                                                     <th class="sort" data-sort="phone">Görevi</th>
                                                     <th class="sort" data-sort="date">Durum</th>
-                                                    <th class="sort" data-sort="date">Dosyaları</th>
+                                                    <th class="sort" data-sort="date">Yetkileri</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
@@ -92,8 +92,9 @@
                                                     
                                                     </td>
                                                     <td class="date">
-                                                        {% kullanici_dosya_sayisi i.id %}
-                                                    
+                                                        {% kulanici_yetkileri_goster i as a%}
+                                                       
+                                                        {{a.isim}}
                                                     </td>
                                                     <td class="date">
                                                         
@@ -242,6 +243,20 @@
                                             <option value="0">Block</option>
                                         </select>
                                     </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Kullanıcı İzinleri</label>
+                                        <select name="izinler" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                            {% kulanici_yetkileri_goster i as a%}
+                                            {% if a %}
+                                                <option value="{{a.id}}">{{a.isim}}</option>
+                                            {% else %}
+                                            {% endif %}
+                                            {% for j in  kullanici_izinlerim %}
+                                                <option value="{{j.id}}">{{j.isim}}</option>
+                                            {% endfor %}
+                                            
+                                        </select>
+                                    </div>
                                     <div class="form-group">
                                         <label>Dosya Yükle</label>
                                         <input name="file" type="file" multiple="multiple" class="form-control" />
@@ -342,6 +357,15 @@
                                             <option value="">Durum</option>
                                             <option value="1">Active</option>
                                             <option value="0">Block</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Kullanıcı İzinleri</label>
+                                        <select name="izinler" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                            {% for i in  kullanici_izinlerim %}
+                                                <option value="{{i.id}}">{{i.isim}}</option>
+                                            {% endfor %}
+                                            
                                         </select>
                                     </div>
                                       <div class="form-group">

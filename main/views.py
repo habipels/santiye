@@ -2682,6 +2682,20 @@ def kullanici_yetki_olustur(request):
             izinlerin_sahibi_kullanici = request.user
         )
     return redirect("main:kullanici_yetkileri")
+def kullanici_yetki_adi_duzenle(request):
+    if request.POST:
+        grup_adi = request.POST.get("grup_adi")
+        id  = request.POST.get("id")
+        personel_izinleri.objects.filter(id = id).update(
+            isim = grup_adi,
+            izinlerin_sahibi_kullanici = request.user
+        )
+    return redirect("main:kullanici_yetkileri")
+def kullanici_yetki_sil(request):
+    if request.POST:
+        id  = request.POST.get("id")
+        personel_izinleri.objects.filter(id = id,izinlerin_sahibi_kullanici = request.user).delete()
+    return redirect("main:kullanici_yetkileri")
 def kullanici_yetki_alma(request):
     if request.POST:
         guncellenen = request.POST.get("guncellenen")

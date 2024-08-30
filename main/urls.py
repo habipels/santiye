@@ -130,6 +130,8 @@ urlpatterns = [#
     path("calendar", views.takvim_olaylari, name="takvim_olaylari"),
     path("userauthorizations", views.kullanici_yetkileri, name="kullanici_yetkileri"),
     path("kullaniciyetkiolustur", views.kullanici_yetki_olustur, name="kullanici_yetki_olustur"),
+    path("kullaniciyetkiadiduzenle", views.kullanici_yetki_adi_duzenle, name="kullanici_yetki_adi_duzenle"),
+    path("kullaniciyetkisil", views.kullanici_yetki_sil, name="kullanici_yetki_sil"),
     path("userauthorizationsset/<int:id>/", views.kullanici_yetkileri_duzenle, name="kullanici_yetkileri_duzenle"),
     path("kullaniciyetkialma", views.kullanici_yetki_alma, name="kullanici_yetki_alma"),
 
