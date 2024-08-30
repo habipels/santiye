@@ -1189,64 +1189,135 @@ def santiyeye_kalem_ekle(request):
             kullanici = request.POST.get("kullanici")
             return redirect("main:santiye_kalem_ekle_admin",kullanici)
         else:
-            projetipi = request.POST.getlist("projetipi")
-            yetkili_adi = request.POST.get("yetkili_adi")
-            santiye_agirligi = request.POST.get("katsayisi")
-            finansal_agirlik = request.POST.get("blogsayisi")
-            metraj = request.POST.get("metraj")
-            tutar = request.POST.get("tutar")
-            birim_bilgisi = request.POST.get("birim_bilgisi")
-            kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
-            id = bloglar.objects.filter(id__in = projetipi).first()
-            kalem = santiye_kalemleri.objects.create(
-                proje_ait_bilgisi = request.user,
-                proje_santiye_Ait =id.proje_santiye_Ait,
-                kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
-                santiye_finansal_agirligi = finansal_agirlik,
-                birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
-                tutari = tutar
-            )
-            if kata_veya_binaya_daihil == "0":
-                blog_lar = bloglar.objects.filter(id__in = projetipi)
-                for i in blog_lar:
-                    for j in range(0,int(i.kat_sayisi)):
-                        santiye_kalemlerin_dagilisi.objects.create(
-                            proje_ait_bilgisi = request.user,
-                            proje_santiye_Ait = id.proje_santiye_Ait,
-                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
-                            kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kalemleri_olusturma:
+                        projetipi = request.POST.getlist("projetipi")
+                        yetkili_adi = request.POST.get("yetkili_adi")
+                        santiye_agirligi = request.POST.get("katsayisi")
+                        finansal_agirlik = request.POST.get("blogsayisi")
+                        metraj = request.POST.get("metraj")
+                        tutar = request.POST.get("tutar")
+                        birim_bilgisi = request.POST.get("birim_bilgisi")
+                        kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
+                        id = bloglar.objects.filter(id__in = projetipi).first()
+                        kalem = santiye_kalemleri.objects.create(
+                            proje_ait_bilgisi = request.user.kullanicilar_db,
+                            proje_santiye_Ait =id.proje_santiye_Ait,
+                            kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                            santiye_finansal_agirligi = finansal_agirlik,
+                            birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                            tutari = tutar
                         )
-            elif kata_veya_binaya_daihil == "1":
-                blog_lar = bloglar.objects.filter(id__in = projetipi)
-                for i in blog_lar:
-                    for j in range(0,int(i.kat_sayisi)):
-                        santiye_kalemlerin_dagilisi.objects.create(
-                            proje_ait_bilgisi = request.user,
-                            proje_santiye_Ait = id.proje_santiye_Ait,
-                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
-                            kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
-                        )
-                        break
-            elif kata_veya_binaya_daihil == "2":
-                blog_lar = bloglar.objects.filter(id__in = projetipi)
-                for i in blog_lar:
-                    for j in range(0,4):
-                        santiye_kalemlerin_dagilisi.objects.create(
-                            proje_ait_bilgisi = request.user,
-                            proje_santiye_Ait = id.proje_santiye_Ait,
-                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
-                            kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
-                        )
+                        if kata_veya_binaya_daihil == "0":
+                            blog_lar = bloglar.objects.filter(id__in = projetipi)
+                            for i in blog_lar:
+                                for j in range(0,int(i.kat_sayisi)):
+                                    santiye_kalemlerin_dagilisi.objects.create(
+                                        proje_ait_bilgisi = request.user.kullanicilar_db,
+                                        proje_santiye_Ait = id.proje_santiye_Ait,
+                                        kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                        kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                                    )
+                        elif kata_veya_binaya_daihil == "1":
+                            blog_lar = bloglar.objects.filter(id__in = projetipi)
+                            for i in blog_lar:
+                                for j in range(0,int(i.kat_sayisi)):
+                                    santiye_kalemlerin_dagilisi.objects.create(
+                                        proje_ait_bilgisi = request.user.kullanicilar_db,
+                                        proje_santiye_Ait = id.proje_santiye_Ait,
+                                        kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                        kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                                    )
+                                    break
+                        elif kata_veya_binaya_daihil == "2":
+                            blog_lar = bloglar.objects.filter(id__in = projetipi)
+                            for i in blog_lar:
+                                for j in range(0,4):
+                                    santiye_kalemlerin_dagilisi.objects.create(
+                                        proje_ait_bilgisi = request.user.kullanicilar_db,
+                                        proje_santiye_Ait = id.proje_santiye_Ait,
+                                        kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                        kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                                    )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                projetipi = request.POST.getlist("projetipi")
+                yetkili_adi = request.POST.get("yetkili_adi")
+                santiye_agirligi = request.POST.get("katsayisi")
+                finansal_agirlik = request.POST.get("blogsayisi")
+                metraj = request.POST.get("metraj")
+                tutar = request.POST.get("tutar")
+                birim_bilgisi = request.POST.get("birim_bilgisi")
+                kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
+                id = bloglar.objects.filter(id__in = projetipi).first()
+                kalem = santiye_kalemleri.objects.create(
+                    proje_ait_bilgisi = request.user,
+                    proje_santiye_Ait =id.proje_santiye_Ait,
+                    kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                    santiye_finansal_agirligi = finansal_agirlik,
+                    birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                    tutari = tutar
+                )
+                if kata_veya_binaya_daihil == "0":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,int(i.kat_sayisi)):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = request.user,
+                                proje_santiye_Ait = id.proje_santiye_Ait,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
+                elif kata_veya_binaya_daihil == "1":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,int(i.kat_sayisi)):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = request.user,
+                                proje_santiye_Ait = id.proje_santiye_Ait,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
+                            break
+                elif kata_veya_binaya_daihil == "2":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,4):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = request.user,
+                                proje_santiye_Ait = id.proje_santiye_Ait,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
                         
     return redirect("main:santtiye_kalemleri",id.proje_santiye_Ait.id)
 
 def kalem_sil(request):
     if request.POST:
-        buttonId = request.POST.get("buttonId")
-        geri_don = request.POST.get("geri_don")
-        santiye_kalemleri.objects.filter(id = buttonId).update(
-            silinme_bilgisi = True
-        )
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.kalemleri_silme:
+                    buttonId = request.POST.get("buttonId")
+                    geri_don = request.POST.get("geri_don")
+                    santiye_kalemleri.objects.filter(id = buttonId).update(
+                        silinme_bilgisi = True
+                    )
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            buttonId = request.POST.get("buttonId")
+            geri_don = request.POST.get("geri_don")
+            santiye_kalemleri.objects.filter(id = buttonId).update(
+                silinme_bilgisi = True
+            )
     return redirect("main:santtiye_kalemleri",geri_don)
 def santiye_kalemleri_duzenle(request):
     if request.POST:
@@ -1281,12 +1352,27 @@ def santiye_kalemleri_duzenle(request):
                 tutari = tutar
                     )
         else:
-            santiye_kalemleri.objects.filter(id  = buttonId).update(
-                    proje_ait_bilgisi = request.user,
-                    kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
-                    santiye_finansal_agirligi = finansal_agirlik,birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
-                tutari = tutar
-                )
+            if request.user.kullanicilar_db:
+                    a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                    if a:
+                        if a.izinler.kalemleri_duzenleme:
+                            santiye_kalemleri.objects.filter(id  = buttonId).update(
+                            proje_ait_bilgisi = request.user.kullanicilar_db,
+                            kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                            santiye_finansal_agirligi = finansal_agirlik,birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                            tutari = tutar
+                            )
+                        else:
+                            return redirect("main:yetkisiz")
+                    else:
+                        return redirect("main:yetkisiz")
+            else:
+                santiye_kalemleri.objects.filter(id  = buttonId).update(
+                            proje_ait_bilgisi = request.user,
+                            kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                            santiye_finansal_agirligi = finansal_agirlik,birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                        tutari = tutar
+                        )
         return redirect("main:santtiye_kalemleri",geri_don)
 
 def kalem_blog_dagilis_sil(request,id,ik):
@@ -1303,7 +1389,17 @@ def santiye_kalem_ve_blog(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = bloglar.objects.filter(proje_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.ilerleme_takibi_gorme:
+                        profile = bloglar.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+        else:
+            profile = bloglar.objects.filter(proje_ait_bilgisi = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1311,7 +1407,17 @@ def santiye_kalem_ve_blog(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.ilerleme_takibi_gorme:
+                        profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user.kullanicilar_db) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -1392,14 +1498,31 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
             content["medya"] = page_obj
 
         else:
-            content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
-            kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
-            kalem_id = []
-            for i in kalemler:
-                if i.kalem_bilgisi.id in kalem_id:
-                    pass
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kalemleri_gorme:
+                        content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
+                        kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
+                        kalem_id = []
+                        for i in kalemler:
+                            if i.kalem_bilgisi.id in kalem_id:
+                                pass
+                            else:
+                                kalem_id.append(i.kalem_bilgisi.id)
+                    else:
+                        return redirect("main:yetkisiz")
                 else:
-                    kalem_id.append(i.kalem_bilgisi.id)
+                    return redirect("main:yetkisiz")
+            else:
+                content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+                kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
+                kalem_id = []
+                for i in kalemler:
+                    if i.kalem_bilgisi.id in kalem_id:
+                        pass
+                    else:
+                        kalem_id.append(i.kalem_bilgisi.id)
 
             profile =  santiye_kalemleri.objects.filter(id__in = kalem_id,silinme_bilgisi = False)
             page_num = request.GET.get('page', 1)
@@ -1420,6 +1543,17 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     return render(request,"santiye_yonetimi/ilerleme_takibi.html",content)
 
 def ilerleme_kaydet(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.ilerleme_takibi_duzenleme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
     if request.POST:
         geri_don = request.POST.get("geri_don")
         veri_cek = request.POST.get("veri_cek")
@@ -3014,6 +3148,11 @@ def kullanici_yetki_alma(request):
         izinler.kalemleri_silme = False
         izinler.kalemleri_gorme = False
         izinler.kalemleri_duzenleme = False
+        #
+        izinler.santiye_raporu_olusturma = False
+        izinler.santiye_raporu_silme = False
+        izinler.santiye_raporu_gorme = False
+        izinler.santiye_raporu_duzenleme = False
         izinler.save()
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
@@ -3270,6 +3409,19 @@ def kullanici_yetki_alma(request):
         kalemleri_silme = request.POST.get("kalemleri_silme")
         if kalemleri_silme:
             izinler.kalemleri_silme = True
+        #
+        santiye_raporu_gorme = request.POST.get("santiye_raporu_gorme")
+        if santiye_raporu_gorme:
+            izinler.santiye_raporu_gorme = True
+        santiye_raporu_olusturma  = request.POST.get("santiye_raporu_olusturma")
+        if santiye_raporu_olusturma:
+            izinler.santiye_raporu_olusturma = True
+        santiye_raporu_duzenleme = request.POST.get("santiye_raporu_duzenleme")
+        if santiye_raporu_duzenleme:
+            izinler.santiye_raporu_duzenleme = True
+        santiye_raporu_silme = request.POST.get("santiye_raporu_silme")
+        if santiye_raporu_silme:
+            izinler.santiye_raporu_silme = True
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 

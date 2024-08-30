@@ -122,6 +122,11 @@ class personel_izinleri(models.Model):
     kalemleri_silme = models.BooleanField(default = False)
     kalemleri_gorme = models.BooleanField(default = False)
     kalemleri_duzenleme = models.BooleanField(default = False)
+    #Şantiye raporu
+    santiye_raporu_olusturma = models.BooleanField(default = False)
+    santiye_raporu_silme = models.BooleanField(default = False)
+    santiye_raporu_gorme = models.BooleanField(default = False)
+    santiye_raporu_duzenleme = models.BooleanField(default = False)
     #Sözleşmeler Kategorileri
     sozlesmeler_olusturma = models.BooleanField(default = False,verbose_name = "Sözleşmeler Oluşturma İzni")
     sozlesmeler_silme = models.BooleanField(default = False,verbose_name = "Sözleşmeler Silme İzni ")

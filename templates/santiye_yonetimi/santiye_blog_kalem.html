@@ -9,11 +9,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Şantiyeler</h4>
+                            <h4 class="mb-sm-0">Proje Yönetimi</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Projeler</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Şantiye Yönetimi</a></li>
+                                    <li class="breadcrumb-item active">Proje Yönetimi</li>
                                 </ol>
                             </div>
                         </div>
@@ -61,7 +61,17 @@
                                             {% for i in santiyeler %}
                                                 <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
                                                     <th scope="row">
-                                                        <a href="{% url 'main:santiye_raporu' i.id %}" class="fw-medium link-primary"> Raporu Göster </a>
+                                                    {% if request.user.kullanicilar_db %}
+                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                    {% if yetki.santiye_raporu_gorme %}
+                                                              <a href="{% url 'main:santiye_raporu' i.id %}" class="fw-medium link-primary"> Raporu Göster </a>                                              
+                                                    {% else %}
+                                                                                                                    
+                                                    {% endif %}
+                                                    {% else %}
+                                                            <a href="{% url 'main:santiye_raporu' i.id %}" class="fw-medium link-primary"> Raporu Göster </a>                                                
+                                                    {% endif %}
+                                                        
                                                     </th>
                                                     <td class="customer_name">{{i.blog_adi}}
                                                     </td>
@@ -71,7 +81,17 @@
                                                     </td>
                                                     <td class="customer_name">
                                                     <b>{{i.blog_sayisi}} :  </b>
-                                                        <a style="padding:2px !important;margin:0px 2px 0px 0px!important;" class="btn btn-info " href="{% url 'main:blogtan_kaleme_ilerleme_takibi' i.id i.blog_adi %}" >{{i.blog_adi}}</a>
+                                                    {% if request.user.kullanicilar_db %}
+                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                    {% if yetki.ilerleme_takibi_gorme %}
+                                                               <a style="padding:2px !important;margin:0px 2px 0px 0px!important;" class="btn btn-info " href="{% url 'main:blogtan_kaleme_ilerleme_takibi' i.id i.blog_adi %}" >{{i.blog_adi}}</a>                                              
+                                                    {% else %}
+                                                                                                                    
+                                                    {% endif %}
+                                                    {% else %}
+                                                              <a style="padding:2px !important;margin:0px 2px 0px 0px!important;" class="btn btn-info " href="{% url 'main:blogtan_kaleme_ilerleme_takibi' i.id i.blog_adi %}" >{{i.blog_adi}}</a>                                               
+                                                    {% endif %}
+                                                       
 
 
                                                     </td>
