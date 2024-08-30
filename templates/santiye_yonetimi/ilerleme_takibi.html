@@ -52,11 +52,21 @@
                                                         <div class="back-button-container">
                                                     <a href="{% url 'main:santiye_kalem_ve_blog' %}" type="button" class="btn btn-info btn-animation waves-effect waves-light"  data-text="Geri"><span>Geri</span></a>
                                                 </div>
-                                                <div class="search-box ms-2">
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.ilerleme_takibi_duzenleme %}
+                                                       <div class="search-box ms-2">
                                                     <button type="submit" class="btn btn-success btn-label waves-effect waves-light"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Kaydet</button>
-
-
-                                                </div>
+                                                </div>                                                 
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                      <div class="search-box ms-2">
+                                                    <button type="submit" class="btn btn-success btn-label waves-effect waves-light"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Kaydet</button>
+                                                </div>                                                  
+                                                {% endif %}
+                                                
                                             </div>
                                         </div>
                                     </div>

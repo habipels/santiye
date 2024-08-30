@@ -1389,7 +1389,17 @@ def santiye_kalem_ve_blog(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = bloglar.objects.filter(proje_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.ilerleme_takibi_gorme:
+                        profile = bloglar.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+        else:
+            profile = bloglar.objects.filter(proje_ait_bilgisi = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1397,7 +1407,17 @@ def santiye_kalem_ve_blog(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.ilerleme_takibi_gorme:
+                        profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user.kullanicilar_db) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -1478,14 +1498,31 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
             content["medya"] = page_obj
 
         else:
-            content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
-            kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
-            kalem_id = []
-            for i in kalemler:
-                if i.kalem_bilgisi.id in kalem_id:
-                    pass
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kalemleri_gorme:
+                        content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
+                        kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
+                        kalem_id = []
+                        for i in kalemler:
+                            if i.kalem_bilgisi.id in kalem_id:
+                                pass
+                            else:
+                                kalem_id.append(i.kalem_bilgisi.id)
+                    else:
+                        return redirect("main:yetkisiz")
                 else:
-                    kalem_id.append(i.kalem_bilgisi.id)
+                    return redirect("main:yetkisiz")
+            else:
+                content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+                kalemler = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id)
+                kalem_id = []
+                for i in kalemler:
+                    if i.kalem_bilgisi.id in kalem_id:
+                        pass
+                    else:
+                        kalem_id.append(i.kalem_bilgisi.id)
 
             profile =  santiye_kalemleri.objects.filter(id__in = kalem_id,silinme_bilgisi = False)
             page_num = request.GET.get('page', 1)
@@ -1506,6 +1543,17 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     return render(request,"santiye_yonetimi/ilerleme_takibi.html",content)
 
 def ilerleme_kaydet(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.ilerleme_takibi_duzenleme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
     if request.POST:
         geri_don = request.POST.get("geri_don")
         veri_cek = request.POST.get("veri_cek")
@@ -3100,6 +3148,11 @@ def kullanici_yetki_alma(request):
         izinler.kalemleri_silme = False
         izinler.kalemleri_gorme = False
         izinler.kalemleri_duzenleme = False
+        #
+        izinler.santiye_raporu_olusturma = False
+        izinler.santiye_raporu_silme = False
+        izinler.santiye_raporu_gorme = False
+        izinler.santiye_raporu_duzenleme = False
         izinler.save()
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
@@ -3356,6 +3409,19 @@ def kullanici_yetki_alma(request):
         kalemleri_silme = request.POST.get("kalemleri_silme")
         if kalemleri_silme:
             izinler.kalemleri_silme = True
+        #
+        santiye_raporu_gorme = request.POST.get("santiye_raporu_gorme")
+        if santiye_raporu_gorme:
+            izinler.santiye_raporu_gorme = True
+        santiye_raporu_olusturma  = request.POST.get("santiye_raporu_olusturma")
+        if santiye_raporu_olusturma:
+            izinler.santiye_raporu_olusturma = True
+        santiye_raporu_duzenleme = request.POST.get("santiye_raporu_duzenleme")
+        if santiye_raporu_duzenleme:
+            izinler.santiye_raporu_duzenleme = True
+        santiye_raporu_silme = request.POST.get("santiye_raporu_silme")
+        if santiye_raporu_silme:
+            izinler.santiye_raporu_silme = True
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 
