@@ -3840,6 +3840,34 @@ def kullanici_yetki_alma(request):
         #
         izinler.kasa_detay_izni = False
         izinler.cari_detay_izni = False
+        ##
+        izinler.gelir_kategorisi_gorme = False
+        izinler.gelir_kategorisi_olusturma = False
+        izinler.gelir_kategorisi_guncelleme = False
+        izinler.gelir_kategorisi_silme = False
+        #
+        izinler.gider_kategorisi_gorme = False
+        izinler.gider_kategorisi_olusturma = False
+        izinler.gider_kategorisi_guncelleme = False
+        izinler.gider_kategorisi_silme = False
+        #
+        izinler.gelir_etiketi_gorme = False
+        izinler.gelir_etiketi_olusturma = False
+        izinler.gelir_etiketi_guncelleme = False
+        izinler.gelir_etiketi_silme = False
+        #
+        izinler.gider_etiketi_gorme = False
+        izinler.gider_etiketi_olusturma = False
+        izinler.gider_etiketi_guncelleme = False
+        izinler.gider_etiketi_silme = False
+        #
+        izinler.urun_gorme = False
+        izinler.urun_olusturma = False
+        izinler.urun_guncelleme = False
+        izinler.urun_silme = False
+        #
+        izinler.muhasabe_ayarlari_gorme = False
+        izinler.muhasabe_ayarlari_guncelleme = False
         izinler.save()
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
@@ -4130,6 +4158,84 @@ def kullanici_yetki_alma(request):
         cari_detay_izni = request.POST.get("cari_detay_izni")
         if cari_detay_izni:
             izinler.cari_detay_izni = True
+        
+        #
+        gelir_kategorisi_gorme = request.POST.get("gelir_kategorisi_gorme")
+        if gelir_kategorisi_gorme:  
+            izinler.gelir_kategorisi_gorme = True
+        gelir_kategorisi_olusturma = request.POST.get("gelir_kategorisi_olusturma")
+        if gelir_kategorisi_olusturma : 
+            izinler.gelir_kategorisi_olusturma = True
+        gelir_kategorisi_guncelleme = request.POST.get("gelir_kategorisi_guncelleme")
+        if gelir_kategorisi_guncelleme : 
+            izinler.gelir_kategorisi_guncelleme = True
+        gelir_kategorisi_silme = request.POST.get("gelir_kategorisi_silme")
+        if gelir_kategorisi_silme : 
+            izinler.gelir_kategorisi_silme = True
+        
+        #
+        gider_kategorisi_gorme = request.POST.get("gider_kategorisi_gorme")
+        if gider_kategorisi_gorme:  
+            izinler.gider_kategorisi_gorme = True
+        gider_kategorisi_olusturma = request.POST.get("gider_kategorisi_olusturma")
+        if gider_kategorisi_olusturma : 
+            izinler.gider_kategorisi_olusturma = True
+        gider_kategorisi_guncelleme = request.POST.get("gider_kategorisi_guncelleme")
+        if gider_kategorisi_guncelleme : 
+            izinler.gider_kategorisi_guncelleme = True
+        gider_kategorisi_silme = request.POST.get("gider_kategorisi_silme")
+        if gider_kategorisi_silme : 
+            izinler.gider_kategorisi_silme = True
+        #
+        #
+        gelir_etiketi_gorme = request.POST.get("gelir_etiketi_gorme")
+        if gelir_etiketi_gorme:  
+            izinler.gelir_etiketi_gorme = True
+        gelir_etiketi_olusturma = request.POST.get("gelir_etiketi_olusturma")
+        if gelir_etiketi_olusturma : 
+            izinler.gelir_etiketi_olusturma = True
+        gelir_etiketi_guncelleme = request.POST.get("gelir_etiketi_guncelleme")
+        if gelir_etiketi_guncelleme : 
+            izinler.gelir_etiketi_guncelleme = True
+        gelir_etiketi_silme = request.POST.get("gelir_etiketi_silme")
+        if gelir_etiketi_silme : 
+            izinler.gelir_etiketi_silme = True
+
+        #
+        gider_etiketi_gorme = request.POST.get("gider_etiketi_gorme")
+        if gider_etiketi_gorme:  
+            izinler.gider_etiketi_gorme = True
+        gider_etiketi_olusturma = request.POST.get("gider_etiketi_olusturma")
+        if gider_etiketi_olusturma : 
+            izinler.gider_etiketi_olusturma = True
+        gider_etiketi_guncelleme = request.POST.get("gider_etiketi_guncelleme")
+        if gider_etiketi_guncelleme : 
+            izinler.gider_etiketi_guncelleme = True
+        gider_etiketi_silme = request.POST.get("gider_etiketi_silme")
+        if gider_etiketi_silme : 
+            izinler.gider_etiketi_silme = True
+        #
+            #
+        urun_gorme = request.POST.get("urun_gorme")
+        if urun_gorme:  
+            izinler.urun_gorme = True
+        urun_olusturma = request.POST.get("urun_olusturma")
+        if urun_olusturma : 
+            izinler.urun_olusturma = True
+        urun_guncelleme = request.POST.get("urun_guncelleme")
+        if urun_guncelleme : 
+            izinler.urun_guncelleme = True
+        urun_silme = request.POST.get("urun_silme")
+        if urun_silme : 
+            izinler.urun_silme = True
+
+        #
+        muhasabe_ayarlari_gorme = request.POST.get("muhasabe_ayarlari_gorme")
+        if muhasabe_ayarlari_gorme : 
+            izinler.muhasabe_ayarlari_gorme = True
+        muhasabe_ayarlari_guncelleme = request.POST.get("muhasabe_ayarlari_guncelleme")
+        if muhasabe_ayarlari_guncelleme : 
+            izinler.muhasabe_ayarlari_guncelleme = True
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 

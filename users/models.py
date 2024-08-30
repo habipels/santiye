@@ -86,6 +86,9 @@ class personel_izinleri(models.Model):
     urun_silme = models.BooleanField(default = False,verbose_name = "Ürün Silme İzni ")
     urun_guncelleme = models.BooleanField(default = False,verbose_name = "Ürün Oluştuma İzni")
     urun_gorme = models.BooleanField(default = False,verbose_name = "Ürün Silme İzni ")
+    #Muhasabe Ayarları
+    muhasabe_ayarlari_gorme = models.BooleanField(default = False)
+    muhasabe_ayarlari_guncelleme = models.BooleanField(default = False)
     # gelir gider faturası oluştuma silme ve düzenleme özelliği
     gelir_faturasi_kesme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Kesme İzni ")
     gelir_faturasi_silme_izni = models.BooleanField(default = False,verbose_name = "Geli Faturası Silme İzni ")
