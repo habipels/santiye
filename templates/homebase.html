@@ -146,6 +146,24 @@ var upadatedonutchart,
         return true;
     }
 </script>
+<script>
+document.addEventListener('keydown', function(event) {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+    // MacOS için Command + Shift + F
+    if (isMac && event.metaKey && event.shiftKey && event.key.toLowerCase() === 'f') {
+        event.preventDefault();
+        window.location.href = '/{{dil}}{% url "accounting:gider_ekle" %}';
+    }
+
+    // Windows/Linux için Ctrl + Shift + F
+    if (!isMac && event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'f') {
+        event.preventDefault();
+        window.location.href = '/{{dil}}{% url "accounting:gider_ekle" %}';
+    }
+});
+
+</script>
 {% block javascriptcode %}
 
 
