@@ -448,8 +448,27 @@ $(document).ready(function () {
                     </div>
                     <div class="invoice-icons">
                         <div class="icon-item print-icon"><a href="/accounting/viewexpenses/${data.id}"><span title="Yazdır" class="mdi mdi-printer-outline"></a></span></div>
-                        <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
-                        <div class="icon-item edit-icon"><a href="/accounting/setexpenses/${data.id}"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></a></span></div>
+                        {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.gider_faturasi_silme_izni %}
+                              <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>                                                  
+                        {% else %}
+                                                                                        
+                        {% endif %}
+                        {% else %}
+                             <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>                                                   
+                        {% endif %}
+                        {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.gider_faturasi_duzenleme_izni %}
+                              <div class="icon-item edit-icon"><a href="/accounting/setexpenses/${data.id}"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></a></span></div>                                                  
+                        {% else %}
+                                                                                        
+                        {% endif %}
+                        {% else %}
+                               <div class="icon-item edit-icon"><a href="/accounting/setexpenses/${data.id}"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></a></span></div>                                                 
+                        {% endif %}
+                        
                         <div class="icon-item close-icon"><span type="button" onclick="kapat()" data-close title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
                     </div>
                 </div>
@@ -518,7 +537,17 @@ $(document).ready(function () {
                     <div class="kalan">
                         <div class="wrapper">
                             <div title="ekle" class="ekle">
-                                <span type="button" onclick="tahsilat_ekleme()"  class="mdi mdi-plus-circle"></span>
+                            {% if request.user.kullanicilar_db %}
+                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                            {% if yetki.gider_faturasi_makbuz_kesme_izni %}
+                                  <span type="button" onclick="tahsilat_ekleme()"  class="mdi mdi-plus-circle"></span>                                                  
+                            {% else %}
+                                  <span type="button"   class="mdi mdi-plus-circle"></span>                                                          
+                            {% endif %}
+                            {% else %}
+                                  <span type="button" onclick="tahsilat_ekleme()"  class="mdi mdi-plus-circle"></span>                                                  
+                            {% endif %}
+                                
                                 <span>KALAN</span>
                             </div>
                             <div class="price">
@@ -626,17 +655,39 @@ $(document).ready(function () {
                             </tr>
                         </thead>
                         <tbody>
-                             <td>{{k.tarihi|date:'d-m-Y'}}</td>
-                                <td>{{k.kasa_bilgisi.kasa_adi}}</td>
-                                <td>{{k.kayit_tarihi|date:'d-m-Y'}}</td>
-                                <td>{% if k.islemi_yapan.last_name %}
-                                    {{k.islemi_yapan.last_name}}
-                                {% else %}
-                                {% endif %}</td>
-                                <td></td>
+                             
                                
                             ${data.makbuzlar.map(makbuz => `
+                            {% if request.user.kullanicilar_db %}
+                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                            {% if yetki.gider_faturasi_makbuz_gorme_izni %}
                             <tr>
+                                
+                                <td>${makbuz.tarihi}</td>
+                                <td>${makbuz.kasa_adi}</td>
+                                <td${makbuz.kayit_tarihi}</td>
+                                <td>${makbuz.islemi_yapan}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                
+                                ${makbuz.resim ? `
+                            <td colspan="2"><a target="_blank" href="${makbuz.resim}">Resmi Göster</a></td>
+                            ` : '<td colspan="2"><a >Resmi Yok</a></td>'}  
+                                {% if yetki.gider_faturasi_makbuz_silme_izni %}
+                                      <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">SİL</button></td>                                              
+                                {% else %}
+                                      <td colspan="2"></td>                                                          
+                                {% endif %} 
+                                
+                                <td>${makbuz.tutar} $</td>
+                            </tr>
+                                                                                   
+                            {% else %}
+                                                                                            
+                            {% endif %}
+                            {% else %}
+                                <tr>
                                 
                                 <td>${makbuz.tarihi}</td>
                                 <td>${makbuz.kasa_adi}</td>
@@ -652,7 +703,9 @@ $(document).ready(function () {
         
                                 <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">SİL</button></td>
                                 <td>${makbuz.tutar} $</td>
-                            </tr>
+                            </tr>                                                    
+                            {% endif %}
+                            
                            
                         `).join('')}
                             

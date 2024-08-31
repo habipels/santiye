@@ -116,8 +116,19 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Fatura No</label>
-                        <input type="text" required class="form-control" value="{% gider_faturasi_no request.user.id %}" disabled />
-                        <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no request.user.id %}" />
+                        {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.gider_faturasi_kesme_izni %}
+                                <input type="text" required class="form-control" value="{% gider_faturasi_no request.user.kullanicilar_db.id %}" disabled />
+                        <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no request.user.kullanicilar_db.id %}" />                                                
+                        {% else %}
+                                                                                        
+                        {% endif %}
+                        {% else %}
+                               <input type="text" required class="form-control" value="{% gider_faturasi_no request.user.id %}" disabled />
+                        <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no request.user.id %}" />                                                 
+                        {% endif %}
+                        
                     </div>
                 </div>
 
