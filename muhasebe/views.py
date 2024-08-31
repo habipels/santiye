@@ -1682,7 +1682,17 @@ def urun_viev(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.urun_gorme:
+                    profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1690,7 +1700,17 @@ def urun_viev(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = urunler.objects.filter(Q(urun_ait_oldugu = request.user) & Q(urun_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.urun_gorme:
+                        profile = urunler.objects.filter(Q(urun_ait_oldugu = request.user.kullanicilar_db) & Q(urun_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = urunler.objects.filter(Q(urun_ait_oldugu = request.user) & Q(urun_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -1755,11 +1775,23 @@ def urun_ekle(request):
 
                                 )
         else:
-            kasa_Adi   = request.POST.get("kasaadi")
-            bakiye = request.POST.get("bakiye")
-
-            urunler.objects.create(urun_ait_oldugu = request.user
-                ,urun_adi = kasa_Adi,urun_fiyati = bakiye)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.urun_olusturma:
+                        kasa_Adi   = request.POST.get("kasaadi")
+                        bakiye = request.POST.get("bakiye")
+                        urunler.objects.create(urun_ait_oldugu = request.user.kullanicilar_db
+                            ,urun_adi = kasa_Adi,urun_fiyati = bakiye)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kasa_Adi   = request.POST.get("kasaadi")
+                bakiye = request.POST.get("bakiye")
+                urunler.objects.create(urun_ait_oldugu = request.user
+                    ,urun_adi = kasa_Adi,urun_fiyati = bakiye)
 
     return redirect("accounting:urun_viev")
 
@@ -1774,7 +1806,17 @@ def urun_sil(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         urunler.objects.filter(id = id).update(silinme_bilgisi = True)
     else:
-        urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(silinme_bilgisi = True)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.urun_silme:
+                    urunler.objects.filter(urun_ait_oldugu = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("accounting:urun_viev")
 
 
@@ -1800,10 +1842,23 @@ def urun_duzenle(request):
         else:
             urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye)
     else:
-        proje_tip_adi   = request.POST.get("kasaadi")
-        bakiye = request.POST.get("bakiye")
-        urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(urun_adi = proje_tip_adi
-                ,urun_fiyati = bakiye)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.urun_guncelleme:
+                    proje_tip_adi   = request.POST.get("kasaadi")
+                    bakiye = request.POST.get("bakiye")
+                    urunler.objects.filter(urun_ait_oldugu = request.user.kullanicilar_db,id = id).update(urun_adi = proje_tip_adi
+                            ,urun_fiyati = bakiye)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tip_adi   = request.POST.get("kasaadi")
+            bakiye = request.POST.get("bakiye")
+            urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(urun_adi = proje_tip_adi
+                    ,urun_fiyati = bakiye)
     return redirect("accounting:urun_viev")
 
 #ürün Düzenle
@@ -1817,23 +1872,20 @@ def gelirler_sayfasi(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
-        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-    if request.GET:
-        search = request.GET.get("search")
-        tarih = request.GET.get("tarih")
-        if search:
-            if super_admin_kontrolu(request):
-                profile =Gelir_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-                content["kullanicilar"] =kullanicilar
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_faturasi_gorme_izni:
+                    profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
+                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
             else:
-                profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        if tarih :
-            profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
+                return redirect("main:yetkisiz")
+        else:
+            profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+            content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
 
-  
     content["santiyeler_i"] = profile
     return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
 def gelirler_sayfasi_2(request,hash):
@@ -1881,11 +1933,25 @@ def gelir_ekle(request):
         kategori_bilgisi = ""
         etiketler =  ""
     else:
-        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
-        cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
-        kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
-        etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_faturasi_kesme_izni:
+                    profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db)
+                    cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
+                    etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+            cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+            kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+            etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
     content["gelir_kategoerisi"] = kategori_bilgisi
     content["gelir_etiketi"] = etiketler
     content["kasa"] = profile
@@ -1933,13 +1999,29 @@ def gelir_duzenle(request ,id):
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
         urunleri = ""
     else:
-        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
-        cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
-        kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
-        etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
-        gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
-        urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_faturasi_duzenleme_izni:
+                    profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db)
+                    cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
+                    etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
+                    gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
+                    urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+            cari_bilgileri = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
+            kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+            etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+            gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
+            urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
     content["gelir_kategoerisi"] = kategori_bilgisi
     content["gelir_etiketi"] = etiketler
     content["kasa"] = profile
@@ -1953,14 +2035,34 @@ def denme(request):
 from django.http import JsonResponse
 def search(request):
     term = request.GET.get('term', '')
-    user = request.user
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_faturasi_kesme_izni or a.izinler.gider_faturasi_kesme_izni:
+                    user = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:
+        user = request.user
     results = urunler.objects.filter(urun_adi__icontains=term, urun_ait_oldugu=user)
     suggestions = [{'label': result.urun_adi, 'value': result.urun_fiyati} for result in results]
     print("oldu mu yav")
     return JsonResponse(suggestions, safe=False)
 def cariler_bilgisi(request):
     term = request.GET.get('term', '')
-    user = request.user
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_faturasi_kesme_izni or a.izinler.gider_faturasi_kesme_izni:
+                    user = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:
+        user = request.user
     results = cari.objects.filter(cari_adi__icontains=term, cari_kart_ait_bilgisi=user)
     suggestions = [{'label': result.cari_adi, 'value':result.aciklama} for result in results]
     return JsonResponse(suggestions, safe=False)
@@ -1982,6 +2084,17 @@ def cariler_bilgisi_2(request,hash):
     return JsonResponse(suggestions, safe=False)
 
 def gelir_faturasi_kaydet(request):
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_faturasi_kesme_izni:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
     if request.POST:
         musteri_bilgisi  = request.POST.get("musteri_bilgisi")
         daterange = request.POST.get("daterange")
@@ -1996,7 +2109,7 @@ def gelir_faturasi_kaydet(request):
         aciklama = request.POST.getlist("aciklama")
         doviz_kuru = request.POST.get("doviz_kuru")
         profile = request.FILES.get("fatura_belgesi")
-        cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user)
+        cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
 
@@ -2005,8 +2118,8 @@ def gelir_faturasi_kaydet(request):
             fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
             vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
-            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = request.user,
-            cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user),
+            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = kullanici,
+            cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici),
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano,
             gelir_kategorisii_id =gelir_kategorisii,doviz = doviz_kuru,aciklama = cari_aciklma
                                          )
@@ -2017,30 +2130,30 @@ def gelir_faturasi_kaydet(request):
             new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
             for i in range(0,len(urunadi)):
                 if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
-                    urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
+                    urun = get_object_or_none(urunler, urun_ait_oldugu=kullanici,urun_adi = urunadi[i])
                     if urun:
                         if indirim[i] == "":
                             a = 0
                         else:
                             a = indirim[i]
                         gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
-                            urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
+                            urun_ait_oldugu =  kullanici,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=kullanici,urun_adi = urunadi[i]),
                             urun_fiyati = bfiyatInput[i],urun_indirimi = float(a),urun_adeti = int(miktari[i]),
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
                         )
                     else:
-                        urun = urunler.objects.create(urun_ait_oldugu=request.user,urun_adi = urunadi[i],
+                        urun = urunler.objects.create(urun_ait_oldugu=kullanici,urun_adi = urunadi[i],
                                                       urun_fiyati = float(bfiyatInput[i]))
                         gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
-                            urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
+                            urun_ait_oldugu =  kullanici,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
                             urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
                         )
 
         else:
-            cari_bilgisi = cari.objects.create(cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = request.user,aciklama = cari_aciklma)
+            cari_bilgisi = cari.objects.create(cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici,aciklama = cari_aciklma)
             date_range_parts = daterange.split(' - ')
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
@@ -2048,7 +2161,7 @@ def gelir_faturasi_kaydet(request):
             fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
             vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
-            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = request.user,
+            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = kullanici,
             cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano,
             gelir_kategorisii_id =gelir_kategorisii,doviz = doviz_kuru,aciklama = cari_aciklma
@@ -2060,19 +2173,19 @@ def gelir_faturasi_kaydet(request):
             new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
             for i in range(0,len(urunadi)):
                 if urunadi[i] != "" and miktari[i] != "" and bfiyatInput[i] != "":
-                    urun = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i])
+                    urun = get_object_or_none(urunler, urun_ait_oldugu=kullanici,urun_adi = urunadi[i])
                     if urun:
                         gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
-                            urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=request.user,urun_adi = urunadi[i]),
+                            urun_ait_oldugu =  kullanici,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=kullanici,urun_adi = urunadi[i]),
                             urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
                         )
                     else:
-                        urun = urunler.objects.create(urun_ait_oldugu=request.user,urun_adi = urunadi[i],
+                        urun = urunler.objects.create(urun_ait_oldugu=kullanici,urun_adi = urunadi[i],
                                                       urun_fiyati = float(bfiyatInput[i]))
                         gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
-                            urun_ait_oldugu =  request.user,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
+                            urun_ait_oldugu =  kullanici,urun_bilgisi = get_object_or_none(urunler,id = urun.id),
                             urun_fiyati = bfiyatInput[i],urun_indirimi = float(indirim[i]),urun_adeti = int(miktari[i]),
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = aciklama[i]
@@ -2199,7 +2312,17 @@ def gelir_faturasi_kaydet_2(request,hash):
 
 
 def gelir_odemesi_ekle(request):
-
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.gelir_faturasi_makbuz_kesme_izni:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
     if request.POST:
         faturabilgisi = request.POST.get("faturabilgisi")
         odemeturu = request.POST.get("odemeturu")

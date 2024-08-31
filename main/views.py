@@ -3868,6 +3868,17 @@ def kullanici_yetki_alma(request):
         #
         izinler.muhasabe_ayarlari_gorme = False
         izinler.muhasabe_ayarlari_guncelleme = False
+        #
+        izinler.gelir_faturasi_makbuz_gorme_izni = False
+        izinler.gelir_faturasi_makbuz_kesme_izni = False
+        izinler.gelir_faturasi_makbuz_duzenleme_izni = False
+        izinler.gelir_faturasi_makbuz_silme_izni = False
+        #
+        izinler.gider_faturasi_makbuz_gorme_izni = False
+        izinler.gider_faturasi_makbuz_kesme_izni = False
+        izinler.gider_faturasi_makbuz_duzenleme_izni = False
+        izinler.gider_faturasi_makbuz_silme_izni = False
+        #
         izinler.save()
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
@@ -4215,7 +4226,7 @@ def kullanici_yetki_alma(request):
         if gider_etiketi_silme : 
             izinler.gider_etiketi_silme = True
         #
-            #
+        #
         urun_gorme = request.POST.get("urun_gorme")
         if urun_gorme:  
             izinler.urun_gorme = True
@@ -4236,6 +4247,33 @@ def kullanici_yetki_alma(request):
         muhasabe_ayarlari_guncelleme = request.POST.get("muhasabe_ayarlari_guncelleme")
         if muhasabe_ayarlari_guncelleme : 
             izinler.muhasabe_ayarlari_guncelleme = True
+
+        #
+        gelir_faturasi_makbuz_gorme_izni = request.POST.get("gelir_faturasi_makbuz_gorme_izni")
+        if gelir_faturasi_makbuz_gorme_izni:  
+            izinler.gelir_faturasi_makbuz_gorme_izni = True
+        gelir_faturasi_makbuz_kesme_izni = request.POST.get("gelir_faturasi_makbuz_kesme_izni")
+        if gelir_faturasi_makbuz_kesme_izni : 
+            izinler.gelir_faturasi_makbuz_kesme_izni = True
+        gelir_faturasi_makbuz_duzenleme_izni = request.POST.get("gelir_faturasi_makbuz_duzenleme_izni")
+        if gelir_faturasi_makbuz_duzenleme_izni : 
+            izinler.gelir_faturasi_makbuz_duzenleme_izni = True
+        gelir_faturasi_makbuz_silme_izni = request.POST.get("gelir_faturasi_makbuz_silme_izni")
+        if gelir_faturasi_makbuz_silme_izni : 
+            izinler.gelir_faturasi_makbuz_silme_izni = True
+        #
+        gider_faturasi_makbuz_gorme_izni = request.POST.get("gider_faturasi_makbuz_gorme_izni")
+        if gider_faturasi_makbuz_gorme_izni:  
+            izinler.gider_faturasi_makbuz_gorme_izni = True
+        gider_faturasi_makbuz_kesme_izni = request.POST.get("gider_faturasi_makbuz_kesme_izni")
+        if gider_faturasi_makbuz_kesme_izni : 
+            izinler.gider_faturasi_makbuz_kesme_izni = True
+        gider_faturasi_makbuz_duzenleme_izni = request.POST.get("gider_faturasi_makbuz_duzenleme_izni")
+        if gider_faturasi_makbuz_duzenleme_izni : 
+            izinler.gider_faturasi_makbuz_duzenleme_izni = True
+        gider_faturasi_makbuz_silme_izni = request.POST.get("gider_faturasi_makbuz_silme_izni")
+        if gider_faturasi_makbuz_silme_izni : 
+            izinler.gider_faturasi_makbuz_silme_izni = True
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 
