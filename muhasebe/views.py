@@ -1336,7 +1336,17 @@ def gider_etiketi_tipleri(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = gider_etiketi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gider_etiketi_gorme:
+                    profile = gider_etiketi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = gider_etiketi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1344,7 +1354,17 @@ def gider_etiketi_tipleri(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = gider_etiketi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.gider_etiketi_gorme:
+                        profile = gider_etiketi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = gider_etiketi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -1406,8 +1426,19 @@ def gider_etiketi_ekleme(request):
 
             gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi)
         else:
-            proje_tip_adi   = request.POST.get("yetkili_adi")
-            gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = request.user,gider_etiketi_adi = proje_tip_adi)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.gider_etiketi_olusturma:
+                        proje_tip_adi   = request.POST.get("yetkili_adi")
+                        gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,gider_etiketi_adi = proje_tip_adi)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                proje_tip_adi   = request.POST.get("yetkili_adi")
+                gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = request.user,gider_etiketi_adi = proje_tip_adi)
     return redirect("accounting:gider_etiketi_tipleri")
 
 def gider_etiketi_sil(request):
@@ -1419,7 +1450,17 @@ def gider_etiketi_sil(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         gider_etiketi.objects.filter(id = id).update(silinme_bilgisi = True)
     else:
-        gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gider_etiketi_silme:
+                    gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("accounting:gider_etiketi_tipleri")
 def gider_etiketi_duzenle(request):
     content = {}
@@ -1439,10 +1480,21 @@ def gider_etiketi_duzenle(request):
         else:
             gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi)
     else:
-        proje_tip_adi   = request.POST.get("yetkili_adi")
-
-        proje_tip_adi   = request.POST.get("yetkili_adi")
-        gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_etiketi_adi = proje_tip_adi)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gider_etiketi_guncelleme:
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gider_etiketi_adi = proje_tip_adi)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_etiketi_adi = proje_tip_adi)
     return redirect("accounting:gider_etiketi_tipleri")
 #gider Etiketleri
 #gider etiketi
@@ -1457,22 +1509,47 @@ def virman_yapma(request):
             z = "/accounting/superadmintransfer/"+kullanici_bilgisi
             return redirect(z)
         else:
-            gonderen = request.POST.get("gonderen")
-            alici = request.POST.get("alici")
-            islemtarihi = request.POST.get("islemtarihi")
-            tutar = float(str(request.POST.get("tutar")).replace(",","."))
-            aciklama = request.POST.get("aciklama")
-            virman.objects.create(virman_ait_oldugu = request.user,
-                virman_tarihi = islemtarihi,gonderen_kasa = get_object_or_404(Kasa,id = gonderen)
-                ,alici_kasa = get_object_or_404(Kasa,id = alici),tutar = tutar,
-                aciklama = aciklama
-                )
-            bakiye_dusme = get_object_or_404(Kasa,id = gonderen).bakiye
-            bakiye_yukseltme = get_object_or_404(Kasa,id = alici).bakiye
-            bakiye_dusme = bakiye_dusme - float(tutar)
-            bakiye_yukseltme = bakiye_yukseltme + float(tutar)
-            Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
-            Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kasa_virman_olusturma_izni:
+                        gonderen = request.POST.get("gonderen")
+                        alici = request.POST.get("alici")
+                        islemtarihi = request.POST.get("islemtarihi")
+                        tutar = float(str(request.POST.get("tutar")).replace(",","."))
+                        aciklama = request.POST.get("aciklama")
+                        virman.objects.create(virman_ait_oldugu = request.user.kullanicilar_db,
+                            virman_tarihi = islemtarihi,gonderen_kasa = get_object_or_404(Kasa,id = gonderen)
+                            ,alici_kasa = get_object_or_404(Kasa,id = alici),tutar = tutar,
+                            aciklama = aciklama
+                            )
+                        bakiye_dusme = get_object_or_404(Kasa,id = gonderen).bakiye
+                        bakiye_yukseltme = get_object_or_404(Kasa,id = alici).bakiye
+                        bakiye_dusme = bakiye_dusme - float(tutar)
+                        bakiye_yukseltme = bakiye_yukseltme + float(tutar)
+                        Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
+                        Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                gonderen = request.POST.get("gonderen")
+                alici = request.POST.get("alici")
+                islemtarihi = request.POST.get("islemtarihi")
+                tutar = float(str(request.POST.get("tutar")).replace(",","."))
+                aciklama = request.POST.get("aciklama")
+                virman.objects.create(virman_ait_oldugu = request.user,
+                    virman_tarihi = islemtarihi,gonderen_kasa = get_object_or_404(Kasa,id = gonderen)
+                    ,alici_kasa = get_object_or_404(Kasa,id = alici),tutar = tutar,
+                    aciklama = aciklama
+                    )
+                bakiye_dusme = get_object_or_404(Kasa,id = gonderen).bakiye
+                bakiye_yukseltme = get_object_or_404(Kasa,id = alici).bakiye
+                bakiye_dusme = bakiye_dusme - float(tutar)
+                bakiye_yukseltme = bakiye_yukseltme + float(tutar)
+                Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
+                Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
 
     return redirect("accounting:kasa")
 
