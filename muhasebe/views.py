@@ -1162,7 +1162,17 @@ def gelir_etiketi_tipleri(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
-        profile = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_etiketi_gorme:
+                    profile = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1170,7 +1180,17 @@ def gelir_etiketi_tipleri(request):
             kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
             content["kullanicilar"] =kullanicilar
         else:
-            profile = gelir_etiketi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.gelir_etiketi_gorme:
+                        profile = gelir_etiketi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = gelir_etiketi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
     paginator = Paginator(profile, 10) # 6 employees per page
 
@@ -1233,8 +1253,19 @@ def gelir_etiketi_ekleme(request):
 
             gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi)
         else:
-            proje_tip_adi   = request.POST.get("yetkili_adi")
-            gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = request.user,gelir_etiketi_adi = proje_tip_adi)
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.gelir_etiketi_olusturma:
+                        proje_tip_adi   = request.POST.get("yetkili_adi")
+                        gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,gelir_etiketi_adi = proje_tip_adi)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                proje_tip_adi   = request.POST.get("yetkili_adi")
+                gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = request.user,gelir_etiketi_adi = proje_tip_adi)
     return redirect("accounting:gelir_etiketi_tipleri")
 
 def gelir_etiketi_sil(request):
@@ -1246,7 +1277,17 @@ def gelir_etiketi_sil(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         gelir_etiketi.objects.filter(id = id).update(silinme_bilgisi = True)
     else:
-        gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_etiketi_silme:
+                    gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("accounting:gelir_etiketi_tipleri")
 def gelir_etiketi_duzenle(request):
     content = {}
@@ -1266,10 +1307,21 @@ def gelir_etiketi_duzenle(request):
         else:
            gelir_etiketi.objects.filter(id = id).update(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi)
     else:
-        proje_tip_adi   = request.POST.get("yetkili_adi")
-
-        proje_tip_adi   = request.POST.get("yetkili_adi")
-        gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(gelir_etiketi_adi = proje_tip_adi)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_etiketi_guncelleme:
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gelir_etiketi_adi = proje_tip_adi)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(gelir_etiketi_adi = proje_tip_adi)
     return redirect("accounting:gelir_etiketi_tipleri")
 #gelir Etiketleri
 
