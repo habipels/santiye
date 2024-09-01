@@ -9,56 +9,67 @@
             display: flex;
             justify-content: center;
             align-items: center;
-          
             margin: 0;
             background-color: #f0f0f0;
+            overflow: hidden; /* Overflow'yu gizler */
         }
 
         .building-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Ekrana sığdırma için gerekli */
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            perspective: 1000px; /* 3D dönüşüm için perspektif ayarı */
         }
 
         .building {
+            position: relative;
             display: flex;
-            flex-direction: column-reverse;
-            margin: 20px;
-            width: 200px;
-            transform-origin: top center; /* Üst merkeze göre ölçekleme yapar */
-            transform: scale(1); /* Default ölçek */
-            transition: transform 0.3s ease; /* Ölçeklemenin yumuşak geçişi */
+            flex-direction: column;
+            width: 300px; /* Binanın genişliği */
+            transform-style: preserve-3d; /* 3D dönüşüm için stil */
+            transition: transform 0.5s ease; /* Dönüşüm geçişi */
+            transform-origin: center; /* Dönüşüm merkezini ortalar */
         }
 
         .floor {
-            position: relative;
-            margin-top: -40px; /* Overlap amount */
+            position: absolute;
+            width: 100%;
+            height: 50px; /* Kat yüksekliği */
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
+            transform-style: preserve-3d;
         }
 
+        .floor .side {
+            position: absolute;
+            width: 100%;
+            
+            
+            /*background-color: #ccc;  Kat arka plan rengi 
+            border: 1px solid #999; Kat sınır rengi */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* Gölgelendirme */
+            transform: translateZ(25px); /* Yüzeylerin bir miktar öne çıkmasını sağlar */
+        }
+
+        .floor .side:nth-child(1) { transform: rotateY(90deg) translateX(128px); margin-left: 301px;}
+        .floor .side:nth-child(2) { transform: rotateY(90deg) translateX(128px); margin-left: -301px;}
+        .floor .side:nth-child(3) { transform: rotateY(180deg) translateZ(280px); ;}
+        
+        
         .floor img {
             width: 100%;
             height: auto;
+            
             transition: filter 0.3s ease; /* Renk değişiminin geçişi */
         }
 
         /* Görselin üzerine gelindiğinde maviye dönüştürmek için */
         .floor img:hover {
             filter: hue-rotate(180deg) brightness(1.5); /* Rengi maviye dönüştürür */
-        }
-
-        /* Animasyon */
-        @keyframes colorChange {
-            0% { filter: none; }
-            50% { filter: hue-rotate(80deg) brightness(1.5) sepia(1) saturate(10);  } /* Mavi renk */
-            100% { filter: none; ; }
-        }
-
-        .animate-color {
-            animation: colorChange 2s infinite; /* 2 saniye süren ve sonsuz tekrar eden animasyon */
         }
 
         .floor-label {
@@ -81,7 +92,6 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0,0,0);
             background-color: rgba(0,0,0,0.4);
             padding-top: 60px;
         }
@@ -124,6 +134,10 @@
 </div>
 
 <script>
+    let isDragging = false;
+    let startX;
+    let currentY = 0; // Y eksenindeki dönüşüm için
+
     // Function to add floors with images
     function addFloors(floorCount) {
         const building = document.getElementById('building');
@@ -132,16 +146,18 @@
         for (let i = 1; i <= floorCount; i++) {
             const floor = document.createElement('div');
             floor.className = 'floor';
-            floor.dataset.floorNumber = i;
+            floor.style.transform = `translateY(${i * 50}px)`; // Alt alta yerleştirme
 
-            // Set z-index based on the floor number
-            floor.style.zIndex = floorCount - i; // Lower floors will have higher z-index
-
-            // Add image for the floor (use your own image URLs)
-            const img = document.createElement('img');
-            img.src = 'building3.png'; // Replace with your image URL
-            img.alt = i + '. Kat';
-            floor.appendChild(img);
+            // Create four sides for each floor
+            for (let j = 0; j < 4; j++) {
+                const side = document.createElement('div');
+                side.className = 'side';
+                const img = document.createElement('img');
+                img.src = 'building3.png'; // Replace with your image URL
+                img.alt = i + '. Kat';
+                side.appendChild(img);
+                floor.appendChild(side);
+            }
 
             // Optional: Add a label on the image
             const label = document.createElement('div');
@@ -154,23 +170,7 @@
                 openModal(i);
             });
 
-            // Add animation to the first floor (for example, you can change this to a specific floor or add conditionally)
-            if (i === 13) {
-                img.classList.add('animate-color');
-            }
-
             building.appendChild(floor);
-        }
-
-        // Adjust the scale to fit all floors within the view
-        const buildingHeight = building.offsetHeight;
-        const containerHeight = document.querySelector('.building-container').offsetHeight;
-
-        if (buildingHeight > containerHeight) {
-            const scale = containerHeight / buildingHeight;
-            building.style.transform = `scale(${scale})`;
-        } else {
-            building.style.transform = 'scale(1)';
         }
     }
 
@@ -193,10 +193,11 @@
         }
     }
 
-    // Initialize with 5 floors
-    addFloors(27);
-// Add event listeners for rotating the building
-document.querySelector('.building-container').addEventListener('mousedown', (e) => {
+    // Initialize with 20 floors
+    addFloors(20);
+
+    // Add event listeners for rotating the building
+    document.querySelector('.building-container').addEventListener('mousedown', (e) => {
         isDragging = true;
         startX = e.clientX;
     });
