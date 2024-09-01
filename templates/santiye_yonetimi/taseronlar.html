@@ -162,7 +162,7 @@
                                                     <td class="number">{% taseron_gorev_saysisi i.id %}</td>
                                                     <td class="projeler">
                                                         {% for yazar in i.proje_bilgisi.all %}
-                                                        <span>{{ yazar.kalem_bilgisi.proje_santiye_Ait.proje_adi }}:{{ yazar.kalem_bilgisi.kalem_adi }}:{{ yazar.blog_bilgisi.blog_adi }}</span>,
+                                                        <span>{{ yazar.kalem_bilgisi.proje_santiye_Ait.proje_adi }}&#8594;{{ yazar.blog_bilgisi.blog_adi }}&#8594;{{ yazar.kalem_bilgisi.kalem_adi }}</span>,
                                                      {% endfor %}
                                                        </td>
                                                     <td  class="document"><i data-bs-toggle="modal" type="button" data-bs-target="#myModal{{i.id}}" class="ri-file-line"></i></td>
@@ -522,7 +522,8 @@
       <div class="modal-body">
         {% taseronsozlesme_dosyalari i.id as dosyalri %}
         {% for k in dosyalri %}
-            <a target="_blank" href="{{k.dosya.url}}"><i   class="ri-file-line"></i>{{k.dosya_adi}}</a>
+            <a target="_blank" href="{{k.dosya.url}}"><i   class="ri-file-line"></i>{{k.dosya.name}}</a>
+            <hr>
         {% endfor %}
       </div>
 

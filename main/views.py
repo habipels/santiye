@@ -1934,7 +1934,7 @@ def taseron_ekle(request):
 
 def taseron_ekle_admin(request,id):
     content = sozluk_yapisi()
-    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi__id = id,silinme_bilgisi = False)
+    content["blog_bilgisi"] =santiye.objects.filter(proje_ait_bilgisi__id = id,silinme_bilgisi = False)
     if request.POST:
         if True:
             taseron_adi = request.POST.get("taseron_adi")
@@ -1952,7 +1952,12 @@ def taseron_ekle_admin(request,id):
             new_project.save()
             bloglar_bilgisi = []
             for i in blogbilgisi:
-                bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+                liste = str(i).split(",")
+                proje = projeler.objects.create(proje_ait_bilgisi__id = id,
+                        blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
+                        kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
+                        )
+                bloglar_bilgisi.append(projeler.objects.get(id=int(proje.id)))
             new_project.proje_bilgisi.add(*bloglar_bilgisi)
             images = request.FILES.getlist('file')
             isim = 1
@@ -2110,7 +2115,219 @@ def taseron_duzelt(request):
     return redirect("main:taseron_sayfasi")
 
 #proje silme
+#Üst Yükleneci olaylari
+def ust_yuklenici_sayfasi(request):
+    content = sozluk_yapisi()
 
+    if super_admin_kontrolu(request):
+        profile =ust_yuklenici.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.ust_yuklenici_gorme:
+                    profile = ust_yuklenici.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user.kullanicilar_db)
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = ust_yuklenici.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user)
+            content["blog_bilgisi"]  =santiye.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =ust_yuklenici.objects.filter(Q(taseron_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.ust_yuklenici_gorme:
+                        profile = ust_yuklenici.objects.filter(Q(taseron_ait_bilgisi = request.user.kullanicilar_db) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = ust_yuklenici.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+
+            
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    
+    return render(request,"santiye_yonetimi/ust_yuklenici.html",content)
+#Üst Yüklenici olaylari
+def ust_yuklenici_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            kullanici = request.POST.get("kullanici")
+            return redirect("main:taseron_ekle_admin",kullanici)
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.taseronlar_olusturma:
+                        taseron_adi = request.POST.get("taseron_adi")
+                        telefonnumarasi = request.POST.get("telefonnumarasi")
+                        email_adresi = request.POST.get("email_adresi")
+                        aciklama = request.POST.get("aciklama")
+                        new_project = ust_yuklenici(
+                            taseron_ait_bilgisi = request.user.kullanicilar_db,
+                            taseron_adi = taseron_adi,
+                            email = email_adresi,
+                            aciklama = aciklama,
+                            telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+                        )
+                        new_project.save()
+                        images = request.FILES.getlist('file')
+                        isim = 1
+                        for images in images:
+                            ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                            isim = isim+1
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                taseron_adi = request.POST.get("taseron_adi")
+                telefonnumarasi = request.POST.get("telefonnumarasi")
+                email_adresi = request.POST.get("email_adresi")
+                
+                aciklama = request.POST.get("aciklama")
+                new_project = ust_yuklenici(
+                    taseron_ait_bilgisi = request.user,
+                    taseron_adi = taseron_adi,
+                    email = email_adresi,
+                    aciklama = aciklama,
+                    telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+                )
+                new_project.save()
+                
+                images = request.FILES.getlist('file')
+                isim = 1
+                for images in images:
+                    ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                    isim = isim+1
+
+    return redirect("main:ust_yuklenici_sayfasi")
+#proje silme
+def ust_yuklenici_silme(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.ust_yuklenici_silme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        ust_yuklenici.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+    return redirect("main:ust_yuklenici_sayfasi")
+#Üst Yüklenivci Düzenleme
+def ust_yuklenici_duzelt(request):
+    if request.POST:
+        if request.user.is_superuser:
+            id_bilgisi = request.POST.get("id_bilgisi")
+            taseron_adi = request.POST.get("taseron_adi")
+            telefonnumarasi = request.POST.get("telefonnumarasi")
+            email_adresi = request.POST.get("email_adresi")
+            aciklama = request.POST.get("aciklama")
+            silinmedurumu = request.POST.get("silinmedurumu")
+            if silinmedurumu == "1":
+                ust_yuklenici.objects.filter(id =id_bilgisi ).update(
+                    taseron_adi = taseron_adi,
+                    email = email_adresi,
+                    aciklama = aciklama,
+                    telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+                )
+            elif silinmedurumu == "2":
+                ust_yuklenici.objects.filter(id =id_bilgisi ).update(
+                    taseron_adi = taseron_adi,
+                    email = email_adresi,
+                    aciklama = aciklama,
+                    telefon_numarasi = telefonnumarasi,silinme_bilgisi = True
+                )
+            else:
+                ust_yuklenici.objects.filter(id =id_bilgisi ).update(
+                    taseron_adi = taseron_adi,
+                    email = email_adresi,
+                    aciklama = aciklama,
+                    telefon_numarasi = telefonnumarasi
+                )
+        
+            images = request.FILES.getlist('file')
+            isim = 1
+            for images in images:
+                ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                isim = isim+1
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.taseronlar_duzenleme:
+                        id_bilgisi = request.POST.get("id_bilgisi")
+                        taseron_adi = request.POST.get("taseron_adi")
+                        telefonnumarasi = request.POST.get("telefonnumarasi")
+                        email_adresi = request.POST.get("email_adresi")
+                        
+                        aciklama = request.POST.get("aciklama")
+                        new_project = ust_yuklenici.objects.filter(id =id_bilgisi ).update(
+                            taseron_adi = taseron_adi,
+                            email = email_adresi,
+                            aciklama = aciklama,
+                            telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+                        )
+                        images = request.FILES.getlist('file')
+                        isim = 1
+                        for images in images:
+                            ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                            isim = isim+1
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+        
+                id_bilgisi = request.POST.get("id_bilgisi")
+                taseron_adi = request.POST.get("taseron_adi")
+                telefonnumarasi = request.POST.get("telefonnumarasi")
+                email_adresi = request.POST.get("email_adresi")
+                
+                aciklama = request.POST.get("aciklama")
+                new_project = ust_yuklenici.objects.filter(id =id_bilgisi ).update(
+                    taseron_adi = taseron_adi,
+                    email = email_adresi,
+                    aciklama = aciklama,
+                    telefon_numarasi = telefonnumarasi,silinme_bilgisi = False
+                )
+                
+                images = request.FILES.getlist('file')
+                isim = 1
+                for images in images:
+                    ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                    isim = isim+1
+    return redirect("main:ust_yuklenici_sayfasi")
 
 #sözleşmeler
 #sözleşme olaylari
@@ -2172,7 +2389,7 @@ def sozlesmler_sayfasi(request):
     content["top"]  = profile
     content["medya"] = page_obj
     
-    return render(request,"santiye_yonetimi/sozlesmler.html",content)
+    return render(request,"santiye_yonetimi/xxsozlesmler.html",content)
 #sözleşme olaylari
 
 def sozlesme_ekle(request):

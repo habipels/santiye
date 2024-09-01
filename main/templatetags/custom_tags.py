@@ -143,6 +143,10 @@ def taseronsozlesme_dosyalari(id):
     a = taseron_sozlesme_dosyalari.objects.filter(proje_ait_bilgisi__id = id)
     return a
 @register.simple_tag
+def ust_yuklenici_d_dosyalari(id):
+    a = ust_yuklenici_dosyalari.objects.filter(proje_ait_bilgisi__id = id)
+    return a
+@register.simple_tag
 def taseron_gorev_saysisi(id):
     a = get_object_or_404(taseronlar,id = id)
     a = a.proje_bilgisi.all().count()
@@ -307,11 +311,7 @@ def kalemler_sadece(id):
                 a.append(j.blog_bilgisi)
         for j in a:
             #/delbuldingsites/{}/{}
-            form = form+ """<option value="{},{}"><span class="badge bg-primary-subtle text-primary badge-border">{}</span>
-
-<span class="badge bg-secondary-subtle text-secondary badge-border">{}</span>
-
-<span class="badge bg-success-subtle text-success badge-border">{}</span></option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(i.kalem_adi),str(j.blog_adi))
+            form = form+ """<option selected value="{},{}">{}&#8594;{}&#8594;{}</option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(j.blog_adi),str(i.kalem_adi))
 
     return mark_safe(form)
 @register.simple_tag
@@ -329,13 +329,9 @@ def kalemler_sadece_duzeltmeli(id,z):
         for j in a:
             #/delbuldingsites/{}/{}
             if z.filter(kalem_bilgisi__id = i.id ,blog_bilgisi__id = j.id):
-                form = form+ """<option selected value="{},{}"><span class="badge bg-primary-subtle text-primary badge-border">{}</span>
-                <span class="badge bg-secondary-subtle text-secondary badge-border">{}</span>
-                <span class="badge bg-success-subtle text-success badge-border">{}</span></option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(i.kalem_adi),str(j.blog_adi))
+                form = form+ """<option selected value="{},{}">{}&#8594;{}&#8594;{}</option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(j.blog_adi),str(i.kalem_adi))
             else:
-                form = form+ """<option  value="{},{}"><span class="badge bg-primary-subtle text-primary badge-border">{}</span>
-                <span class="badge bg-secondary-subtle text-secondary badge-border">{}</span>
-                <span class="badge bg-success-subtle text-success badge-border">{}</span></option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(i.kalem_adi),str(j.blog_adi))
+                form = form+ """<option selected value="{},{}">{}&#8594;{}&#8594;{}</option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(j.blog_adi),str(i.kalem_adi))
     return mark_safe(form)
 @register.simple_tag
 
