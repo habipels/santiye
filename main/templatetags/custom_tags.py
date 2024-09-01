@@ -138,7 +138,10 @@ def proje_dosyalarini_bilgi(id):
 def taseronsozlesme_saysisi(id):
     a = taseron_sozlesme_dosyalari.objects.filter(proje_ait_bilgisi__id = id).count()
     return a
-
+@register.simple_tag
+def taseronsozlesme_dosyalari(id):
+    a = taseron_sozlesme_dosyalari.objects.filter(proje_ait_bilgisi__id = id)
+    return a
 @register.simple_tag
 def taseron_gorev_saysisi(id):
     a = get_object_or_404(taseronlar,id = id)
@@ -290,8 +293,50 @@ def kalem_blog(id):
         #/delbuldingsites/{}/{}
         bilgiler = bilgiler+ '<a href="#" >{}</a>'.format(str(i.blog_adi))+" , "
     return mark_safe(bilgiler)
+@register.simple_tag
+def kalemler_sadece(id):
+    kalemelr = santiye_kalemleri.objects.filter(proje_santiye_Ait = id,silinme_bilgisi = False)
+    form = ""
+    for i in kalemelr:
+        unique_values = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =i.id)
+        a = []
+        for j in unique_values:
+            if j.blog_bilgisi in a:
+                pass
+            else:
+                a.append(j.blog_bilgisi)
+        for j in a:
+            #/delbuldingsites/{}/{}
+            form = form+ """<option value="{},{}"><span class="badge bg-primary-subtle text-primary badge-border">{}</span>
 
+<span class="badge bg-secondary-subtle text-secondary badge-border">{}</span>
 
+<span class="badge bg-success-subtle text-success badge-border">{}</span></option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(i.kalem_adi),str(j.blog_adi))
+
+    return mark_safe(form)
+@register.simple_tag
+def kalemler_sadece_duzeltmeli(id,z):
+    kalemelr = santiye_kalemleri.objects.filter(proje_santiye_Ait = id,silinme_bilgisi = False)
+    form = ""
+    for i in kalemelr:
+        unique_values = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =i.id)
+        a = []
+        for j in unique_values:
+            if j.blog_bilgisi in a:
+                pass
+            else:
+                a.append(j.blog_bilgisi)
+        for j in a:
+            #/delbuldingsites/{}/{}
+            if z.filter(kalem_bilgisi__id = i.id ,blog_bilgisi__id = j.id):
+                form = form+ """<option selected value="{},{}"><span class="badge bg-primary-subtle text-primary badge-border">{}</span>
+                <span class="badge bg-secondary-subtle text-secondary badge-border">{}</span>
+                <span class="badge bg-success-subtle text-success badge-border">{}</span></option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(i.kalem_adi),str(j.blog_adi))
+            else:
+                form = form+ """<option  value="{},{}"><span class="badge bg-primary-subtle text-primary badge-border">{}</span>
+                <span class="badge bg-secondary-subtle text-secondary badge-border">{}</span>
+                <span class="badge bg-success-subtle text-success badge-border">{}</span></option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(i.kalem_adi),str(j.blog_adi))
+    return mark_safe(form)
 @register.simple_tag
 
 def blogtan_kaleme_ilerleme(id):

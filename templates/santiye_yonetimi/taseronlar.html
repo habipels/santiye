@@ -162,10 +162,10 @@
                                                     <td class="number">{% taseron_gorev_saysisi i.id %}</td>
                                                     <td class="projeler">
                                                         {% for yazar in i.proje_bilgisi.all %}
-                                                        <span>{{ yazar.proje_Adi }}</span>,
+                                                        <span>{{ yazar.kalem_bilgisi.proje_santiye_Ait.proje_adi }}:{{ yazar.kalem_bilgisi.kalem_adi }}:{{ yazar.blog_bilgisi.blog_adi }}</span>,
                                                      {% endfor %}
                                                        </td>
-                                                    <td class="document"><i class="ri-file-line"></i></td>
+                                                    <td  class="document"><i data-bs-toggle="modal" type="button" data-bs-target="#myModal{{i.id}}" class="ri-file-line"></i></td>
                                                     <td>
                                                         <div class="d-flex justify-content-start">
                                                         {% if request.user.kullanicilar_db %}
@@ -312,11 +312,10 @@
                                         <div class="invalid-feedback">Please enter an email.</div>
                                     </div>
                                     <div>
-                                        <label for="status-field" class="form-label">Sözleşmesi Yapılan Projeler</label>
+                                        <label for="status-field" class="form-label">Şantiye : Kalem : Blok</label>
                                         <select name="blogbilgisi" hidden class="form-control" data-trigger multiple  id="cokluetiket" >
-                                            <option value=""></option>
                                             {% for blog in blog_bilgisi %}
-                                            <option value="{{ blog.id }}">{{ blog.proje_Adi }}</option>
+                                            {% kalemler_sadece blog %}
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -421,7 +420,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form autocomplete="off"class="tablelist-form" action="{% url 'main:yapilacalar_ekle_duzenleme' %}" method="post" enctype="multipart/form-data" >
+                            <form autocomplete="off"class="tablelist-form" action="{% url 'main:taseron_duzelt' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 
                                     
@@ -464,14 +463,12 @@
                                                 {% endfor %}
                                            
                                             {% endif %}
+                                            
                                             {% for blog in blog_bilgisi %}
-                                            {% if blog in  i.proje_bilgisi.all %}
-                                                <option selected value="{{ blog.id }}">{{ blog.proje_Adi }}</option>
-                                            {% else %}
-                                            <option value="{{ blog.id }}">{{ blog.proje_Adi }}</option>
-                                            {% endif %}
-                                    
+                                            {% kalemler_sadece_duzeltmeli blog i.proje_bilgisi.all %}
                                             {% endfor %}
+
+                                            
                                         </select>
                                     </div>
                                     
@@ -509,6 +506,35 @@
                     </div>
                 </div>
         {% endfor %}
+    <!-- The Modal -->
+{% for i in santiyeler %}
+<div class="modal" id="myModal{{i.id}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">{{i.taseron_adi}} Dosyaları</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        {% taseronsozlesme_dosyalari i.id as dosyalri %}
+        {% for k in dosyalri %}
+            <a target="_blank" href="{{k.dosya.url}}"><i   class="ri-file-line"></i>{{k.dosya_adi}}</a>
+        {% endfor %}
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endfor %}
 </div>
   <script>
                     function initializeMultiSelectTag() {

@@ -1792,13 +1792,15 @@ def taseron_sayfasi(request):
             if a:
                 if a.izinler.taseronlar_gorme:
                     profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user.kullanicilar_db)
+                    if a.izinler.santiye_gorme:
+                        content["blog_bilgisi"] =santiye.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,silinme_bilgisi = False)
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
             profile = taseronlar.objects.filter(silinme_bilgisi = False,taseron_ait_bilgisi = request.user)
-
+            content["blog_bilgisi"]  =santiye.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1833,7 +1835,7 @@ def taseron_sayfasi(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
-    content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    
     return render(request,"santiye_yonetimi/taseronlar.html",content)
 #taseron olaylari
 
@@ -1863,7 +1865,13 @@ def taseron_ekle(request):
                         new_project.save()
                         bloglar_bilgisi = []
                         for i in blogbilgisi:
-                            bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+                            liste = str(i).split(",")
+                            proje = projeler.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,
+                                    blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
+                                    kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
+                                    )
+                            
+                            bloglar_bilgisi.append(projeler.objects.get(id=int(proje.id)))
                         new_project.proje_bilgisi.add(*bloglar_bilgisi)
                         images = request.FILES.getlist('file')
                         isim = 1
@@ -1900,7 +1908,12 @@ def taseron_ekle(request):
                 new_project.save()
                 bloglar_bilgisi = []
                 for i in blogbilgisi:
-                    bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+                    liste = str(i).split(",")
+                    proje = projeler.objects.create(proje_ait_bilgisi = request.user,
+                            blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
+                            kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
+                            )
+                    bloglar_bilgisi.append(projeler.objects.get(id=int(proje.id)))
                 new_project.proje_bilgisi.add(*bloglar_bilgisi)
                 images = request.FILES.getlist('file')
                 isim = 1
@@ -2036,7 +2049,19 @@ def taseron_duzelt(request):
                         )
                         bloglar_bilgisi = []
                         for i in blogbilgisi:
-                            bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+                            liste = str(i).split(",")
+                            j  = get_object_or_none(projeler,blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
+                                    kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0]),proje_ait_bilgisi = request.user.kullanicilar_db)
+                            if j:
+                                print(j,"geldi")
+                                bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
+                            else:
+                                proje = projeler.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,
+                                        blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
+                                        kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
+                                        )
+                                bloglar_bilgisi.append(projeler.objects.get(id=int(proje.id)))
+                        get_object_or_404(taseronlar,id =id_bilgisi).proje_bilgisi.clear()
                         get_object_or_404(taseronlar,id =id_bilgisi).proje_bilgisi.add(*bloglar_bilgisi)
                         images = request.FILES.getlist('file')
                         isim = 1
@@ -2063,7 +2088,19 @@ def taseron_duzelt(request):
                 )
                 bloglar_bilgisi = []
                 for i in blogbilgisi:
-                    bloglar_bilgisi.append(projeler.objects.get(id=int(i)))
+                    liste = str(i).split(",")
+                    j  = projeler.objects.filter(blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
+                        kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])).last()
+                    if j:
+                        print(j,"geldi")       
+                        bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
+                    else:
+                        proje = projeler.objects.create(proje_ait_bilgisi = request.user,
+                        blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
+                        kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
+                        )
+                        bloglar_bilgisi.append(projeler.objects.get(id=int(proje.id)))
+                get_object_or_404(taseronlar,id =id_bilgisi).proje_bilgisi.clear()
                 get_object_or_404(taseronlar,id =id_bilgisi).proje_bilgisi.add(*bloglar_bilgisi)
                 images = request.FILES.getlist('file')
                 isim = 1

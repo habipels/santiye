@@ -67,11 +67,8 @@ class santiye_kalemlerin_dagilisi (models.Model):
 
 class projeler (models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
-    proje_Adi = models.CharField(max_length = 200 ,verbose_name="Proje Adı",blank = True, null = True)
-    blog_bilgisi = models.ManyToManyField(bloglar,blank=True,null=True)
-    tarih = models.DateField(verbose_name = "Proje Tarihi",blank = True,null = True)
-    aciklama = models.TextField(verbose_name = "Açıklama",blank = True,null = True)
-    durum = models.BooleanField(default = False,verbose_name = "Durum",blank = True,null = True)
+    blog_bilgisi = models.ForeignKey(bloglar,blank=True,null=True,on_delete=models.CASCADE)
+    kalem_bilgisi = models.ForeignKey(santiye_kalemleri,blank=True,null=True,on_delete=models.CASCADE)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
