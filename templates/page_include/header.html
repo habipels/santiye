@@ -398,7 +398,7 @@
                     <div id="two-column-menu">
                     </div>
                     <ul class="navbar-nav" id="navbar-nav">
-                        <li class="menu-title"><span data-key="t-menu">Şantiyem</span></li>
+                        <li class="menu-title"><span data-key="t-menu">Şantiyenizi Yönetin</span></li>
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="/" role="button" aria-expanded="false" aria-controls="sidebarLayouts">
                                 <i class="bx bxs-dashboard"></i><span>Genel Özet</span>
@@ -453,10 +453,10 @@
                                         <div class="collapse menu-dropdown" id="finansalRaporlar">
                                             <ul class="nav nav-sm flex-column">
                                                 <li class="nav-item">
-                                                    <a href="{% url 'accounting:gelirler_ozeti' %}" class="nav-link"> Gelir Özeti </a>
+                                                    <a href="{% url 'accounting:gelirler_ozeti' %}" class="nav-link"> Gelir Raporu </a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{% url 'accounting:giderler_ozeti' %}" class="nav-link"> Gider Özeti </a>
+                                                    <a href="{% url 'accounting:giderler_ozeti' %}" class="nav-link"> Gider Raporu </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a href="{% url 'accounting:hesap_ekstra_durumu' %}" class="nav-link"> Hesap Ekstresi </a>
@@ -484,7 +484,7 @@
 
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{% url 'main:santiye_kalem_ve_blog_2' hashler %}" class="nav-link"> İlerleme Takibi </a>
+                                        <a href="{% url 'main:santiye_kalem_ve_blog_2' hashler %}" class="nav-link"> Proje Yönetimi </a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="{% url 'main:yapilacaklar' %}" class="nav-link"  role="button" aria-expanded="false"> Görevler
@@ -497,16 +497,17 @@
                                         <a href="{% url 'main:takvim_olaylari' %}" class="nav-link"> Takvim </a>
                                     </li>-->
                                     <li class="nav-item">
-                                        <a href="{% url 'main:depolama_sistemim' %}" class="nav-link"> Dosya Yöneticisi </a>
+                                        <a href="{% url 'main:depolama_sistemim' %}" class="nav-link"> Dosya Yönetici </a>
                                     </li>
-                                   <!-- <li class="nav-item">
+                                  <!--   <li class="nav-item">
                                         <a href="{% url 'main:projeler_sayfasi' %}" class="nav-link"> Projeler </a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="{% url 'users:kullanicilarim' %}" class="nav-link"> Personeller </a>
                                     </li>-->
+
                                     <li class="nav-item">
-                                        <a href="{% url 'main:taseron_sayfasi' %}" class="nav-link"> Alt Yükleniciler </a>
+                                        <a href="{% url 'main:taseron_sayfasi' %}" class="nav-link"> Taşeronlar </a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="{% url 'main:hakedis_sayfasi' %}" class="nav-link"> Hakedişler </a>
@@ -514,7 +515,7 @@
                                     <li class="nav-item">
                                         <a href="{% url 'main:sozlesmler_sayfasi' %}" class="nav-link"> Sözleşmeler </a>
                                     </li>
-
+                                    
                                 </ul>
                             </div>
                         </li><!--Şantiye Yönetimi Menü-->
@@ -523,19 +524,17 @@
                         <!--Muhasebe Menü-->
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#muhasebe" data-bs-toggle="collapse" role="button" aria-expanded="false">
-                                <i class="ri-money-dollar-circle-line"></i> <span>Muhasebe</span>
+                                <i class="ri-money-dollar-circle-line"></i> <span>Finans Yönetimi</span>
                             </a>
                             <div class="collapse menu-dropdown" id="muhasebe">
 
                                 <ul class="nav nav-sm flex-column">
+                                
                                     <li class="nav-item">
-                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi_2' hashler %}" class="nav-link">Gelirler</a>
+                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi_2' hashler %}" class="nav-link">Gelir Faturası</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_2' hashler %}" class="nav-link">Giderler</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="/{{dil}}{% url 'accounting:virman_gondermeler_2' hashler %}" class="nav-link">Virman</a>
+                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_2' hashler %}" class="nav-link">Gider Faturası</a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="/{{dil}}{% url 'accounting:a_kasa_viev' hashler %}" class="nav-link">Kasa</a>
@@ -543,14 +542,78 @@
                                     <li class="nav-item">
                                         <a href="/{{dil}}{% url 'accounting:cari_viev_2' hashler %}" class="nav-link">Cari Hesapları</a>
                                     </li>
+                                </ul>
+                            </div>
+                        </li><!--Muhasebe Menü-->
+
+                        <!--Personal Menu-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{% url 'users:kullanicilarim' %}" role="button" aria-expanded="false">
+                                <i class="ri-user-line"></i><span>Çalışan Yönetimi</span>
+                            </a>
+                        </li> <!-- end Personal Menu -->
+
+                        <!--Satın Alma ve Stok Menu-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="satin-alma-ve-stok.html" role="button" aria-expanded="false">
+                                <i class="ri-archive-2-fill"></i><span>Satın alma ve Stok</span>
+                            </a>
+                        </li> <!-- end Satın Alma ve Stok Menu -->
+
+
+                    <!--Ayarlar Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#ayarlar" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class=" ri-settings-3-line"></i> <span>Ayarlar</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="ayarlar">
+                
+                                <ul class="nav nav-sm flex-column">
+                                
+                                <li class="nav-item">
+                                        <a href="#kullaniciayar" data-bs-toggle="collapse" class="nav-link"> Kullanıcı Ayarları</a>
+                                        <div class="collapse menu-dropdown" id="kullaniciayar">
+                                            <ul class="nav nav-sm flex-column">
+
+                                            <li class="nav-item">
+                                                    <a href="{% url 'users:kullanicilarim' %}" class="nav-link"> Kullanıcılar </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                        <a href="{% url 'main:kullanici_yetkileri' %}" class="nav-link"> Kullanıcı Yetkileri </a>
+                                            </li>
+
+                                            </ul>
+                                        </div>
+                                    </li>
                                     <li class="nav-item">
-                                        <a href="#santiyeAyari" data-bs-toggle="collapse" class="nav-link"> Muhasebe Ayarları </a>
+                                        <a href="#santiyeAyari" data-bs-toggle="collapse" class="nav-link"> Şantiye Ayarları </a>
                                         <div class="collapse menu-dropdown" id="santiyeAyari">
                                             <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'main:proje_tipi_2' hashler %}" class="nav-link"> Proje Tipi </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'main:santiye_projesi_ekle_2' hashler %}" class="nav-link"> Şantiye </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#muhasebeayar" data-bs-toggle="collapse" class="nav-link"> Muhasebe Ayarları </a>
+                                        <div class="collapse menu-dropdown" id="muhasebeayar">
+                                            <ul class="nav nav-sm flex-column">
+                                            {% if request.user.is_superuser %}
+                                            <li class="nav-item">
                                                     <a href="/{{dil}}{% url 'accounting:muhasebe_ayarlari_2' hashler %}" class="nav-link"> Muhasebe Ayarları </a>
                                                 </li>
+                                            {% else %}
                                             <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:muhasebe_ayarlari' %}" class="nav-link"> Muhasebe Ayarları </a>
+                                                </li>
+                                            
+                                            {% endif %}
+                                                <li class="nav-item">
                                                     <a href="/{{dil}}{% url 'accounting:gelir_kategorisi_tipleri_2' hashler %}" class="nav-link"> Gelir Kategorileri </a>
                                                 </li>
                                                 <li class="nav-item">
@@ -570,55 +633,8 @@
                                     </li>
                                 </ul>
                             </div>
-                        </li><!--Muhasebe Menü-->
+                        </li><!--Ayarlar Menü-->
 
-                        <!--Personal Menu-->
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="{% url 'users:kullanicilarim' %}" role="button" aria-expanded="false">
-                                <i class="ri-user-line"></i><span>Personel</span>
-                            </a>
-                        </li> <!-- end Personal Menu -->
-
-                        <!--Satın Alma ve Stok Menu-->
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="satin-alma-ve-stok.html" role="button" aria-expanded="false">
-                                <i class="ri-archive-2-fill"></i><span>Satın alma ve Stok</span>
-                            </a>
-                        </li> <!-- end Satın Alma ve Stok Menu -->
-
-                        <!--Kullanıcılar Menu-->
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="{% url 'users:kullanicilarim' %}" role="button" aria-expanded="false">
-                                <i class="ri-file-user-line"></i><span>Kullanıcılar</span>
-                                    <li class="nav-item">
-                                        <a href="{% url 'main:kullanici_yetkileri' %}" class="nav-link"> Kullanıcı Yetkileri </a>
-                                    </li>
-                            </a>
-                        </li> <!-- end Kullanıcılar Menu -->
-
-
-                        <!--Ayarlar Menu-->
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="{% url 'users:kullanicilarim' %}" role="button" aria-expanded="false">
-                                <i class="ri-file-user-line"></i><span>Kullanıcılar</span>
-                                    <li class="nav-item">
-                                        <a href="#santiyeAyari" data-bs-toggle="collapse" class="nav-link"> Şantiye Ayarları </a>
-                                        <div class="collapse menu-dropdown" id="santiyeAyari">
-                                            <ul class="nav nav-sm flex-column">
-                                            <li class="nav-item">
-                                                    <a href="/{{dil}}{% url 'main:proje_tipi_2' hashler %}" class="nav-link"> Proje Tipi </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/{{dil}}{% url 'main:santiye_projesi_ekle_2' hashler %}" class="nav-link"> Şantiye </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="kategoriler.html" class="nav-link"> Kategoriler </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                            </a>
-                        </li> <!-- end Ayarlar Menu -->
 
                     </ul>
                 </div>
