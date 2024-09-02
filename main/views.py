@@ -58,6 +58,7 @@ def translate(language):
 
 def sozluk_yapisi():
     trans = translate(language='tr')
+    dil = dil_bilgisi()
     sozluk = {"trans":trans,"dil":dil_bilgisi()}
     sozluk ["diller"] = dil_ayarla.objects.all()
     sozluk ["sayfalogusu"] = sayfa_logosu.objects.last()
@@ -74,6 +75,9 @@ def sozluk_yapisi():
     sozluk["layout_sitili"] = layout_sitili.objects.last()
     sozluk["etiketler"] = faturalardaki_gelir_gider_etiketi.objects.last()
     sozluk["latest_actions"] =LogEntry.objects.all().order_by('-action_time')[:10]
+    
+    sozluk["trans"]=trans
+    sozluk["dil"]=dil
     return sozluk
 def loglar(request):
     content = sozluk_yapisi()
@@ -250,7 +254,9 @@ def homepage(request):
         return redirect("/users/login/")
 
     return render(request,"index.html",content)
-
+def ana_sayfa(request):
+    content = sozluk_yapisi()
+    return render(request,"a.html",content)
 def homepage_2(request,hash):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
@@ -4799,7 +4805,7 @@ def giderleri_excelden_ekle(request,id):
                                        aciklama = "",makbuz_no =str(i[13] ) ,gelir_makbuzu = str(i[12] ) )
         bir.set_gelir_makbuzu(str(i[13] ))
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
-    return redirect("/")
+    return redirect("main:ana_sayfa")
 
 def gelirleri_excelden_ekle(request,id):
     import openpyxl
@@ -4883,7 +4889,7 @@ def gelirleri_excelden_ekle(request,id):
         Gelir_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_odemesi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
                                      tutar =float(str(str(i[4]).replace("$","")).replace(",",".")),tarihi =i[2],makbuz_no = new_project.id,
                                        aciklama = "deneme"  )
-    return redirect("/")
+    return redirect("main:ana_sayfa")
 
 def sayfa_denemeleri(request):
     content = sozluk_yapisi()

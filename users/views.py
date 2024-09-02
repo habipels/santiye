@@ -41,7 +41,7 @@ def register(request):
         login(request,newUser)
         messages.info(request,"Başarıyla Kayıt Oldunuz...")
 
-        return redirect("/")
+        return redirect("main:ana_sayfa")
 
     return render(request,"account/register.html",context)
 
@@ -72,7 +72,7 @@ def loginUser(request):
             # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
             lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=False)
 
-        return redirect("/")
+        return redirect("main:ana_sayfa")
     return render(request,"account/login.html",context)
 @login_required
 def logoutUser(request):

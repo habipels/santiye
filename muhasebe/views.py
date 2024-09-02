@@ -3864,7 +3864,7 @@ def download_pdf(request):
     elements.append(table)
     pdf.build(elements)
     return response
-    #return redirect("/")
+    #return redirect("main:ana_sayfa")
 def fatura_gosterqr(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
