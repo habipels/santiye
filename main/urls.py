@@ -92,6 +92,13 @@ urlpatterns = [#
     path("adminaddcontracts/<int:id>", views.sozlesme_ekle_admin, name="sozlesme_ekle_admin"),
     path("setcontracts", views.sozlesme_duzenle, name="sozlesme_duzenle"),
     #
+    path("topcontracts", views.ana_yuklenici_sozlesmler_sayfasi, name="ana_yuklenici_sozlesmler_sayfasi"),
+    path("topaddcontract", views.ust_yuklenici_sozlesme_ekle, name="ust_yuklenici_sozlesme_ekle"),
+    path("topdelcontract", views.ust_yuklenici_silme, name="ust_yuklenici_silme"),
+    path("topadminaddcontracts/<int:id>", views.sozlesme_ekle_admin, name="sozlesme_ekle_admin"),
+    path("topsetcontracts", views.ust_yuklenici_sozlesme_duzenle, name="ust_yuklenici_sozlesme_duzenle"),
+
+    #
     #sözleşmeler olayları
     #hakedişler
     path("progresspayment", views.hakedis_sayfasi, name="hakedis_sayfasi"),

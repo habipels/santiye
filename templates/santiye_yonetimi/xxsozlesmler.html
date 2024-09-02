@@ -406,25 +406,22 @@
             <div class="col-md-3 group-list">
                 <h5>Sözleşmeler</h5>
                 <div class="group-item" onclick="switchCategory('anaFirma')">
-                    <span>Ana Firma Sözleşmeleri</span>
-                    <div class="action-icons">
-                        <i class="fas fa-edit" onclick="openModal('editCategoryModal')"></i>
-                        <i class="fas fa-trash" onclick="openModal('deleteCategoryModal')"></i>
-                    </div>
+                    
+                    <a style="color: black; text-decoration: none;" href="{% url 'main:ana_yuklenici_sozlesmler_sayfasi' %}">
+                        <span>Ana Firma Sözleşmeleri</span></a>
+                    
                 </div>
-                <div class="group-item" onclick="switchCategory('altYuklenici')">
-                    <span>Alt Yüklenici Sözleşmeleri</span>
-                    <div class="action-icons">
-                        <i class="fas fa-edit" onclick="openModal('editCategoryModal')"></i>
-                        <i class="fas fa-trash" onclick="openModal('deleteCategoryModal')"></i>
-                    </div>
+                <div style="background-color: rgb(153, 150, 150);" class="group-item" onclick="switchCategory('altYuklenici')">
+                    <a style="color: black; text-decoration: none; " href="{% url 'main:sozlesmler_sayfasi' %}">
+                    <span>Alt Yüklenici Sözleşmeleri</span></a>
+                    
                 </div>
                 <button class="btn btn-primary mt-3 w-100" onclick="openModal('contractModal')">+ Sözleşme Ekle</button>
             </div>
 
             <!-- Sözleşme Detayları -->
             <div class="col-md-9 permissions-panel">
-                <h5>Seçilen Kategori: <span id="currentCategory">Ana Firma Sözleşmeleri</span></h5>
+                <h5>Seçilen Kategori: Alt Yüklenici Sözleşmeleri</h5>
 
                 <!-- Filtreleme ve Hesaplamalar -->
                 <div class="mb-4">
@@ -454,36 +451,31 @@
                         </thead>
                         <tbody id="contractList">
                             <!-- Örnek Sözleşmeler -->
+                            {% for i in santiyeler %}
                             <tr>
-                                <td>Firma A</td>
-                                <td>Proje X</td>
-                                <td>İmalat Y</td>
-                                <td>01.09.2024</td>
-                                <td>Örnek açıklama</td>
-                                <td>Aktif</td>
+                                <td>{{i.proje_ait_bilgisi.taseron_adi}}</td>
+                                <td>{% for yazar in i.proje_ait_bilgisi.proje_bilgisi.all %}
+                                                     <span> {{ yazar.kalem_bilgisi.proje_santiye_Ait.proje_adi}}</span>,
+                                                    {% endfor %}</td>
+                                <td>{% for yazar in i.proje_ait_bilgisi.proje_bilgisi.all %}
+                                                     <span> {{ yazar.kalem_bilgisi.kalem_adi}}</span>,
+                                                    {% endfor %}</td>
+                                <td>{% if i.tarih %}
+                                                        {{ i.tarih | date:'d.m.Y'}}
+                                                    {% else %}
+                                                    {{ i.kayit_tarihi | date:'d.m.Y'}}
+                                                    {% endif %}</td>
+                                <td>{{i.aciklama}}</td>
+                                <td>{% if i.durum %}Aktif{% else %}Pasif{% endif %}</td>
                                 <td class="icon-cell">
-                                    <i class="fas fa-file-alt" onclick="openModal('viewContractsModal')"></i>
+                                    <i class="fas fa-file-alt" onclick="openModal('viewContractsModal{{i.id}}')"></i>
                                     <div class="actions">
-                                        <i class="fas fa-edit" onclick="openModal('editContractModal', event)"></i>
-                                        <i class="fas fa-trash" onclick="openModal('deleteConfirmationModal', event)"></i>
+                                        <i class="fas fa-edit" onclick="openModal('editContractModal{{i.id}}', event)"></i>
+                                        <i class="fas fa-trash" onclick="openModal('deleteConfirmationModal{{i.id}}', event)"></i>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Firma B</td>
-                                <td>Proje Y</td>
-                                <td>İmalat Z</td>
-                                <td>15.09.2024</td>
-                                <td>Örnek açıklama 2</td>
-                                <td>Pasif</td>
-                                <td class="icon-cell">
-                                    <i class="fas fa-file-alt" onclick="openModal('viewContractsModal')"></i>
-                                    <div class="actions">
-                                        <i class="fas fa-edit" onclick="openModal('editContractModal', event)"></i>
-                                        <i class="fas fa-trash" onclick="openModal('deleteConfirmationModal', event)"></i>
-                                    </div>
-                                </td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -497,103 +489,185 @@
         <div class="modal-content small-modal">
             <span class="close" onclick="closeModal('contractModal')">&times;</span>
             <h2>Sözleşme Ekle</h2>
-            <form id="contractForm">
-                <div class="form-group">
-                    <label for="tasaron">Taşeron</label>
-                    <input type="text" id="tasaron" name="tasaron" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="projeler">Projeler</label>
-                    <input type="text" id="projeler" name="projeler" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="imalat">İmalat</label>
-                    <input type="text" id="imalat" name="imalat" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="dosyaAdi">Dosya Adı</label>
-                    <input type="text" id="dosyaAdi" name="dosyaAdi" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="aciklama">Açıklama</label>
-                    <textarea id="aciklama" name="aciklama" class="form-control"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="durum">Durum</label>
-                    <input type="text" id="durum" name="durum" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="sozlesmeler">Sözleşmeler</label>
-                    <div class="file-drop-area">
-                        <span class="fake-btn">Dosyaları Seç</span>
-                        <span class="file-msg">veya buraya sürükleyip bırakın</span>
-                        <input class="file-input" type="file" id="sozlesmeler" name="sozlesmeler" multiple>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Sözleşme Ekle</button>
-            </form>
+            <form autocomplete="off"class="tablelist-form" action="{% url 'main:sozlesme_ekle' %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="mb-3" id="modal-id" style="display: none;">
+                                        <label for="id-field" class="form-label">ID</label>
+                                        <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
+                                    </div>
+                                    {% if request.user.is_superuser %}
+                                        <div class="mb-3">
+                                        <label for="date-field" class="form-label">Şantiye Seç</label>
+                                        <select class="form-control" name="kullanici" id="date-field">
+                                            {% for i in kullanicilar %}
+                                                <option value="{{i.id}}">{{i.first_name}}</option>
+                                            {% endfor %}
+                                            
+                                            
+                                        </select>
+                                    </div>
+                                    {% else %}
+                                    <div class="mb-3">
+                                        <label for="customername-field" class="form-label">Taşeron</label>
+                                        <select class="form-control" name="taseron" id="date-field">
+                                                {% for j in taseronlar %}
+                                                    <option value="{{j.id}}">{{j.taseron_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        <div class="invalid-feedback">Lütfen Taşeron Adını Boş Bırakmayınız.</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Dosya Adı</label>
+                                        <input type="tel" name="dosyaadi" id="date-field" class="form-control" placeholder="Telefon Gir"  />
+                                        <div class="invalid-feedback">Lütfen telefon alanını boş bırakmayınız.</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">Tarih</label>
+                                        <input type="date" name="tarih" class="form-control" placeholder="E-Posta giriniz" ></input>
+                                        <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">Açıklama</label>
+                                        <textarea name="aciklama" class="form-control" placeholder="Enter Description" ></textarea>
+                                        <div class="invalid-feedback">Please enter an email.</div>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Durum</label>
+                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                            <option value="">Durum</option>
+                                            <option value="1">Active</option>
+                                            <option value="0">Block</option>
+                                        </select>
+                                    </div>
+                                    
+                                    
+                                  <div class="md-4">
+                                        <div class="form-group">
+                                            <label>Dosya Yükle</label>
+                                            <input name="file" type="file"class="form-control" />
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                               <button type="submit" class="btn btn-primary btn-block">Sözleşme Ekle</button>
+                            </form>
+            
         </div>
     </div>
 
     <!-- Edit Contract Modal -->
-    <div id="editContractModal" class="modal">
+    {% for i in santiyeler %}
+    <div id="editContractModal{{i.id}}" class="modal">
         <div class="modal-content small-modal">
-            <span class="close" onclick="closeModal('editContractModal')">&times;</span>
+            <span class="close" onclick="closeModal('editContractModal{{i.id}}')">&times;</span>
             <h2>Sözleşme Düzenle</h2>
-            <form id="editContractForm">
-                <!-- Edit form content -->
-                <div class="form-group">
-                    <label for="editTasaron">Taşeron</label>
-                    <input type="text" id="editTasaron" name="editTasaron" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="editProjeler">Projeler</label>
-                    <input type="text" id="editProjeler" name="editProjeler" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="editImalat">İmalat</label>
-                    <input type="text" id="editImalat" name="editImalat" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="editDosyaAdi">Dosya Adı</label>
-                    <input type="text" id="editDosyaAdi" name="editDosyaAdi" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="editAciklama">Açıklama</label>
-                    <textarea id="editAciklama" name="editAciklama" class="form-control"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="editDurum">Durum</label>
-                    <input type="text" id="editDurum" name="editDurum" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="editSozlesmeler">Sözleşmeler</label>
-                    <div class="file-drop-area">
-                        <span class="fake-btn">Dosyaları Seç</span>
-                        <span class="file-msg">veya buraya sürükleyip bırakın</span>
-                        <input class="file-input" type="file" id="editSozlesmeler" name="editSozlesmeler" multiple>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Güncelle</button>
+            <form autocomplete="off"class="tablelist-form" action="{% url 'main:sozlesme_duzenle' %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="mb-3" id="modal-id" style="display: none;">
+                                        <label for="id-field" class="form-label">ID</label>
+                                        <input type="text" id="id-field" name="id_bilgisi" hidden value="{{i.id}}" class="form-control" />
+                                  </div>
+             
+                                    <div class="mb-3">
+                                        <label for="customername-field" class="form-label">Taşeron</label>
+                                        <select class="form-control" name="taseron" id="date-field">
+                                            <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.taseron_adi}}</option>
+                                                {% for j in taseronlar %}
+                                                    <option value="{{j.id}}">{{j.taseron_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        <div class="invalid-feedback">Lütfen Taşeron Adını Boş Bırakmayınız.</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">Dosya Adı</label>
+                                        <input type="tel" value="{{i.dosya_adi}}" name="dosyaadi" id="date-field" class="form-control" placeholder="Telefon Gir"  />
+                                        <div class="invalid-feedback">Lütfen telefon alanını boş bırakmayınız.</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">Tarih</label>
+                                        <input type="date" value="{{i.tarih | date:'Y-m-d' }}" name="tarih" class="form-control" placeholder="E-Posta giriniz" >
+                                        <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">Açıklama</label>
+                                        <textarea name="aciklama" class="form-control" placeholder="Enter Description" >{{i.aciklama }}</textarea>
+                                        <div class="invalid-feedback">Please enter an email.</div>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">Durum</label>
+                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                            {% if i.durum %}
+                                                <option value="1">Active</option>
+                                            {% else %}  
+                                            <option value="0">Block</option>
+                                            {% endif %}
+                                            <option value="">Durum</option>
+                                            <option value="1">Active</option>
+                                            <option value="0">Block</option>
+                                        </select>
+                                    </div>
+                                    
+                                    
+                                  <div class="md-4">
+                                        <div class="form-group">
+                                            <label>Dosya Yükle</label>
+                                            <input name="file" type="file" value="{{i.dosya}}" class="form-control" />
+                                        </div>
+                                    </div>
+                                    {% if request.user.is_superuser %}
+                                            <div class="mb-3">
+                                            <label for="date-field" class="form-label">Proje Silinme Durumu</label>
+                                            <select name="silinmedurumu"  class="form-control" id="">
+                                                <option value="3">Karışma</option>
+                                                <option value="2">Sil</option>
+                                                {% if i.silinme_bilgisi %}
+                                                    <option value="1">Geri Getir</option>
+                                                {% else %}
+                                                {% endif %}
+                                                
+                                            </select>
+                                        </div>
+                                        
+                                        {% endif %}
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Güncelle</button>
+                            </form>
+                
+
+        </div>
+    </div>
+    {% endfor %}
+    {% for i in santiyeler %}
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmationModal{{i.id}}" class="modal">
+        <div class="modal-content small-modal">
+            <span class="close" onclick="closeModal('deleteConfirmationModal{{i.id}}')">&times;</span>
+            <form autocomplete="off"action="{% url 'main:sozlesme_silme' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+            <h2>Sözleşmeyi Sil</h2>
+            <p>Bu sözleşmeyi silmek istediğinize emin misiniz?</p>
+            <button type = "submit" class="btn btn-danger btn-block" onclick="confirmDelete()">Evet, Sil</button>
+            <button type="button" class="btn btn-secondary btn-block" onclick="closeModal('deleteConfirmationModal{{i.id}}')">Vazgeç</button>
             </form>
         </div>
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmationModal" class="modal">
-        <div class="modal-content small-modal">
-            <span class="close" onclick="closeModal('deleteConfirmationModal')">&times;</span>
-            <h2>Sözleşmeyi Sil</h2>
-            <p>Bu sözleşmeyi silmek istediğinize emin misiniz?</p>
-            <button class="btn btn-danger btn-block" onclick="confirmDelete()">Evet, Sil</button>
-            <button class="btn btn-secondary btn-block" onclick="closeModal('deleteConfirmationModal')">Vazgeç</button>
-        </div>
-    </div>
-
+    {% endfor %}
     <!-- View Contracts Modal -->
-    <div id="viewContractsModal" class="modal">
+    {% for i in santiyeler %}
+    <div id="viewContractsModal{{i.id}}" class="modal">
         <div class="modal-content small-modal">
-            <span class="close" onclick="closeModal('viewContractsModal')">&times;</span>
+            <span class="close" onclick="closeModal('viewContractsModal{{i.id}}')">&times;</span>
             <h2>Yüklü Sözleşmeler</h2>
             <table class="table table-bordered">
                 <thead>
@@ -604,18 +678,15 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Sözleşme_1.pdf</td>
-                        <td><a href="#" class="btn btn-sm btn-secondary">İndir</a></td>
+                        <td><a href="{{i.dosya.url}}" class="btn btn-sm btn-secondary">{% isim i.dosya.name %}</a></td>
+                        <td><a href="{{i.dosya.url}}" download="{{i.dosya.url}}" class="btn btn-sm btn-secondary">İndir</a></td>
                     </tr>
-                    <tr>
-                        <td>Sözleşme_2.pdf</td>
-                        <td><a href="#" class="btn btn-sm btn-secondary">İndir</a></td>
-                    </tr>
+                    
                 </tbody>
             </table>
         </div>
     </div>
-
+    {% endfor %}
     <script>
         // Category switch functionality
         function switchCategory(category) {
@@ -637,10 +708,7 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        function confirmDelete() {
-            alert('Sözleşme silindi!');
-            closeModal('deleteConfirmationModal');
-        }
+        
 
         // File upload handling
         document.querySelectorAll('.file-drop-area').forEach(area => {

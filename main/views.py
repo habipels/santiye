@@ -2391,7 +2391,176 @@ def sozlesmler_sayfasi(request):
     
     return render(request,"santiye_yonetimi/xxsozlesmler.html",content)
 #sözleşme olaylari
+#sözleşme olaylari
+def ana_yuklenici_sozlesmler_sayfasi(request):
+    content = sozluk_yapisi()
 
+    if super_admin_kontrolu(request):
+        profile = taseron_sozlesme_dosyalari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.ust_yuklenici_gorme:
+                    profile = ust_yuklenici_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user.kullanicilar_db)
+                    #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,silinme_bilgisi = False)
+                    content["taseronlar"] = ust_yuklenici.objects.filter(taseron_ait_bilgisi= request.user.kullanicilar_db,silinme_bilgisi = False)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = ust_yuklenici_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
+            #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+            content["taseronlar"] = ust_yuklenici.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =ust_yuklenici_dosyalari.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.sozlesmeler_gorme:
+                        profile = ust_yuklenici_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user.kullanicilar_db) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = ust_yuklenici_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                
+           
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    
+    return render(request,"santiye_yonetimi/ana_yuklenici_sozlesme.html",content)
+#sözleşme olaylari
+def ust_yuklenici_sozlesme_ekle(request):
+    if request.POST:
+        if request.user.is_superuser:
+            kullanici = request.POST.get("kullanici")
+            return redirect("main:sozlesme_ekle_admin",kullanici)
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.ust_yuklenici_olusturma:
+                        pass
+                    else:
+                        return redirect("main:yetkisiz")
+            else:
+                pass
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("dosyaadi")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.FILES.get("file")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            ust_yuklenici_dosyalari.objects.create(
+                proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                dosya = file,dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu
+            )
+    return redirect("main:ana_yuklenici_sozlesmler_sayfasi")
+
+def ust_yuklenici_sozlesme_duzenle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.ust_yuklenici_duzenleme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
+    if request.POST:
+        id_bilgisi = request.POST.get("id_bilgisi")
+        taseron = request.POST.get("taseron")
+        dosyaadi = request.POST.get("dosyaadi")
+        tarih = request.POST.get("tarih")
+        aciklama = request.POST.get("aciklama")
+        durumu = request.POST.get("durumu")
+        file = request.FILES.get("file")
+        if durumu == "1":
+            durumu = True
+        else:
+            durumu = False
+        if request.user.is_superuser:
+            silinmedurumu = request.POST.get("silinmedurumu")
+            if silinmedurumu == "3":
+                ust_yuklenici_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu
+                )
+            elif silinmedurumu == "2":
+                ust_yuklenici_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,silinme_bilgisi = True
+                )
+            elif silinmedurumu == "1":
+                ust_yuklenici_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,silinme_bilgisi = False
+                )
+        else:
+
+            ust_yuklenici_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu
+                )
+    return redirect("main:ust_yuklenici_sayfasi")
+#sözleşmeler sil
+def ust_yuklenici_silme(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.ust_yuklenici_silme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        ust_yuklenici_dosyalari.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+    return redirect("main:ust_yuklenici_sayfasi")
+
+#sözleşmeler sil
+#sözleşme olaylari
 def sozlesme_ekle(request):
     if request.POST:
         if request.user.is_superuser:

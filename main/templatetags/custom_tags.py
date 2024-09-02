@@ -153,7 +153,10 @@ def taseron_gorev_saysisi(id):
 
     return a
 
-
+@register.simple_tag
+def isim(id):
+    a = id.split("/")
+    return a[1]
 @register.simple_tag
 def kullanici_dosya_sayisi(id):
     a = personel_dosyalari.objects.filter(kullanici__id = id).count()
@@ -1042,7 +1045,21 @@ def fatura_hakedis_baglama(fatura_numari,fatura_kime_ait):
         return {"tutar" : b.toplam_tutar,"kalan_tuar":b.kalan_tutar}
     else:
         return 0
-
+@register.simple_tag
+def hakedistoplam_kalan(id):
+    toplam = 0
+    kalan = 0
+    for i in id:
+        a = get_object_or_none(Gider_Bilgisi,fatura_no = i.fatura_numarasi , gelir_kime_ait_oldugu = i.proje_ait_bilgisi.taseron_ait_bilgisi)
+        b = get_object_or_none(Gelir_Bilgisi,fatura_no = i.fatura_numarasi , gelir_kime_ait_oldugu = i.proje_ait_bilgisi.taseron_ait_bilgisi)
+        if a:
+            toplam = toplam+ a.toplam_tutar
+            kalan = kalan+a.kalan_tutar
+            
+        elif b:
+            toplam = toplam+ a.toplam_tutar
+            kalan = kalan+a.kalan_tutar
+    return {"toplam":toplam,"kalan":kalan}
 @register.simple_tag
 def kulanici_yetkileri_goster(kullanici):
     a = get_object_or_none(bagli_kullanicilar,kullanicilar = kullanici)
