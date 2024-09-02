@@ -9,7 +9,7 @@
         <div class="row">
             <!-- Gruplar Listesi -->
             <div class="col-md-3 group-list">
-                <h5>Gruplar</h5>
+                <h5>{% trans "Kullanıcı Grupları" %}</h5>
                 {% for i in izinler %}
                 
                 <div class="group-item">
@@ -24,7 +24,7 @@
                 
                 
                 <!-- Diğer gruplar burada listelenecek -->
-                <button class="btn btn-primary mt-3 w-100" data-bs-toggle="modal" data-bs-target="#addGroupModal">Yeni Grup Ekle</button>
+                <button class="btn btn-primary mt-3 w-100" data-bs-toggle="modal" data-bs-target="#addGroupModal">{% trans "Yeni Grup Ekle" %}</button>
             </div>
 
             <!-- İzin Detayları -->
@@ -34,12 +34,12 @@
                     {% csrf_token %}
                     <input type="text" name="guncellenen" hidden value="{{secili_grup.id}}">
                 {% if secili_grup %}
-                    <h5>Seçilen Grup: {{secili_grup.isim}}</h5>
+                    <h5>{% trans "Seçilen Grup" %}: {{secili_grup.isim}}</h5>
                 {% else %}
-                <h5>Grubu Seçmediniz</h5>
+                <h5>{% trans "Grubu Seçmediniz" %}</h5>
                 {% endif %}
                 {% if secili_grup %}
-                <button type="submit">Kaydet</button>
+                <button type="submit">{% trans "Kaydet" %}</button>
                 {% else %}
                
                 {% endif %}
@@ -49,7 +49,7 @@
                     <!-- Dashboard Grubu -->
                     <div class="permission-group">
                         <h6>
-                            Dashboard
+                            {% trans "Dashboard" %}
                             <div class="form-check form-switch">
                                 <input class="form-check-input toggle-group" type="checkbox">
                             </div>
@@ -57,17 +57,17 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Oluşturma</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
+                                    <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Dashboard Görüntüleme</td>
+                                    <td>{% trans "Dashboard Görüntüleme" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all"    type="checkbox"></div></td>
                                     {% if secili_grup.dashboard_gorme %}
                                         <td><div class="form-check form-switch"><input name="dashboard_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -98,7 +98,7 @@
                     <!-- Raporlar Grubu -->
                     <div class="permission-group">
                         <h6>
-                            Raporlar
+                            {% trans "Raporlar" %}
                             <div class="form-check form-switch">
                                 <input class="form-check-input toggle-group" type="checkbox">
                             </div>
@@ -106,18 +106,18 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Oluşturma</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
+                                   <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                 
-                                    <td>Gelir Özeti</td>
+                                    <td>{% trans "Gelir Özeti" %}</td>
                                     
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.gelir_ozeti_gorme %}
@@ -142,7 +142,7 @@
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    <td>Gider Özeti</td>
+                                    <td>{% trans "Gider Özeti" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.gider_ozeti_gorme %}
                                         <td><div class="form-check form-switch"><input name="gider_ozeti_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -166,7 +166,7 @@
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    <td>Hesap Ekstresi</td>
+                                    <td>{% trans "Hesap Ekstresi" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.hesap_ekstra_gorme %}
                                         <td><div class="form-check form-switch"><input name="hesap_ekstra_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -190,7 +190,7 @@
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    <td>Virman Raporu</td>
+                                    <td>{% trans "Virman Raporu" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.kasa_virman_gorme_izni %}
                                         <td><div class="form-check form-switch"><input name="kasa_virman_gorme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -205,7 +205,7 @@
                                     
                                 </tr>
                                 <tr>
-                                    <td>Santiye Raporu</td>
+                                    <td>{% trans "Santiye Raporu" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.santiye_raporu_gorme %}
                                         <td><div class="form-check form-switch"><input name="santiye_raporu_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -235,7 +235,7 @@
                     <!-- Şantiye Yönetimi Grubu -->
                     <div class="permission-group">
                         <h6>
-                            Şantiye Yönetimi
+                            {% trans "Şantiye Yönetimi" %}
                             <div class="form-check form-switch">
                                 <input class="form-check-input toggle-group" type="checkbox">
                             </div>
@@ -243,17 +243,17 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Oluşturma</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
+                                 <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>İlerleme Takibi</td>
+                                    <td>{% trans "İlerleme Takibi" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.ilerleme_takibi_gorme %}
                                         <td><div class="form-check form-switch"><input name="ilerleme_takibi_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -277,7 +277,7 @@
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    <td>Sözleşmeler</td>
+                                    <td>{% trans "Taşeron Sözleşmeler" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.sozlesmeler_gorme %}
                                         <td><div class="form-check form-switch"><input name="sozlesmeler_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -301,7 +301,7 @@
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    <td>Yapılacaklar</td>
+                                    <td>{% trans "Yapılacaklar" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.yapilacaklar_gorme %}
                                         <td><div class="form-check form-switch"><input name="yapilacaklar_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -326,7 +326,7 @@
                                 </tr>
                                 <tr>
                                     <tr>
-                                        <td>Taşeronlar</td>
+                                        <td>{% trans "Taşeronlar" %}</td>
                                         <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                         {% if secili_grup.taseronlar_gorme %}
                                             <td><div class="form-check form-switch"><input name="taseronlar_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -351,7 +351,7 @@
                                     </tr>
                                 </tr>
                                 <tr>
-                                    <td>Dosya Yönetici</td>
+                                    <td>{% trans "Dosya Yönetici" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.dosya_yoneticisi_gorme %}
                                         <td><div class="form-check form-switch"><input name="dosya_yoneticisi_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -375,7 +375,7 @@
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    <td>Proje Tipi</td>
+                                    <td>{% trans "Proje Tipi" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.projeler_gorme %}
                                         <td><div class="form-check form-switch"><input name="projeler_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -399,7 +399,7 @@
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    <td>Santiye</td>
+                                    <td>{% trans "Şantiye" %}</td>
                                     <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
                                     {% if secili_grup.santiye_gorme %}
                                         <td><div class="form-check form-switch"><input name="santiye_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
@@ -510,12 +510,12 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Oluşturma</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
+                               <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -699,12 +699,12 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Oluşturma</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
+                              <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -859,11 +859,12 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Fonksiyon</th>
-                                    <th>Hepsi</th>
-                                    <th>Görme</th>
-                                    <th>Düzenleme</th>
-                                    <th>Silme</th>
+                                <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
