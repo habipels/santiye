@@ -115,14 +115,14 @@
                                                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                         {% if yetki.kasa_detay_izni %}
                                                                 <div class="edit" >
-                                                                <a href="{% url 'accounting:kasa_tekli' i.id %}" class="btn btn-sm btn-success edit-item-btn" >{% trans 'Kasa Detay' %}</a>
+                                                                <a href=/{{dil}}{% url 'accounting:kasa_tekli' i.id %}" class="btn btn-sm btn-success edit-item-btn" >{% trans 'Kasa Detay' %}</a>
                                                             </div>                                                
                                                         {% else %}
                                                                                                                         
                                                         {% endif %}
                                                         {% else %}
                                                               <div class="edit" >
-                                                                <a href="{% url 'accounting:kasa_tekli' i.id %}" class="btn btn-sm btn-success edit-item-btn" >{% trans 'Kasa Detay' %}</a>
+                                                                <a href=/{{dil}}{% url 'accounting:kasa_tekli' i.id %}" class="btn btn-sm btn-success edit-item-btn" >{% trans 'Kasa Detay' %}</a>
                                                             </div>                                                  
                                                         {% endif %}
                                                             
@@ -226,7 +226,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel">{% trans 'Kasa Ekle' %}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form autocomplete="off"class="tablelist-form" method="post" action="{% url 'accounting:kasa_ekle' %}"  autocomplete="off">
+                            <form autocomplete="off"class="tablelist-form" method="post" action=/{{dil}}{% url 'accounting:kasa_ekle' %}"  autocomplete="off">
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
@@ -280,7 +280,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel">{% trans 'Virman' %}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form autocomplete="off"class="tablelist-form" method="post" action="{% url 'accounting:virman_yapma' %}" autocomplete="off">
+                            <form autocomplete="off"class="tablelist-form" method="post" action=/{{dil}}{% url 'accounting:virman_yapma' %}" autocomplete="off">
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
@@ -365,7 +365,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form autocomplete="off"class="tablelist-form" action="{% url 'accounting:kasa_duzenle' %}" method="post" enctype="multipart/form-data" >
+                            <form autocomplete="off"class="tablelist-form" action=/{{dil}}{% url 'accounting:kasa_duzenle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
@@ -442,7 +442,7 @@
                                         <p class="text-muted mx-4 mb-0">{% trans 'Kasa Kaydını Silmek İstediğinden Emin Misin ?' %}</p>
                                     </div>
                                 </div>
-                                <form autocomplete="off"action="{% url 'accounting:kasa_sil' %}" method="post">
+                                <form autocomplete="off"action=/{{dil}}{% url 'accounting:kasa_sil' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
 

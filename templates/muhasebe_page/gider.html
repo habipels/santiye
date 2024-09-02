@@ -49,7 +49,7 @@
 
                                         </div>
                                         <div class="col-sm-2">
-                                            <a href="{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
+                                            <a href=/{{dil}}{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
                                                 Temizle
                                             </a>
 
@@ -224,7 +224,7 @@
         <h4 class="modal-title">Faturayı İptal Et</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-        <form autocomplete="off"action="{% url 'accounting:fatura_sil' %}" method="post">
+        <form autocomplete="off"action=/{{dil}}{% url 'accounting:fatura_sil' %}" method="post">
         {% csrf_token %}
       <!-- Modal body -->
       <div class="modal-body">
@@ -299,9 +299,9 @@
                 <a>Fatura Adı</a>
             </div>
             <div class="invoice-icons">
-                <div class="icon-item print-icon"><a href="{% url 'accounting:fatura_goster2' i.id %}"  title="Yazdır" class="mdi mdi-printer-outline"></a></div>
+                <div class="icon-item print-icon"><a href=/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"  title="Yazdır" class="mdi mdi-printer-outline"></a></div>
                 <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil{{i.id}}" title="İptal et" class="mdi mdi-alert-circle-outline"></span></div>
-                <a href="{% url 'accounting:gider_duzenle' i.id %}" class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></a>
+                <a href=/{{dil}}{% url 'accounting:gider_duzenle' i.id %}" class="icon-item edit-icon"><span title="Düzenle" class="mdi mdi-pencil-circle-outline"></span></a>
                 <div class="icon-item close-icon"><span title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
             </div>
         </div>
@@ -387,7 +387,7 @@
                 </div>
             </div>
             <div class="tahsilatEkle" id="tahsilatEkle{{i.id}}">
-                <form autocomplete="off"method="post" action="{% url 'accounting:gider_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
+                <form autocomplete="off"method="post" action=/{{dil}}{% url 'accounting:gider_odemesi_ekle' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="text" hidden value="{{i.id}}" name="faturabilgisi">
                     <div class="input-item">
@@ -590,7 +590,7 @@
     a = this.id.split('-')[1],
     $.ajax({
       type: "POST",
-      url: "{% url 'accounting:makbuz_sil' %}",
+      url: /{{dil}}{% url 'accounting:makbuz_sil' %}",
       data: {
         makbuz: makbuz,
         makbuzidsi :makbuzidsi,

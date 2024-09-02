@@ -13,7 +13,7 @@
                 {% for i in izinler %}
                 
                 <div class="group-item">
-                    <a style="color: black; text-decoration: none;" href="{% url 'main:kullanici_yetkileri_duzenle' i.id %}"><span>{{i.isim}}</span></a>
+                    <a style="color: black; text-decoration: none;" href=/{{dil}}{% url 'main:kullanici_yetkileri_duzenle' i.id %}"><span>{{i.isim}}</span></a>
                     <div class="action-icons">
                         <i class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#editGroupModal{{i.id}}"></i>
                         <i class="fas fa-trash-alt" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal{{i.id}}"></i>
@@ -30,7 +30,7 @@
             <!-- İzin Detayları -->
             
             <div class="col-md-9 permissions-panel">
-                <form autocomplete="off"action="{% url 'main:kullanici_yetki_alma' %}" method="post">
+                <form autocomplete="off"action=/{{dil}}{% url 'main:kullanici_yetki_alma' %}" method="post">
                     {% csrf_token %}
                     <input type="text" name="guncellenen" hidden value="{{secili_grup.id}}">
                 {% if secili_grup %}
@@ -936,7 +936,7 @@
                     <h5 class="modal-title" id="addGroupModalLabel">Yeni Grup Ekle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form autocomplete="off"action="{% url 'main:kullanici_yetki_olustur' %}" method="post">
+                <form autocomplete="off"action=/{{dil}}{% url 'main:kullanici_yetki_olustur' %}" method="post">
                     {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
@@ -962,7 +962,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                <form autocomplete="off"class="tablelist-form" action="{% url 'main:kullanici_yetki_adi_duzenle' %}" method="post" enctype="multipart/form-data" >
+                <form autocomplete="off"class="tablelist-form" action=/{{dil}}{% url 'main:kullanici_yetki_adi_duzenle' %}" method="post" enctype="multipart/form-data" >
                     {% csrf_token %}
                     <div class="mb-3">
                         <input type="text" hidden name="id" class="form-control" id="edit-group-name" value="{{i.id}}">
@@ -992,7 +992,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     
                 </div>
-                <form autocomplete="off"class="tablelist-form" action="{% url 'main:kullanici_yetki_sil' %}" method="post" enctype="multipart/form-data" >
+                <form autocomplete="off"class="tablelist-form" action=/{{dil}}{% url 'main:kullanici_yetki_sil' %}" method="post" enctype="multipart/form-data" >
                     {% csrf_token %}
                     <input type="text" name="id" id="" hidden value="{{i.id}}">
                 <div class="modal-body">

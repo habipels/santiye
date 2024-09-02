@@ -47,16 +47,16 @@
                                             </div>
                                         </li>
                                         <li>
-                                            <a href="{% url 'main:dokumanlar' %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">Dökümanlarım</span></a>
+                                            <a href=/{{dil}}{% url 'main:dokumanlar' %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">Dökümanlarım</span></a>
                                         </li>
                                         <li>
-                                            <a href="{% url 'main:media_dosyalari' %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">Media Dosyalarım</span></a>
+                                            <a href=/{{dil}}{% url 'main:media_dosyalari' %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">Media Dosyalarım</span></a>
                                         <li>
-                                            <a href="{% url 'main:zamana_dosyalari' %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">Geçmiş</span></a>
+                                            <a href=/{{dil}}{% url 'main:zamana_dosyalari' %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">Geçmiş</span></a>
                                         </li>
                                         </li>
                                         <li>
-                                            <a href="{% url 'main:silinen_dosyalari' %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">Silinen Dosyalar</span></a>
+                                            <a href=/{{dil}}{% url 'main:silinen_dosyalari' %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">Silinen Dosyalar</span></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -89,7 +89,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                        
-                                                     <h6 class="fs-16 mb-0"> <a href="{% url 'main:depolama_sistemim' %}">Ana Depolama</a> > {% klasor_olayi id_bilgisi %}</h6>
+                                                     <h6 class="fs-16 mb-0"> <a href=/{{dil}}{% url 'main:depolama_sistemim' %}">Ana Depolama</a> > {% klasor_olayi id_bilgisi %}</h6>
                                                 </div>
                                             </div>
                                         </div>
@@ -121,9 +121,9 @@
                                                             </button>
                                                             <ul class="dropdown-menu dropdown-menu-end">
                                                             {% if  i.klasor_adi %}
-                                                                <li><a class="dropdown-item view-item-btn" href="{% url 'main:klasore_gir' i.id i.klasor_adi %}">Klasörü Aç</a></li>
+                                                                <li><a class="dropdown-item view-item-btn" href=/{{dil}}{% url 'main:klasore_gir' i.id i.klasor_adi %}">Klasörü Aç</a></li>
                                                             {% else %}
-                                                            <li><a class="dropdown-item view-item-btn" href="{% url 'main:klasore_gir' i.id 'untitle' %}">Klasörü Aç</a></li>
+                                                            <li><a class="dropdown-item view-item-btn" href=/{{dil}}{% url 'main:klasore_gir' i.id 'untitle' %}">Klasörü Aç</a></li>
                                                             {% endif %}
                                                                 
                                                                 <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#createFolderModal{{i.id}}" role="button">Yeniden Adlandır</a></li>
@@ -415,7 +415,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form autocomplete="off"class="tablelist-form" action="{% url 'main:dosya_ekle' %}" method="post" enctype="multipart/form-data" >
+                        <form autocomplete="off"class="tablelist-form" action=/{{dil}}{% url 'main:dosya_ekle' %}" method="post" enctype="multipart/form-data" >
                             {% csrf_token %}
                             <div class="modal-body">
                                 <div class="mb-3" id="modal-id" style="display: none;">
@@ -471,7 +471,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form autocomplete="off" method="post" action="{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                            <form autocomplete="off" method="post" action=/{{dil}}{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
                                  {% csrf_token %}
                                 <div class="mb-4">
                                     <label for="foldername-input"  class="form-label">Klasör Adı</label>
@@ -499,7 +499,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form autocomplete="off" method="post" action="{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                            <form autocomplete="off" method="post" action=/{{dil}}{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
                                  {% csrf_token %}
                                 <div class="mb-4">
                                     <label for="foldername-input" class="form-label">Klasör Adı</label>
@@ -554,7 +554,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
                         </div>
                         <div class="modal-body">
-                        <form autocomplete="off"action="{% url 'main:klasor_sil' %}" method="post">
+                        <form autocomplete="off"action=/{{dil}}{% url 'main:klasor_sil' %}" method="post">
                             {% csrf_token %}
                                 <div class="mb-4">
                                     
@@ -586,7 +586,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
                         </div>
                         <div class="modal-body">
-                        <form autocomplete="off"action="{% url 'main:dosya_sil' %}" method="post">
+                        <form autocomplete="off"action=/{{dil}}{% url 'main:dosya_sil' %}" method="post">
                             {% csrf_token %}
                                 <div class="mb-4">
                                     <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">

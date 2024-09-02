@@ -30,12 +30,12 @@
                                 <h5 class="card-title mb-0 flex-grow-1">{% trans 'Hesap Özeti' %}</h5>
                                 <div class="export">
                                     <span>{% trans 'Export:' %}</span>
-                                    <form autocomplete="off"action="{% url 'accounting:download_excel' %}" method="post">
+                                    <form autocomplete="off"action=/{{dil}}{% url 'accounting:download_excel' %}" method="post">
                                         {% csrf_token %}
                                         <button value="2" type="submit" name="sonuc_cek" class="item bg-danger"><a style="color: white;" ><i class="ri-file-excel-line"></i>{% trans 'Excell' %}</a></button>
                                         
                                     </form>
-                                    <form autocomplete="off"action="{% url 'accounting:download_pdf' %}" method="post">
+                                    <form autocomplete="off"action=/{{dil}}{% url 'accounting:download_pdf' %}" method="post">
                                         {% csrf_token %}
                                         <button value="2" type="submit" name="sonuc_cek" class="item bg-danger"><a style="color: white;" ><i class="ri-file-pdf-2-line"></i>{% trans 'Pdf' %}</a></button>
                                     </form>
@@ -63,7 +63,7 @@
 
                                     </div>
                                     <div class="col-sm-2">
-                                        <a href="{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
+                                        <a href=/{{dil}}{% url 'accounting:giderler_sayfasi' %}" type="button" class="btn btn-primary w-100">
                                             {% trans 'Temizle' %}
                                         </a>
 
@@ -140,18 +140,18 @@
                         <ul class="dropdown-menu dropdown-menu-end" style="">
                             {% ayiklama i.fatura_no as sonuc_verme %}
                             {% if sonuc_verme == 1 %}
-                                <li><a href="{% url 'accounting:fatura_goster2' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="ViewInvoice(this);" data-id="25000351"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
+                                <li><a href=/{{dil}}{% url 'accounting:fatura_goster2' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="ViewInvoice(this);" data-id="25000351"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                     {% trans 'Faturayı Görüntüle' %}</a></li>
-                            <li><a href="{% url 'accounting:gider_duzenle' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="EditInvoice(this);" data-id="25000351"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                            <li><a href=/{{dil}}{% url 'accounting:gider_duzenle' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="EditInvoice(this);" data-id="25000351"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                     {% trans 'Faturayı Düzenle' %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'accounting:fatura_goster2' i.id %}"><i class="ri-download-2-line align-bottom me-2 text-muted"></i>
+                            <li><a class="dropdown-item" href=/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"><i class="ri-download-2-line align-bottom me-2 text-muted"></i>
                                     {% trans 'İndir' %}</a></li>
                             {% else %}
-                             <li><a href="{% url 'accounting:fatura_goster' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="ViewInvoice(this);" data-id="25000351"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
+                             <li><a href=/{{dil}}{% url 'accounting:fatura_goster' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="ViewInvoice(this);" data-id="25000351"><i class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                     {% trans 'Faturayı Görüntüle' %}</a></li>
-                            <li><a href="{% url 'accounting:gelir_duzenle' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="EditInvoice(this);" data-id="25000351"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                            <li><a href=/{{dil}}{% url 'accounting:gelir_duzenle' i.id %}" class="dropdown-item" href="javascript:void(0);" onclick="EditInvoice(this);" data-id="25000351"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                     {% trans 'Faturayı Düzenle' %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'accounting:fatura_goster' i.id %}"><i class="ri-download-2-line align-bottom me-2 text-muted"></i>
+                            <li><a class="dropdown-item" href=/{{dil}}{% url 'accounting:fatura_goster' i.id %}"><i class="ri-download-2-line align-bottom me-2 text-muted"></i>
                                     {% trans 'İndir' %}</a></li>
                             {% endif %}
                             

@@ -407,12 +407,12 @@
                 <h5>Sözleşmeler</h5>
                 <div style="background-color: rgb(153, 150, 150);"  class="group-item" onclick="switchCategory('anaFirma')">
                     
-                    <a style="color: black; text-decoration: none;" href="{% url 'main:ana_yuklenici_sozlesmler_sayfasi' %}">
+                    <a style="color: black; text-decoration: none;" href=/{{dil}}{% url 'main:ana_yuklenici_sozlesmler_sayfasi' %}">
                         <span>Ana Firma Sözleşmeleri</span></a>
                     
                 </div>
                 <div  class="group-item" onclick="switchCategory('altYuklenici')">
-                    <a style="color: black; text-decoration: none; " href="{% url 'main:sozlesmler_sayfasi' %}">
+                    <a style="color: black; text-decoration: none; " href=/{{dil}}{% url 'main:sozlesmler_sayfasi' %}">
                     <span>Alt Yüklenici Sözleşmeleri</span></a>
                     
                 </div>
@@ -485,7 +485,7 @@
         <div class="modal-content small-modal">
             <span class="close" onclick="closeModal('contractModal')">&times;</span>
             <h2>Sözleşme Ekle</h2>
-            <form autocomplete="off"class="tablelist-form" action="{% url 'main:ust_yuklenici_sozlesme_ekle' %}" method="post" enctype="multipart/form-data" >
+            <form autocomplete="off"class="tablelist-form" action=/{{dil}}{% url 'main:ust_yuklenici_sozlesme_ekle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
@@ -562,7 +562,7 @@
         <div class="modal-content small-modal">
             <span class="close" onclick="closeModal('editContractModal{{i.id}}')">&times;</span>
             <h2>Sözleşme Düzenle</h2>
-            <form autocomplete="off"class="tablelist-form" action="{% url 'main:ust_yuklenici_sozlesme_duzenle' %}" method="post" enctype="multipart/form-data" >
+            <form autocomplete="off"class="tablelist-form" action=/{{dil}}{% url 'main:ust_yuklenici_sozlesme_duzenle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
@@ -648,7 +648,7 @@
     <div id="deleteConfirmationModal{{i.id}}" class="modal">
         <div class="modal-content small-modal">
             <span class="close" onclick="closeModal('deleteConfirmationModal{{i.id}}')">&times;</span>
-            <form autocomplete="off"action="{% url 'main:ust_yuklenici_silme' %}" method="post">
+            <form autocomplete="off"action=/{{dil}}{% url 'main:ust_yuklenici_silme' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
             <h2>Sözleşmeyi Sil</h2>

@@ -30,7 +30,7 @@
     {% endblock head %}
 {% block sidebar %}
 <!-- ============================================================== -->
-<form autocomplete="off"method="post" action="{% url 'accounting:gelir_faturasi_kaydet' %}" enctype="multipart/form-data">
+<form autocomplete="off"method="post" action=/{{dil}}{% url 'accounting:gelir_faturasi_kaydet' %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="main-content">
         <div class="page-content">
@@ -57,7 +57,7 @@
 <div class="card-header d-flex justify-content-between align-items-center">
     <h2 class="title">{% trans 'Genel Bilgiler' %}</h2>
     <div class="buttons">
-        <a class="btn btn-warning btn-label waves-effect waves-light" href="{% url 'accounting:giderler_sayfasi' %}">
+        <a class="btn btn-warning btn-label waves-effect waves-light" href=/{{dil}}{% url 'accounting:giderler_sayfasi' %}">
             <i class="ri-error-warning-line label-icon align-middle fs-16 me-2"></i>{% trans 'Vazgeç' %} 
         </a>
         <button type="submit" class="btn btn-success btn-label waves-effect waves-light">
@@ -644,7 +644,7 @@ function showCustomToast(title, message) {
     }
 
     $('.den').autocomplete({
-        source: "{% url 'accounting:search_2' hashler %}",
+        source: /{{dil}}{% url 'accounting:search_2' hashler %}",
         minLength: 2,
         select: function(event, ui) {
             var id = this.id;
@@ -676,7 +676,7 @@ $(document).ready(function(){
 });
 $(document).ready(function(){
     $('.cari').autocomplete({
-                source: "{% url 'accounting:cariler_bilgisi_2' hashler %}",
+                source: /{{dil}}{% url 'accounting:cariler_bilgisi_2' hashler %}",
                 minLength: 2,
                 select: function(event, ui) {
                     $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
@@ -778,7 +778,7 @@ var multiSelectInstance = initializeMultiSelectTag();
 
             $.ajax({
                 type: "POST",
-                url: "{% url 'accounting:gider_gelir_ekleme' %}",
+                url: /{{dil}}{% url 'accounting:gider_gelir_ekleme' %}",
                 data: {
                     tur: tur,
                     adi: adi,
@@ -800,7 +800,7 @@ var multiSelectInstance = initializeMultiSelectTag();
 
     $.ajax({
       type: "POST",
-      url: "{% url 'accounting:gider_gelir_etiketekleme' %}",
+      url: /{{dil}}{% url 'accounting:gider_gelir_etiketekleme' %}",
       data: {
         tur2: tur2,
         adi2:adi2,
@@ -984,7 +984,7 @@ var multiSelectInstance = initializeMultiSelectTag();
 
             $.ajax({
                 type: "POST",
-                url: "{% url 'accounting:gider_gelir_ekleme' %}",
+                url: /{{dil}}{% url 'accounting:gider_gelir_ekleme' %}",
                 data: {
                     tur: tur,
                     adi: adi,
@@ -1006,7 +1006,7 @@ var multiSelectInstance = initializeMultiSelectTag();
 
     $.ajax({
       type: "POST",
-      url: "{% url 'accounting:gider_gelir_etiketekleme' %}",
+      url: /{{dil}}{% url 'accounting:gider_gelir_etiketekleme' %}",
       data: {
         tur2: tur2,
         adi2:adi2,
