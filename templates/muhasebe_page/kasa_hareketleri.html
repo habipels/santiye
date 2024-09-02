@@ -9,11 +9,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">Kasa Detayı</h4>
+                            <h4 class="mb-sm-0">{% trans 'Kasa Detayı' %}</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Kasa</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                                    <li class="breadcrumb-item active">{% trans 'Kasa Detayı' %}</li>
                                 </ol>
                             </div>
                         </div>
@@ -24,7 +24,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">Kasa Detayı</h4>
+                                <h4 class="card-title mb-0">{% trans 'Kasa Detayı' %}</h4>
                             </div><!-- end card header -->
                             <div class="card-body">
                                 <div class="listjs-table" id="customerList">
@@ -52,14 +52,14 @@
                                                         </div>
                                                     </th>
                                                     {% if request.user.is_superuser %}
-                                                    <th class="sort" data-sort="customer_name">Kasa Kime Ait</th>
+                                                    <th class="sort" data-sort="customer_name">{% trans 'Kasa Kime Ait' %}</th>
                                                     {% endif %}
-                                                    <th class="sort" data-sort="customer_name">Kasa</th>
+                                                    <th class="sort" data-sort="customer_name">{% trans 'Kasa' %}</th>
 
-                                                    <th class="sort" data-sort="phone">Açıklama</th>
-                                                    <th class="sort" data-sort="phone">Tarih</th>
-                                                    <th class="sort" data-sort="date">Tutar</th>
-                                                    <th class="sort" data-sort="date">Bakiye</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Açıklama' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Tarih' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Tutar' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Bakiye' %}</th>
                                                     
                                                 </tr>
                                             </thead>
@@ -120,7 +120,7 @@
                                             <ul class="pagination pagination-m justify-content-center">
 
                                                 {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
 
                                                   {% if medya.number > 3 %}
 
@@ -147,7 +147,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
 
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
                                                 {% endif %}
                                                 </ul>
                                         </div>
@@ -161,244 +161,10 @@
                 </div>
                 <!-- end row -->
 
-                <!--KASA EKLE POPUP-->
-                <div class="modal fade" id="kasaEkleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel">Kasa Ekle</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form autocomplete="off"class="tablelist-form" method="post" action="{% url 'accounting:kasa_ekle' %}"  autocomplete="off">
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                    {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Seç</label>
-                                            <select class="form-control" name="kullanici" id="date-field">
-                                                <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.first_name}}</option>
-                                                {% for j in kullanicilar %}
-                                                    <option value="{{j.id}}">{{j.first_name}}</option>
-                                                {% endfor %}
-
-
-                                            </select>
-                                        </div>
-                                        {% else %}
-                                        {% endif %}
-
-                                    <div class="mb-3">
-                                        <label for="customername-field" class="form-label">Kasa</label>
-                                        <input name="kasaadi" type="text" id="customername-field" class="form-control" placeholder="Kasa" required />
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="customername-field" class="form-label">Açılış Bilançosu</label>
-                                        <input name="bakiye" value="0" step="0.01" type="number" id="customername-field" class="form-control" placeholder="Açılış Bilançosu" required />
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="customername-field" class="form-label">Konum</label>
-                                        <input type="text" name="konumu" id="customername-field" class="form-control" placeholder="Konum" required />
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!--VİRMAN POPUP-->
-                <div class="modal fade" id="virmanEkleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel">Virman</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form autocomplete="off"class="tablelist-form" method="post" action="{% url 'accounting:virman_yapma' %}" autocomplete="off">
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                    <div class="mb-3" id="modal-id" style="display: none;">
-                                        <label for="id-field" class="form-label">ID</label>
-                                        <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
-                                    </div>
-                                    {% if request.user.is_superuser %}
-                                    <div class="mb-3" id="modal-id" >
-
-
-                                        <label for="date-field" class="form-label">Şantiye Seç</label>
-                                            <select class="form-control" name="kullanici" id="date-field">
-                                                {% for j in kullanicilar %}
-                                                    <option value="{{j.id}}">{{j.first_name}}</option>
-                                                {% endfor %}
-
-
-                                            </select>
-                                        </div>
-                                    {% else %}
-
-                                    <div class="mb-3">
-                                        <label for="gonderen" class="form-label">Gönderen</label>
-                                        <select id="gonderen" name="gonderen" class="form-control">
-                                            <option selected disabled>Seçiniz..</option>
-                                                {% for i in santiyeler %}
-                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
-                                                {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="alici"  class="form-label">Alıcı</label>
-                                        <select id="alici" name="alici" class="form-control">
-                                            <option selected disabled>Seçiniz..</option>
-                                            {% for i in santiyeler %}
-                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
-                                                {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="tarih" class="form-label">Tarih</label>
-                                        <input id="tarih" name="islemtarihi" type="date" class="form-control" />
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="tutar" class="form-label">Tutar</label>
-                                        <input id="tutar" name="tutar" step="0.01" type="text" class="form-control" placeholder="Tutar giriniz"/>
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="aciklama" class="form-label">Açıklama</label>
-                                        <textarea id="aciklama" name="aciklama" type="text" class="form-control" placeholder="Açıklama"></textarea>
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
-                                    </div>
-                                    {% endif %}
-                                </div>
-
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+              
 
                 <!-- end row -->
-                {% for i in santiyeler %}
-                <div class="modal fade" id="showModal{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form autocomplete="off"class="tablelist-form" action="{% url 'accounting:kasa_duzenle' %}" method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                    <div class="mb-3" id="modal-id" style="display: none;">
-
-                                        <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
-                                    </div>
-
-                                    {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Seç</label>
-                                            <select class="form-control" name="kullanici" id="date-field">
-                                                <option value="{{i.kasa_kart_ait_bilgisi.id}}">{{i.kasa_kart_ait_bilgisi.first_name}}</option>
-                                                {% for j in kullanicilar %}
-                                                    <option value="{{j.id}}">{{j.first_name}}</option>
-                                                {% endfor %}
-
-
-                                            </select>
-                                        </div>
-                                        {% else %}
-                                        {% endif %}
-
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Kasa Adı</label>
-                                            <input type="text" value="{{i.kasa_adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Kasa Adı" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="date-field" class="form-label">Konum</label>
-                                            <input type="text" value="{{i.aciklama}}"  name="konumu" id="date-field" class="form-control" placeholder="Kasa Adı" />
-                                        </div>{% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">Kasa Silinme Durumu</label>
-                                            <select name="silinmedurumu"  class="form-control" id="">
-                                                <option value="3">Karışma</option>
-                                                <option value="2">Sil</option>
-                                                {% if i.silinme_bilgisi %}
-                                                    <option value="1">Geri Getir</option>
-                                                {% else %}
-                                                {% endif %}
-
-                                            </select>
-                                        </div>
-
-                                        {% endif %}
-
-
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                {% for i in santiyeler %}
-                <!-- Modal -->
-                <div class="modal fade zoomIn" id="deleteRecordModal{{i.id}}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"></button>
-                            </div>
-                            <div class="modal-body">
-
-                                <div class="mt-2 text-center">
-                                    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                                    <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                        <h4>Are you Sure ?</h4>
-                                        <p class="text-muted mx-4 mb-0">Are you Sure You want to Remove this Record ?</p>
-                                    </div>
-                                </div>
-                                <form autocomplete="off"action="{% url 'accounting:kasa_sil' %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-
-                                <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                    <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn w-sm btn-danger " id="delete-record">Yes, Delete It!</button>
-                                </div>
-                            </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+    
                 <!--end modal -->
             </div>
             <footer class="footer">
