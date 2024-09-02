@@ -34,12 +34,12 @@
                                             {% if request.user.kullanicilar_db %}
                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                             {% if yetki.gider_etiketi_olusturma %}
-                                                     <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans ' Ekle' %}</button>                                               
+                                                     <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Gider Etiketi Ekle' %}</button>                                               
                                             {% else %}
                                                                                                             
                                             {% endif %}
                                             {% else %}
-                                                  <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans ' Ekle' %}</button>                                                  
+                                                  <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Gider Etiketi Ekle' %}</button>                                                  
                                             {% endif %}
                                                 
                                             </div>
@@ -69,7 +69,7 @@
                                                     {% endif %}
                                                     <th class="sort" data-sort="email">{% trans 'Etiket Adı' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
-                                                    <th class="sort" data-sort="date"></th>
+                                                    <th class="sort" data-sort="date">{% trans 'Aksiyon' %}</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
@@ -97,14 +97,14 @@
                                                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                         {% if yetki.gider_etiketi_guncelleme %}
                                                               <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Edit' %}</button>
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Etiketi Düzenle' %}</button>
                                                             </div>                                                  
                                                         {% else %}
                                                                                                                         
                                                         {% endif %}
                                                         {% else %}
                                                              <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Edit' %}</button>
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Etiketi Düzenle' %}</button>
                                                             </div>                                                   
                                                         {% endif %}
                                                             
@@ -112,14 +112,14 @@
                                                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                         {% if yetki.gider_etiketi_silme %}
                                                                <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Remove' %}</button>
+                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Etiketi Sil' %}</button>
                                                             </div>                                                 
                                                         {% else %}
                                                                                                                         
                                                         {% endif %}
                                                         {% else %}
                                                              <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Remove' %}</button>
+                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Etiketi Sil' %}</button>
                                                             </div>                                                   
                                                         {% endif %}
                                                             
@@ -145,7 +145,7 @@
                                             <ul class="pagination pagination-m justify-content-center">
 
                                                 {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
                                                 
                                                   {% if medya.number > 3 %}
                                                 
@@ -172,7 +172,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
                                                 
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
                                                 {% endif %}
                                                 </ul>
                                         </div>
@@ -265,7 +265,7 @@
                                     <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                                         <h4>{% trans 'Are you Sure ?' %}</h4>
-                                        <p class="text-muted mx-4 mb-0">{% trans 'Are you Sure You want to Remove this Record ?' %}</p>
+                                        <p class="text-muted mx-4 mb-0">{% trans 'Gelir Etiketni Silmek İstediğinden Emin Misin ? ' %}</p>
                                     </div>
                                 </div>
                                 <form autocomplete="off"action="{% url 'accounting:gider_etiketi_sil' %}" method="post">
@@ -335,7 +335,7 @@
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Close' %}</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Ekle' %}</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Etiketi Ekle' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>

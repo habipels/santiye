@@ -45,8 +45,8 @@
                             <h4 class="mb-sm-0">{% trans 'Satış Ekle' %}</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Satış Ekle</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                                    <li class="breadcrumb-item active">{% trans 'Satış Düzeltme' %}</li>
                                 </ol>
                             </div>
                         </div>
@@ -57,13 +57,13 @@
                 <div id="satis-ekle" class="row">
                     <div class="card">
 <div class="card-header d-flex justify-content-between align-items-center">
-    <h2 class="title">Genel Bilgiler</h2>
+    <h2 class="title">{% trans 'Genel Bilgiler' %}</h2>
     <div class="buttons">
         <a class="btn btn-warning btn-label waves-effect waves-light" href="{% url 'accounting:gelirler_sayfasi' %}">
-            <i class="ri-error-warning-line label-icon align-middle fs-16 me-2"></i> Vazgeç
+            <i class="ri-error-warning-line label-icon align-middle fs-16 me-2"></i> {% trans 'Vazgeç' %}
         </a>
         <button type="submit" class="btn btn-success btn-label waves-effect waves-light">
-            <i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Kaydet
+            <i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i>{% trans 'Kaydet' %} 
         </button>
     </div>
 </div>
@@ -72,15 +72,15 @@
         <!-- Cari Kutusu -->
         <div class="col-md-2">
             <div class="input-item musteri-input">
-                <label>Cari</label>
-                <input type="search" value="{{bilgi.cari_bilgisi.cari_adi}}" required name="musteri_bilgisi" class="form-control cari" title="Kayıtlı cariler için cari adının ilk üç karekterini giriniz." placeholder="Cari Hesabı" autocomplete="off">
+                <label>{% trans 'Cari' %}</label>
+                <input type="search" value="{{bilgi.cari_bilgisi.cari_adi}}" required name="musteri_bilgisi" class="form-control cari" title="{% trans 'Kayıtlı cariler için cari adının ilk üç karekterini giriniz.' %}" placeholder="{% trans 'Cari Hesabı' %}" autocomplete="off">
             </div>
         </div>
 
         <!-- Düzenleme ve Vade Tarihi -->
         <div class="col-md-3">
             <div class="form-group">
-                <label>Düzenleme ve Vade Tarihi</label>
+                <label>{% trans 'Düzenleme ve Vade Tarihi' %}</label>
                 <input type="text" required name="daterange" class="form-control" value="{{bilgi.fatura_tarihi|date:'m-d-Y'}} - {{bilgi.vade_tarihi|date:'m-d-Y'}}">
             </div>
         </div>
@@ -90,24 +90,24 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Döviz Kuru (Sadece IQD)</label>
+                        <label>{% trans 'Döviz Kuru (Sadece IQD)' %}</label>
                         <div class="input-group">
                             <input type="text" id="doviz_kuru" name="doviz_kuru" class="form-control" 
-                                placeholder="Örn: 1450 veya 1450.06" 
+                                placeholder="{% trans 'Örn: 1450 veya 1450.06' %}" 
                                 pattern="\d+(\.\d{1,2})?" 
-                                title="Lütfen sadece sayısal değer giriniz" 
+                                title="{% trans 'Lütfen sadece sayısal değer giriniz' %}" 
                                 oninput="hesaplama_islemi()" value="{{bilgi.doviz}}" />
-                            <span class="input-group-text">IQD</span>
+                            <span class="input-group-text">{% trans 'IQD' %}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Toplam IQD</label>
+                        <label>{% trans 'Toplam IQD' %}</label>
                         <div class="input-group">
                             <input type="text" id="toplam_iqd" name="toplam_iqd" class="form-control" disabled />
-                            <span class="input-group-text">IQD</span>
+                            <span class="input-group-text">{% trans 'IQD' %}</span>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
         <!-- Fatura No Kutusu -->
         <div class="col-md-3">
             <div class="form-group">
-                <label>Fatura No</label>
+                <label>{% trans 'Fatura No' %}</label>
                 <input type="text" required name="faturano" class="form-control" value="{{bilgi.fatura_no}}" disabled />
                 <input type="text" required name="faturano_hidden" hidden class="form-control" value="{{bilgi.fatura_no}}" />
             </div>
@@ -126,15 +126,15 @@
         <!-- Açıklama Kutusu -->
         <div class="col-md-6">
             <div class="form-group">
-                <label>Açıklama</label>
-                <input type="text" value="{{bilgi.aciklama}}" required name="cari_aciklma" class="form-control" placeholder="Açıklama">
+                <label>{% trans 'Açıklama' %}</label>
+                <input type="text" value="{{bilgi.aciklama}}" required name="cari_aciklma" class="form-control" placeholder="{% trans 'Açıklama' %}">
             </div>
         </div>
 
         <!-- Kategori ve Etiket Kutuları -->
         <div class="col-md-3">
             <div class="form-group">
-                <label>Kategori</label>
+                <label>{% trans 'Kategori' %}</label>
                 <div class="input-group" id="kategori">
                     <select required name="gelir_kategorisi" class="form-select">
                         <option selected value="{{bilgi.gelir_kategorisii.id}}">{{bilgi.gelir_kategorisii.gelir_kategori_adi}}</option>
@@ -143,7 +143,7 @@
                                         {% endfor %}
                     </select>
                     <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#showModal">
-                        <i class="ri-add-line align-bottom me-1"></i>Ekle
+                        <i class="ri-add-line align-bottom me-1"></i>{% trans 'Kategori Ekle' %}
                     </button>
                 </div>
             </div>
@@ -151,7 +151,7 @@
 
         <div class="col-md-3">
             <div class="input-item etiket">
-                <label>Etiketler</label>
+                <label>{% trans 'Etiketler' %}</label>
                 <div id="etkett" class="d-flex align-items-center">
                     <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
                         {% for i in gelir_etiketi %}
@@ -163,14 +163,14 @@
                                         {% endfor %}
                     </select>
                     <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#gideretiketiekle">
-                        <i class="ri-add-line align-bottom me-1"></i>Ekle
+                        <i class="ri-add-line align-bottom me-1"></i>{% trans 'Etiket Ekle' %}
                     </button>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
                     <div class="form-group">
-                        <label>Belge Yükle</label>
+                        <label>{% trans 'Belge Yükle' %}</label>
                         <input type="file"  name="fatura_belgesi" class="form-control" />
                     </div>
                 </div>
@@ -179,13 +179,13 @@
 
 <div class="card">
     <div class="card-head">
-        <div class="title"><h2>Fatura Kalemleri</h2></div>
+        <div class="title"><h2>{% trans 'Fatura Kalemleri' %}</h2></div>
     </div>
     <div class="fatura-tablosu-basliklar">
-        <h2 class="urun">HİZMET / ÜRÜN</h2>
-        <h2 class="miktar">MİKTAR</h2>
-        <h2 class="bfiyat">BİRİM FİYAT</h2>
-        <h2 class="toplam">TOPLAM</h2>
+        <h2 class="urun">{% trans 'HİZMET / ÜRÜN' %}</h2>
+        <h2 class="miktar">{% trans 'MİKTAR' %}</h2>
+        <h2 class="bfiyat">{% trans 'BİRİM FİYAT' %}</h2>
+        <h2 class="toplam">{% trans 'TOPLAM' %}</h2>
     </div>
     <div class="card-body">
         <div class="form2" id="form2" >
@@ -222,7 +222,7 @@
         </div>
     </div>
     <div class="addNewItem">
-        <span>Yeni Satır Ekle</span>
+        <span>{% trans 'Yeni Satır Ekle' %}</span>
     </div>
 </div>
 
@@ -230,13 +230,13 @@
     <div class="card-body">
         <div class="row mb-4">
             <div class="col text-center">
-                <h5 class="fw-bold">ARA TOPLAM</h5>
+                <h5 class="fw-bold">{% trans 'ARA TOPLAM' %}</h5>
                 <h2 class="fw-bold text-primary">$<span class="aratoplam">0.00</span></h2>
             </div>
         </div>
         <div class="row">
             <div class="col text-center">
-                <h5 class="fw-bold">ÖDENECEK TUTAR</h5>
+                <h5 class="fw-bold">{% trans 'ÖDENECEK TUTAR' %}</h5>
                 <h2 class="fw-bold text-success">$<span class="odenecektutar">0.00</span></h2>
             </div>
         </div>
@@ -398,7 +398,7 @@ function validateDovizKuru() {
     if (!validPattern.test(dovizKuruValue)) {
         // Eğer mevcut bir toast görünüyorsa, yeni bir toast göstermeyin
         if (!isToastVisible) {
-            showCustomToast('Geçersiz Döviz Kuru', 'Lütfen geçerli bir döviz kuru giriniz. Sadece sayısal değer ve ondalık olabilir.');
+            showCustomToast('{% trans "Geçersiz Döviz Kuru" %}', '{% trans "Lütfen geçerli bir döviz kuru giriniz. Sadece sayısal değer ve ondalık olabilir." %}');
         }
 
         dovizKuruInput.value = "";  // Geçerli olmayan değeri temizle
@@ -463,8 +463,8 @@ function showCustomToast(title, message) {
         <div class="calendar-time" style="display: none;"></div>
     </div>
     <div   class="drp-buttons"><span class="drp-selected">01/01/2024 - 01/30/2024</span><button
-            class="cancelBtn btn btn-sm btn-default" type="button">Cancel</button><button
-            class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">Apply</button> </div>
+            class="cancelBtn btn btn-sm btn-default" type="button">{% trans 'Cancel' %}</button><button
+            class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">{% trans Apply'' %}</button> </div>
 </div>
 <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
@@ -477,22 +477,22 @@ function showCustomToast(title, message) {
                                 <div class="modal-body">
                                     <input type="text" name="tur" id="tur" hidden value="0">
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gider Kategorisi Adı</label>
-                                        <input type="text"  name="adi" id="adi" class="form-control" placeholder="Kategori Adı" />
+                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Adı' %}</label>
+                                        <input type="text"  name="adi" id="adi" class="form-control" placeholder="{% trans 'Kategori Adı' %}" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gider Kategorisi Açıklaması</label>
-                                        <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="Kategori Açıklaması" />
+                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Açıklaması' %}</label>
+                                        <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="{% trans 'Kategori Açıklaması' %}" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gider Kategorisi Rengi</label>
-                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="Gider Kategorisi" />
+                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Rengi' %}</label>
+                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="{% trans 'Gider Kategorisi' %}" />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">Ekle</button>
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">{% trans 'KAtegoriyi Ekle' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -510,15 +510,15 @@ function showCustomToast(title, message) {
                                 <div class="modal-body">
                                     <input type="text" name="tur2" id="tur2" hidden value="0">
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Gider Etiketi Adı</label>
-                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="Etiket Adı" />
+                                        <label for="date-field" class="form-label">{% trans 'Gider Etiketi Adı' %}</label>
+                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="{% trans 'Etiket Adı' %}" />
                                     </div>
 
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">Ekle</button>
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">{% trans 'Etiket Ekle' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -755,7 +755,7 @@ $(document).ready(function(){
         return new MultiSelectTag('cokluetiket', {
             rounded: true,
             shadow: true,
-            placeholder: 'Search',
+            placeholder: '{% trans "Search" %}',
             tagColor: {
                 textColor: '#327b2c',
                 borderColor: '#92e681',
@@ -863,7 +863,7 @@ var multiSelectInstance = initializeMultiSelectTag();
         }
     }).data('ui-autocomplete')._renderItem = function(ul, item) {
         return $('<li>')
-            .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
+            .append('<div>' + item.label + '  ' + item.value + ' {% trans "USD" %}</div>')
             .appendTo(ul);
     };
 }
@@ -961,7 +961,7 @@ $(document).ready(function(){
         return new MultiSelectTag('cokluetiket', {
             rounded: true,
             shadow: true,
-            placeholder: 'Search',
+            placeholder: '{% trans "Search" %}',
             tagColor: {
                 textColor: '#327b2c',
                 borderColor: '#92e681',

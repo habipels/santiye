@@ -143,7 +143,7 @@
                     extend: 'csv',
                     text: 'CSV',
                     title: function() {
-                        return cariAdi + ' Hesap Bakiyesi';
+                        return cariAdi + ' {% trans "Hesap Bakiyesi" %}';
                     },
                     exportOptions: {
                         columns: ':visible:not(:last-child)' // "İncele" sütununu export etmiyoruz
@@ -153,7 +153,7 @@
                     extend: 'excel',
                     text: 'Excel',
                     title: function() {
-                        return cariAdi + ' Hesap Bakiyesi';
+                        return cariAdi + ' {% trans "Hesap Bakiyesi" %}';
                     },
                     exportOptions: {
                         columns: ':visible:not(:last-child)' // "İncele" sütununu export etmiyoruz
@@ -163,14 +163,14 @@
                     extend: 'pdf',
                     text: 'PDF',
                     title: function() {
-                        return cariAdi + ' Hesap Bakiyesi';
+                        return cariAdi + ' {% trans "Hesap Bakiyesi" %}';
                     },
                     exportOptions: {
                         columns: ':visible:not(:last-child)' // "İncele" sütununu export etmiyoruz
                     },
                     customize: function (doc) {
                         doc.content.splice(0, 1, {
-                            text: cariAdi + ' Hesap Bakiyesi',
+                            text: cariAdi + ' {% trans "Hesap Bakiyesi" %}',
                             fontSize: 14,
                             alignment: 'center',
                             margin: [0, 0, 0, 12] // Başlık ve tablo arasındaki boşluk
@@ -191,11 +191,11 @@
                     extend: 'print',
                     text: 'Yazdır',
                     title: function() {
-                        return cariAdi + ' Hesap Bakiyesi';
+                        return cariAdi + ' {% trans "Hesap Bakiyesi" %}';
                     },
                     customize: function (win) {
                         $(win.document.body)
-                            .prepend('<h3>' + cariAdi + ' Hesap Bakiyesi</h3>')
+                            .prepend('<h3>' + cariAdi + ' {% trans "Hesap Bakiyesi" %}</h3>')
                             .find('h1')
                             .remove(); // Varsayılan başlığı kaldır
                     },
@@ -215,10 +215,10 @@
             language: {
                 url: "//cdn.datatables.net/plug-ins/1.10.21/i18n/Turkish.json",
                 buttons: {
-                    copyTitle: 'Kopyalandı',
+                    copyTitle: '{% trans "Kopyalandı" %}',
                     copySuccess: {
-                        _: '%d satır panoya kopyalandı',
-                        1: '1 satır panoya kopyalandı'
+                        _: '%d {% trans "satır panoya kopyalandı" %}',
+                        1: '1 {% trans "satır panoya kopyalandı" %}'
                     }
                 }
             }
