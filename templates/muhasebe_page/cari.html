@@ -121,7 +121,7 @@
                                             <ul class="pagination pagination-m justify-content-center">
 
                                                 {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans "« Previous page" %}</a></li>
                                                 
                                                   {% if medya.number > 3 %}
                                                 
@@ -148,7 +148,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
                                                 
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans "Next Page »" %}</a></li>
                                                 {% endif %}
                                                 </ul>
                                         </div>
@@ -175,7 +175,7 @@
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
                                             <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Seç</label>
+                                            <label for="date-field" class="form-label">{% trans "Hesap Seç" %}</label>
                                             <select class="form-control" name="kullanici" id="date-field">
                                                 <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.first_name}}</option>
                                                 {% for j in kullanicilar %}
@@ -189,25 +189,25 @@
                                         {% endif %}
 
                                     <div class="mb-3">
-                                        <label for="customername-field" class="form-label">Cari</label>
-                                        <input name="cariadi" type="text" id="customername-field" class="form-control" placeholder="Cari" required />
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
+                                        <label for="customername-field" class="form-label">{% trans "Cari" %}</label>
+                                        <input name="cariadi" type="text" id="customername-field" class="form-control" placeholder='{% trans "Cari" %}' required />
+                                        <div class="invalid-feedback">{% trans "Lütfen Boş Bırakmayınız" %}</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="customername-field" class="form-label">Cari Telefon</label>
-                                        <input name="bakiye" value="+" type="number" id="customername-field" class="form-control" placeholder="Cari Telefon Numarası" required />
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
+                                        <label for="customername-field" class="form-label">{% trans "Cari Telefon" %}</label>
+                                        <input name="bakiye" value="+" type="number" id="customername-field" class="form-control" placeholder='{% trans "Cari Telefon Numarası" %}' required />
+                                        <div class="invalid-feedback">{% trans "Lütfen Boş Bırakmayınız" %}</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="customername-field" class="form-label">Açıklama</label>
-                                        <input type="text" name="konumu" id="customername-field" class="form-control" placeholder="Açıklama" required />
-                                        <div class="invalid-feedback">Lütfen Boş Bırakmayınız</div>
+                                        <label for="customername-field" class="form-label">{% trans "Açıklama" %}</label>
+                                        <input type="text" name="konumu" id="customername-field" class="form-control" placeholder='{% trans "Açıklama" %}' required />
+                                        <div class="invalid-feedback">{% trans "Lütfen Boş Bırakmayınız" %}</div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans "Kapat" %}</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans "Cariyi Ekle" %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -300,7 +300,7 @@
 
                                     {% if request.user.is_superuser %}
                                             <div class="mb-3">
-                                            <label for="date-field" class="form-label">Şantiye Seç</label>
+                                            <label for="date-field" class="form-label">{% trans "Hesap Seç" %} </label>
                                             <select class="form-control" name="kullanici" id="date-field">
                                                 <option value="{{i.cari_kart_ait_bilgisi.id}}">{{i.cari_kart_ait_bilgisi.first_name}}</option>
                                                 {% for j in kullanicilar %}
@@ -314,20 +314,20 @@
                                         {% endif %}
     
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Cari Adı</label>
-                                            <input type="text" value="{{i.cari_adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Cari Adı" />
+                                            <label for="date-field" class="form-label">{% trans "Cari Adı" %}</label>
+                                            <input type="text" value="{{i.cari_adi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder='{% trans "Cari Adı" %}' />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">Açıklama</label>
-                                            <input type="text" value="{{i.aciklama}}"  name="konumu" id="date-field" class="form-control" placeholder="Cari Adı" />
+                                            <label for="date-field" class="form-label">{% trans "Açıklama" %}</label>
+                                            <input type="text" value="{{i.aciklama}}"  name="konumu" id="date-field" class="form-control" placeholder='{% trans "Açıklama" %}' />
                                         </div>{% if request.user.is_superuser %}
                                             <div class="mb-3">
-                                            <label for="date-field" class="form-label">Cari Silinme Durumu</label>
+                                            <label for="date-field" class="form-label">{% trans "Cari Silinme Durumu" %}</label>
                                             <select name="silinmedurumu"  class="form-control" id="">
-                                                <option value="3">Karışma</option>
-                                                <option value="2">Sil</option>
+                                                <option value="3">{% trans "Karışma" %}</option>
+                                                <option value="2">{% trans "Sil" %}</option>
                                                 {% if i.silinme_bilgisi %}
-                                                    <option value="1">Geri Getir</option>
+                                                    <option value="1">{% trans "Geri Getir" %}</option>
                                                 {% else %}
                                                 {% endif %}
                                                 
@@ -340,8 +340,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans "Kapat" %}</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans "Cariyi Kaydet" %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -350,113 +350,7 @@
                     </div>
                 </div>
                 {% endfor %}
-                {% for i in santiyeler %}
-                <div class="modal fade" id="detay{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel">Cari Datayı</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                                <div class="modal-body">
-                                    <style>
-                                    
-                                        div.scroll {
-                                            margin: 4px, 4px;
-                                            height: 400px;
-                                            overflow-x: hidden;
-                                            overflow-y: auto;
-                                            text-align: justify;
-                                        }
-                                    </style>
-
-                                    <!-- The Modal -->
                 
-                   <style>.odeme-tarihi table, .odeme-tarihi th,.odeme-tarihi td {
-                    border: 1px solid black;
-                  }</style>
-            <div class="odeme-tarihi scroll">
-                
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fatura Mı</th>
-                        <th>Ödeme Mi ? </th>
-                        <th>Tutar</th>
-                        <th>Bakiye</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% cari_islemleri i as bilgi_veriyor %}
-                    {% for j in bilgi_veriyor.a %}
-                    {% cari_gelirlerii j.id as tutar  %}
-                    {% cari_gelirleri j.id as gelir_bilgileri_tamami %}
-                    {% for k in gelir_bilgileri_tamami.gider_odemesi %}
-                    
-                    
-                    <tr>
-                        <td>Hayır</td>
-                        <td>Evet</td>
-                        <td style="color:orange;">- {{k.tutar }}</td>
-                        <td style="color:orange;">{{tutar}}</td>
-                    </tr>
-                    {% cikarma  tutar k.tutar  as tutar %}
-                    {% endfor %}
-                    <tr>
-                        <td>Gelir Faturası</td>
-                        <td>Hayır</td>
-                        <td style="color:blue;">{{gelir_bilgileri_tamami.gelir_toplama}}</td>
-                        <td style="color:blue;">{{gelir_bilgileri_tamami.gelir_toplama }}</td>
-                    </tr>
-                    {% endfor %}
-                <tr>
-                        
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                        <td ></td>
-                    </tr>
-                {% cari_islemleri i as bilgi_veriyor %}
-                    {% for j in bilgi_veriyor.b %}
-                    {% cari_giderlerii j.id as tutar  %}
-                    {% cari_giderleri j.id as gider_bilgileri_tamami %}
-                    {% for k in gider_bilgileri_tamami.gider_odemesi %}
-                    
-                    
-                    <tr>
-                        <td>Hayır</td>
-                        <td>Evet</td>
-                        <td style="color:orange;">{{k.tutar }}</td>
-                        <td style="color:orange;">{{tutar}}</td>
-                    </tr>
-                    {% cikarma  tutar k.tutar  as tutar %}
-                    {% endfor %}
-                    <tr>
-                        <td>Gider Faturası</td>
-                        <td>Hayır</td>
-                        <td style="color:blue;">- {{gider_bilgileri_tamami.gelir_toplama}}</td>
-                        <td style="color:blue;">- {{gider_bilgileri_tamami.gelir_toplama }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-                </div>
-                         
-                                        
-                                    
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                        
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
                 {% for i in santiyeler %}
                 <!-- Modal -->
                 <div class="modal fade zoomIn" id="deleteRecordModal{{i.id}}" tabindex="-1" aria-hidden="true">
@@ -470,8 +364,8 @@
                                 <div class="mt-2 text-center">
                                     <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                        <h4>Are you Sure ?</h4>
-                                        <p class="text-muted mx-4 mb-0">Are you Sure You want to Remove this Record ?</p>
+                                        <h4>{% trans "Emin misin ?" %}</h4>
+                                        <p class="text-muted mx-4 mb-0">{% trans "Cari Kaydını Silmek Üzresiniz Emin misiniz?" %}</p>
                                     </div>
                                 </div>
                                 <form autocomplete="off"action="{% url 'accounting:cari_sil' %}" method="post">
@@ -479,8 +373,8 @@
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                                 
                                 <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                    <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn w-sm btn-danger " id="delete-record">Yes, Delete It!</button>
+                                    <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans "Vazgeç" %}</button>
+                                    <button type="submit" class="btn w-sm btn-danger " id="delete-record">{% trans "Evet , Sil" %}</button>
                                 </div>
                             </form>
                             </div>
