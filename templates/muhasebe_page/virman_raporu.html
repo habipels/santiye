@@ -10,12 +10,12 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                                <h4 class="mb-sm-0">Datatables</h4>
+                                <h4 class="mb-sm-0">{% trans 'Virman Raporu' %}</h4>
 
                                 <div class="page-title-right">
                                     <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
-                                        <li class="breadcrumb-item active">Datatables</li>
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                                        <li class="breadcrumb-item active">{% trans 'Virman Raporu' %}</li>
                                     </ol>
                                 </div>
 
@@ -27,14 +27,14 @@
                         <div class="col-lg-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="card-title mb-0">Virman Raporları</h5>
+                                    <h5 class="card-title mb-0">{% trans 'Virman Raporları' %}</h5>
                                     <br>
                                      <form autocomplete="off"method="get">
                                     <div class="row g-3 gelirler-filtre">
                                         <div class="col-sm-3">
                                             <div class="search-box">
                                                 <select class="form-control search bg-light border-light" name="gonderen_kasa" id="gonderen_kasa">
-                                                    <option value="">Gönderen Kasayı Seçin</option>
+                                                    <option value="">{% trans 'Gönderen Kasayı Seçin' %}</option>
                                                     {% for i in kasalar %}
                                                     {% if request.GET.gonderen_kasa == i.id %}
                                                     <option selected value="{{request.GET.gonderen_kasa}}">{{i.kasa_adi}}</option>
@@ -50,7 +50,7 @@
                                         <div class="col-sm-3">
                                             <div class="search-box">
                                                 <select class="form-control search bg-light border-light" name="alici_kasa" id="alici_kasa">
-                                                    <option value="">Alıcı Kasayı Seçin</option>
+                                                    <option value="">{% trans 'Alıcı Kasayı Seçin' %}</option>
                                                     {% for i in kasalar %}
                                                     {% if request.GET.alici_kasa == i.id %}
                                                     <option selected value="{{request.GET.alici_kasa}}">{{i.kasa_adi}}</option>
@@ -71,13 +71,13 @@
                                         <!--end col-->
                                         <div class="col-sm-1">
                                             <button type="submit" class="btn btn-primary w-100">
-                                            Ara
+                                            {% trans 'Ara' %}
                                             </button>
 
                                         </div>
                                         <div class="col-sm-2">
                                             <a href="{% url 'accounting:virman_gondermeler' %}" type="button" class="btn btn-primary w-100">
-                                                Temizle
+                                                {% trans 'Temizle' %}
                                             </a>
 
                                         </div>
@@ -95,14 +95,14 @@
                                             <thead>
                                                 <tr>
                                                 {% if request.user.is_superuser %}
-                                                    <th>Virman İşlemi Kime Ait</th>
+                                                    <th>{% trans 'Virman İşlemi Kime Ait' %}</th>
                                                     {% endif %}
                                                     
-                                                    <th>Tarih D-M-Y</th>
-                                                    <th>Gönderen</th>
-                                                    <th>Alıcı</th>
-                                                    <th>Tutar </th>
-                                                    <th>Açıklama</th>
+                                                    <th>{% trans 'Tarih D-M-Y' %}</th>
+                                                    <th>{% trans 'Gönderen' %}</th>
+                                                    <th>{% trans 'Alıcı' %}</th>
+                                                    <th>{% trans 'Tutar' %} </th>
+                                                    <th>{% trans 'Açıklama' %}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -127,7 +127,7 @@
                                             <ul class="pagination pagination-m justify-content-center">
 
                                                 {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
                                                 
                                                   {% if medya.number > 3 %}
                                                 
@@ -154,7 +154,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
                                                 
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
                                                 {% endif %}
                                                 </ul>
                                         </div>
