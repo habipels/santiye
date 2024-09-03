@@ -217,29 +217,28 @@
             <div class="d-flex">
                 {% hakedistoplam_kalan santiyeler as bilgileri %}
                 <div class="stat-box">
-                    Toplam Hakediş
+                    {% trans 'Toplam Hakediş' %}
                     <span id="totalHakediş">${{bilgileri.toplam}}</span>
                 </div>
                 <div class="stat-box">
-                    Ödenmemiş Hakediş
+                    {% trans 'Ödenmemiş Hakediş' %}
                     <span id="unpaidHakediş">${{bilgileri.kalan}}</span>
                 </div>
-                <button class="btn hakediş-button" onclick="openModal('contractModal')">Hakediş Ekle</button>
+                <button class="btn hakediş-button" onclick="openModal('contractModal')">{% trans 'Hakediş Ekle' %}</button>
             </div>
         </div>
 
         <table class="table contract-table table-hover">
             <thead>
                 <tr>
-                    <th>Taşeron</th>
-                    <th>Proje</th>
-                    
-                    <th>Açıklama</th>
-                    <th>Eklenme Tarihi</th>
-                    <th>Fatura Numarası</th>
-                    <th>Tutar</th>
-                    <th>Kalan</th>
-                    <th></th>
+                    <th>{% trans 'Taşeron' %}</th>
+                    <th>{% trans 'Proje' %}</th>
+                    <th>{% trans 'Açıklama' %}</th>
+                    <th>{% trans 'Eklenme Tarihi' %}</th>
+                    <th>{% trans 'Fatura Numarası' %}</th>
+                    <th>{% trans 'Tutar' %}</th>
+                    <th>{% trans 'Kalan' %}</th>
+                    <th>{% trans 'Aksiyon' %}</th>
                 </tr>
             </thead>
             <tbody id="contractList">
@@ -274,13 +273,13 @@
     <div id="contractModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('contractModal')">&times;</span>
-            <h2>Hakediş Ekle</h2>
+            <h2>{% trans 'Hakediş Ekle' %}</h2>
             <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:hakedis_ekle' %}"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
                                         <div class="mb-3">
-                                        <label for="date-field" class="form-label">Şantiye Seç</label>
+                                        <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
                                         <select class="form-control" name="kullanici" id="date-field">
                                             {% for i in kullanicilar %}
                                                 <option value="{{i.id}}">{{i.first_name}}</option>
@@ -291,7 +290,7 @@
                                     </div>
                                     {% else %}
                                     <div class="mb-3">
-                                        <label for="customername-field" class="form-label">Taşeron</label>
+                                        <label for="customername-field" class="form-label">{% trans 'Taşeron' %}</label>
                                         <select class="form-control" name="taseron" id="date-field">
                                                 {% for j in taseronlar %}
                                                     <option value="{{j.id}}">{{j.taseron_adi}}</option>
@@ -299,32 +298,32 @@
                                                 
                                                 
                                             </select>
-                                        <div class="invalid-feedback">Lütfen Taşeron Adını Boş Bırakmayınız.</div>
+                                        <div class="invalid-feedback">{% trans 'Lütfen Taşeron Adını Boş Bırakmayınız.' %}</div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Dosya Adı</label>
-                                        <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="Dosya Adı" />
+                                        <label for="date-field" class="form-label">{% trans 'Dosya Adı' %}</label>
+                                        <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="{% trans 'Dosya Adı' %}" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Tarih</label>
-                                        <input name="tarih_bilgisi" type="date" id="date-field" class="form-control" placeholder="Select Date" required />
-                                        <div class="invalid-feedback">Please select a date.</div>
+                                        <label for="date-field" class="form-label">{% trans 'Tarih' %}</label>
+                                        <input name="tarih_bilgisi" type="date" id="date-field" class="form-control" placeholder="{% trans 'Tarih' %}" required />
+                                        <div class="invalid-feedback">{% trans 'Please select a date.' %}</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="email-field" class="form-label">Açıklama</label>
-                                        <textarea name="aciklama" class="form-control" placeholder="Enter Description" required></textarea>
-                                        <div class="invalid-feedback">Please enter an email.</div>
+                                        <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
+                                        <textarea name="aciklama" class="form-control" placeholder="{% trans 'Enter Description' %}" required></textarea>
+                                        <div class="invalid-feedback">{% trans 'Please enter an email.' %}</div>
                                     </div>
                                     
                                    
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Fatura No</label>
-                                        <input type="text"  name="fatura_no" id="date-field" class="form-control" placeholder="Fatura No" />
+                                        <label for="date-field" class="form-label">{% trans 'Fatura No' %}</label>
+                                        <input type="text"  name="fatura_no" id="date-field" class="form-control" placeholder="{% trans 'Fatura No' %}" />
                                     </div>
                                     <div class="md-4">
                                         <div class="form-group">
-                                            <label>Dosya Yükle</label>
+                                            <label>{% trans 'Dosya Yükle' %}</label>
                                             <input name="file" type="file" multiple="multiple" class="form-control" />
                                         </div>
                                     </div>
@@ -332,8 +331,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Hakediş Kaydet' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -346,7 +345,7 @@
     <div id="editContractModal{{i.id}}" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('editContractModal{{i.id}}')">&times;</span>
-            <h2>Hakediş Düzenle</h2>
+            <h2>{% trans 'Hakediş Düzenle' %}</h2>
             <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:hakedis_duzenle' %}" method="POST" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
@@ -361,7 +360,7 @@
                                         {% endif %}
     
                                         <div class="mb-3">
-                                        <label for="customername-field" class="form-label">Taşeron</label>
+                                        <label for="customername-field" class="form-label">{% trans 'Taşeron' %}</label>
                                         <select class="form-control" name="taseron" id="date-field">
                                             <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.taseron_adi}}</option>
                                                 {% for j in taseronlar %}
@@ -370,43 +369,43 @@
                                                 
                                                 
                                             </select>
-                                        <div class="invalid-feedback">Lütfen Taşeron Adını Boş Bırakmayınız.</div>
+                                        <div class="invalid-feedback">{% trans 'Lütfen Taşeron Adını Boş Bırakmayınız.' %}</div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Dosya Adı</label>
-                                        <input type="text" value="{{i.dosya_adi}}" name="yetkili_adi" id="date-field" class="form-control" placeholder="Dosya Adı" />
+                                        <label for="date-field" class="form-label">{% trans 'Dosya Adı' %}</label>
+                                        <input type="text" value="{{i.dosya_adi}}" name="yetkili_adi" id="date-field" class="form-control" placeholder="{% trans 'Dosya Adı' %}" />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Tarih</label>
-                                        <input name="tarih_bilgisi" value="{{i.tarih | date:'Y-m-d'}}" type="date" id="date-field" class="form-control" placeholder="Select Date" required />
-                                        <div class="invalid-feedback">Please select a date.</div>
+                                        <label for="date-field" class="form-label">{% trans 'Tarih' %}</label>
+                                        <input name="tarih_bilgisi" value="{{i.tarih | date:'Y-m-d'}}" type="date" id="date-field" class="form-control" placeholder="{% trans 'Select Date' %}" required />
+                                        <div class="invalid-feedback">{% trans 'Please select a date.' %}</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="email-field" class="form-label">Açıklama</label>
-                                        <textarea name="aciklama"  class="form-control" placeholder="Enter Description" required>{{i.aciklama}}</textarea>
-                                        <div class="invalid-feedback">Please enter an email.</div>
+                                        <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
+                                        <textarea name="aciklama"  class="form-control" placeholder="{% trans 'Enter Description' %}" required>{{i.aciklama}}</textarea>
+                                        <div class="invalid-feedback">{% trans 'Please enter an email.' %}</div>
                                     </div>
                                     
                                     
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">Fatura No</label>
-                                        <input type="text"  value="{{i.fatura_numarasi }}" name="fatura_no" id="date-field" class="form-control" placeholder="Fatura No" />
+                                        <label for="date-field" class="form-label">{% trans 'Fatura No' %}</label>
+                                        <input type="text"  value="{{i.fatura_numarasi }}" name="fatura_no" id="date-field" class="form-control" placeholder="{% trans 'Fatura No' %}" />
                                     </div>
                                    <div class="md-4">
                                         <div class="form-group">
-                                            <label>Dosya Yükle</label>
+                                            <label>{% trans 'Dosya Yükle' %}</label>
                                             <input name="file" type="file" multiple="multiple" class="form-control" />
                                         </div>
                                     </div>
                                     {% if request.user.is_superuser %}
                                             <div class="mb-3">
-                                            <label for="date-field" class="form-label">Proje Silinme Durumu</label>
+                                            <label for="date-field" class="form-label">{% trans 'Proje Silinme Durumu' %}</label>
                                             <select name="silinmedurumu"  class="form-control" id="">
-                                                <option value="3">Karışma</option>
-                                                <option value="2">Sil</option>
+                                                <option value="3">{% trans 'Karışma' %}</option>
+                                                <option value="2">{% trans 'Sil' %}</option>
                                                 {% if i.silinme_bilgisi %}
-                                                    <option value="1">Geri Getir</option>
+                                                    <option value="1">{% trans 'Geri Getir' %}</option>
                                                 {% else %}
                                                 {% endif %}
                                                 
@@ -419,8 +418,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Hakedişi Düzenle' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -430,14 +429,14 @@
     <div id="deleteConfirmationModal{{i.id}}" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('deleteConfirmationModal{{i.id}}')">&times;</span>
-            <h2>Hakedişi Sil</h2>
-            <p>Bu hakedişi silmek istediğinizden emin misiniz?</p>
+            <h2>{% trans 'Hakedişi Sil' %}</h2>
+            <p>{% trans 'Bu hakedişi silmek istediğinizden emin misiniz?' %}</p>
             <form autocomplete="off"action="/{{dil}}{% url 'main:hakedis_silme' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
             <div class="modal-footer inline">
-                <button type="submit" class="btn btn-danger" >Evet, Sil</button>
-                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmationModal')">Vazgeç</button>
+                <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmationModal')">{% trans 'Vazgeç' %}</button>
             </div>
             </form>
         </div>
@@ -445,19 +444,19 @@
     <div id="viewContractsModal{{i.id}}" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('viewContractsModal{{i.id}}')">&times;</span>
-            <h2>Yüklü Hakediş Dosyaları</h2>
+            <h2>{% trans 'Yüklü Hakediş Dosyaları' %}</h2>
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Dosya Adı</th>
-                        <th>İndirme</th>
+                        <th>{% trans 'Dosya Adı' %}</th>
+                        <th>{% trans 'İndirme' %}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         {% if i.dosya %}
                             <td><a href="{{i.dosya.url}}" class="btn btn-sm btn-secondary">{% isim i.dosya.name %}</a></td>
-                    <td><a href="{{i.dosya.url}}" download="{{i.dosya.url}}" class="btn btn-sm btn-secondary">İndir</a></td>
+                    <td><a href="{{i.dosya.url}}" download="{{i.dosya.url}}" class="btn btn-sm btn-secondary">{% trans 'İndir' %}</a></td>
                         {% else %}
                         {% endif %}
                     
