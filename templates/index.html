@@ -21,17 +21,17 @@
                                                 <h4 class="fs-16 mb-1">
                                                 {% saat_bilgisi as saat %}
                                                 {% if saat >= 3  and saat < 12 %}
-                                                    Günaydın {% yaziyi_duzelt hash_bilgi.last_name %},
+                                                    {% trans 'Günaydın' %} {% yaziyi_duzelt hash_bilgi.last_name %},
                                                 {% elif saat >= 12 and saat < 17 %}
-                                                    İyi Günler {% yaziyi_duzelt hash_bilgi.last_name %},
+                                                    {% trans 'İyi Günler' %} {% yaziyi_duzelt hash_bilgi.last_name %},
                                                 {% elif saat >= 17 and saat < 21 %}
-                                                    İyi Akşamlar {% yaziyi_duzelt hash_bilgi.last_name %},
+                                                    {% trans 'İyi Akşamlar' %} {% yaziyi_duzelt hash_bilgi.last_name %},
                                                 {% elif saat >= 21  %}
-                                                    İyi Geceler {% yaziyi_duzelt hash_bilgi.last_name %},
+                                                    {% trans 'İyi Geceler' %} {% yaziyi_duzelt hash_bilgi.last_name %},
 
                                                 {% endif %}
                                                 </h4>
-                                                <p class="text-muted mb-0">Şantiyenizin güncel durumunu sizin için özetledim.</p>
+                                                <p class="text-muted mb-0">{% trans 'Şantiyenizin güncel durumunu sizin için özetledim.' %}</p>
                                             </div>
                                             <div class="mt-3 mt-lg-0">
                                                 <form autocomplete="off"action="javascript:void(0);">
@@ -69,7 +69,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            Gelir</p>
+                                                            {% trans 'Gelir' %}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-success fs-14 mb-0">
@@ -83,7 +83,7 @@
                                                     {% gelirler_tutari hash_bilgi as gelir_bilgisi_cek %}
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4"> $<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
                                                         </h4>
-                                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">Gelirleri Görüntüle</a>
+                                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">{% trans 'Gelirleri Görüntüle' %}</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-success-subtle rounded fs-3">
@@ -102,7 +102,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            Gider</p>
+                                                            {% trans 'Gider' %}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-danger fs-14 mb-0">
@@ -115,7 +115,7 @@
                                                     <div>
                                                     {% giderler_tutari hash_bilgi  as gider_bilgisicekeme %}
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
-                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">Giderleri Görüntüle</a>
+                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">{% trans 'Giderleri Görüntüle' %}</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-info-subtle rounded fs-3">
@@ -134,7 +134,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            Borç</p>
+                                                            {% trans 'Borç' %}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-success fs-14 mb-0">
@@ -151,7 +151,7 @@
 
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% mutlak_deger  sonuc_Bilgisi %}">0</span>
                                                         </h4>
-                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc_2' hashler %}" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
+                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc_2' hashler %}" class="text-decoration-underline text-muted">{% trans 'Borçları Görüntüle' %}</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-warning-subtle rounded fs-3">
@@ -170,7 +170,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            Kasa</p>
+                                                            {% trans 'Kasa' %}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         
@@ -216,7 +216,7 @@
                         <div class="col-xl-8">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title mb-0">Gelir ve Giderler</h4>
+                                    <h4 class="card-title mb-0">{% trans 'Gelir ve Giderler' %}</h4>
                                 </div><!-- end card header -->
 
                                 <div class="card-body">
@@ -228,9 +228,9 @@
                         <div class="col-xl-4">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title mb-0">Kategoriye Göre Giderler</h4>
+                                    <h4 class="card-title mb-0">{% trans 'Kategoriye Göre Giderler' %}</h4>
 
-                                    <span>2023 Yılı</span>
+                                    <span>{% trans '2023 Yılı' %}</span>
                                 </div><!-- end card header -->
                                 <div class="card-body">
                                     <div id="simple_dount_chart" data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' class="apex-charts" dir="ltr"></div>
@@ -244,11 +244,11 @@
                         <div class="col-xl-6">
                             <div class="card card-height-100">
                                 <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">Son Faturalar</h4>
+                                    <h4 class="card-title mb-0 flex-grow-1">{% trans 'Son Faturalar' %}</h4>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
                                             <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_2' hashler %}" >
-                                                <span class="text-muted">Gider Faturaları<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                                <span class="text-muted">{% trans 'Gider Faturaları' %}<i class="mdi mdi-chevron-down ms-1"></i></span>
                                             </a>
                                             
                                         </div>
@@ -264,20 +264,20 @@
                                                         <div class="d-flex align-items-center">
 
                                                             <div>
-                                                                <h5 class="fs-13 my-1"> Fatura NO</a>
+                                                                <h5 class="fs-13 my-1"> {% trans 'Fatura NO' %}</a>
                                                                 </h5>
 
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Vade Tarihi</span>
+                                                        <span class="text-muted">{% trans 'Vade Tarihi' %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Fatura Tutar</span>
+                                                        <span class="text-muted">{% trans 'Fatura Tutar' %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Kalan Tutar</span>
+                                                        <span class="text-muted">{% trans 'Kalan Tutar' %}</span>
                                                     </td>
                                                 </tr><!-- end -->
                                             {% for i in  bilgi %}
@@ -324,7 +324,7 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">{{bilgi.count}}</span> fatura.
+                                                {% trans 'Gösterilen' %} <span class="fw-semibold">{{bilgi.count}}</span> {% trans 'fatura' %}.
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
@@ -338,11 +338,11 @@
                         <div class="col-xl-6">
                             <div class="card card-height-100">
                                 <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">Borç Faturaları</h4>
+                                    <h4 class="card-title mb-0 flex-grow-1">{% trans 'Borç Faturaları' %}</h4>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
                                             <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc_2' hashler %}" >
-                                                <span class="text-muted">Gider Faturaları<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                                <span class="text-muted">{% trans 'Gider Faturaları' %}<i class="mdi mdi-chevron-down ms-1"></i></span>
                                             </a>
                                            
                                         </div>
@@ -358,20 +358,20 @@
                                                         <div class="d-flex align-items-center">
 
                                                             <div>
-                                                                <h5 class="fs-13 my-1"> Fatura NO</a>
+                                                                <h5 class="fs-13 my-1"> {% trans 'Fatura NO' %}</a>
                                                                 </h5>
 
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Vade Tarihi</span>
+                                                        <span class="text-muted">{% trans 'Vade Tarihi' %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Fatura Tutar</span>
+                                                        <span class="text-muted">{% trans 'Fatura Tutar' %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Kalan Tutar</span>
+                                                        <span class="text-muted">{% trans 'Kalan Tutar' %}</span>
                                                     </td>
                                                 </tr><!-- end -->
                                                 {% for i in  gider %}
@@ -419,7 +419,7 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">{{ gider.count}}</span> fatura.
+                                                {% trans 'Gösterilen' %} <span class="fw-semibold">{{ gider.count}}</span>{% trans 'fatura.' %} 
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
@@ -481,17 +481,17 @@
                                                 <h4 class="fs-16 mb-1">
                                                 {% saat_bilgisi as saat %}
                                                 {% if saat >= 3  and saat < 12 %}
-                                                    Günaydın {% yaziyi_duzelt request.user.last_name %},
+                                                    {% trans 'Günaydın' %} {% yaziyi_duzelt request.user.last_name %},
                                                 {% elif saat >= 12 and saat < 17 %}
-                                                    İyi Günler {% yaziyi_duzelt request.user.last_name %},
+                                                    {% trans 'İyi Günler' %} {% yaziyi_duzelt request.user.last_name %},
                                                 {% elif saat >= 17 and saat < 21 %}
-                                                    İyi Akşamlar {% yaziyi_duzelt request.user.last_name %},
+                                                    {% trans 'İyi Akşamlar' %} {% yaziyi_duzelt request.user.last_name %},
                                                 {% elif saat >= 21  %}
-                                                    İyi Geceler {% yaziyi_duzelt request.user.last_name %},
+                                                    {% trans 'İyi Geceler' %} {% yaziyi_duzelt request.user.last_name %},
 
                                                 {% endif %}
                                                 </h4>
-                                                <p class="text-muted mb-0">Şantiyenizin güncel durumunu sizin için özetledim.</p>
+                                                <p class="text-muted mb-0">{% trans 'Şantiyenizin güncel durumunu sizin için özetledim.' %}</p>
                                             </div>
                                             <div class="mt-3 mt-lg-0">
                                                 <form autocomplete="off"action="javascript:void(0);">
@@ -529,7 +529,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            Gelir</p>
+                                                            {% trans 'Gelir' %}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-success fs-14 mb-0">
@@ -548,7 +548,7 @@
                                                     
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
                                                         </h4>
-                                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">Gelirleri Görüntüle</a>
+                                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">{% trans 'Gelirleri Görüntüle' %}</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-success-subtle rounded fs-3">
@@ -567,7 +567,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            Gider</p>
+                                                            {% trans 'Gider' %}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-danger fs-14 mb-0">
@@ -585,7 +585,7 @@
                                                     {% endif %}
                                                     
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
-                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">Giderleri Görüntüle</a>
+                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">{% trans 'Giderleri Görüntüle' %}</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-info-subtle rounded fs-3">
@@ -604,7 +604,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            Borç</p>
+                                                            {% trans 'Borç' %}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-success fs-14 mb-0">
@@ -620,7 +620,7 @@
                                                     {% basit_cikarma  gelir_islem_sonucu gider_islem_sonucu as sonuc_Bilgisi  %}
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% mutlak_deger  sonuc_Bilgisi %}">0</span>
                                                         </h4>
-                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}" class="text-decoration-underline text-muted">Borçları Görüntüle</a>
+                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}" class="text-decoration-underline text-muted">{% trans 'Borçları Görüntüle' %}</a>
                                                     </div>
                                                     <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-warning-subtle rounded fs-3">
@@ -639,7 +639,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            Kasa</p>
+                                                            {% trans 'Kasa' %}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
                                                         <h5 class="text-muted fs-14 mb-0">
@@ -678,7 +678,7 @@
                         <div class="col-xl-8">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title mb-0">Gelir ve Giderler</h4>
+                                    <h4 class="card-title mb-0">{% trans 'Gelir ve Giderler' %}</h4>
                                 </div><!-- end card header -->
 
                                 <div class="card-body">
@@ -690,9 +690,9 @@
                         <div class="col-xl-4">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title mb-0">Kategoriye Göre Giderler</h4>
+                                    <h4 class="card-title mb-0">{% trans 'Kategoriye Göre Giderler' %}</h4>
 
-                                    <span>2023 Yılı</span>
+                                    <span>{% trans '2023 Yılı' %}</span>
                                 </div><!-- end card header -->
                                 <div class="card-body">
                                     <div id="simple_dount_chart" data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' class="apex-charts" dir="ltr"></div>
@@ -706,11 +706,11 @@
                         <div class="col-xl-6">
                             <div class="card card-height-100">
                                 <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">Son Faturalar</h4>
+                                    <h4 class="card-title mb-0 flex-grow-1">{% trans 'Son Faturalar' %}</h4>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
                                             <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi'  %}" >
-                                                <span class="text-muted">Gider Faturaları<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                                <span class="text-muted">{% trans 'Gider Faturaları' %}<i class="mdi mdi-chevron-down ms-1"></i></span>
                                             </a>
                                             
                                         </div>
@@ -726,20 +726,20 @@
                                                         <div class="d-flex align-items-center">
 
                                                             <div>
-                                                                <h5 class="fs-13 my-1"> Fatura NO</a>
+                                                                <h5 class="fs-13 my-1"> {% trans 'Fatura NO' %}</a>
                                                                 </h5>
 
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Vade Tarihi</span>
+                                                        <span class="text-muted">{% trans 'Vade Tarihi' %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Fatura Tutar</span>
+                                                        <span class="text-muted">{% trans 'Fatura Tutar' %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Kalan Tutar</span>
+                                                        <span class="text-muted">{% trans 'Kalan Tutar' %}</span>
                                                     </td>
                                                 </tr><!-- end -->
                                             {% for i in  bilgi %}
@@ -786,7 +786,7 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">{{bilgi.count}}</span> fatura.
+                                                {% trans 'Gösterilen' %} <span class="fw-semibold">{{bilgi.count}}</span>{% trans 'fatura.' %} 
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
@@ -800,11 +800,11 @@
                         <div class="col-xl-6">
                             <div class="card card-height-100">
                                 <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">Borç Faturaları</h4>
+                                    <h4 class="card-title mb-0 flex-grow-1">{% trans 'Borç Faturaları' %}</h4>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
                                             <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}" >
-                                                <span class="text-muted">Gider Faturaları<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                                <span class="text-muted">{% trans 'Gider Faturaları' %}<i class="mdi mdi-chevron-down ms-1"></i></span>
                                             </a>
                                             
                                         </div>
@@ -820,20 +820,20 @@
                                                         <div class="d-flex align-items-center">
 
                                                             <div>
-                                                                <h5 class="fs-13 my-1"> Fatura NO</a>
+                                                                <h5 class="fs-13 my-1"> {% trans 'Fatura NO' %}</a>
                                                                 </h5>
 
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Vade Tarihi</span>
+                                                        <span class="text-muted">{% trans 'Vade Tarihi' %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Fatura Tutar</span>
+                                                        <span class="text-muted">{% trans 'Fatura Tutar' %}</span>
                                                     </td>
                                                     <td>
-                                                        <span class="text-muted">Kalan Tutar</span>
+                                                        <span class="text-muted">{% trans 'Kalan Tutar' %}</span>
                                                     </td>
                                                 </tr><!-- end -->
                                                 {% for i in  gider %}
@@ -881,7 +881,7 @@
                                     <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
                                         <div class="col-sm">
                                             <div class="text-muted">
-                                                Gösterilen <span class="fw-semibold">{{gider.count}}</span> fatura.
+                                                {% trans 'Gösterilen' %} <span class="fw-semibold">{{gider.count}}</span> {% trans 'fatura.' %}
                                             </div>
                                         </div>
                                         <div class="col-sm-auto  mt-3 mt-sm-0">
