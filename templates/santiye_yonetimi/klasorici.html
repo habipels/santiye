@@ -226,14 +226,19 @@
                                                 
                                                 </td>
                                                 <td class="date">
-                                                    {% mb_donusturme i.dosya.size %} MB
+                                                {% if i.dosya %}
+                                                {% mb_donusturme i.dosya.size %} {% trans 'MB' %}
+                                                {% else %}
+                                                0 {% trans 'MB' %}
+                                                {% endif %}
+                                                    
                                                 
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-start">
                                                         
                                                         <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">Remove</button>
+                                                            <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">{% trans 'Dosyayı Sil' %}</button>
                                                         </div>
                                                        
                                                     </div>
@@ -411,7 +416,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0">
                     <div class="modal-header p-3 bg-success-subtle">
-                        <h5 class="modal-title" id="createFolderModalLabel">Dosya Ekle</h5>
+                        <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Dosya Ekle' %}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -419,40 +424,40 @@
                             {% csrf_token %}
                             <div class="modal-body">
                                 <div class="mb-3" id="modal-id" style="display: none;">
-                                    <label for="id-field" class="form-label">ID</label>
-                                    <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
-                                    <input type="text" id="id-field"  name="ust_klasor" hidden value="{{id_bilgisi}}" class="form-control" placeholder="ID" readonly />
+                                    <label for="id-field" class="form-label">{% trans 'ID' %}</label>
+                                    <input type="text" id="id-field" class="form-control" placeholder="{% trans 'ID' %}" readonly />
+                                    <input type="text" id="id-field"  name="ust_klasor" hidden value="{{id_bilgisi}}" class="form-control" placeholder="{% trans 'ID' %}" readonly />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="date-field"  class="form-label">Dosya Adı</label>
-                                    <input type="tel" name="klasor" required id="date-field" class="form-control" placeholder="Dosya Adı"  />
-                                    <div class="invalid-feedback">Lütfen telefon alanını boş bırakmayınız.</div>
+                                    <label for="date-field"  class="form-label">{% trans 'Dosya Adı' %}</label>
+                                    <input type="tel" name="klasor" required id="date-field" class="form-control" placeholder="{% trans 'Dosya Adı' %}"  />
+                                    <div class="invalid-feedback">{% trans 'Lütfen telefon alanını boş bırakmayınız.' %}</div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="email-field" class="form-label">Tarih</label>
-                                    <input type="date" required name="tarih" class="form-control" placeholder="E-Posta giriniz" >
-                                    <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
+                                    <label for="email-field" class="form-label">{% trans 'Tarih' %}</label>
+                                    <input type="date" required name="tarih" class="form-control" placeholder="{% trans 'Tarih' %}" >
+                                    <div class="invalid-feedback">{% trans 'Lütfen Tarihi alanını boş bırakmayınız' %}.</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="email-field" class="form-label">Açıklama</label>
-                                    <textarea name="aciklama" required class="form-control" placeholder="Enter Description" ></textarea>
-                                    <div class="invalid-feedback">Please enter an email.</div>
+                                    <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
+                                    <textarea name="aciklama" required class="form-control" placeholder="{% trans 'Enter Description' %}" ></textarea>
+                                    <div class="invalid-feedback">{% trans 'Please enter an Description.' %}</div>
                                 </div>
                                 
                                 
                            <div class="md-4">
                     <div class="form-group">
-                        <label>Dosya Yükle</label>
+                        <label>{% trans 'Dosya Yükle' %}</label>
                         <input required name="file" type="file" class="form-control" />
                     </div>
                 </div>
                             </div>
                             <div class="modal-footer">
                                 <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                    <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Dosya Ekle' %}</button>
                                     <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                 </div>
                             </div>
@@ -467,21 +472,21 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0">
                         <div class="modal-header p-3 bg-success-subtle">
-                            <h5 class="modal-title" id="createFolderModalLabel">Klasör Oluştur</h5>
+                            <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Klasör Oluştur' %}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
                                  {% csrf_token %}
                                 <div class="mb-4">
-                                    <label for="foldername-input"  class="form-label">Klasör Adı</label>
-                                    <input type="text" name="klasor" required class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
-                                    <div class="invalid-feedback">Please enter a folder name.</div>
+                                    <label for="foldername-input"  class="form-label">{% trans 'Klasör Adı' %}</label>
+                                    <input type="text" name="klasor" required class="form-control" id="foldername-input" required placeholder="{% trans 'Klasör Adı Giriniz' %}">
+                                    <div class="invalid-feedback">{% trans 'Please enter a folder name.' %}</div>
                                     <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
                                 </div>
                                 <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> İptal</button>
-                                    <button type="submit" class="btn btn-primary" id="addNewFolder">Klasör Oluştur</button>
+                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> {% trans 'İptal' %}</button>
+                                    <button type="submit" class="btn btn-primary" id="addNewFolder">{% trans 'Klasör Oluştur' %}</button>
                                 </div>
                             </form>
                         </div>
@@ -495,21 +500,21 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0">
                         <div class="modal-header p-3 bg-success-subtle">
-                            <h5 class="modal-title" id="createFolderModalLabel">Klasör Oluştur</h5>
+                            <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Klasör Düzenle' %}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
                                  {% csrf_token %}
                                 <div class="mb-4">
-                                    <label for="foldername-input" class="form-label">Klasör Adı</label>
-                                    <input type="text" value="{{i.klasor_adi}}" required name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
-                                    <div class="invalid-feedback">Please enter a folder name.</div>
+                                    <label for="foldername-input" class="form-label">{% trans 'Klasör Adı' %}</label>
+                                    <input type="text" value="{{i.klasor_adi}}" required name="klasor" class="form-control" id="foldername-input" required placeholder="{% trans 'Klasör Adı Giriniz' %}">
+                                    <div class="invalid-feedback">{% trans 'Please enter a folder name.' %}</div>
                                     <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
                                 </div>
                                 <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> İptal</button>
-                                    <button type="submit" class="btn btn-primary" id="addNewFolder">Klasör Oluştur</button>
+                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i>{% trans 'İptal' %}</button>
+                                    <button type="submit" class="btn btn-primary" id="addNewFolder">{% trans 'Klasör Düzenle' %}</button>
                                 </div>
                             </form>
                         </div>
@@ -519,30 +524,7 @@
             <!-- END CREATE FOLDER MODAL -->
             {% endfor %}
             <!-- START CREATE FILE MODAL -->
-            <div class="modal fade zoomIn" id="createFileModal" tabindex="-1" aria-labelledby="createFileModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-0">
-                        <div class="modal-header p-3 bg-success-subtle">
-                            <h5 class="modal-title" id="createFileModalLabel">Create File</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFileBtn-close" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form autocomplete="off"autocomplete="off" class="needs-validation createfile-form" id="createfile-form" novalidate>
-                                <div class="mb-4">
-                                    <label for="filename-input" class="form-label">File Name</label>
-                                    <input type="text" class="form-control" required id="filename-input" value="" required placeholder="Enter file name" />
-                                    <div class="invalid-feedback">Please enter a file name.</div>
-                                    <input type="hidden" class="form-control" id="fileid-input" value="" placeholder="Enter file name">
-                                </div>
-                                <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> Close</button>
-                                    <button type="submit" class="btn btn-primary" id="addNewFile">Create</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          
             <!-- END CREATE FILE MODAL -->
 
             <!-- removeFileItemModal -->
@@ -563,13 +545,13 @@
                             <div class="mt-2 text-center">
                                 <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                 <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>Are you sure ?</h4>
-                                    <p class="text-muted mx-4 mb-0">Are you sure you want to remove this item ?</p>
+                                    <h4>{% trans 'Emin Misiniz ?' %}</h4>
+                                    <p class="text-muted mx-4 mb-0">{% trans 'Klasörü Silmek İstediğinizden Emin Misiniz ?' %}</p>
                                 </div>
                             </div>
                             <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
                             </div>
                         </form>
                         </div>
@@ -595,13 +577,13 @@
                             <div class="mt-2 text-center">
                                 <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                 <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>Are you sure ?</h4>
-                                    <p class="text-muted mx-4 mb-0">Are you sure you want to remove this item ?</p>
+                                    <h4>{% trans 'Emin Misiniz ?' %}</h4>
+                                    <p class="text-muted mx-4 mb-0">{% trans 'Dosyayı Silmek İStediğinizden Emin Misiniz ? ' %}</p>
                                 </div>
                             </div>
                             <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
                             </div>
                         </form>
                         </div>
