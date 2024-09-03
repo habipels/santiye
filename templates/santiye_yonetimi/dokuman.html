@@ -14,45 +14,43 @@
                         <div class="file-manager-sidebar">
                             <div class="p-3 d-flex flex-column h-100">
                                 <div class="mb-3">
-                                    <h5 class="mb-0 fw-bold">Benim Depolama Alanım</h5>
+                                    <h5 class="mb-0 fw-bold">{% trans 'Benim Depolama Alanım' %}</h5>
                                 </div>
                                 <div class="search-box">
-                                    <input type="text" class="form-control bg-light border-light" placeholder="Search here...">
+                                    <input type="text" class="form-control bg-light border-light" placeholder="{% trans 'Search here...' %}">
                                     <i class="ri-search-2-line search-icon"></i>
                                 </div>
                                 <div class="mt-3 mx-n4 px-4 file-menu-sidebar-scroll" data-simplebar>
                                     <ul class="list-unstyled file-manager-menu">
                                         <li>
                                             <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true" aria-controls="collapseExample">
-                                                <i class="ri-folder-2-line align-bottom me-2"></i> <span class="file-list-link">Şantiye Klasörlerim</span>
+                                                <i class="ri-folder-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Şantiye Klasörlerim' %}</span>
                                             </a>
                                             <div class="collapse show" id="collapseExample">
                                                 <ul class="sub-menu list-unstyled">
                                                     <li>
-                                                        <a href="/{{dil}}{% url 'main:sozlesmler_depolamam' %}">Sözleşme Dosyaları</a>
+                                                        <a href="/{{dil}}{% url 'main:sozlesmler_depolamam' %}">{% trans 'Sözleşme Dosyaları' %}</a>
                                                     </li>
                                                     <li>
-                                                        <a href="/{{dil}}{% url 'main:hakedis_depolamam' %}">Hakediş Dosyaları</a>
+                                                        <a href="/{{dil}}{% url 'main:hakedis_depolamam' %}">{% trans 'Hakediş Dosyaları' %}</a>
                                                     </li>
                                                     <li>
-                                                        <a href="#!">Personel Dosyaları</a>
+                                                        <a href="#!">{% trans 'Personel Dosyaları' %}</a>
                                                     </li>
                                                     <li>
-                                                        <a href="#!">Proje Dosyaları</a>
+                                                        <a href="#!">{% trans 'Proje Dosyaları' %}</a>
                                                     </li>
-                                                    <li>
-                                                        <a href="#!">İş Planı Dosyaları</a>
-                                                    </li>
+                                                    
                                                 </ul>
                                             </div>
                                         </li>
                                         <li>
-                                            <a href="/{{dil}}{% url 'main:dokumanlar' %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">Dökümanlarım</span></a>
+                                            <a href="/{{dil}}{% url 'main:dokumanlar' %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Dökümanlarım' %}</span></a>
                                         </li>
                                         <li>
-                                            <a href="/{{dil}}{% url 'main:media_dosyalari' %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">Media Dosyalarım</span></a>
+                                            <a href="/{{dil}}{% url 'main:media_dosyalari' %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Media Dosyalarım' %}</span></a>
                                         <li>
-                                            <a href="/{{dil}}{% url 'main:zamana_dosyalari' %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">Geçmiş</span></a>
+                                            <a href="/{{dil}}{% url 'main:zamana_dosyalari' %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Geçmiş' %}</span></a>
                                         </li>
                                         </li>
                                         <li>
@@ -63,7 +61,7 @@
 
 
                                 <div class="mt-auto">
-                                    <h6 class="fs-11 text-muted text-uppercase mb-3">Storage Status</h6>
+                                    <h6 class="fs-11 text-muted text-uppercase mb-3">{% trans 'Depolama Durumu' %}</h6>
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
                                             <i class="ri-database-2-line fs-17"></i>
@@ -123,11 +121,11 @@
                                                         <input class="form-check-input" type="checkbox" id="checkAll" value="option">
                                                     </div>
                                                 </th>
-                                                <th class="sort" data-sort="customer_name">Klasör Adı</th>
-                                                <th class="sort" data-sort="email">Dosya Adı</th>
-                                                <th class="sort" data-sort="date">Açıklama</th>
-                                                <th class="sort" data-sort="phone">Yüklenme Tarihi</th>
-                                                <th class="sort" data-sort="date">Boyutu</th>
+                                                <th class="sort" data-sort="customer_name">{% trans 'Klasör Adı' %}</th>
+                                                <th class="sort" data-sort="email">{% trans 'Dosya Adı' %}</th>
+                                                <th class="sort" data-sort="date">{% trans 'Açıklama' %}</th>
+                                                <th class="sort" data-sort="phone">{% trans 'Yüklenme Tarihi' %}</th>
+                                                <th class="sort" data-sort="date">{% trans 'Boyutu' %}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
@@ -162,14 +160,14 @@
                                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                             {% if yetki.dosya_yoneticisi_duzenleme %}
                                                                    <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#geri_getir{{i.id}}">Geri Getir</button>
+                                                            <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#geri_getir{{i.id}}">{% trans 'Geri Getir' %}</button>
                                                         </div>                                                 
                                                             {% else %}
                                                                                                                             
                                                             {% endif %}
                                                             {% else %}
                                                                      <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#geri_getir{{i.id}}">Geri Getir</button>
+                                                            <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#geri_getir{{i.id}}">{% trans 'Geri Getir' %}</button>
                                                         </div>                                               
                                                             {% endif %}
                                                         
@@ -178,14 +176,14 @@
                                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                             {% if yetki.dosya_yoneticisi_silme %}
                                                                        <div class="remove" style="margin-left:10px;">
-                                                                    <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">Remove</button>
+                                                                    <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">{% trans 'Dosyayı Sil' %}</button>
                                                                 </div>                                             
                                                             {% else %}
                                                                                                                             
                                                             {% endif %}
                                                             {% else %}
                                                                    <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">Remove</button>
+                                                            <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">{% trans 'Dosyayı Sil' %}</button>
                                                         </div>                                                 
                                                             {% endif %}
                                                           
@@ -202,7 +200,7 @@
                                         <ul class="pagination pagination-m justify-content-center">
 
                                             {% if medya.has_previous %}
-                                              <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                              <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
                                             
                                               {% if medya.number > 3 %}
                                             
@@ -229,7 +227,7 @@
                                                 <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                               {% endif %}
                                             
-                                              <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                              <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
                                             {% endif %}
                                             </ul>
                                     </div>
@@ -384,7 +382,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0">
                     <div class="modal-header p-3 bg-success-subtle">
-                        <h5 class="modal-title" id="createFolderModalLabel">Dosya Ekle</h5>
+                        <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Dosya Ekle' %}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -392,26 +390,26 @@
                             {% csrf_token %}
                             <div class="modal-body">
                                 <div class="mb-3" id="modal-id" style="display: none;">
-                                    <label for="id-field" class="form-label">ID</label>
-                                    <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
-                                    <input type="text" id="id-field"  name="ust_klasor" hidden value="{{id_bilgisi}}" class="form-control" placeholder="ID" readonly />
+                                    <label for="id-field" class="form-label">{% trans 'ID' %}</label>
+                                    <input type="text" id="id-field" class="form-control" placeholder="{% trans 'ID' %}" readonly />
+                                    <input type="text" id="id-field"  name="ust_klasor" hidden value="{{id_bilgisi}}" class="form-control" placeholder="{% trans 'ID' %}" readonly />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="date-field" class="form-label">Dosya Adı</label>
-                                    <input type="tel" name="klasor" id="date-field" class="form-control" placeholder="Dosya Adı"  />
-                                    <div class="invalid-feedback">Lütfen telefon alanını boş bırakmayınız.</div>
+                                    <label for="date-field" class="form-label">{% trans 'Dosya Adı' %}</label>
+                                    <input type="tel" name="klasor" id="date-field" class="form-control" placeholder="{% trans 'Dosya Adı' %}"  />
+                                    <div class="invalid-feedback">{% trans 'Lütfen telefon alanını boş bırakmayınız.' %}</div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="email-field" class="form-label">Tarih</label>
-                                    <input type="date" name="tarih" class="form-control" placeholder="E-Posta giriniz" ></input>
-                                    <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
+                                    <label for="email-field" class="form-label">{% trans 'Tarih' %}</label>
+                                    <input type="date" name="tarih" class="form-control" placeholder="{% trans 'Tarih' %}" >
+                                    <div class="invalid-feedback">{% trans 'Lütfen eposta alanını boş bırakmayınız.' %}</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="email-field" class="form-label">Açıklama</label>
-                                    <textarea name="aciklama" class="form-control" placeholder="Enter Description" ></textarea>
-                                    <div class="invalid-feedback">Please enter an email.</div>
+                                    <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
+                                    <textarea name="aciklama" class="form-control" placeholder="{% trans 'Açıklama' %}" ></textarea>
+                                    <div class="invalid-feedback">{% trans 'Lütfen Açıklama Giriniz' %}</div>
                                 </div>
                                 
                                 
@@ -419,11 +417,11 @@
                                     <div class="col-lg-12">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h4 class="card-title mb-0">Sözleşmeleri Yükle</h4>
+                                                <h4 class="card-title mb-0">{% trans 'Sözleşmeleri Yükle' %}</h4>
                                             </div><!-- end card header -->
                                         
                                             <div class="card-body">
-                                                <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
+                                                <p class="text-muted">{% trans 'Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.' %}</p>
                                             
                                                 <div class="dropzone">
                                                     <div class="fallback">
@@ -434,7 +432,7 @@
                                                             <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
                                                         </div>
                                                     
-                                                        <h4>Drop files here or click to upload.</h4>
+                                                        <h4>{% trans 'Drop files here or click to upload.' %}</h4>
                                                     </div>
                                                 </div>
                                             
@@ -456,7 +454,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="flex-shrink-0 ms-3">
-                                                                    <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
+                                                                    <button data-dz-remove class="btn btn-sm btn-danger">{% trans 'Delete' %}</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -472,8 +470,8 @@
                             </div>
                             <div class="modal-footer">
                                 <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                    <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Dosyayı Ekle' %}</button>
                                     <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                 </div>
                             </div>
@@ -488,21 +486,21 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0">
                         <div class="modal-header p-3 bg-success-subtle">
-                            <h5 class="modal-title" id="createFolderModalLabel">Klasör Oluştur</h5>
+                            <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Klasör Oluştur' %}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
                                  {% csrf_token %}
                                 <div class="mb-4">
-                                    <label for="foldername-input" class="form-label">Klasör Adı</label>
-                                    <input type="text" name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
-                                    <div class="invalid-feedback">Please enter a folder name.</div>
+                                    <label for="foldername-input" class="form-label">{% trans 'Klasör Adı' %}</label>
+                                    <input type="text" name="klasor" class="form-control" id="foldername-input" required placeholder="{% trans 'Klasör Adı Giriniz' %}">
+                                    <div class="invalid-feedback">{% trans 'Please enter a folder name.' %}</div>
                                     <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
                                 </div>
                                 <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> İptal</button>
-                                    <button type="submit" class="btn btn-primary" id="addNewFolder">Klasör Oluştur</button>
+                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> {% trans 'İptal' %}</button>
+                                    <button type="submit" class="btn btn-primary" id="addNewFolder">{% trans 'Klasör Oluştur' %}</button>
                                 </div>
                             </form>
                         </div>
@@ -516,21 +514,21 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0">
                         <div class="modal-header p-3 bg-success-subtle">
-                            <h5 class="modal-title" id="createFolderModalLabel">Klasör Oluştur</h5>
+                            <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Klasör Oluştur' %}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
                                  {% csrf_token %}
                                 <div class="mb-4">
-                                    <label for="foldername-input" class="form-label">Klasör Adı</label>
-                                    <input type="text" value="{{i.klasor_adi}}" name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
-                                    <div class="invalid-feedback">Please enter a folder name.</div>
+                                    <label for="foldername-input" class="form-label">{% trans 'Klasör Adı' %}</label>
+                                    <input type="text" value="{{i.klasor_adi}}" name="klasor" class="form-control" id="foldername-input" required placeholder="{% trans 'Klasör Adı Giriniz' %}">
+                                    <div class="invalid-feedback">{% trans 'Please enter a folder name.' %}</div>
                                     <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
                                 </div>
                                 <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> İptal</button>
-                                    <button type="submit" class="btn btn-primary" id="addNewFolder">Klasör Oluştur</button>
+                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> {% trans 'İptal' %}</button>
+                                    <button type="submit" class="btn btn-primary" id="addNewFolder">{% trans 'Klasör Oluştur' %}</button>
                                 </div>
                             </form>
                         </div>
@@ -584,13 +582,13 @@
                             <div class="mt-2 text-center">
                                 <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                 <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>Are you sure ?</h4>
-                                    <p class="text-muted mx-4 mb-0">Are you sure you want to remove this item ?</p>
+                                    <h4>{% trans 'Emin Misin ? ' %}</h4>
+                                    <p class="text-muted mx-4 mb-0">{% trans 'Klasörü Silmek İstediğinizden Emin Misiniz ?' %}</p>
                                 </div>
                             </div>
                             <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
                             </div>
                         </form>
                         </div>
@@ -616,13 +614,13 @@
                             <div class="mt-2 text-center">
                                 <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                 <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>Are you sure ?</h4>
-                                    <p class="text-muted mx-4 mb-0">Are you sure you want to remove this item ?</p>
+                                    <h4>{% trans 'Emin Misiniz?' %}</h4>
+                                    <p class="text-muted mx-4 mb-0">{% trans 'Dosyayı Silmek İstediğinizden Emin Misiniz ?' %}</p>
                                 </div>
                             </div>
                             <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
                             </div>
                         </form>
                         </div>
@@ -647,13 +645,13 @@
                             <div class="mt-2 text-center">
                                 <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                 <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>Are you sure ?</h4>
-                                    <p class="text-muted mx-4 mb-0">Dosyamı Geri Yükle ?</p>
+                                    <h4>{% trans 'Dosyayı Geri Getirmek İstediğinizden Emin Misiniz?' %}</h4>
+                                    <p class="text-muted mx-4 mb-0">{% trans 'Dosyamı Geri Yükle ?' %}</p>
                                 </div>
                             </div>
                             <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn w-sm btn-success" id="remove-fileitem">Yes, Delete It!</button>
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                <button type="submit" class="btn w-sm btn-success" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
                             </div>
                         </form>
                         </div>
