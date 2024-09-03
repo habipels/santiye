@@ -9,11 +9,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">İlerleme Takibi</h4>
+                            <h4 class="mb-sm-0">{% trans 'İlerleme Takibi' %}</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">İlerleme Takibi</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                                    <li class="breadcrumb-item active">{% trans 'İlerleme Takibi' %}</li>
                                 </ol>
                             </div>
                         </div>
@@ -25,8 +25,8 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">İlerleme Takibi</h4>
-                                <h5><b>Blog : </b> {{id.blog_adi}}</h5>
+                                <h4 class="card-title mb-0">{% trans 'İlerleme Takibi' %}</h4>
+                                <h5><b>{% trans 'Blok' %} : </b> {{id.blog_adi}}</h5>
                             </div><!-- end card header -->
                         <form autocomplete="off"action="/{{dil}}{% url 'main:ilerleme_kaydet' %}" method="post">
                             {% csrf_token %}
@@ -42,28 +42,28 @@
                                         <div class="d-flex justify-content-sm-start">
                                             {% toplam_kalem_orani_toplami santiyeler as bilgi  %}
                                                         <div class="back-button-container">
-                                                            <span>Fiziksel Ağırlık : {{bilgi.a}}</span>
+                                                            <span>{% trans 'Fiziksel Ağırlık :' %} {{bilgi.a}}</span>
                                                 </div>
                                                 <div class="search-box ms-2">
-                                                    <span>Finansal Ağırlık : {{bilgi.b}}</span>
+                                                    <span>{% trans 'Finansal Ağırlık :' %} {{bilgi.b}}</span>
                                                 </div>
                                             </div>
                                             <div class="d-flex justify-content-sm-end">
                                                         <div class="back-button-container">
-                                                    <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" type="button" class="btn btn-info btn-animation waves-effect waves-light"  data-text="Geri"><span>Geri</span></a>
+                                                    <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" type="button" class="btn btn-info btn-animation waves-effect waves-light"  data-text="Geri"><span>{% trans 'Geri' %}</span></a>
                                                 </div>
                                                 {% if request.user.kullanicilar_db %}
                                                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                 {% if yetki.ilerleme_takibi_duzenleme %}
                                                        <div class="search-box ms-2">
-                                                    <button type="submit" class="btn btn-success btn-label waves-effect waves-light"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Kaydet</button>
+                                                    <button type="submit" class="btn btn-success btn-label waves-effect waves-light"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i>{% trans 'Kaydet' %} </button>
                                                 </div>                                                 
                                                 {% else %}
                                                                                                                 
                                                 {% endif %}
                                                 {% else %}
                                                       <div class="search-box ms-2">
-                                                    <button type="submit" class="btn btn-success btn-label waves-effect waves-light"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> Kaydet</button>
+                                                    <button type="submit" class="btn btn-success btn-label waves-effect waves-light"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> {% trans 'Kaydet' %}</button>
                                                 </div>                                                  
                                                 {% endif %}
                                                 
@@ -80,11 +80,11 @@
                                                         </div>
                                                     </th>
                                                     <th class="text-uppercase&quot;" data-sort="mission_name">
-                                                        Görev Adı</th>
+                                                        {% trans 'Görev Adı' %}</th>
                                                     <th class="text-uppercase&quot;" data-sort="mission_name">
-                                                        Fiziksel Ağırlığı</th>
+                                                        {% trans 'Fiziksel Ağırlığı' %}</th>
                                                     <th class="text-uppercase&quot;" data-sort="mission_name">
-                                                        Finansal Ağırlığı</th>
+                                                        {% trans 'Finansal Ağırlığı' %}</th>
 
 
 
@@ -127,7 +127,7 @@
                                             <ul class="pagination pagination-m justify-content-center">
 
                                                 {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
 
                                                   {% if medya.number > 3 %}
 
@@ -154,7 +154,7 @@
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
 
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
                                                 {% endif %}
                                                 </ul>
                                         </div>
