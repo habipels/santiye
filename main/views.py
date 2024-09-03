@@ -4893,4 +4893,4 @@ def gelirleri_excelden_ekle(request,id):
 
 def sayfa_denemeleri(request):
     content = sozluk_yapisi()
-    return render(request,"account/xxanasayfa.html",content)
+    return render(request,"xxpuantaj.html",content)
