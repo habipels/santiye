@@ -9,176 +9,334 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
-from pathlib import Path
-import os
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(c@9=wl&3=c#nm@=5#hn$#dpw5zqm0vvmojfcr!d7%&7&ofz2n'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["*"]
+DEPLOY__ = 0
+if DEPLOY__:
+    from pathlib import Path
+    import os
+    # Build paths inside the project like this: BASE_DIR / 'subdir'.
+    BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Application definition
+    # Quick-start development settings - unsuitable for production
+    # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # Add our new application
-      #rosetta çeviri için
-    'rosetta',
-    'simple_history',
-    'rest_framework',
-    'rest_framework.authtoken',
-    #
-    'main',
-    'users',
-    "site_settings",
-    "muhasebe",
-    "site_info",
-]
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
-AUTH_USER_MODEL = 'users.CustomUser'
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = '(c@9=wl&3=c#nm@=5#hn$#dpw5zqm0vvmojfcr!d7%&7&ofz2n'
 
-MIDDLEWARE = [
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
 
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    #
-    'django.middleware.locale.LocaleMiddleware',
-    'simple_history.middleware.HistoryRequestMiddleware',
-    
-    #
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'users.middleware.LockScreenMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+    ALLOWED_HOSTS = ["*"]
 
-ROOT_URLCONF = 'djang_website.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,"templates")],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-            'libraries': {
-            'custom_tags': 'main.templatetags.custom_tags',
+    # Application definition
+
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        # Add our new application
+        #rosetta çeviri için
+        'rosetta',
+        'simple_history',
+        'rest_framework',
+        'rest_framework.authtoken',
+        #
+        'main',
+        'users',
+        "site_settings",
+        "muhasebe",
+        "site_info",
+    ]
+    DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
+    AUTH_USER_MODEL = 'users.CustomUser'
+
+    MIDDLEWARE = [
+
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        #
+        'django.middleware.locale.LocaleMiddleware',
+        'simple_history.middleware.HistoryRequestMiddleware',
+        
+        #
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        #'users.middleware.LockScreenMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    ]
+
+    ROOT_URLCONF = 'djang_website.urls'
+
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [os.path.join(BASE_DIR,"templates")],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                ],
+                'libraries': {
+                'custom_tags': 'main.templatetags.custom_tags',
+                },
             },
+
         },
+    ]
 
-    },
-]
-
-WSGI_APPLICATION = 'djang_website.wsgi.application'
+    WSGI_APPLICATION = 'djang_website.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+    # Database
+    # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-}
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000','http://127.0.0.1:8000',]
-CSRF_COOKIE_SECURE = False
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.TokenAuthentication',
+        ),
+    }
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:8000','http://127.0.0.1:8000',]
+    CSRF_COOKIE_SECURE = False
 
-# Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+    # Password validation
+    # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+    AUTH_PASSWORD_VALIDATORS = [
+        {
+            'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        },
+    ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
+    # Internationalization
+    # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+    LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+    TIME_ZONE = 'UTC'
 
-USE_I18N = True
+    USE_I18N = True
 
-USE_L10N = True
+    USE_L10N = True
 
-USE_TZ = True
+    USE_TZ = True
 
-from django.utils.translation import gettext_lazy as _
-LANGUAGES = (
-  ('en', _('English')),
-    ('de', _('Deutsche')),
-    ('tr', _('Turkish')),
-    ('es', _('Spanish')),
-    ('it', _('Italian')),
-    ('ru', _('Russian')),
-      # 'zh' dil kodu Çince için standart olarak kullanılır
-    ('fr', _('French')),
-    ('ar', _('Arabic')),
-    #('ku', _('Kurdish')),
-    #('fr', _('Kurdish')),
+    from django.utils.translation import gettext_lazy as _
+    LANGUAGES = (
+    ('en', _('English')),
+        ('de', _('Deutsche')),
+        ('tr', _('Turkish')),
+        ('es', _('Spanish')),
+        ('it', _('Italian')),
+        ('ru', _('Russian')),
+        # 'zh' dil kodu Çince için standart olarak kullanılır
+        ('fr', _('French')),
+        ('ar', _('Arabic')),
+        #('ku', _('Kurdish')),
+        #('fr', _('Kurdish')),
 
-)
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'locale/'),
-)
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
+    )
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/3.1/howto/static-files/
+    LOCALE_PATHS = (
+        os.path.join(BASE_DIR, 'locale/'),
+    )
+    STATIC_URL = 'static/'
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+    STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
+    # BASE_DIR bir üst dizini referans alır
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-MEDIA_URL = ''
-MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+    # MEDIA_ROOT'u BASE_DIR'in bir üst dizininde 'uploads' klasörü olarak ayarlar
+    MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'uploads')
+
+    # MEDIA_URL'yi tanımlarsınız, örneğin:
+    MEDIA_URL = '/uploads/'
+else:
+    from pathlib import Path
+    import os
+    # Build paths inside the project like this: BASE_DIR / 'subdir'.
+    BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+    # Quick-start development settings - unsuitable for production
+    # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
+
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = '(c@9=wl&3=c#nm@=5#hn$#dpw5zqm0vvmojfcr!d7%&7&ofz2n'
+
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
+
+    ALLOWED_HOSTS = ["*"]
+
+
+    # Application definition
+
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        # Add our new application
+        #rosetta çeviri için
+        'rosetta',
+        'simple_history',
+        'rest_framework',
+        'rest_framework.authtoken',
+        #
+        'main',
+        'users',
+        "site_settings",
+        "muhasebe",
+        "site_info",
+    ]
+    DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
+    AUTH_USER_MODEL = 'users.CustomUser'
+
+    MIDDLEWARE = [
+
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        #
+        'django.middleware.locale.LocaleMiddleware',
+        'simple_history.middleware.HistoryRequestMiddleware',
+        
+        #
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        #'users.middleware.LockScreenMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    ]
+
+    ROOT_URLCONF = 'djang_website.urls'
+
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [os.path.join(BASE_DIR,"templates")],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                ],
+                'libraries': {
+                'custom_tags': 'main.templatetags.custom_tags',
+                },
+            },
+
+        },
+    ]
+
+    WSGI_APPLICATION = 'djang_website.wsgi.application'
+
+
+    # Database
+    # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.TokenAuthentication',
+        ),
+    }
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:8000','http://127.0.0.1:8000',]
+    CSRF_COOKIE_SECURE = False
+
+    # Password validation
+    # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+
+    AUTH_PASSWORD_VALIDATORS = [
+        {
+            'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        },
+    ]
+
+
+    # Internationalization
+    # https://docs.djangoproject.com/en/3.1/topics/i18n/
+
+    LANGUAGE_CODE = 'en-us'
+
+    TIME_ZONE = 'UTC'
+
+    USE_I18N = True
+
+    USE_L10N = True
+
+    USE_TZ = True
+
+    from django.utils.translation import gettext_lazy as _
+    LANGUAGES = (
+    ('en', _('English')),
+        ('de', _('Deutsche')),
+        ('tr', _('Turkish')),
+        ('es', _('Spanish')),
+        ('it', _('Italian')),
+        ('ru', _('Russian')),
+        # 'zh' dil kodu Çince için standart olarak kullanılır
+        ('fr', _('French')),
+        ('ar', _('Arabic')),
+        #('ku', _('Kurdish')),
+        #('fr', _('Kurdish')),
+
+    )
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/3.1/howto/static-files/
+    LOCALE_PATHS = (
+        os.path.join(BASE_DIR, 'locale/'),
+    )
+    STATIC_URL = 'static/'
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+    STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
+
+    MEDIA_URL = ''
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 #Sunucuda Güncelleme Atarken Dosyaların Kabolmasını Sağlar
-"""
-# BASE_DIR bir üst dizini referans alır
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# MEDIA_ROOT'u BASE_DIR'in bir üst dizininde 'uploads' klasörü olarak ayarlar
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'uploads')
-
-# MEDIA_URL'yi tanımlarsınız, örneğin:
-MEDIA_URL = '/uploads/'
-"""

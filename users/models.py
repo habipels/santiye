@@ -217,8 +217,15 @@ class bagli_kullanicilar(models.Model):
 
 from datetime import datetime
 from simple_history.models import HistoricalRecords
+class calisanlar_kategorisi(models.Model):
+    kategori_kime_ait = models.ForeignKey(CustomUser,verbose_name="Çalışan Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    kategori_isimi = models.CharField(max_length= 200 ,verbose_name="Çalışan Kategori İsmi")
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class calisanlar(models.Model):
     calisan_kime_ait = models.ForeignKey(CustomUser,verbose_name="Çalışan Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    calisan_kategori = models.ForeignKey(calisanlar_kategorisi,verbose_name="Çalışan Kategorisi",blank=True,null=True,on_delete=models.SET_NULL)
     isim = models.CharField(max_length=200,null=True,verbose_name="İsim",blank = True)
     soyisim = models.CharField(max_length=200,null=True,verbose_name="Soyisim",blank = True)
     maas = models.FloatField(verbose_name="Maaş",default=0,blank=True,null=True)
@@ -230,18 +237,18 @@ class calisanlar(models.Model):
     durum = models.BooleanField(default=False) #False Maaşlı , True İse Puantaja Ait 
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
-class calisanlar_kategorisi(models.Model):
-    kategori_kime_ait = models.ForeignKey(CustomUser,verbose_name="Çalışan Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
-    kategori_isimi = models.CharField(max_length= 200 ,verbose_name="Çalışan Kategori İsmi")
-    silinme_bilgisi = models.BooleanField(default=False)
+from django.utils import timezone
+class calisanlar_calismalari(models.Model):
+    mesai_orani = (
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+    )
+    calisan = models.ForeignKey(calisanlar,verbose_name="işlem Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    normal_calisma_saati = models.FloatField(verbose_name="Normal Çalışma Saati",default=0,blank=True,null=True)
+    mesai_calisma_saati = models.FloatField(verbose_name="Mesai Çalışma Saati",default=0,blank=True,null=True)
+    tarihi = models.DateTimeField(null=True,verbose_name="Çalışma Tarihi",blank = True)
+    guncelleme_tarihi = models.DateTimeField("Date modified", default=timezone.now)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
-class calisanlar_kategorisi_baglama(models.Model):
-    #models.ForeignKey(CustomUser,verbose_name="Çalışan Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
-    kategori = models.CharField(max_length= 200 ,verbose_name="Çalışan Kategori İsmi")
-    silinme_bilgisi = models.BooleanField(default=False)
-    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
-    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
