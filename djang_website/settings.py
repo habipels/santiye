@@ -24,11 +24,16 @@ if DEPLOY__:
     SECRET_KEY = '(c@9=wl&3=c#nm@=5#hn$#dpw5zqm0vvmojfcr!d7%&7&ofz2n'
 
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = True
+    DEBUG = False
 
     ALLOWED_HOSTS = ["*"]
 
 
+    CSRF_TRUSTED_ORIGINS = [
+        'https://cloud.biadago.com',
+        'http://cloud.biadago.com'
+    ]
+    # Application definition
     # Application definition
 
     INSTALLED_APPS = [
@@ -100,10 +105,17 @@ if DEPLOY__:
     # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'biadagov',
+        'USER': 'biadagov',
+        'PASSWORD': 'bjDykdA5F24nWiJW',
+        'HOST': 'localhost',
+        'PORT': '887',
+        'OPTIONS': {
+            'unix_socket': '/tmp/mysql.sock',
+        },
+    }
     }
 
     REST_FRAMEWORK = {
