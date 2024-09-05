@@ -35,6 +35,7 @@ class faturalardaki_gelir_gider_etiketi_ozel(models.Model):
     gelir_etiketi = models.CharField(max_length=10,verbose_name  ="Gelir Etiketi",blank = True,null=True)
     gider_etiketi = models.CharField(max_length=10,verbose_name  ="Gider Etiketi",blank = True,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
 class LockScreenStatus(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     is_locked = models.BooleanField(default=False)

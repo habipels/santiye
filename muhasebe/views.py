@@ -3525,7 +3525,7 @@ def fatura_goster(request,id):
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
         urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
 
-
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/gelir_faturasi_goster.html",content)
@@ -3545,7 +3545,7 @@ def fatura_goster2(request,id):
         etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
         urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
-
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/gider_faturasi_goster.html",content)
@@ -3766,7 +3766,7 @@ def fatura_gosterqr(request,id):
     else:
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
         urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
-
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/faturalari_goster_gelir.html",content)
@@ -3782,7 +3782,7 @@ def fatura_goster2qr(request,id):
 
         gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
         urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
-
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/faturalari_goster_gider.html",content)

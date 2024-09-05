@@ -283,3 +283,22 @@ def parola_degistime(request):
         else:
             messages.success(request, 'Parolanız Uyuşmuyor')
     return redirect("users:logout")
+
+
+
+def personeller_sayfasi(request):
+    pass
+def personeller_ekle(request):
+    pass
+def personeller_sil(request):
+    pass
+def personelleri_düzenle(request):
+    pass
+
+#
+def personeller_kategori_ekle(request):
+    pass
+def personeller_kategori_sil(request):
+    pass
+def personelleri_kategori_düzenle(request):
+    pass

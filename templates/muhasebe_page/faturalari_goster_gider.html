@@ -2,9 +2,6 @@
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
-{% block header %}
-
-{% endblock header %}
 {% block slider %}
 <div class="main-content">
     <div class="page-content">
@@ -16,7 +13,8 @@
                         <h4 class="mb-sm-0">{% trans 'FATURA DETAYI' %}</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                            
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Gider faturaları' %}</a></li>
+                                <li class="breadcrumb-item active">{% trans 'Fatura detayı' %}</li>
                             </ol>
                         </div>
                     </div>
@@ -26,11 +24,11 @@
 
             <div class="container">
                 <div class="header row align-items-center">
-                    <div class="col-md-6 firma-bilgileri text-left">
+                    <div class="col-md-10 firma-bilgileri text-left">
                      <div>
-    {% if bilgi.gelir_kime_ait_oldugu.image %}
-    <img src="{{bilgi.gelir_kime_ait_oldugu.image.url}}" class="card-logo card-logo-dark" alt="logo dark" height="100">
-    <img src="{{bilgi.gelir_kime_ait_oldugu.image.url}}" class="card-logo card-logo-light" alt="logo light" height="100">
+    {% if logosu.gelir_makbuzu %}
+    <img src="{{logosu.gelir_makbuzu.url}}" class="card-logo card-logo-dark" alt="logo dark" style="max-width: 140px; width: auto;" >
+    <img src="{{logosu.gelir_makbuzu.url}}" class="card-logo card-logo-light" alt="logo light" style="max-width: 140px; width: auto;" >
     {% endif %}
         <h4 class="mb-1">{{ site_adi }}</h4>
         <p class="mb-1">Barbaros Mh. Deluxia Palace Kat:6 No:181 Ataşehir İSTANBUL</p>
@@ -39,10 +37,8 @@
     </div>
 </div>
 
-                    <div class="col-md-6 text-right">
-                        {% if bilgi.gelir_kime_ait_oldugu.image %}
-                        <img src="{{bilgi.gelir_kime_ait_oldugu.image.url}}" alt="Firma Logosu" class="logo">
-                        {% endif %}
+                    <div class="col-md-2 text-right">
+                        <img src="{% gider_qr_cek bilgi.id %}" alt="QR Kod" class="qr-code">
                     </div>
                 </div>
 
@@ -93,7 +89,7 @@
                         <p>{{bilgi.aciklama}}</p>
                     </div>
                     <div class="col-md-4 text-center">
-                        <img src="{% gider_qr_cek bilgi.id %}" alt="QR Kod" class="qr-code">
+                        
                     </div>
                     <div class="col-md-4 text-right">
                         <table class="table">
@@ -193,7 +189,7 @@
         width: 100%;
     }
     .table thead th {
-        background-color: #013744;
+        background-color: #052941;
         color: #fff;
     }
     .qr-code {
