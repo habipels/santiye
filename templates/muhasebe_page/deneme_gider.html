@@ -4,7 +4,73 @@
 {% load custom_tags %}
 {% load static %}
 {% block slider %}
-
+<style>/* SearchBuilder'ın daha düzgün ve estetik görünümü */
+    .dataTables_wrapper .searchBuilderContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        position: relative;
+    }
+    
+    .dataTables_wrapper .searchBuilderContainer .dt-buttons {
+        margin-left: 10px;
+    }
+    
+    .dataTables_wrapper .searchBuilderContainer .searchBuilder {
+        flex-grow: 1;
+    }
+    
+    .dataTables_wrapper .searchBuilderContainer .dt-buttons {
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+    }
+    
+    /* Temizle butonunun SearchBuilder'ın yanına yerleşimi */
+    .dataTables_wrapper .searchBuilderContainer .searchBuilder-clearAll {
+        margin-left: 10px;
+    }
+    
+    /* Modal düzenlemeleri */
+    .modal-content {
+        border-radius: 5px;
+    }
+    
+    .modal-header {
+        background-color: #343a40;
+        color: white;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    /* DataTables tablolarının genel düzenlemeleri */
+    table.dataTable {
+        width: 100% !important;
+        margin: 0 auto;
+        clear: both;
+        border-collapse: separate !important;
+        border-spacing: 0 10px !important;
+    }
+    
+    table.dataTable thead th {
+        background-color: #003643;
+        color: white;
+        text-align: center;
+    }
+    
+    table.dataTable tbody td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    </style>
 <!-- ============================================================== -->
     <div class="main-content">
         <div class="page-content">
@@ -125,138 +191,31 @@
 <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
     <i class="ri-arrow-up-line"></i>
 </button>
-<!--end back-to-top-->
+<link href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css" rel="stylesheet" type="text/css" />
+<link href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.css" rel="stylesheet" type="text/css" />
+<link href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css" rel="stylesheet" type="text/css" />
 
-<!-- jQuery ve jQuery UI -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/searchBuilder.dataTables.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.3/js/dataTables.dateTime.min.js"></script>
+<!-- DataTables Buttons JS -->
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+<!-- DataTables SearchBuilder ve DateTime CSS -->
+<link href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.min.css" rel="stylesheet" type="text/css" />
+<link href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css" rel="stylesheet" type="text/css" />
 <!-- DataTables CSS -->
 <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 
 <!-- DataTables Buttons CSS -->
 <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
-
-<!-- DataTables SearchBuilder ve DateTime CSS -->
-<link href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.min.css" rel="stylesheet" type="text/css" />
-<link href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css" rel="stylesheet" type="text/css" />
-
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-
-<!-- DataTables Buttons JS -->
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
-
 <!-- Export işlemleri için JSZip ve pdfmake -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-
-<!-- DataTables SearchBuilder ve DateTime JS -->
-<script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.min.js"></script>
-<script src="https://cdn.datatables.net/datetime/1.5.3/js/dataTables.dateTime.min.js"></script>
-
-<!-- Basit ve küçük kaydırma çubuğu -->
-<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
-
-<!-- Dalgalanma efekti -->
-<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
-
-<!-- Feather simgeleri -->
-<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
-
-<!-- Lord ikon -->
-<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-
-<!-- Genel eklentiler -->
-<script src="{% static 'assets/js/plugins.js' %}"></script>
-
-<!-- Özel script dosyanız -->
-<script src="{% static 'assets/js/custom.js' %}"></script>
-
-<!-- Liste.js ve sayfalama -->
-<script src="{% static 'assets/libs/list.js/list.min.js' %}"></script>
-<script src="{% static 'assets/libs/list.pagination.js/list.pagination.min.js' %}"></script>
-
-<!-- SweetAlert eklentisi -->
-<script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
-
-<!-- Ana uygulama scripti -->
-<script src="{% static 'assets/js/app.js' %}"></script>
-
-<script>
- 
-</script>
-<style>/* SearchBuilder'ın daha düzgün ve estetik görünümü */
-.dataTables_wrapper .searchBuilderContainer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-    position: relative;
-}
-
-.dataTables_wrapper .searchBuilderContainer .dt-buttons {
-    margin-left: 10px;
-}
-
-.dataTables_wrapper .searchBuilderContainer .searchBuilder {
-    flex-grow: 1;
-}
-
-.dataTables_wrapper .searchBuilderContainer .dt-buttons {
-    display: flex;
-    justify-content: flex-end;
-    margin-left: auto;
-}
-
-/* Temizle butonunun SearchBuilder'ın yanına yerleşimi */
-.dataTables_wrapper .searchBuilderContainer .searchBuilder-clearAll {
-    margin-left: 10px;
-}
-
-/* Modal düzenlemeleri */
-.modal-content {
-    border-radius: 5px;
-}
-
-.modal-header {
-    background-color: #343a40;
-    color: white;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-/* DataTables tablolarının genel düzenlemeleri */
-table.dataTable {
-    width: 100% !important;
-    margin: 0 auto;
-    clear: both;
-    border-collapse: separate !important;
-    border-spacing: 0 10px !important;
-}
-
-table.dataTable thead th {
-    background-color: #003643;
-    color: white;
-    text-align: center;
-}
-
-table.dataTable tbody td {
-    text-align: center;
-    vertical-align: middle;
-}
-
-</style>
-
 <script>
 $(document).ready(function () {
     var table = $('#example').DataTable({
@@ -283,6 +242,73 @@ $(document).ready(function () {
             { data: 'kalan_tutar' },
             { data: 'durum' }
         ],
+        language: { 
+            searchBuilder: {
+                add: '{% trans "search builder add" %}',
+                clearAll: '{% trans "search builder clearAll" %}',
+                condition: '{% trans "search builder condition" %}',
+                data: '{% trans "search builder data" %}',
+                deleteTitle: '{% trans "search builder deleteTitle" %}',
+                logicAnd: '{% trans "search builder logicAnd" %}',
+                logicOr: '{% trans "search builder logicOr" %}',
+                title: {
+                    _: '{% trans "search builder Filtreler (%d)" %}',
+                    0: '{% trans "search builder Filtreler" %}'
+                },
+                value: '{% trans "search builder Değer" %}',
+                column: '{% trans "search builder column" %}',
+                condition: '{% trans "search builder condition" %}',
+                operator: '{% trans "search builder operator" %}',
+                conditions: {
+                    // Örnek koşullar, ihtiyacınıza göre düzenleyebilirsiniz
+                    string: {
+                        contains: '{% trans "search builder contains" %}',
+                        not: '{% trans "search builder not" %}',
+                        empty: '{% trans "search builder empty" %}',
+                        equals: '{% trans "search builder equals" %}',
+                        notEquals: '{% trans "search builder notEquals" %}',
+                        startsWith: '{% trans "search builder startswith" %}',
+                        doesNotStartWith: '{% trans "search builder doesnotstartwith" %}',
+                        doesNotContrain: '{% trans "search builder doesnotcontrain" %}',
+                        endsWith: '{% trans "search builder endswith" %}',
+                        doesNotEndWith: '{% trans "search builder doesnotendwith" %}',
+                        notEmpty: '{% trans "search builder notempty" %}'
+                        
+                    },
+                    date: {
+                        before: '{% trans "search builder before" %}',
+                        after: '{% trans "search builder after" %}',
+                        between: '{% trans "search builder between" %}',
+                        empty: '{% trans "search builder empty" %}',
+                        equals: '{% trans "search builder equals" %}',
+                        notBetween: '{% trans "search builder notBetween" %}'
+                    },
+                    number: {
+                        lessThan: '{% trans "search builder lessThan" %}',
+                        lessThanEqual: '{% trans "search builder lessThanEqual" %}',
+                        greaterThan: '{% trans "search builder greaterThan" %}',
+                        greaterThanEqual: '{% trans "search builder greaterThanEqual" %}',
+                        between: '{% trans "search builder between" %}',
+                        empty: '{% trans "search builder empty" %}',
+                        equals: '{% trans "search builder equals" %}',
+                        notBetween: '{% trans "search builder notBetween" %}'
+                    },
+                    array: {
+                        contains: '{% trans "search builder contains" %}',
+                        not: '{% trans "search builder not" %}',
+                        empty: '{% trans "search builder empty" %}',
+                        equals: '{% trans "search builder equals" %}',
+                        notEquals: '{% trans "search builder notEquals" %}',
+                        startsWith: '{% trans "search builder startswith" %}',
+                        doesNotStartWith: '{% trans "search builder doesnotstartwith" %}',
+                        doesNotContrain: '{% trans "search builder doesnotcontrain" %}',
+                        endsWith: '{% trans "search builder endswith" %}',
+                        doesNotEndWith: '{% trans "search builder doesnotendwith" %}',
+                        notEmpty: '{% trans "search builder notempty" %}'
+                    }
+                }
+            }
+        },
         dom: '<"row align-items-center"' +
                 '<"col-sm-3 d-flex gap-2"B>' +  // Butonlar
                 '<"col-sm-4"Q>' +              // Custom Search
@@ -291,8 +317,8 @@ $(document).ready(function () {
              '>' +
              'rt' +
              '<"row"<"col-sm-5"i><"col-sm-7"p>>',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print',
+          buttons: [
+            '{% trans "copy" %}', '{% trans "csv" %}', '{% trans "excel" %}', '{% trans "pdf" %}', '{% trans "print" %}',
             {
                 text: '{% trans "Fatura Ekle" %}',
                 className: 'btn btn-danger',
@@ -301,73 +327,7 @@ $(document).ready(function () {
                 }
             }
         ],
-        searchBuilder: {
-    conditions: {
-        string: {
-            contains: 'İçerir',
-            empty: 'Boş',
-            equals: 'Eşittir',
-            not: 'Eşit Değildir',
-            notEmpty: 'Boş Değil',
-            startsWith: 'Başlar',
-            endsWith: 'Biter'
-        },
-        number: {
-            between: 'Arasında',
-            empty: 'Boş',
-            equals: 'Eşittir',
-            gt: 'Büyüktür',
-            gte: 'Büyük veya Eşittir',
-            lt: 'Küçüktür',
-            lte: 'Küçük veya Eşittir',
-            not: 'Eşit Değildir',
-            notBetween: 'Arasında Değildir',
-            notEmpty: 'Boş Değil'
-        },
-        date: {
-            after: 'Sonra',
-            before: 'Önce',
-            between: 'Arasında',
-            equals: 'Eşittir',
-            not: 'Eşit Değildir',
-            notBetween: 'Arasında Değildir',
-            notEmpty: 'Boş Değil'
-        }
-            },
-            language: {
-                title: 'Gelişmiş Filtreleme',
-                add: 'Filtre Ekle',
-                condition: 'Koşul',
-                data: 'Veri',
-                deleteTitle: 'Filtreyi Sil',
-                logicAnd: 've',
-                logicOr: 'veya',
-                value: 'Değer',
-                button: {
-                    add: 'Koşul Ekle',
-                    clearAll: 'Tümünü Temizle',
-                    delete: 'Sil'
-                }
-            },
-            width: '300px',
-            background: '#f8f9fa'
-        },
-        language: {
-            search: "Tabloda Ara:",
-            paginate: {
-                first: "İlk",
-                last: "Son",
-                next: "Sonraki",
-                previous: "Önceki"
-            },
-            lengthMenu: "Her sayfada _MENU_ kayıt göster",
-            info: "Toplam _TOTAL_ kayıttan _START_ ile _END_ arasındaki kayıtlar gösteriliyor",
-            infoEmpty: "Gösterilecek kayıt yok",
-            zeroRecords: "Eşleşen kayıt bulunamadı",
-            infoFiltered: "(toplam _MAX_ kayıt içinden filtrelendi)",
-            loadingRecords: "Yükleniyor...",
-            processing: "İşleniyor..."
-        }
+        
     });
 });
 
