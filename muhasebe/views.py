@@ -3297,16 +3297,22 @@ def muhasebe_ayarlari(request):
             if a:
                 if a.izinler.muhasabe_ayarlari_gorme:
                     b = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = request.user.kullanicilar_db).last()
+                    bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = request.user.kullanicilar_db).last()
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
     else:
+        bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = request.user).last()
         b = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = request.user).last()
     if b : 
         content["fatura_icerigi"] = b
     else:
         content["fatura_icerigi"] = "0"
+    if bilgi : 
+        content["faturalar_bilgisi"] = bilgi
+    else:
+        content["faturalar_bilgisi"] = "0"
     if request.POST:
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -3322,6 +3328,12 @@ def muhasebe_ayarlari(request):
         dark_logo = request.FILES.get("dark_logo")
         gideretiketi = request.POST.get("gideretiketi")
         gelir_etiketi = request.POST.get("gelir_etiketi")
+        adres_bilgisi = request.POST.get("adres")
+        emailadresi = request.POST.get("emailadresi")
+        telefonadresi = request.POST.get("telefonadresi")
+        faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = kullanici).delete()
+        faturalar_icin_bilgiler.objects.create(gelir_kime_ait_oldugu  = kullanici,
+        adress = adres_bilgisi,email =emailadresi,telefon = telefonadresi )
         if dark_logo:
             faturalar_icin_logo.objects.create(gelir_makbuzu = dark_logo
             ,gelir_kime_ait_oldugu  = kullanici
@@ -3414,14 +3426,25 @@ def muhasebe_ayarlari_2(request,hash):
     users = get_object_or_404(CustomUser,id = d)
     content["hash_bilgi"] = users
     b = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = users).last()
+    bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = users).last()
     if b : 
         content["fatura_icerigi"] = b
     else:
         content["fatura_icerigi"] = "0"
+    if bilgi : 
+        content["faturalar_bilgisi"] = bilgi
+    else:
+        content["faturalar_bilgisi"] = "0"
     if request.POST:
         dark_logo = request.FILES.get("dark_logo")
         gideretiketi = request.POST.get("gideretiketi")
         gelir_etiketi = request.POST.get("gelir_etiketi")
+        adres_bilgisi = request.POST.get("adres")
+        emailadresi = request.POST.get("emailadresi")
+        telefonadresi = request.POST.get("telefonadresi")
+        faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = users).delete()
+        faturalar_icin_bilgiler.objects.create(gelir_kime_ait_oldugu  = users,
+        adress = adres_bilgisi,email =emailadresi,telefon = telefonadresi )
         if dark_logo:
             faturalar_icin_logo.objects.create(gelir_makbuzu = dark_logo
             ,gelir_kime_ait_oldugu  = users
@@ -3524,7 +3547,7 @@ def fatura_goster(request,id):
         etiketler = gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
         urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
-
+    content["fatura_bilgi"] = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
@@ -3545,6 +3568,7 @@ def fatura_goster2(request,id):
         etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
         urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
+    content["fatura_bilgi"] = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
@@ -3766,6 +3790,7 @@ def fatura_gosterqr(request,id):
     else:
         gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
         urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
+    content["fatura_bilgi"] = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
@@ -3782,6 +3807,7 @@ def fatura_goster2qr(request,id):
 
         gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
         urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
+    content["fatura_bilgi"] = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri

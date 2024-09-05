@@ -168,6 +168,15 @@ class faturalar_icin_logo(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+class faturalar_icin_bilgiler(models.Model):
+    gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    adress = models.CharField(max_length=200,verbose_name="Faturadaki Adress",blank=True , null= True)
+    email = models.EmailField(max_length=200,verbose_name="Email",blank=True,null=True)
+    telefon = models.CharField(max_length=20 ,verbose_name="Telefon" , blank=True,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 import qrcode
 from io import BytesIO
 from django.core.files import File

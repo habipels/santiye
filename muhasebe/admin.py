@@ -22,6 +22,7 @@ admin.site.register(gelir_qr)
 admin.site.register(gider_qr)
 admin.site.register(Gelir_excel_ekleme)
 admin.site.register(Gider_excel_ekleme)
+admin.site.register(faturalar_icin_bilgiler)
 @admin.register(cari)
 class CariAdmin(SimpleHistoryAdmin):
     pass
