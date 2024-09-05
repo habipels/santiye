@@ -69,7 +69,9 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            {% indirim_toplam_fonksiyonu 0 0 as indirim_topla %}
                                 {% for i in urunler %}
+                                {% indirim_toplam_fonksiyonu  indirim_topla i.indirim  as indirim_topla %}
                                 <tr>
                                     <td>{{ i.urun_bilgisi.urun_adi }}</td>
                                     <td>{{ i.urun_adeti }}</td>
@@ -85,8 +87,8 @@
 
                 <div class="row mt-5">
                     <div class="col-md-4">
-                        <h4>Fatura Açıklaması</h4>
-                        <p>Detaylar buraya yazılacak.</p>
+                        <h4>{% trans 'Fatura Açıklaması' %}</h4>
+                        <p>{{bilgi.aciklama}}</p>
                     </div>
                     <div class="col-md-4 text-center">
                         <img src="{% gider_qr_cek bilgi.id %}" alt="QR Kod" class="qr-code">
@@ -100,7 +102,7 @@
                                 </tr>
                                 <tr>
                                     <th>{% trans 'İndirim' %}</th>
-                                    <td class="text-right">$10</td>
+                                    <td class="text-right">${{indirim_topla}}</td>
                                 </tr>
                                 <tr>
                                     <th>{% trans 'Toplam' %}</th>

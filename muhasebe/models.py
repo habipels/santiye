@@ -5,6 +5,7 @@ from simple_history.models import HistoricalRecords
 from django.conf import settings
 from django.db import models
 from simple_history.models import HistoricalRecords
+from django.contrib.sites.shortcuts import get_current_site
 # Create your models here.
 class cari (models.Model):
     cari_kart_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Cari Kartın Kime Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)

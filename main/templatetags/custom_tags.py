@@ -1067,7 +1067,16 @@ def kulanici_yetkileri_goster(kullanici):
         return a.izinler
     else: 
         return 0
+@register.simple_tag
+def indirim_toplam_fonksiyonu(a=0, b=0):
+    try:
+        a = float(a) if a not in ("", None) else 0
+        b = float(b) if b not in ("", None) else 0
+    except ValueError:
+        a = 0
+        b = 0
 
+    return a + b
 @register.simple_tag
 def kulanici_yetkileri_kullandirt(kullanici,ust_kullanici):
     a = get_object_or_none(bagli_kullanicilar,kullanicilar = kullanici,izinler__izinlerin_sahibi_kullanici = ust_kullanici)

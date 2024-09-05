@@ -1,4 +1,3 @@
-
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load custom_tags %}
@@ -8,195 +7,121 @@
 {% endblock header %}
 {% block slider %}
 <div class="main-content">
-
     <div class="page-content">
         <div class="container-fluid">
-
-
-
-            <div class="row justify-content-start">
-                <div class="col-xxl-9">
-                    <div class="card" id="demo">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="card-header border-bottom-dashed p-4">
-                                    <div class="d-flex">
-                                        <div class="flex-grow-1">
-                                            {% if bilgi.gelir_kime_ait_oldugu.image %}
-                                            <img src="{{bilgi.gelir_kime_ait_oldugu.image.url}}" class="card-logo card-logo-dark" alt="logo dark" height="100">
-                                            <img src="{{bilgi.gelir_kime_ait_oldugu.image.url}}" class="card-logo card-logo-light" alt="logo light" height="100">
-                                            {% endif %}<div class="mt-sm-5 mt-4">
-                                          <div class="card-body p-4 border-top border-top-dashed">
-                                    <div class="row g-3">
-                                        <div class="col-6">
-                                            <h6 class="text-muted text-uppercase fw-semibold mb-3">{% trans "Billing Address" %}</h6>
-                                            <p class="fw-medium mb-2" id="billing-name">{{bilgi.gelir_kime_ait_oldugu.first_name}}</p>
-                                            <p class="text-muted mb-1" id="billing-address-line-1">{{bilgi.gelir_kime_ait_oldugu.adrrsi}}</p>
-                                            <p class="text-muted mb-1"><span>{% trans "Phone" %}: </span><span id="billing-phone-no">{{bilgi.gelir_kime_ait_oldugu.telefon_numarasi}}</span></p>
-
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-6">
-                                            <h6 class="text-muted text-uppercase fw-semibold mb-3">{% trans "Shipping Address" %}</h6>
-
-
-
-                                            <p class="fw-medium mb-2" id="shipping-name">{{bilgi.cari_bilgisi.cari_adi}}</p>
-                                            <p class="text-muted mb-1" id="shipping-address-line-1">{{bilgi.cari_bilgisi.aciklama}}</p>
-                                            <p class="text-muted mb-1"><span>{% trans "Phone" %}: </span><span id="shipping-phone-no">{{bilgi.cari_bilgisi.telefon_numarasi}}</span></p>
-
-                                        </div>
-                                        <!--end col-->
-                                    </div>
-                                    <!--end row-->
-                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0 mt-sm-0 mt-3">
-                                            <img src="{%  gelir_qr_cek bilgi.id %}"  alt="logo dark" height="100">
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--end card-header-->
-                            </div><!--end col-->
-                            <div class="col-lg-12">
-                                <div class="card-body p-4">
-                                    <div class="row g-3">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-muted mb-2 text-uppercase fw-semibold">{% trans "Invoice No" %}</p>
-                                            <h5 class="fs-14 mb-0"><span id="invoice-no">{{bilgi.fatura_no}}</span></h5>
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-muted mb-2 text-uppercase fw-semibold">{% trans "Date" %}</p>
-                                            <h5 class="fs-14 mb-0"><span id="invoice-date">{{bilgi.fatura_tarihi | date:'d.m.Y'}}</span> </h5>
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-muted mb-2 text-uppercase fw-semibold">{% trans "Payment Status" %}</p>
-                                            {% if i.silinme_bilgisi %}
-                                                    <td class="cancel"><span>{% trans "İPTAL" %}</span></td>
-                                                    {% else %}
-                                                   {% toplam_tutar_cikarma bilgi as tutar %}
-                                                    {% toplam_odenme_tutar bilgi as odeme %}
-                                                    {% if  odeme == tutar %}
-                                                        <span class="badge bg-success-subtle text-success fs-11" id="payment-status">{% trans "ÖDENDİ" %}</span>
-                                                    {% elif odeme > 0 %}
-                                                    <span class="badge bg-warning-subtle text-warning fs-11" id="payment-status">{% trans "PARÇALI ÖDENDİ" %}</span>
-                                                    {% elif odeme == 0 %}
-                                                    <span class="badge bg-danger-subtle text-danger fs-11" id="payment-status">{% trans "ÖDENMEDİ" %}</span>
-                                                    {% endif %}
-                                                     {% endif %}
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-muted mb-2 text-uppercase fw-semibold">{% trans "Total Amount" %}</p>
-                                            <h5 class="fs-14 mb-0">$<span id="total-amount">{% toplam_tutar_cikarma bilgi %}</span></h5>
-                                        </div>
-                                        <!--end col-->
-                                    </div>
-                                    <!--end row-->
-                                </div>
-                                <!--end card-body-->
-                            </div><!--end col-->
-
-                            <div class="col-lg-12">
-                                <div class="card-body p-4">
-                                    <div class="table-responsive">
-                                        <table class="table table-borderless text-center table-nowrap align-middle mb-0">
-                                            <thead>
-                                                <tr class="table-active">
-
-                                                    <th scope="col">{% trans "Ürün" %}</th>
-                                                    <th scope="col">{% trans "Açıklama" %}</th>
-                                                    <th scope="col">{% trans "Fiyat" %}</th>
-                                                    <th scope="col">{% trans "Adet" %}</th>
-                                                    <th scope="col" class="text-end">{% trans "Tutar" %}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="products-list">
-                                             {% for i in urunler %}
-                                                <tr>
-
-                                                    <td class="text-start">
-                                                        <span class="fw-medium">{{i.urun_bilgisi.urun_adi}}</span>
-                                                        <p class="text-muted mb-0"></p>
-                                                    </td>
-                                                    {% if i.aciklama %}
-                                                    <td class="text-start">
-                                                        <span class="fw-medium">{{i.aciklama}}</span>
-                                                        <p class="text-muted mb-0"></p>
-                                                    </td>
-                                                    {% else %}
-                                                    <td class="text-start">
-                                                        <span class="fw-medium"></span>
-                                                        <p class="text-muted mb-0"></p>
-                                                    </td>
-                                                    {% endif %}
-
-                                                    <td>${{i.urun_fiyati|stringformat:'.2f'}}</td>
-                                                    <td>{{i.urun_adeti}}</td>
-                                                    <td class="text-end">${%  carpma_islemi i.urun_adeti i.urun_fiyati %}</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table><!--end table-->
-                                    </div>
-                                    <div class="border-top border-top-dashed mt-2">
-                                        <table class="table table-borderless table-nowrap align-middle mb-0 ms-auto" style="width:250px">
-                                            <tbody>
-                                                <tr>
-                                                    <td>{% trans "Sub Total" %}</td>
-                                                    <td class="text-end">${% toplama_yaptirma urunler %}</td>
-                                                </tr>
-
-                                                <tr class="border-top border-top-dashed fs-15">
-                                                    <th scope="row">{% trans "Total Amount" %}</th>
-                                                    <th class="text-end">${% toplama_yaptirma urunler %}</th>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <!--end table-->
-                                    </div>
-                                    <!--
-                                    <div class="mt-3">
-                                        <h6 class="text-muted text-uppercase fw-semibold mb-3">Payment Details:</h6>
-                                        <p class="text-muted mb-1">Payment Method: <span class="fw-medium" id="payment-method">Mastercard</span></p>
-                                        <p class="text-muted mb-1">Card Holder: <span class="fw-medium" id="card-holder-name">David Nichols</span></p>
-                                        <p class="text-muted mb-1">Card Number: <span class="fw-medium" id="card-number">xxx xxxx xxxx 1234</span></p>
-                                        <p class="text-muted">Total Amount: <span class="fw-medium" id="">$ </span><span id="card-total-amount">755.96</span></p>
-                                    </div>
-                                    <div class="mt-4">
-                                        <div class="alert alert-info">
-                                            <p class="mb-0"><span class="fw-semibold">NOTES:</span>
-                                                <span id="note">All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or
-                                                    credit card or direct payment online. If account is not paid within 7
-                                                    days the credits details supplied as confirmation of work undertaken
-                                                    will be charged the agreed quoted fee noted above.
-                                                </span>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    -->
-                                    <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                                        <a href="javascript:window.print()" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> {% trans "Print" %}</a>
-                                       <!-- <a href="javascript:void(0);" class="btn btn-primary"><i class="ri-download-2-line align-bottom me-1"></i> Download</a>
-                                    end card-body--></div>
-                                </div>
-                                <!--end card-body-->
-                            </div><!--end col-->
-                        </div><!--end row-->
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">{% trans 'FATURA DETAYI' %}</h4>
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                
+                            </ol>
+                        </div>
                     </div>
-                    <!--end card-->
                 </div>
-                <!--end col-->
             </div>
-            <!--end row-->
+            <!-- end page title -->
 
-        </div><!-- container-fluid -->
-    </div><!-- End Page-content -->
+            <div class="container">
+                <div class="header row align-items-center">
+                    <div class="col-md-6 firma-bilgileri text-left">
+                     <div>
+    {% if bilgi.gelir_kime_ait_oldugu.image %}
+    <img src="{{bilgi.gelir_kime_ait_oldugu.image.url}}" class="card-logo card-logo-dark" alt="logo dark" height="100">
+    <img src="{{bilgi.gelir_kime_ait_oldugu.image.url}}" class="card-logo card-logo-light" alt="logo light" height="100">
+    {% endif %}
+        <h4 class="mb-1">{{ site_adi }}</h4>
+        <p class="mb-1">Barbaros Mh. Deluxia Palace Kat:6 No:181 Ataşehir İSTANBUL</p>
+        <p class="mb-1">Email: info@biadagroup.com</p>
+        <p>Telefon: +90 216 606 6490</p>
+    </div>
+</div>
+
+                    <div class="col-md-6 text-right">
+                        {% if bilgi.gelir_kime_ait_oldugu.image %}
+                        <img src="{{bilgi.gelir_kime_ait_oldugu.image.url}}" alt="Firma Logosu" class="logo">
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="fatura-bilgileri row mt-4">
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-between">
+                            <div class="cari-adi">{% trans 'Cari Adı' %}: {{ bilgi.cari_bilgisi.cari_adi }}</div>
+                            <div class="fatura-info">
+                                <div class="fatura-no">{% trans 'Fatura No' %}: {{ bilgi.fatura_no }}</div>
+                                <div class="fatura-tarih">{% trans 'Fatura Tarihi' %}: {{ bilgi.fatura_tarihi | date:'d.m.Y' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="invoice-content row mt-4">
+                    <div class="col-12">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Ürün' %}</th>
+                                    <th>{% trans 'Adet' %}</th>
+                                    <th>{% trans 'Fiyat' %}</th>
+                                    <th>{% trans 'İndirim' %}</th>
+                                    <th class="text-right">{% trans 'Tutar' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% indirim_toplam_fonksiyonu 0 0 as indirim_topla %}
+                                {% for i in urunler %}
+                                {% indirim_toplam_fonksiyonu  indirim_topla i.indirim  as indirim_topla %}
+                                <tr>
+                                    <td>{{ i.urun_bilgisi.urun_adi }}</td>
+                                    <td>{{ i.urun_adeti }}</td>
+                                    <td>${{ i.urun_fiyati|stringformat:'.2f' }}</td>
+                                    <td>%{{ i.indirim }}</td>
+                                    <td class="text-right">${% carpma_islemi i.urun_adeti i.urun_fiyati %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-md-4">
+                        <h4>{% trans 'Fatura Açıklaması' %}</h4>
+                        <p>{{bilgi.aciklama}}</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <img src="{% gelir_qr_cek bilgi.id %}" alt="QR Kod" class="qr-code">
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th>{% trans 'Alt Toplam' %}</th>
+                                    <td class="text-right">${% toplama_yaptirma urunler %}</td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans 'İndirim' %}</th>
+                                    <td class="text-right">${{indirim_topla}}</td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans 'Toplam' %}</th>
+                                    <td class="text-right">${% toplama_yaptirma urunler %}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="btn-container mt-4">
+                    <button id="pdfBtn" class="btn btn-primary">{% trans 'PDF Olarak Kaydet' %}</button>
+                    <button onclick="window.print()" class="btn btn-secondary">{% trans 'Yazdır' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="container-fluid">
@@ -206,7 +131,6 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="text-sm-end d-none d-sm-block">
-
                     </div>
                 </div>
             </div>
@@ -214,3 +138,130 @@
     </footer>
 </div><!-- end main content-->
 {% endblock slider %}
+
+{% block javascriptcodeadd %}
+<!-- HTML2PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+<script>
+    document.getElementById('pdfBtn').addEventListener('click', function () {
+        var element = document.querySelector('.container'); // PDF'e çevrilecek element
+        // Butonları gizle
+        document.querySelector('.btn-container').style.display = 'none';
+        var opt = {
+            margin: [10, 5, 10, 5], // Sayfanın kenar boşluklarını ayarla
+            filename: 'fatura.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save().then(() => {
+            // PDF oluşturma tamamlandıktan sonra butonları tekrar göster
+            document.querySelector('.btn-container').style.display = 'block';
+        });
+    });
+</script>
+
+<style>
+    body {
+        font-size: 12px; /* Genel yazı boyutu */
+        color: #013744; /* Kurumsal renk */
+        background-color: #fff;
+    }
+    .container {
+        width: 210mm; /* Sayfa genişliği A4 boyutuna uygun */
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 5mm; /* Kenar boşluklarını azalt */
+    }
+    .header, .footer {
+        margin-bottom: 20px;
+    }
+    .firma-bilgileri h2, .footer h4 {
+        color: #013744;
+        font-weight: bold;
+    }
+    .logo {
+        width: 100px; /* Logo boyutu */
+        height: auto;
+    }
+    .fatura-container, .invoice-content, .footer {
+        background-color: #f9f9f9;
+        padding: 10px;
+    }
+    .table {
+        width: 100%;
+    }
+    .table thead th {
+        background-color: #013744;
+        color: #fff;
+    }
+    .qr-code {
+        width: 100px; /* QR kod boyutu */
+        height: auto;
+    }
+    .btn-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    @media print {
+        .btn-container, .logo {
+            display: none; /* Yazdırma sırasında butonlar ve logo gizlenir */
+        }
+        .container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            margin: 0 auto;
+            box-shadow: none;
+        }
+        .header, .footer, .invoice-content, .fatura-container {
+            padding: 5mm;
+            background-color: #fff; /* Yazdırma için arka planı beyaz yap */
+            border: none;
+        }
+        .footer {
+            padding-top: 10mm; /* Footer içeriğini biraz daha yukarı taşı */
+        }
+        .firma-bilgileri h2, .footer h4, .table {
+            font-size: 10pt; /* Yazı boyutunu daha uygun bir değere ayarla */
+        }
+        .fatura-container, .invoice-content {
+            padding-bottom: 0;
+        }
+        .table th, .table td {
+            padding: 2mm; /* Tablo hücre padding'ini azalt */
+        }
+        .qr-code {
+            width: 80px; /* QR kod boyutunu yazdırma için azalt */
+            height: auto;
+        }
+        .fatura-info {
+            font-size: 10pt; /* Fatura bilgileri yazı boyutu */
+        }
+    }
+    .firma-bilgileri {
+    font-size: 12px; /* Genel yazı boyutu */
+    color: #013744; /* Kurumsal renk */
+}
+
+    .firma-bilgileri h4 {
+        color: #013744;
+        font-weight: bold;
+        margin-bottom: 0; /* Başlık ve metin arasındaki boşluğu kaldır */
+    }
+
+    .firma-bilgileri p {
+        margin-bottom: 4px; /* Satır aralığını azalt */
+        line-height: 1.4; /* Satırlar arasındaki boşluğu sıkılaştır */
+    }
+
+    .logo {
+        width: 120px; /* Logo boyutu */
+        height: auto;
+        margin-bottom: 10px; /* Logo ile metin arasındaki boşluk */
+    }
+
+</style>
+{% endblock javascriptcodeadd %}
