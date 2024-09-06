@@ -224,22 +224,50 @@ class calisanlar_kategorisi(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class calisanlar_pozisyonu(models.Model):
+    kategori_kime_ait = models.ForeignKey(CustomUser,verbose_name="Çalışan Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    kategori_isimi = models.CharField(max_length= 200 ,verbose_name="Çalışan Kategori İsmi")
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class calisanlar(models.Model):
+    STATUS = (
+        ('0', '0'),
+        ('1', '1'),
+        
+    )#0 Çalışıyor # diğerleri Çalışmıyor 
     calisan_kime_ait = models.ForeignKey(CustomUser,verbose_name="Çalışan Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     calisan_kategori = models.ForeignKey(calisanlar_kategorisi,verbose_name="Çalışan Kategorisi",blank=True,null=True,on_delete=models.SET_NULL)
+    calisan_pozisyonu = models.ForeignKey(calisanlar_pozisyonu,verbose_name="Çalışan Kategorisi",blank=True,null=True,on_delete=models.SET_NULL)
+    uyrugu = models.CharField(max_length=200,null=True,verbose_name="uyruğu",blank = True)
+    pasaport_numarasi = models.CharField(max_length=200,null=True,verbose_name="Pasaport Numarası",blank = True)
     isim = models.CharField(max_length=200,null=True,verbose_name="İsim",blank = True)
     soyisim = models.CharField(max_length=200,null=True,verbose_name="Soyisim",blank = True)
-    maas = models.FloatField(verbose_name="Maaş",default=0,blank=True,null=True)
-    puantaj = models.FloatField(verbose_name="Puantaj",default=0,blank=True,null=True)
-    aciklama = models.TextField(verbose_name="Gelir Açıklaması",blank=True,null=True)
-    ulkeye_gelis_tarihi = models.DateTimeField(null=True,verbose_name="Ülkeye Geliş Tarihi",blank = True)
-    İse_baslama_tarihi = models.DateTimeField(null=True,verbose_name="İşe Başlama Tarihi",blank = True)
+    profile  = models.FileField(upload_to='calisanprofili/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    dogum_tarihi = models.DateTimeField(null=True,verbose_name="Doğum Tarihi",blank = True)
+    telefon_numarasi = models.CharField(max_length=20,null=True,verbose_name="Telefon Numarasi",blank = True)
+    status = models.CharField(max_length=100, choices=STATUS, default='0')
     silinme_bilgisi = models.BooleanField(default=False)
-    durum = models.BooleanField(default=False) #False Maaşlı , True İse Puantaja Ait 
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class calisan_maas_durumlari(models.Model):
+    calisan = models.ForeignKey(calisanlar,verbose_name="işlem Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    maas = models.FloatField(verbose_name="Maaş",default=0,blank=True,null=True)
+    yevmiye = models.FloatField(verbose_name="Puantaj",default=0,blank=True,null=True)
+    durum = models.BooleanField(default=False) #True Maaşlı , False Yevmiye
+    para_birimi =models.BooleanField(default=False) #True dolor , False dinar
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class calisan_belgeleri(models.Model):
+    calisan = models.ForeignKey(calisanlar,verbose_name="işlem Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    belge_turu = models.CharField(max_length=200,null=True,verbose_name="Soyisim",blank = True)
+    belge  = models.FileField(upload_to='belge/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 from django.utils import timezone
-class calisanlar_calismalari(models.Model):
+"""class calisanlar_calismalari(models.Model):
     mesai_orani = (
         ('1', '1'),
         ('2', '2'),
@@ -253,3 +281,4 @@ class calisanlar_calismalari(models.Model):
     guncelleme_tarihi = models.DateTimeField("Date modified", default=timezone.now)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+"""

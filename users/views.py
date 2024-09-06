@@ -12,7 +12,11 @@ from site_info.models import *
 from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki
 from django.core.paginator import Paginator , EmptyPage, PageNotAnInteger
 from django.db.models.query_utils import Q
-
+def get_object_or_none(model, *args, **kwargs):
+    try:
+        return model.objects.get(*args, **kwargs)
+    except :
+        return None
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -287,9 +291,74 @@ def parola_degistime(request):
 
 
 def personeller_sayfasi(request):
-    pass
+    content = sozluk_yapisi()
+
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_gorme:
+                    kullanici = request.user.kullanicilar_db
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
+        content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
+        content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici)
+    return render(request,"kullanici_yetkileri/personeller.html",content)
 def personeller_ekle(request):
-    pass
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.personeller_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
+    if request.POST:
+        profilePicture = request.FILES.get("profilePicture")
+        passportNo = request.POST.get("passportNo")
+        firstName = request.POST.get("firstName")
+        lastName = request.POST.get("lastName")
+        dogum_tarihi = request.POST.get("dob")
+        nationality = request.POST.get("nationality")
+        phoneNumber = request.POST.get("phoneNumber")
+        department = request.POST.get("department")
+        position = request.POST.get("position")
+        salaryType = request.POST.get("salaryType")
+        dailyWage = request.POST.get("dailyWage")
+        hourlyWage = request.POST.get("hourlyWage")
+        currency = request.POST.get("currency")
+        belgeler = request.POST.getlist("belgeler")
+        documents = request.FILES.getlist("documents")
+        print(belgeler,documents)
+        if profilePicture:
+            pass
+        else:
+            profilePicture =None
+        if salaryType == "maas":
+            salaryType = True
+        else:
+            salaryType = False
+        if currency == "USD":
+            currency = True
+        else:
+            currency = False
+        bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
+        calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
+         isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
+        calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
+        yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
+    return redirect("user:personeller_sayfasi")
 def personeller_sil(request):
     pass
 def personelleri_düzenle(request):

@@ -19,6 +19,11 @@ urlpatterns = [
     path('delmyusers/',views.kullanici_silme,name = "kullanici_silme"),
     path('setmyusers/',views.kullanici_bilgileri_duzenle,name = "kullanici_bilgileri_duzenle"),
     #kullanici işlemleri
+    #personel
+    path('employee/',views.personeller_sayfasi,name = "personeller_sayfasi"),
+    path('addemployee/',views.personeller_ekle,name = "personeller_ekle"),
+    #personel
+#
 #
 ]
 #lock_screen
