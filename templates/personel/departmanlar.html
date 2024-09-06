@@ -34,13 +34,13 @@
                                             {% if request.user.kullanicilar_db %}
                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                             {% if yetki.personeller_olusturma %}
-                                                  <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Pozisyon Ekle' %}</button>
+                                                  <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Departman Ekle' %}</button>
                                                   
                                             {% else %}
                                                                                                             
                                             {% endif %}
                                             {% else %}
-                                                <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Pozisyon Ekle' %}</button>
+                                                <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Departman Ekle' %}</button>
                                                     
                                             {% endif %}
                                                 
@@ -67,10 +67,10 @@
                                                         </div>
                                                     </th>
                                                     {% if request.user.is_superuser %}
-                                                    <th class="sort" data-sort="customer_name">{% trans 'Pozisyon Kime Ait' %}</th>
+                                                    <th class="sort" data-sort="customer_name">{% trans 'Departman Kime Ait' %}</th>
                                                     {% endif %}
-                                                    <th class="sort" data-sort="email">{% trans 'Pozisyon Adı' %}</th>
-                                                    <th class="sort" data-sort="phone">{% trans 'Pozisyondaki Personel Sayısı' %}</th>
+                                                    <th class="sort" data-sort="email">{% trans 'Departman Adı' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Departmandaki Personel Sayısı' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Kalan Departman Ödemesi' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Durum' %}</th>
@@ -104,14 +104,14 @@
                                                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                         {% if yetki.personeller_duzenleme %}
                                                                <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Kategoriyi Düzenle' %}</button>
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Departman Düzenle' %}</button>
                                                             </div>                                                 
                                                         {% else %}
                                                                                                                         
                                                         {% endif %}
                                                         {% else %}
                                                             <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Pozisyonu Düzenle' %}</button>
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Departmanu Düzenle' %}</button>
                                                             </div>                                                    
                                                         {% endif %}
                                                             
@@ -119,14 +119,14 @@
                                                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                         {% if yetki.personeller_silme %}
                                                                  <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Pozisyonu Sil' %}</button>
+                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Departmanu Sil' %}</button>
                                                             </div>                                               
                                                         {% else %}
                                                                                                                         
                                                         {% endif %}
                                                         {% else %}
                                                                <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Kategoriyi Sil' %}</button>
+                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Departman Sil' %}</button>
                                                             </div>                                                 
                                                         {% endif %}
                                                             
