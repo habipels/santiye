@@ -23,6 +23,11 @@ urlpatterns = [
     path('employee/',views.personeller_sayfasi,name = "personeller_sayfasi"),
     path('addemployee/',views.personeller_ekle,name = "personeller_ekle"),
     path('detailemployee/<int:id>/',views.personel_bilgisi_axaj,name = "personel_bilgisi_axaj"),
+    # POzisyon Sayfası
+    path('position/',views.personeller_kategori_sayfalari,name = "personeller_kategori_sayfalari"),
+    path('addposition/',views.personeller_kategori_ekle,name = "personeller_kategori_ekle"),
+    path('delposition/',views.personeller_kategori_sil,name = "personeller_kategori_sil"),
+    path('setposition/',views.personelleri_kategori_düzenle,name = "personelleri_kategori_düzenle"),
     #personel
 #
 #
