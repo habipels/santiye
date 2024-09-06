@@ -1089,3 +1089,7 @@ def kulanici_yetkileri_kullandirt(kullanici,ust_kullanici):
 def pozisyon_calisan_sayisi(id):
     a = calisanlar.objects.filter(silinme_bilgisi = False,status = "0",calisan_pozisyonu = id).count()
     return a
+@register.simple_tag
+def departman_calisan_sayisi(id):
+    a = calisanlar.objects.filter(silinme_bilgisi = False,status = "0",calisan_kategori = id).count()
+    return a

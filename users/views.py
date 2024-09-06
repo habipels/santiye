@@ -492,3 +492,90 @@ def personelleri_kategori_düzenle(request):
         
     return redirect("users:personeller_kategori_sayfalari")
 
+#
+def personeller_depertman_sayfalari(request):
+    content = sozluk_yapisi()
+
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_gorme:
+                    kullanici = request.user.kullanicilar_db
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        content["santiyeler"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
+        #content["santiyeler"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
+        #content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici)
+    return render(request,"personel/departmanlar.html",content)
+def personeller_departman_ekle(request):
+    if request.POST:
+        pozsiyon = request.POST.get("yetkili_adi")
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.personeller_olusturma:
+                        kullanici = request.user.kullanicilar_db
+                        
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici = request.user
+        calisanlar_kategorisi.objects.create(kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
+        
+    return redirect("users:personeller_depertman_sayfalari")   
+def personeller_departman_sil(request):
+    if request.POST:
+        pozsiyon = request.POST.get("buttonId")
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.personeller_silme:
+                        kullanici = request.user.kullanicilar_db
+                        
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici = request.user
+        calisanlar_kategorisi.objects.filter(kategori_kime_ait =kullanici,id = pozsiyon ).delete()
+        
+    return redirect("users:personeller_depertman_sayfalari")   
+def personelleri_departman_düzenle(request):
+    if request.POST:
+        buton = request.POST.get("buttonId")
+        pozsiyon = request.POST.get("yetkili_adi")
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.personeller_olusturma:
+                        kullanici = request.user.kullanicilar_db
+                        
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici = request.user
+        calisanlar_kategorisi.objects.filter(kategori_kime_ait =kullanici,id =buton ).update(kategori_isimi = pozsiyon )
+        
+    return redirect("users:personeller_depertman_sayfalari")

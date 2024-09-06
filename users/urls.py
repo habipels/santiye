@@ -28,6 +28,11 @@ urlpatterns = [
     path('addposition/',views.personeller_kategori_ekle,name = "personeller_kategori_ekle"),
     path('delposition/',views.personeller_kategori_sil,name = "personeller_kategori_sil"),
     path('setposition/',views.personelleri_kategori_düzenle,name = "personelleri_kategori_düzenle"),
+    # DEpartman Sayfası
+    path('department/',views.personeller_depertman_sayfalari,name = "personeller_depertman_sayfalari"),
+    path('adddepartment/',views.personeller_departman_ekle,name = "personeller_departman_ekle"),
+    path('deldepartment/',views.personeller_departman_sil,name = "personeller_departman_sil"),
+    path('setdepartment/',views.personelleri_departman_düzenle,name = "personelleri_departman_düzenle"),
     #personel
 #
 #
