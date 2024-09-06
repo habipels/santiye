@@ -22,6 +22,7 @@ urlpatterns = [
     #personel
     path('employee/',views.personeller_sayfasi,name = "personeller_sayfasi"),
     path('addemployee/',views.personeller_ekle,name = "personeller_ekle"),
+    path('detailemployee/<int:id>/',views.personel_bilgisi_axaj,name = "personel_bilgisi_axaj"),
     #personel
 #
 #

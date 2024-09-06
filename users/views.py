@@ -12,6 +12,46 @@ from site_info.models import *
 from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki
 from django.core.paginator import Paginator , EmptyPage, PageNotAnInteger
 from django.db.models.query_utils import Q
+from django.http import JsonResponse
+
+def personel_bilgisi_axaj(request, id):
+    
+    if True:
+        calisan = get_object_or_none(calisanlar, id = id)
+        maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
+        cali_belgeleri = calisan_belgeleri.objects.filter(calisan = get_object_or_none(calisanlar, id = id))
+        personel_detayi = {
+            'id':str(id),
+        'calisan_kategori': calisan.calisan_kategori.kategori_isimi,
+        'calisan_pozisyonu': calisan.calisan_pozisyonu.kategori_isimi,
+        'uyrugu': calisan.uyrugu,
+        "pasaport_numarasi" :calisan.pasaport_numarasi ,
+        "isim" : calisan.isim,
+        "soyisim" : calisan.soyisim,
+        "profile" : calisan.profile.url if calisan.profile else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
+        "dogum_tarihi" : str(calisan.dogum_tarihi.strftime("%d.%m.%Y")),
+        "telefon_numarasi" : calisan.telefon_numarasi,
+        "status" : str(calisan.status),
+        "maas" : str(maasli.maas),
+        "yevmiye" : str(maasli.yevmiye),
+        "durum" :"1" if maasli.durum else "0",
+        "para_birimi" : "1" if maasli.para_birimi else "0",
+        "belgeler": [
+            {
+                "id": belge.id,
+                "belge_turu": belge.belge_turu,
+                "resim": belge.belge.url if belge.belge else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
+                
+
+            } for belge in cali_belgeleri
+        ]
+        
+        
+        }
+        #print(personel_detayi)
+        return JsonResponse(personel_detayi)
+
+
 def get_object_or_none(model, *args, **kwargs):
     try:
         return model.objects.get(*args, **kwargs)
