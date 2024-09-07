@@ -380,24 +380,25 @@ def personeller_ekle(request):
         currency = request.POST.get("currency")
         belgeler = request.POST.getlist("belgeler")
         documents = request.FILES.getlist("documents")
-        print(belgeler,documents)
-        if profilePicture:
-            pass
-        else:
-            profilePicture =None
-        if salaryType == "maas":
-            salaryType = True
-        else:
-            salaryType = False
-        if currency == "USD":
-            currency = True
-        else:
-            currency = False
-        bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
-        calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
-         isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
-        calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
-        yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
+        for i in range(50):
+            print(belgeler,documents)
+            if profilePicture:
+                pass
+            else:
+                profilePicture =None
+            if salaryType == "maas":
+                salaryType = True
+            else:
+                salaryType = False
+            if currency == "USD":
+                currency = True
+            else:
+                currency = False
+            bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
+            calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
+            isim = firstName+str(i),soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
+            calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
+            yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
     return redirect("user:personeller_sayfasi")
 def personeller_sil(request):
     pass
