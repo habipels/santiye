@@ -101,13 +101,41 @@ class virman(models.Model):
 
 
 class urunler(models.Model):
+    urun_turu = (
+        ("1","1"),
+        ("2","2")
+    )
     urun_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     urun_adi = models.CharField(max_length=400,verbose_name="Ürün ADı",blank=True,null=True)
     urun_fiyati = models.FloatField(verbose_name="Ürün Fiyatı",default=0)
+    stok_mu = models.BooleanField(default=False,verbose_name="Stok İse Tik Seçilidir")
+    urun_turu_secim = models.CharField(max_length=5,verbose_name="Urun Türü",choices = urun_turu, default="1")
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
+class urun_talepleri(models.Model):
+    talebi_onaylama=(
+        ("1","1"),
+        ("2","2"),
+        ("3","3")
+    )
+    #1 Bekleniyor
+    #2 Onaylandı
+    #3 Red Edildi
+    talebin_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Talebin Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "talebin_ait_oldugu")
+    talebi_olusturan = models.ForeignKey(CustomUser,verbose_name="Talebi Oluşturan",blank=True,null=True,on_delete=models.SET_NULL,related_name="talebi_olusturan")
+    urun = models.ForeignKey(urunler,verbose_name="Ürün",blank=True,null=True,on_delete=models.SET_NULL)
+    miktar = models.FloatField(default=0,verbose_name="Taleb Adet Miktarı")
+    fiyati = models.FloatField(default=0,verbose_name="Fiyati")
+    tedarikci = models.CharField(max_length=200 , verbose_name="Tedarikçi",blank=True,null=True)
+    aciklama = models.CharField(max_length=500,verbose_name="Açıklama",blank=True,null=True)
+    talep_Olusturma_tarihi =models.DateTimeField(null=True,verbose_name="Talep Oluşturma Tarihi",blank = True)
+    talep_durumu = models.CharField(max_length=3,verbose_name="Talep Durumu",choices=talebi_onaylama,default="1")
+    talep_durum_tarihi = models.DateTimeField(null=True,verbose_name="Talep Durum Değiştirme Tarihi",blank = True)
+    satin_alinma_durumu = models.BooleanField(default=False)#satın_almayı Onaylı İse Satın Alındı
+    satin_alinma_tarihi = models.DateTimeField(null=True,verbose_name="Satın Alınma Tarihi",blank = True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class gider_urun_bilgisi(models.Model):
     urun_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     urun_bilgisi = models.ForeignKey(urunler,blank=True,null=True,verbose_name="Ürün Bilgisi",on_delete=models.SET_NULL)
