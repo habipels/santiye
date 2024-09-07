@@ -579,3 +579,77 @@ def personelleri_departman_düzenle(request):
         calisanlar_kategorisi.objects.filter(kategori_kime_ait =kullanici,id =buton ).update(kategori_isimi = pozsiyon )
         
     return redirect("users:personeller_depertman_sayfalari")
+
+def personeller_puantaj_sayfasi(request):
+    content = sozluk_yapisi()
+
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_gorme:
+                    kullanici = request.user.kullanicilar_db
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
+        content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
+        content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici)
+    return render(request,"personel/puantaj.html",content)
+
+from django.http import JsonResponse
+import json
+
+def save_attendance(request):
+    from datetime import datetime
+    if request.method == 'POST':
+        data = json.loads(request.body)  # JSON veriyi al
+        tarih = data[0]
+        tarih = str(tarih).split("-")
+        yil  = tarih[0]
+        ay = tarih[1]
+        veriler = data[1]
+        for entry in veriler:     
+            person_id = entry.get('person')
+            day = entry.get('day')
+            work_type = entry.get('type')
+            hours_value = entry.get('value')
+            date_obj = datetime(int(yil), int(ay), int(day))
+            if work_type == "normal":
+                if get_object_or_none(calisanlar_calismalari,calisan = get_object_or_none(calisanlar,id =person_id ),tarihi = date_obj):
+                    calisanlar_calismalari.objects.filter(calisan = get_object_or_none(calisanlar,id =person_id ),tarihi = date_obj
+                    ).update(normal_calisma_saati =float(hours_value))
+                else:
+                    calisanlar_calismalari.objects.create(calisan = get_object_or_none(calisanlar,id =person_id )
+                    ,tarihi = date_obj,maas = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar,id =person_id )).last(),
+                    normal_calisma_saati =float(hours_value) )
+            elif work_type == "overtime":
+                calisanlar_calismalari.objects.filter(calisan = get_object_or_none(calisanlar,id =person_id ),tarihi = date_obj
+                    ).update(mesai_calisma_saati =float(hours_value))
+            # Her bir kayıttaki verilerle istediğiniz işlemi yapabilirsiniz
+            
+        return JsonResponse({'status': 'success'})
+def calismalari_cek(request):
+    from datetime import datetime
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        for entry in data: 
+            personel = entry.get('personel')
+            gun = entry.get('gun_gonder')
+            tarih = entry.get('tarih_gonder')
+            tarih  = str(tarih).split("-")
+            yil  = tarih[0]
+            ay = tarih[1]
+            date_obj = datetime(int(yil), int(ay), int(gun))
+            sonuc  = get_object_or_none(calisanlar_calismalari,calisan = get_object_or_none(calisanlar,id =personel ),tarihi = date_obj)
+            if sonuc:
+                return JsonResponse({'sonuc': 'veri_var',"normal_saat":sonuc.normal_calisma_saati,"mesai_saati":sonuc.mesai_calisma_saati})   
+            else:
+                return JsonResponse({'sonuc': 'veri_yok'})   
+    return JsonResponse({'sonuc': 'veri_yok'})

@@ -259,11 +259,9 @@ body {
                 <input type="month" id="monthFilter" class="filter-input">
                 <select id="jobTypeFilter" class="filter-input">
                     <option value="">Kategori Seçin</option>
-                    <option value="Betoncu">Betoncu</option>
-                    <option value="Ahşapçı">Ahşapçı</option>
-                    <option value="Demirci">Demirci</option>
-                    <option value="Tünel Kalıp">Tünel Kalıp</option>
-                    <option value="Ofis Personeli">Ofis Personeli</option>
+                    {% for i in departmanlar %}
+                    <option value="{{i.kategori_isimi}}">{{i.kategori_isimi}}</option>
+                    {% endfor %}
                 </select>
                 <button id="applyFilters" class="btn apply-btn"><i class="fas fa-filter"></i> Filtreleri Uygula</button>
                <div class="total-box">
@@ -364,11 +362,14 @@ body {
 
     <script>
 // Örnek Personel Verileri
+
+// Örnek Personel Verileri
 const personnelData = [
-    { name: 'Ahmet Yılmaz', category: 'Mühendis' },
-    { name: 'Mehmet Kaya', category: 'Usta' },
-    { name: 'Ali Demir', category: 'İşçi' },
-    { name: 'Ayşe Aydın', category: 'Ofis Personeli' }
+    {% for i in personeller %}
+    { id : "{{i.id}}",name: "{{i.isim}} {{i.soyisim}}", category: "{{i.calisan_kategori.kategori_isimi}}" }
+    {% if not forloop.last %},{% endif %}
+    {% endfor %}
+
 ];
 
 // Tabloya Personel Verilerini Yükleme
@@ -382,8 +383,8 @@ window.onload = function() {
             daysInputs += `
                 <td>
                     <div class="day-container">
-                        <input type="number" class="day-hours" data-person="${personIndex}" data-day="${i}" data-type="normal" min="0" max="24" value="9" placeholder="Normal">
-                        <input type="number" class="overtime-hours" data-person="${personIndex}" data-day="${i}" data-type="overtime" min="0" max="24" value="0" placeholder="Fazla Mesai">
+                        <input type="number" class="day-hours" data-person="${person.id}" data-day="${i}" data-type="normal" min="0" max="24" value="9" placeholder="Normal">
+                        <input type="number" class="overtime-hours" data-person="${person.id}" data-day="${i}" data-type="overtime" min="0" max="24" value="0" placeholder="Fazla Mesai">
                     </div>
                 </td>`;
         }
@@ -417,7 +418,7 @@ window.onload = function() {
 
                 // Eğer normal saat kutusundaysa, fazla mesai kutusuna geç
                 if (inputType === 'normal') {
-                    nextInput = document.querySelector(`input[data-person="${personIndex}"][data-day="${dayIndex}"][data-type="overtime"]`);
+                    nextInput = document.querySelector(`input[data-person="${person.id}"][data-day="${dayIndex}"][data-type="overtime"]`);
                 } else {
                     // Fazla mesai kutusundaysa, bir sonraki personelin normal saat kutusuna geç
                     nextInput = document.querySelector(`input[data-person="${personIndex + 1}"][data-day="${dayIndex}"][data-type="normal"]`);
@@ -597,47 +598,82 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateTable() {
         const date = new Date(monthInput.value);
-        if (isNaN(date.getTime())) {
-            monthHeader.textContent = "Lütfen ay seçimi yapın";
-            tableContainer.style.display = "none";
-            noDataMessage.style.display = "block";
-        } else {
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-            const days = daysInMonth(month, year);
-            monthHeader.textContent = `${date.toLocaleString('tr-TR', { month: 'long' })} ${year} Puantajı`;
-            tableContainer.style.display = "table";
-            noDataMessage.style.display = "none";
+        const dfe = [];
+    if (isNaN(date.getTime())) {
+        monthHeader.textContent = "Lütfen ay seçimi yapın";
+        tableContainer.style.display = "none";
+        noDataMessage.style.display = "block";
+    } else {
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        const days = daysInMonth(month, year);
+        monthHeader.textContent = `${date.toLocaleString('tr-TR', { month: 'long' })} ${year} Puantajı`;
+        tableContainer.style.display = "table";
+        noDataMessage.style.display = "none";
 
-            // Tablo başlıklarını güncelle
-            const thead = tableContainer.querySelector('thead tr');
-            thead.innerHTML = `
-                <th>Ad Soyad</th>
-                <th>Görevi</th>
-            `;
+        // Tablo başlıklarını güncelle
+        const thead = tableContainer.querySelector('thead tr');
+        thead.innerHTML = `
+            <th>Ad Soyad</th>
+            <th>Görevi</th>
+        `;
+        for (let i = 1; i <= days; i++) {
+            thead.innerHTML += `<th>${i}</th>`;
+        }
+        thead.innerHTML += `
+            <th>Toplam Çalışma</th>
+            <th>Toplam Mesai</th>
+            <th>Hakediş</th>
+        `;
+
+        // Tablo gövdesini güncelle
+        tbody.innerHTML = ''; // Önceki içerikleri temizle
+
+        const fetchPromises = personnelData.map((person, personIndex) => {
+            // Her gün için bir dizi oluştur
+            const daysInputsArray = new Array(days).fill('');
+
+            const dayPromises = [];
             for (let i = 1; i <= days; i++) {
-                thead.innerHTML += `<th>${i}</th>`;
+                const tarih_gonder = document.querySelector(".filter-input").value;
+
+                const veri = [{
+                    gun_gonder: i,
+                    tarih_gonder: tarih_gonder,
+                    personel: person.id
+                }];
+
+                dayPromises.push(
+                    fetch('/users/taketally/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify(veri)  // Tüm verileri gönderiyoruz
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const normal_saat_bilgisi = data.sonuc == "veri_yok" ? 9 : parseFloat(data.normal_saat) || 0;
+                        const mesai_saati_bilgisi = data.sonuc == "veri_yok" ? 0 : parseFloat(data.mesai_saati) || 0;
+                        //dfe.push(
+                        //    {"gun":i,"normal_saat_bilgisi":normal_saat_bilgisi,"mesai_saati_bilgisi":mesai_saati_bilgisi}
+                        //)
+                        // Veriyi doğru sıraya ekleyelim
+                        daysInputsArray[i - 1] = `
+                            <td>
+                                <div class="day-container">
+                                    <input type="number" class="day-hours" data-person="${person.id}" data-day="${i}" data-type="normal" step="0.01" min="0" max="24" value="${normal_saat_bilgisi}" placeholder="Normal">
+                                    <input type="number" class="overtime-hours" data-person="${person.id}" data-day="${i}" data-type="overtime" step="0.01" min="0" max="24" value="${mesai_saati_bilgisi}" placeholder="Fazla Mesai">
+                                </div>
+                            </td>`;
+                    })
+                );
+                //console.log(dfe);
             }
-            thead.innerHTML += `
-                <th>Toplam Çalışma</th>
-                <th>Toplam Mesai</th>
-                <th>Hakediş</th>
-            `;
 
-            // Tablo gövdesini güncelle
-            tbody.innerHTML = ''; // Önceki içerikleri temizle
-            personnelData.forEach((person, personIndex) => {
-                let daysInputs = '';
-                for (let i = 1; i <= days; i++) {
-                    daysInputs += `
-                        <td>
-                            <div class="day-container">
-                                <input type="number" class="day-hours" data-person="${personIndex}" data-day="${i}" data-type="normal" min="0" max="24" value="9" placeholder="Normal">
-                                <input type="number" class="overtime-hours" data-person="${personIndex}" data-day="${i}" data-type="overtime" min="0" max="24" value="0" placeholder="Fazla Mesai">
-                            </div>
-                        </td>`;
-                }
-
+            return Promise.all(dayPromises).then(() => {
+                const daysInputs = daysInputsArray.join(''); // Günlük verileri sırayla birleştir
                 const row = `
                     <tr>
                         <td>${person.name}</td>
@@ -650,6 +686,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 tbody.innerHTML += row;
             });
+        });
+
+        Promise.all(fetchPromises).then(() => {
+            console.log('Tablo başarıyla güncellendi.');
+        }).catch(error => {
+            console.error('Tablo güncellenirken bir hata oluştu:', error);
+        });
         }
     }
 
@@ -658,9 +701,265 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTable(); // Sayfa yüklendiğinde tabloyu güncelle
 });
 
+
+// HABIPPPPPPP BURDAN SONRASIIIII
+// Ay seçimi sayısal
+document.getElementById('monthFilter').addEventListener('change', function () {
+    const selectedDate = new Date(this.value); 
+    const selectedMonth = selectedDate.getMonth() + 1; 
+    console.log("Seçilen ay:", selectedMonth); 
+});
+
+
+//filitreeeeeeeee
+// Filtreleme işlevi
+function filterData() {
+    const jobTypeFilter = document.getElementById('jobTypeFilter').value;
+    const tbody = document.querySelector('.attendance-table tbody');
+    tbody.innerHTML = ''; // Mevcut tabloyu temizle
+
+    // Eğer bir kategori seçildiyse, verileri filtrele
+    let filteredData = personnelData.filter(person => {
+        return jobTypeFilter === '' || person.category === jobTypeFilter;
+    });
+
+    // Filtrelenmiş personelleri tabloya yükle
+    filteredData.forEach((person, personIndex) => {
+        const row = document.createElement('tr');
+
+        let daysInputs = '';
+        for (let i = 1; i <= 30; i++) {
+            daysInputs += `
+                <td>
+                    <div class="day-container">
+                        <input type="number" class="day-hours" data-person="${person.id}" data-day="${i}" data-type="normal" min="0" max="24" value="9" placeholder="Normal">
+                        <input type="number" class="overtime-hours" data-person="${person.id}" data-day="${i}" data-type="overtime" min="0" max="24" value="0" placeholder="Fazla Mesai">
+                    </div>
+                </td>`;
+        }
+
+        row.innerHTML = `
+            <td>${person.name}</td>
+            <td>${person.category}</td>
+            ${daysInputs}
+            <td class="total-working-hours">0</td>
+            <td class="total-overtime-hours">0</td>
+            <td class="total-salary">0 ₺</td>
+        `;
+
+        tbody.appendChild(row);
+    });
+}
+
+// Kategori seçildiğinde filtreleme işlevini çalıştır
+document.getElementById('jobTypeFilter').addEventListener('change', filterData);
+
+// Sayfa yüklendiğinde tüm personelleri yükle
+window.onload = function () {
+    filterData(); // İlk başta tüm personelleri göster
+};
+
+//Toplu giriş kısıtı
+document.getElementById('monthFilter').addEventListener('change', function () {
+    const selectedMonth = this.value;  // YYYY-MM formatında ay değeri
+
+    if (!selectedMonth) {
+        // Ay seçilmediyse toplu giriş bölümünü gizle
+        document.querySelector('.bulk-entry').style.display = 'none';
+        return;
+    }
+
+    // Eğer geçerli bir ay seçildiyse toplu giriş bölümünü göster
+    document.querySelector('.bulk-entry').style.display = 'block';
+
+    const year = parseInt(selectedMonth.split('-')[0]);  // Seçilen yıl
+    const month = parseInt(selectedMonth.split('-')[1]);  // Seçilen ay (1 tabanlı)
+
+    // Seçilen ayın son gününü doğru bir şekilde hesapla
+    const firstDayOfMonth = `${year}-${month.toString().padStart(2, '0')}-01`; // Ayın ilk günü
+    const lastDayOfMonth = `${year}-${month.toString().padStart(2, '0')}-${new Date(year, month, 0).getDate()}`; // Ayın son günü
+
+    // Toplu giriş tarih alanlarının min ve max değerlerini güncelle
+    document.getElementById('bulkStartDate').setAttribute('min', firstDayOfMonth);
+    document.getElementById('bulkStartDate').setAttribute('max', lastDayOfMonth);
+
+    document.getElementById('bulkEndDate').setAttribute('min', firstDayOfMonth);
+    document.getElementById('bulkEndDate').setAttribute('max', lastDayOfMonth);
+
+    console.log("Seçilen ayın ilk günü:", firstDayOfMonth);
+    console.log("Seçilen ayın son günü:", lastDayOfMonth);
+});
+
+// Sayfa yüklendiğinde toplu giriş bölümünü gizle
+window.onload = function () {
+    document.querySelector('.bulk-entry').style.display = 'none';  // Sayfa ilk yüklendiğinde gizli
+};
+
+
+// Normal mesai inputları için renk değiştirme fonksiyonu
+// Normal mesai inputları için renk değiştirme fonksiyonu
+function updateInputBackground(inputElement) {
+    const value = parseFloat(inputElement.value);
+    
+    if (isNaN(value)) {
+        return; // Eğer input boş ise hiçbir değişiklik yapma
+    }
+
+    if (value >= 1 && value <= 4) {
+        inputElement.style.backgroundColor = '#FEBA33';  // 1-4 arasında
+        inputElement.style.color = '#000000';
+    } else if (value >= 5 && value <= 8) {
+        inputElement.style.backgroundColor = '#1AA5E0';  // 5-8 arasında
+        inputElement.style.color = '#000000';
+    } else if (value === 9) {
+        inputElement.style.backgroundColor = '#23D4AF';  // 9 olduğunda
+        inputElement.style.color = '#000000';
+    } else if (value > 9) {
+        inputElement.style.backgroundColor = '#FF5450';  // 9 üzeri
+        inputElement.style.color = '#000000';
+    }
+}
+
+// Fazla mesai inputları için renk değiştirme fonksiyonu
+function updateOvertimeBackground(inputElement) {
+    const value = parseFloat(inputElement.value);
+    
+    if (isNaN(value)) {
+        return; // Eğer input boş ise hiçbir değişiklik yapma
+    }
+
+    if (value > 0) {
+        inputElement.style.backgroundColor = '#F45B42';  // Fazla mesai 0'dan büyükse
+        inputElement.style.color = '#000000';
+    } else {
+        inputElement.style.backgroundColor = '';  // Varsayılan rengi koru
+        inputElement.style.color = '';
+    }
+}
+
+// Toplu veri girişini gerçekleştiren fonksiyon
+function applyBulkEntries(startDay, endDay, bulkHours, bulkOvertime) {
+    const rows = document.querySelectorAll('.attendance-table tbody tr');
+    rows.forEach(row => {
+        for (let i = startDay - 1; i < endDay; i++) {
+            const dayInput = row.querySelectorAll('.day-hours')[i];
+            const overtimeInput = row.querySelectorAll('.overtime-hours')[i];
+            dayInput.value = bulkHours;
+            overtimeInput.value = bulkOvertime;
+
+            // Toplu giriş sırasında renk değiştirme fonksiyonlarını çağırıyoruz
+            updateInputBackground(dayInput);        // Normal mesai için
+            updateOvertimeBackground(overtimeInput); // Fazla mesai için
+        }
+    });
+
+    calculateTotal(); // Toplam ücret ve saat hesaplamasını güncelle
+}
+
+// Toplu veri girişi fonksiyonu
+document.getElementById('applyBulk').addEventListener('click', function() {
+    const bulkStartDate = document.getElementById('bulkStartDate').value;
+    const bulkEndDate = document.getElementById('bulkEndDate').value;
+    const bulkHours = document.getElementById('bulkHours').value;
+    const bulkOvertime = document.getElementById('bulkOvertime').value;
+
+    const startDay = new Date(bulkStartDate).getDate();
+    const endDay = new Date(bulkEndDate).getDate();
+
+    // Uyarı modalını göster
+    const warningModal = document.getElementById('warningModal');
+    const warningMessage = document.getElementById('warningMessage');
+    const dayCount = (endDay - startDay) + 1;
+    const personnelCount = document.querySelectorAll('.attendance-table tbody tr').length;
+    
+    warningMessage.textContent = `${dayCount} gün ve ${personnelCount} kişi için veri girişi yapıyorsunuz. Emin misiniz?`;
+    warningModal.style.display = 'block';
+
+    // Evet ve Hayır butonları için event listener ekle
+    document.getElementById('confirmBulkEntry').addEventListener('click', function() {
+        applyBulkEntries(startDay, endDay, bulkHours, bulkOvertime);
+        warningModal.style.display = 'none';
+    });
+
+    document.getElementById('cancelBulkEntry').addEventListener('click', function() {
+        warningModal.style.display = 'none';
+    });
+});
+
+// Inputların renklerini değiştir
+document.addEventListener('input', function (event) {
+    if (event.target.classList.contains('day-hours')) {
+        updateInputBackground(event.target);  // Normal mesai inputu
+    } else if (event.target.classList.contains('overtime-hours')) {
+        updateOvertimeBackground(event.target);  // Fazla mesai inputu
+    }
+});
+
+
     </script>
 
+<script>
+    
+document.querySelector('#saveBtn').addEventListener('click', function() {
+    const dayInputs = document.querySelectorAll('.day-hours');
+    const overtimeInputs = document.querySelectorAll('.overtime-hours');
+    
+    const filter_input = document.querySelector(".filter-input") 
+    const dis_katman = [filter_input.value];
+    const dataToSend = [];
+    // Normal saatler için verileri topla
+    dayInputs.forEach(input => {
+        const person = input.getAttribute('data-person');
+        const day = input.getAttribute('data-day');
+        const type = input.getAttribute('data-type');
+        const value = input.value;
+        const value_filter_input = filter_input.value;
+        // Veriyi toplu olarak diziye ekle
+        dataToSend.push({
+            person: person,
+            day: day,
+            type: type,
+            value: value
+        });
+    });
+    
+    // Fazla mesai saatleri için verileri topla
+    overtimeInputs.forEach(input => {
+        const person = input.getAttribute('data-person');
+        const day = input.getAttribute('data-day');
+        const type = input.getAttribute('data-type');
+        const value = input.value;
 
+        // Fazla mesai verisini diziye ekle
+        dataToSend.push({
+            person: person,
+            day: day,
+            type: type,
+            value: value
+        });
+    });
+    dis_katman.push(
+             dataToSend
+        );
+    // AJAX isteği ile Django'ya veri gönder
+    fetch('/users/savetally/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(dis_katman)  // Tüm verileri gönderiyoruz
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Hata:', error);
+    });
+});
+
+</script>
         </div>
 
 {% endblock sidebar %}

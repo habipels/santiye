@@ -267,18 +267,19 @@ class calisan_belgeleri(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 from django.utils import timezone
-"""class calisanlar_calismalari(models.Model):
+class calisanlar_calismalari(models.Model):
     mesai_orani = (
         ('1', '1'),
         ('2', '2'),
         ('3', '3'),
         ('4', '4'),
     )
-    calisan = models.ForeignKey(calisanlar,verbose_name="işlem Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
+    calisan = models.ForeignKey(calisanlar,verbose_name="Çalışan",blank=True,null=True,on_delete=models.SET_NULL)
+    maas = models.ForeignKey(calisan_maas_durumlari,verbose_name="işlem Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     normal_calisma_saati = models.FloatField(verbose_name="Normal Çalışma Saati",default=0,blank=True,null=True)
     mesai_calisma_saati = models.FloatField(verbose_name="Mesai Çalışma Saati",default=0,blank=True,null=True)
+    mesai_oran_tutma = models.CharField(max_length=100, choices=mesai_orani, default='1')
     tarihi = models.DateTimeField(null=True,verbose_name="Çalışma Tarihi",blank = True)
     guncelleme_tarihi = models.DateTimeField("Date modified", default=timezone.now)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-"""
