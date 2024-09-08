@@ -1,0 +1,476 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% block sidebar %}
+<style>/* Global Styles for BiadaGO ERP */
+
+    /* Color Variables */
+    :root {
+        --primary-color: #24d6b5;
+        --secondary-color: #042940;
+        --text-color: #333;
+        --background-color: #fff;
+        --border-color: #e0e0e0;
+        --modal-background: rgba(0, 0, 0, 0.6);
+        --transition-duration: 0.3s;
+        --button-radius: 4px;
+        --font-family: 'Arial', sans-serif;
+    }
+    
+    body {
+        background-color: var(--background-color);
+        font-family: var(--font-family);
+        margin: 0;
+        padding: 0;
+        color: var(--text-color);
+    }
+    
+    h1 {
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+    
+    button {
+        background-color: var(--primary-color);
+        color: #fff;
+        border: none;
+        border-radius: var(--button-radius);
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color var(--transition-duration);
+    }
+    
+    button:hover {
+        background-color: #042940;  /* Arka plan beyaz olduğunda */
+        color: #24d6b5;  /* Yazı rengi düzeltiliyor */
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+    }
+    
+    .flex-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .space-between {
+        justify-content: space-between;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    
+    th, td {
+        border: 1px solid var(--border-color);
+        padding: 10px;
+        text-align: left;
+    }
+    
+    th {
+        background-color: var(--secondary-color);
+        color: #fff;
+    }
+    
+    /* Modals - updated design for cleaner form layout */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+    
+    .modal-content {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+    
+    .modal-content h2 {
+        font-size: 22px;
+        color: #042940;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .modal-content form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .modal-content label {
+        font-weight: bold;
+        color: #042940;
+        margin-bottom: 5px;
+    }
+    
+    .modal-content input,
+    .modal-content textarea {
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        width: 100%;
+        font-size: 16px;
+    }
+    
+    .modal-content textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .modal-content .flex-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    
+    .modal-content .cancel-btn {
+        background-color: #042940;
+        padding: 10px 20px;
+        color: white;
+        border-radius: 4px;
+    }
+    
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .flex-row {
+            flex-direction: column;
+        }
+    
+        .modal-content {
+            padding: 20px;
+            max-width: 90%;
+        }
+    
+        .modal-content h2 {
+            font-size: 20px;
+        }
+    }
+    
+    
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    
+    .cancel-btn {
+        background-color: var(--secondary-color);
+        color: white;
+        border-radius: var(--button-radius);
+    }
+    
+    .cancel-btn:hover {
+        background-color: darken(var(--secondary-color), 10%);
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .flex-row {
+            flex-direction: column;
+        }
+    
+        h1 {
+            font-size: 20px;
+        }
+    
+        button {
+            padding: 8px 16px;
+        }
+    
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+    
+        thead {
+            display: none;
+        }
+    
+        tr {
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--button-radius);
+            padding: 20px;
+        }
+    
+        td {
+            padding: 10px;
+            border: none;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            border-radius: var(--button-radius);
+        }
+    
+        td::before {
+            content: attr(data-label);
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+    }
+    </style>
+<div class="main-content">
+        <div class="page-content">
+<div class="container">
+    <h1>Satın Alma Talepleri</h1>
+    <div class="flex-row space-between">
+    {% if request.user.kullanicilar_db %}
+    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+    {% if yetki.satin_alma_talebi_olusturma %}
+              <button onclick="openModal('createRequestModal')">Yeni Talep Oluştur</button>                                    
+    {% else %}
+                                                                                                                        
+    {% endif %}
+    {% else %}
+             <button onclick="openModal('createRequestModal')">Yeni Talep Oluştur</button>                                                                                        
+    {% endif %}
+        
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Talep ID</th>
+                <th>Talebi Oluşturan</th>
+                <th>Ürün</th>
+                <th>Miktar</th>
+                <th>Fiyat</th>
+                <th>Tedarikçi</th>
+                <th>Durum</th>
+                <th>Talep Tarihi</th>
+                <th>Aksiyonlar</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in santiyeler %}
+            <tr>
+                <td data-label="Talep ID">{{i.id}}</td>
+                <td data-label="Ürün">{{i.talebi_olusturan.first_name}}</td>
+                <td data-label="Ürün">{{i.urun.urun_adi}}</td>
+                <td data-label="Miktar">{{i.miktar}}</td>
+                <td data-label="Fiyat">${{i.fiyati}}</td>
+                <td data-label="Tedarikçi">{{i.tedarikci}}</td>
+                <td data-label="Durum">{% if i.talep_durumu == "1" %}
+                    Beklemede
+                {% elif i.talep_durumu == "2" %}
+                Onaylandı
+                {% else %}
+                Onaylanmadı
+                {% endif %}</td>
+                <td data-label="Talep Tarihi">{{i.talep_Olusturma_tarihi|  date:'d.m.Y'}}</td>
+                <td data-label="Aksiyonlar">
+                {% if i.talep_durumu != "1"  %}
+                {% else %}
+                {% if request.user.kullanicilar_db %}
+                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                {% if yetki.satin_alma_talebi_silme %}
+                        <button onclick="openModal('requestDetailModal{{i.id}}')">Sil</button>
+                                                       
+                {% else %}
+                                                                                                                                    
+                {% endif %}
+                {% else %}
+                        <button onclick="openModal('requestDetailModal{{i.id}}')">Sil</button>
+                                                                                                         
+                {% endif %}
+                    
+                {% endif %}
+                    
+                </td>
+            </tr>
+        {% endfor %}
+            
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-end">
+                                        <div class="pagination-wrap hstack gap-2">
+                                            <ul class="pagination pagination-m justify-content-center">
+
+                                                {% if medya.has_previous %}
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
+                                                
+                                                  {% if medya.number > 3 %}
+                                                
+                                                    <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                    {% if medya.number > 4 %}
+                                                      <li class="page-item"><span class="page-link">...</span></li>
+                                                    {% endif %}
+                                                  {% endif %}
+                                                {% endif %}
+                                                
+                                                {% for num in medya.paginator.page_range %}
+                                                  {% if medya.number == num %}
+                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% endif %}
+                                                {% endfor %}
+                                                
+                                                {% if medya.has_next %}
+                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                    <li class="page-item"><span class="page-link">...</span></li>
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% endif %}
+                                                
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
+                                                {% endif %}
+                                                </ul>
+                                        </div>
+                                    </div>
+</div>
+</div>
+</div>
+
+<!-- Create Request Modal -->
+<div id="createRequestModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('createRequestModal')">&times;</span>
+        <h2>Yeni Talep Oluştur</h2>
+        <form id="createRequestForm" action="/{{dil}}{% url 'accounting:satin_alma_talebi_ekle' %}" method="POST">
+            {% csrf_token %}
+            <div class="flex-column">
+                <label for="urun">Ürün:</label>
+                <select name="urun" id="urun">
+                    {% for i in urunlerimiz %}
+                        <option value="{{i.id}}">{{i.urun_adi}}</option>
+                    {% endfor %}
+                    
+                </select>
+                
+
+                <label for="miktar">Miktar:</label>
+                <input type="number" id="miktar" name="miktar" placeholder="Miktar girin">
+
+                <label for="fiyat">Fiyat:</label>
+                <input type="number" id="fiyat" name="fiyat" placeholder="Fiyat girin">
+
+                <label for="tedarikci">Tedarikçi:</label>
+                <input type="text" id="tedarikci" name="tedarikci" placeholder="Tedarikçi adı girin">
+
+                <label for="aciklama">Açıklama:</label>
+                <textarea id="aciklama" name="aciklama" placeholder="Talep hakkında açıklama girin"></textarea>
+
+                <div class="flex-row space-between">
+                    <button type="submit">Talep Oluştur</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('createRequestModal')">İptal</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% for i in santiyeler %}
+
+<!-- Request Detail Modal -->
+<div id="requestDetailModal{{i.id}}" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('requestDetailModal{{i.id}}')">&times;</span>
+        <h2>Talebi Sil</h2>
+        <div class="flex-column">
+            <p><strong>Oluşturan:</strong> {{i.talebi_olusturan.first_name}}</p>
+            <p><strong>Ürün:</strong> {{i.urun.urun_adi}}</p>
+            <p><strong>Miktar:</strong> {{i.miktar}}</p>
+            <p><strong>Fiyat:</strong> ${{i.fiyati}}</p>
+            <p><strong>Durum:</strong> {% if i.talep_durumu == "1" %}
+                    Beklemede
+                {% elif i.talep_durumu == "2" %}
+                Onaylandı
+                {% else %}
+                Onaylanmadı
+                {% endif %}</p>
+            <p><strong>Tedarikçi:</strong> {{i.tedarikci}}</p>
+            <p><strong>Talep Tarihi:</strong> {{i.talep_Olusturma_tarihi|  date:'d.m.Y'}}</p>
+            <p><strong>açıklama:</strong> {{i.aciklama}}</p>
+            <div class="flex-row space-between">
+                <a href="/{{dil}}{% url 'accounting:satin_alma_talebi_sil' i.id %}">Sil</a>
+                <button type="button" class="cancel-btn" onclick="closeModal('requestDetailModal{{i.id}}')">İptal</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<script>
+    /* Global JS Functions for BiadaGO ERP */
+
+// Modal functionality
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Form validation example
+function validateForm(formId) {
+    var form = document.getElementById(formId);
+    var inputs = form.querySelectorAll('input, select, textarea');
+    var valid = true;
+
+    inputs.forEach(function(input) {
+        if (input.value === '') {
+            input.style.border = '1px solid red';
+            valid = false;
+        } else {
+            input.style.border = '';
+        }
+    });
+
+    return valid;
+}
+
+// Toast Notification
+function showToast(message) {
+    var toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerText = message;
+    document.body.appendChild(toast);
+
+    setTimeout(function() {
+        toast.style.opacity = 0;
+    }, 3000);
+
+    setTimeout(function() {
+        toast.remove();
+    }, 3500);
+}
+
+</script>
+{% endblock sidebar %}
+

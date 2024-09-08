@@ -114,6 +114,12 @@ urlpatterns = [
     path('delproductscategory/', views.urunler_kategorisi_sil, name='urunler_kategorisi_sil'),
     path('setproductscategory/', views.urunler_kategorisi_duzenle, name='urunler_kategorisi_duzenle'),
     #ürünler KAtegorisi
+    #ürünler satin_alma_talabi
+    path('purchaserequest/', views.satin_alma_talabi, name='satin_alma_talabi'),
+    path('addpurchaserequest/', views.satin_alma_talebi_ekle, name='satin_alma_talebi_ekle'),
+    path('delpurchaserequest/<int:id>/', views.satin_alma_talebi_sil, name='satin_alma_talebi_sil'),
+    #ürünler satin_alma_talabi
 ]
 #
+#accounting
 
