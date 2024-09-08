@@ -43,6 +43,7 @@ if DEPLOY__:
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        'rest_framework_swagger',
         # Add our new application
         #rosetta çeviri için
         'rosetta',

@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from rest_framework_swagger.views import get_swagger_view
+schema_view = get_swagger_view(title='Pastebin API')
 app_name = "api"
 urlpatterns = [#
  path('api-token-auth/', views.CustomAuthToken.as_view(), name='api_token_auth'),
@@ -99,5 +101,7 @@ urlpatterns = [#
  path('update/todo/', views.yapilacaklar_time_line_duzenle_api, name='yapilacaklar_time_line_duzenle_api'),
  #######
  path('report/<int:id>', views.santiye_raporu_api, name='santiye_raporu_api'),
+ path('swag', schema_view)
+
 ]#
 #
