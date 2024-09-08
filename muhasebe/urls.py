@@ -108,6 +108,12 @@ urlpatterns = [
     #qrfaturasıgöster
     path("viewcomeqr/<int:id>", views.fatura_gosterqr, name="fatura_gosterqr"),
     path("viewexpensesqr/<int:id>", views.fatura_goster2qr, name="fatura_goster2qr"),
+    #ürünler KAtegorisi
+    path('productscategory/', views.urunler_kategorisi, name='urunler_kategorisi'),
+    path('addproductscategory/', views.urunler_kategorisi_ekle, name='urunler_kategorisi_ekle'),
+    path('delproductscategory/', views.urunler_kategorisi_sil, name='urunler_kategorisi_sil'),
+    path('setproductscategory/', views.urunler_kategorisi_duzenle, name='urunler_kategorisi_duzenle'),
+    #ürünler KAtegorisi
 ]
 #
 

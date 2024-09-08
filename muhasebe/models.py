@@ -98,14 +98,19 @@ class virman(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
-
+class urun_kategorileri(models.Model):
+    kategrori_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="KAtegori Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    kategori_adi = models.CharField(max_length=400,verbose_name="Kategori ADı",blank=True,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class urunler(models.Model):
     urun_turu = (
         ("1","1"),
         ("2","2")
     )
     urun_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    urun_kategorisi = models.ForeignKey(urun_kategorileri,verbose_name="ürün Kategorisi",blank=True,null=True,on_delete=models.SET_NULL)
     urun_adi = models.CharField(max_length=400,verbose_name="Ürün ADı",blank=True,null=True)
     urun_fiyati = models.FloatField(verbose_name="Ürün Fiyatı",default=0)
     stok_mu = models.BooleanField(default=False,verbose_name="Stok İse Tik Seçilidir")
