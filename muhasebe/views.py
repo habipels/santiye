@@ -1687,12 +1687,14 @@ def urun_viev(request):
             if a:
                 if a.izinler.urun_gorme:
                     profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db)
+                    kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db)
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
             profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+            kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1725,6 +1727,7 @@ def urun_viev(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
+    content["urun_kategorisi"] = kategori
     return render(request,"muhasebe_page/urunler.html",content)
 def urun_viev_2(request,hash):
     content = sozluk_yapisi()
@@ -1770,8 +1773,9 @@ def urun_ekle(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             kasa_Adi   = request.POST.get("kasaadi")
             bakiye = request.POST.get("bakiye")
+            kategori = request.POST.get("kategori")
             urunler.objects.create(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi )
-                                ,urun_adi = kasa_Adi,urun_fiyati = bakiye
+                                ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
 
                                 )
         else:
@@ -1781,8 +1785,9 @@ def urun_ekle(request):
                     if a.izinler.urun_olusturma:
                         kasa_Adi   = request.POST.get("kasaadi")
                         bakiye = request.POST.get("bakiye")
+                        kategori = request.POST.get("kategori")
                         urunler.objects.create(urun_ait_oldugu = request.user.kullanicilar_db
-                            ,urun_adi = kasa_Adi,urun_fiyati = bakiye)
+                            ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori))
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -1790,8 +1795,9 @@ def urun_ekle(request):
             else:
                 kasa_Adi   = request.POST.get("kasaadi")
                 bakiye = request.POST.get("bakiye")
+                kategori = request.POST.get("kategori")
                 urunler.objects.create(urun_ait_oldugu = request.user
-                    ,urun_adi = kasa_Adi,urun_fiyati = bakiye)
+                    ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori))
 
     return redirect("accounting:urun_viev")
 
@@ -1833,14 +1839,15 @@ def urun_duzenle(request):
         proje_tip_adi   = request.POST.get("kasaadi")
         silinmedurumu = request.POST.get("silinmedurumu")
         bakiye = request.POST.get("bakiye")
+        kategori = request.POST.get("kategori")
         if silinmedurumu == "1":
             silinmedurumu = False
-            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu)
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori))
         elif silinmedurumu == "2":
             silinmedurumu = True
-            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu)
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori))
         else:
-            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye)
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori))
     else:
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -1848,8 +1855,9 @@ def urun_duzenle(request):
                 if a.izinler.urun_guncelleme:
                     proje_tip_adi   = request.POST.get("kasaadi")
                     bakiye = request.POST.get("bakiye")
+                    kategori = request.POST.get("kategori")
                     urunler.objects.filter(urun_ait_oldugu = request.user.kullanicilar_db,id = id).update(urun_adi = proje_tip_adi
-                            ,urun_fiyati = bakiye)
+                            ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori))
                 else:
                     return redirect("main:yetkisiz")
             else:
@@ -1857,8 +1865,9 @@ def urun_duzenle(request):
         else:
             proje_tip_adi   = request.POST.get("kasaadi")
             bakiye = request.POST.get("bakiye")
+            kategori = request.POST.get("kategori")
             urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(urun_adi = proje_tip_adi
-                    ,urun_fiyati = bakiye)
+                    ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori))
     return redirect("accounting:urun_viev")
 
 #ürün Düzenle
