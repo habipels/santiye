@@ -46,6 +46,17 @@
 
     {% endblock head %}
 <style>
+
+        /* Yükleme çubuğu ayarları */
+    #nprogress .bar {
+      background: #24d6b6 !important;  /* Çizginin rengi */
+      height: 2px !important;          /* Çizginin yüksekliği */
+    }
+    /* Spinnerı kapatmak için */
+    #nprogress .spinner {
+      display: none;
+    }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
@@ -232,6 +243,8 @@
         });
     </script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
 
     <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
@@ -463,8 +476,29 @@ $(document).ready(function() {
         }
     }
 });
-</script>
 
+</script>
+ <script>
+    // NProgress ayarları
+    NProgress.configure({ 
+      showSpinner: false,   // Spinner'ı kapatma
+      speed: 500,           // Çizginin hareket hızı
+      minimum: 0.08,        // Başlangıç genişliği (minimum %8)
+      trickleSpeed: 200     // Akış hızını ayarlayın
+    });
+
+    // Sayfa geçişlerinde çalıştırmak için:
+    window.addEventListener('beforeunload', function () {
+      NProgress.start();  // Yükleme çubuğunu başlat
+    });
+
+    // Sayfa yüklendiğinde çalıştırmak için:
+    window.addEventListener('load', function () {
+      setTimeout(function() {
+        NProgress.done(); // Sayfa tamamlandığında çizgiyi bitir
+      }, 300); // Yükleme tamamlandıktan sonra kısa bir gecikme ekleyin
+    });
+  </script>
        
 
 
