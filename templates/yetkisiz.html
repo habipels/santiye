@@ -1,14 +1,139 @@
 {% extends "homebase.html" %}
 {% load i18n %}
 {% block sidebar %}
-<div class="main-content">
-        <div class="page-content dangerZoneContainer">
-            <div class="wrapper">
-                <i class="ri-git-repository-private-line"></i>
-                <h2>{% trans 'BU SAYFAYI GÖRÜNTÜLEMEYE YETKİNİZ YOK' %}</h2>
-            </div>
-        </div>
-        
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: 'Arial', sans-serif;
+      background-color: white; /* Arka planı beyaz yapıyoruz */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
 
+    .container {
+      text-align: center;
+      z-index: 10;
+      position: absolute;
+      top: 20%;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #042940;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #667279;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      background-color: #24d6b5;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+      background-color: #1bb395;
+      transform: scale(1.05);
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white; /* Canvas arka planı da beyaz */
+    }
+  </style>
+<div class="container">
+    <h1>Yetkiniz Yok</h1>
+    <p>Bu sayfaya erişim yetkiniz bulunmamaktadır. Lütfen yönetici ile iletişime geçiniz.</p>
+    <button class="btn" onclick="goHome()">Ana Sayfaya Dön</button>
+  </div>
+        
+        
+<canvas id="bg"></canvas>
 </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Three.js sahnesi
+    const scene = new THREE.Scene();
+
+    // Kamera
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg'), alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0xffffff, 1); // Arka plan beyaz
+
+    // Geometrik kilit objesi
+    const geometry = new THREE.TorusKnotGeometry(1, 0.4, 100, 16);
+    const material = new THREE.MeshStandardMaterial({ color: 0x24d6b5, wireframe: true });
+    const lock = new THREE.Mesh(geometry, material);
+    scene.add(lock);
+
+    // Işık
+    const pointLight = new THREE.PointLight(0xffffff);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff);
+    scene.add(ambientLight);
+
+    // Mouse hareketi ile etkileşim
+    let mouseX = 0;
+    let mouseY = 0;
+    document.addEventListener('mousemove', (event) => {
+      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // Animasyon
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Kilidin kendi etrafında dönmesi
+      lock.rotation.x += 0.01;
+      lock.rotation.y += 0.01;
+
+      // Mouse hareketiyle kilidi döndürme
+      lock.rotation.y += mouseX * 0.05;
+      lock.rotation.x += mouseY * 0.05;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    function goHome() {
+      window.location.href = "/";
+    }
+
+    // Responsive için yeniden boyutlandırma
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+
+
 {% endblock sidebar %}
