@@ -43,12 +43,15 @@ if DEPLOY__:
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        'rest_framework_swagger',
         # Add our new application
         #rosetta çeviri için
         'rosetta',
+        'rest_framework_swagger',
         'simple_history',
         'rest_framework',
         'rest_framework.authtoken',
+         'drf_yasg',
         #
         'main',
         'users',
@@ -119,10 +122,14 @@ if DEPLOY__:
     }
 
     REST_FRAMEWORK = {
-        'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.TokenAuthentication',
-        ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+     # Bu Swagger için gereklidir
     }
+
+    
+
     CSRF_TRUSTED_ORIGINS = ['http://localhost:8000','http://127.0.0.1:8000',]
     CSRF_COOKIE_SECURE = False
 
@@ -220,9 +227,11 @@ else:
         # Add our new application
         #rosetta çeviri için
         'rosetta',
+        'rest_framework_swagger',
         'simple_history',
         'rest_framework',
         'rest_framework.authtoken',
+         'drf_yasg',
         #
         'main',
         'users',
@@ -286,10 +295,15 @@ else:
     }
 
     REST_FRAMEWORK = {
-        'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.TokenAuthentication',
-        ),
-    }
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    
+    }   
+
+    
+
+
     CSRF_TRUSTED_ORIGINS = ['http://localhost:8000','http://127.0.0.1:8000',]
     CSRF_COOKIE_SECURE = False
 
