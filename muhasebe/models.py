@@ -129,7 +129,8 @@ class urun_talepleri(models.Model):
     #3 Red Edildi
     talebin_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Talebin Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "talebin_ait_oldugu")
     talebi_olusturan = models.ForeignKey(CustomUser,verbose_name="Talebi Oluşturan",blank=True,null=True,on_delete=models.SET_NULL,related_name="talebi_olusturan")
-    talebi_onaylayan = models.ForeignKey(CustomUser,verbose_name="Talebi Oluşturan",blank=True,null=True,on_delete=models.SET_NULL,related_name="talebi_onaylayan")
+    talebi_onaylayan = models.ForeignKey(CustomUser,verbose_name="Talebi onaylayan",blank=True,null=True,on_delete=models.SET_NULL,related_name="talebi_onaylayan")
+    satin_almayi_onaylayan = models.ForeignKey(CustomUser,verbose_name="SAtın Almayı Onaylayan",blank=True,null=True,on_delete=models.SET_NULL,related_name="satin_almayi_onaylayan")
     urun = models.ForeignKey(urunler,verbose_name="Ürün",blank=True,null=True,on_delete=models.SET_NULL)
     miktar = models.FloatField(default=0,verbose_name="Taleb Adet Miktarı")
     fiyati = models.FloatField(default=0,verbose_name="Fiyati")

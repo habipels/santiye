@@ -247,10 +247,8 @@
 <div class="main-content">
         <div class="page-content">
 <div class="container">
-    <h1>Satın Alma Talepleri</h1>
-    <div class="flex-row space-between">
-    
-        
+    <h1>Satın Alma Yönet</h1>
+    <div class="flex-row space-between">        
     </div>
 
     <table>
@@ -258,13 +256,17 @@
             <tr>
                 <th>Talep ID</th>
                 <th>Talebi Oluşturan</th>
+                <th>Talep üzerine işlem yapan</th>
+                <th>işlem Tarihi</th>
+                <th>Satın Almayı yapan</th>
+                <th>Satın Alma Tarihi</th>
                 <th>Ürün</th>
                 <th>Miktar</th>
                 <th>Fiyat</th>
                 <th>Tedarikçi</th>
                 <th>Durum</th>
                 <th>Talep Tarihi</th>
-                <th>Aksiyonlar</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -272,6 +274,14 @@
             <tr>
                 <td data-label="Talep ID">{{i.id}}</td>
                 <td data-label="Ürün">{{i.talebi_olusturan.first_name}}</td>
+                <td data-label="Ürün">{% if i.talebi_onaylayan %}
+                    {{i.talebi_onaylayan.first_name}}
+                {% else %}
+                    Henüz Kimse İşlem Yapmadı
+                {% endif %}</td>
+                <td data-label="Talep Tarihi">{{i.talep_durum_tarihi|  date:'d.m.Y'}}</td>
+                <td data-label="Ürün">{{i.satin_almayi_onaylayan.first_name}}</td>
+                <td data-label="Talep Tarihi">{{i.satin_alinma_tarihi|  date:'d.m.Y'}}</td>
                 <td data-label="Ürün">{{i.urun.urun_adi}}</td>
                 <td data-label="Miktar">{{i.miktar}}</td>
                 <td data-label="Fiyat">${{i.fiyati}}</td>
@@ -284,25 +294,8 @@
                 Onaylanmadı
                 {% endif %}</td>
                 <td data-label="Talep Tarihi">{{i.talep_Olusturma_tarihi|  date:'d.m.Y'}}</td>
-                <td data-label="Aksiyonlar">
-                {% if i.talep_durumu != "1"  %}
-                {% else %}
-                {% if request.user.kullanicilar_db %}
-                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                {% if yetki.satin_alma_talebi_silme %}
-                        <button onclick="openModal('requestDetailModal{{i.id}}')">Sil</button>
-                                                       
-                {% else %}
-                                                                                                                                    
-                {% endif %}
-                {% else %}
-                        <button onclick="openModal('requestDetailModal{{i.id}}')">Sil</button>
-                                                                                                         
-                {% endif %}
-                    
-                {% endif %}
-                    
-                </td>
+                                         
+     
             </tr>
         {% endfor %}
             
@@ -353,7 +346,7 @@
 <div id="createRequestModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('createRequestModal')">&times;</span>
-        <h2>Yeni Talep Oluştur</h2>
+        <h2>Talep Durum Güncelleme</h2>
         <form id="createRequestForm" action="/{{dil}}{% url 'accounting:satin_alma_talebi_ekle' %}" method="POST">
             {% csrf_token %}
             <div class="flex-column">
@@ -392,9 +385,11 @@
 <div id="requestDetailModal{{i.id}}" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('requestDetailModal{{i.id}}')">&times;</span>
-        <h2>Talebi Sil</h2>
+        <h2>Talebi Satın Alındı</h2>
         <div class="flex-column">
             <p><strong>Oluşturan:</strong> {{i.talebi_olusturan.first_name}}</p>
+            <p><strong>Talepte İşlem Yapan:</strong> {{i.talebi_onaylayan.first_name}}</p>
+            <p><strong>İşlem Tarihi:</strong> {{i.talep_durum_tarihi|  date:'d.m.Y'}}</p>
             <p><strong>Ürün:</strong> {{i.urun.urun_adi}}</p>
             <p><strong>Miktar:</strong> {{i.miktar}}</p>
             <p><strong>Fiyat:</strong> ${{i.fiyati}}</p>
@@ -409,7 +404,7 @@
             <p><strong>Talep Tarihi:</strong> {{i.talep_Olusturma_tarihi|  date:'d.m.Y'}}</p>
             <p><strong>açıklama:</strong> {{i.aciklama}}</p>
             <div class="flex-row space-between">
-                <a href="/{{dil}}{% url 'accounting:satin_alma_talebi_sil' i.id %}">Sil</a>
+                <a href="/{{dil}}{% url 'accounting:satin_alma_onayla' i.id %}">Onayla</a>
                 <button type="button" class="cancel-btn" onclick="closeModal('requestDetailModal{{i.id}}')">İptal</button>
             </div>
         </div>
