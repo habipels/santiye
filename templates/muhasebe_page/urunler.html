@@ -61,6 +61,9 @@
                                                     {% if request.user.is_superuser %}
                                                     <th class="sort" data-sort="customer_name">{% trans 'Ürün Kime Ait' %}</th>
                                                     {% endif %}
+                                                    <th class="sort" data-sort="customer_name">{% trans 'Ürün Kategorisi' %}</th>
+                                                    <th class="sort" data-sort="customer_name">{% trans 'Ürün Türü' %}</th>
+                                                    <th class="sort" data-sort="customer_name">{% trans 'Ürün Stoğa Dahil Mi ?' %}</th>
                                                     <th class="sort" data-sort="customer_name">{% trans 'Ürün Adı' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Ürün Fiyatı' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
@@ -79,6 +82,25 @@
                                                     <td class="kasa">{{i.urun_ait_oldugu.first_name}}</td>
                                                     {% endif %}
                                                     <td class="id" style="display:none;"><a href="javascript:void(0);" class="fw-medium link-primary">#VZ2101</a></td>
+                                                     <td class="kasa">{% if i.urun_kategorisi %}
+                                                     {{i.urun_kategorisi.kategori_adi}}
+                                                     {% else %}
+                                                     {% trans 'Ürün Kategorisi Yok' %}
+                                                     {% endif %}</td>
+                                                     <td class="kasa">
+                                                     {% if i.urun_turu_secim == "1" %}
+                                                        {% trans 'Hizmet' %}
+                                                     {% else %}
+                                                     {% trans 'Stok Ürünü' %}
+                                                     {% endif %}
+                                                     </td>
+                                                     <td class="kasa">
+                                                     {% if i.stok_mu %}
+                                                        {% trans 'Evet' %}
+                                                     {% else %}
+                                                     {% trans 'Hayır' %}
+                                                     {% endif %}
+                                                     </td>
                                                     <td class="kasa">{{i.urun_adi}}</td>
                                                     <td class="bakiye">{{i.urun_fiyati}} <span>$</span></td>
                                                     
@@ -178,7 +200,35 @@
                                         </div>
                                         {% else %}
                                         {% endif %}
-
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Ürün Kategorisi' %}</label>
+                                            <select class="form-control" name="kategori" id="date-field">
+                                                
+                                                {% for j in urun_kategorisi %}
+                                                    <option value="{{j.id}}">{{j.kategori_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                    <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Ürün Türü' %}</label>
+                                            <select class="form-control" name="urun_turu" id="date-field">
+                                            
+                                                <option value="1">{% trans 'Hizmet' %}</option>
+                                                <option value="2">{% trans 'Stok Ürünü' %}</option> 
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Ürün Stoğa Dahil Mi' %}</label>
+                                            <select class="form-control" name="stok" id="date-field">
+                                            
+                                                <option value="1">{% trans 'Stoğa Dahil' %}</option>
+                                                <option value="2">{% trans 'Stoğa Dahil Değil' %}</option>
+                                            
+                                                
+                                            </select>
+                                        </div>
                                     <div class="mb-3">
                                         <label for="customername-field" class="form-label">{% trans 'Ürün Adı' %}</label>
                                         <input name="kasaadi" type="text" id="customername-field" class="form-control" placeholder="{% trans 'Ürün Adı' %}" required />
@@ -234,7 +284,44 @@
                                         </div>
                                         {% else %}
                                         {% endif %}
-    
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Ürün Kategorisi' %}</label>
+                                            <select class="form-control" name="kategori" id="date-field">
+                                                <option value="{{i.urun_kategorisi.id}}">{{i.urun_kategorisi.kategori_adi}}</option>
+                                                {% for j in urun_kategorisi %}
+                                                    <option value="{{j.id}}">{{j.kategori_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Ürün Türü' %}</label>
+                                            <select class="form-control" name="urun_turu" id="date-field">
+                                            {% if i.urun_turu_secim == "1" %}
+                                                <option value="1">{% trans 'Hizmet' %}</option>
+                                                <option value="2">{% trans 'Stok Ürünü' %}</option>
+                                            {% else %}
+                                            <option value="2">{% trans 'Stok Ürünü' %}</option>
+                                            <option value="1">{% trans 'Hizmet' %}</option>
+                                            {% endif %}
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Ürün Stoğa Dahil Mi' %}</label>
+                                            <select class="form-control" name="stok" id="date-field">
+                                            {% if i.stok_mu %}
+                                                <option value="1">{% trans 'Stoğa Dahil' %}</option>
+                                                <option value="2">{% trans 'Stoğa Dahil Değil' %}</option>
+                                            {% else %}
+                                            <option value="2">{% trans 'Stoğa Dahil Değil' %}</option>
+                                            <option value="1">{% trans 'Stoğa Dahil' %}</option> 
+                                            {% endif %}
+                                                
+                                            </select>
+                                        </div>
                                         <div class="mb-3">
                                         <label for="customername-field" class="form-label">{% trans 'Ürün Adı' %}</label>
                                         <input name="kasaadi" value="{{i.urun_adi}}" type="text" id="customername-field" class="form-control" placeholder="{% trans 'Ürün Adı' %}" required />

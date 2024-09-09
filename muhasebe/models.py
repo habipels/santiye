@@ -129,6 +129,8 @@ class urun_talepleri(models.Model):
     #3 Red Edildi
     talebin_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Talebin Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "talebin_ait_oldugu")
     talebi_olusturan = models.ForeignKey(CustomUser,verbose_name="Talebi Oluşturan",blank=True,null=True,on_delete=models.SET_NULL,related_name="talebi_olusturan")
+    talebi_onaylayan = models.ForeignKey(CustomUser,verbose_name="Talebi onaylayan",blank=True,null=True,on_delete=models.SET_NULL,related_name="talebi_onaylayan")
+    satin_almayi_onaylayan = models.ForeignKey(CustomUser,verbose_name="SAtın Almayı Onaylayan",blank=True,null=True,on_delete=models.SET_NULL,related_name="satin_almayi_onaylayan")
     urun = models.ForeignKey(urunler,verbose_name="Ürün",blank=True,null=True,on_delete=models.SET_NULL)
     miktar = models.FloatField(default=0,verbose_name="Taleb Adet Miktarı")
     fiyati = models.FloatField(default=0,verbose_name="Fiyati")
@@ -139,6 +141,7 @@ class urun_talepleri(models.Model):
     talep_durum_tarihi = models.DateTimeField(null=True,verbose_name="Talep Durum Değiştirme Tarihi",blank = True)
     satin_alinma_durumu = models.BooleanField(default=False)#satın_almayı Onaylı İse Satın Alındı
     satin_alinma_tarihi = models.DateTimeField(null=True,verbose_name="Satın Alınma Tarihi",blank = True)
+    silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class gider_urun_bilgisi(models.Model):

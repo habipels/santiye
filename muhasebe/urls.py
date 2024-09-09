@@ -114,6 +114,23 @@ urlpatterns = [
     path('delproductscategory/', views.urunler_kategorisi_sil, name='urunler_kategorisi_sil'),
     path('setproductscategory/', views.urunler_kategorisi_duzenle, name='urunler_kategorisi_duzenle'),
     #ürünler KAtegorisi
+    #ürünler satin_alma_talabi
+    path('purchaserequest/', views.satin_alma_talabi, name='satin_alma_talabi'),
+    path('addpurchaserequest/', views.satin_alma_talebi_ekle, name='satin_alma_talebi_ekle'),
+    path('delpurchaserequest/<int:id>/', views.satin_alma_talebi_sil, name='satin_alma_talebi_sil'),
+    #ürünler satin_alma_talabi
+    path('apleyrequest/', views.satin_alma_talabi_onaylama, name='satin_alma_talabi_onaylama'),
+    path('onayapleyrequest/<int:id>/', views.satin_alma_talebi_onayla, name='satin_alma_talebi_onayla'),
+    path('redapleyrequest/<int:id>/', views.satin_alma_talebi_red, name='satin_alma_talebi_red'),
+    #ürünler satin_alma_
+    path('apleyrequest/', views.satin_alma_talabi_onaylama, name='satin_alma_talabi_onaylama'),
+    path('onayapleyrequest/<int:id>/', views.satin_alma_talebi_onayla, name='satin_alma_talebi_onayla'),
+    path('redapleyrequest/<int:id>/', views.satin_alma_talebi_red, name='satin_alma_talebi_red'),
+    #satın alınma
+    path('buyrequest/', views.satin_alma_, name='satin_alma_'),
+    path('apleybuyrequest/<int:id>/', views.satin_alma_onayla, name='satin_alma_onayla'),
+    path('buyelement/', views.satin_alma_kabuller, name='satin_alma_kabuller'),
 ]
 #
+#accounting
 

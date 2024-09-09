@@ -179,7 +179,7 @@ class personel_izinleri(models.Model):
     projeler_silme = models.BooleanField(default = False)
     projeler_gorme = models.BooleanField(default = False)
     projeler_duzenleme = models.BooleanField(default = False)
-    #Personeller Kategorileri
+    #Personeller Kategorileri back end olarak yapılmadı
     personeller_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     personeller_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
     personeller_gorme = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
@@ -209,6 +209,16 @@ class personel_izinleri(models.Model):
     virman_raporu_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
     virman_raporu_gorme = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     virman_raporu_duzenleme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
+    #stok back end olarak bağlanmmadı
+    satin_alma_talebi_olusturma = models.BooleanField(default = False)
+    satin_alma_talebi_silme = models.BooleanField(default = False)
+    satin_alma_talebi_gorme = models.BooleanField(default = False)
+    satin_alma_talebi_duzenleme = models.BooleanField(default = False)
+    #stok back end olarak bağlanmmadı
+    satin_alma_talebi_onaylama_olusturma = models.BooleanField(default = False)
+    satin_alma_talebi_onaylama_silme = models.BooleanField(default = False)
+    satin_alma_talebi_onaylama_gorme = models.BooleanField(default = False)
+    satin_alma_talebi_onaylama_duzenleme = models.BooleanField(default = False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):

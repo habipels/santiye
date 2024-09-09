@@ -1687,12 +1687,14 @@ def urun_viev(request):
             if a:
                 if a.izinler.urun_gorme:
                     profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db)
+                    kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db)
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
             profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
+            kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user)
     if request.GET.get("search"):
         search = request.GET.get("search")
         if super_admin_kontrolu(request):
@@ -1725,6 +1727,7 @@ def urun_viev(request):
     content["santiyeler"] = page_obj
     content["top"]  = profile
     content["medya"] = page_obj
+    content["urun_kategorisi"] = kategori
     return render(request,"muhasebe_page/urunler.html",content)
 def urun_viev_2(request,hash):
     content = sozluk_yapisi()
@@ -1770,9 +1773,16 @@ def urun_ekle(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             kasa_Adi   = request.POST.get("kasaadi")
             bakiye = request.POST.get("bakiye")
+            kategori = request.POST.get("kategori")
+            urun_turu = request.POST.get("urun_turu")
+            stok = request.POST.get("stok")
+            if stok == "1":
+                stok = True
+            else:
+                stok = False
             urunler.objects.create(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi )
-                                ,urun_adi = kasa_Adi,urun_fiyati = bakiye
-
+                                ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
+                                ,urun_turu_secim =  urun_turu,stok_mu = stok  
                                 )
         else:
             if request.user.kullanicilar_db:
@@ -1781,8 +1791,16 @@ def urun_ekle(request):
                     if a.izinler.urun_olusturma:
                         kasa_Adi   = request.POST.get("kasaadi")
                         bakiye = request.POST.get("bakiye")
+                        kategori = request.POST.get("kategori")
+                        urun_turu = request.POST.get("urun_turu")
+                        stok = request.POST.get("stok")
+                        if stok == "1":
+                            stok = True
+                        else:
+                            stok = False
                         urunler.objects.create(urun_ait_oldugu = request.user.kullanicilar_db
-                            ,urun_adi = kasa_Adi,urun_fiyati = bakiye)
+                            ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
+                            ,urun_turu_secim =  urun_turu,stok_mu = stok  )
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -1790,8 +1808,16 @@ def urun_ekle(request):
             else:
                 kasa_Adi   = request.POST.get("kasaadi")
                 bakiye = request.POST.get("bakiye")
+                kategori = request.POST.get("kategori")
+                urun_turu = request.POST.get("urun_turu")
+                stok = request.POST.get("stok")
+                if stok == "1":
+                    stok = True
+                else:
+                    stok = False
                 urunler.objects.create(urun_ait_oldugu = request.user
-                    ,urun_adi = kasa_Adi,urun_fiyati = bakiye)
+                    ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
+                    ,urun_turu_secim =  urun_turu,stok_mu = stok)
 
     return redirect("accounting:urun_viev")
 
@@ -1833,14 +1859,24 @@ def urun_duzenle(request):
         proje_tip_adi   = request.POST.get("kasaadi")
         silinmedurumu = request.POST.get("silinmedurumu")
         bakiye = request.POST.get("bakiye")
+        kategori = request.POST.get("kategori")
+        urun_turu = request.POST.get("urun_turu")
+        stok = request.POST.get("stok")
+        if stok == "1":
+            stok = True
+        else:
+            stok = False
         if silinmedurumu == "1":
             silinmedurumu = False
-            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu)
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
+                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok)
         elif silinmedurumu == "2":
             silinmedurumu = True
-            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu)
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
+                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok)
         else:
-            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye)
+            urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
+                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok)
     else:
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -1848,8 +1884,15 @@ def urun_duzenle(request):
                 if a.izinler.urun_guncelleme:
                     proje_tip_adi   = request.POST.get("kasaadi")
                     bakiye = request.POST.get("bakiye")
+                    kategori = request.POST.get("kategori")
+                    urun_turu = request.POST.get("urun_turu")
+                    stok = request.POST.get("stok")
+                    if stok == "1":
+                        stok = True
+                    else:
+                        stok = False
                     urunler.objects.filter(urun_ait_oldugu = request.user.kullanicilar_db,id = id).update(urun_adi = proje_tip_adi
-                            ,urun_fiyati = bakiye)
+                            ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori),urun_turu_secim =  urun_turu,stok_mu = stok)
                 else:
                     return redirect("main:yetkisiz")
             else:
@@ -1857,8 +1900,15 @@ def urun_duzenle(request):
         else:
             proje_tip_adi   = request.POST.get("kasaadi")
             bakiye = request.POST.get("bakiye")
+            kategori = request.POST.get("kategori")
+            urun_turu = request.POST.get("urun_turu")
+            stok = request.POST.get("stok")
+            if stok == "1":
+                stok = True
+            else:
+                stok = False
             urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(urun_adi = proje_tip_adi
-                    ,urun_fiyati = bakiye)
+                    ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori),urun_turu_secim =  urun_turu,stok_mu = stok)
     return redirect("accounting:urun_viev")
 
 #ürün Düzenle
@@ -3942,3 +3992,349 @@ def urunler_kategorisi_duzenle(request):
             urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user,id = id).update(kategori_adi = proje_tip_adi
                             )
     return redirect("accounting:urunler_kategorisi")
+
+def satin_alma_talabi(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =urun_talepleri.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.satin_alma_talebi_gorme:
+                    profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db)
+                    urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2" )
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user)
+            urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =urun_talepleri.objects.filter(Q(talebin_ait_oldugu__first_name__icontains = search)|Q(urun__urun_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_gorme:
+                        profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False))
+                        
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False))
+                
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["urunlerimiz"] = urunler_gonder
+    return render(request,"stok/satin_alama_talebi.html",content)
+
+def satin_alma_talebi_ekle(request):
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            
+        else:
+            urun_bilgisi = request.POST.get("urun")
+            miktar = request.POST.get("miktar")
+            fiyat = request.POST.get("fiyat")
+            tedarikci = request.POST.get("tedarikci")
+            aciklama = request.POST.get("aciklama")
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_olusturma:
+                        urun_talepleri.objects.create(talebin_ait_oldugu = request.user.kullanicilar_db,
+                        talebi_olusturan =request.user,urun = get_object_or_none(urunler,id =urun_bilgisi),
+                        miktar = float(miktar),fiyati = float(fiyat),
+                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.now() )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                urun_talepleri.objects.create(talebin_ait_oldugu = request.user,
+                        talebi_olusturan =request.user,urun = get_object_or_none(urunler,id =urun_bilgisi),
+                        miktar = float(miktar),fiyati = float(fiyat),
+                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.now()  )
+
+    return redirect("accounting:satin_alma_talabi")
+
+def satin_alma_talebi_sil(request,id):
+    if True:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_silme:
+                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(silinme_bilgisi = True)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(silinme_bilgisi = True)
+
+    return redirect("accounting:satin_alma_talabi")
+
+
+def satin_alma_talabi_onaylama(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =urun_talepleri.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.satin_alma_talebi_onaylama_gorme:
+                    profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
+                    urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2" )
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
+            urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =urun_talepleri.objects.filter(Q(talebin_ait_oldugu__first_name__icontains = search)|Q(urun__urun_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_onaylama_gorme:
+                        profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False)).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
+                        
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False)).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
+                
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["urunlerimiz"] = urunler_gonder
+    return render(request,"stok/satin_alama_talebi_onaylama.html",content)
+
+
+def satin_alma_talebi_onayla(request,id):
+    if True:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_silme:
+                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+
+    return redirect("accounting:satin_alma_talabi_onaylama")
+
+def satin_alma_talebi_red(request,id):
+    if True:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_silme:
+                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+
+    return redirect("accounting:satin_alma_talabi_onaylama")
+
+def satin_alma_(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =urun_talepleri.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.satin_alma_talebi_onaylama_gorme:
+                    profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db,talep_durumu = "2" ,satin_alinma_durumu = False)
+                    urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user,talep_durumu = "2",satin_alinma_durumu = False )
+            urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =urun_talepleri.objects.filter(Q(talebin_ait_oldugu__first_name__icontains = search)|Q(urun__urun_adi__icontains = search),satin_alinma_durumu = False)
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_onaylama_gorme:
+                        profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False),talep_durumu = "2" ,satin_alinma_durumu = False)
+                        
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False),talep_durumu = "2" ,satin_alinma_durumu = False)
+                
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["urunlerimiz"] = urunler_gonder
+    return render(request,"stok/satin_alma.html",content)
+
+def satin_alma_onayla(request,id):
+    if True:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_silme:
+                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.now())
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.now())
+
+    return redirect("accounting:satin_alma_talabi_onaylama")
+
+def satin_alma_kabuller(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =urun_talepleri.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.satin_alma_talebi_onaylama_gorme:
+                    profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db,talep_durumu = "2" ,satin_alinma_durumu = True)
+                    urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user,talep_durumu = "2",satin_alinma_durumu = True )
+            urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =urun_talepleri.objects.filter(Q(talebin_ait_oldugu__first_name__icontains = search)|Q(urun__urun_adi__icontains = search),satin_alinma_durumu = True)
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.satin_alma_talebi_onaylama_gorme:
+                        profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False),talep_durumu = "2" ,satin_alinma_durumu = True)
+                        
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False),talep_durumu = "2" ,satin_alinma_durumu = True)
+                
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["urunlerimiz"] = urunler_gonder
+    return render(request,"stok/satin_alma_kabul.html",content)
