@@ -4418,10 +4418,10 @@ def urun_bilgisi(request,id):
         'stok': stok_sayisi(urun),
         "kalemler": [
             {
-                "Personel": str(kalem.zimmet_alan_personel.isim) +str(kalem.zimmet_alan_personel.soyisim),
+                "Personel": str(kalem.zimmet_alan_personel.isim) +" "+str(kalem.zimmet_alan_personel.soyisim),
                 "adet": kalem.zimmet_miktari,
                 "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
-                "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y"),
+    "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y") if kalem.zimmet_teslim_edilme_tarihi else "" ,
             } for kalem in zimmetler
         ]
         }
@@ -4438,18 +4438,83 @@ def zimmetler(request):
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
-                if a.izinler.stok_talebi_onaylama_gorme:
+                if a.izinler.zimmet_gorme:
                     profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db,urun_turu_secim = "2",stok_mu = True )
-                    kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db)
+                    kategori = zimmet_olayi.objects.filter(zimmet_kime_ait = request.user.kullanicilar_db)
+                    personeller = calisanlar.objects.filter(calisan_kime_ait =request.user.kullanicilar_db )
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
             profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user,urun_turu_secim = "2",stok_mu = True )
-            kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user)
-    
+            kategori = zimmet_olayi.objects.filter(zimmet_kime_ait = request.user)
+            personeller = calisanlar.objects.filter(calisan_kime_ait =request.user )   
     content["santiyeler"] = profile
     content["urun_kategorisi"] = kategori
-    return render(request,"stok/zimmet.html",content)
+    content["personeller"] = personeller
+    return render(request,"stok/zimmetler.html",content)
 
+def zimmet_ekle(request):
+    if request.POST:
+        if super_admin_kontrolu(request):
+            pass
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.zimmet_olusturma:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        personel = request.POST.get("personel")
+        urun = request.POST.get("malzeme")
+        miktar = request.POST.get("miktar")
+        teslimTarihi = request.POST.get("teslimTarihi")
+        zimmet_olayi.objects.create(
+            zimmet_kime_ait = kullanici,zimmeti_veren = request.user,
+            zimmet_alan_personel = get_object_or_none(calisanlar,id = personel),
+            zimmet_verilen_urun = get_object_or_none(urunler,id = urun),
+            zimmet_durumu = "0",zimmet_miktari = miktar,
+            zimmet_verilis_tarihi = teslimTarihi
+        )
+    return redirect("accounting:zimmetler")
+def zimmeti_teslim_Al(request,id,iz):
+    if True:
+        if super_admin_kontrolu(request):
+            pass
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.zimmet_olusturma:
+                    pass
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            pass
+        
+        if iz == 1:
+            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "1",zimmet_teslim_edilme_tarihi = datetime.now())
+        elif iz == 2:
+            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.now())
+    return redirect("accounting:zimmetler")
+
+def zimmet(request,id):
+    if True:
+        kalem = get_object_or_none(zimmet_olayi , id = id)
+        fatura_data = {
+            "id" : id,
+                "urun":kalem.zimmet_verilen_urun.urun_adi,
+                "personel": str(kalem.zimmet_alan_personel.isim) +" "+str(kalem.zimmet_alan_personel.soyisim),
+                "adet": str(kalem.zimmet_miktari),
+                "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
+                "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y") if kalem.zimmet_teslim_edilme_tarihi else "" ,
+                "durum":kalem.zimmet_durumu,
+                
+        }
+        return JsonResponse(fatura_data)

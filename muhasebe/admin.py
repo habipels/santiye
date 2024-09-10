@@ -25,6 +25,7 @@ admin.site.register(Gider_excel_ekleme)
 admin.site.register(faturalar_icin_bilgiler)
 admin.site.register(urun_talepleri)
 admin.site.register(stok_giris_cikis)
+admin.site.register(zimmet_olayi)
 @admin.register(cari)
 class CariAdmin(SimpleHistoryAdmin):
     pass

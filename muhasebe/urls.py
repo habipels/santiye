@@ -134,7 +134,12 @@ urlpatterns = [
     path('stock/', views.stok, name='stok'),
     path('addstock/', views.stok_girisi_yap, name='stok_girisi_yap'),
     path('zimmetbilgisi/<int:id>/', views.urun_bilgisi, name='urun_bilgisi'),
+    #zimmet
+    path('debit/', views.zimmetler, name='zimmetler'),
+    path('adddebit/', views.zimmet_ekle, name='zimmet_ekle'),
+    path('zimmet/<int:id>/', views.zimmet, name='zimmet'),
+    path('teslim/<int:id>/<int:iz>/', views.zimmeti_teslim_Al, name='zimmeti_teslim_Al'),
 ]
-#
+#zimmeti_teslim_Al_1
 #accounting
 
