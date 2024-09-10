@@ -130,6 +130,10 @@ urlpatterns = [
     path('buyrequest/', views.satin_alma_, name='satin_alma_'),
     path('apleybuyrequest/<int:id>/', views.satin_alma_onayla, name='satin_alma_onayla'),
     path('buyelement/', views.satin_alma_kabuller, name='satin_alma_kabuller'),
+    #stoklar
+    path('stock/', views.stok, name='stok'),
+    path('addstock/', views.stok_girisi_yap, name='stok_girisi_yap'),
+    path('zimmetbilgisi/<int:id>/', views.urun_bilgisi, name='urun_bilgisi'),
 ]
 #
 #accounting

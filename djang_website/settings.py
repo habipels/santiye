@@ -24,7 +24,7 @@ if DEPLOY__:
     SECRET_KEY = '(c@9=wl&3=c#nm@=5#hn$#dpw5zqm0vvmojfcr!d7%&7&ofz2n'
 
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = False
+    DEBUG = True
 
     ALLOWED_HOSTS = ["*"]
 
@@ -43,7 +43,6 @@ if DEPLOY__:
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
-        'rest_framework_swagger',
         # Add our new application
         #rosetta çeviri için
         'rosetta',
@@ -122,15 +121,23 @@ if DEPLOY__:
     }
 
     REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-     # Bu Swagger için gereklidir
-    }
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # Eğer tüm API'ler için kimlik doğrulama gerekiyorsa bu ayarları bırakabilirsiniz.
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # API endpoint'leri için genel izin ayarları. 
+        # Sadece Swagger için 'AllowAny' kullanıyoruz.
+        'rest_framework.permissions.AllowAny',
+    ],
+}
+
 
     
 
-    CSRF_TRUSTED_ORIGINS = ['http://localhost:8000','http://127.0.0.1:8000',]
+    CSRF_TRUSTED_ORIGINS = ['https://cloud.biadago.com',
+        'http://cloud.biadago.com',]
     CSRF_COOKIE_SECURE = False
 
     # Password validation

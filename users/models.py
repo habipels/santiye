@@ -219,6 +219,13 @@ class personel_izinleri(models.Model):
     satin_alma_talebi_onaylama_silme = models.BooleanField(default = False)
     satin_alma_talebi_onaylama_gorme = models.BooleanField(default = False)
     satin_alma_talebi_onaylama_duzenleme = models.BooleanField(default = False)
+    stok_olusturma = models.BooleanField(default = False)
+    stok_talebi_onaylama_silme = models.BooleanField(default = False)
+    stok_talebi_onaylama_gorme = models.BooleanField(default = False)
+    stok_talebi_onaylama_duzenleme = models.BooleanField(default = False)
+    zimmet_olusturma = models.BooleanField(default = False)
+    zimmet_silme = models.BooleanField(default = False)
+    zimmet_gorme = models.BooleanField(default = False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):

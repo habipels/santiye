@@ -1093,3 +1093,31 @@ def pozisyon_calisan_sayisi(id):
 def departman_calisan_sayisi(id):
     a = calisanlar.objects.filter(silinme_bilgisi = False,status = "0",calisan_kategori = id).count()
     return a
+from django.db.models.query_utils import Q
+@register.simple_tag
+def stok_sayisi(id):
+    toplam = 0
+    a = gider_urun_bilgisi.objects.filter(urun_bilgisi = id,gider_bilgis__silinme_bilgisi = False)
+    b = gelir_urun_bilgisi.objects.filter(urun_bilgisi = id,gider_bilgis__silinme_bilgisi = False)
+    stok_giris_cikisi = stok_giris_cikis.objects.filter(stok_giren_urun = id,stok_durumu = "0")
+    for i in a:
+        toplam = toplam+float(i.urun_adeti)
+    for i in b:
+        toplam = toplam-float(i.urun_adeti)
+    for i in stok_giris_cikisi:
+        toplam = toplam+float(i.stok_adeti)
+    stok_giris_cikisi = stok_giris_cikis.objects.filter(stok_giren_urun = id,stok_durumu = "1")
+    for i in stok_giris_cikisi:
+        toplam = toplam-float(i.stok_adeti)
+    zimmet = zimmet_olayi.objects.filter(zimmet_verilen_urun = id).filter(Q(zimmet_durumu = "0")|Q(zimmet_durumu = "2"))
+    for i in zimmet:
+        toplam = toplam - float(i.zimmet_miktari)
+    return toplam
+
+@register.simple_tag
+def zimmet_sayisi(id):
+    toplam = 0
+    zimmet = zimmet_olayi.objects.filter(zimmet_verilen_urun = id).filter(Q(zimmet_durumu = "0")|Q(zimmet_durumu = "2"))
+    for i in zimmet:
+        toplam = toplam + float(i.zimmet_miktari)
+    return toplam

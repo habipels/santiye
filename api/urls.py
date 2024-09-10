@@ -125,7 +125,6 @@ urlpatterns = [#deneme
  path('update/todo/', views.yapilacaklar_time_line_duzenle_api, name='yapilacaklar_time_line_duzenle_api'),
  #######
  path('report/<int:id>', views.santiye_raporu_api, name='santiye_raporu_api'),
- path('swag', schema_view)
 
 ]#
 #

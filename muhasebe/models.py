@@ -118,6 +118,38 @@ class urunler(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class zimmet_olayi(models.Model):
+    urun_turu = (
+        ("0","0"),
+        ("1","1"),
+        ("2","2")
+    )
+    zimmet_kime_ait = models.ForeignKey(CustomUser,verbose_name="ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "zimmet_kime_ait")
+    zimmeti_veren = models.ForeignKey(CustomUser,verbose_name="Talebin Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "zimmeti_veren")
+    zimmet_alan_personel = models.ForeignKey(calisanlar,verbose_name="Talebin Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "Zimmet_alan_personel")
+    zimmet_verilen_urun = models.ForeignKey(urunler,verbose_name="Talebin Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "Zimmet_alan_personel")
+    zimmet_verilis_tarihi= models.DateTimeField(null=True,verbose_name="Zimmet Veriliş Tarihi",blank = True)
+    zimmet_teslim_edilme_tarihi= models.DateTimeField(null=True,verbose_name="zimmet_teslim_edilme_tarihi",blank = True)
+    zimmet_durumu = models.CharField(max_length=5,verbose_name="Urun Türü",choices = urun_turu, default="0")#0 verildi, 1 Hasarsız teslim alindı , 2 hasarlı alındı
+    zimet_veris_belgesi = models.FileField(upload_to='zimmet_verilis_belgesi/',verbose_name="Zimmet Belgesi",blank=True,null=True)
+    zimet_teslim_belgesi = models.FileField(upload_to='zimmet_teslim_belgesi/',verbose_name="Zimmet Belgesi",blank=True,null=True)
+    zimmet_miktari = models.FloatField(default= 0)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class stok_giris_cikis(models.Model):
+    urun_turu = (
+        ("0","0"),
+        ("1","1")
+    )
+    stok_kime_ait = models.ForeignKey(CustomUser,verbose_name="ürün Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "stok_kime_ait")
+    stok_giren = models.ForeignKey(CustomUser,verbose_name="Talebin Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "stok_giren")
+    stok_giren_urun = models.ForeignKey(urunler,verbose_name="Talebin Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name = "stok_giren_urun")
+    stok_adeti = models.FloatField(default=0,verbose_name="Stok Miktari")
+    stok_durumu = models.CharField(max_length=5,verbose_name="Urun Türü",choices = urun_turu, default="0")#0 Giriş, 1 çıkış 
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class urun_talepleri(models.Model):
     talebi_onaylama=(
         ("1","1"),

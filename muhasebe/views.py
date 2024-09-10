@@ -4338,3 +4338,118 @@ def satin_alma_kabuller(request):
     content["medya"] = page_obj
     content["urunlerimiz"] = urunler_gonder
     return render(request,"stok/satin_alma_kabul.html",content)
+
+
+def stok(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =urunler.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.stok_talebi_onaylama_gorme:
+                    profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db,urun_turu_secim = "2",stok_mu = True )
+                    kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user,urun_turu_secim = "2",stok_mu = True )
+            kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user)
+    
+    content["santiyeler"] = profile
+    content["urun_kategorisi"] = kategori
+    return render(request,"stok/stok.html",content)
+
+def stok_girisi_yap(request):
+    if request.POST:
+        if super_admin_kontrolu(request):
+            pass
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.stok_talebi_onaylama_gorme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        urun = request.POST.get("urun")
+        transactionType = request.POST.get("transactionType")
+        transactionAmount = request.POST.get("transactionAmount")
+        stok_giris_cikis.objects.create(
+            stok_kime_ait = kullanici,stok_giren = request.user,
+            stok_giren_urun= get_object_or_none(urunler,id = urun),
+            stok_durumu = transactionType,stok_adeti  = transactionAmount
+        )
+        print("kaydedildi")
+    return redirect("accounting:stok")
+def stok_sayisi(id):
+    toplam = 0
+    a = gider_urun_bilgisi.objects.filter(urun_bilgisi = id,gider_bilgis__silinme_bilgisi = False)
+    b = gelir_urun_bilgisi.objects.filter(urun_bilgisi = id,gider_bilgis__silinme_bilgisi = False)
+    stok_giris_cikisi = stok_giris_cikis.objects.filter(stok_giren_urun = id,stok_durumu = "0")
+    for i in a:
+        toplam = toplam+float(i.urun_adeti)
+    for i in b:
+        toplam = toplam-float(i.urun_adeti)
+    for i in stok_giris_cikisi:
+        toplam = toplam+float(i.stok_adeti)
+    stok_giris_cikisi = stok_giris_cikis.objects.filter(stok_giren_urun = id,stok_durumu = "1")
+    for i in stok_giris_cikisi:
+        toplam = toplam-float(i.stok_adeti)
+    zimmet = zimmet_olayi.objects.filter(zimmet_verilen_urun = id).filter(Q(zimmet_durumu = "0")|Q(zimmet_durumu = "2"))
+    for i in zimmet:
+        toplam = toplam - float(i.zimmet_miktari)
+    return toplam
+def urun_bilgisi(request,id):
+    if True:
+        urun = get_object_or_none(urunler , id = id)
+        zimmetler = zimmet_olayi.objects.filter(zimmet_verilen_urun = urun)
+        fatura_data = {
+            'isim':urun.urun_adi,
+        'kategori': urun.urun_kategorisi.kategori_adi,
+        'stok': stok_sayisi(urun),
+        "kalemler": [
+            {
+                "Personel": str(kalem.zimmet_alan_personel.isim) +str(kalem.zimmet_alan_personel.soyisim),
+                "adet": kalem.zimmet_miktari,
+                "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
+                "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y"),
+            } for kalem in zimmetler
+        ]
+        }
+        print(fatura_data)
+        return JsonResponse(fatura_data)
+
+def zimmetler(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile =urunler.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.stok_talebi_onaylama_gorme:
+                    profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db,urun_turu_secim = "2",stok_mu = True )
+                    kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user,urun_turu_secim = "2",stok_mu = True )
+            kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user)
+    
+    content["santiyeler"] = profile
+    content["urun_kategorisi"] = kategori
+    return render(request,"stok/zimmet.html",content)
+
