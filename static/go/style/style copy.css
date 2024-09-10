@@ -15,29 +15,16 @@ body:has(.sidebar-collapsed) {
 }
 
 .sidebar {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 280px;
     height: 100%;
-    max-height: 100%;
     box-shadow: 0 16px 44px 0px rgba(0, 0, 0, 0.07);
     transition: all .2s ease-in-out;
     background-color: #fff;
     z-index: 5000;
     border-bottom-right-radius: 18px;
-}
-
-.sidebar-navs::-webkit-scrollbar {
-    display: none;
-}
-
-.sidebar-navs {
-    height: calc(100% - 120px);
-    max-height: calc(100% - 120px);
-    overflow-y: scroll;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
 }
 
 .sidebar-collapsed {
@@ -149,14 +136,13 @@ body:has(.sidebar-collapsed) {
     gap: 4px;
 }
 
-.sidebar-nav>li {
+.sidebar-nav li {
     margin-inline: 24px;
     border-radius: 50px;
     transition: all .1s ease-in-out;
-    transition: border-radius .2s ease-in-out;
 }
 
-.sidebar-nav>li a {
+.sidebar-nav li a {
     text-decoration: none;
     color: #8C8C8C;
     padding: 12px 16px;
@@ -170,54 +156,15 @@ body:has(.sidebar-collapsed) {
     transition: all .1s ease-in-out;
 }
 
-.sidebar-nav>li:hover,
-.sidebar-nav>li.active {
+.sidebar-nav li:hover,
+.sidebar-nav li.active {
     background-color: #EEF2FF;
 }
 
-.sidebar-nav .sidebar-sub-menu a:hover {
-    font-weight: bold;
-    color: #052941;
-}
-
-.sidebar-nav>li:hover>a,
-.sidebar-nav>li.active>a {
+.sidebar-nav li:hover a,
+.sidebar-nav li.active a {
     color: #052941;
     font-weight: bold;
-}
-
-.sidebar-nav .sidebar-sub-toggle .icon-caret {
-    transition: all .2s ease-in-out;
-    margin-left: auto;
-}
-
-.sidebar-collapsed .sidebar-sub-toggle .icon-caret {
-    display: none;
-}
-
-.sidebar-collapsed .sidebar-sub-menu {
-    display: none !important;
-}
-
-.rotate {
-    transform: rotate(90deg);
-}
-
-.sidebar-nav li:has(.sidebar-sub-menu.open) {
-    border-radius: 24px;
-}
-
-.sidebar li .sidebar-sub-menu {
-    display: none;
-    list-style-type: none;
-}
-
-.sidebar li .sidebar-sub-menu a {
-    padding-left: 30px;
-}
-
-.sidebar-sub-menu .sidebar-sub-menu {
-    padding-left: 30px;
 }
 
 .sidebar hr {
@@ -293,20 +240,12 @@ body:has(.sidebar-collapsed) {
     background-size: contain;
 }
 
-.icon-caret {
-    background-image: url("../icons/caret.svg");
-}
-
 .icon-sidebar-left {
     background-image: url("../icons/sidebar-left.svg");
 }
 
 .icon-sidebar-right {
     background-image: url("../icons/sidebar-right.svg");
-}
-
-.icon-close {
-    background-image: url("../icons/close.svg");
 }
 
 .icon-dashboard {
@@ -1072,8 +1011,6 @@ header .header-language i {
     font-size: 14px;
     color: #052941;
     font-weight: bolder;
-    width: max-content;
-
 }
 
 .header-profile .profile-title span {
@@ -1150,8 +1087,7 @@ main {
     }
 }
 
-.quick-actions-grid .quick-action,
-.quick-actions-grid .hidden-link {
+.quick-actions-grid .quick-action {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1163,7 +1099,6 @@ main {
     border-radius: 30px;
     font-size: 16px;
     transition: all .1s ease-in-out;
-    cursor: pointer;
 }
 
 .quick-actions-grid .quick-action:hover {
@@ -1277,18 +1212,29 @@ main {
 }
 
 .quick-actions-add {
-    background-color: #fff;
     border: 1px solid #D0D5DD;
     padding-inline: 12px;
     height: 30px;
     display: flex;
-    align-items: center;
     border-radius: 100px;
     opacity: 0;
     transition: all .1s ease-in-out;
-    cursor: pointer;
 }
 
+.quick-actions-add input {
+    border: none;
+    outline: none;
+    height: 100%;
+}
+
+.quick-actions-add button {
+    background-color: #fff;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
 
 .quick-actions:has(.quick-actions-body.open) .quick-actions-add {
     opacity: 1;
@@ -1363,6 +1309,7 @@ main {
 .profile-avatar,
 .profile-avatar img {
     border-radius: 50%;
+    height: 40px;
 }
 
 .stats-card {
@@ -1961,45 +1908,1282 @@ table.dataTable tbody tr td span.time {
     font-size: 13px;
     font-weight: bold;
 }
+body {
+    font-family: 'Red Hat Display', sans-serif;
+    color: #013744; /* Kurumsal Renk */
+    background-color: #fff; /* Arka Plan Rengi */
+}
 
-.quick-action-modal {
-    position: fixed;
-    inset: 0;
+h1, h2, h3, h4, h5, h6 {
+    color: #052941; /* Başlık Renkleri */
+}
+
+.btn-primary {
+    background-color: #08a88a;
+    border-color: #08a88a;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.table th {
+    background-color: #052941;
+    color: white;
+}
+
+.table td {
+    text-align: center;
+    vertical-align: middle;
+}
+/* Fatura Bilgileri */
+.firma-bilgileri {
+    font-size: 12px;
+    color: #013744;
+}
+
+.firma-bilgileri h4 {
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.firma-bilgileri p {
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.qr-code {
+    width: 100px;
+    height: auto;
+}
+
+.invoice-content .table {
     width: 100%;
-    height: 100dvh;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 50000;
-    display: none;
-    align-items: center;
-    justify-content: center;
 }
 
-.quick-action-modal.open {
-    display: flex;
+.invoice-content .table th, 
+.invoice-content .table td {
+    padding: 10px;
 }
 
-.quick-action-modal .quick-action-modal-content {
-    background-color: #fff;
-    width: 600px;
-    min-width: 300px;
-    min-height: 200px;
-    border-radius: 12px;
-    box-shadow: -20px 20px 40px -4px rgba(145, 158, 171, 0.24);
+.btn-container {
+    text-align: center;
+    margin-top: 20px;
 }
-
-.quick-action-modal .quick-action-modal-content .quick-action-modal-header {
+/* SearchBuilder ve DataTables Genel Ayarları */
+.dataTables_wrapper .searchBuilderContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px;
-    border-bottom: 1px solid #E3E3E3;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+.dataTables_wrapper .table th {
+    background-color: #003643;
+    color: white;
+    text-align: center;
+}
+/* Fatura Gösterimi Genel Stiller */
+.fatura-bilgileri {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.fatura-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.fatura-info .fatura-no,
+.fatura-info .fatura-tarih {
+    font-weight: bold;
+    color: #013744;
+}
+
+/* Tablo Stilleri */
+.invoice-content table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.invoice-content table th,
+.invoice-content table td {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    text-align: right;
+}
+
+.invoice-content table th {
+    background-color: #052941;
+    color: white;
+}
+
+.invoice-content table td {
+    color: #052941;
+}
+
+/* Toplam Bilgileri */
+.invoice-summary {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.invoice-summary th {
+    font-weight: bold;
+}
+
+.invoice-summary td {
+    padding-left: 20px;
+    color: #052941;
+}
+
+/* Fatura Açıklaması */
+.fatura-aciklama {
+    margin-top: 30px;
+}
+
+.fatura-aciklama h4 {
     color: #052941;
     font-weight: bold;
 }
 
-.quick-action-modal-header button {
-    background-color: #fff;
+.fatura-aciklama p {
+    color: #052941;
+}
+/* Muhasebe Ayarları Form */
+.tablelist-form {
+    margin-top: 20px;
+}
+
+.tablelist-form label {
+    color: #052941;
+    font-weight: bold;
+}
+
+.tablelist-form .form-control {
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    color: #052941;
+    font-size: 14px;
+}
+
+.tablelist-form input[type="submit"] {
+    margin-top: 20px;
+    background-color: #08a88a;
+    color: #fff;
+    padding: 10px 20px;
     border: none;
-    outline: none;
+    border-radius: 5px;
     cursor: pointer;
 }
+/* DataTables Genel Stiller */
+.dataTables_wrapper {
+    padding: 20px;
+}
+
+.dataTables_wrapper .table th,
+.dataTables_wrapper .table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.dataTables_wrapper .table thead th {
+    background-color: #052941;
+    color: #fff;
+}
+
+.dataTables_wrapper .table tbody td {
+    background-color: #f8f9fa;
+}
+
+/* SearchBuilder Stilleri */
+.dataTables_wrapper .searchBuilderContainer {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.searchBuilder-clearAll {
+    margin-left: 10px;
+}
+
+/* No Result Stili */
+.noresult {
+    text-align: center;
+    margin-top: 50px;
+}
+/* PDF ve Yazdır Butonları */
+.btn-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-container .btn {
+    margin-right: 10px;
+}
+
+#pdfBtn {
+    background-color: #08a88a;
+    color: #fff;
+    border: none;
+}
+
+#pdfBtn:hover {
+    background-color: #06a071;
+}
+
+.btn-secondary {
+    background-color: #343a40;
+    color: #fff;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #2c2f33;
+}
+/* Responsive Düzenlemeler */
+@media (max-width: 768px) {
+    .firma-bilgileri, .fatura-info {
+        text-align: center;
+    }
+    .fatura-info {
+        flex-direction: column;
+    }
+    .invoice-content .table th,
+    .invoice-content .table td {
+        padding: 5px;
+    }
+    .fatura-summary th, .fatura-summary td {
+        font-size: 14px;
+    }
+}
+/* Yazdırma ve PDF */
+@media print {
+    .btn-container, .noresult {
+        display: none;
+    }
+    .firma-bilgileri, .fatura-info, .invoice-content {
+        margin: 0;
+        padding: 0;
+    }
+    .fatura-info {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .invoice-content .table th, .invoice-content .table td {
+        padding: 5px;
+    }
+}
+/* Modal İçerik Düzenlemeleri */
+.modal-content {
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.modal-header {
+    background-color: #052941;
+    color: #fff;
+    padding: 15px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px;
+    text-align: right;
+}
+
+.modal-footer .btn {
+    margin-left: 10px;
+}
+/* Buton Hover Efektleri */
+.btn-primary:hover {
+    background-color: #06a071;
+}
+
+.btn-secondary:hover {
+    background-color: #2c2f33;
+}
+
+.btn-danger:hover {
+    background-color: #d9534f;
+}
+/* Başlık Stilleri */
+.page-title-box {
+    margin-bottom: 20px;
+}
+
+.page-title-box h4 {
+    color: #052941;
+    font-weight: bold;
+}
+
+/* Kart Düzenlemeleri */
+.card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-body.bg-light-subtle {
+    background-color: #f1f3f5;
+}
+/* Tablo Başlık Stilleri */
+.table thead th {
+    background-color: #052941;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+.table tbody td {
+    text-align: center;
+    padding: 10px;
+}
+
+/* Grafik İçin Alan Düzenlemesi */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+/* Form Elemanları için Stil */
+.form-control {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+    color: #052941;
+}
+
+/* Fatura Tablosu Düzenlemeleri */
+.table th, .table td {
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #052941;
+    color: #fff;
+}
+/* Fatura Arama ve Filtreleme Alanları */
+.gelirler-filtre .form-control {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.gelirler-filtre .btn {
+    background-color: #08a88a;
+    color: #fff;
+}
+
+/* Fatura Tablosu */
+.table thead th {
+    background-color: #013744;
+    color: white;
+}
+
+.table tbody tr td {
+    text-align: center;
+    vertical-align: middle;
+}
+/* Virman Raporu Tablosu */
+.table thead th {
+    background-color: #052941;
+    color: #fff;
+}
+
+.table tbody td {
+    text-align: center;
+    padding: 10px;
+}
+
+.pagination-wrap ul.pagination li.page-item a.page-link {
+    color: #052941;
+}
+
+.pagination-wrap ul.pagination li.page-item.active a.page-link {
+    background-color: #08a88a;
+    color: white;
+}
+/* Ürün ve Kasa Listesi Tablosu */
+.table th, .table td {
+    text-align: left;
+    padding: 15px;
+}
+
+.table .form-check-input {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+/* Modal Butonlar */
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-footer .btn {
+    background-color: #08a88a;
+    color: white;
+}
+
+.btn-success {
+    background-color: #08a88a;
+    border-color: #08a88a;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+}
+/* Kasa Listesi Tablo Düzeni */
+.table th, .table td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #013744;
+    color: white;
+}
+
+/* Kasa Ekleme Butonu */
+.add-btn {
+    background-color: #08a88a;
+    color: white;
+}
+
+/* Modal İçerik Düzenlemeleri */
+.modal-content {
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 10px 20px;
+}
+/* Gider Tablosu Stili */
+.table thead th {
+    background-color: #052941;
+    color: white;
+}
+
+.table tbody tr td {
+    text-align: center;
+    padding: 10px;
+    color: #052941;
+}
+
+/* Modal İçerik Düzenlemeleri */
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-footer {
+    padding: 10px;
+    text-align: right;
+}
+/* Ortak Tablo Stilleri */
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.table thead th {
+    background-color: #052941;
+    color: white;
+}
+
+/* Butonlar */
+.add-btn {
+    background-color: #08a88a;
+    color: white;
+}
+
+/* Modal Stilleri */
+.modal-header {
+    background-color: #f8f9fa;
+}
+
+.modal-footer .btn {
+    margin-left: 10px;
+}
+/* Kategori Tablosu Stili */
+.table {
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    padding: 12px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Modal Form Elemanları */
+.form-control {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+}
+/* Cari Tablosu */
+.cariler-table .table-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.cariler-table .table-item h2 {
+    color: #052941;
+    margin: 0;
+}
+
+/* Cari Detay Tablosu */
+#cariTable thead th {
+    background-color: #052941;
+    color: white;
+}
+
+#cariTable tbody td {
+    text-align: center;
+}
+/* Kasa Hareketleri Tablosu */
+.table th, .table td {
+    text-align: center;
+    padding: 12px;
+}
+
+.table thead th {
+    background-color: #052941;
+    color: white;
+}
+
+/* Virman Yap Butonu */
+.btn-success {
+    background-color: #08a88a;
+    color: white;
+}
+
+/* Pagination Stilleri */
+.pagination .page-item .page-link {
+    color: #052941;
+}
+/* Filtreleme ve Arama Alanları */
+.search-box input {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+/* Profil Düzenleme Stilleri */
+.profile-wid-img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.profile-user {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.profile-user img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+}
+
+.profile-photo-edit {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #fff;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.form-control {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.btn-primary {
+    background-color: #08a88a;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+}
+/* Profil Kartları ve Genel Stiller */
+.profile-wrapper {
+    background-color: #052941;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.avatar-lg img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+}
+
+.table-borderless th, .table-borderless td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.card {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+/* Şifre Sıfırlama ve Değiştirme Stilleri */
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.btn-success {
+    background-color: #08a88a;
+    border: none;
+    color: white;
+    width: 100%;
+}
+
+.form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.avatar-xl {
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    display: block;
+}
+/* Hakedişler Tablosu ve Filtreleme */
+.table {
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table th {
+    background-color: #24d6b6;
+    color: white;
+}
+
+.table td {
+    text-align: center;
+    padding: 10px;
+}
+
+.filter-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+/* Kullanıcı Tablosu Stili */
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.table thead th {
+    background-color: #052941;
+    color: white;
+}
+
+/* Filtreleme ve Arama Alanları */
+.search-box input {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    width: 250px;
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Butonlar */
+.btn-success {
+    background-color: #08a88a;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    color: white;
+}
+
+/* Modal İçeriği */
+.modal-content {
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+/* Login Sayfası Stili */
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-box {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #24d6b6;
+    color: white;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Logout Sayfası Stili */
+.card-body {
+    padding: 40px;
+}
+
+.lord-icon {
+    width: 180px;
+    height: 180px;
+}
+/* Lock Screen Stili */
+.user-thumb img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+}
+
+.form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.btn-success {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    background-color: #08a88a;
+    color: white;
+}
+/* Ana Sayfa Stilleri */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #052941;
+}
+
+.quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.quick-link {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+/* Timeline Sayfası Stili */
+.timeline-item {
+    border-left: 3px solid #08a88a;
+    margin-bottom: 30px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.timeline-item .date {
+    color: #999;
+    font-size: 14px;
+}
+
+.timeline-item h5 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #052941;
+}
+
+.timeline-item .badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+.search-box .search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.modal-content {
+    border-radius: 8px;
+    padding: 20px;
+}
+/* Sözleşmeler Sayfası Stili */
+.taseronlar.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+.taseronlar .addBtn a {
+    color: white;
+    background-color: #08a88a;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.table th, .table td {
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #08a88a;
+    color: white;
+}
+/* Şantiye Ekleme Stili */
+.santiye-ekle-form {
+    margin-top: 20px;
+}
+
+.santiye-ekle-form .form-control {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.santiye-ekle-form .btn-success {
+    background-color: #08a88a;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+}
+/* Şantiye Kalem Ekleme Stili */
+.santiye-ekle-form .form-control {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.santiye-ekle-form .btn-success {
+    background-color: #08a88a;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+}
+/* Taşeronlar Sayfası Stili */
+.taseron-title {
+    font-size: 18px;
+    color: #052941;
+    margin-bottom: 10px;
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    text-align: left;
+    padding: 10px;
+}
+
+.table thead th {
+    background-color: #08a88a;
+    color: white;
+}
+/* Şantiye Raporu Tablo Stili */
+.table th, .table td {
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #08a88a;
+    color: white;
+}
+
+/* Arama ve Filtreleme */
+.search-box input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+/* Proje Tablosu */
+.table th, .table td {
+    text-align: left;
+    padding: 10px;
+}
+
+.table thead th {
+    background-color: #052941;
+    color: white;
+}
+
+/* Butonlar */
+.btn-success {
+    background-color: #08a88a;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    color: white;
+}
+/* Kalem Tablosu */
+.table th, .table td {
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #08a88a;
+    color: white;
+}
+
+/* Modal İçeriği */
+.modal-content {
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+/* Blok Ekleme Form Stilleri */
+.form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.btn-success {
+    background-color: #08a88a;
+    color: white;
+    border-radius: 5px;
+}
+/* Ayarlar Tablosu */
+.table th, .table td {
+    text-align: left;
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #052941;
+    color: white;
+}
+
+/* Arama Alanı */
+.search-box input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+/* Loglar Tablosu */
+.table th, .table td {
+    text-align: center;
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #08a88a;
+    color: white;
+}
+
+.search-box input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+/* İlerleme Takibi Tablosu */
+.table th, .table td {
+    text-align: left;
+    padding: 10px;
+}
+
+.table thead th {
+    background-color: #24d6b6;
+    color: white;
+}
+
+/* Butonlar */
+.btn-success {
+    background-color: #08a88a;
+    border: none;
+    color: white;
+}
+/* Hakediş Formu Stilleri */
+.form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.dropzone {
+    border: 2px dashed #08a88a;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.dropzone:hover {
+    background-color: #f1f1f1;
+}
+
+.dropzone .dz-message {
+    font-size: 14px;
+    color: #888;
+}
+/* Dil Ayarları Tablosu */
+.table th, .table td {
+    text-align: center;
+    padding: 10px;
+}
+
+.table thead th {
+    background-color: #24d6b6;
+    color: white;
+}
+
+.modal-content {
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+/* Dil Düzenleme Butonları */
+.btn-success {
+    background-color: #08a88a;
+    color: white;
+}
+/* Dosya ve Klasör Görünümü */
+.folder-card {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px;
+    text-align: center;
+}
+
+.folder-card .form-check-input {
+    cursor: pointer;
+}
+
+.file-list-link {
+    color: #052941;
+    font-weight: bold;
+}
+/* Form Stilleri */
+.santiye-ekle-form .form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.santiye-ekle-form .btn-success {
+    background-color: #08a88a;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* Dosya Yükleme Stili */
+.dropzone {
+    border: 2px dashed #08a88a;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.dropzone .dz-message {
+    font-size: 14px;
+    color: #888;
+}
+/* Sözleşme Ekleme Stilleri */
+.santiye-ekle-form .form-control {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.btn-success {
+    background-color: #08a88a;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* Dropzone Stili */
+.dropzone {
+    border: 2px dashed #08a88a;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+}
+
+.dropzone .dz-message {
+    color: #888;
+    font-size: 14px;
+}
+/* Takvim Stili */
+.calendar {
+    width: 98%;
+    margin: auto;
+    font-size: 13px;
+    border-collapse: collapse;
+}
+
+.calendar th, .calendar td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+.calendar td {
+    height: 150px;
+    width: 200px;
+    vertical-align: top;
+}
+
+/* Etkinlik Kartları */
+.card {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #052941;
+}
+.submenu {
+    display: none;
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  li:hover .submenu {
+    display: block;
+  }
+  
