@@ -654,3 +654,50 @@ def calismalari_cek(request):
             else:
                 return JsonResponse({'sonuc': 'veri_yok'})   
     return JsonResponse({'sonuc': 'veri_yok'})
+
+
+import requests
+from django.shortcuts import render
+
+
+
+def get_client_ip(request):
+    """Kullanıcının IP adresini alır"""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def weather_view(request):
+    weather_data = None
+    ip_info = None
+    
+    # Kullanıcının IP adresini alıyoruz
+    ip ="185.95.206.84"  #get_client_ip(request) #
+    
+    # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
+    ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
+    ip_response = requests.get(ipinfo_api_url)
+    print(ip_response.json())
+    if ip_response.status_code == 200:
+        ip_info = ip_response.json()
+        loc = ip_info.get('loc')
+        
+        if loc:  # Eğer 'loc' None değilse
+            print(loc)
+            location = loc.split(',')
+            lat, lon = location[0], location[1]
+            
+            # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
+            api_key = 'dee0661903df4f2c76ccfd8afab8be69'
+            weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
+            
+            weather_response = requests.get(weather_api_url)
+            print(weather_response)
+            if weather_response.status_code == 200:
+                weather_data = weather_response.json()
+            a = weather_data["weather"][0]
+            icon = a["icon"] 
+    return render(request, 'weather.html', {'weather_data': weather_data, 'ip_info': ip_info,"icon":icon})

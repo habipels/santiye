@@ -37,6 +37,8 @@ urlpatterns = [
     path('tally/',views.personeller_puantaj_sayfasi,name = "personeller_puantaj_sayfasi"),
     path('savetally/',views.save_attendance,name = "save_attendance"),
     path('taketally/',views.calismalari_cek,name = "calismalari_cek"),
+
+    path('havadurumu/',views.weather_view,name = "weather_view"),
 #
 #
 ]
