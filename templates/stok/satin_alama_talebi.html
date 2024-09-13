@@ -250,7 +250,16 @@
     <h1>Satın Alma Talepleri</h1>
     <div class="flex-row space-between">
     
-        
+        {% if request.user.kullanicilar_db %}
+    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+    {% if yetki.satin_alma_talebi_olusturma %}
+              <button onclick="openModal('createRequestModal')">Yeni Talep Oluştur</button>                                    
+    {% else %}
+
+    {% endif %}
+    {% else %}
+             <button onclick="openModal('createRequestModal')">Yeni Talep Oluştur</button>                                                                                        
+    {% endif %}
     </div>
 
     <table>

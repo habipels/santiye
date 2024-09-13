@@ -4078,10 +4078,7 @@ from .utils import *
 from django.utils.safestring import mark_safe
 def takvim_olaylari(request):
     content = sozluk_yapisi()
-    su_an = datetime.today()
-    cal = Calendar(su_an.year, su_an.month)
-    html_cal = cal.formatmonth(withyear=True)
-    content["takvim_gelicek"] = mark_safe(html_cal)
+    
     return render(request,"santiye_yonetimi/takvim.html",content)
 #takvim
 

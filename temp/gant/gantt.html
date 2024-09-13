@@ -1,50 +1,54 @@
-{% extends "homebase.html" %}
-{% load i18n %}
-{% load custom_tags %}
-{% load static %}
-{% block head %}
-    
-  <link rel=stylesheet href="{% static 'go/gant/platform.css' %}" type="text/css">
-  <link rel=stylesheet href="{% static 'go/gant/libs/jquery/dateField/jquery.dateField.css' %}" type="text/css">
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>BiadaGO - İş Planı</title>
 
-  <link rel=stylesheet href="{% static 'go/gant/gantt.css' %}" type="text/css">
-  <link rel=stylesheet href="{% static 'go/gant/ganttPrint.css' %}" type="text/css" media="print">
-  <link rel=stylesheet href="{% static 'go/gant/libs/jquery/valueSlider/mb.slider.css' %}" type="text/css" media="print">
+  <link rel=stylesheet href="platform.css" type="text/css">
+  <link rel=stylesheet href="libs/jquery/dateField/jquery.dateField.css" type="text/css">
+
+  <link rel=stylesheet href="gantt.css" type="text/css">
+  <link rel=stylesheet href="ganttPrint.css" type="text/css" media="print">
+  <link rel=stylesheet href="libs/jquery/valueSlider/mb.slider.css" type="text/css" media="print">
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-  <script src="{% static 'go/gant/libs/jquery/jquery.livequery.1.1.1.min.js' %}"></script>
-  <script src="{% static 'go/gant/libs/jquery/jquery.timers.js' %}"></script>
+  <script src="libs/jquery/jquery.livequery.1.1.1.min.js"></script>
+  <script src="libs/jquery/jquery.timers.js"></script>
 
-  <script src="{% static 'go/gant/libs/utilities.js' %}"></script>
-  <script src="{% static 'go/gant/libs/forms.js' %}"></script>
-  <script src="{% static 'go/gant/libs/date.js' %}"></script>
-  <script src="{% static 'go/gant/libs/dialogs.js' %}"></script>
-  <script src="{% static 'go/gant/libs/layout.js' %}"></script>
-  <script src="{% static 'go/gant/libs/i18nJs.js' %}"></script>
-  <script src="{% static 'go/gant/libs/jquery/dateField/jquery.dateField.js' %}"></script>
-  <script src="{% static 'go/gant/libs/jquery/JST/jquery.JST.js' %}"></script>
-  <script src="{% static 'go/gant/libs/jquery/valueSlider/jquery.mb.slider.js' %}"></script>
+  <script src="libs/utilities.js"></script>
+  <script src="libs/forms.js"></script>
+  <script src="libs/date.js"></script>
+  <script src="libs/dialogs.js"></script>
+  <script src="libs/layout.js"></script>
+  <script src="libs/i18nJs.js"></script>
+  <script src="libs/jquery/dateField/jquery.dateField.js"></script>
+  <script src="libs/jquery/JST/jquery.JST.js"></script>
+  <script src="libs/jquery/valueSlider/jquery.mb.slider.js"></script>
 
-  <script type="text/javascript" src="{% static 'go/gant/libs/jquery/svg/jquery.svg.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'go/gant/libs/jquery/svg/jquery.svgdom.1.8.js' %}"></script>
+  <script type="text/javascript" src="libs/jquery/svg/jquery.svg.min.js"></script>
+  <script type="text/javascript" src="libs/jquery/svg/jquery.svgdom.1.8.js"></script>
 
 
-  <script src="{% static 'go/gant/ganttUtilities.js' %}"></script>
-  <script src="{% static 'go/gant/ganttTask.js' %}"></script>
-  <script src="{% static 'go/gant/ganttDrawerSVG.js' %}"></script>
-  <script src="{% static 'go/gant/ganttZoom.js' %}"></script>
-  <script src="{% static 'go/gant/ganttGridEditor.js' %}"></script>
-  <script src="{% static 'go/gant/ganttMaster.js' %}"></script>  
-{% endblock head %}
-{% block sidebar %}
-<div class="main-content">
-        <div class="page-content">
+  <script src="ganttUtilities.js"></script>
+  <script src="ganttTask.js"></script>
+  <script src="ganttDrawerSVG.js"></script>
+  <script src="ganttZoom.js"></script>
+  <script src="ganttGridEditor.js"></script>
+  <script src="ganttMaster.js"></script>  
 
-<div id="workSpace" style="padding:0px; overflow-y:auto; overflow-x:hidden;border:1px solid #e5e5e5;position:relative;"></div>
-</div>
-</div>
+
+  <!--<script src="libs/profiling.js"></script>-->
+  <!--<script type="text/javascript" src="ganttTestSuite.js"></script>-->
+</head>
+<body style="background-color: #fff;">
+
+
+
+<div id="workSpace" style="padding:0px; overflow-y:auto; overflow-x:hidden;border:1px solid #e5e5e5;position:relative;margin:0 5px"></div>
+
 <style>
   .resEdit {
     padding: 15px;
@@ -106,7 +110,7 @@ $(function() {
 function getDemoProject(){
   //console.debug("getDemoProject")
 ret= {"tasks":    [
-      {"id": -1, "name": "Gantt editor", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 0, "status": "STATUS_ACTIVE", "depends": "", "canWrite": false, "start": 1396994400000, "duration": 20, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true},
+      {"id": -1, "name": "Gantt editor", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 0, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 20, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true},
       {"id": -2, "name": "coding", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 10, "end": 1398203999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true},
       {"id": -3, "name": "gantt part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 2, "end": 1397167199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
       {"id": -4, "name": "editor part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "3", "canWrite": true, "start": 1397167200000, "duration": 4, "end": 1397685599999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
@@ -839,4 +843,9 @@ $(document).on("change", "#load-file", function() {
 </script>
 
 
-{% endblock sidebar %}
+
+
+
+
+</body>
+</html>
