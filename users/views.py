@@ -580,10 +580,11 @@ def personelleri_departman_düzenle(request):
         calisanlar_kategorisi.objects.filter(kategori_kime_ait =kullanici,id =buton ).update(kategori_isimi = pozsiyon )
         
     return redirect("users:personeller_depertman_sayfalari")
-
+import calendar
+from datetime import datetime
 def personeller_puantaj_sayfasi(request):
     content = sozluk_yapisi()
-
+    
     if super_admin_kontrolu(request):
         pass
     else:
@@ -599,10 +600,23 @@ def personeller_puantaj_sayfasi(request):
                 return redirect("main:yetkisiz")
         else:
             kullanici = request.user
+        person = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici)
+        if request.GET:
+            month_filter = request.GET.get("monthFilter")
+            jobTypeFilter = request.GET.get("jobTypeFilter")
+            days_in_month = 0
+            days_list =[]
+            if month_filter:
+                year, month = map(int, month_filter.split('-'))  # Yıl ve ayı alıyoruz
+                _, num_days = calendar.monthrange(year, month)   # O ayın gün sayısını buluyoruz
+                days_list = [day for day in range(1, num_days + 1)] 
+            content["gun"] =days_list
+            if jobTypeFilter :
+                person = person.filter(calisan_kategori = get_object_or_none(calisanlar_kategorisi , id = jobTypeFilter))
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
-        content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici)
-    return render(request,"personel/puantaj.html",content)
+        content["personeller"] = person
+    return render(request,"personel/puantaj2.html",content)
 
 from django.http import JsonResponse
 import json

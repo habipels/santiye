@@ -1121,3 +1121,26 @@ def zimmet_sayisi(id):
     for i in zimmet:
         toplam = toplam + float(i.zimmet_miktari)
     return toplam
+
+# myapp/templatetags/custom_tags.py
+
+from django import template
+from django.http import JsonResponse
+from users.models import calisanlar_calismalari, calisanlar
+from django.shortcuts import get_object_or_404
+import json
+from datetime import datetime
+
+
+
+@register.simple_tag
+def calismalari_cek(personel, gun, tarih):
+    tarih = str(tarih).split("-")
+    yil = tarih[0]
+    ay = tarih[1]
+    date_obj = datetime(int(yil), int(ay), int(gun))
+    sonuc = get_object_or_none(calisanlar_calismalari, calisan=get_object_or_404(calisanlar, id=personel), tarihi=date_obj)
+    if sonuc:
+        return { 'normal_saat': sonuc.normal_calisma_saati, 'mesai_saati': sonuc.mesai_calisma_saati}
+    else:
+        return { 'normal_saat': 0, 'mesai_saati': 0}

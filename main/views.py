@@ -83,7 +83,7 @@ def loglar(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
         if request.user.is_superuser :
-            content["latest_actions"] =LogEntry.objects.all().order_by('-action_time')
+            content["latest_actions"] =LogEntry.objects.filter(object_repr = get_object_or_none(calisan_maas_durumlari,id = 4)  ).order_by('-action_time')
         if request.GET.get("search"):
             search = request.GET.get("search")
             if search:
