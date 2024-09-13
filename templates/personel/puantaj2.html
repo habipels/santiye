@@ -282,7 +282,35 @@ body {
 }
 
 </style>
-   
+<style>
+#preloader {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+   <div id="preloader" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; font-size: 20px; color: black;">
+    Yükleniyor...
+</div>
+
            
         <div class="container-fluid">
             <div class="header-top">
@@ -301,6 +329,8 @@ body {
             {{ i.kategori_isimi }}
         </option>
     {% endfor %}
+    <input type="text" id="personelID" hidden name="personelID" class="filter-input"
+       value="{% if request.GET.personelID %}{{ request.GET.personelID }}{% endif %}">
 </select>
 
             </form>
@@ -593,23 +623,53 @@ function toparlama() {
         // Sayfa yüklendiğinde toparlama fonksiyonunu çalıştır
         document.addEventListener('DOMContentLoaded', toparlama);
 
+function calculateTotal() {
+    const rows = document.querySelectorAll('.attendance-table tbody tr');
+    let totalSalary = 0;
+
+    rows.forEach(row => {
+        const dayHours = row.querySelectorAll('.day-hours');
+        const overtimeHours = row.querySelectorAll('.overtime-hours');
+        
+        let totalWorkingHours = 0;
+        let totalOvertimeHours = 0;
+
+        dayHours.forEach((input, index) => {
+            totalWorkingHours += parseFloat(input.value);
+            totalOvertimeHours += parseFloat(overtimeHours[index].value);
+        });
+
+        const rowTotalSalary = (totalWorkingHours * 10) + (totalOvertimeHours * 15); // Örnek ücret hesaplama
+        totalSalary += rowTotalSalary;
+
+        row.querySelector('.total-working-hours').innerText = totalWorkingHours;
+        row.querySelector('.total-overtime-hours').innerText = totalOvertimeHours;
+        row.querySelector('.total-salary').innerText = rowTotalSalary.toFixed(2) + ' ₺';
+    });
+
+    document.getElementById('totalSalaryDisplay').innerText = totalSalary.toFixed(2) + ' $';
+}
+
 </script>
 <script>
     
 document.querySelector('#saveBtn').addEventListener('click', function() {
     const dayInputs = document.querySelectorAll('.day-hours');
     const overtimeInputs = document.querySelectorAll('.overtime-hours');
-    
-    const filter_input = document.querySelector(".filter-input") 
+    const filter_input = document.querySelector(".filter-input");
     const dis_katman = [filter_input.value];
     const dataToSend = [];
+
+    // Preloader'ı göster
+    //document.getElementById('preloader').style.display = 'block';
+
     // Normal saatler için verileri topla
     dayInputs.forEach(input => {
         const person = input.getAttribute('data-person');
         const day = input.getAttribute('data-day');
         const type = input.getAttribute('data-type');
         const value = input.value;
-        const value_filter_input = filter_input.value;
+
         // Veriyi toplu olarak diziye ekle
         dataToSend.push({
             person: person,
@@ -618,7 +678,7 @@ document.querySelector('#saveBtn').addEventListener('click', function() {
             value: value
         });
     });
-    
+
     // Fazla mesai saatleri için verileri topla
     overtimeInputs.forEach(input => {
         const person = input.getAttribute('data-person');
@@ -634,9 +694,9 @@ document.querySelector('#saveBtn').addEventListener('click', function() {
             value: value
         });
     });
-    dis_katman.push(
-             dataToSend
-        );
+
+    dis_katman.push(dataToSend);
+
     // AJAX isteği ile Django'ya veri gönder
     fetch('/users/savetally/', {
         method: 'POST',
@@ -649,11 +709,17 @@ document.querySelector('#saveBtn').addEventListener('click', function() {
     .then(response => response.json())
     .then(data => {
         console.log(data);
+        // Preloader'ı gizle ve sayfayı yenile
+        document.getElementById('preloader').style.display = 'none';
+        location.reload();
     })
     .catch(error => {
         console.error('Hata:', error);
+        // Hata durumunda preloader'ı gizle
+        document.getElementById('preloader').style.display = 'none';
     });
 });
+
 
 </script>
 <script>

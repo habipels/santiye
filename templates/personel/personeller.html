@@ -811,13 +811,7 @@ table th {
                             <td>2000 ₺</td>
                             <td><a href="#"><i class="fas fa-file-pdf"></i></a></td>
                         </tr>
-                        <tr>
-                            <td>Şubat 2024</td>
-                            <td>5200 ₺</td>
-                            <td>5200 ₺</td>
-                            <td>0 ₺</td>
-                            <td><a href="#"><i class="fas fa-file-pdf"></i></a></td>
-                        </tr>
+                        
                     </tbody>
                 </table>
             </div>
@@ -918,7 +912,7 @@ table th {
             <!-- Puantaj Yönetimi Tabı -->
     <div class="tab-content" id="puantajYonetimi">
         <div class="tabs">
-            <div class="tab active" data-tab="puantajGirisi">Puantaj Girişi</div>
+            <div class="tab active" data-tab="puantajGirisi" id="puantajGirisi"></div>
             <div class="tab" data-tab="puantajRaporu">Puantaj Raporu</div>
         </div>
     
@@ -1049,11 +1043,48 @@ function openPersonelDetails(id) {
                     document.getElementById('detailucret').innerText  = data.maas+" IQD";
                     document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" IQD";
                 }
-                
-                
+                // Belirli bir elementin innerHTML özelliğini güncelleme
+                document.getElementById('puantajGirisi').innerHTML = `<a href="/users/tally/?monthFilter=&jobTypeFilter=&personelID=${id}">Puantaj Girişi</a>`;
+
+                // Tabloya verileri yerleştirme
+            const salaryTableBody = document.getElementById('salaryTableBody');
+            salaryTableBody.innerHTML = ''; // Önce mevcut satırları temizliyoruz
+
+            data.calismalar.forEach(item => {
+                const row = document.createElement('tr');
+
+                const monthCell = document.createElement('td');
+                monthCell.textContent = item.tarih;
+
+                const hakedisCell = document.createElement('td');
+                hakedisCell.textContent = item.hakedis_tutari + " ₺";
+
+                const odenenCell = document.createElement('td');
+                odenenCell.textContent = item.odenen ? item.odenen + " ₺" : " - "; // Eğer ödeme yoksa " - " göster
+
+                const kalanCell = document.createElement('td');
+                kalanCell.textContent = item.kalan ? item.kalan + " ₺" : " - "; // Eğer kalan yoksa " - " göster
+
+                const bordroCell = document.createElement('td');
+                const bordroLink = document.createElement('a');
+                bordroLink.href = item.bodro; // Bordro PDF linki
+                const pdfIcon = document.createElement('i');
+                pdfIcon.className = 'fas fa-file-pdf';
+                bordroLink.appendChild(pdfIcon);
+                bordroCell.appendChild(bordroLink);
+
+                // Satırı tabloya ekle
+                row.appendChild(monthCell);
+                row.appendChild(hakedisCell);
+                row.appendChild(odenenCell);
+                row.appendChild(kalanCell);
+                row.appendChild(bordroCell);
+
+                salaryTableBody.appendChild(row);
+            });
             })
     
-    
+
 
     openModal('personelDetailsModal');
 }

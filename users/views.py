@@ -13,13 +13,26 @@ from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,
 from django.core.paginator import Paginator , EmptyPage, PageNotAnInteger
 from django.db.models.query_utils import Q
 from django.http import JsonResponse
-
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth, ExtractYear
 def personel_bilgisi_axaj(request, id):
     
     if True:
         calisan = get_object_or_none(calisanlar, id = id)
         maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
         cali_belgeleri = calisan_belgeleri.objects.filter(calisan = get_object_or_none(calisanlar, id = id))
+        calismalar = calisanlar_calismalari.objects.filter(
+        calisan=get_object_or_none(calisanlar, id=id)
+        ).annotate(
+            year=ExtractYear('tarihi'),
+            month=ExtractMonth('tarihi')
+        ).values(
+            'year', 'month', 'maas__id'  # Maas ID ve ismi ile gruplanıyor
+        ).annotate(
+            total_normal_calisma_saati=Sum('normal_calisma_saati'),
+            total_mesai_calisma_saati=Sum('mesai_calisma_saati')
+        ).order_by('year', 'month', 'maas__id')
+
         personel_detayi = {
             'id':str(id),
         'calisan_kategori': calisan.calisan_kategori.kategori_isimi,
@@ -44,7 +57,17 @@ def personel_bilgisi_axaj(request, id):
                 
 
             } for belge in cali_belgeleri
+        ],
+        "calismalar": [
+            {
+                "tarih": str(calis['year']) + " "+ str(calis['month']),
+                "hakedis_tutari":(calis["total_normal_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).maas) +(calis["total_mesai_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).yevmiye),
+                "odenen": "",
+                "kalan": "",
+                "bodro": "",
+            } for calis in calismalar
         ]
+        
         
         
         }
@@ -604,6 +627,7 @@ def personeller_puantaj_sayfasi(request):
         if request.GET:
             month_filter = request.GET.get("monthFilter")
             jobTypeFilter = request.GET.get("jobTypeFilter")
+            personelID = request.GET.get("personelID")
             days_in_month = 0
             days_list =[]
             if month_filter:
@@ -613,6 +637,8 @@ def personeller_puantaj_sayfasi(request):
             content["gun"] =days_list
             if jobTypeFilter :
                 person = person.filter(calisan_kategori = get_object_or_none(calisanlar_kategorisi , id = jobTypeFilter))
+            if personelID:
+                person = person.filter(id = personelID)
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
         content["personeller"] = person
