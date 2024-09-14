@@ -1,16 +1,7 @@
 {% load i18n %}
 {% load static %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'go/style/style.css' %}">
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://momentjs.com/downloads/moment.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+
     <aside class="sidebar">
         <div class="sidebar-toggle"><i class="icon icon-sidebar-right"></i><i class="icon icon-sidebar-left"></i></div>
         <div class="sidebar-logo">
@@ -21,236 +12,62 @@
                 <img src="{% static 'go/images/o.png' %}">
             </div>
         </div>
-        <ul class="sidebar-nav">
-            <li class="active"><a href="/{{dil}}/"><i class="icon icon-dashboard"></i> <span>{% trans 'Genel Özet' %}</span> </a></li>
-            {% if request.user.is_superuser %}
-            <li><a href="#superAdmin"data-bs-toggle="collapse" role="button" aria-expanded="false"><i class="icon icon-super-admin"></i> <span>{% trans 'Süper Admin' %}</span> </a>
-            <div class="collapse menu-dropdown" id="superAdmin">
-                <ul class="submenu">
-                    <li class="submenu">
-                        <a href="/{{dil}}{% url 'main:santiye_ekle' %}" class="nav-link" role="button" aria-expanded="false">{% trans 'Şantiye Ekle' %}</a>
-                    </li>
-                    <li class="submenu">
-                        <a href="/{{dil}}{% url 'main:santiye_listele' %}" class="nav-link" role="button" aria-expanded="false">{% trans 'Şantiye Ayarları' %}</a>
-                    </li>
-                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:site_ayarlari' %}" class="nav-link">{% trans 'Sistem Ayarları' %}</a>
-                    </li>
-                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:dil_ayari_listele' %}" class="nav-link" role="button" aria-expanded="false">{% trans 'Dil Ayarları' %}</a>
-                    </li>
-                </ul>
-            </div>
-            </li>
-             {% else %}
+        <div class="sidebar-navs">
+            <ul class="sidebar-nav">
+                <li class="active"><a href="/{{dil}}/"><i class="icon icon-dashboard"></i> <span>Dashboard</span> </a></li>
+                {% if request.user.is_superuser %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-super-admin"></i> <span>Super
+                            Admin</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li><a href="/{{dil}}{% url 'main:santiye_ekle' %}" class="sidebar-sub-item">Şantiye Ekle</a></li>
+                        <li><a href="/{{dil}}{% url 'main:santiye_listele' %}" class="sidebar-sub-item">Şantiye Ayarları</a></li>
+                        <li><a href="/{{dil}}{% url 'main:site_ayarlari' %}" class="sidebar-sub-item">Sistem Ayarları</a></li>
+                        <li><a href="/{{dil}}{% url 'main:dil_ayari_listele' %}" class="sidebar-sub-item">Dil Ayarları</a></li>
+
+                    </ul>
+                </li>
+                    {% else %}
                         {% endif %}
-            <li><a href="#"><i class="icon icon-document"></i> <span>{% trans 'Raporlar' %}</span> </a>
-                    <div class="collapse menu-dropdown" id="sidebarAuth">
-                        <ul class="nav nav-sm flex-column">
-                                    <li class="submenu">
-                                        <a href="#finansalRaporlar" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="false"> Finansal Raporlar
-                                        </a>
-                                        <div class="collapse menu-dropdown" id="finansalRaporlar">
-                                            <ul class="nav nav-sm flex-column">
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:gelirler_ozeti' %}" class="nav-link">{% trans 'Gelir Raporu ' %} </a>
-                                                </li>
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:giderler_ozeti' %}" class="nav-link">{% trans 'Gider Raporu' %}  </a>
-                                                </li>
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:hesap_ekstra_durumu' %}" class="nav-link">{% trans 'Hesap Ekstresi' %}  </a>
-                                                </li>
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:virman_gondermeler' %}"class="nav-link">{% trans 'Virman Raporu' %}  </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" class="nav-link" role="button" aria-expanded="false">{% trans 'Şantiye Raporları' %} 
-                                        </a>
-                                    </li>
-                        </ul>
-                    </div>
-            </li>
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>Raporlar</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li><a href="#" class="sidebar-sub-item">Şantiye Raporları</a></li>
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>Finans Raporları</span> <i
+                                    class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="/{{dil}}{% url 'accounting:gelirler_ozeti' %}" class="sidebar-sub-item">{% trans 'Gelir Raporu ' %}</a></li>
+                                <li><a href="/{{dil}}{% url 'accounting:giderler_ozeti' %}" class="sidebar-sub-item">{% trans 'Gider Raporu ' %}</a></li>
+                                <li><a href="/{{dil}}{% url 'accounting:hesap_ekstra_durumu' %}" class="sidebar-sub-item">{% trans 'Hesap Ekstresi ' %}</a></li>
+                                <li><a href="/{{dil}}{% url 'accounting:virman_gondermeler' %}" class="sidebar-sub-item">{% trans 'Virman Raporu ' %}</a></li>
 
-            <li><a href="#"><i class="icon icon-santiye-yonetimi"></i> <span>{% trans 'Şantiye Yönetimi' %}</span> </a>
-            <div class="collapse menu-dropdown" id="santiyeYonetimi">
-
-                                <ul class="nav nav-sm flex-column">
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" class="nav-link">{% trans 'Proje Yönetimi' %}  </a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:yapilacaklar' %}" class="nav-link"  role="button" aria-expanded="false">{% trans 'Görevler' %} 
-                                        </a>
-                                    </li>
-                                   <!-- <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:yapilacaklar_timeline' %}" class="nav-link"> Yapılacaklar </a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:takvim_olaylari' %}" class="nav-link"> Takvim </a>
-                                    </li>-->
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:depolama_sistemim' %}" class="nav-link">{% trans 'Dosya Yöneticisi' %} </a>
-                                    </li>
-                                  <!--   <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:projeler_sayfasi' %}" class="nav-link"> Projeler </a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'users:kullanicilarim' %}" class="nav-link"> Personeller </a>
-                                    </li>-->
-
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:taseron_sayfasi' %}" class="nav-link">{% trans 'Taşeronlar' %}  </a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:ust_yuklenici_sayfasi' %}" class="nav-link">{% trans 'Üst Yüklenici' %}  </a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:hakedis_sayfasi' %}" class="nav-link">{% trans 'Hakedişler' %}  </a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'main:sozlesmler_sayfasi' %}" class="nav-link">{% trans 'Sözleşmeler' %} </a>
-                                    </li>
-                                    
-                                </ul>
-                            </div>
-                        </li><!--Şantiye Yönetimi Menü-->
-            <li><a href="#muhasebe"><i class="icon icon-muhasebe"></i> <span>{% trans 'Finans Yönetimi' %}</span> </a>
-            <div class="collapse menu-dropdown" id="muhasebe">
-
-                                <ul class="nav nav-sm flex-column">
-                                
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}" class="nav-link">{% trans 'Gelir Faturası' %}</a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}" class="nav-link">{% trans 'Gider Faturası' %}</a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'accounting:kasa' %}" class="nav-link">{% trans 'Kasa' %}</a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'accounting:cari' %}" class="nav-link">{% trans 'Cari Hesapları' %}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li><!--Muhasebe Menü-->
-            <li><a href="#calisanyonetimi"><i class="icon icon-profile"></i> <span>{% trans 'Personel' %}</span> </a>
-            <div class="collapse menu-dropdown" id="calisanyonetimi">
-
-                                <ul class="nav nav-sm flex-column">
-                                
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'users:personeller_sayfasi' %}" class="nav-link">{% trans 'Calışanlar' %}</a>
-                                    </li>
-                                     <li class="submenu">
-                                        <a href="/{{dil}}{% url 'users:personeller_kategori_sayfalari' %}" class="nav-link">{% trans 'Pozisyonlar' %}</a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'users:personeller_depertman_sayfalari' %}" class="nav-link">{% trans 'Departmanlar' %}</a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'users:personeller_puantaj_sayfasi' %}" class="nav-link">{% trans 'Puantaj' %}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li><!--Çalışan Menü-->
-            <li><a href="#satinalma"><i class="icon icon-stok"></i> <span>{% trans 'Satın alma ve Stok' %}</span> </a>
-            <div class="collapse menu-dropdown" id="satinalma">
-
-                                <ul class="nav nav-sm flex-column">
-                                
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'accounting:urunler_kategorisi' %}" class="submenu">{% trans 'Ürünler Kategorisi' %}</a>
-                                    </li>
-                                     <li class="submenu">
-                                        <a href="/{{dil}}{% url 'users:personeller_kategori_sayfalari' %}" class="nav-link">{% trans 'Pozisyonlar' %}</a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'users:personeller_depertman_sayfalari' %}" class="nav-link">{% trans 'Departmanlar' %}</a>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="/{{dil}}{% url 'users:personeller_puantaj_sayfasi' %}" class="nav-link">{% trans 'Puantaj' %}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li><!--Satın Alma ve Stok Menu Menü-->
-            <!--<li><a href="#"><i class="icon icon-users"></i> <span>Kullanıcılar</span> </a></li>-->
-        </ul>
-        <hr>
-        <ul class="sidebar-nav">
-            <li><a href="#"><i class="icon icon-notifications"></i> <span>Bildirimler</span> </a></li>
-            <li><a href="#"><i class="icon icon-settings"></i> <span>Ayarlar</span> </a>
-             <div class="collapse menu-dropdown" id="ayarlar">
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
                 
-                                <ul class="nav nav-sm flex-column">
-                                
-                                <li class="submenu">
-                                        <a href="#kullaniciayar" data-bs-toggle="collapse" class="nav-link">{% trans 'Kullanıcı Ayarları' %} </a>
-                                        <div class="collapse menu-dropdown" id="kullaniciayar">
-                                            <ul class="nav nav-sm flex-column">
+                <li><a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>{% trans 'Şantiye Yönetimi' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li><a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" class="sidebar-sub-item">{% trans 'Proje Yönetimi' %}</a></li>
+                        <li><a href="/{{dil}}{% url 'main:yapilacaklar' %}" class="sidebar-sub-item">{% trans 'Görevler' %}</a></li>
+                        <li><a href="/{{dil}}{% url 'main:depolama_sistemim' %}" class="sidebar-sub-item">{% trans 'Dosya Yöneticisi' %}</a></li>
+                        <li><a href="/{{dil}}{% url 'main:taseron_sayfasi' %}" class="sidebar-sub-item">{% trans 'Taşeronlar' %}</a></li>
 
-                                            <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'users:kullanicilarim' %}" class="nav-link">{% trans 'Kullanıcılar' %}  </a>
-                                            </li>
-                                            <li class="submenu">
-                                                        <a href="/{{dil}}{% url 'main:kullanici_yetkileri' %}" class="nav-link">{% trans 'Kullanıcı Yetkileri' %}  </a>
-                                            </li>
-
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="#santiyeAyari" data-bs-toggle="collapse" class="nav-link">{% trans 'Şantiye Ayarları' %}  </a>
-                                        <div class="collapse menu-dropdown" id="santiyeAyari">
-                                            <ul class="nav nav-sm flex-column">
-                                            <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'main:proje_tipi_' %}" class="nav-link">{% trans 'Proje Tipi' %}  </a>
-                                                </li>
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'main:santiye_projesi_ekle_' %}" class="nav-link">{% trans 'Şantiye' %}  </a>
-                                                </li>
-
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li class="submenu">
-                                        <a href="#muhasebeayar" data-bs-toggle="collapse" class="nav-link">{% trans 'Muhasebe Ayarları' %}  </a>
-                                        <div class="collapse menu-dropdown" id="muhasebeayar">
-                                            <ul class="nav nav-sm flex-column">
-                                            {% if request.user.is_superuser %}
-                                            {% else %}
-                                            <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:muhasebe_ayarlari' %}" class="nav-link">{% trans 'Muhasebe Ayarları' %}  </a>
-                                                </li>
-                                            
-                                            {% endif %}
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:gelir_kategorisi_tipleri'  %}" class="nav-link">{% trans 'Gelir Kategorileri ' %}</a>
-                                                </li>
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:gelir_etiketi_tipleri' %}" class="nav-link">{% trans 'Gelir Etiketleri' %}  </a>
-                                                </li>
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:gider_kategorisi_tipleri' %}" class="nav-link">{% trans 'Gider Kategorileri' %} </a>
-                                                </li>
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:gider_etiketi_tipleri' %}" class="nav-link">{% trans 'Gider Etiketleri' %}  </a>
-                                                </li>
-                                                <li class="submenu">
-                                                    <a href="/{{dil}}{% url 'accounting:urun_viev' %}" class="nav-link">{% trans 'Ürünler' %} </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li><!--Ayarlar Menü-->
-            <li><a href="#"><i class="icon icon-help"></i> <span>Destek ve Yardım</span> </a></li>
-        </ul>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="icon icon-muhasebe"></i> <span>Muhasebe</span> </a></li>
+                <li><a href="#"><i class="icon icon-profile"></i> <span>Personel</span> </a></li>
+                <li><a href="#"><i class="icon icon-stok"></i> <span>Satın Alma ve Stok</span> </a></li>
+                <li><a href="#"><i class="icon icon-users"></i> <span>Kullanıcılar</span> </a></li>
+            </ul>
+            <hr>
+            <ul class="sidebar-nav">
+                <li><a href="#"><i class="icon icon-notifications"></i> <span>Bildirimler</span> </a></li>
+                <li><a href="#"><i class="icon icon-settings"></i> <span>Ayarlar</span> </a></li>
+                <li><a href="#"><i class="icon icon-help"></i> <span>Destek ve Yardım</span> </a></li>
+            </ul>
+        </div>
     </aside>
 
     <div class="sidebar-mobile-toggle">
@@ -268,6 +85,12 @@
         sidebarMobileToggle.addEventListener("click", function () {
             sidebar.classList.toggle("sidebar-collapsed");
         })
+
+        $('.sidebar-sub-toggle').click(function () {
+            $(this).next('.sidebar-sub-menu').slideToggle();
+            $(this).next('.sidebar-sub-menu').toggleClass("open");
+            $(this).find('.icon-caret').toggleClass('rotate');
+        });
     </script>
 
     <header>
@@ -280,7 +103,7 @@
                 <a href="#"><i class="icon icon-dashboard"></i></a>
                 <div class="actions-dropdown-content">
                     <div class="actions-dropdown-content-title">
-                        Uygulamalar
+                        Web Apps
                     </div>
                     <div class="actions-dropdown-content-apps">
                         <a href="#" class="adc-app">
@@ -407,7 +230,7 @@
                 </div>
             </div>
         </div>
-        <div class="header-language-wrapper">
+         <div class="header-language-wrapper">
             <div class="header-language">
             {% for i in diller  %}
                             {% if i.dil_kisaltması == dil %}
@@ -427,11 +250,10 @@
                         {% for i in diller  %}
                             {% if i.dil_kisaltması == lang.code %}
                 <div class="language-selector">
-                    <a href="/{{ lang.code }}/{{linki}}" class="dropdown-item notify-item language py-2" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
-                                <img src="{{i.dil_bayragi_icon.url}}" alt="user-image" class="me-2 rounded" height="18">
-                                <span class="align-middle">{{ lang.name_local }}</span>
+                    <a href="/{{ lang.code }}/{{linki}}" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
+                                <img src="{{i.dil_bayragi_icon.url}}" alt="TR" height="18px">
+                                <span>{{ lang.name_local }}</span>
                                 </a>
-                        {{ lang.name_local }}
                     
                 </div>
                     {% else %}
@@ -442,12 +264,9 @@
         </div>
         <div class="header-profile-wrapper">
             <div class="header-profile">
-            {% if request.user.image %}
                 <div class="profile-avatar">
-                    <img src="{{request.user.image.url}}" alt="Avatar">
-                    {% else %}
                     <img src="{% static 'go/images/avatar.png' %}" alt="Avatar">
-                    {% endif %}
+                    
                 </div>
                 <div class="profile-title">
                     <span>{% trans 'Hoşgeldin' %} 👋</span>
@@ -461,7 +280,7 @@
                     <span>{{request.user.first_name}}</span>
                 </div>
                 <div class="profile-dropdown-actions">
-                    <a href="/{{dil}}{% url 'user:profil_bilgisi' %}"><i class="icon icon-profile"></i> {% trans 'Profil' %}</a>
+                   <a href="/{{dil}}{% url 'user:profil_bilgisi' %}"><i class="icon icon-profile"></i> {% trans 'Profil' %}</a>
                     <a href="/{{dil}}{% url 'users:profile_edit_kismi' %}"><i class="icon icon-settings"></i> {% trans 'Ayarlar' %}</a>
                     <a href="/{{dil}}{% url 'users:unlock' %}"><i class="icon icon-lock"></i> {% trans 'Ekranı kilitle' %}</a>
                 </div>
@@ -471,3 +290,27 @@
             </div>
         </div>
     </header>
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
