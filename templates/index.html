@@ -5,943 +5,1785 @@
 {% block sidebar %}
 {% if hash_bilgi %}
 
-<div class="main-content">
-            <div class="page-content">
-                <div class="container-fluid">
+    <main>
 
-                    <!--İstatistik Kartları-->
-                    <div class="row">
-                        <div class="col">
-
-                            <div class="h-100">
-                                <div class="row mb-3 pb-1">
-                                    <div class="col-12">
-                                        <div class="d-flex align-items-lg-center flex-lg-row flex-column">
-                                            <div class="flex-grow-1">
-                                                <h4 class="fs-16 mb-1">
-                                                {% saat_bilgisi as saat %}
-                                                {% if saat >= 3  and saat < 12 %}
-                                                    {% trans 'Günaydın' %} {% yaziyi_duzelt hash_bilgi.last_name %},
-                                                {% elif saat >= 12 and saat < 17 %}
-                                                    {% trans 'İyi Günler' %} {% yaziyi_duzelt hash_bilgi.last_name %},
-                                                {% elif saat >= 17 and saat < 21 %}
-                                                    {% trans 'İyi Akşamlar' %} {% yaziyi_duzelt hash_bilgi.last_name %},
-                                                {% elif saat >= 21  %}
-                                                    {% trans 'İyi Geceler' %} {% yaziyi_duzelt hash_bilgi.last_name %},
-
-                                                {% endif %}
-                                                </h4>
-                                                <p class="text-muted mb-0">{% trans 'Şantiyenizin güncel durumunu sizin için özetledim.' %}</p>
-                                            </div>
-                                            <div class="mt-3 mt-lg-0">
-                                                <form autocomplete="off"action="javascript:void(0);">
-                                                    <div class="row g-3 mb-0 align-items-center">
-                                                        <div class="col-sm-auto">
-                                                            <div class="input-group">
-                                                            {% if request.user.is_superuser %}
-                                                                <select name="" onchange="document.location.href = this.value" id="">
-                                                                    {% for i in kullanicilar %}
-                                                                    {% encode_id i.id as hash %}
-                                                                        <option value="/{{dil}}{% url 'main:homepage_2' hash  %}">{{i.first_name}}</option>
-                                                                    {% endfor %}
-                                                                    
-                                                                </select>
-                                                                {% else %}
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
-                                                        <!--end col-->
-                                                    </div>
-                                                    <!--end row-->
-                                                </form>
-                                            </div>
-                                        </div><!-- end card header -->
-                                    </div>
-                                    <!--end col-->
-                                </div>
-                                <!--end row-->
-
-                                <div class="row">
-                                    <div class="col-xl-3 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            {% trans 'Gelir' %}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-success fs-14 mb-0">
-                                                            <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                    {% gelirler_tutari hash_bilgi as gelir_bilgisi_cek %}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"> $<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
-                                                        </h4>
-                                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">{% trans 'Gelirleri Görüntüle' %}</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-success-subtle rounded fs-3">
-                                                            <i class=" bx bx-down-arrow-alt text-success"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-
-                                    <div class="col-xl-3 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            {% trans 'Gider' %}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-danger fs-14 mb-0">
-                                                            <i class="ri-arrow-right-down-line fs-13 align-middle"></i>
-
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                    {% giderler_tutari hash_bilgi  as gider_bilgisicekeme %}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
-                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">{% trans 'Giderleri Görüntüle' %}</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-info-subtle rounded fs-3">
-                                                            <i class="bx bx-up-arrow-alt text-info"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-
-                                    <div class="col-xl-3 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            {% trans 'Borç' %}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-success fs-14 mb-0">
-                                                            <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                    {% basit_cikarma  gelir_bilgisi_cek.tutar gelir_bilgisi_cek.genel_odeme as gelir_islem_sonucu  %}
-                                                    {% basit_cikarma  gider_bilgisicekeme.tutar gider_bilgisicekeme.genel_odeme as gider_islem_sonucu  %}
-                                                    {% basit_cikarma  gelir_islem_sonucu gider_islem_sonucu as sonuc_Bilgisi  %}
-
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% mutlak_deger  sonuc_Bilgisi %}">0</span>
-                                                        </h4>
-                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc_2' hashler %}" class="text-decoration-underline text-muted">{% trans 'Borçları Görüntüle' %}</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-warning-subtle rounded fs-3">
-                                                            <i class="bx bx-error-alt text-warning"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-
-                                    <div class="col-xl-3 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            {% trans 'Kasa' %}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between ">
-                                                 
-                                                    <div class="card-body box mb-1">
-                                                       
-                                                            
-                                                        <ul class="list-group">
-                                                        {% for i in kasa %}
-                                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                                     {{i.kasa_adi}}
-                                                                     <span class="badge bg-success">${% kasa_toplam i %}</span>
-                                                                 </li>
-                                                                {% endfor %}
-                                                                
-                                                             </ul>     
-                                                         </div>
-                                                      
-
-                                                            
-                                                           
-    
-                                                            
-                                                        
-                                                    <div class="avatar-sm flex-shrink-0">
-
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-                                </div> <!-- end row-->
-
-                            </div> <!-- end .h-100-->
-                        </div> <!-- end col -->
-                    </div><!--İstatistik Kartları-->
-
-                    <!--Gelir Gider Chartsları-->
-                    <div class="row">
-                        <div class="col-xl-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">{% trans 'Gelir ve Giderler' %}</h4>
-                                </div><!-- end card header -->
-
-                                <div class="card-body">
-                                    <div id="column_chart" data-colors='["#00b271", "#143745"]' class="apex-charts" dir="ltr"></div>
-                                </div><!-- end card-body -->
-                            </div><!-- end card -->
-                        </div>
-                        <!-- end col -->
-                        <div class="col-xl-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">{% trans 'Kategoriye Göre Giderler' %}</h4>
-
-                                    <span>{% trans '2023 Yılı' %}</span>
-                                </div><!-- end card header -->
-                                <div class="card-body">
-                                    <div id="simple_dount_chart" data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' class="apex-charts" dir="ltr"></div>
-                                </div><!-- end card-body -->
-                            </div><!-- end card -->
-                        </div>
-                        <!-- end col -->
-                    </div><!--Gelir Gider Chartsları-->
-
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <div class="card card-height-100">
-                                <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">{% trans 'Son Faturalar' %}</h4>
-                                    <div class="flex-shrink-0">
-                                        <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_2' hashler %}" >
-                                                <span class="text-muted">{% trans 'Gider Faturaları' %}<i class="mdi mdi-chevron-down ms-1"></i></span>
-                                            </a>
-                                            
-                                        </div>
-                                    </div>
-                                </div><!-- end card header -->
-
-                                <div class="card-body">
-                                    <div class="table-responsive table-card">
-                                        <table class="table table-centered table-hover align-middle table-nowrap mb-0">
-                                            <tbody>
-                                            <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-
-                                                            <div>
-                                                                <h5 class="fs-13 my-1"> {% trans 'Fatura NO' %}</a>
-                                                                </h5>
-
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Vade Tarihi' %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Fatura Tutar' %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Kalan Tutar' %}</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                            {% for i in  bilgi %}
-
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                {% toplam_odenme_tutari i as odeme %}
-                                                                {% toplam_tutar_cikarmai i as tutar %}
-                                                    {% if  odeme == tutar %}
-                                                    <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% elif odeme > 0 %}
-                                                    <div class="bg-warning" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% elif odeme == 0 %}
-                                                    <div class="bg-danger" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% endif %}
-
-
-
-                                                            </div>
-                                                            <div>
-                                                                <h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
-                                                                </h5>
-                                                                <span class="text-muted">{{i.cari_bilgisi.cari_adi}}</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{{i.vade_tarihi| date:'d.m.Y'}}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">${% kalan_tutuari i %}</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                {% endfor %}
-                                            </tbody>
-                                        </table><!-- end table -->
-                                    </div>
-
-                                    <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
-                                        <div class="col-sm">
-                                            <div class="text-muted">
-                                                {% trans 'Gösterilen' %} <span class="fw-semibold">{{bilgi.count}}</span> {% trans 'fatura' %}.
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-auto  mt-3 mt-sm-0">
-
-                                        </div>
-                                    </div>
-
-                                </div> <!-- .card-body-->
-                            </div> <!-- .card-->
-                        </div> <!-- .col-->
-                        <div class="col-xl-6">
-                            <div class="card card-height-100">
-                                <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">{% trans 'Borç Faturaları' %}</h4>
-                                    <div class="flex-shrink-0">
-                                        <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc_2' hashler %}" >
-                                                <span class="text-muted">{% trans 'Gider Faturaları' %}<i class="mdi mdi-chevron-down ms-1"></i></span>
-                                            </a>
-                                           
-                                        </div>
-                                    </div>
-                                </div><!-- end card header -->
-
-                                <div class="card-body">
-                                    <div class="table-responsive table-card">
-                                        <table class="table table-centered table-hover align-middle table-nowrap mb-0">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-
-                                                            <div>
-                                                                <h5 class="fs-13 my-1"> {% trans 'Fatura NO' %}</a>
-                                                                </h5>
-
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Vade Tarihi' %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Fatura Tutar' %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Kalan Tutar' %}</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                {% for i in  gider %}
-
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-
-                                                                {% toplam_tutar_cikarmai i as tutar %}
-                                                                {% toplam_odenme_tutari i as odeme %}
-                                                    {% if  odeme == tutar %}
-                                                    <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% elif odeme > 0 %}
-                                                    <div class="bg-warning" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% elif odeme == 0 %}
-                                                    <div class="bg-danger" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% endif %}
-
-
-
-                                                            </div>
-                                                            <div>
-                                                                <h5 class="fs-13 my-1"><a href="/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
-                                                                </h5>
-                                                                <span class="text-muted">{{i.cari_bilgisi.cari_adi}}</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{{i.vade_tarihi| date:'d.m.Y'}}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">${% kalan_tutuari i %} </span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                {% endfor %}
-                                            </tbody>
-                                        </table><!-- end table -->
-                                    </div>
-
-                                    <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
-                                        <div class="col-sm">
-                                            <div class="text-muted">
-                                                {% trans 'Gösterilen' %} <span class="fw-semibold">{{ gider.count}}</span>{% trans 'fatura.' %} 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-auto  mt-3 mt-sm-0">
-
-                                        </div>
-                                    </div>
-
-                                </div> <!-- .card-body-->
-                            </div> <!-- .card-->
-                        </div> <!-- .col-->
-
+        <div class="quick-actions">
+            <div class="quick-actions-header">
+                <div class="quick-actions-title">{% trans 'Hızlı Menü' %}</div>
+                <div class="quick-actions-right">
+                    <button class="quick-actions-add" onclick="showHiddenActions()">
+                        <i class="icon icon-add"></i> {% trans 'Gizli Öğeler' %}
+                    </button>
+                    <div class="quick-actions-toggle">
+                        <i class="icon icon-arrow-circle-up"></i>
+                        <i class="icon icon-arrow-circle-down"></i>
                     </div>
-                    <!-- end row -->
                 </div>
+            </div>
+            <div class="quick-actions-body open">
+                <div class="quick-actions-inner">
+                    <div class="quick-actions-grid" id="quick-actions-grid">
+                        <a href="#" class="quick-action" data-id="1" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-document"></i> {% trans 'Raporlar' %}</a>
+                        <a href="#" class="quick-action" data-id="2" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-ilerleme-takibi"></i>{% trans 'İlerleme Takibi' %} </a>
+                        <a href="#" class="quick-action" data-id="3" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-giderler"></i> {% trans 'Giderler' %}</a>
+                        <a href="#" class="quick-action" data-id="4" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-gelirler"></i>{% trans 'Gelirler' %} </a>
+                        <a href="#" class="quick-action" data-id="5" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-muhasebe"></i>{% trans 'Borçlar' %} </a>
+                        <a href="#" class="quick-action" data-id="6" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-puantaj-girisi"></i>{% trans 'Puantaj Girişi' %}</a>
+                        <a href="#" class="quick-action" data-id="7" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-satin-alma"></i>{% trans 'Satın Alma' %}</a>
+                        <a href="#" class="quick-action" data-id="8" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-yeni-personel"></i>{% trans 'Personel Ekle' %} </a>
+                        <a href="#" class="quick-action" data-id="9" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-yeni-kullanici"></i> {% trans 'Kullanıcı Ekle' %}</a>
+                        <a href="#" class="quick-action" data-id="10" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-dosya-yoneticisi"></i>{% trans 'Dosya Yöneticisi' %} </a>
+                        <a href="#" class="quick-action" data-id="11" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-taseronlar"></i> {% trans 'Taşeronlar' %}</a>
+                        <a href="#" class="quick-action" data-id="12" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-sozlesmeler"></i> {% trans 'Sözleşmeler' %}</a>
+                        <a href="#" class="quick-action" data-id="13" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-hakedisler"></i> {% trans 'Hakedişler' %}</a>
+                        <a href="#" class="quick-action" data-id="14" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-gorevler"></i> {% trans 'Görevler' %}</a>
+                        <a href="#" class="quick-action" data-id="15" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-kasa"></i> {% trans 'Kasa' %}</a>
+                        <a href="#" class="quick-action" data-id="16" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-users"></i> {% trans 'Cari Hesapları' %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+
+        <div class="quick-action-modal " id="hiddenLinksModal">
+            <div class="quick-action-modal-content">
+                <div class="quick-action-modal-header">
+                    <span>{% trans 'Gizli Öğeler' %}</span>
+                    <button onclick="hideHiddenActions()"><i class="icon icon-close"></i></button>
+                </div>
+                <div class="quick-actions-grid modal-body">
+                </div>
+            </div>
+        </div>
+
+        <script>
+
+            const hiddenLinksModalBody = document.querySelector('#hiddenLinksModal .modal-body');
+            document.addEventListener('DOMContentLoaded', function () {
+                const quickLinks = document.getElementById('quick-actions-grid');
+                const hiddenLinksModalBody = document.querySelector('#hiddenLinksModal .modal-body');
+
+                // Hızlı linkleri sürükle-bırak düzenleme
+                new Sortable(quickLinks, {
+                    animation: 150,
+                    handle: '.quick-action',
+                    onEnd: function (evt) {
+                        const items = Array.from(quickLinks.children);
+                        const order = items.map(item => item.dataset.id);
+                        sessionStorage.setItem('quickLinksOrder', JSON.stringify(order));
+                    }
+                });
+
+
+                // Gizli linkleri modalda geri getirme
+                hiddenLinksModalBody.addEventListener('click', function (event) {
+                    const link = event.target.closest('.hidden-link');
+                    if (link) {
+                        const id = link.dataset.id;
+                        const hiddenItem = document.querySelector(`[data-id="${id}"]`);
+                        if (hiddenItem) {
+                            hiddenItem.style.display = "flex"; // Linki geri görünür yap
+                            quickLinks.appendChild(hiddenItem); // Sayfaya geri ekle
+                            link.remove(); // Modaldan kaldır
+                            saveHiddenLinks(); // Gizli linklerin durumunu kaydet
+                        }
+                    }
+                });
+
+                // Oturum açıldığında kullanıcı düzenini yükle
+                const savedQuickLinksOrder = JSON.parse(sessionStorage.getItem('quickLinksOrder'));
+                if (savedQuickLinksOrder) {
+                    savedQuickLinksOrder.forEach(id => {
+                        const item = quickLinks.querySelector(`[data-id='${id}']`);
+                        if (item) {
+                            quickLinks.appendChild(item);
+                        }
+                    });
+                }
+
+                // Gizli linklerin durumunu kaydet
+                function saveHiddenLinks() {
+                    const hiddenLinks = Array.from(hiddenLinksModalBody.querySelectorAll('.hidden-link')).map(link => link.dataset.id);
+                    sessionStorage.setItem('hiddenLinks', JSON.stringify(hiddenLinks));
+                }
+
+                // Gizli linkleri yükleme
+                function loadHiddenLinks() {
+                    const hiddenLinks = JSON.parse(sessionStorage.getItem('hiddenLinks'));
+                    if (hiddenLinks) {
+                        hiddenLinks.forEach(id => {
+                            const item = quickLinks.querySelector(`[data-id='${id}']`);
+                            if (item) {
+                                item.style.display = "none"; // Linki gizle
+                                const hiddenLink = document.createElement('div');
+                                hiddenLink.className = 'hidden-link';
+                                hiddenLink.dataset.id = id;
+                                hiddenLink.innerHTML = item.innerHTML;
+                                hiddenLinksModalBody.appendChild(hiddenLink);
+                            }
+                        });
+                    }
+                }
+
+                loadHiddenLinks(); // Gizli linkleri sayfa yüklendiğinde çağır
+            });
+
+            // Gizli linklerin durumunu kaydet
+            function saveHiddenLinks() {
+                const hiddenLinks = Array.from(hiddenLinksModalBody.querySelectorAll('.hidden-link')).map(link => link.dataset.id);
+                sessionStorage.setItem('hiddenLinks', JSON.stringify(hiddenLinks));
+            }
+
+            // Hızlı linki gizleme
+            function hideQuickLink(event, element) {
+                event.preventDefault();
+                const id = element.dataset.id;
+                element.style.display = "none"; // Sayfadan gizle
+                const hiddenLink = document.createElement('div');
+                hiddenLink.className = 'hidden-link';
+                hiddenLink.dataset.id = id;
+                hiddenLink.innerHTML = element.innerHTML;
+                document.querySelector('#hiddenLinksModal .modal-body').appendChild(hiddenLink);
+                saveHiddenLinks(); // Gizli linklerin durumunu kaydet
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            function showHiddenActions() {
+                $(".quick-action-modal").css("display", "flex").hide().fadeIn();
+            }
+
+            function hideHiddenActions() {
+                $(".quick-action-modal").fadeOut();
+            }
+
+            let quickActionModal = document.querySelector(".quick-action-modal");
+            $(".quick-action-modal").on("click", function (e) {
+                if (e.target == quickActionModal) {
+                    hideHiddenActions();
+                }
+            })
+
+            let quickActionsToggle = document.querySelector(".quick-actions-toggle");
+            let quickActionsBody = document.querySelector(".quick-actions-body");
+
+            quickActionsToggle.addEventListener("click", function () {
+                quickActionsBody.classList.toggle("open");
+            });
+
+
+
+
+
+
+
+        </script>
+
+
+
+        <div class="main-cards">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <img src="{% static 'go/images/profile.png' %}" alt="Profile">
+                </div>
+                <div class="profile-info">
+                    <div class="profile-title">Johnathan William <span>Admin</span></div>
+                    <div class="profile-date"><i class="icon icon-calendar"></i> 02/09/2024 - Pazartesi</div>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-title">{% trans 'GELİR' %}</div>
+                <div class="stats-content">
+                    <div class="stats-value">$20.500,99</div>
+                    <div class="stats-rease">
+                        <div class="stats-rease-icon"><i class="icon icon-increment"></i></div>
+                         {% trans '<b>+40.1%</b> than last week' %}
+                    </div>
+                </div>
+                <div class="stats-img">
+
+
+                    <div id="stats-gelir"></div>
+
+                    <script>
+                        var options = {
+                            series: [{
+                                name: "{% trans 'Gelir' %}",
+                                data: [100, 10, 80, 23]
+                            }],
+                            chart: {
+                                width: 120,
+                                height: 120,
+                                type: 'line',
+                                toolbar: {
+                                    show: false
+                                },
+                                zoom: {
+                                    enabled: false
+                                },
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                colors: ['#22B076']
+                            },
+                            xaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0,
+                                categories: ["Haziran", "Temmuz", "Ağustos", "Eylül"]
+                            },
+                            yaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0
+                            },
+                            grid: {
+                                show: false
+                            }
+                        };
+
+
+                        var chart = new ApexCharts(document.querySelector("#stats-gelir"), options);
+                        chart.render();
+
+
+                    </script>
+
+
+
+
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-title">{% trans 'GİDER' %}</div>
+                <div class="stats-content">
+                    <div class="stats-value">$20.500,99</div>
+                    <div class="stats-rease">
+                        <div class="stats-rease-icon"><i class="icon icon-decrement"></i></div>
+                        {% trans '<b>-40.1%</b> than last week' %}
+                    </div>
+                </div>
+                <div class="stats-img">
+
+                    <div id="stats-gider"></div>
+
+                    <script>
+                        var options = {
+                            series: [{
+                                name: "{% trans 'Gider' %}",
+                                data: [100, 10, 80, 23]
+                            }],
+                            chart: {
+                                width: 120,
+                                height: 120,
+                                type: 'line',
+                                toolbar: {
+                                    show: false
+                                },
+                                zoom: {
+                                    enabled: false
+                                },
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                colors: ['#26CFE3']
+                            },
+                            xaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0,
+                                categories: ["Haziran", "Temmuz", "Ağustos", "Eylül"]
+                            },
+                            yaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0
+                            },
+                            grid: {
+                                show: false
+                            }
+                        };
+
+
+                        var chart = new ApexCharts(document.querySelector("#stats-gider"), options);
+                        chart.render();
+
+
+                    </script>
+
+
+                </div>
+            </div>
+            <div class="weather-card">
+                <div class="weather-location">
+                    İstanbul
+                    <span>Pazartesi</span>
+                    <span>09:30 • 03/08</span>
+                </div>
+                <div class="weather-content">
+                    <div class="weather-temp">
+                        24°
+                        <img src="{% static 'go/images/partly_cloudy_daytime.png' %}" alt="Parçalı Bulutlu">
+                    </div>
+                    <div class="weather-wind">
+                        8 km/s
+                        <img src="{% static 'go/images/wind.png' %}" alt="Rüzgar">
+                    </div>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-title">{% trans 'BORÇ' %}</div>
+                <div class="stats-content">
+                    <div class="stats-value">$20.500,99</div>
+                    <div class="stats-rease">
+                        <div class="stats-rease-icon"><i class="icon icon-decrement"></i></div>
+                        {% trans '<b>-40.1%</b> than last week' %}
+                    </div>
+                </div>
+                <div class="stats-img">
+
+                    <div id="stats-borc"></div>
+
+                    <script>
+                        var options = {
+                            series: [{
+                                name: "{% trans 'Borç' %}",
+                                data: [100, 10, 80, 23]
+                            }],
+                            chart: {
+                                width: 120,
+                                height: 120,
+                                type: 'line',
+                                toolbar: {
+                                    show: false
+                                },
+                                zoom: {
+                                    enabled: false
+                                },
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                colors: ['#26CFE3']
+                            },
+                            xaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0,
+                                categories: ["Haziran", "Temmuz", "Ağustos", "Eylül"]
+                            },
+                            yaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0
+                            },
+                            grid: {
+                                show: false
+                            }
+                        };
+
+
+                        var chart = new ApexCharts(document.querySelector("#stats-borc"), options);
+                        chart.render();
+
+
+                    </script>
+
+
+                </div>
+            </div>
+            <div class="register-card">
+                <div class="register-card-title">
+                    4
+                    <span>{% trans 'Kasa' %}</span>
+                </div>
+                <div class="register-card-registers">
+                    {% trans '<div class="register-card-register"><i class="icon icon-register"></i> KASA 1 <span>$
+                            12.049,20</span></div>' %}
+                </div>
+            </div>
+        </div>
+
+        <div class="large-cards">
+            <div class="large-stats-card">
+                <div class="stats-header">
+                    <div class="stats-title">{% trans 'Gelir - Gider Grafiği' %}</div>
+                    <div class="stats-period-dropdown">
+                        <div class="stats-period">{% trans 'Aylık' %}</div>
+                        <div class="stats-period-content">
+                            <a href="#">{% trans 'Aylık' %}</a>
+                            <a href="#">{% trans 'Yıllık' %}</a>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
+                    </div>
+                </div>
+                <div id="gelirgider"></div>
+            </div>
+            <div class="large-stats-card expenses-by-category">
+                <div class="stats-header">
+                    <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
+                </div>
+                <div id="expenses-by-category"></div>
+                <div class="stats-footer">
+                    <div class="stats-footer-part">
+                        <span>{% trans 'Kategori Sayısı' %}</span>
+                        6
+                    </div>
+                    <div class="stats-footer-part">
+                        <span>{% trans 'Toplam Gider' %}</span>
+                        $18,765
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <script>
+            var options = {
+                series: [{
+                    name: '{% trans "Gelir" %}',
+                    data: [31, 40, 28, 51, 42, 109, 100, 80, 90, 70, 60, 50]
+                }, {
+                    name: '{% trans "Gider" %}',
+                    data: [11, 32, 45, 32, 34, 52, 41, 62, 51, 43, 34, 23]
+                }],
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                xaxis: {
+                    type: 'category',
+                    categories: [
+                        'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+                    ]
+                },
+                colors: ['#5FC396', '#FFAB00'],
+                tooltip: {
+                    x: {
+                        format: 'MMM'
+                    }
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector("#gelirgider"), options);
+            chart.render();
+
+
+
+
+            var options = {
+                series: [14, 23, 21, 17, 15, 10],
+                labels: ['Personel', 'Yemekhane', 'İnşaat Malzemesi', 'Elektrik', 'Bakım', 'Onarım'],
+                chart: {
+                    type: 'polarArea',
+                },
+                stroke: {
+                    colors: ['#fff']
+                },
+                fill: {
+                    opacity: 0.8
+                },
+            };
+
+            var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
+            chart.render();
+
+
+
+        </script>
+
+
+        <div class="large-cards">
+
+            <div class="large-cards-main-row">
+                <div class="large-stats-card table-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'Faturalar' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Aylık' %}</div>
+                            <div class="stats-period-content">
+                                <a href="#">{% trans 'Aylık' %}</a>
+                                <a href="#">{% trans 'Yıllık' %}</a>
                             </div>
                         </div>
                     </div>
-                </div>
-            </footer>
-            </div>
-            <!-- End Page-content -->
 
+                    <div class="table-wrapper">
+                        <table id="faturalar">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Fatura No' %}</th>
+                                    <th>{% trans 'Ünvan' %}</th>
+                                    <th>{% trans 'Telefon' %}</th>
+                                    <th>{% trans 'Vade Tarihi' %}</th>
+                                    <th>{% trans 'Fatura Tutarı' %}</th>
+                                    <th>{% trans 'Durum' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-success">Ödendi</span></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-pending">Beklemede</span></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-cancel">İptal Edildi</span></td>
+                                </tr>
 
-    </div>
-    <!-- end main content-->
-    {% ozellikler hash_bilgi as ozellikleri %}
-    <script>
-        // Django şablon etiketlerini JavaScript değişkenlerine atayın
-
-        window.gelir = {{ozellikleri.gelir}};
-        window.gider = {{ozellikleri.gider}} ;
-        window.kategoriler = {{ozellikleri.kategoriler |safe}};
-    </script>
-{% else %}
-
-<div class="main-content">
-            <div class="page-content">
-                <div class="container-fluid">
-
-                    <!--İstatistik Kartları-->
-                    <div class="row">
-                        <div class="col">
-
-                            <div class="h-100">
-                                <div class="row mb-3 pb-1">
-                                    <div class="col-12">
-                                        <div class="d-flex align-items-lg-center flex-lg-row flex-column">
-                                            <div class="flex-grow-1">
-                                                <h4 class="fs-16 mb-1">
-                                                {% saat_bilgisi as saat %}
-                                                {% if saat >= 3  and saat < 12 %}
-                                                    {% trans 'Günaydın' %} {% yaziyi_duzelt request.user.last_name %},
-                                                {% elif saat >= 12 and saat < 17 %}
-                                                    {% trans 'İyi Günler' %} {% yaziyi_duzelt request.user.last_name %},
-                                                {% elif saat >= 17 and saat < 21 %}
-                                                    {% trans 'İyi Akşamlar' %} {% yaziyi_duzelt request.user.last_name %},
-                                                {% elif saat >= 21  %}
-                                                    {% trans 'İyi Geceler' %} {% yaziyi_duzelt request.user.last_name %},
-
-                                                {% endif %}
-                                                </h4>
-                                                <p class="text-muted mb-0">{% trans 'Şantiyenizin güncel durumunu sizin için özetledim.' %}</p>
-                                            </div>
-                                            <div class="mt-3 mt-lg-0">
-                                                <form autocomplete="off"action="javascript:void(0);">
-                                                    <div class="row g-3 mb-0 align-items-center">
-                                                        <div class="col-sm-auto">
-                                                            <div class="input-group">
-                                                            {% if request.user.is_superuser %}
-                                                                <select name="" onchange="document.location.href = this.value" id="">
-                                                                    {% for i in kullanicilar %}
-                                                                    {% encode_id i.id as hash %}
-                                                                        <option value="/{{dil}}{% url 'main:homepage_2' hash  %}">{{i.first_name}}</option>
-                                                                    {% endfor %}
-                                                                    
-                                                                </select>
-                                                                {% else %}
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
-                                                        <!--end col-->
-                                                    </div>
-                                                    <!--end row-->
-                                                </form>
-                                            </div>
-                                        </div><!-- end card header -->
-                                    </div>
-                                    <!--end col-->
-                                </div>
-                                <!--end row-->
-
-                                <div class="row">
-                                    <div class="col-xl-3 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            {% trans 'Gelir' %}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-success fs-14 mb-0">
-                                                            <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                    {% if request.user.kullanicilar_db %}
-                                                        {% gelirler_tutari request.user.kullanicilar_db as gelir_bilgisi_cek %}
-                                                    {% else %}
-                                                    {% gelirler_tutari request.user as gelir_bilgisi_cek %}
-                                                    {% endif %}
-                                                    
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gelir_bilgisi_cek.tutar}}">0</span>
-                                                        </h4>
-                                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}" class="text-decoration-underline text-muted">{% trans 'Gelirleri Görüntüle' %}</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-success-subtle rounded fs-3">
-                                                            <i class=" bx bx-down-arrow-alt text-success"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-
-                                    <div class="col-xl-3 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            {% trans 'Gider' %}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-danger fs-14 mb-0">
-                                                            <i class="ri-arrow-right-down-line fs-13 align-middle"></i>
-
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                    {% if request.user.kullanicilar_db %}
-                                                        {% giderler_tutari request.user.kullanicilar_db  as gider_bilgisicekeme %}
-                                                    {% else %}
-                                                    {% giderler_tutari request.user  as gider_bilgisicekeme %}
-                                                    {% endif %}
-                                                    
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{{gider_bilgisicekeme.genel_odeme2}}">0</span></h4>
-                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}" class="text-decoration-underline text-muted">{% trans 'Giderleri Görüntüle' %}</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-info-subtle rounded fs-3">
-                                                            <i class="bx bx-up-arrow-alt text-info"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-
-                                    <div class="col-xl-3 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            {% trans 'Borç' %}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-success fs-14 mb-0">
-                                                            <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                    {% basit_cikarma  gelir_bilgisi_cek.tutar gelir_bilgisi_cek.genel_odeme as gelir_islem_sonucu  %}
-                                                    {% basit_cikarma  gider_bilgisicekeme.tutar gider_bilgisicekeme.genel_odeme as gider_islem_sonucu  %}
-                                                    {% basit_cikarma  gelir_islem_sonucu gider_islem_sonucu as sonuc_Bilgisi  %}
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value" data-target="{% mutlak_deger  sonuc_Bilgisi %}">0</span>
-                                                        </h4>
-                                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}" class="text-decoration-underline text-muted">{% trans 'Borçları Görüntüle' %}</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-warning-subtle rounded fs-3">
-                                                            <i class="bx bx-error-alt text-warning"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-
-                                    <div class="col-xl-3 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            {% trans 'Kasa' %}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-muted fs-14 mb-0">
-
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    
-                                                    <div class="card-body box mb-1">
-                                                       
-                                                            
-                                                        <ul class="list-group">
-                                                        {% for i in kasa %}
-                                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                                     {{i.kasa_adi}}
-                                                                     <span class="badge bg-success">${% kasa_toplam i %}</span>
-                                                                 </li>
-                                                                {% endfor %}
-                                                                
-                                                             </ul>     
-                                                         </div>
-
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-                                </div> <!-- end row-->
-
-                            </div> <!-- end .h-100-->
-                        </div> <!-- end col -->
-                    </div><!--İstatistik Kartları-->
-
-                    <!--Gelir Gider Chartsları-->
-                    <div class="row">
-                        <div class="col-xl-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">{% trans 'Gelir ve Giderler' %}</h4>
-                                </div><!-- end card header -->
-
-                                <div class="card-body">
-                                    <div id="column_chart" data-colors='["#00b271", "#143745"]' class="apex-charts" dir="ltr"></div>
-                                </div><!-- end card-body -->
-                            </div><!-- end card -->
-                        </div>
-                        <!-- end col -->
-                        <div class="col-xl-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">{% trans 'Kategoriye Göre Giderler' %}</h4>
-
-                                    <span>{% trans '2023 Yılı' %}</span>
-                                </div><!-- end card header -->
-                                <div class="card-body">
-                                    <div id="simple_dount_chart" data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' class="apex-charts" dir="ltr"></div>
-                                </div><!-- end card-body -->
-                            </div><!-- end card -->
-                        </div>
-                        <!-- end col -->
-                    </div><!--Gelir Gider Chartsları-->
-
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <div class="card card-height-100">
-                                <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">{% trans 'Son Faturalar' %}</h4>
-                                    <div class="flex-shrink-0">
-                                        <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi'  %}" >
-                                                <span class="text-muted">{% trans 'Gider Faturaları' %}<i class="mdi mdi-chevron-down ms-1"></i></span>
-                                            </a>
-                                            
-                                        </div>
-                                    </div>
-                                </div><!-- end card header -->
-
-                                <div class="card-body">
-                                    <div class="table-responsive table-card">
-                                        <table class="table table-centered table-hover align-middle table-nowrap mb-0">
-                                            <tbody>
-                                            <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-
-                                                            <div>
-                                                                <h5 class="fs-13 my-1"> {% trans 'Fatura NO' %}</a>
-                                                                </h5>
-
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Vade Tarihi' %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Fatura Tutar' %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Kalan Tutar' %}</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                            {% for i in  bilgi %}
-
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-                                                                {% toplam_odenme_tutari i as odeme %}
-                                                                {% toplam_tutar_cikarmai i as tutar %}
-                                                    {% if  odeme == tutar %}
-                                                    <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% elif odeme > 0 %}
-                                                    <div class="bg-warning" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% elif odeme == 0 %}
-                                                    <div class="bg-danger" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% endif %}
-
-
-
-                                                            </div>
-                                                            <div>
-                                                                <h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
-                                                                </h5>
-                                                                <span class="text-muted">{{i.cari_bilgisi.cari_adi}}</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{{i.vade_tarihi| date:'d.m.Y'}}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">${% kalan_tutuari i %}</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                {% endfor %}
-                                            </tbody>
-                                        </table><!-- end table -->
-                                    </div>
-
-                                    <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
-                                        <div class="col-sm">
-                                            <div class="text-muted">
-                                                {% trans 'Gösterilen' %} <span class="fw-semibold">{{bilgi.count}}</span>{% trans 'fatura.' %} 
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-auto  mt-3 mt-sm-0">
-
-                                        </div>
-                                    </div>
-
-                                </div> <!-- .card-body-->
-                            </div> <!-- .card-->
-                        </div> <!-- .col-->
-                        <div class="col-xl-6">
-                            <div class="card card-height-100">
-                                <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">{% trans 'Borç Faturaları' %}</h4>
-                                    <div class="flex-shrink-0">
-                                        <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}" >
-                                                <span class="text-muted">{% trans 'Gider Faturaları' %}<i class="mdi mdi-chevron-down ms-1"></i></span>
-                                            </a>
-                                            
-                                        </div>
-                                    </div>
-                                </div><!-- end card header -->
-
-                                <div class="card-body">
-                                    <div class="table-responsive table-card">
-                                        <table class="table table-centered table-hover align-middle table-nowrap mb-0">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-
-                                                            <div>
-                                                                <h5 class="fs-13 my-1"> {% trans 'Fatura NO' %}</a>
-                                                                </h5>
-
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Vade Tarihi' %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Fatura Tutar' %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{% trans 'Kalan Tutar' %}</span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                {% for i in  gider %}
-
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="flex-shrink-0 me-2">
-
-                                                                {% toplam_tutar_cikarmai i as tutar %}
-                                                                {% toplam_odenme_tutari i as odeme %}
-                                                    {% if  odeme == tutar %}
-                                                    <div class="bg-success" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% elif odeme > 0 %}
-                                                    <div class="bg-warning" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% elif odeme == 0 %}
-                                                    <div class="bg-danger" style="min-width: 10px; min-height: 10px;  border-radius: 50%;" ></div>
-                                                    {% endif %}
-
-
-
-                                                            </div>
-                                                            <div>
-                                                                <h5 class="fs-13 my-1"><a href="/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
-                                                                </h5>
-                                                                <span class="text-muted">{{i.cari_bilgisi.cari_adi}}</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{{i.vade_tarihi| date:'d.m.Y'}}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">${% toplam_tutar_cikarmai i %}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">${% kalan_tutuari i %} </span>
-                                                    </td>
-                                                </tr><!-- end -->
-                                                {% endfor %}
-                                            </tbody>
-                                        </table><!-- end table -->
-                                    </div>
-
-                                    <div class="align-items-center mt-4 pt-2 justify-content-between row text-center text-sm-start">
-                                        <div class="col-sm">
-                                            <div class="text-muted">
-                                                {% trans 'Gösterilen' %} <span class="fw-semibold">{{gider.count}}</span> {% trans 'fatura.' %}
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-auto  mt-3 mt-sm-0">
-
-                                        </div>
-                                    </div>
-
-                                </div> <!-- .card-body-->
-                            </div> <!-- .card-->
-                        </div> <!-- .col-->
-
+                            </tbody>
+                        </table>
                     </div>
-                    <!-- end row -->
+
+                    <div class="table-footer">
+                        {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %}
+                    </div>
+
                 </div>
 
-                <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-
+                <div class="large-stats-card table-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'Borç Faturaları' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Aylık' %}</div>
+                            <div class="stats-period-content">
+                                <a href="#">{% trans 'Aylık' %}</a>
+                                <a href="#">{% trans 'Yıllık' %}</a>
                             </div>
                         </div>
                     </div>
+
+                    <div class="table-wrapper">
+                        <table id="borc-faturalar">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Fatura No' %}</th>
+                                    <th>{% trans 'Ünvan' %}</th>
+                                    <th>{% trans 'Telefon' %}</th>
+                                    <th>{% trans 'Vade Tarihi' %}</th>
+                                    <th>{% trans 'Fatura Tutarı' %}</th>
+                                    <th>{% trans 'Durum' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-success">Ödendi</span></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-pending">Beklemede</span></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-cancel">İptal Edildi</span></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                    {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %}
+                        
+                    </div>
+
                 </div>
-            </footer>
+
+                <div class="large-stats-card table-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'Görevler' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Tüm Görevler' %}</div>
+                            <div class="stats-period-content">
+                                <a href="#">{% trans 'Tüm Görevler' %}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="gorevler">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'Açıklama' %}</th>
+                                    <th>{% trans 'Atanmış Kişi' %}</th>
+                                    <th>{% trans 'Bitiş Tarihi' %}</th>
+                                    <th>{% trans 'Öncelik' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Depo Düzenleme & Stok Sayımı</td>
+                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
+                                        stoklar
+                                        tespit edilerek kayıt a...</td>
+                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
+                                    <td>12/08/2024</td>
+                                    <td><span class="status-success">Az</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Depo Düzenleme & Stok Sayımı</td>
+                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
+                                        stoklar
+                                        tespit edilerek kayıt a...</td>
+                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
+                                    <td>12/08/2024</td>
+                                    <td><span class="status-pending">Orta</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Depo Düzenleme & Stok Sayımı</td>
+                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
+                                        stoklar
+                                        tespit edilerek kayıt a...</td>
+                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
+                                    <td>12/08/2024</td>
+                                    <td><span class="status-cancel">Acil</span></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div class="table-footer">
+                       {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %} 
+                    </div>
+
+                </div>
             </div>
-            <!-- End Page-content -->
+
+            <script>
+                let faturalar = new DataTable('#faturalar', {
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    // responsive: true
+                });
+
+                let borcfaturalar = new DataTable('#borc-faturalar', {
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    // responsive: true
+                });
+
+                let gorevler = new DataTable('#gorevler', {
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    // responsive: true
+                });
+            </script>
 
 
-    </div>
-    <!-- end main content-->
-    {% if request.user.kullanicilar_db %}
+
+            <div class="large-cards-second-row">
+
+                <div class="card">
+                    <div class="card-header">
+                        {% trans '<a href="#" class="card-details">Detayını Gör <i class="icon icon-chevron-right"></i></a>' %}
+                    </div>
+                    <div class="card-body">
+                        <img class="building-img" src="./content/images/bina.png' %}" alt="Bina">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            {% trans 'Personeller' %}
+                            <span>{% trans 'Toplam 182 personel' %}</span>
+                        </div>
+                        <a href="#"><i class="icon icon-plus"></i></a>
+                    </div>
+                    <div class="card-body">
+                        <div class="employees">
+                            <div class="employee">
+                                <div class="employee-image"><img src="{% static 'go/images/avatar.png' %}" alt=""></div>
+                                <div class="employee-details">
+                                    Ahmet Yılmaz
+                                    <span>ahmet@biada.com</span>
+                                </div>
+                                <div class="employee-stats">
+                                    <span>Ay / Çalışma Saati</span>
+                                    2450
+                                </div>
+                            </div>
+                            <div class="employee">
+                                <div class="employee-image"><img src="{% static 'go/images/avatar.png' %}" alt=""></div>
+                                <div class="employee-details">
+                                    Ahmet Yılmaz
+                                    <span>ahmet@biada.com</span>
+                                </div>
+                                <div class="employee-stats">
+                                    <span>Ay / Çalışma Saati</span>
+                                    2450
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            {% trans '<a href="#" class="card-show-all">Tümünü Gör <i class="icon icon-forward"></i></a>' %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-image">
+                        <img src="{% static 'go/images/info-card-1.png' %}" alt="Aktif Şantiye Sayısı">
+                    </div>
+                    <div class="info-card-content">
+                    {% trans '12 <span>Aktif Şantiye Sayısı</span>' %}
+                        
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-image">
+                        <img src="{% static 'go/images/info-card-2.png' %}" alt="Aktif Personel Sayısı">
+                    </div>
+                    <div class="info-card-content">
+                        {% trans '182 <span>Aktif Personel Sayısı</span>' %}
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-image">
+                        <img src="{% static 'go/images/info-card-3.png' %}" alt="Aktif Proje Sayısı">
+                    </div>
+                    <div class="info-card-content">
+                        {% trans '202 <span>Aktif Proje Sayısı</span>' %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+    </main>
+{% else %} 
+
+    <main>
+
+        <div class="quick-actions">
+            <div class="quick-actions-header">
+                <div class="quick-actions-title">{% trans 'Hızlı Menü' %}</div>
+                <div class="quick-actions-right">
+                    <button class="quick-actions-add" onclick="showHiddenActions()">
+                        <i class="icon icon-add"></i> {% trans 'Gizli Öğeler' %}
+                    </button>
+                    <div class="quick-actions-toggle">
+                        <i class="icon icon-arrow-circle-up"></i>
+                        <i class="icon icon-arrow-circle-down"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="quick-actions-body open">
+                <div class="quick-actions-inner">
+                    <div class="quick-actions-grid" id="quick-actions-grid">
+                        <a href="#" class="quick-action" data-id="1" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-document"></i> {% trans 'Raporlar' %}</a>
+                        <a href="#" class="quick-action" data-id="2" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-ilerleme-takibi"></i>{% trans 'İlerleme Takibi' %} </a>
+                        <a href="#" class="quick-action" data-id="3" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-giderler"></i> {% trans 'Giderler' %}</a>
+                        <a href="#" class="quick-action" data-id="4" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-gelirler"></i>{% trans 'Gelirler' %} </a>
+                        <a href="#" class="quick-action" data-id="5" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-muhasebe"></i>{% trans 'Borçlar' %} </a>
+                        <a href="#" class="quick-action" data-id="6" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-puantaj-girisi"></i>{% trans 'Puantaj Girişi' %}</a>
+                        <a href="#" class="quick-action" data-id="7" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-satin-alma"></i>{% trans 'Satın Alma' %}</a>
+                        <a href="#" class="quick-action" data-id="8" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-yeni-personel"></i>{% trans 'Personel Ekle' %} </a>
+                        <a href="#" class="quick-action" data-id="9" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-yeni-kullanici"></i> {% trans 'Kullanıcı Ekle' %}</a>
+                        <a href="#" class="quick-action" data-id="10" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-dosya-yoneticisi"></i>{% trans 'Dosya Yöneticisi' %} </a>
+                        <a href="#" class="quick-action" data-id="11" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-taseronlar"></i> {% trans 'Taşeronlar' %}</a>
+                        <a href="#" class="quick-action" data-id="12" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-sozlesmeler"></i> {% trans 'Sözleşmeler' %}</a>
+                        <a href="#" class="quick-action" data-id="13" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-hakedisler"></i> {% trans 'Hakedişler' %}</a>
+                        <a href="#" class="quick-action" data-id="14" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-gorevler"></i> {% trans 'Görevler' %}</a>
+                        <a href="#" class="quick-action" data-id="15" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-kasa"></i> {% trans 'Kasa' %}</a>
+                        <a href="#" class="quick-action" data-id="16" oncontextmenu="hideQuickLink(event, this)"><i
+                                class="icon icon-users"></i> {% trans 'Cari Hesapları' %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="quick-action-modal " id="hiddenLinksModal">
+            <div class="quick-action-modal-content">
+                <div class="quick-action-modal-header">
+                    <span>{% trans 'Gizli Öğeler' %}</span>
+                    <button onclick="hideHiddenActions()"><i class="icon icon-close"></i></button>
+                </div>
+                <div class="quick-actions-grid modal-body">
+                </div>
+            </div>
+        </div>
+
+        <script>
+
+            const hiddenLinksModalBody = document.querySelector('#hiddenLinksModal .modal-body');
+            document.addEventListener('DOMContentLoaded', function () {
+                const quickLinks = document.getElementById('quick-actions-grid');
+                const hiddenLinksModalBody = document.querySelector('#hiddenLinksModal .modal-body');
+
+                // Hızlı linkleri sürükle-bırak düzenleme
+                new Sortable(quickLinks, {
+                    animation: 150,
+                    handle: '.quick-action',
+                    onEnd: function (evt) {
+                        const items = Array.from(quickLinks.children);
+                        const order = items.map(item => item.dataset.id);
+                        sessionStorage.setItem('quickLinksOrder', JSON.stringify(order));
+                    }
+                });
+
+
+                // Gizli linkleri modalda geri getirme
+                hiddenLinksModalBody.addEventListener('click', function (event) {
+                    const link = event.target.closest('.hidden-link');
+                    if (link) {
+                        const id = link.dataset.id;
+                        const hiddenItem = document.querySelector(`[data-id="${id}"]`);
+                        if (hiddenItem) {
+                            hiddenItem.style.display = "flex"; // Linki geri görünür yap
+                            quickLinks.appendChild(hiddenItem); // Sayfaya geri ekle
+                            link.remove(); // Modaldan kaldır
+                            saveHiddenLinks(); // Gizli linklerin durumunu kaydet
+                        }
+                    }
+                });
+
+                // Oturum açıldığında kullanıcı düzenini yükle
+                const savedQuickLinksOrder = JSON.parse(sessionStorage.getItem('quickLinksOrder'));
+                if (savedQuickLinksOrder) {
+                    savedQuickLinksOrder.forEach(id => {
+                        const item = quickLinks.querySelector(`[data-id='${id}']`);
+                        if (item) {
+                            quickLinks.appendChild(item);
+                        }
+                    });
+                }
+
+                // Gizli linklerin durumunu kaydet
+                function saveHiddenLinks() {
+                    const hiddenLinks = Array.from(hiddenLinksModalBody.querySelectorAll('.hidden-link')).map(link => link.dataset.id);
+                    sessionStorage.setItem('hiddenLinks', JSON.stringify(hiddenLinks));
+                }
+
+                // Gizli linkleri yükleme
+                function loadHiddenLinks() {
+                    const hiddenLinks = JSON.parse(sessionStorage.getItem('hiddenLinks'));
+                    if (hiddenLinks) {
+                        hiddenLinks.forEach(id => {
+                            const item = quickLinks.querySelector(`[data-id='${id}']`);
+                            if (item) {
+                                item.style.display = "none"; // Linki gizle
+                                const hiddenLink = document.createElement('div');
+                                hiddenLink.className = 'hidden-link';
+                                hiddenLink.dataset.id = id;
+                                hiddenLink.innerHTML = item.innerHTML;
+                                hiddenLinksModalBody.appendChild(hiddenLink);
+                            }
+                        });
+                    }
+                }
+
+                loadHiddenLinks(); // Gizli linkleri sayfa yüklendiğinde çağır
+            });
+
+            // Gizli linklerin durumunu kaydet
+            function saveHiddenLinks() {
+                const hiddenLinks = Array.from(hiddenLinksModalBody.querySelectorAll('.hidden-link')).map(link => link.dataset.id);
+                sessionStorage.setItem('hiddenLinks', JSON.stringify(hiddenLinks));
+            }
+
+            // Hızlı linki gizleme
+            function hideQuickLink(event, element) {
+                event.preventDefault();
+                const id = element.dataset.id;
+                element.style.display = "none"; // Sayfadan gizle
+                const hiddenLink = document.createElement('div');
+                hiddenLink.className = 'hidden-link';
+                hiddenLink.dataset.id = id;
+                hiddenLink.innerHTML = element.innerHTML;
+                document.querySelector('#hiddenLinksModal .modal-body').appendChild(hiddenLink);
+                saveHiddenLinks(); // Gizli linklerin durumunu kaydet
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            function showHiddenActions() {
+                $(".quick-action-modal").css("display", "flex").hide().fadeIn();
+            }
+
+            function hideHiddenActions() {
+                $(".quick-action-modal").fadeOut();
+            }
+
+            let quickActionModal = document.querySelector(".quick-action-modal");
+            $(".quick-action-modal").on("click", function (e) {
+                if (e.target == quickActionModal) {
+                    hideHiddenActions();
+                }
+            })
+
+            let quickActionsToggle = document.querySelector(".quick-actions-toggle");
+            let quickActionsBody = document.querySelector(".quick-actions-body");
+
+            quickActionsToggle.addEventListener("click", function () {
+                quickActionsBody.classList.toggle("open");
+            });
+
+
+
+
+
+
+
+        </script>
+
+
+
+        <div class="main-cards">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                {% if request.user.image %}
+                        <img src="{{request.user.image.url}}" style="max-width: 80px; max-height: 80px;" alt="Profile">
+
+                        {% else %}
+                        <img src="{% static 'go/images/profile.png' %}" alt="Profile">
+                        {% endif %}
+                    
+                </div>
+                <div class="profile-info">
+                    <div class="profile-title">{{request.user.last_name}} <span>{{request.user.gorevi}}</span></div>
+                    <div class="profile-date"><i class="icon icon-calendar"></i> 02/09/2024 - Pazartesi</div>
+                    
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-title">{% trans 'GELİR' %}</div>
+                {% if request.user.kullanicilar_db %}
+                {% gelirler_tutari request.user.kullanicilar_db as gelir_bilgisi_cek %}
+                {% else %}
+                {% gelirler_tutari request.user as gelir_bilgisi_cek %}
+                {% endif %}
+                <div class="stats-content">
+                    <div class="stats-value"> $ {{gelir_bilgisi_cek.tutar}}</div>
+                    <div class="stats-rease">
+                        <div class="stats-rease-icon"><i class="icon icon-increment"></i></div>
+                         {% trans '<b>+40.1%</b> than last week' %}
+                    </div>
+                </div>
+                <div class="stats-img">
+
+
+                    <div id="stats-gelir"></div>
+
+                    <script>
+                        var options = {
+                            series: [{
+                                name: "{% trans 'Gelir' %}",
+                                data: [100, 10, 80, 23]
+                            }],
+                            chart: {
+                                width: 120,
+                                height: 120,
+                                type: 'line',
+                                toolbar: {
+                                    show: false
+                                },
+                                zoom: {
+                                    enabled: false
+                                },
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                colors: ['#22B076']
+                            },
+                            xaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0,
+                                categories: ["Haziran", "Temmuz", "Ağustos", "Eylül"]
+                            },
+                            yaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0
+                            },
+                            grid: {
+                                show: false
+                            }
+                        };
+
+
+                        var chart = new ApexCharts(document.querySelector("#stats-gelir"), options);
+                        chart.render();
+
+
+                    </script>
+
+
+
+
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-title">{% trans 'GİDER' %}</div>
+                {% if request.user.kullanicilar_db %}
+                {% giderler_tutari request.user.kullanicilar_db  as gider_bilgisicekeme %}
+                {% else %}
+                {% giderler_tutari request.user  as gider_bilgisicekeme %}
+                {% endif %}
+                <div class="stats-content">
+                    <div class="stats-value">$ {{gider_bilgisicekeme.genel_odeme2}}</div>
+                    <div class="stats-rease">
+                        <div class="stats-rease-icon"><i class="icon icon-decrement"></i></div>
+                        {% trans '<b>-40.1%</b> than last week' %}
+                    </div>
+                </div>
+                <div class="stats-img">
+
+                    <div id="stats-gider"></div>
+
+                    <script>
+                        var options = {
+                            series: [{
+                                name: "{% trans 'Gider' %}",
+                                data: [100, 10, 80, 23]
+                            }],
+                            chart: {
+                                width: 120,
+                                height: 120,
+                                type: 'line',
+                                toolbar: {
+                                    show: false
+                                },
+                                zoom: {
+                                    enabled: false
+                                },
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                colors: ['#26CFE3']
+                            },
+                            xaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0,
+                                categories: ["Haziran", "Temmuz", "Ağustos", "Eylül"]
+                            },
+                            yaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0
+                            },
+                            grid: {
+                                show: false
+                            }
+                        };
+
+
+                        var chart = new ApexCharts(document.querySelector("#stats-gider"), options);
+                        chart.render();
+
+
+                    </script>
+
+
+                </div>
+            </div>
+            <div class="weather-card">
+                <div class="weather-location">
+                    İstanbul
+                    <span>Pazartesi</span>
+                    <span>09:30 • 03/08</span>
+                </div>
+                <div class="weather-content">
+                    <div class="weather-temp">
+                        24°
+                        <img src="{% static 'go/images/partly_cloudy_daytime.png' %}" alt="Parçalı Bulutlu">
+                    </div>
+                    <div class="weather-wind">
+                        8 km/s
+                        <img src="{% static 'go/images/wind.png' %}" alt="Rüzgar">
+                    </div>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-title">{% trans 'BORÇ' %}</div>
+                {% basit_cikarma  gelir_bilgisi_cek.tutar gelir_bilgisi_cek.genel_odeme as gelir_islem_sonucu  %}
+                                                    {% basit_cikarma  gider_bilgisicekeme.tutar gider_bilgisicekeme.genel_odeme as gider_islem_sonucu  %}
+                                                    {% basit_cikarma  gelir_islem_sonucu gider_islem_sonucu as sonuc_Bilgisi  %}
+                <div class="stats-content">
+                    <div class="stats-value">${% mutlak_deger  sonuc_Bilgisi %}</div>
+                    <div class="stats-rease">
+                        <div class="stats-rease-icon"><i class="icon icon-decrement"></i></div>
+                        {% trans '<b>-40.1%</b> than last week' %}
+                    </div>
+                </div>
+                <div class="stats-img">
+
+                    <div id="stats-borc"></div>
+
+                    <script>
+                        var options = {
+                            series: [{
+                                name: "{% trans 'Borç' %}",
+                                data: [100, 10, 80, 23]
+                            }],
+                            chart: {
+                                width: 120,
+                                height: 120,
+                                type: 'line',
+                                toolbar: {
+                                    show: false
+                                },
+                                zoom: {
+                                    enabled: false
+                                },
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                colors: ['#26CFE3']
+                            },
+                            xaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0,
+                                categories: ["Haziran", "Temmuz", "Ağustos", "Eylül"]
+                            },
+                            yaxis: {
+                                labels: {
+                                    show: false
+                                },
+                                axisBorder: {
+                                    show: false
+                                },
+                                axisTicks: {
+                                    show: false
+                                },
+                                tickAmount: 0
+                            },
+                            grid: {
+                                show: false
+                            }
+                        };
+
+
+                        var chart = new ApexCharts(document.querySelector("#stats-borc"), options);
+                        chart.render();
+
+
+                    </script>
+
+
+                </div>
+            </div>
+            <div class="register-card">
+                <div class="register-card-title">
+                    {% if kasa %}
+                        {{ kasa|length }}
+                    {% else %}
+                        0
+                    {% endif %}
+                    <span>{% trans 'Kasa' %}</span>
+                </div>
+                <div class="register-card-registers">
+                {% for i in kasa %}
+
+                    <div class="register-card-register"><i class="icon icon-register"></i> {{i.kasa_adi}} <span>$
+                            {% kasa_toplam i %}</span></div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% if request.user.kullanicilar_db %}
          {% ozellikler request.user.kullanicilar_db as ozellikleri %}      
-    {% else %}
-       {% ozellikler request.user as ozellikleri %}                                            
-    {% endif %}
-    
-    <script>
-        // Django şablon etiketlerini JavaScript değişkenlerine atayın
+        {% else %}
+        {% ozellikler request.user as ozellikleri %}                                            
+        {% endif %}
+        {% if request.user.is_authenticated %}
+        {% if request.user.kullanicilar_db %}
+         {% kategori_bilgi_ver request.user.kullanicilar_db as bilgi_cagir %}    
+        {% else %}
+        {% kategori_bilgi_ver request.user as bilgi_cagir %}                                           
+        {% endif %}
+            
+            {% endif %}
+        <div class="large-cards">
+            <div class="large-stats-card">
+                <div class="stats-header">
+                    <div class="stats-title">{% trans 'Gelir - Gider Grafiği' %}</div>
+                    <div class="stats-period-dropdown">
+                        <div class="stats-period">{% trans 'Aylık' %}</div>
+                        <div class="stats-period-content">
+                            <a href="#">{% trans 'Aylık' %}</a>
+                            <a href="#">{% trans 'Yıllık' %}</a>
+                        </div>
+                    </div>
+                </div>
+                <div id="gelirgider"></div>
+            </div>
+            <div class="large-stats-card expenses-by-category">
+                <div class="stats-header">
+                    <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
+                </div>
+                <div id="expenses-by-category"></div>
+                <div class="stats-footer">
+                    <div class="stats-footer-part">
+                        <span>{% trans 'Kategori Sayısı' %}</span>
+                        {{bilgi_cagir | length}}
+                    </div>
+                    <div class="stats-footer-part">
+                        <span>{% trans 'Toplam Gider' %}</span>
+                        ${{gider_bilgisicekeme.genel_odeme2}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            var options = {
+                series: [{
+                    name: '{% trans "Gelir" %}',
+                    data: {{ozellikleri.gelir}}
+                }, {
+                    name: '{% trans "Gider" %}',
+                    data: {{ozellikleri.gider}}
+                }],
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                xaxis: {
+                    type: 'category',
+                    categories: [ 
+                        '{% trans "Ocak" %}', '{% trans "Şubat" %}', '{% trans "Mart" %}', '{% trans "Nisan" %}', '{% trans "Mayıs" %}', '{% trans "Haziran" %}',
+                        '{% trans "Temmuz" %}', '{% trans "Ağustos" %}', '{% trans "Eylül" %}', '{% trans "Ekim" %}', '{% trans "Kasım" %}', '{% trans "Aralık" %}'
+                    ]
+                },
+                colors: ['#5FC396', '#FFAB00'],
+                tooltip: {
+                    x: {
+                        format: 'MMM'
+                    }
+                }
+            };
 
-        window.gelir = {{ozellikleri.gelir}};
-        window.gider = {{ozellikleri.gider}} ;
-        window.kategoriler = {{ozellikleri.kategoriler |safe}};
-    </script>
+            var chart = new ApexCharts(document.querySelector("#gelirgider"), options);
+            chart.render();
+
+
+
+
+            var options = {
+                series: {{bilgi_cagir.a}},
+                labels: {{bilgi_cagir.isimleri |safe}},
+                chart: {
+                    type: 'polarArea',
+                },
+                stroke: {
+                    colors: ['#fff']
+                },
+                fill: {
+                    opacity: 0.8
+                },
+            };
+
+            var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
+            chart.render();
+
+
+
+        </script>
+
+
+        <div class="large-cards">
+
+            <div class="large-cards-main-row">
+                <div class="large-stats-card table-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'Faturalar' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Aylık' %}</div>
+                            <div class="stats-period-content">
+                                <a href="#">{% trans 'Aylık' %}</a>
+                                <a href="#">{% trans 'Yıllık' %}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="faturalar">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Fatura No' %}</th>
+                                    <th>{% trans 'Ünvan' %}</th>
+                                    <th>{% trans 'Telefon' %}</th>
+                                    <th>{% trans 'Vade Tarihi' %}</th>
+                                    <th>{% trans 'Fatura Tutarı' %}</th>
+                                    <th>{% trans 'Kalan Tutarı' %}</th>
+                                    <th>{% trans 'Durum' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in  bilgi %}
+                                <tr>
+                                    {% toplam_odenme_tutari i as odeme %}
+                                    {% toplam_tutar_cikarmai i as tutar %}
+                                    <td><h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
+                                    </h5></td>
+                                    <td>{{i.cari_bilgisi.cari_adi}}</td>
+                                    <td>0555 123 0000</td>
+                                    <td>{{i.vade_tarihi| date:'d.m.Y'}} <span class="time"></span></td>
+                                    <td>${% toplam_tutar_cikarmai i %}</td>
+                                    <td>
+                                        ${% kalan_tutuari i %}
+                                    </td>
+                                    {% if  odeme == tutar %}
+                                    <td><span class="status-success">{% trans "Ödendi" %}</span></td>
+                                    {% elif odeme > 0 %}
+                                    <td><span class="status-pending">{% trans "Beklemede" %}</span></td>
+                                    {% elif odeme == 0 %}
+                                    <td><span class="status-cancel">{% trans "Ödenmedi" %}</span></td>
+                                    {% endif %}
+                                    
+                                    </tr>
+                                    {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %}
+                    </div>
+
+                </div>
+
+                <div class="large-stats-card table-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'Borç Faturaları' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Aylık' %}</div>
+                            <div class="stats-period-content">
+                                <a href="#">{% trans 'Aylık' %}</a>
+                                <a href="#">{% trans 'Yıllık' %}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="borc-faturalar">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Fatura No' %}</th>
+                                    <th>{% trans 'Ünvan' %}</th>
+                                    <th>{% trans 'Telefon' %}</th>
+                                    <th>{% trans 'Vade Tarihi' %}</th>
+                                    <th>{% trans 'Fatura Tutarı' %}</th>
+                                    <th>{% trans 'Durum' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-success">Ödendi</span></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-pending">Beklemede</span></td>
+                                </tr>
+                                <tr>
+                                    <td>INV-1708</td>
+                                    <td>QUALITY DECOR</td>
+                                    <td>0555 123 0000</td>
+                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
+                                    <td>$87.99</td>
+                                    <td><span class="status-cancel">İptal Edildi</span></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                    {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %}
+                        
+                    </div>
+
+                </div>
+
+                <div class="large-stats-card table-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'Görevler' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Tüm Görevler' %}</div>
+                            <div class="stats-period-content">
+                                <a href="#">{% trans 'Tüm Görevler' %}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="gorevler">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'Açıklama' %}</th>
+                                    <th>{% trans 'Atanmış Kişi' %}</th>
+                                    <th>{% trans 'Bitiş Tarihi' %}</th>
+                                    <th>{% trans 'Öncelik' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Depo Düzenleme & Stok Sayımı</td>
+                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
+                                        stoklar
+                                        tespit edilerek kayıt a...</td>
+                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
+                                    <td>12/08/2024</td>
+                                    <td><span class="status-success">Az</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Depo Düzenleme & Stok Sayımı</td>
+                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
+                                        stoklar
+                                        tespit edilerek kayıt a...</td>
+                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
+                                    <td>12/08/2024</td>
+                                    <td><span class="status-pending">Orta</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Depo Düzenleme & Stok Sayımı</td>
+                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
+                                        stoklar
+                                        tespit edilerek kayıt a...</td>
+                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
+                                    <td>12/08/2024</td>
+                                    <td><span class="status-cancel">Acil</span></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div class="table-footer">
+                       {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %} 
+                    </div>
+
+                </div>
+            </div>
+
+            <script>
+                let faturalar = new DataTable('#faturalar', {
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    // responsive: true
+                });
+
+                let borcfaturalar = new DataTable('#borc-faturalar', {
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    // responsive: true
+                });
+
+                let gorevler = new DataTable('#gorevler', {
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    // responsive: true
+                });
+            </script>
+
+
+
+            <div class="large-cards-second-row">
+
+                <div class="card">
+                    <div class="card-header">
+                        {% trans '<a href="#" class="card-details">Detayını Gör <i class="icon icon-chevron-right"></i></a>' %}
+                    </div>
+                    <div class="card-body">
+                        <img class="building-img" src="./content/images/bina.png' %}" alt="Bina">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            {% trans 'Personeller' %}
+                            <span>{% trans 'Toplam 182 personel' %}</span>
+                        </div>
+                        <a href="#"><i class="icon icon-plus"></i></a>
+                    </div>
+                    <div class="card-body">
+                        <div class="employees">
+                            <div class="employee">
+                                <div class="employee-image"><img src="{% static 'go/images/avatar.png' %}" alt=""></div>
+                                <div class="employee-details">
+                                    Ahmet Yılmaz
+                                    <span>ahmet@biada.com</span>
+                                </div>
+                                <div class="employee-stats">
+                                    <span>Ay / Çalışma Saati</span>
+                                    2450
+                                </div>
+                            </div>
+                            <div class="employee">
+                                <div class="employee-image"><img src="{% static 'go/images/avatar.png' %}" alt=""></div>
+                                <div class="employee-details">
+                                    Ahmet Yılmaz
+                                    <span>ahmet@biada.com</span>
+                                </div>
+                                <div class="employee-stats">
+                                    <span>Ay / Çalışma Saati</span>
+                                    2450
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            {% trans '<a href="#" class="card-show-all">Tümünü Gör <i class="icon icon-forward"></i></a>' %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-image">
+                        <img src="{% static 'go/images/info-card-1.png' %}" alt="Aktif Şantiye Sayısı">
+                    </div>
+                    <div class="info-card-content">
+                    {% trans '12 <span>Aktif Şantiye Sayısı</span>' %}
+                        
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-image">
+                        <img src="{% static 'go/images/info-card-2.png' %}" alt="Aktif Personel Sayısı">
+                    </div>
+                    <div class="info-card-content">
+                        {% trans '182 <span>Aktif Personel Sayısı</span>' %}
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-image">
+                        <img src="{% static 'go/images/info-card-3.png' %}" alt="Aktif Proje Sayısı">
+                    </div>
+                    <div class="info-card-content">
+                        {% trans '202 <span>Aktif Proje Sayısı</span>' %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+    </main>
 {% endif %}
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .box {
-            height: 100%;
-            overflow-y: scroll; 
-            max-height: 100px !important;
-        }
-    </style>
-
 {% endblock sidebar %}
