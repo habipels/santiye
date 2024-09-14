@@ -6,6 +6,7 @@ from simple_history.models import HistoricalRecords
 from django.conf import settings
 from django.db import models
 from simple_history.models import HistoricalRecords
+#from muhasebe.models import Gider_Bilgisi
 # Create your models here.
 class CustomUser(AbstractUser):
 
@@ -300,3 +301,4 @@ class calisanlar_calismalari(models.Model):
     guncelleme_tarihi = models.DateTimeField("Date modified", default=timezone.now)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+

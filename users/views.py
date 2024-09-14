@@ -32,6 +32,16 @@ def personel_bilgisi_axaj(request, id):
             total_normal_calisma_saati=Sum('normal_calisma_saati'),
             total_mesai_calisma_saati=Sum('mesai_calisma_saati')
         ).order_by('year', 'month', 'maas__id')
+        odemeler = calisanlar_calismalari_odemeleri.objects.filter(
+        calisan=get_object_or_none(calisanlar, id=id)
+        ).annotate(
+            year=ExtractYear('tarihi'),
+            month=ExtractMonth('tarihi')
+        ).values(
+            'year', 'month',"calisan__id"  # Maas ID ve ismi ile gruplanıyor
+        ).annotate(
+            total_tutar=Sum('tutar')
+        ).order_by('year', 'month')
 
         personel_detayi = {
             'id':str(id),
@@ -60,10 +70,10 @@ def personel_bilgisi_axaj(request, id):
         ],
         "calismalar": [
             {
-                "tarih": str(calis['year']) + " "+ str(calis['month']),
+                "tarih": str(calis['year']) + "-"+ str(calis['month']),
                 "hakedis_tutari":(calis["total_normal_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).maas) +(calis["total_mesai_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).yevmiye),
                 "odenen": "",
-                "kalan": "",
+                "kalan": (calis["total_normal_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).maas) +(calis["total_mesai_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).yevmiye),
                 "bodro": "",
             } for calis in calismalar
         ]

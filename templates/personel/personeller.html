@@ -868,7 +868,7 @@ table th {
                 </div>
                 <div class="form-group">
                     <label for="maasBakiye">Kalan Bakiye</label>
-                    <input type="number" id="maasBakiye" class="form-control" value="2000 ₺" readonly>
+                    <input type="number" id="maasBakiye" class="form-control" value="0" >
                 </div>
                 <div class="form-group">
                     <label for="maasAciklama">Açıklama</label>
@@ -1015,6 +1015,70 @@ document.getElementById('addPersonBtn').addEventListener('click', function() {
     openModal('addPersonModal');
 });
 
+// JSON verilerindeki ayları dropdown'a ekleme
+function populateMonths(calismalar) {
+    var monthSelect = document.getElementById('maasAy');
+    
+    // Tüm mevcut seçenekleri temizleyelim
+    monthSelect.innerHTML = '';
+
+    // JSON verilerinden gelen ayları options olarak ekleyelim
+    calismalar.forEach(function(calis) {
+        var option = document.createElement('option');
+        option.value = calis.tarih;  // Örneğin "Ocak 2024"
+        option.text = calis.tarih;   // Görünür metin de aynı olacak
+        monthSelect.appendChild(option);
+    });
+}
+
+// Seçilen ayın maksimum tutarını bakiye inputuna ekleme
+function updateMaxBakiye(calismalar) {
+    var monthSelect = document.getElementById('maasAy');
+    var bakiyeInput = document.getElementById('maasBakiye');
+
+    // Seçili ayı değiştirince işlem yapılacak
+    monthSelect.addEventListener('change', function() {
+        var selectedMonth = monthSelect.value;
+        var selectedCalisma = calismalar.find(calis => calis.tarih === selectedMonth);
+
+        if (selectedCalisma) {
+            bakiyeInput.max = selectedCalisma.kalan; // max değeri olarak kalan tutarı belirle
+            bakiyeInput.value = selectedCalisma.kalan; // Varsayılan olarak input'a kalan tutarı yaz
+        }
+    });
+}
+// JSON verilerindeki ayları avans dropdown'a ekleme
+function populateAvansMonths(calismalar) {
+    var avansMonthSelect = document.getElementById('avansAy');
+    
+    // Tüm mevcut seçenekleri temizleyelim
+    avansMonthSelect.innerHTML = '';
+
+    // JSON verilerinden gelen ayları options olarak ekleyelim
+    calismalar.forEach(function(calis) {
+        var option = document.createElement('option');
+        option.value = calis.tarih;  // Örneğin "Ocak 2024"
+        option.text = calis.tarih;   // Görünür metin de aynı olacak
+        avansMonthSelect.appendChild(option);
+    });
+}
+
+// Seçilen ayın maksimum avans tutarını ayarlama
+function updateMaxAvansTutar(calismalar) {
+    var avansMonthSelect = document.getElementById('avansAy');
+    var avansTutarInput = document.getElementById('avansTutar');
+
+    // Seçili ayı değiştirince işlem yapılacak
+    avansMonthSelect.addEventListener('change', function() {
+        var selectedMonth = avansMonthSelect.value;
+        var selectedCalisma = calismalar.find(calis => calis.tarih === selectedMonth);
+
+        if (selectedCalisma) {
+            avansTutarInput.max = selectedCalisma.kalan;  // Maksimum avans tutarı ayarlanır
+            avansTutarInput.placeholder = selectedCalisma.kalan;  // Placeholder'ı günceller
+        }
+    });
+}
 // Personel Detaylarını Gösterme Fonksiyonu
 function openPersonelDetails(id) {
     fetch(`/users/detailemployee/${id}/`)
@@ -1082,6 +1146,10 @@ function openPersonelDetails(id) {
 
                 salaryTableBody.appendChild(row);
             });
+            populateMonths(data.calismalar);
+            updateMaxBakiye(data.calismalar);
+            populateAvansMonths(data.calismalar);  // Ayları dropdown'a ekle
+            updateMaxAvansTutar(data.calismalar);  // Avans tutarını ayarla
             })
     
 

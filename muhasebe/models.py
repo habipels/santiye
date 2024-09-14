@@ -320,3 +320,13 @@ class Gider_excel_ekleme(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(CustomUser,verbose_name="Gelir Ödemesi Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     gelir_makbuzu = models.FileField(upload_to='excel/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
     kasa = models.ForeignKey(Kasa,blank=True,null = True, verbose_name ="Kasa",on_delete=models.SET_NULL)
+
+class calisanlar_calismalari_odemeleri(models.Model):
+    fatura = models.ForeignKey(Gider_Bilgisi,verbose_name="Gider Faturası",blank=True,null=True,on_delete=models.SET_NULL)
+    calisan = models.ForeignKey(calisanlar,verbose_name="Çalışan",blank=True,null=True,on_delete=models.SET_NULL)
+    tutar = models.FloatField(verbose_name="Tutar",default=0,blank=True,null=True)
+    tarihi = models.DateTimeField(null=True,verbose_name="Çalışma Tarihi",blank = True)
+    odeme_turu = models.BooleanField(default=False) #False ise Maaş True İse Avans
+    guncelleme_tarihi = models.DateTimeField("Date modified", default=timezone.now)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
