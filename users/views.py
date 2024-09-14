@@ -725,7 +725,7 @@ def weather_view(request):
     ip_info = None
     
     # Kullanıcının IP adresini alıyoruz
-    ip ="185.95.206.84"  #get_client_ip(request) #
+    ip ="85.110.71.229"  #get_client_ip(request) #
     
     # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
     ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
