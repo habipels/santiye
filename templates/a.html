@@ -1513,35 +1513,34 @@
                                     <th>{% trans 'Telefon' %}</th>
                                     <th>{% trans 'Vade Tarihi' %}</th>
                                     <th>{% trans 'Fatura Tutarı' %}</th>
+                                    <th>{% trans 'Kalan Tutarı' %}</th>
                                     <th>{% trans 'Durum' %}</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for i in  bilgi %}
                                 <tr>
-                                    <td>INV-1708</td>
-                                    <td>QUALITY DECOR</td>
+                                    {% toplam_odenme_tutari i as odeme %}
+                                    {% toplam_tutar_cikarmai i as tutar %}
+                                    <td><h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
+                                    </h5></td>
+                                    <td>{{i.cari_bilgisi.cari_adi}}</td>
                                     <td>0555 123 0000</td>
-                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
-                                    <td>$87.99</td>
-                                    <td><span class="status-success">Ödendi</span></td>
-                                </tr>
-                                <tr>
-                                    <td>INV-1708</td>
-                                    <td>QUALITY DECOR</td>
-                                    <td>0555 123 0000</td>
-                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
-                                    <td>$87.99</td>
-                                    <td><span class="status-pending">Beklemede</span></td>
-                                </tr>
-                                <tr>
-                                    <td>INV-1708</td>
-                                    <td>QUALITY DECOR</td>
-                                    <td>0555 123 0000</td>
-                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
-                                    <td>$87.99</td>
-                                    <td><span class="status-cancel">İptal Edildi</span></td>
-                                </tr>
-
+                                    <td>{{i.vade_tarihi| date:'d.m.Y'}} <span class="time"></span></td>
+                                    <td>${% toplam_tutar_cikarmai i %}</td>
+                                    <td>
+                                        ${% kalan_tutuari i %}
+                                    </td>
+                                    {% if  odeme == tutar %}
+                                    <td><span class="status-success">{% trans "Ödendi" %}</span></td>
+                                    {% elif odeme > 0 %}
+                                    <td><span class="status-pending">{% trans "Beklemede" %}</span></td>
+                                    {% elif odeme == 0 %}
+                                    <td><span class="status-cancel">{% trans "Ödenmedi" %}</span></td>
+                                    {% endif %}
+                                    
+                                    </tr>
+                                    {% endfor %}
                             </tbody>
                         </table>
                     </div>
