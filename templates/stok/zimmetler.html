@@ -348,31 +348,31 @@
         <tbody>
             {% for i in urun_kategorisi %}
             <tr>
-                <td data-label="Zimmet ID">{{i.id}}</td>
-                <td data-label="Personel">{{i.zimmet_alan_personel.isim}} {{i.zimmet_alan_personel.soyisim}}</td>
-                <td data-label="Malzeme">{{i.zimmet_verilen_urun.urun_adi}}</td>
-                <td data-label="Miktar">{{i.zimmet_miktari}}</td>
-                <td data-label="Teslim Tarihi">{{i.zimmet_verilis_tarihi | date:'d.m.Y' }}</td>
-                <td data-label="Durum">
+                <td data-label="{% trans 'ID' %}">{{i.id}}</td>
+                <td data-label="{% trans 'Personel' %}">{{i.zimmet_alan_personel.isim}} {{i.zimmet_alan_personel.soyisim}}</td>
+                <td data-label="{% trans 'Malzeme' %}">{{i.zimmet_verilen_urun.urun_adi}}</td>
+                <td data-label="{% trans 'Miktar' %}">{{i.zimmet_miktari}}</td>
+                <td data-label="{% trans 'Teslim Tarihi' %}">{{i.zimmet_verilis_tarihi | date:'d.m.Y' }}</td>
+                <td data-label="{% trans 'Durum' %}">
                 {% if i.zimmet_durumu == "0" %}
-                Zimmet Verildi
+                {% trans 'Zimmet Verildi' %}
                 {% elif i.zimmet_durumu == "1" %}
-                    Teslim Alındı
+                    {% trans 'Teslim Alındı' %}
                 {% else %}
-                Hasarlı Alındı
+                {% trans 'Hasarlı Alındı' %}
                 {% endif %}
                 </td>
-                <td data-label="Aksiyonlar">
+                <td data-label="{% trans 'Aksiyonlar' %}">
                 {% if i.zimmet_durumu == "0" %}
-                    <button onclick="zimmet_gonder('{{i.id}}')">Görüntüle</button>
+                    <button onclick="zimmet_gonder('{{i.id}}')">{% trans 'Görüntüle' %}</button>
                 {% else %}
-                    <button onclick="zimmet_gonder('{{i.id}}')">Görüntüle</button>
+                    <button onclick="zimmet_gonder('{{i.id}}')">{% trans 'Görüntüle' %}</button>
                     
                 {% endif %}
                 {% if i.zimet_teslim_belgesi %}
                
                 {% else %}
-                <button onclick="openModal('uploadSignedDocumentModal')">Belge Yükle</button>
+                <button onclick="openModal('uploadSignedDocumentModal')">{% trans 'Belge Yükle' %}</button>
                 {% endif %}
                     
                 </td>
@@ -388,11 +388,11 @@
 <div id="createZimmetModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('createZimmetModal')">&times;</span>
-        <h2>Yeni Teslim ve Zimmet Oluştur</h2>
+        <h2>{% trans 'Yeni Teslim ve Zimmet Oluştur' %}</h2>
 <form id="createZimmetForm" action="/{{dil}}{% url 'accounting:zimmet_ekle' %}" method="POST">
     {% csrf_token %}
     <div class="flex-column">
-        <label for="personel">Personel:</label>
+        <label for="personel">{% trans 'Personel' %}:</label>
         <select id="personel" name="personel">
             {% for i in personeller %}
                 <option value="{{i.id}}">{{i.isim}} {{i.soyisim}}</option>
@@ -400,23 +400,23 @@
         </select>
         
         
-        <label for="malzeme">Malzeme:</label>
+        <label for="malzeme">{% trans 'Malzeme' %}:</label>
         <select id="malzeme" name="malzeme">
             {% for i in santiyeler %}
                 <option value="{{i.id}}">{{i.urun_adi}}</option>
             {% endfor %}
         </select>
         
-        <label for="miktar">Miktar:</label>
-        <input type="number" id="miktar" name="miktar" placeholder="Malzeme miktarı">
+        <label for="miktar">{% trans 'Miktar' %}:</label>
+        <input type="number" id="miktar" name="miktar" placeholder="{% trans 'Malzeme miktarı' %}">
         
-        <label for="teslimTarihi">Teslim Tarihi:</label>
+        <label for="teslimTarihi">{% trans 'Teslim Tarihi' %}:</label>
         <input type="date" id="teslimTarihi" name="teslimTarihi">
         
         <div class="flex-row space-between">
-            <button type="submit" >Kaydet</button>
-            <button type="button" onclick="generatePDF(event)">PDF Oluştur</button>
-            <button type="button" class="cancel-btn" onclick="closeModal('createZimmetModal')">İptal</button>
+            <button type="submit" >{% trans 'Kaydet' %}</button>
+            <button type="button" onclick="generatePDF(event)">{% trans 'PDF Oluştur' %}</button>
+            <button type="button" class="cancel-btn" onclick="closeModal('createZimmetModal')">{% trans 'İptal' %}</button>
         </div>
     </div>
 </form>
@@ -428,14 +428,14 @@
 <div id="zimmetDetailModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('zimmetDetailModal')">&times;</span>
-        <h2>Zimmet Detayları</h2>
+        <h2>{% trans 'Zimmet Detayları' %}</h2>
         <div class="flex-column">
-            <p><strong>Personel:</strong> <span id="isim"></span></p>
-            <p><strong>Malzeme:</strong> <span id="urun"></span></p>
-            <p><strong>Miktar:</strong> <span id="adet"></span></p>
-            <p><strong>Teslim Tarihi:</strong> <span id="verilis"></span></p>
-            <p><strong>Teslim Alma Tarihi:</strong> <span id="alis"></span></p>
-            <p><strong>Durum:</strong> <span id="durumu"></span></p>
+            <p><strong>{% trans 'Personel' %}:</strong> <span id="isim"></span></p>
+            <p><strong>{% trans 'Malzeme' %}:</strong> <span id="urun"></span></p>
+            <p><strong>{% trans 'Miktar' %}:</strong> <span id="adet"></span></p>
+            <p><strong>{% trans 'Teslim Tarihi' %}:</strong> <span id="verilis"></span></p>
+            <p><strong>{% trans 'Teslim Alma Tarihi' %}:</strong> <span id="alis"></span></p>
+            <p><strong>{% trans 'Durum' %}:</strong> <span id="durumu"></span></p>
             <p id="teslim_al">
                 
             </p>
@@ -447,15 +447,15 @@
 <div id="uploadSignedDocumentModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('uploadSignedDocumentModal')">&times;</span>
-        <h2>İmzalı Belge Yükle</h2>
+        <h2>{% trans 'İmzalı Belge Yükle' %}</h2>
         <form id="uploadSignedDocumentForm">
             <div class="flex-column">
-                <label for="signedDocument">İmzalı Belge:</label>
+                <label for="signedDocument">{% trans 'İmzalı Belge' %}:</label>
                 <input type="file" id="signedDocument" name="signedDocument" accept=".pdf,.jpg,.jpeg,.png">
 
                 <div class="flex-row space-between">
-                    <button type="submit">Belge Yükle</button>
-                    <button type="button" class="cancel-btn" onclick="closeModal('uploadSignedDocumentModal')">İptal</button>
+                    <button type="submit">{% trans 'Belge Yükle' %}</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('uploadSignedDocumentModal')">{% trans 'İptal' %}</button>
                 </div>
             </div>
         </form>
@@ -474,16 +474,16 @@
 
                 // Durum kontrolü
                 if (data.durum == "0") {
-                    document.getElementById("durumu").textContent = "Teslim Verildi";
+                    document.getElementById("durumu").textContent = "{% trans 'Teslim Verildi' %}";
                     document.getElementById("teslim_al").innerHTML = `
-                        <a id="teslim_alma" href="/{{dil}}/accounting/teslim/${data.id}/1/">Teslim Alındı</a>
-                        <a href="/{{dil}}/accounting/teslim/${data.id}/2/">Hasarlı Teslim Alındı</a>
-                        <button onclick="closeModal('zimmetDetailModal')">İptal</button>`;
+                        <a id="teslim_alma" href="/{{dil}}/accounting/teslim/${data.id}/1/">{% trans 'Teslim Alındı' %}</a>
+                        <a href="/{{dil}}/accounting/teslim/${data.id}/2/">{% trans 'Hasarlı Teslim Alındı' %}</a>
+                        <button onclick="closeModal('zimmetDetailModal')">{% trans 'İptal' %}</button>`;
                 } else if (data.durum == "1") {
-                    document.getElementById("durumu").textContent = "Teslim Alındı";
+                    document.getElementById("durumu").textContent = "{% trans 'Teslim Alındı' %}";
                     document.getElementById("teslim_al").innerHTML = ''; // Zaten teslim alındıysa linkleri gizliyoruz
                 } else {
-                    document.getElementById("durumu").textContent = "Hasarlı Teslim Alındı";
+                    document.getElementById("durumu").textContent = "{% trans 'Hasarlı Teslim Alındı' %}";
                     document.getElementById("teslim_al").innerHTML = ''; // Hasarlı teslim alındıysa linkleri gizliyoruz
                 }
 
@@ -537,30 +537,30 @@ function getFormattedDateTime() {
 
         // Başlık ekleme
         doc.setFontSize(16);  // Başlık boyutu optimize edildi
-        doc.text(20, currentY, 'Malzeme Teslim ve Zimmet Belgesi');
+        doc.text(20, currentY, '{% trans 'Malzeme Teslim ve Zimmet Belgesi' %}');
         currentY += 10;
 
         // Alt başlık ve metinler
         doc.setFontSize(12);  // Genel yazı tipi boyutu
-        doc.text(20, currentY, `Personel Adı: ${personel}`);
+        doc.text(20, currentY, `{% trans 'Personel Adı' %}: ${personel}`);
         currentY += 8;
-        doc.text(20, currentY, `Teslim Edilen Malzeme: ${malzeme}`);
+        doc.text(20, currentY, `{% trans 'Teslim Edilen Malzeme' %}: ${malzeme}`);
         currentY += 8;
-        doc.text(20, currentY, `Miktar: ${miktar}`);
+        doc.text(20, currentY, `{% trans 'Miktar' %}: ${miktar}`);
         currentY += 8;
-        doc.text(20, currentY, `Teslim Tarihi: ${teslimTarihi}`);
+        doc.text(20, currentY, `{% trans 'Teslim Tarihi' %}: ${teslimTarihi}`);
         currentY += 12;
 
         // Zimmet sözleşmesi metni
-        doc.text(20, currentY, "Bu zimmet belgesi ile yukarıda belirtilen malzeme tarafıma teslim edilmiştir.");
+        doc.text(20, currentY, "{% trans 'Bu zimmet belgesi ile yukarıda belirtilen malzeme tarafıma teslim edilmiştir.' %}");
         currentY += 8;
-        doc.text(20, currentY, "İmzalamakla malzemeyi belirtilen tarihte ve eksiksiz olarak aldığımı kabul ederim.");
+        doc.text(20, currentY, "{% trans 'İmzalamakla malzemeyi belirtilen tarihte ve eksiksiz olarak aldığımı kabul ederim.' %}");
         currentY += 15;
 
         // İmza alanı
         doc.setLineWidth(0.5);
         doc.line(20, currentY, 100, currentY);  // İmza çizgisi
-        doc.text(20, currentY + 10, "İmza");
+        doc.text(20, currentY + 10, "{% trans 'İmza' %}");
 
         // Alt Bilgi - Sayfanın en altına ekliyoruz
         const pageHeight = doc.internal.pageSize.height;  // Sayfa yüksekliğini alıyoruz
@@ -576,7 +576,7 @@ function getFormattedDateTime() {
         // PDF'i kaydet
         doc.save(fileName);
     
-        showToast('PDF oluşturuldu');
+        showToast('{% trans 'PDF oluşturuldu' %}');
     }
     
     
@@ -655,9 +655,9 @@ function getFormattedDateTime() {
         doc.autoTable({
             html: '#stockTable',
             columns: [
-                { header: 'Ürün Adi', dataKey: 'urun' },
-                { header: 'Kategori', dataKey: 'kategori' },
-                { header: 'Stok Durumu', dataKey: 'stok' }
+                { header: '{% trans 'Ürün Adi' %}', dataKey: 'urun' },
+                { header: '{% trans 'Kategori' %}', dataKey: 'kategori' },
+                { header: '{% trans 'Stok Durumu' %}', dataKey: 'stok' }
             ]
         });
 

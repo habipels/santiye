@@ -333,24 +333,24 @@
     <div class="filter-section">
         <input type="text" id="filterName" placeholder="Ürün Adı ile Filtrele" oninput="filterProducts()">
         <select id="filterCategory" onchange="filterProducts()">
-            <option value="">Kategoriye Göre Filtrele</option>
+            <option value="">{% trans 'Kategoriye Göre Filtrele' %}</option>
             {% for i in urun_kategorisi %}
                 <option value="{{i.kategori_adi}}">{{i.kategori_adi}}</option>
             {% endfor %}
         </select>
-        <button onclick="exportToExcel()">Excel'e Aktar</button>
-        <button onclick="exportToPDF()">PDF'e Aktar</button>
+        <button onclick="exportToExcel()">{% trans "Excel'e Aktar" %}</button>
+        <button onclick="exportToPDF()">{% trans "PDF'e Aktar" %}</button>
     </div>
 
     <!-- Stok Tablosu -->
     <table id="stockTable">
         <thead>
             <tr>
-                <th>Ürün Adı</th>
-                <th>Kategori</th>
-                <th>Stok Durumu</th>
-                <th>Zimmet Altında Bulunanlar</th>
-                <th>Aksiyonlar</th>
+                <th>{% trans 'Ürün Adı' %}</th>
+                <th>{% trans 'Kategori' %}</th>
+                <th>{% trans 'Stok Durumu' %}</th>
+                <th>{% trans 'Zimmet Altında Bulunanlar' %}</th>
+                <th>{% trans 'Aksiyonlar' %}</th>
             </tr>
         </thead>
         <tbody>
@@ -359,13 +359,13 @@
             
             
             <tr>
-                <td data-label="Ürün Adı">{{i.urun_adi}}</td>
-                <td data-label="Kategori">{% if i.urun_kategorisi %}{{ i.urun_kategorisi.kategori_adi}}{% else %}Kategori Yok{% endif %}</td>
-                <td data-label="Stok Durumu">{% stok_sayisi i %} </td>
-                <td data-label="Stok Durumu">{% zimmet_sayisi i %}</td>
-                <td data-label="Aksiyonlar">
-                    <button onclick="urun_detayi('{{i.id}}')">Görüntüle</button>
-                    <button onclick="stok_ekle({{i.id}})">Stok İşlemleri</button>
+                <td data-label="{% trans 'Ürün Adı' %}">{{i.urun_adi}}</td>
+                <td data-label="{% trans 'Kategori' %}">{% if i.urun_kategorisi %}{{ i.urun_kategorisi.kategori_adi}}{% else %}{% trans 'Kategori Yok' %}{% endif %}</td>
+                <td data-label="{% trans 'Stok Durumu' %}">{% stok_sayisi i %} </td>
+                <td data-label="{% trans 'Stok Durumu' %}">{% zimmet_sayisi i %}</td>
+                <td data-label="{% trans 'Aksiyonlar' %}">
+                    <button onclick="urun_detayi('{{i.id}}')">{% trans 'Görüntüle' %}</button>
+                    <button onclick="stok_ekle({{i.id}})">{% trans 'Stok İşlemleri' %}</button>
                 </td>
             </tr>
             {% endfor %}
@@ -376,11 +376,11 @@
     <div id="viewProductModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('viewProductModal')">&times;</span>
-            <h2>Ürün Bilgileri</h2>
-            <p><strong>Ürün Adı:</strong> <span id="urun_bilgisi"></span> </p>
-            <p><strong>Kategori:</strong> <span id="kategori_bilgisi"></span> </p>
-            <p><strong>Stok Durumu:</strong> <span id="adet"></span> </p>
-            <p><strong>Zimmet Geçmişi:</strong></p>
+            <h2>{% trans 'Ürün Bilgileri' %}</h2>
+            <p><strong>{% trans 'Ürün Adı' %}:</strong> <span id="urun_bilgisi"></span> </p>
+            <p><strong>{% trans 'Kategori' %}:</strong> <span id="kategori_bilgisi"></span> </p>
+            <p><strong>{% trans 'Stok Durumu' %}:</strong> <span id="adet"></span> </p>
+            <p><strong>{% trans 'Zimmet Geçmişi' %}:</strong></p>
             <ul id="zimet">
              
             </ul>
@@ -393,20 +393,20 @@
     <div id="stockTransactionModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('stockTransactionModal')">&times;</span>
-            <h2>Stok Giriş/Çıkış İşlemleri</h2>
+            <h2>{% trans 'Stok Giriş/Çıkış İşlemleri' %}</h2>
             <form id="stockTransactionForm" action="/{{dil}}{% url 'accounting:stok_girisi_yap' %}" method="POST">
                 {% csrf_token %}
                 <input type="text" name="urun" hidden id="urun_bilgisi_doldur">
-                <label for="transactionType">İşlem Türü:</label>
+                <label for="transactionType">{% trans 'İşlem Türü' %}:</label>
                 <select id="transactionType" name="transactionType">
-                    <option value="0">Stok Girişi</option>
-                    <option value="1">Stok Çıkışı</option>
+                    <option value="0">{% trans 'Stok Girişi' %}</option>
+                    <option value="1">{% trans 'Stok Çıkışı' %}</option>
                 </select>
 
-                <label for="transactionAmount">Miktar:</label>
-                <input type="number" id="transactionAmount" name="transactionAmount" placeholder="Miktar girin">
+                <label for="transactionAmount">{% trans 'Miktar' %}:</label>
+                <input type="number" id="transactionAmount" name="transactionAmount" placeholder="{% trans 'Miktar girin' %}">
 
-                <button type="submit">İşlemi Kaydet</button>
+                <button type="submit">{% trans 'İşlemi Kaydet' %}</button>
             </form>
         </div>
     </div>
@@ -506,9 +506,9 @@ function getFormattedDateTime() {
         doc.autoTable({
             html: '#stockTable',
             columns: [
-                { header: 'Ürün Adi', dataKey: 'urun' },
-                { header: 'Kategori', dataKey: 'kategori' },
-                { header: 'Stok Durumu', dataKey: 'stok' }
+                { header: '{% trans 'Ürün Adi' %}', dataKey: 'urun' },
+                { header: '{% trans 'Kategori' %}', dataKey: 'kategori' },
+                { header: '{% trans 'Stok Durumu' %}', dataKey: 'stok' }
             ]
         });
 

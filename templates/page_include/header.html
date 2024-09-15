@@ -12,60 +12,216 @@
             </div>
         </div>
         <div class="sidebar-navs">
-            <ul class="sidebar-nav">
-                <li class="active"><a href="/{{dil}}/"><i class="icon icon-dashboard"></i> <span>{% trans 'Dashboard' %}</span> </a></li>
-                {% if request.user.is_superuser %}
-                <li>
-                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-super-admin"></i> <span>{% trans 'Super
-                            Admin' %}</span> <i class="icon icon-caret"></i></a>
-                    <ul class="sidebar-sub-menu">
-                        <li><a href="/{{dil}}{% url 'main:santiye_ekle' %}" class="sidebar-sub-item">{% trans 'Şantiye Ekle' %}</a></li>
-                        <li><a href="/{{dil}}{% url 'main:santiye_listele' %}" class="sidebar-sub-item">{% trans 'Şantiye Ayarları' %}</a></li>
-                        <li><a href="/{{dil}}{% url 'main:site_ayarlari' %}" class="sidebar-sub-item">{% trans 'Sistem Ayarları' %}</a></li>
-                        <li><a href="/{{dil}}{% url 'main:dil_ayari_listele' %}" class="sidebar-sub-item">{% trans 'Dil Ayarları' %}</a></li>
+<ul class="sidebar-nav">
+    <li class="{% if request.path == '/' %}active{% endif %}">
+        <a href="/{{dil}}/"><i class="icon icon-dashboard"></i> <span>{% trans 'Dashboard' %}</span></a>
+    </li>
 
-                    </ul>
-                </li>
-                    {% else %}
-                        {% endif %}
-                <li>
-                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>Raporlar</span> <i class="icon icon-caret"></i></a>
-                    <ul class="sidebar-sub-menu">
-                        <li><a href="#" class="sidebar-sub-item">{% trans 'Şantiye Raporları' %}</a></li>
-                        <li>
-                            <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Finans Raporları' %}</span> <i
-                                    class="icon icon-caret"></i></a>
-                            <ul class="sidebar-sub-menu">
-                                <li><a href="/{{dil}}{% url 'accounting:gelirler_ozeti' %}" class="sidebar-sub-item">{% trans 'Gelir Raporu ' %}</a></li>
-                                <li><a href="/{{dil}}{% url 'accounting:giderler_ozeti' %}" class="sidebar-sub-item">{% trans 'Gider Raporu ' %}</a></li>
-                                <li><a href="/{{dil}}{% url 'accounting:hesap_ekstra_durumu' %}" class="sidebar-sub-item">{% trans 'Hesap Ekstresi ' %}</a></li>
-                                <li><a href="/{{dil}}{% url 'accounting:virman_gondermeler' %}" class="sidebar-sub-item">{% trans 'Virman Raporu ' %}</a></li>
+    {% if request.user.is_superuser %}
+    {% url 'main:santiye_ekle' as santiye_ekle_url %}
+    {% url 'main:santiye_listele' as santiye_listele_url %}
+    {% url 'main:site_ayarlari' as site_ayarlari_url %}
+    {% url 'main:dil_ayari_listele' as dil_ayari_listele_url %}
+    <li class="{% if request.path == santiye_ekle_url or request.path == santiye_listele_url or request.path == site_ayarlari_url or request.path == dil_ayari_listele_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-super-admin"></i> <span>{% trans 'Super Admin' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == santiye_ekle_url %}active{% endif %}">
+                <a href="{{ santiye_ekle_url }}" class="sidebar-sub-item">{% trans 'Şantiye Ekle' %}</a>
+            </li>
+            <li class="{% if request.path == santiye_listele_url %}active{% endif %}">
+                <a href="{{ santiye_listele_url }}" class="sidebar-sub-item">{% trans 'Şantiye Ayarları' %}</a>
+            </li>
+            <li class="{% if request.path == site_ayarlari_url %}active{% endif %}">
+                <a href="{{ site_ayarlari_url }}" class="sidebar-sub-item">{% trans 'Sistem Ayarları' %}</a>
+            </li>
+            <li class="{% if request.path == dil_ayari_listele_url %}active{% endif %}">
+                <a href="{{ dil_ayari_listele_url }}" class="sidebar-sub-item">{% trans 'Dil Ayarları' %}</a>
+            </li>
+        </ul>
+    </li>
+    {% endif %}
 
-                            </ul>
+    {% url 'main:santiye_kalem_ve_blog' as santiye_kalem_ve_blog_url %}
+    <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>Raporlar</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
+                <a href="{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Şantiye Raporları' %}</a>
+            </li>
+
+            {% url 'accounting:gelirler_ozeti' as gelirler_ozeti_url %}
+            {% url 'accounting:giderler_ozeti' as giderler_ozeti_url %}
+            {% url 'accounting:hesap_ekstra_durumu' as hesap_ekstra_durumu_url %}
+            {% url 'accounting:virman_gondermeler' as virman_gondermeler_url %}
+            <li class="{% if request.path == gelirler_ozeti_url or request.path == giderler_ozeti_url or request.path == hesap_ekstra_durumu_url or request.path == virman_gondermeler_url %}active{% endif %}">
+                <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Finans Raporları' %}</span> <i class="icon icon-caret"></i></a>
+                <ul class="sidebar-sub-menu">
+                    <li class="{% if request.path == gelirler_ozeti_url %}active{% endif %}">
+                        <a href="{{ gelirler_ozeti_url }}" class="sidebar-sub-item">{% trans 'Gelir Raporu ' %}</a>
+                    </li>
+                    <li class="{% if request.path == giderler_ozeti_url %}active{% endif %}">
+                        <a href="{{ giderler_ozeti_url }}" class="sidebar-sub-item">{% trans 'Gider Raporu ' %}</a>
+                    </li>
+                    <li class="{% if request.path == hesap_ekstra_durumu_url %}active{% endif %}">
+                        <a href="{{ hesap_ekstra_durumu_url }}" class="sidebar-sub-item">{% trans 'Hesap Ekstresi ' %}</a>
+                    </li>
+                    <li class="{% if request.path == virman_gondermeler_url %}active{% endif %}">
+                        <a href="{{ virman_gondermeler_url }}" class="sidebar-sub-item">{% trans 'Virman Raporu ' %}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+
+    {% url 'accounting:gelirler_sayfasi' as gelirler_sayfasi_url %}
+    {% url 'accounting:giderler_sayfasi' as giderler_sayfasi_url %}
+    {% url 'accounting:kasa' as kasa_url %}
+    {% url 'accounting:cari' as cari_url %}
+    <li class="{% if request.path == gelirler_sayfasi_url or request.path == giderler_sayfasi_url or request.path == kasa_url or request.path == cari_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-muhasebe"></i> <span>{% trans 'Muhasebe' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == gelirler_sayfasi_url %}active{% endif %}">
+                <a href="{{ gelirler_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Gelir Faturası' %}</a>
+            </li>
+            <li class="{% if request.path == giderler_sayfasi_url %}active{% endif %}">
+                <a href="{{ giderler_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Gider Faturası' %}</a>
+            </li>
+            <li class="{% if request.path == kasa_url %}active{% endif %}">
+                <a href="{{ kasa_url }}" class="sidebar-sub-item">{% trans 'Kasa' %}</a>
+            </li>
+            <li class="{% if request.path == cari_url %}active{% endif %}">
+                <a href="{{ cari_url }}" class="sidebar-sub-item">{% trans 'Cari Hesapları' %}</a>
+            </li>
+        </ul>
+    </li>
+
+    {% url 'users:personeller_sayfasi' as personeller_sayfasi_url %}
+    {% url 'users:personeller_puantaj_sayfasi' as personeller_puantaj_sayfasi_url %}
+    {% url 'users:personeller_kategori_sayfalari' as personeller_kategori_sayfalari_url %}
+    {% url 'users:personeller_depertman_sayfalari' as personeller_depertman_sayfalari_url %}
+    <li class="{% if request.path == personeller_sayfasi_url or request.path == personeller_puantaj_sayfasi_url or request.path == personeller_kategori_sayfalari_url or request.path == personeller_depertman_sayfalari_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-profile"></i> <span>{% trans 'Çalışan Yönetimi' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == personeller_sayfasi_url %}active{% endif %}">
+                <a href="{{ personeller_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Çalışanlar' %}</a>
+            </li>
+            <li class="{% if request.path == personeller_puantaj_sayfasi_url %}active{% endif %}">
+                <a href="{{ personeller_puantaj_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Puantaj' %}</a>
+            </li>
+            <li class="{% if request.path == personeller_kategori_sayfalari_url %}active{% endif %}">
+                <a href="{{ personeller_kategori_sayfalari_url }}" class="sidebar-sub-item">{% trans 'Pozisyonlar' %}</a>
+            </li>
+            <li class="{% if request.path == personeller_depertman_sayfalari_url %}active{% endif %}">
+                <a href="{{ personeller_depertman_sayfalari_url }}" class="sidebar-sub-item">{% trans 'Departmanlar' %}</a>
+            </li>
+        </ul>
+    </li>
+
+    {% url 'accounting:satin_alma_talabi' as satin_alma_talabi_url %}
+    {% url 'accounting:satin_alma_talabi_onaylama' as satin_alma_talabi_onaylama_url %}
+    {% url 'accounting:satin_alma_' as satin_alma_url %}
+    {% url 'accounting:zimmetler' as zimmetler_url %}
+    {% url 'accounting:stok' as stok_url %}
+    <li class="{% if request.path == satin_alma_talabi_url or request.path == satin_alma_talabi_onaylama_url or request.path == satin_alma_url or request.path == zimmetler_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-stok"></i> <span>{% trans 'Satın Alma' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == satin_alma_talabi_url %}active{% endif %}">
+                <a href="{{ satin_alma_talabi_url }}" class="sidebar-sub-item">{% trans 'Talep Girişi' %}</a>
+            </li>
+            <li class="{% if request.path == satin_alma_talabi_onaylama_url %}active{% endif %}">
+                <a href="{{ satin_alma_talabi_onaylama_url }}" class="sidebar-sub-item">{% trans 'Onay Ekranı' %}</a>
+            </li>
+            <li class="{% if request.path == satin_alma_url %}active{% endif %}">
+                <a href="{{ satin_alma_url }}" class="sidebar-sub-item">{% trans 'Sipariş Girişi' %}</a>
+            </li>
+            <li class="{% if request.path == zimmetler_url %}active{% endif %}">
+                <a href="{{ zimmetler_url }}" class="sidebar-sub-item">{% trans 'Zimmetler' %}</a>
+            </li>
+            <li class="{% if request.path == stok_url %}active{% endif %}">
+                <a href="{{ stok_url }}" class="sidebar-sub-item">{% trans 'Stok' %}</a>
+            </li>
+        </ul>
+    </li>
+
+    <hr>
+
+    <ul class="sidebar-nav">
+        <li><a href="#"><i class="icon icon-notifications"></i> <span>{% trans 'Bildirimler' %}</span></a></li>
+        <li><a class="sidebar-sub-toggle" href="#"><i class="icon icon-settings"></i> <span>{% trans 'Ayarlar' %}</span> <i class="icon icon-caret"></i></a>
+            <ul class="sidebar-sub-menu">
+                {% url 'users:kullanicilarim' as kullanicilarim_url %}
+                {% url 'main:kullanici_yetkileri' as kullanici_yetkileri_url %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Kullanıcı Ayarları' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li class="{% if request.path == kullanicilarim_url %}active{% endif %}">
+                            <a href="{{ kullanicilarim_url }}" class="sidebar-sub-item">{% trans 'Kullanıcılar' %}</a>
+                        </li>
+                        <li class="{% if request.path == kullanici_yetkileri_url %}active{% endif %}">
+                            <a href="{{ kullanici_yetkileri_url }}" class="sidebar-sub-item">{% trans 'Kullanıcı Yetkileri' %}</a>
                         </li>
                     </ul>
                 </li>
-                
-                <li><a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>{% trans 'Şantiye Yönetimi' %}</span> <i class="icon icon-caret"></i></a>
-                    <ul class="sidebar-sub-menu">
-                        <li><a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" class="sidebar-sub-item">{% trans 'Proje Yönetimi' %}</a></li>
-                        <li><a href="/{{dil}}{% url 'main:yapilacaklar' %}" class="sidebar-sub-item">{% trans 'Görevler' %}</a></li>
-                        <li><a href="/{{dil}}{% url 'main:depolama_sistemim' %}" class="sidebar-sub-item">{% trans 'Dosya Yöneticisi' %}</a></li>
-                        <li><a href="/{{dil}}{% url 'main:taseron_sayfasi' %}" class="sidebar-sub-item">{% trans 'Taşeronlar' %}</a></li>
 
+                {% url 'main:proje_tipi_' as proje_tipi_url %}
+                {% url 'main:santiye_projesi_ekle_' as santiye_projesi_ekle_url %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Şantiye Ayarları' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li class="{% if request.path == proje_tipi_url %}active{% endif %}">
+                            <a href="{{ proje_tipi_url }}" class="sidebar-sub-item">{% trans 'Proje Tipi' %}</a>
+                        </li>
+                        <li class="{% if request.path == santiye_projesi_ekle_url %}active{% endif %}">
+                            <a href="{{ santiye_projesi_ekle_url }}" class="sidebar-sub-item">{% trans 'Şantiye' %}</a>
+                        </li>
                     </ul>
                 </li>
-                <li><a href="#"><i class="icon icon-muhasebe"></i> <span>Muhasebe</span> </a></li>
-                <li><a href="#"><i class="icon icon-profile"></i> <span>Personel</span> </a></li>
-                <li><a href="#"><i class="icon icon-stok"></i> <span>Satın Alma ve Stok</span> </a></li>
-                <li><a href="#"><i class="icon icon-users"></i> <span>Kullanıcılar</span> </a></li>
+
+                {% url 'accounting:muhasebe_ayarlari' as muhasebe_ayarlari_url %}
+                {% url 'accounting:gelir_kategorisi_tipleri' as gelir_kategorisi_tipleri_url %}
+                {% url 'accounting:gider_kategorisi_tipleri' as gider_kategorisi_tipleri_url %}
+                {% url 'accounting:gelir_etiketi_tipleri' as gelir_etiketi_tipleri_url %}
+                {% url 'accounting:gider_etiketi_tipleri' as gider_etiketi_tipleri_url %}
+                {% url 'accounting:urun_viev' as urun_viev_url %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Muhasebe Ayarları' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li class="{% if request.path == muhasebe_ayarlari_url %}active{% endif %}">
+                            <a href="{{ muhasebe_ayarlari_url }}" class="sidebar-sub-item">{% trans 'Muhasebe Ayarları' %}</a>
+                        </li>
+                        <li class="{% if request.path == gelir_kategorisi_tipleri_url %}active{% endif %}">
+                            <a href="{{ gelir_kategorisi_tipleri_url }}" class="sidebar-sub-item">{% trans 'Gelir Kategorileri' %}</a>
+                        </li>
+                        <li class="{% if request.path == gider_kategorisi_tipleri_url %}active{% endif %}">
+                            <a href="{{ gider_kategorisi_tipleri_url }}" class="sidebar-sub-item">{% trans 'Gider Kategorileri' %}</a>
+                        </li>
+                        <li class="{% if request.path == gelir_etiketi_tipleri_url %}active{% endif %}">
+                            <a href="{{ gelir_etiketi_tipleri_url }}" class="sidebar-sub-item">{% trans 'Gelir Etiketleri' %}</a>
+                        </li>
+                        <li class="{% if request.path == gider_etiketi_tipleri_url %}active{% endif %}">
+                            <a href="{{ gider_etiketi_tipleri_url }}" class="sidebar-sub-item">{% trans 'Gider Etiketleri' %}</a>
+                        </li>
+                        <li class="{% if request.path == urun_viev_url %}active{% endif %}">
+                            <a href="{{ urun_viev_url }}" class="sidebar-sub-item">{% trans 'Ürünler' %}</a>
+                        </li>
+                    </ul>
+                </li>
+
+                {% url 'accounting:urunler_kategorisi' as urunler_kategorisi_url %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Satın Alma Ayarları' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li class="{% if request.path == urunler_kategorisi_url %}active{% endif %}">
+                            <a href="{{ urunler_kategorisi_url }}" class="sidebar-sub-item">{% trans 'Ürün Kategorileri' %}</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
-            <hr>
-            <ul class="sidebar-nav">
-                <li><a href="#"><i class="icon icon-notifications"></i> <span>Bildirimler</span> </a></li>
-                <li><a href="#"><i class="icon icon-settings"></i> <span>Ayarlar</span> </a></li>
-                <li><a href="#"><i class="icon icon-help"></i> <span>Destek ve Yardım</span> </a></li>
-            </ul>
+        </li>
+        <li><a href="#"><i class="icon icon-help"></i> <span>{% trans 'Destek ve Yardım' %}</span></a></li>
+    </ul>
+</ul>
+
         </div>
     </aside>
 
