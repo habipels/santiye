@@ -822,8 +822,18 @@ def gider_kategorisi_ekleme(request):
             proje_tip_adi   = request.POST.get("yetkili_adi")
             aciklama = request.POST.get("aciklama")
             renk = request.POST.get("renk")
-
-            gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
+            gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -832,7 +842,18 @@ def gider_kategorisi_ekleme(request):
                         proje_tip_adi   = request.POST.get("yetkili_adi")
                         aciklama = request.POST.get("aciklama")
                         renk = request.POST.get("renk")
-                        gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+                        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                        if maaslarda_kullan == "1":
+                            maaslarda_kullan = False
+                        else:
+                            maaslarda_kullan = True
+                        if avanslarda_kullan == "1":
+                            avanslarda_kullan = False
+                        else:
+                            avanslarda_kullan = True
+                        gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -841,7 +862,18 @@ def gider_kategorisi_ekleme(request):
                 proje_tip_adi   = request.POST.get("yetkili_adi")
                 aciklama = request.POST.get("aciklama")
                 renk = request.POST.get("renk")
-                gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = request.user,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+                maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                if maaslarda_kullan == "1":
+                    maaslarda_kullan = False
+                else:
+                    maaslarda_kullan = True
+                if avanslarda_kullan == "1":
+                    avanslarda_kullan = False
+                else:
+                    avanslarda_kullan = True
+                gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = request.user,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     return redirect("accounting:gider_kategorisi_tipleri")
 
 #gider Kategorisi Silme
@@ -877,15 +909,29 @@ def gider_kategorisi_duzenle(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         aciklama = request.POST.get("aciklama")
         renk = request.POST.get("renk")
+        if True:
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
         silinmedurumu = request.POST.get("silinmedurumu")
         if silinmedurumu == "1":
             silinmedurumu = False
-            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu)
+            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         elif silinmedurumu == "2":
             silinmedurumu = True
-            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu)
+            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,silinme_bilgisi = silinmedurumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         else:
-            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+            gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     else:
         if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -895,7 +941,18 @@ def gider_kategorisi_duzenle(request):
                         aciklama = request.POST.get("aciklama")
                         renk = request.POST.get("renk")
                         proje_tip_adi   = request.POST.get("yetkili_adi")
-                        gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+                        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                        if maaslarda_kullan == "1":
+                            maaslarda_kullan = False
+                        else:
+                            maaslarda_kullan = True
+                        if avanslarda_kullan == "1":
+                            avanslarda_kullan = False
+                        else:
+                            avanslarda_kullan = True
+                        gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -905,7 +962,18 @@ def gider_kategorisi_duzenle(request):
                 aciklama = request.POST.get("aciklama")
                 renk = request.POST.get("renk")
                 proje_tip_adi   = request.POST.get("yetkili_adi")
-                gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama)
+                maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                if maaslarda_kullan == "1":
+                    maaslarda_kullan = False
+                else:
+                    maaslarda_kullan = True
+                if avanslarda_kullan == "1":
+                    avanslarda_kullan = False
+                else:
+                    avanslarda_kullan = True
+                gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     return redirect("accounting:gider_kategorisi_tipleri")
 
 
@@ -1423,22 +1491,54 @@ def gider_etiketi_ekleme(request):
         if super_admin_kontrolu(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             proje_tip_adi   = request.POST.get("yetkili_adi")
-
-            gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi)
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
+            gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
                     if a.izinler.gider_etiketi_olusturma:
                         proje_tip_adi   = request.POST.get("yetkili_adi")
-                        gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,gider_etiketi_adi = proje_tip_adi)
+                        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                        if maaslarda_kullan == "1":
+                            maaslarda_kullan = False
+                        else:
+                            maaslarda_kullan = True
+                        if avanslarda_kullan == "1":
+                            avanslarda_kullan = False
+                        else:
+                            avanslarda_kullan = True
+                        gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
                     else:
                         return redirect("main:yetkisiz")
                 else:
                     return redirect("main:yetkisiz")
             else:
                 proje_tip_adi   = request.POST.get("yetkili_adi")
-                gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = request.user,gider_etiketi_adi = proje_tip_adi)
+                maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                if maaslarda_kullan == "1":
+                    maaslarda_kullan = False
+                else:
+                    maaslarda_kullan = True
+                if avanslarda_kullan == "1":
+                    avanslarda_kullan = False
+                else:
+                    avanslarda_kullan = True
+                gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = request.user,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     return redirect("accounting:gider_etiketi_tipleri")
 
 def gider_etiketi_sil(request):
@@ -1469,16 +1569,29 @@ def gider_etiketi_duzenle(request):
     if super_admin_kontrolu(request):
         kullanici_bilgisi  = request.POST.get("kullanici")
         proje_tip_adi   = request.POST.get("yetkili_adi")
-
+        if True:
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
         silinmedurumu = request.POST.get("silinmedurumu")
         if silinmedurumu == "1":
             silinmedurumu = False
-            gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
+            gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         elif silinmedurumu == "2":
             silinmedurumu = True
-            gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
+            gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         else:
-            gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi)
+            gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     else:
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -1486,7 +1599,18 @@ def gider_etiketi_duzenle(request):
                 if a.izinler.gider_etiketi_guncelleme:
                     proje_tip_adi   = request.POST.get("yetkili_adi")
                     proje_tip_adi   = request.POST.get("yetkili_adi")
-                    gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gider_etiketi_adi = proje_tip_adi)
+                    maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                    avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                    if maaslarda_kullan == "1":
+                        maaslarda_kullan = False
+                    else:
+                        maaslarda_kullan = True
+                    if avanslarda_kullan == "1":
+                        avanslarda_kullan = False
+                    else:
+                        avanslarda_kullan = True
+                    gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
                 else:
                     return redirect("main:yetkisiz")
             else:
@@ -1494,7 +1618,18 @@ def gider_etiketi_duzenle(request):
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             proje_tip_adi   = request.POST.get("yetkili_adi")
-            gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_etiketi_adi = proje_tip_adi)
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
+            gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     return redirect("accounting:gider_etiketi_tipleri")
 #gider Etiketleri
 #gider etiketi
@@ -1776,13 +1911,24 @@ def urun_ekle(request):
             kategori = request.POST.get("kategori")
             urun_turu = request.POST.get("urun_turu")
             stok = request.POST.get("stok")
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
             if stok == "1":
                 stok = True
             else:
                 stok = False
             urunler.objects.create(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi )
                                 ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
-                                ,urun_turu_secim =  urun_turu,stok_mu = stok  
+                                ,urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan
                                 )
         else:
             if request.user.kullanicilar_db:
@@ -1794,13 +1940,24 @@ def urun_ekle(request):
                         kategori = request.POST.get("kategori")
                         urun_turu = request.POST.get("urun_turu")
                         stok = request.POST.get("stok")
+                        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                        if maaslarda_kullan == "1":
+                            maaslarda_kullan = False
+                        else:
+                            maaslarda_kullan = True
+                        if avanslarda_kullan == "1":
+                            avanslarda_kullan = False
+                        else:
+                            avanslarda_kullan = True
                         if stok == "1":
                             stok = True
                         else:
                             stok = False
                         urunler.objects.create(urun_ait_oldugu = request.user.kullanicilar_db
                             ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
-                            ,urun_turu_secim =  urun_turu,stok_mu = stok  )
+                            ,urun_turu_secim =  urun_turu,stok_mu = stok ,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan )
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -1811,13 +1968,24 @@ def urun_ekle(request):
                 kategori = request.POST.get("kategori")
                 urun_turu = request.POST.get("urun_turu")
                 stok = request.POST.get("stok")
+                maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                if maaslarda_kullan == "1":
+                    maaslarda_kullan = False
+                else:
+                    maaslarda_kullan = True
+                if avanslarda_kullan == "1":
+                    avanslarda_kullan = False
+                else:
+                    avanslarda_kullan = True
                 if stok == "1":
                     stok = True
                 else:
                     stok = False
                 urunler.objects.create(urun_ait_oldugu = request.user
                     ,urun_adi = kasa_Adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
-                    ,urun_turu_secim =  urun_turu,stok_mu = stok)
+                    ,urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
 
     return redirect("accounting:urun_viev")
 
@@ -1862,6 +2030,16 @@ def urun_duzenle(request):
         kategori = request.POST.get("kategori")
         urun_turu = request.POST.get("urun_turu")
         stok = request.POST.get("stok")
+        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+        if maaslarda_kullan == "1":
+            maaslarda_kullan = False
+        else:
+            maaslarda_kullan = True
+        if avanslarda_kullan == "1":
+            avanslarda_kullan = False
+        else:
+            avanslarda_kullan = True
         if stok == "1":
             stok = True
         else:
@@ -1869,14 +2047,17 @@ def urun_duzenle(request):
         if silinmedurumu == "1":
             silinmedurumu = False
             urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
-                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok)
+                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         elif silinmedurumu == "2":
             silinmedurumu = True
             urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,silinme_bilgisi = silinmedurumu,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
-                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok)
+                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         else:
             urunler.objects.filter(id = id).update(urun_ait_oldugu = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,urun_adi = proje_tip_adi,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori)
-                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok)
+                                                   ,urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     else:
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -1887,12 +2068,23 @@ def urun_duzenle(request):
                     kategori = request.POST.get("kategori")
                     urun_turu = request.POST.get("urun_turu")
                     stok = request.POST.get("stok")
+                    maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                    avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                    if maaslarda_kullan == "1":
+                        maaslarda_kullan = False
+                    else:
+                        maaslarda_kullan = True
+                    if avanslarda_kullan == "1":
+                        avanslarda_kullan = False
+                    else:
+                        avanslarda_kullan = True
                     if stok == "1":
                         stok = True
                     else:
                         stok = False
                     urunler.objects.filter(urun_ait_oldugu = request.user.kullanicilar_db,id = id).update(urun_adi = proje_tip_adi
-                            ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori),urun_turu_secim =  urun_turu,stok_mu = stok)
+                            ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori),urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
                 else:
                     return redirect("main:yetkisiz")
             else:
@@ -1903,12 +2095,23 @@ def urun_duzenle(request):
             kategori = request.POST.get("kategori")
             urun_turu = request.POST.get("urun_turu")
             stok = request.POST.get("stok")
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
             if stok == "1":
                 stok = True
             else:
                 stok = False
             urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(urun_adi = proje_tip_adi
-                    ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori),urun_turu_secim =  urun_turu,stok_mu = stok)
+                    ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori),urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     return redirect("accounting:urun_viev")
 
 #ürün Düzenle

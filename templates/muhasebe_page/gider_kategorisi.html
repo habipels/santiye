@@ -71,6 +71,8 @@
                                                     <th class="sort" data-sort="email">{% trans 'Kategori Adı' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Kategori Açıklama' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Renk' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Maaş Faturalarında Otomatik Kullan' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Avans Faturalarında Otomatik Kullan' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
                                                     <th class="sort" data-sort="date"></th>
                                                 </tr>
@@ -96,6 +98,20 @@
                                                         {{i.gider_kategorisi_renk}}
                                                     
                                                     </td>
+                                                    <td class="kasa">
+                                                     {% if i.maas_icin_kullan  %}
+                                                        {% trans 'Otomatik Faturalarda Kullan' %}
+                                                     {% else %}
+                                                     {% trans 'Faturalarda Otomatik Kullanma' %}
+                                                     {% endif %}
+                                                     </td>
+                                                     <td class="kasa">
+                                                     {% if i.avans_icin_kullan %}
+                                                         {% trans 'Otomatik Faturalarda Kullan' %}
+                                                     {% else %}
+                                                     {% trans 'Faturalarda Otomatik Kullanma' %}
+                                                     {% endif %}
+                                                     </td>
                                                     <td class="date">
                                                         {{i.kayit_tarihi}}
                                                     
@@ -237,6 +253,33 @@
                                             <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Rengi' %}</label>
                                             <input type="color" value="{{i.gider_kategorisi_renk}}"   name="renk" id="date-field" class="form-control" placeholder="{% trans 'Gider Kategorisi Rengi' %}" />
                                         </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Otomatik Maaşlarda Kullan' %}</label>
+                                            <select class="form-control" name="maaslarda_kullan" id="date-field">
+                                                {% if i.maas_icin_kullan %}
+                                               
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                            {% else %}
+                                            <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            {% endif %}
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Otomatik avanslarda Kullan' %}</label>
+                                            <select class="form-control" name="avanslarda_kullan" id="date-field">
+                                            {% if i.avans_icin_kullan %}
+                                               
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                            {% else %}
+                                            <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            {% endif %}
+                                            </select>
+                                        </div>
                                         {% if request.user.is_superuser %}
                                             
                                         
@@ -354,7 +397,24 @@
                                         <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Rengi' %}</label>
                                         <input type="color"  name="renk" id="date-field" class="form-control" placeholder="{% trans 'Gider Kategorisi Rengi' %}" />
                                     </div>
+                                    <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Otomatik Maaşlarda Kullan' %}</label>
+                                            <select class="form-control" name="maaslarda_kullan" id="date-field">
+                                            
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            </select>
+                                        </div>
+                                    <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Otomatik avanslarda Kullan' %}</label>
+                                            <select class="form-control" name="avanslarda_kullan" id="date-field">
+                                            
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            </select>
+                                        </div>
                                 </div>
+                                
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Close' %}</button>

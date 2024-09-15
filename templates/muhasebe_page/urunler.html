@@ -1,4 +1,4 @@
-{% extends "homebase.html" %}
+{% extends "homebase2.html" %}
 {% load i18n %}
 {% load custom_tags %}
 {% block sidebar %}
@@ -66,6 +66,8 @@
                                                     <th class="sort" data-sort="customer_name">{% trans 'Ürün Stoğa Dahil Mi ?' %}</th>
                                                     <th class="sort" data-sort="customer_name">{% trans 'Ürün Adı' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Ürün Fiyatı' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Maaş Faturalarında Otomatik Kullan' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Avans Faturalarında Otomatik Kullan' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Aksiyonlar' %}</th>
                                                 </tr>
@@ -103,7 +105,20 @@
                                                      </td>
                                                     <td class="kasa">{{i.urun_adi}}</td>
                                                     <td class="bakiye">{{i.urun_fiyati}} <span>$</span></td>
-                                                    
+                                                    <td class="kasa">
+                                                     {% if i.maas_icin_kullan  %}
+                                                        {% trans 'Otomatik Faturalarda Kullan' %}
+                                                     {% else %}
+                                                     {% trans 'Faturalarda Otomatik Kullanma' %}
+                                                     {% endif %}
+                                                     </td>
+                                                     <td class="kasa">
+                                                     {% if i.avans_icin_kullan %}
+                                                         {% trans 'Otomatik Faturalarda Kullan' %}
+                                                     {% else %}
+                                                     {% trans 'Faturalarda Otomatik Kullanma' %}
+                                                     {% endif %}
+                                                     </td>
                                                     <td class="konum">{{i.kayit_tarihi}}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-end">
@@ -230,6 +245,22 @@
                                             </select>
                                         </div>
                                     <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Otomatik Maaşlarda Kullan' %}</label>
+                                            <select class="form-control" name="maaslarda_kullan" id="date-field">
+                                            
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            </select>
+                                        </div>
+                                    <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Otomatik avanslarda Kullan' %}</label>
+                                            <select class="form-control" name="avanslarda_kullan" id="date-field">
+                                            
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            </select>
+                                        </div>
+                                    <div class="mb-3">
                                         <label for="customername-field" class="form-label">{% trans 'Ürün Adı' %}</label>
                                         <input name="kasaadi" type="text" id="customername-field" class="form-control" placeholder="{% trans 'Ürün Adı' %}" required />
                                         <div class="invalid-feedback">{% trans 'Lütfen Boş Bırakmayınız' %}</div>
@@ -320,6 +351,33 @@
                                             <option value="1">{% trans 'Stoğa Dahil' %}</option> 
                                             {% endif %}
                                                 
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Otomatik Maaşlarda Kullan' %}</label>
+                                            <select class="form-control" name="maaslarda_kullan" id="date-field">
+                                                {% if i.maas_icin_kullan %}
+                                               
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                            {% else %}
+                                            <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            {% endif %}
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Otomatik avanslarda Kullan' %}</label>
+                                            <select class="form-control" name="avanslarda_kullan" id="date-field">
+                                            {% if i.avans_icin_kullan %}
+                                               
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                            {% else %}
+                                            <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            {% endif %}
                                             </select>
                                         </div>
                                         <div class="mb-3">
