@@ -133,6 +133,10 @@ def yetki(request):
 def homepage(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
+        pass
+    else:
+        return redirect("/users/login/")
+    if request.user.is_authenticated:
         content = sozluk_yapisi()
         if super_admin_kontrolu(request):
             profile =Gelir_Bilgisi.objects.all()
