@@ -252,6 +252,8 @@ class calisanlar(models.Model):
     STATUS = (
         ('0', '0'),
         ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
         
     )#0 Çalışıyor # diğerleri Çalışmıyor 
     calisan_kime_ait = models.ForeignKey(CustomUser,verbose_name="Çalışan Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)

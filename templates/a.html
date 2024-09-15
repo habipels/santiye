@@ -1093,7 +1093,11 @@
                 </div>
                 <div class="profile-info">
                     <div class="profile-title">{{request.user.last_name}} <span>{{request.user.gorevi}}</span></div>
-                    <div class="profile-date"><i class="icon icon-calendar"></i> 02/09/2024 - Pazartesi</div>
+                    <div class="profile-date"><i class="icon icon-calendar"></i> 
+
+  <span id="day-name"> </span><span id="fds">-</span>
+  <span id="full-date"></span>
+</div>
                     
                 </div>
             </div>
@@ -1266,17 +1270,17 @@
             </div>
             <div class="weather-card">
                 <div class="weather-location">
-                    İstanbul
-                    <span>Pazartesi</span>
-                    <span>09:30 • 03/08</span>
+                {{sehir}}
+                <span id="day-names"></span><br>
+                <span id="time-date"></span><br>
                 </div>
                 <div class="weather-content">
                     <div class="weather-temp">
-                        24°
-                        <img src="{% static 'go/images/partly_cloudy_daytime.png' %}" alt="Parçalı Bulutlu">
+                        {{weather_data.main.temp |stringformat:'.f'}}°
+                        <img src="http://openweathermap.org/img/wn/{{icon}}@2x.png" alt="">
                     </div>
                     <div class="weather-wind">
-                        8 km/s
+                        {{weather_data.wind.speed}}<h5>km/s</h5>
                         <img src="{% static 'go/images/wind.png' %}" alt="Rüzgar">
                     </div>
                 </div>
@@ -1546,7 +1550,7 @@
                     </div>
 
                     <div class="table-footer">
-                        {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %}
+                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi'  %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a>
                     </div>
 
                 </div>
@@ -1572,41 +1576,41 @@
                                     <th>{% trans 'Telefon' %}</th>
                                     <th>{% trans 'Vade Tarihi' %}</th>
                                     <th>{% trans 'Fatura Tutarı' %}</th>
+                                    <th>{% trans 'Kalan Tutarı' %}</th>
                                     <th>{% trans 'Durum' %}</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for i in  gider  %}
                                 <tr>
-                                    <td>INV-1708</td>
-                                    <td>QUALITY DECOR</td>
+                                    {% toplam_odenme_tutari i as odeme %}
+                                    {% toplam_tutar_cikarmai i as tutar %}
+                                    <td><h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"  class="text-reset">{{i.fatura_no}}</a>
+                                    </h5></td>
+                                    <td>{{i.cari_bilgisi.cari_adi}}</td>
                                     <td>0555 123 0000</td>
-                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
-                                    <td>$87.99</td>
-                                    <td><span class="status-success">Ödendi</span></td>
-                                </tr>
-                                <tr>
-                                    <td>INV-1708</td>
-                                    <td>QUALITY DECOR</td>
-                                    <td>0555 123 0000</td>
-                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
-                                    <td>$87.99</td>
-                                    <td><span class="status-pending">Beklemede</span></td>
-                                </tr>
-                                <tr>
-                                    <td>INV-1708</td>
-                                    <td>QUALITY DECOR</td>
-                                    <td>0555 123 0000</td>
-                                    <td>07 Aug 2022 <span class="time">4:00 PM</span></td>
-                                    <td>$87.99</td>
-                                    <td><span class="status-cancel">İptal Edildi</span></td>
-                                </tr>
+                                    <td>{{i.vade_tarihi| date:'d.m.Y'}} <span class="time"></span></td>
+                                    <td>${% toplam_tutar_cikarmai i %}</td>
+                                    <td>
+                                        ${% kalan_tutuari i %}
+                                    </td>
+                                    {% if  odeme == tutar %}
+                                    <td><span class="status-success">{% trans "Ödendi" %}</span></td>
+                                    {% elif odeme > 0 %}
+                                    <td><span class="status-pending">{% trans "Beklemede" %}</span></td>
+                                    {% elif odeme == 0 %}
+                                    <td><span class="status-cancel">{% trans "Ödenmedi" %}</span></td>
+                                    {% endif %}
+                                    
+                                    </tr>
+                                    {% endfor %}
 
                             </tbody>
                         </table>
                     </div>
 
                     <div class="table-footer">
-                    {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %}
+                    <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a>
                         
                     </div>
 
@@ -1618,7 +1622,7 @@
                         <div class="stats-period-dropdown">
                             <div class="stats-period">{% trans 'Tüm Görevler' %}</div>
                             <div class="stats-period-content">
-                                <a href="#">{% trans 'Tüm Görevler' %}</a>
+                                <a href="/{{dil}}{% url 'main:yapilacaklar' %}">{% trans 'Tüm Görevler' %}</a>
                             </div>
                         </div>
                     </div>
@@ -1635,33 +1639,32 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            {% for i in son_gorevler %}
                                 <tr>
-                                    <td>Depo Düzenleme & Stok Sayımı</td>
-                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
-                                        stoklar
-                                        tespit edilerek kayıt a...</td>
-                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
-                                    <td>12/08/2024</td>
-                                    <td><span class="status-success">Az</span></td>
+                                    <td>{{i.title}}</td>
+                                    <td>{{i.aciklama}}</td>
+                                    <td>{% for yazar in i.yapacaklar.all %}
+                                                       <a href="javascript: void(0);"
+                                                        class="avatar-group-item"
+                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        data-bs-title="{{yazar.last_name}}"> <img
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            class="rounded-circle avatar-xxs"> </a>
+                                                {% endfor %}</td>
+                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>
+                                    {% if i.oncelik_durumu == "High" %}
+                                        <span class="status-danger">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Medium" %}
+                                            
+                                             <span class="status-warning">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Low" %}
+                                            <span class="status-success">{{i.oncelik_durumu}}</span>
+                                            {% endif %}</td>
                                 </tr>
-                                <tr>
-                                    <td>Depo Düzenleme & Stok Sayımı</td>
-                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
-                                        stoklar
-                                        tespit edilerek kayıt a...</td>
-                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
-                                    <td>12/08/2024</td>
-                                    <td><span class="status-pending">Orta</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Depo Düzenleme & Stok Sayımı</td>
-                                    <td>Belirli bir sıraya göre malzemeler yerleştirilecek ve eksik veya fazla olan
-                                        stoklar
-                                        tespit edilerek kayıt a...</td>
-                                    <td><img src="{% static 'go/images/avatar.png' %}"></td>
-                                    <td>12/08/2024</td>
-                                    <td><span class="status-cancel">Acil</span></td>
-                                </tr>
+                                {% endfor %}
+                                
 
                             </tbody>
                         </table>
@@ -1669,7 +1672,7 @@
 
 
                     <div class="table-footer">
-                       {% trans '<a href="#">Tümünü Gör <i class="icon icon-chevron-right"></i></a>' %} 
+                       <a href="/{{dil}}{% url 'main:yapilacaklar' %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a> 
                     </div>
 
                 </div>
@@ -1704,7 +1707,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        {% trans '<a href="#" class="card-details">Detayını Gör <i class="icon icon-chevron-right"></i></a>' %}
+                        <a href="#" class="card-details">{% trans 'Detayını Gör <i class="icon icon-chevron-right"></i>' %}</a>
                     </div>
                     <div class="card-body">
                         <img class="building-img" src="./content/images/bina.png' %}" alt="Bina">
@@ -1714,40 +1717,43 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
+                            {% if request.user.kullanicilar_db %}
+                            {% dashboard_bilgisi request.user.kullanicilar_db as personelbilgi %}    
+                            {% else %}
+                            {% dashboard_bilgisi request.user as personelbilgi %}                                          
+                            {% endif %}
+                                
+                                
                             {% trans 'Personeller' %}
-                            <span>{% trans 'Toplam 182 personel' %}</span>
+                            <span>{% blocktrans with personel_sayisi=personelbilgi.personel_sayisi %}
+                                Toplam {{ personel_sayisi }} personel
+                            {% endblocktrans %}</span>
                         </div>
-                        <a href="#"><i class="icon icon-plus"></i></a>
+                        <a href="/{{dil}}{% url 'users:personeller_sayfasi' %}"><i class="icon icon-plus"></i></a>
                     </div>
+                    
                     <div class="card-body">
+                    {% for i in personelbilgi.personeller %}
                         <div class="employees">
                             <div class="employee">
-                                <div class="employee-image"><img src="{% static 'go/images/avatar.png' %}" alt=""></div>
+                                <div class="employee-image"><img src="{{i.resim}}" alt=""></div>
                                 <div class="employee-details">
-                                    Ahmet Yılmaz
-                                    <span>ahmet@biada.com</span>
+                                    {{i.isim_soyisim}}
+                                    <span>{{i.telefon_numarasi}}</span>
                                 </div>
                                 <div class="employee-stats">
                                     <span>Ay / Çalışma Saati</span>
-                                    2450
+                                    {{i.toplam_calisma_saati}}
                                 </div>
                             </div>
-                            <div class="employee">
-                                <div class="employee-image"><img src="{% static 'go/images/avatar.png' %}" alt=""></div>
-                                <div class="employee-details">
-                                    Ahmet Yılmaz
-                                    <span>ahmet@biada.com</span>
-                                </div>
-                                <div class="employee-stats">
-                                    <span>Ay / Çalışma Saati</span>
-                                    2450
-                                </div>
-                            </div>
+                            
                         </div>
+                         {% endfor %}
                         <div class="card-footer">
-                            {% trans '<a href="#" class="card-show-all">Tümünü Gör <i class="icon icon-forward"></i></a>' %}
+                           <a href="/{{dil}}{% url 'users:personeller_sayfasi' %}" class="card-show-all"> {% trans 'Tümünü Gör <i class="icon icon-forward"></i>' %}</a>
                         </div>
                     </div>
+                   
                 </div>
 
                 <div class="info-card">
@@ -1755,7 +1761,10 @@
                         <img src="{% static 'go/images/info-card-1.png' %}" alt="Aktif Şantiye Sayısı">
                     </div>
                     <div class="info-card-content">
-                    {% trans '12 <span>Aktif Şantiye Sayısı</span>' %}
+                    {% blocktrans with aktif_santiye=personelbilgi.aktif_santiye %}
+                            {{ aktif_santiye }} <span>Aktif Şantiye Sayısı</span>
+                            {% endblocktrans %}
+                    
                         
                     </div>
                 </div>
@@ -1765,7 +1774,10 @@
                         <img src="{% static 'go/images/info-card-2.png' %}" alt="Aktif Personel Sayısı">
                     </div>
                     <div class="info-card-content">
-                        {% trans '182 <span>Aktif Personel Sayısı</span>' %}
+                    {% blocktrans with personel_sayisi=personelbilgi.personel_sayisi %}
+                            {{ personel_sayisi }} <span>Aktif Personel Sayısı</span>
+                            {% endblocktrans %}
+                       
                     </div>
                 </div>
 
@@ -1774,7 +1786,10 @@
                         <img src="{% static 'go/images/info-card-3.png' %}" alt="Aktif Proje Sayısı">
                     </div>
                     <div class="info-card-content">
-                        {% trans '202 <span>Aktif Proje Sayısı</span>' %}
+                    {% blocktrans with aktif_proje=personelbilgi.aktif_proje %}
+                            {{ aktif_proje }} <span>Aktif Proje Sayısı</span>
+                            {% endblocktrans %}
+                        
                     </div>
                 </div>
 
@@ -1786,4 +1801,50 @@
 
     </main>
 {% endif %}
+<script>
+    function updateWeatherClock() {
+      // Dinamik long ve lat değerleri
+      var longitude = parseFloat("{{ weather_data.coord.lon|default:0 }}"); // Boylam değeri (float'a çevrilir)
+      var latitude = parseFloat("{{ weather_data.coord.lat|default:0 }}");  // Enlem değeri (float'a çevrilir)
+    
+      // Haftanın günleri
+      var days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+      var now = new Date();
+    
+      // Gün, saat ve tarih bilgilerini al
+      var dayName = days[now.getDay()];
+      var hours = now.getHours();
+      var minutes = now.getMinutes();
+      var seconds = now.getSeconds();
+      var day = now.getDate();
+      var month = now.getMonth() + 1; // Aylar 0-11 arası olduğundan +1 eklenir.
+      var year = now.getFullYear();
+    
+      // Dakika ve saniyeleri iki haneli göstermek için
+      hours = hours < 10 ? '0' + hours : hours;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+    
+      // Saati "09:30:45" formatında göster
+      var timeString = hours + ":" + minutes + ":" + seconds;
+      
+      // Tarihi "12/09/2024" formatında göster
+      var fullDateString = day + "/" + month + "/" + year;
+    
+      // Dinamik olarak gün, saat ve tarih bilgilerini güncelle
+      document.getElementById("day-name").textContent = dayName;
+      document.getElementById("time-date").textContent = timeString;
+      document.getElementById("full-date").textContent = fullDateString;
+      document.getElementById("day-names").textContent = dayName;
+ 
+    }
+    
+    // Her saniyede bir güncelleme
+    setInterval(updateWeatherClock, 1000);
+    
+    // Sayfa yüklendiğinde saati güncelle
+    updateWeatherClock();
+</script>
+
+    
 {% endblock sidebar %}
