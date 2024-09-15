@@ -1144,3 +1144,34 @@ def calismalari_cek(personel, gun, tarih):
         return { 'normal_saat': sonuc.normal_calisma_saati, 'mesai_saati': sonuc.mesai_calisma_saati}
     else:
         return { 'normal_saat': 0, 'mesai_saati': 0}
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth, ExtractYear
+@register.simple_tag
+def dashboard_bilgisi(kisi):
+    content = {}
+    cali = calisanlar.objects.filter(calisan_kime_ait = kisi,status = "0")
+    content["personel_sayisi"] = cali.count()
+    cali = cali.order_by("-id")[:2]
+    html = []
+    for i in cali:
+        calismalar = calisanlar_calismalari.objects.filter(
+            calisan=get_object_or_none(calisanlar, id=i.id)
+            ).annotate(
+                year=ExtractYear('tarihi'),
+                month=ExtractMonth('tarihi')
+            ).values(
+                'year', 'month', 'maas__id'  # Maas ID ve ismi ile gruplanıyor
+            ).annotate(
+                total_normal_calisma_saati=Sum('normal_calisma_saati'),
+                total_mesai_calisma_saati=Sum('mesai_calisma_saati')
+            ).order_by('year', 'month', 'maas__id')
+        person = {"resim":i.profile.url if i.profile.url else "{% static 'go/images/avatar.png' %}",
+         "isim_soyisim" : i.isim +" "+ i.soyisim,
+         "toplam_calisma_saati" : calismalar.last()["total_normal_calisma_saati"],
+         "iletisim" : i.telefon_numarasi}
+        html.append(person)
+    content["aktif_santiye"] = santiye.objects.filter(proje_ait_bilgisi = kisi,silinme_bilgisi = False).count()
+    content["aktif_proje"] = proje_tipi.objects.filter(proje_ait_bilgisi = kisi,silinme_bilgisi = False).count()
+    
+    content["personeller"] = html
+    return content

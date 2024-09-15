@@ -13,6 +13,15 @@ from django.contrib.admin.models import LogEntry
 from hashids import Hashids
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
+import requests
+def get_client_ip(request):
+    """Kullanıcının IP adresini alır"""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 def get_csrf_token(request):
     token = get_token(request)
@@ -143,19 +152,6 @@ def homepage(request):
             else:
                 profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        if request.GET:
-            search = request.GET.get("search")
-            tarih = request.GET.get("tarih")
-            if search:
-                if super_admin_kontrolu(request):
-                    profile =Gelir_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                    kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-                    content["kullanicilar"] =kullanicilar
-                else:
-                    profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-            if tarih :
-                profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 5) # 6 employees per page
 
@@ -187,19 +183,6 @@ def homepage(request):
             else:
                 profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        if request.GET:
-            search = request.GET.get("search")
-            tarih = request.GET.get("tarih")
-            if search:
-                if super_admin_kontrolu(request):
-                    profile =Gider_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                    kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-                    content["kullanicilar"] =kullanicilar
-                else:
-                    profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-            if tarih :
-                profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 5) # 6 employees per page
 
@@ -243,13 +226,50 @@ def homepage(request):
                 if a.izinler.dashboard_gorme:
                     content["gider"] = sonuc
                     content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")[:5]
+                    content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:3]
                 else:
                     return redirect("main:yetkisiz")
+
             else:
                 return redirect("main:yetkisiz")
         else:
             content["gider"] = sonuc
             content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
+            content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:3]
+    weather_data = None
+    ip_info = None
+    
+    # Kullanıcının IP adresini alıyoruz
+    ip ="85.110.71.229"  #get_client_ip(request) #
+    
+    # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
+    ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
+    ip_response = requests.get(ipinfo_api_url)
+    print(ip_response.json())
+    if ip_response.status_code == 200:
+        ip_info = ip_response.json()
+        loc = ip_info.get('loc')
+        
+        if loc:  # Eğer 'loc' None değilse
+            print(loc)
+            location = loc.split(',')
+            lat, lon = location[0], location[1]
+            
+            # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
+            api_key = 'dee0661903df4f2c76ccfd8afab8be69'
+            weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
+            
+            weather_response = requests.get(weather_api_url)
+            print(weather_response)
+            if weather_response.status_code == 200:
+                weather_data = weather_response.json()
+            a = weather_data["weather"][0]
+            icon = a["icon"]
+            content['weather_data'] = weather_data
+            content['ip_info'] = ip_info
+            content['icon'] = icon
+            content['sehir'] = weather_data["name"]
+            
     else:
         return redirect("/users/login/")
 
@@ -276,19 +296,6 @@ def ana_sayfa(request):
             else:
                 profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        if request.GET:
-            search = request.GET.get("search")
-            tarih = request.GET.get("tarih")
-            if search:
-                if super_admin_kontrolu(request):
-                    profile =Gelir_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                    kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-                    content["kullanicilar"] =kullanicilar
-                else:
-                    profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-            if tarih :
-                profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 5) # 6 employees per page
 
@@ -320,19 +327,6 @@ def ana_sayfa(request):
             else:
                 profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-        if request.GET:
-            search = request.GET.get("search")
-            tarih = request.GET.get("tarih")
-            if search:
-                if super_admin_kontrolu(request):
-                    profile =Gider_Bilgisi.objects.filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                    kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
-                    content["kullanicilar"] =kullanicilar
-                else:
-                    profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).filter(Q(fatura_no__icontains = search)|Q(cari_bilgisi__cari_adi__icontains = search)| Q(gelir_kime_ait_oldugu__first_name__icontains = search)| Q(aciklama__icontains = search) | Q(gelir_kategorisi__gelir_kategori_adi__icontains = search))
-                    content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
-            if tarih :
-                profile = profile.filter(Q(fatura_tarihi__gt  = tarih) | Q(vade_tarihi__lt  = tarih) )
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 5) # 6 employees per page
 
@@ -376,13 +370,50 @@ def ana_sayfa(request):
                 if a.izinler.dashboard_gorme:
                     content["gider"] = sonuc
                     content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")[:5]
+                    content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:3]
                 else:
                     return redirect("main:yetkisiz")
+
             else:
                 return redirect("main:yetkisiz")
         else:
             content["gider"] = sonuc
             content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
+            content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:3]
+    weather_data = None
+    ip_info = None
+    
+    # Kullanıcının IP adresini alıyoruz
+    ip ="85.110.71.229"  #get_client_ip(request) #
+    
+    # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
+    ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
+    ip_response = requests.get(ipinfo_api_url)
+    print(ip_response.json())
+    if ip_response.status_code == 200:
+        ip_info = ip_response.json()
+        loc = ip_info.get('loc')
+        
+        if loc:  # Eğer 'loc' None değilse
+            print(loc)
+            location = loc.split(',')
+            lat, lon = location[0], location[1]
+            
+            # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
+            api_key = 'dee0661903df4f2c76ccfd8afab8be69'
+            weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
+            
+            weather_response = requests.get(weather_api_url)
+            print(weather_response)
+            if weather_response.status_code == 200:
+                weather_data = weather_response.json()
+            a = weather_data["weather"][0]
+            icon = a["icon"]
+            content['weather_data'] = weather_data
+            content['ip_info'] = ip_info
+            content['icon'] = icon
+            content['sehir'] = weather_data["name"]
+            
     else:
         return redirect("/users/login/")
     return render(request,"a.html",content)
