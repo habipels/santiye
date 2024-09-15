@@ -892,10 +892,10 @@
                     </div>
                 </div>
             </div>
-            <div class="quick-actions-body open">
+            <div class="quick-actions-body close">
                 <div class="quick-actions-inner">
                     <div class="quick-actions-grid" id="quick-actions-grid">
-                        <a href="#" class="quick-action" data-id="1" oncontextmenu="hideQuickLink(event, this)"><i
+                        <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" class="quick-action" data-id="1" oncontextmenu="hideQuickLink(event, this)"><i
                                 class="icon icon-document"></i> {% trans 'Raporlar' %}</a>
                         <a href="#" class="quick-action" data-id="2" oncontextmenu="hideQuickLink(event, this)"><i
                                 class="icon icon-ilerleme-takibi"></i>{% trans 'İlerleme Takibi' %} </a>
@@ -913,7 +913,7 @@
                                 class="icon icon-yeni-personel"></i>{% trans 'Personel Ekle' %} </a>
                         <a href="#" class="quick-action" data-id="9" oncontextmenu="hideQuickLink(event, this)"><i
                                 class="icon icon-yeni-kullanici"></i> {% trans 'Kullanıcı Ekle' %}</a>
-                        <a href="#" class="quick-action" data-id="10" oncontextmenu="hideQuickLink(event, this)"><i
+                        <a href="/{{dil}}{% url 'main:depolama_sistemim' %}" class="quick-action" data-id="10" oncontextmenu="hideQuickLink(event, this)"><i
                                 class="icon icon-dosya-yoneticisi"></i>{% trans 'Dosya Yöneticisi' %} </a>
                         <a href="#" class="quick-action" data-id="11" oncontextmenu="hideQuickLink(event, this)"><i
                                 class="icon icon-taseronlar"></i> {% trans 'Taşeronlar' %}</a>
@@ -1035,19 +1035,6 @@
                 saveHiddenLinks(); // Gizli linklerin durumunu kaydet
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
             function showHiddenActions() {
                 $(".quick-action-modal").css("display", "flex").hide().fadeIn();
             }
@@ -1095,7 +1082,7 @@
                     <div class="profile-title">{{request.user.last_name}} <span>{{request.user.gorevi}}</span></div>
                     <div class="profile-date"><i class="icon icon-calendar"></i> 
 
-  <span id="day-name"></span>
+  <span id="day-name"> </span><span id="fds">-</span>
   <span id="full-date"></span>
 </div>
                     
@@ -1271,17 +1258,21 @@
             <div class="weather-card">
                 <div class="weather-location">
                 {{sehir}}
-                <span id="day-names"></span><br>
-                <span id="time-date"></span><br>
+                <span id="day-names"></span>
+                <span id="time-date"></span>
                 </div>
                 <div class="weather-content">
-                    <div class="weather-temp">
-                        {{weather_data.main.temp |stringformat:'.f'}}°
-                        <img src="http://openweathermap.org/img/wn/{{icon}}@2x.png" alt="">
-                    </div>
                     <div class="weather-wind">
-                        {{weather_data.wind.speed}}<h5>km/s</h5>
-                        <img src="{% static 'go/images/wind.png' %}" alt="Rüzgar">
+                        <span>{{weather_data.wind.speed}} km/s</span>
+                        <div class="wind-direction" style="transform: rotate({{weather_data.wind.deg}}deg);">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L15 8H9L12 2ZM12 22V8" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="weather-temp">
+                        <span>{{weather_data.main.temp |stringformat:'.f'}}°</span>
+                        <img src="http://openweathermap.org/img/wn/{{icon}}@2x.png" alt="">
                     </div>
                 </div>
             </div>
@@ -1804,8 +1795,8 @@
 <script>
     function updateWeatherClock() {
       // Dinamik long ve lat değerleri
-      var longitude = {{weather_data.coord.lon}}; // Örnek boylam değeri (İstanbul)
-      var latitude = {{weather_data.coord.lat}};  // Örnek enlem değeri (İstanbul)
+      var longitude = parseFloat("{{ weather_data.coord.lon|default:0 }}"); // Boylam değeri (float'a çevrilir)
+      var latitude = parseFloat("{{ weather_data.coord.lat|default:0 }}");  // Enlem değeri (float'a çevrilir)
     
       // Haftanın günleri
       var days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
@@ -1831,13 +1822,12 @@
       // Tarihi "12/09/2024" formatında göster
       var fullDateString = day + "/" + month + "/" + year;
     
-    
       // Dinamik olarak gün, saat ve tarih bilgilerini güncelle
       document.getElementById("day-name").textContent = dayName;
       document.getElementById("time-date").textContent = timeString;
       document.getElementById("full-date").textContent = fullDateString;
       document.getElementById("day-names").textContent = dayName;
-      console.log(timeString);
+ 
     }
     
     // Her saniyede bir güncelleme
@@ -1845,6 +1835,7 @@
     
     // Sayfa yüklendiğinde saati güncelle
     updateWeatherClock();
-    </script>
+</script>
+
     
 {% endblock sidebar %}

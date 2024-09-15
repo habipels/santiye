@@ -3,14 +3,17 @@
 {% load custom_tags %}
     <aside class="sidebar">
         <div class="sidebar-toggle"><i class="icon icon-sidebar-right"></i><i class="icon icon-sidebar-left"></i></div>
-        <div class="sidebar-logo">
+    <div class="sidebar-logo">
+        <a href="/" class="logo-link">
             <div class="sidebar-logo-main-part"></div>
             <div class="sidebar-logo-second-part"></div>
             <div class="sidebar-logo-large-parts">
-                <img src="{% static 'go/images/half-o.png' %}">
-                <img src="{% static 'go/images/o.png' %}">
+                <img src="{% static 'go/images/half-o.png' %}" alt="Half Logo">
+                <img src="{% static 'go/images/o.png' %}" alt="Full Logo">
             </div>
-        </div>
+        </a>
+    </div>
+
         <div class="sidebar-navs">
 <ul class="sidebar-nav">
     <li class="{% if request.path == '/' %}active{% endif %}">
@@ -69,6 +72,40 @@
                         <a href="{{ virman_gondermeler_url }}" class="sidebar-sub-item">{% trans 'Virman Raporu ' %}</a>
                     </li>
                 </ul>
+            </li>
+        </ul>
+    </li>
+    {% url 'main:santiye_kalem_ve_blog' as santiye_kalem_ve_blog_url %}
+    {% url 'main:yapilacaklar' as yapilacaklar_url %}
+    {% url 'main:depolama_sistemim' as depolama_sistemim_url %}
+    {% url 'main:taseron_sayfasi' as taseron_sayfasi_url %}
+    {% url 'main:ust_yuklenici_sayfasi' as ust_yuklenici_sayfasi_url %}
+    {% url 'main:hakedis_sayfasi' as hakedis_sayfasi_url %}
+    {% url 'main:sozlesmler_sayfasi' as sozlesmler_sayfasi_url %}
+
+    <li class="{% if request.path == santiye_kalem_ve_blog_url or request.path == yapilacaklar_url or request.path == depolama_sistemim_url or request.path == taseron_sayfasi_url or request.path == ust_yuklenici_sayfasi_url or request.path == hakedis_sayfasi_url or request.path == sozlesmler_sayfasi_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>{% trans 'Şantiye Yönetimi' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
+                <a href="{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Proje Yönetimi' %}</a>
+            </li>
+            <li class="{% if request.path == yapilacaklar_url %}active{% endif %}">
+                <a href="{{ yapilacaklar_url }}" class="sidebar-sub-item">{% trans 'Görevler' %}</a>
+            </li>
+            <li class="{% if request.path == depolama_sistemim_url %}active{% endif %}">
+                <a href="{{ depolama_sistemim_url }}" class="sidebar-sub-item">{% trans 'Dosya Yöneticisi' %}</a>
+            </li>
+            <li class="{% if request.path == taseron_sayfasi_url %}active{% endif %}">
+                <a href="{{ taseron_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Taşeronlar' %}</a>
+            </li>
+            <li class="{% if request.path == ust_yuklenici_sayfasi_url %}active{% endif %}">
+                <a href="{{ ust_yuklenici_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Üst Yüklenici' %}</a>
+            </li>
+            <li class="{% if request.path == hakedis_sayfasi_url %}active{% endif %}">
+                <a href="{{ hakedis_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Hakedişler' %}</a>
+            </li>
+            <li class="{% if request.path == sozlesmler_sayfasi_url %}active{% endif %}">
+                <a href="{{ sozlesmler_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Sözleşmeler' %}</a>
             </li>
         </ul>
     </li>
