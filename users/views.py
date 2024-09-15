@@ -21,66 +21,68 @@ def personel_bilgisi_axaj(request, id):
         calisan = get_object_or_none(calisanlar, id = id)
         maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
         cali_belgeleri = calisan_belgeleri.objects.filter(calisan = get_object_or_none(calisanlar, id = id))
+        # Sorguları çalıştır
         calismalar = calisanlar_calismalari.objects.filter(
-        calisan=get_object_or_none(calisanlar, id=id)
+            calisan=get_object_or_none(calisanlar, id=id)
         ).annotate(
             year=ExtractYear('tarihi'),
             month=ExtractMonth('tarihi')
         ).values(
-            'year', 'month', 'maas__id'  # Maas ID ve ismi ile gruplanıyor
+            'year', 'month', 'maas__id', 'calisan__id'  # Maas ID ve ismi ile gruplanıyor
         ).annotate(
             total_normal_calisma_saati=Sum('normal_calisma_saati'),
             total_mesai_calisma_saati=Sum('mesai_calisma_saati')
         ).order_by('year', 'month', 'maas__id')
+
         odemeler = calisanlar_calismalari_odemeleri.objects.filter(
-        calisan=get_object_or_none(calisanlar, id=id)
+            calisan=get_object_or_none(calisanlar, id=id)
         ).annotate(
             year=ExtractYear('tarihi'),
             month=ExtractMonth('tarihi')
         ).values(
-            'year', 'month',"calisan__id"  # Maas ID ve ismi ile gruplanıyor
+            'year', 'month', 'calisan__id'  # Maas ID ve ismi ile gruplanıyor
         ).annotate(
             total_tutar=Sum('tutar')
         ).order_by('year', 'month')
 
-        personel_detayi = {
-            'id':str(id),
-        'calisan_kategori': calisan.calisan_kategori.kategori_isimi,
-        'calisan_pozisyonu': calisan.calisan_pozisyonu.kategori_isimi,
-        'uyrugu': calisan.uyrugu,
-        "pasaport_numarasi" :calisan.pasaport_numarasi ,
-        "isim" : calisan.isim,
-        "soyisim" : calisan.soyisim,
-        "profile" : calisan.profile.url if calisan.profile else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
-        "dogum_tarihi" : str(calisan.dogum_tarihi.strftime("%d.%m.%Y")),
-        "telefon_numarasi" : calisan.telefon_numarasi,
-        "status" : str(calisan.status),
-        "maas" : str(maasli.maas),
-        "yevmiye" : str(maasli.yevmiye),
-        "durum" :"1" if maasli.durum else "0",
-        "para_birimi" : "1" if maasli.para_birimi else "0",
-        "belgeler": [
-            {
-                "id": belge.id,
-                "belge_turu": belge.belge_turu,
-                "resim": belge.belge.url if belge.belge else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
-                
+        # Ödemeleri bir dict içine yerleştir
+        odemeler_dict = {(odeme['year'], odeme['month']): odeme['total_tutar'] for odeme in odemeler}
 
-            } for belge in cali_belgeleri
-        ],
-        "calismalar": [
-            {
-                "tarih": str(calis['year']) + "-"+ str(calis['month']),
-                "hakedis_tutari":(calis["total_normal_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).maas) +(calis["total_mesai_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).yevmiye),
-                "odenen": "",
-                "kalan": (calis["total_normal_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).maas) +(calis["total_mesai_calisma_saati"]*get_object_or_none(calisan_maas_durumlari,id = calis["maas__id"]).yevmiye),
-                "bodro": "",
-            } for calis in calismalar
-        ]
-        
-        
-        
+        # Personel detayını oluştur
+        personel_detayi = {
+            'id': str(id),
+            'calisan_kategori': calisan.calisan_kategori.kategori_isimi,
+            'calisan_pozisyonu': calisan.calisan_pozisyonu.kategori_isimi,
+            'uyrugu': calisan.uyrugu,
+            'pasaport_numarasi': calisan.pasaport_numarasi,
+            'isim': calisan.isim,
+            'soyisim': calisan.soyisim,
+            'profile': calisan.profile.url if calisan.profile else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
+            'dogum_tarihi': str(calisan.dogum_tarihi.strftime("%d.%m.%Y")),
+            'telefon_numarasi': calisan.telefon_numarasi,
+            'status': str(calisan.status),
+            'maas': str(maasli.maas),
+            'yevmiye': str(maasli.yevmiye),
+            'durum': "1" if maasli.durum else "0",
+            'para_birimi': "1" if maasli.para_birimi else "0",
+            'belgeler': [
+                {
+                    'id': belge.id,
+                    'belge_turu': belge.belge_turu,
+                    'resim': belge.belge.url if belge.belge else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
+                } for belge in cali_belgeleri
+            ],
+            'calismalar': [
+                {
+                    'tarih': str(calis['year']) + "-" + str(calis['month']),
+                    'hakedis_tutari': (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye),
+                    'odenen': odemeler_dict.get((calis['year'], calis['month']), 0),
+                    'kalan': ((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)) - odemeler_dict.get((calis['year'], calis['month']), 0),
+                    'bodro': "",  # Bodro ile ilgili ek bir işlem yapılacaksa buraya eklenir.
+                } for calis in calismalar
+            ]
         }
+        
         #print(personel_detayi)
         return JsonResponse(personel_detayi)
 
@@ -705,6 +707,47 @@ def calismalari_cek(request):
                 return JsonResponse({'sonuc': 'veri_yok'})   
     return JsonResponse({'sonuc': 'veri_yok'})
 
+from muhasebe.models import calisanlar_calismalari_odemeleri
+def calisan_odemeleri_kaydet(request):
+    if request.POST:
+        odeme_turu = request.POST.get("odeme_turu")
+        users_id = request.POST.get("users_id")
+        maas_ayi = request.POST.get("maas_ayi")
+        odeme_tarihi = request.POST.get("odeme_tarihi")
+        tutar = request.POST.get("tutar")
+        aciklama = request.POST.get("aciklama")
+        file = request.FILES.get("file")
+        kur = request.POST.get("kur")
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.blog_olusturma:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        elif super_admin_kontrolu(request):
+            return redirect("/")
+        else:
+            kullanici = request.user
+        year, month = map(int, maas_ayi.split('-'))
+    
+        # Ayın ilk günü ile Date nesnesini oluştur
+        date_obj = datetime(year, month, 1)
+        if odeme_turu:
+            calisanlar_calismalari_odemeleri.objects.create(
+                calisan = get_object_or_none(calisanlar,id =users_id,calisan_kime_ait =  kullanici),
+                tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
+                odeme_turu = True,aciklama = aciklama,dosya = file
+            )
+        else:
+            calisanlar_calismalari_odemeleri.objects.create(
+                calisan = get_object_or_none(calisanlar,id =users_id,calisan_kime_ait =  kullanici),
+                tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
+                odeme_turu = False,aciklama = aciklama,dosya = file
+            )
+    return redirect("users:personeller_sayfasi")
 
 import requests
 from django.shortcuts import render

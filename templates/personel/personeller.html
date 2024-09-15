@@ -1,4 +1,4 @@
-{% extends "homebase.html" %}
+{% extends "homebase2.html" %}
 {% load i18n %}
 {% load static %}
 {% load custom_tags %}
@@ -823,26 +823,38 @@ table th {
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('avansOdeModal')">&times;</span>
             <h2>Avans Öde</h2>
-            <form id="avansOdeForm">
+            <form id="avansOdeForm" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
+                {% csrf_token %} 
+                <input type="text" hidden value="1" name="odeme_turu">
+                <div id="odemeturu" ></div>
+                
                 <div class="form-group">
                     <label for="avansAy">Ay Seçimi</label>
-                    <select id="avansAy" class="form-control">
-                        <option value="Ocak">Ocak</option>
-                        <option value="Şubat">Şubat</option>
+                    <select required name="maas_ayi" id="avansAy" class="form-control">
+                        <option value="2024-11">2024-11</option>
+                        <option value="2024-1">2024-1</option>
                         <!-- Diğer aylar -->
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="avansTutar">Ödeme Tarihi</label>
+                    <input required type="date" name="odeme_tarihi" id="avansTutar" class="form-control" placeholder="Avans Tutarı">
+                </div>
+                <div class="form-group">
                     <label for="avansTutar">Tutar</label>
-                    <input type="number" id="avansTutar" class="form-control" placeholder="Avans Tutarı">
+                    <input required type="number" name="tutar" id="avansTutar" class="form-control" placeholder="Avans Tutarı">
+                </div>
+                <div class="form-group">
+                    <label for="avansTutar">Kur</label>
+                    <input required type="number" name="kur" id="avansTutar" class="form-control" placeholder="Kur">
                 </div>
                 <div class="form-group">
                     <label for="avansAciklama">Açıklama</label>
-                    <textarea id="avansAciklama" class="form-control" placeholder="Açıklama"></textarea>
+                    <textarea id="avansAciklama" name="aciklama" class="form-control" placeholder="Açıklama"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="avansDosya">Dosya Yükleme</label>
-                    <input type="file" id="avansDosya" class="form-control">
+                    <input type="file" name="file" id="avansDosya" class="form-control">
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn save-btn">Avansı Öde</button>
@@ -857,10 +869,12 @@ table th {
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('maasOdeModal')">&times;</span>
             <h2>Maaş Öde</h2>
-            <form id="maasOdeForm">
+            <form method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
+                {% csrf_token %} 
+                <div id="odemeturuu" ></div>
                 <div class="form-group">
                     <label for="maasAy">Maaş Ayı</label>
-                    <select id="maasAy" class="form-control">
+                    <select required id="maasAy" name="maas_ayi" class="form-control">
                         <option value="Ocak">Ocak</option>
                         <option value="Şubat">Şubat</option>
                         <!-- Diğer aylar -->
@@ -868,15 +882,23 @@ table th {
                 </div>
                 <div class="form-group">
                     <label for="maasBakiye">Kalan Bakiye</label>
-                    <input type="number" id="maasBakiye" class="form-control" value="0" >
+                    <input required type="number"  name="tutar" id="maasBakiye" class="form-control" value="0" >
                 </div>
                 <div class="form-group">
-                    <label for="maasAciklama">Açıklama</label>
-                    <textarea id="maasAciklama" class="form-control" placeholder="Açıklama"></textarea>
+                    <label for="avansTutar">Kur</label>
+                    <input required type="number" name="kur" id="avansTutar" class="form-control" placeholder="Kur">
                 </div>
                 <div class="form-group">
-                    <label for="maasDosya">Dosya Yükleme</label>
-                    <input type="file" id="maasDosya" class="form-control">
+                    <label for="avansTutar">Ödeme Tarihi</label>
+                    <input required type="date" name="odeme_tarihi" id="avansTutar" class="form-control" placeholder="Avans Tutarı">
+                </div>
+                <div class="form-group">
+                    <label for="avansAciklama">Açıklama</label>
+                    <textarea  id="avansAciklama" name="aciklama" class="form-control" placeholder="Açıklama"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="avansDosya">Dosya Yükleme</label>
+                    <input type="file" name="file" id="avansDosya" class="form-control">
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn save-btn">Maaşı Öde</button>
@@ -1109,7 +1131,8 @@ function openPersonelDetails(id) {
                 }
                 // Belirli bir elementin innerHTML özelliğini güncelleme
                 document.getElementById('puantajGirisi').innerHTML = `<a href="/users/tally/?monthFilter=&jobTypeFilter=&personelID=${id}">Puantaj Girişi</a>`;
-
+                document.getElementById('odemeturu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;
+                document.getElementById('odemeturuu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;
                 // Tabloya verileri yerleştirme
             const salaryTableBody = document.getElementById('salaryTableBody');
             salaryTableBody.innerHTML = ''; // Önce mevcut satırları temizliyoruz

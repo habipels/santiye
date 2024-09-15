@@ -227,6 +227,16 @@ class personel_izinleri(models.Model):
     zimmet_olusturma = models.BooleanField(default = False)
     zimmet_silme = models.BooleanField(default = False)
     zimmet_gorme = models.BooleanField(default = False)
+    #puantaj durum
+    personeller_puantaj_olusturma = models.BooleanField(default = False)
+    personeller_puantaj_silme = models.BooleanField(default = False)
+    personeller_puantaj_gorme = models.BooleanField(default = False)
+    personeller_puantaj_duzenleme = models.BooleanField(default = False)
+    #personel maaş ödeme
+    personeller_odeme_olusturma = models.BooleanField(default = False)
+    personeller_odeme_silme = models.BooleanField(default = False)
+    personeller_odeme_gorme = models.BooleanField(default = False)
+    personeller_odeme_duzenleme = models.BooleanField(default = False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):
