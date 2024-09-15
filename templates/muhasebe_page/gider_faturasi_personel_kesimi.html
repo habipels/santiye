@@ -71,7 +71,8 @@
                 <div class="col-md-2">
                     <div class="input-item musteri-input">
                         <label>{% trans 'Cari' %}</label>
-                        <input type="search" required name="musteri_bilgisi" class="form-control cari" title="{% trans 'Kayıtlı cariler için cari adının ilk üç karekterini giriniz.' %}" placeholder="{% trans 'Cari Hesabı' %}" autocomplete="off">
+                        <input type="search" required  value="{{veri.calisan.isim}} {{veri.calisan.soyisim}}" class="form-control" title="{% trans 'Kayıtlı cariler için cari adının ilk üç karekterini giriniz.' %}" disabled placeholder="{% trans 'Cari Hesabı' %}" autocomplete="off">
+                        <input type="search" required name="musteri_bilgisi" value="{{veri.calisan.isim}} {{veri.calisan.soyisim}}" class="form-control" title="{% trans 'Kayıtlı cariler için cari adının ilk üç karekterini giriniz.' %}" hidden placeholder="{% trans 'Cari Hesabı' %}" autocomplete="off">
                     </div>
                 </div>
 
@@ -79,7 +80,8 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>{% trans 'Düzenleme ve Vade Tarihi' %}</label>
-                        <input type="text" required name="daterange" class="form-control" value="{% tarih_cek %}">
+                        <input type="text" required  disabled class="form-control" value="{{veri.odeme_tarihi|date:'m-d-Y'}} - {{veri.odeme_tarihi|date:'m-d-Y'}}">
+                        <input type="text" required name="daterange" hidden class="form-control" value="{{veri.odeme_tarihi|date:'m-d-Y'}} - {{veri.odeme_tarihi|date:'m-d-Y'}}">
                     </div>
                 </div>
 
@@ -90,11 +92,16 @@
                             <div class="form-group">
                                 <label>{% trans 'Döviz Kuru (Sadece IQD)' %}</label>
                                 <div class="input-group">
-                                    <input type="text" id="doviz_kuru" name="doviz_kuru" class="form-control" 
+                                    <input type="text" id="" disabled  class="form-control" 
                                         placeholder="{% trans 'Örn: 1450 veya 1450.06' %}" 
                                         pattern="\d+(\.\d{1,2})?" 
                                         title="{% trans 'Lütfen sadece sayısal değer giriniz' %}" 
-                                        oninput="hesaplama_islemi()" />
+                                        oninput="hesaplama_islemi()" value="{{veri.kur |stringformat:'.f'}}" />
+                                    <input type="text" id="doviz_kuru" hidden name="doviz_kuru" class="form-control" 
+                                        placeholder="{% trans 'Örn: 1450 veya 1450.06' %}" 
+                                        pattern="\d+(\.\d{1,2})?" 
+                                        title="{% trans 'Lütfen sadece sayısal değer giriniz' %}" 
+                                        oninput="hesaplama_islemi()"  value="{{veri.kur |stringformat:'.f' }}" />
                                     <span class="input-group-text">{% trans 'IQD' %}</span>
                                 </div>
                             </div>
@@ -136,7 +143,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>{% trans 'Açıklama' %}</label>
-                        <input type="text" required name="cari_aciklma" class="form-control" placeholder="{% trans 'Açıklama' %}">
+                        <input type="text" required name="cari_aciklma" class="form-control" value ="{{veri.aciklama}}" placeholder="{% trans 'Açıklama' %}">
                     </div>
                 </div>
 
@@ -145,14 +152,16 @@
                     <div class="form-group">
                         <label>{% trans 'Kategori' %}</label>
                         <div class="input-group" id="kategori">
-                            <select required name="gelir_kategorisi" class="form-select">
+                            <select disabled required  class="form-select">
                                 {% for i in gelir_kategoerisi %}
-                                <option value="{{i.id}}">{{i.gider_kategori_adi}}</option>
+                                <option selected value="{{i.id}}">{{i.gider_kategori_adi}}</option>
                                 {% endfor %}
                             </select>
-                            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#showModal">
-                                <i class="ri-add-line align-bottom me-1"></i>{% trans 'Ekle' %}
-                            </button>
+                            <select hidden required name="gelir_kategorisi" class="form-select">
+                                {% for i in gelir_kategoerisi %}
+                                <option selected value="{{i.id}}">{{i.gider_kategori_adi}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -162,14 +171,16 @@
                     <div class="input-item etiket">
                         <label>{% trans 'Etiketler' %}</label>
                         <div id="etkett" class="d-flex align-items-center">
-                            <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
+                            <select disabled required id="cokluetiket" class="etkett me-2" multiple>
                                 {% for i in gelir_etiketi %}
-                                <option value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
+                                <option selected value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
                                 {% endfor %}
                             </select>
-                            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#gideretiketiekle">
-                                <i class="ri-add-line align-bottom me-1"></i>{% trans 'Ekle' %}
-                            </button>
+                            <select name="etiketler" hidden required id="" class=" me-2" multiple>
+                                {% for i in gelir_etiketi %}
+                                <option selected value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -178,7 +189,13 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>{% trans 'Belge Yükle' %}</label>
-                        <input type="file"  name="fatura_belgesi" class="form-control" />
+                        
+                        <input type="file" value="{% if veri.dosya  %}{{veri.dosya.url}}{% else %}{% endif %}"  name="fatura_belgesi" class="form-control" />
+                        {% if veri.dosya %}
+                            <p>{% trans 'Mevcut Dosya:' %} <a href="{{ veri.dosya.url }}" target="_blank">{{ veri.dosya.url }}</a></p>
+                        {% else %}
+                            <p>{% trans 'Dosya bulunamad' %}ı</p>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -202,35 +219,32 @@
         <div class="form2" id="form2" >
             <div class="table-item">
                 <div class="urun">
-                    <input type="search" name="urunadi" class="den" required id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
+                    <input type="search" value="{{urunler.urun_adi}}" disabled class="den" required id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
                 </div>
-                <div class="miktar">
-                    <input class="miktarInput" name="miktari" type="number" value="1" oninput="hesaplama_islemi()" />
+                <div classy="miktar">
+                    <input class="miktarInput"  disabled type="number" value="1" oninput="hesaplama_islemi()" />
                 </div>
                 <div class="bfiyat">
-                    <input id="bfiyatInput" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                    <input id="bfiyatInput" value="{{veri.tutar |stringformat:'.2f'}}" disabled class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
                     <span class="mdi mdi-currency-usd"></span>
                 </div>
-                <div class="toplam">
-                    <input class="toplamInput" type="text" step="0.01" value="0" disabled/>
-                    <span class="mdi mdi-currency-usd"></span>
+                <br>
+                <div class="urun">
+                    <input type="search" hidden value="{{urunler.urun_adi}}" name="urunadi" class="den" required id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
                 </div>
-                <div class="icons">
-                    <span class="mdi mdi-pan-left specBtn" onclick="specAc(event)"></span>
-                    <ul class="specs">
-                        <li class="addDesc" onclick="aciklamaEkle(event)">{% trans 'Açıklama Ekle' %}</li>
-                        <li class="addSale" onclick="indirimEkle(event)">{% trans 'İndirim Ekle' %}</li>
-                    </ul>
-                    <span style="display: flex !important;" class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
+                <div classy="miktar">
+                    <input class="miktarInput" hidden  name="miktari" type="number" value="1" oninput="hesaplama_islemi()" />
                 </div>
-                <div class="indirim"><input id="indirim" class="indirim" name="indirim" value="0" type="number" placeholder="{% trans 'İndirim gir %' %}"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
-                <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="{% trans 'Açıklama Giriniz' %}"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
+                <div class="bfiyat">
+                    <input id="bfiyatInput" hidden value="{{veri.tutar |stringformat:'.2f'}}" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                    
+                </div>
+                
+                
             </div>
         </div>
     </div>
-    <div class="addNewItem">
-        <span>{% trans 'Yeni Satır Ekle' %}</span>
-    </div>
+    
 </div>
 
 <div class="card hesaplar">

@@ -2951,6 +2951,51 @@ def gider_ekle(request):
     content["cari_bilgileri"] = cari_bilgileri
     return render(request,"muhasebe_page/gider_faturasi.html",content)
 #
+# Personel Gider Faturası Kesme
+def personel_gider_faturasi_kesme(request,id):
+    content = sozluk_yapisi()
+    avans_mi_maas_mi = get_object_or_404(calisanlar_calismalari_odemeleri,id = id)
+    if super_admin_kontrolu(request):
+        profile =Kasa.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        urunler_bilgisi = ""
+        cari_bilgileri = ""
+        kategori_bilgisi =""
+        etiketler =  ""
+
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gider_faturasi_kesme_izni:
+                    kullanci = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanci = request.user
+        if avans_mi_maas_mi.odeme_turu:
+            profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = kullanci,avans_icin_kullan = True)
+            urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = kullanci,avans_icin_kullan = True).last()
+            cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = kullanci)
+            kategori_bilgisi = gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = kullanci,avans_icin_kullan = True)
+            etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = kullanci,avans_icin_kullan = True)
+        else:
+            profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = kullanci,maas_icin_kullan = True)
+            urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = kullanci,maas_icin_kullan = True).last()
+            cari_bilgileri = cari.objects.filter(cari_kart_ait_bilgisi = kullanci)
+            kategori_bilgisi = gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = kullanci,maas_icin_kullan = True)
+            etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = kullanci,maas_icin_kullan = True)
+    content["veri"] = avans_mi_maas_mi
+    content["gelir_kategoerisi"] = kategori_bilgisi
+    content["gelir_etiketi"] = etiketler
+    content["kasa"] = profile
+    content["urunler"]  = urunler_bilgisi
+    content["cari_bilgileri"] = cari_bilgileri
+    return render(request,"muhasebe_page/gider_faturasi_personel_kesimi.html",content)
+#
 def gider_ekle_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
