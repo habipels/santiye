@@ -1,0 +1,81 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% block sidebar %}
+<form autocomplete="off"class="tablelist-form"  method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="main-content">
+        <div class="page-content options">
+            <div class="container-fluid">
+                <div class="row">
+                    
+
+                    <div  class="col-sm-12" >
+                        <label>{% trans 'Fatura Logosu' %}</label>
+                        <input type="file" class="form-control" id="inputGroupFile03" name="dark_logo"
+                            aria-describedby="inputGroupFileAddon03" aria-label="Upload">
+                    </div>
+                    
+                    {% if faturalar_bilgisi != "0" %}
+                    <div  class="col-sm-12" >
+                        <label>{% trans 'Şirket Adresi' %}</label>
+                        <input type="text" value="{{faturalar_bilgisi.adress}}" class="form-control" id="inputGroupFile03" name="adres">
+                    </div>
+                    <div  class="col-sm-12" >
+                        <label>{% trans 'Email Adresi' %}</label>
+                        <input type="text" value="{{faturalar_bilgisi.email}}" class="form-control" id="inputGroupFile03" name="emailadresi">
+                    </div>
+                    <div  class="col-sm-12" >
+                        <label>{% trans 'Telefon Adresi' %}</label>
+                        <input type="text" value="{{faturalar_bilgisi.telefon}}" class="form-control" id="inputGroupFile03" name="telefonadresi">
+                    </div>
+                    {% else %}
+                    <div  class="col-sm-12" >
+                        <label>{% trans 'Şirket Adresi' %}</label>
+                        <input type="text" class="form-control" id="inputGroupFile03" name="adres">
+                    </div>
+                    <div  class="col-sm-12" >
+                        <label>{% trans 'Email Adresi' %}</label>
+                        <input type="text" class="form-control" id="inputGroupFile03" name="emailadresi">
+                    </div>
+                    <div  class="col-sm-12" >
+                        <label>{% trans 'Telefon Adresi' %}</label>
+                        <input type="text" class="form-control" id="inputGroupFile03" name="telefonadresi">
+                    </div>
+                    {% endif %}
+                    
+                    <div  class="col-sm-12 mb-5 ">
+                        {% if fatura_icerigi == "0" %}
+                        <label>{% trans 'Fatura Gider Etiketi' %}</label>
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gideretiketi" value="E">
+                        <label>{% trans 'Fatura Gelir Etiketi' %}</label>
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gelir_etiketi" value="I">
+                        {% else %}
+                        <label>{% trans 'Fatura Gider Etiketi' %}</label>
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gideretiketi" value="{{fatura_icerigi.gider_etiketi}}">
+                        <label>{% trans 'Fatura Gelir Etiketi' %}</label>
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gelir_etiketi" value="{{fatura_icerigi.gelir_etiketi}}">
+                        {% endif %}
+                        
+                    </div>
+                    <input type="submit" class="btn btn-success waves-effect waves-light" value="{% trans 'Kaydet' %}">
+
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</form>
+{% endblock sidebar %}

@@ -1,0 +1,219 @@
+{% extends "homebase.html" %}
+{% load static  %}
+{% load i18n %}
+{% load custom_tags %}
+{% block head %}
+
+<link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css" />
+{% endblock head %}
+{% block sidebar %}
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">{% trans "Cariler" %}</h4>
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans "Dashboard" %}</a></li>
+                                <li class="breadcrumb-item active">{% trans "Cariler" %}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <div class="row">
+                <div class="cariler-container">
+                    <div class="filter">
+                        <div class="search">
+                        
+                            <input type="search" name="search" placeholder='{% trans "Ünvan veya VKN ile ara..." %}' />
+                        
+                            <h2 class="filtreBtn"><span class="mdi mdi-filter"></span>{% trans "Filtre" %}</h2>
+                            <h2 class="durumBtn">{% trans "AKTİF" %}</h2>
+                            <span class="mdi mdi-magnify"></span>
+                            <div class="filtreModal">
+                                <ul>
+                                    <li><a href="">{% trans "Kart Türü" %}</a></li>
+                                    <li><a href="">{% trans "Kategori" %}</a></li>
+                                    <li><a href="">{% trans "Grup" %}</a></li>
+                                </ul>
+                            </div>
+                            <div class="durumModal">
+                                <div class="title">
+                                    <h2>{% trans "Durum" %}</h2>
+                                    <span class="mdi mdi-close-circle-outline"></span>
+                                </div>
+                                <ul>
+                                    <li><input id="aktif" type="radio" name="durum" value="Aktif" /><label for="aktif">{% trans "Aktif" %}</label></li>
+                                    <li><input id="arsivlenen" type="radio" name="durum" value="Arşivlenen" /><label for="arsivlenen">{% trans "Arşivlenen" %}</label></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" class="cari-tanimla-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#cariEkleModal"><i class="ri-add-line align-bottom me-1"></i>{% trans "Cari Tanımla" %}</button>
+                        
+                    </div>
+                    <div class="cariler-table">
+                        <div class="table-head">
+                            <input type="checkbox" />
+                            <h2 class="title-unvan">{% trans "ÜNVAN" %}</h2>
+                            <h2>{% trans "TELEFON" %}</h2>
+                            <h2>{% trans "BAKİYE" %}</h2>
+                        </div>
+                        <div class="table-body">
+                         {% for i in santiyeler %} 
+                            <div class="table-item">
+                                <a href="/{{dil}}{% url 'accounting:cari_views_details' i.id %}">
+                                        {% if request.user.is_superuser %}
+                                            <span class="cari">{{i.cari_kart_ait_bilgisi.first_name}}</span>
+                                        {% endif %}
+                                    <input type="checkbox" />
+                                    <h2 class="unvan-value">
+                                        <span class="mdi mdi-dock-window"></span>
+                                        {{i.cari_adi}}
+                                    </h2>
+                                    <h2 class="telefon-value">
+                                        <span class="mdi mdi-truck-outline"></span>
+                                        {% if i.telefon_numarasi %}
+                                            {{i.telefon_numarasi}}
+                                        {% else %}
+                                        {% endif %}
+                                        
+                                    </h2>
+                                    <h2 class="bakiye-value">
+                                        {% cari_islemleri i as bilgi_veriyor %}
+                                                    
+                                            {{ bilgi_veriyor.sonuc }}
+                                    </h2>
+                                </a>
+                            </div>
+                        {% endfor %}
+                            
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <div class="export"><span class="mdi mdi-file-export-outline">{% trans "DIŞA AKTAR" %}</span></div>
+                        <div class="table-count"><span> </span> {% trans "CARİ KARTI" %}</div>
+                        <div class="paginations">
+                            <div class="listelemeSayisi">
+                                <div class="pagination-wrap hstack gap-2">
+                                            <ul class="pagination pagination-m justify-content-center">
+
+                                                {% if medya.has_previous %}
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                                
+                                                  {% if medya.number > 3 %}
+                                                
+                                                    <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                    {% if medya.number > 4 %}
+                                                      <li class="page-item"><span class="page-link">...</span></li>
+                                                    {% endif %}
+                                                  {% endif %}
+                                                {% endif %}
+                                                
+                                                {% for num in medya.paginator.page_range %}
+                                                  {% if medya.number == num %}
+                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% endif %}
+                                                {% endfor %}
+                                                
+                                                {% if medya.has_next %}
+                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                    <li class="page-item"><span class="page-link">...</span></li>
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% endif %}
+                                                
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                                {% endif %}
+                                                </ul>
+                                        </div>
+                            </div>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end row-->
+        </div>
+    </div>
+    
+ <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+</div>
+
+<script src="{% static '' %}assets/libs/sweetalert2/sweetalert2.min.js"></script>
+    <div class="modal fade" id="cariEkleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel">{% trans "Cari Ekle" %}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+                            <form autocomplete="off"class="tablelist-form" method="post" action="/{{dil}}{% url 'accounting:cari_ekle' %}"  autocomplete="off">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    {% if request.user.is_superuser %}
+                                            <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans "Hesap Seç" %}</label>
+                                            <select class="form-control" name="kullanici" id="date-field">
+                                                <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.first_name}}</option>
+                                                {% for j in kullanicilar %}
+                                                    <option value="{{j.id}}">{{j.first_name}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                        {% else %}
+                                        {% endif %}
+
+                                    <div class="mb-3">
+                                        <label for="customername-field" class="form-label">{% trans "Cari" %}</label>
+                                        <input name="cariadi" type="text" id="customername-field" class="form-control" placeholder='{% trans "Cari" %}' required />
+                                        <div class="invalid-feedback">{% trans "Lütfen Boş Bırakmayınız" %}</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="customername-field" class="form-label">{% trans "Cari Telefon" %}</label>
+                                        <input name="bakiye" value="+" type="number" id="customername-field" class="form-control" placeholder='{% trans "Cari Telefon Numarası" %}' required />
+                                        <div class="invalid-feedback">{% trans "Lütfen Boş Bırakmayınız" %}</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="customername-field" class="form-label">{% trans "Açıklama" %}</label>
+                                        <input type="text" name="konumu" id="customername-field" class="form-control" placeholder='{% trans "Açıklama" %}' required />
+                                        <div class="invalid-feedback">{% trans "Lütfen Boş Bırakmayınız" %}</div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans "Close" %}</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans "Ekle" %}</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+{% endblock sidebar %}
+

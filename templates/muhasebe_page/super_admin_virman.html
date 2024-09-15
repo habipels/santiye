@@ -1,0 +1,75 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% block sidebar %}
+<div class="vertical-overlay"></div>
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form autocomplete="off"class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3">
+                                        <label for="gonderen" class="form-label">{% trans 'Gönderen' %}</label>
+                                        <select id="gonderen" name="gonderen" class="form-control">
+                                            <option selected disabled>{% trans 'Seçiniz..' %}</option>
+                                                {% for i in santiyeler %}
+                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">{% trans 'Lütfen Boş Bırakmayınız' %}</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="alici"  class="form-label">{% trans 'Alıcı' %}</label>
+                                        <select id="alici" name="alici" class="form-control">
+                                            <option selected disabled>{% trans 'Seçiniz..' %}</option>
+                                            {% for i in santiyeler %}
+                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">{% trans 'Lütfen Boş Bırakmayınız' %}</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="tarih" class="form-label">{% trans 'Tarih' %}</label>
+                                        <input id="tarih" name="islemtarihi"  type="date" class="form-control" />
+                                        <div class="invalid-feedback">{% trans 'Lütfen Boş Bırakmayını' %}z</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="tutar" class="form-label">{% trans 'Tutar' %}</label>
+                                        <input id="tutar" name="tutar" value="0" step="0.01" type="text" class="form-control" placeholder="{% trans 'Tutar giriniz' %}"/>
+                                        <div class="invalid-feedback">{% trans 'Lütfen Boş Bırakmayınız' %}</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="aciklama" class="form-label">{% trans 'Açıklama' %}</label>
+                                        <textarea id="aciklama" name="aciklama" type="text" class="form-control" placeholder="{% trans 'Açıklama' %}"></textarea>
+                                        <div class="invalid-feedback">{% trans 'Lütfen Boş Bırakmayınız' %}</div>
+                                    </div>
+                            <input type="submit" class="btn btn-success waves-effect waves-light" value="{% trans 'Virmanı Yap' %}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        
+</div>
+
+{% endblock sidebar %}
+

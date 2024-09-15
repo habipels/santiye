@@ -1,0 +1,484 @@
+{% load i18n %}
+{% load static %}
+{% load custom_tags %}
+    <aside class="sidebar">
+        <div class="sidebar-toggle"><i class="icon icon-sidebar-right"></i><i class="icon icon-sidebar-left"></i></div>
+    <div class="sidebar-logo">
+        <a href="/" class="logo-link">
+            <div class="sidebar-logo-main-part"></div>
+            <div class="sidebar-logo-second-part"></div>
+            <div class="sidebar-logo-large-parts">
+                <img src="{% static 'go/images/half-o.png' %}" alt="Half Logo">
+                <img src="{% static 'go/images/o.png' %}" alt="Full Logo">
+            </div>
+        </a>
+    </div>
+
+        <div class="sidebar-navs">
+<ul class="sidebar-nav">
+    <li class="{% if request.path == '/' %}active{% endif %}">
+        <a href="/{{dil}}/"><i class="icon icon-dashboard"></i> <span>{% trans 'Dashboard' %}</span></a>
+    </li>
+
+    {% if request.user.is_superuser %}
+    {% url 'main:santiye_ekle' as santiye_ekle_url %}
+    {% url 'main:santiye_listele' as santiye_listele_url %}
+    {% url 'main:site_ayarlari' as site_ayarlari_url %}
+    {% url 'main:dil_ayari_listele' as dil_ayari_listele_url %}
+    <li class="{% if request.path == santiye_ekle_url or request.path == santiye_listele_url or request.path == site_ayarlari_url or request.path == dil_ayari_listele_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-super-admin"></i> <span>{% trans 'Super Admin' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == santiye_ekle_url %}active{% endif %}">
+                <a href="{{ santiye_ekle_url }}" class="sidebar-sub-item">{% trans 'Şantiye Ekle' %}</a>
+            </li>
+            <li class="{% if request.path == santiye_listele_url %}active{% endif %}">
+                <a href="{{ santiye_listele_url }}" class="sidebar-sub-item">{% trans 'Şantiye Ayarları' %}</a>
+            </li>
+            <li class="{% if request.path == site_ayarlari_url %}active{% endif %}">
+                <a href="{{ site_ayarlari_url }}" class="sidebar-sub-item">{% trans 'Sistem Ayarları' %}</a>
+            </li>
+            <li class="{% if request.path == dil_ayari_listele_url %}active{% endif %}">
+                <a href="{{ dil_ayari_listele_url }}" class="sidebar-sub-item">{% trans 'Dil Ayarları' %}</a>
+            </li>
+        </ul>
+    </li>
+    {% endif %}
+
+    {% url 'main:santiye_kalem_ve_blog' as santiye_kalem_ve_blog_url %}
+    <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>Raporlar</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
+                <a href="{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Şantiye Raporları' %}</a>
+            </li>
+
+            {% url 'accounting:gelirler_ozeti' as gelirler_ozeti_url %}
+            {% url 'accounting:giderler_ozeti' as giderler_ozeti_url %}
+            {% url 'accounting:hesap_ekstra_durumu' as hesap_ekstra_durumu_url %}
+            {% url 'accounting:virman_gondermeler' as virman_gondermeler_url %}
+            <li class="{% if request.path == gelirler_ozeti_url or request.path == giderler_ozeti_url or request.path == hesap_ekstra_durumu_url or request.path == virman_gondermeler_url %}active{% endif %}">
+                <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Finans Raporları' %}</span> <i class="icon icon-caret"></i></a>
+                <ul class="sidebar-sub-menu">
+                    <li class="{% if request.path == gelirler_ozeti_url %}active{% endif %}">
+                        <a href="{{ gelirler_ozeti_url }}" class="sidebar-sub-item">{% trans 'Gelir Raporu ' %}</a>
+                    </li>
+                    <li class="{% if request.path == giderler_ozeti_url %}active{% endif %}">
+                        <a href="{{ giderler_ozeti_url }}" class="sidebar-sub-item">{% trans 'Gider Raporu ' %}</a>
+                    </li>
+                    <li class="{% if request.path == hesap_ekstra_durumu_url %}active{% endif %}">
+                        <a href="{{ hesap_ekstra_durumu_url }}" class="sidebar-sub-item">{% trans 'Hesap Ekstresi ' %}</a>
+                    </li>
+                    <li class="{% if request.path == virman_gondermeler_url %}active{% endif %}">
+                        <a href="{{ virman_gondermeler_url }}" class="sidebar-sub-item">{% trans 'Virman Raporu ' %}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    {% url 'main:santiye_kalem_ve_blog' as santiye_kalem_ve_blog_url %}
+    {% url 'main:yapilacaklar' as yapilacaklar_url %}
+    {% url 'main:depolama_sistemim' as depolama_sistemim_url %}
+    {% url 'main:taseron_sayfasi' as taseron_sayfasi_url %}
+    {% url 'main:ust_yuklenici_sayfasi' as ust_yuklenici_sayfasi_url %}
+    {% url 'main:hakedis_sayfasi' as hakedis_sayfasi_url %}
+    {% url 'main:sozlesmler_sayfasi' as sozlesmler_sayfasi_url %}
+
+    <li class="{% if request.path == santiye_kalem_ve_blog_url or request.path == yapilacaklar_url or request.path == depolama_sistemim_url or request.path == taseron_sayfasi_url or request.path == ust_yuklenici_sayfasi_url or request.path == hakedis_sayfasi_url or request.path == sozlesmler_sayfasi_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>{% trans 'Şantiye Yönetimi' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
+                <a href="{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Proje Yönetimi' %}</a>
+            </li>
+            <li class="{% if request.path == yapilacaklar_url %}active{% endif %}">
+                <a href="{{ yapilacaklar_url }}" class="sidebar-sub-item">{% trans 'Görevler' %}</a>
+            </li>
+            <li class="{% if request.path == depolama_sistemim_url %}active{% endif %}">
+                <a href="{{ depolama_sistemim_url }}" class="sidebar-sub-item">{% trans 'Dosya Yöneticisi' %}</a>
+            </li>
+            <li class="{% if request.path == taseron_sayfasi_url %}active{% endif %}">
+                <a href="{{ taseron_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Taşeronlar' %}</a>
+            </li>
+            <li class="{% if request.path == ust_yuklenici_sayfasi_url %}active{% endif %}">
+                <a href="{{ ust_yuklenici_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Üst Yüklenici' %}</a>
+            </li>
+            <li class="{% if request.path == hakedis_sayfasi_url %}active{% endif %}">
+                <a href="{{ hakedis_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Hakedişler' %}</a>
+            </li>
+            <li class="{% if request.path == sozlesmler_sayfasi_url %}active{% endif %}">
+                <a href="{{ sozlesmler_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Sözleşmeler' %}</a>
+            </li>
+        </ul>
+    </li>
+
+    {% url 'accounting:gelirler_sayfasi' as gelirler_sayfasi_url %}
+    {% url 'accounting:giderler_sayfasi' as giderler_sayfasi_url %}
+    {% url 'accounting:kasa' as kasa_url %}
+    {% url 'accounting:cari' as cari_url %}
+    <li class="{% if request.path == gelirler_sayfasi_url or request.path == giderler_sayfasi_url or request.path == kasa_url or request.path == cari_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-muhasebe"></i> <span>{% trans 'Muhasebe' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == gelirler_sayfasi_url %}active{% endif %}">
+                <a href="{{ gelirler_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Gelir Faturası' %}</a>
+            </li>
+            <li class="{% if request.path == giderler_sayfasi_url %}active{% endif %}">
+                <a href="{{ giderler_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Gider Faturası' %}</a>
+            </li>
+            <li class="{% if request.path == kasa_url %}active{% endif %}">
+                <a href="{{ kasa_url }}" class="sidebar-sub-item">{% trans 'Kasa' %}</a>
+            </li>
+            <li class="{% if request.path == cari_url %}active{% endif %}">
+                <a href="{{ cari_url }}" class="sidebar-sub-item">{% trans 'Cari Hesapları' %}</a>
+            </li>
+        </ul>
+    </li>
+
+    {% url 'users:personeller_sayfasi' as personeller_sayfasi_url %}
+    {% url 'users:personeller_puantaj_sayfasi' as personeller_puantaj_sayfasi_url %}
+    {% url 'users:personeller_kategori_sayfalari' as personeller_kategori_sayfalari_url %}
+    {% url 'users:personeller_depertman_sayfalari' as personeller_depertman_sayfalari_url %}
+    <li class="{% if request.path == personeller_sayfasi_url or request.path == personeller_puantaj_sayfasi_url or request.path == personeller_kategori_sayfalari_url or request.path == personeller_depertman_sayfalari_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-profile"></i> <span>{% trans 'Çalışan Yönetimi' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == personeller_sayfasi_url %}active{% endif %}">
+                <a href="{{ personeller_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Çalışanlar' %}</a>
+            </li>
+            <li class="{% if request.path == personeller_puantaj_sayfasi_url %}active{% endif %}">
+                <a href="{{ personeller_puantaj_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Puantaj' %}</a>
+            </li>
+            <li class="{% if request.path == personeller_kategori_sayfalari_url %}active{% endif %}">
+                <a href="{{ personeller_kategori_sayfalari_url }}" class="sidebar-sub-item">{% trans 'Pozisyonlar' %}</a>
+            </li>
+            <li class="{% if request.path == personeller_depertman_sayfalari_url %}active{% endif %}">
+                <a href="{{ personeller_depertman_sayfalari_url }}" class="sidebar-sub-item">{% trans 'Departmanlar' %}</a>
+            </li>
+        </ul>
+    </li>
+
+    {% url 'accounting:satin_alma_talabi' as satin_alma_talabi_url %}
+    {% url 'accounting:satin_alma_talabi_onaylama' as satin_alma_talabi_onaylama_url %}
+    {% url 'accounting:satin_alma_' as satin_alma_url %}
+    {% url 'accounting:zimmetler' as zimmetler_url %}
+    {% url 'accounting:stok' as stok_url %}
+    <li class="{% if request.path == satin_alma_talabi_url or request.path == satin_alma_talabi_onaylama_url or request.path == satin_alma_url or request.path == zimmetler_url %}active{% endif %}">
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-stok"></i> <span>{% trans 'Satın Alma' %}</span> <i class="icon icon-caret"></i></a>
+        <ul class="sidebar-sub-menu">
+            <li class="{% if request.path == satin_alma_talabi_url %}active{% endif %}">
+                <a href="{{ satin_alma_talabi_url }}" class="sidebar-sub-item">{% trans 'Talep Girişi' %}</a>
+            </li>
+            <li class="{% if request.path == satin_alma_talabi_onaylama_url %}active{% endif %}">
+                <a href="{{ satin_alma_talabi_onaylama_url }}" class="sidebar-sub-item">{% trans 'Onay Ekranı' %}</a>
+            </li>
+            <li class="{% if request.path == satin_alma_url %}active{% endif %}">
+                <a href="{{ satin_alma_url }}" class="sidebar-sub-item">{% trans 'Sipariş Girişi' %}</a>
+            </li>
+            <li class="{% if request.path == zimmetler_url %}active{% endif %}">
+                <a href="{{ zimmetler_url }}" class="sidebar-sub-item">{% trans 'Zimmetler' %}</a>
+            </li>
+            <li class="{% if request.path == stok_url %}active{% endif %}">
+                <a href="{{ stok_url }}" class="sidebar-sub-item">{% trans 'Stok' %}</a>
+            </li>
+        </ul>
+    </li>
+
+    <hr>
+
+    <ul class="sidebar-nav">
+        <li><a href="#"><i class="icon icon-notifications"></i> <span>{% trans 'Bildirimler' %}</span></a></li>
+        <li><a class="sidebar-sub-toggle" href="#"><i class="icon icon-settings"></i> <span>{% trans 'Ayarlar' %}</span> <i class="icon icon-caret"></i></a>
+            <ul class="sidebar-sub-menu">
+                {% url 'users:kullanicilarim' as kullanicilarim_url %}
+                {% url 'main:kullanici_yetkileri' as kullanici_yetkileri_url %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Kullanıcı Ayarları' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li class="{% if request.path == kullanicilarim_url %}active{% endif %}">
+                            <a href="{{ kullanicilarim_url }}" class="sidebar-sub-item">{% trans 'Kullanıcılar' %}</a>
+                        </li>
+                        <li class="{% if request.path == kullanici_yetkileri_url %}active{% endif %}">
+                            <a href="{{ kullanici_yetkileri_url }}" class="sidebar-sub-item">{% trans 'Kullanıcı Yetkileri' %}</a>
+                        </li>
+                    </ul>
+                </li>
+
+                {% url 'main:proje_tipi_' as proje_tipi_url %}
+                {% url 'main:santiye_projesi_ekle_' as santiye_projesi_ekle_url %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Şantiye Ayarları' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li class="{% if request.path == proje_tipi_url %}active{% endif %}">
+                            <a href="{{ proje_tipi_url }}" class="sidebar-sub-item">{% trans 'Proje Tipi' %}</a>
+                        </li>
+                        <li class="{% if request.path == santiye_projesi_ekle_url %}active{% endif %}">
+                            <a href="{{ santiye_projesi_ekle_url }}" class="sidebar-sub-item">{% trans 'Şantiye' %}</a>
+                        </li>
+                    </ul>
+                </li>
+
+                {% url 'accounting:muhasebe_ayarlari' as muhasebe_ayarlari_url %}
+                {% url 'accounting:gelir_kategorisi_tipleri' as gelir_kategorisi_tipleri_url %}
+                {% url 'accounting:gider_kategorisi_tipleri' as gider_kategorisi_tipleri_url %}
+                {% url 'accounting:gelir_etiketi_tipleri' as gelir_etiketi_tipleri_url %}
+                {% url 'accounting:gider_etiketi_tipleri' as gider_etiketi_tipleri_url %}
+                {% url 'accounting:urun_viev' as urun_viev_url %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Muhasebe Ayarları' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li class="{% if request.path == muhasebe_ayarlari_url %}active{% endif %}">
+                            <a href="{{ muhasebe_ayarlari_url }}" class="sidebar-sub-item">{% trans 'Muhasebe Ayarları' %}</a>
+                        </li>
+                        <li class="{% if request.path == gelir_kategorisi_tipleri_url %}active{% endif %}">
+                            <a href="{{ gelir_kategorisi_tipleri_url }}" class="sidebar-sub-item">{% trans 'Gelir Kategorileri' %}</a>
+                        </li>
+                        <li class="{% if request.path == gider_kategorisi_tipleri_url %}active{% endif %}">
+                            <a href="{{ gider_kategorisi_tipleri_url }}" class="sidebar-sub-item">{% trans 'Gider Kategorileri' %}</a>
+                        </li>
+                        <li class="{% if request.path == gelir_etiketi_tipleri_url %}active{% endif %}">
+                            <a href="{{ gelir_etiketi_tipleri_url }}" class="sidebar-sub-item">{% trans 'Gelir Etiketleri' %}</a>
+                        </li>
+                        <li class="{% if request.path == gider_etiketi_tipleri_url %}active{% endif %}">
+                            <a href="{{ gider_etiketi_tipleri_url }}" class="sidebar-sub-item">{% trans 'Gider Etiketleri' %}</a>
+                        </li>
+                        <li class="{% if request.path == urun_viev_url %}active{% endif %}">
+                            <a href="{{ urun_viev_url }}" class="sidebar-sub-item">{% trans 'Ürünler' %}</a>
+                        </li>
+                    </ul>
+                </li>
+
+                {% url 'accounting:urunler_kategorisi' as urunler_kategorisi_url %}
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Satın Alma Ayarları' %}</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li class="{% if request.path == urunler_kategorisi_url %}active{% endif %}">
+                            <a href="{{ urunler_kategorisi_url }}" class="sidebar-sub-item">{% trans 'Ürün Kategorileri' %}</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li><a href="#"><i class="icon icon-help"></i> <span>{% trans 'Destek ve Yardım' %}</span></a></li>
+    </ul>
+</ul>
+
+        </div>
+    </aside>
+
+    <div class="sidebar-mobile-toggle">
+        <img src="{% static 'go/images/logo-sm.png' %}" class="sidebar-mobile-sm-logo" alt="" />
+        <i class="icon icon-chevron-right"></i>
+    </div>
+
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarToggle = document.querySelector(".sidebar-toggle");
+        let sidebarMobileToggle = document.querySelector(".sidebar-mobile-toggle");
+        sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-collapsed");
+        })
+        sidebarMobileToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-collapsed");
+        })
+
+        $('.sidebar-sub-toggle').click(function () {
+            $(this).next('.sidebar-sub-menu').slideToggle();
+            $(this).next('.sidebar-sub-menu').toggleClass("open");
+            $(this).find('.icon-caret').toggleClass('rotate');
+        });
+    </script>
+
+    <header>
+        <div class="header-search">
+            <input type="search" name="search" id="search" placeholder="Uygulama içerisinde ara">
+            <button><i class="icon icon-search"></i></button>
+        </div>
+        <div class="header-actions">
+            <div class="header-actions-dropdown">
+                <a href="#"><i class="icon icon-dashboard"></i></a>
+                <div class="actions-dropdown-content">
+                    <div class="actions-dropdown-content-title">
+                        Web Apps
+                    </div>
+                    <div class="actions-dropdown-content-apps">
+                        <a href="#" class="adc-app">
+                            <div class="adc-app-icon">
+                                <img src="{% static 'go/images/google-play.png' %}" alt="Google Play">
+                            </div>
+                            <div class="adc-app-title">Android</div>
+                        </a>
+                        <a href="#" class="adc-app">
+                            <div class="adc-app-icon">
+                                <img src="{% static 'go/images/appstore.png' %}" alt="App Store">
+                            </div>
+                            <div class="adc-app-title">IOS</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" onclick="toggleFullScreen()"><i class="icon icon-fullscreen"></i></a>
+            <a href="#"><i class="icon icon-moon"></i></a>
+            <div class="header-actions-dropdown notifications-dropdown">
+                <a href="#"><i class="icon icon-notification"></i></a>
+                <div class="actions-dropdown-content">
+                    <div class="actions-dropdown-content-title">
+                        Bildirimler
+                        <span>12 adet yeni bildiriminiz var.</span>
+                    </div>
+                    <div class="notifications-tabs">
+                        <button onclick="notificationTab(event, 'notification-all')"
+                            class="notification-tab-btn active">Hepsi
+                            <span>22</span></button>
+                        <button onclick="notificationTab(event, 'notification-unread')"
+                            class="notification-tab-btn">Okunmamış <span>3</span></button>
+                    </div>
+                    <div class="notifications" id="notification-all">
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">İncele</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">İncele</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-success">Görevinizi tamamladınız</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">Ödeme tarihini geçen bir
+                                    faturanız bulunmaktadır.</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">İncele</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notifications" id="notification-unread" style="display: none;">
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">İncele</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        function notificationTab(e, id) {
+                            var i, x, notificationTabBtn;
+                            x = document.getElementsByClassName("notifications");
+                            for (i = 0; i < x.length; i++) {
+                                x[i].style.display = "none";
+                            }
+                            notificationTabBtn = document.getElementsByClassName("notification-tab-btn");
+                            for (i = 0; i < x.length; i++) {
+                                notificationTabBtn[i].className = notificationTabBtn[i].className.replace(" active", "");
+                            }
+                            document.getElementById(id).style.display = "block";
+                            e.currentTarget.className += " active";
+                        }
+                    </script>
+
+                    <div class="notifications-footer">
+                        <a href="#">Tümünü Gör <i class="icon icon-forward"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="header-language-wrapper">
+            <div class="header-language">
+            {% for i in diller  %}
+                            {% if i.dil_kisaltması == dil %}
+                <img id="" src="{{i.dil_bayragi_icon.url}}" alt="Header Language" height="20" class="header-language-flag">
+                <span>Türkçe</span>
+                <i class="icon icon-chevron-bottom"></i>
+                  {% else %}
+                            {% endif %}
+                        {% endfor %}
+            </div>
+            <div class="header-language-dropdown">
+            {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+
+                    {% for lang in languages %}
+                        {% for i in diller  %}
+                            {% if i.dil_kisaltması == lang.code %}
+                <div class="language-selector">
+                    <a href="/{{ lang.code }}/{{linki}}" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
+                                <img src="{{i.dil_bayragi_icon.url}}" alt="TR" height="18px">
+                                <span>{{ lang.name_local }}</span>
+                                </a>
+                    
+                </div>
+                    {% else %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+            </div>
+        </div>
+        <div class="header-profile-wrapper">
+            <div class="header-profile">
+                <div class="profile-avatar">
+                    <img src="{% static 'go/images/avatar.png' %}" alt="Avatar">
+                    
+                </div>
+                <div class="profile-title">
+                    <span>{% trans 'Hoşgeldin' %} 👋</span>
+                    {{request.user.last_name}}
+                </div>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+            <div class="header-profile-dropdown">
+                <div class="profile-dropdown-title">
+                    {{request.user.last_name}}
+                    <span>{{request.user.first_name}}</span>
+                </div>
+                <div class="profile-dropdown-actions">
+                   <a href="/{{dil}}{% url 'user:profil_bilgisi' %}"><i class="icon icon-profile"></i> {% trans 'Profil' %}</a>
+                    <a href="/{{dil}}{% url 'users:profile_edit_kismi' %}"><i class="icon icon-settings"></i> {% trans 'Ayarlar' %}</a>
+                    <a href="/{{dil}}{% url 'users:unlock' %}"><i class="icon icon-lock"></i> {% trans 'Ekranı kilitle' %}</a>
+                </div>
+                <div class="profile-dropdown-logout">
+                    <a href="/{{dil}}{% url 'users:logout' %}">{% trans 'Çıkış yap' %}</a>
+                </div>
+            </div>
+        </div>
+    </header>

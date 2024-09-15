@@ -1,0 +1,1037 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<style>
+    .ui-menu .ui-menu-item a{
+    background:red;
+    height:10px;
+    font-size:8px;
+
+}
+</style>
+<!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static '' %}assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static '' %}assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static '' %}assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static '' %}assets/css/app.min.css" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static '' %}assets/css/custom.min.css" rel="stylesheet" type="text/css">
+    <link href="{% static '' %}assets/css/custom.css" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    {% endblock head %}
+{% block sidebar %}
+<!-- ============================================================== -->
+<form autocomplete="off"method="post" action="/{{dil}}{% url 'accounting:gider_faturasi_kaydet' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">{% trans 'Alış Ekle' %}</h4>
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                                    <li class="breadcrumb-item active">{% trans 'Satış Ekle' %}</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div id="satis-ekle" class="row">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="title">{% trans 'Genel Bilgiler' %}</h2>
+            <div class="buttons">
+                <a class="btn btn-warning btn-label waves-effect waves-light" href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}">
+                    <i class="ri-error-warning-line label-icon align-middle fs-16 me-2"></i> {% trans 'Vazgeç' %}
+                </a>
+                <button type="submit" class="btn btn-success btn-label waves-effect waves-light">
+                    <i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> {% trans 'Kaydet' %}
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- Cari Kutusu -->
+                <div class="col-md-2">
+                    <div class="input-item musteri-input">
+                        <label>{% trans 'Cari' %}</label>
+                        <input type="search" required name="musteri_bilgisi" class="form-control cari" title="{% trans 'Kayıtlı cariler için cari adının ilk üç karekterini giriniz.' %}" placeholder="{% trans 'Cari Hesabı' %}" autocomplete="off">
+                    </div>
+                </div>
+
+                <!-- Düzenleme ve Vade Tarihi -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>{% trans 'Düzenleme ve Vade Tarihi' %}</label>
+                        <input type="text" required name="daterange" class="form-control" value="{% tarih_cek %}">
+                    </div>
+                </div>
+
+                <!-- Döviz Kuru ve Toplam IQD Kutusu -->
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{% trans 'Döviz Kuru (Sadece IQD)' %}</label>
+                                <div class="input-group">
+                                    <input type="text" id="doviz_kuru" name="doviz_kuru" class="form-control" 
+                                        placeholder="{% trans 'Örn: 1450 veya 1450.06' %}" 
+                                        pattern="\d+(\.\d{1,2})?" 
+                                        title="{% trans 'Lütfen sadece sayısal değer giriniz' %}" 
+                                        oninput="hesaplama_islemi()" />
+                                    <span class="input-group-text">{% trans 'IQD' %}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{% trans 'Toplam IQD' %}</label>
+                                <div class="input-group">
+                                    <input type="text" id="toplam_iqd" name="toplam_iqd" class="form-control" disabled />
+                                    <span class="input-group-text">{% trans 'IQD' %}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fatura No Kutusu -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>{% trans 'Fatura No' %}</label>
+                        {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.gider_faturasi_kesme_izni %}
+                                <input type="text" required class="form-control" value="{% gider_faturasi_no request.user.kullanicilar_db.id %}" disabled />
+                        <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no request.user.kullanicilar_db.id %}" />                                                
+                        {% else %}
+                                                                                        
+                        {% endif %}
+                        {% else %}
+                               <input type="text" required class="form-control" value="{% gider_faturasi_no request.user.id %}" disabled />
+                        <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no request.user.id %}" />                                                 
+                        {% endif %}
+                        
+                    </div>
+                </div>
+
+                <!-- Açıklama Kutusu -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>{% trans 'Açıklama' %}</label>
+                        <input type="text" required name="cari_aciklma" class="form-control" placeholder="{% trans 'Açıklama' %}">
+                    </div>
+                </div>
+
+                <!-- Kategori Kutusu -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>{% trans 'Kategori' %}</label>
+                        <div class="input-group" id="kategori">
+                            <select required name="gelir_kategorisi" class="form-select">
+                                {% for i in gelir_kategoerisi %}
+                                <option value="{{i.id}}">{{i.gider_kategori_adi}}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#showModal">
+                                <i class="ri-add-line align-bottom me-1"></i>{% trans 'Ekle' %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Etiket ve Dosya Yükleme Kutuları -->
+                <div class="col-md-3">
+                    <div class="input-item etiket">
+                        <label>{% trans 'Etiketler' %}</label>
+                        <div id="etkett" class="d-flex align-items-center">
+                            <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
+                                {% for i in gelir_etiketi %}
+                                <option value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#gideretiketiekle">
+                                <i class="ri-add-line align-bottom me-1"></i>{% trans 'Ekle' %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dosya Yükleme Kutusu -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>{% trans 'Belge Yükle' %}</label>
+                        <input type="file"  name="fatura_belgesi" class="form-control" />
+                    </div>
+                </div>
+
+            </div>
+
+
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <div class="title"><h2>{% trans 'Fatura Kalemleri' %}</h2></div>
+    </div>
+    <div class="fatura-tablosu-basliklar">
+        <h2 class="urun">{% trans 'HİZMET / ÜRÜN' %}</h2>
+        <h2 class="miktar">{% trans 'MİKTAR' %}</h2>
+        <h2 class="bfiyat">{% trans 'BİRİM FİYAT' %}</h2>
+        <h2 class="toplam">{% trans 'TOPLAM' %}</h2>
+    </div>
+    <div class="card-body">
+        <div class="form2" id="form2" >
+            <div class="table-item">
+                <div class="urun">
+                    <input type="search" name="urunadi" class="den" required id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
+                </div>
+                <div class="miktar">
+                    <input class="miktarInput" name="miktari" type="number" value="1" oninput="hesaplama_islemi()" />
+                </div>
+                <div class="bfiyat">
+                    <input id="bfiyatInput" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                    <span class="mdi mdi-currency-usd"></span>
+                </div>
+                <div class="toplam">
+                    <input class="toplamInput" type="text" step="0.01" value="0" disabled/>
+                    <span class="mdi mdi-currency-usd"></span>
+                </div>
+                <div class="icons">
+                    <span class="mdi mdi-pan-left specBtn" onclick="specAc(event)"></span>
+                    <ul class="specs">
+                        <li class="addDesc" onclick="aciklamaEkle(event)">{% trans 'Açıklama Ekle' %}</li>
+                        <li class="addSale" onclick="indirimEkle(event)">{% trans 'İndirim Ekle' %}</li>
+                    </ul>
+                    <span style="display: flex !important;" class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
+                </div>
+                <div class="indirim"><input id="indirim" class="indirim" name="indirim" value="0" type="number" placeholder="{% trans 'İndirim gir %' %}"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
+                <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="{% trans 'Açıklama Giriniz' %}"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
+            </div>
+        </div>
+    </div>
+    <div class="addNewItem">
+        <span>{% trans 'Yeni Satır Ekle' %}</span>
+    </div>
+</div>
+
+<div class="card hesaplar">
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col text-center">
+                <h5 class="fw-bold">{% trans 'ARA TOPLAM' %}</h5>
+                <h2 class="fw-bold text-primary">$<span class="aratoplam">0.00</span></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <h5 class="fw-bold">{% trans 'ÖDENECEK TUTAR' %}</h5>
+                <h2 class="fw-bold text-success">$<span class="odenecektutar">0.00</span></h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+                </div>
+                <!--end row-->
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                    </div>
+                    <div class="col-sm-6">
+                        <div  class="text-sm-end d-none d-sm-block">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- end main content-->
+</form>
+<!-- JAVASCRIPT -->
+
+<script src="{% static '' %}assets/libs/simplebar/simplebar.min.js"></script>
+<script src="{% static '' %}assets/libs/node-waves/waves.min.js"></script>
+<script src="{% static '' %}assets/libs/feather-icons/feather.min.js"></script>
+<script src="{% static '' %}assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+<script src="{% static '' %}assets/js/plugins.js"></script>
+<script src="{% static '' %}assets/js/pages/satis-ekle.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<!-- Sweet Alerts js -->
+<script src="{% static '' %}assets/libs/sweetalert2/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css">
+
+<!-- App js -->
+<script src="{% static '' %}assets/js/app.js"></script>
+<!--Multi Select Date Calender-->
+<script>
+    $(function () {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        }, function (start, end, label) {
+            console.log("{% trans 'A new date selection was made' %}: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Döviz kuru değeri ayarlama
+    var dovizKuruInput = document.getElementById('doviz_kuru');
+    var dovizKuruValue = "{{ data.doviz }}"; 
+    dovizKuruInput.value = dovizKuruValue;
+
+    // Döviz kuru alanına değer girişi olduğunda
+    dovizKuruInput.addEventListener('input', function () {
+        validateDovizKuru();
+        hesaplama_islemi();
+        showToast();
+    });
+
+    // Birim fiyat (USD) değiştiğinde IQD'yi hesapla
+    document.getElementById('bfiyat_usd').addEventListener('input', function() {
+        hesaplama_islemi();
+    });
+
+    // Birim fiyat (IQD) değiştiğinde USD'yi hesapla
+    document.getElementById('bfiyat_iqd').addEventListener('input', function() {
+        hesaplama_islemi();
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    function hesaplama_islemi() {
+        var dovizKuru = parseFloat(document.getElementById('doviz_kuru').value) || 0;
+        var odenecekTutar = parseFloat(document.querySelector('.odenecektutar').textContent.replace('$', '').trim()) || 0;
+
+        if (dovizKuru && odenecekTutar) {
+            var toplamIQD = odenecekTutar * dovizKuru;
+            document.getElementById('toplam_iqd').value = toplamIQD.toFixed(2);
+        }
+    }
+
+    // Döviz kuru değiştikçe hesaplama yap
+    document.getElementById('doviz_kuru').addEventListener('input', hesaplama_islemi);
+
+    // Ürün miktarı veya fiyatı değiştiğinde hesaplama yap
+    document.querySelectorAll('.miktarInput, .bfiyatInput').forEach(function(element) {
+        element.addEventListener('input', function() {
+            // Önce ara toplamı ve ödenecek tutarı güncelleyin
+            updateTotals();
+            // Ardından IQD değerini güncelleyin
+            hesaplama_islemi();
+        });
+    });
+
+    // İlk yüklemede hesaplama yap
+    hesaplama_islemi();
+});
+
+function updateTotals() {
+    var brimtutar = document.querySelectorAll(".bfiyatInput");
+    var miktar = document.querySelectorAll(".miktarInput");
+    var ana_toplam = document.querySelectorAll(".toplamInput");
+    var indirim = document.querySelectorAll(".indirim");
+    var indirim_toplam = 0;
+
+    for (var u = 0; u < brimtutar.length; u++) {
+        ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+    }
+
+    var islem_sonucu = 0;
+    var aratoplam = document.querySelector(".aratoplam");
+    for (var u = 0; u < ana_toplam.length; u++) {
+        islem_sonucu += parseFloat(ana_toplam[u].value);
+    }
+
+    for (var u = 0; u < indirim.length; u++) {
+        indirim_toplam += parseFloat(indirim[u].value);
+    }
+
+    aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+    document.querySelector(".odenecektutar").textContent = (islem_sonucu).toFixed(2) + " $";
+}
+
+
+function hesaplama_islemi() {
+    var dovizKuru = parseFloat(document.getElementById('doviz_kuru').value) || 0;
+    var bfiyatUSD = parseFloat(document.getElementById('bfiyat_usd').value) || 0;
+    var bfiyatIQD = parseFloat(document.getElementById('bfiyat_iqd').value) || 0;
+
+    // USD'den IQD'ye çeviri
+    if (bfiyatUSD && dovizKuru) {
+        document.getElementById('bfiyat_iqd').value = (bfiyatUSD * dovizKuru).toFixed(2);
+    }
+
+    // IQD'den USD'ye çeviri
+    if (bfiyatIQD && dovizKuru) {
+        document.getElementById('bfiyat_usd').value = (bfiyatIQD / dovizKuru).toFixed(2);
+    }
+}
+
+var isToastVisible = false;  // Toast'ın görünür olup olmadığını takip etmek için
+
+function validateDovizKuru() {
+    var dovizKuruInput = document.getElementById('doviz_kuru');
+    var dovizKuruValue = dovizKuruInput.value;
+
+    // Sadece sayısal değer ve ondalık sayı kontrolü (örn: 1450 veya 1450.06)
+    var validPattern = /^\d*\.?\d{0,2}$/;
+
+    if (!validPattern.test(dovizKuruValue)) {
+        // Eğer mevcut bir toast görünüyorsa, yeni bir toast göstermeyin
+        if (!isToastVisible) {
+            showCustomToast('{% trans "Geçersiz Döviz Kuru" %}', '{% trans "Lütfen geçerli bir döviz kuru giriniz. Sadece sayısal değer ve ondalık olabilir." %}');
+        }
+
+        dovizKuruInput.value = "";  // Geçerli olmayan değeri temizle
+    }
+}
+
+function showCustomToast(title, message) {
+    isToastVisible = true;  // Toast'ın görünür olduğunu belirleyin
+
+    var toastContainer = document.createElement('div');
+    toastContainer.className = 'custom-toast-container';
+    
+    var toast = document.createElement('div');
+    toast.className = 'custom-toast';
+    
+    var icon = document.createElement('div');
+    icon.className = 'custom-toast-icon';
+    icon.innerHTML = '<i class="mdi mdi-alert-circle-outline"></i>';
+    
+    var toastContent = document.createElement('div');
+    toastContent.className = 'custom-toast-content';
+    
+    var toastTitle = document.createElement('strong');
+    toastTitle.textContent = title;
+    
+    var toastMessage = document.createElement('p');
+    toastMessage.textContent = message;
+    
+    toastContent.appendChild(toastTitle);
+    toastContent.appendChild(toastMessage);
+    toast.appendChild(icon);
+    toast.appendChild(toastContent);
+    toastContainer.appendChild(toast);
+    
+    document.body.appendChild(toastContainer);
+    
+    setTimeout(function() {
+        toastContainer.classList.add('show');
+    }, 100);
+    
+    setTimeout(function() {
+        toastContainer.classList.remove('show');
+        setTimeout(function() {
+            document.body.removeChild(toastContainer);
+            isToastVisible = false;  // Toast kapandı, yeni toastlar gösterilebilir
+        }, 500);
+    }, 4000);
+}
+
+
+</script>
+
+
+<div class="daterangepicker ltr show-calendar opensleft">
+    <div class="ranges"></div>
+    <div class="drp-calendar left">
+        <div class="calendar-table"></div>
+        <div class="calendar-time" style="display: none;"></div>
+    </div>
+    <div class="drp-calendar right">
+        <div class="calendar-table"></div>
+        <div class="calendar-time" style="display: none;"></div>
+    </div>
+    <div   class="drp-buttons"><span class="drp-selected">01/01/2024 - 01/30/2024</span><button
+            class="cancelBtn btn btn-sm btn-default" type="button">{% trans 'Cancel' %}</button><button
+            class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">{% trans 'Apply' %}</button> </div>
+</div>
+<div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+
+                                <div class="modal-body">
+                                    <input type="text" name="tur" id="tur" hidden value="1">
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Adı' %}</label>
+                                        <input type="text"  name="adi" id="adi" class="form-control" placeholder="{% trans 'Kategori Adı' %}" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Açıklaması' %}</label>
+                                        <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="{% trans 'Kategori Açıklaması' %}" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Rengi' %}</label>
+                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="{% trans 'Gider Kategorisi' %}" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">{% trans 'Gider Kategorisini Ekle' %}</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="gideretiketiekle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-light p-3">
+                                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                            </div>
+
+                                <div class="modal-body">
+                                    <input type="text" name="tur2" id="tur2" hidden value="1">
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Gider Etiketi Adı' %}</label>
+                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="{% trans 'Etiket Adı' %}" />
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">{% trans 'Gider Etiketini Ekle' %}</button>
+                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+{% endblock sidebar %}
+{% block javascriptcodeadd %}
+
+
+<!--Multi Select Date Calender-->
+<script>
+
+      $('input[name="daterange"]').daterangepicker({
+        opens: 'left'
+      }, function(start, end, label) {
+        console.log("{% trans 'A new date selection was made' %}: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+      });
+
+</script>
+<style>
+.custom-toast-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translate(-50%, -60%);
+}
+
+.custom-toast-container.show {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+.custom-toast {
+    background-color: #013744;
+    color: #ffffff;
+    padding: 20px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 350px;
+    display: flex;
+    align-items: center;
+}
+
+.custom-toast-icon {
+    font-size: 30px;
+    margin-right: 15px;
+    color: #ffcc00; /* İkon rengi */
+}
+
+.custom-toast-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-toast-content strong {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.custom-toast-content p {
+    margin: 0;
+    font-size: 14px;
+    color: #d3d3d3; /* Açık gri metin rengi */
+}
+
+    .ui-menu-item-wrapper:hover{
+        background-color: white !important;
+        color: black;
+    }
+    .ui-menu-item-wrapper{
+    background-color:  orange !important;
+    max-width: 400px !important;
+    z-index: 999 !important;
+    font-size: 15px !important;
+    list-style: none; color: white;
+    }
+    </style>
+<script src="{% static 'assets/js/pages/satis-ekle.js '%}"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+{% if hash_bilgi %}
+                                                    
+
+    <script>
+
+       function enableAutocompleteForNewItems() {
+    function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
+    $('.den').autocomplete({
+        source: "/{{dil}}{% url 'accounting:search_2' hashler %}",
+        minLength: 2,
+        select: function(event, ui) {
+            var id = this.id;
+            $(this).val(ui.item.label);
+            $(this).siblings().val(ui.item.label);
+            id = id.replace("searchInput", "bfiyatInput");
+            document.getElementById(id).value = ui.item.value;
+            hesaplama_islemi();
+            return false;
+        }
+    }).data('ui-autocomplete')._renderItem = function(ul, item) {
+        return $('<li>')
+            .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
+            .appendTo(ul);
+    };
+}
+
+$(document).ready(function(){
+    enableAutocompleteForNewItems();
+
+    $(document).on('click', '.addNewItem span', function() {
+        var newItem = $('<input>').addClass('den');
+        $('.container').append(newItem);
+        enableAutocompleteForNewItems();
+    });
+
+
+    // Diğer kodlarınız buraya gelebilir...
+});
+$(document).ready(function(){
+    $('.cari').autocomplete({
+                source: "/{{dil}}{% url 'accounting:cariler_bilgisi_2' hashler %}",
+                minLength: 2,
+                select: function(event, ui) {
+                    $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + '</div>')// Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
+
+/*
+$(document).ready(function(){
+    $('.den').each(function() {
+        $(this).keyup(function() {
+            $(this).autocomplete({
+                source: '/accounting/search/',
+                minLength: 2,
+                select: function(event, ui) {
+                    $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+                    $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
+                    $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
+    });
+
+    $('.bfiyatInput').on('input', function(){
+        // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
+        $('#hiddenBfiyatInput').val($(this).val());
+    });
+});
+*/
+       function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
+    </script>
+<style>
+  .item-label{
+    font-size: 15px !important;
+  }
+</style>
+<script>
+
+    // Function to initialize MultiSelectTag
+    function initializeMultiSelectTag() {
+        return new MultiSelectTag('cokluetiket', {
+            rounded: true,
+            shadow: true,
+            placeholder: '{% trans "Search" %}',
+            tagColor: {
+                textColor: '#327b2c',
+                borderColor: '#92e681',
+                bgColor: '#eaffe6',
+            },
+            onChange: function(values) {
+                console.log(values);
+            }
+        });
+    }
+var multiSelectInstance = initializeMultiSelectTag();
+
+
+    $(document).ready(function () {
+        $("#ekle").click(function (event) {
+            var tur = $("#tur").val(),
+                adi = $("#adi").val(),
+                aciklama = $("#aciklama").val(),
+                renk = $("#renk").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/{{dil}}{% url 'accounting:gider_gelir_ekleme' %}",
+                data: {
+                    tur: tur,
+                    adi: adi,
+                    aciklama: aciklama,
+                    renk: renk,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $("#kategori").load(window.location.href + " #kategori");
+                }
+            });
+            return false;
+        });
+    });
+    $(document).ready(function () {
+  $("#ekle2").click(function (event) {
+    tur2 = $("#tur2").val(),
+    adi2 = $("#etiket_ismi_gonder").val(),
+
+    $.ajax({
+      type: "POST",
+      url: "/{{dil}}{% url 'accounting:gider_gelir_etiketekleme' %}",
+      data: {
+        tur2: tur2,
+        adi2:adi2,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+
+        $("#etkett").load(window.location.href + " #etkett", function() {
+        multiSelectInstance = initializeMultiSelectTag() });
+
+      }
+    });
+    return false; //<---- move it here
+  });
+});
+
+</script>
+{% else %}
+                                                     
+
+    <script>
+
+       function enableAutocompleteForNewItems() {
+    function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
+    $('.den').autocomplete({
+        source: '/accounting/search/',
+        minLength: 2,
+        select: function(event, ui) {
+            var id = this.id;
+            $(this).val(ui.item.label);
+            $(this).siblings().val(ui.item.label);
+            id = id.replace("searchInput", "bfiyatInput");
+            document.getElementById(id).value = ui.item.value;
+            hesaplama_islemi();
+            return false;
+        }
+    }).data('ui-autocomplete')._renderItem = function(ul, item) {
+        return $('<li>')
+            .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
+            .appendTo(ul);
+    };
+}
+
+$(document).ready(function(){
+    enableAutocompleteForNewItems();
+
+    $(document).on('click', '.addNewItem span', function() {
+        var newItem = $('<input>').addClass('den');
+        $('.container').append(newItem);
+        enableAutocompleteForNewItems();
+    });
+
+
+    // Diğer kodlarınız buraya gelebilir...
+});
+$(document).ready(function(){
+    $('.cari').autocomplete({
+                source: '/accounting/cari/',
+                minLength: 2,
+                select: function(event, ui) {
+                    $('.cari').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + '</div>')// Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
+
+/*
+$(document).ready(function(){
+    $('.den').each(function() {
+        $(this).keyup(function() {
+            $(this).autocomplete({
+                source: '/accounting/search/',
+                minLength: 2,
+                select: function(event, ui) {
+                    $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
+                    $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
+                    $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
+                    return false;
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                return $('<li>')
+                    .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
+                    .appendTo(ul);
+            };
+        });
+    });
+
+    $('.bfiyatInput').on('input', function(){
+        // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
+        $('#hiddenBfiyatInput').val($(this).val());
+    });
+});
+*/
+       function hesaplama_islemi(){
+        var brimtutar = document.querySelectorAll(".bfiyatInput");
+        var miktar = document.querySelectorAll(".miktarInput");
+        var ana_toplam = document.querySelectorAll(".toplamInput");
+        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
+        var indirim_toplam = 0;
+
+        for (var u = 0; u < brimtutar.length; u++) {
+            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
+        }
+
+        var islem_sonucu = 0;
+        var aratoplam = document.querySelector(".aratoplam");
+        for (var u = 0; u < ana_toplam.length; u++) {
+            islem_sonucu += parseFloat(ana_toplam[u].value);
+        }
+
+        for (var u = 0; u < indirim.length; u++) {
+            indirim_toplam += parseFloat(indirim[u].value);
+        }
+
+        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
+        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
+    }
+
+    </script>
+<style>
+  .item-label{
+    font-size: 15px !important;
+  }
+</style>
+<script>
+
+    // Function to initialize MultiSelectTag
+    function initializeMultiSelectTag() {
+        return new MultiSelectTag('cokluetiket', {
+            rounded: true,
+            shadow: true,
+            placeholder: '{% trans "Search" %}',
+            tagColor: {
+                textColor: '#327b2c',
+                borderColor: '#92e681',
+                bgColor: '#eaffe6',
+            },
+            onChange: function(values) {
+                console.log(values);
+            }
+        });
+    }
+var multiSelectInstance = initializeMultiSelectTag();
+
+
+    $(document).ready(function () {
+        $("#ekle").click(function (event) {
+            var tur = $("#tur").val(),
+                adi = $("#adi").val(),
+                aciklama = $("#aciklama").val(),
+                renk = $("#renk").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/{{dil}}{% url 'accounting:gider_gelir_ekleme' %}",
+                data: {
+                    tur: tur,
+                    adi: adi,
+                    aciklama: aciklama,
+                    renk: renk,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $("#kategori").load(window.location.href + " #kategori");
+                }
+            });
+            return false;
+        });
+    });
+    $(document).ready(function () {
+  $("#ekle2").click(function (event) {
+    tur2 = $("#tur2").val(),
+    adi2 = $("#etiket_ismi_gonder").val(),
+
+    $.ajax({
+      type: "POST",
+      url: "/{{dil}}{% url 'accounting:gider_gelir_etiketekleme' %}",
+      data: {
+        tur2: tur2,
+        adi2:adi2,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (data) {
+
+        $("#etkett").load(window.location.href + " #etkett", function() {
+        multiSelectInstance = initializeMultiSelectTag() });
+
+      }
+    });
+    return false; //<---- move it here
+  });
+});
+
+</script>
+{% endif %}
+
+
+{% endblock javascriptcodeadd %}

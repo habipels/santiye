@@ -1,0 +1,637 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+
+{% block sidebar %}
+
+      <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
+                        <div class="file-manager-sidebar">
+                            <div class="p-3 d-flex flex-column h-100">
+                                <div class="mb-3">
+                                    <h5 class="mb-0 fw-bold">{% trans 'Benim Depolama Alanım' %}</h5>
+                                </div>
+                                <div class="search-box">
+                                    <input type="text" class="form-control bg-light border-light" placeholder="{% trans 'Search here...' %}">
+                                    <i class="ri-search-2-line search-icon"></i>
+                                </div>
+                                <div class="mt-3 mx-n4 px-4 file-menu-sidebar-scroll" data-simplebar>
+                                    <ul class="list-unstyled file-manager-menu">
+                                        <li>
+                                            <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true" aria-controls="collapseExample">
+                                                <i class="ri-folder-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Şantiye Klasörlerim' %}</span>
+                                            </a>
+                                            <div class="collapse show" id="collapseExample">
+                                                <ul class="sub-menu list-unstyled">
+                                                    <li>
+                                                        <a href="/{{dil}}{% url 'main:sozlesmler_depolamam' %}">{% trans 'Sözleşme Dosyaları' %}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/{{dil}}{% url 'main:hakedis_depolamam' %}">{% trans 'Hakediş Dosyaları' %}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#!">{% trans 'Personel Dosyaları' %}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#!">{% trans 'Proje Dosyaları' %}</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:dokumanlar' %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Dökümanlarım' %}</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:media_dosyalari' %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Media Dosyalarım' %}</span></a>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:zamana_dosyalari' %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Geçmiş' %}</span></a>
+                                        </li>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:silinen_dosyalari' %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Silinen Dosyalar' %}</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+
+                                <div class="mt-auto">
+                                    <h6 class="fs-11 text-muted text-uppercase mb-3">{% trans 'Depolama Durumum' %}</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <i class="ri-database-2-line fs-17"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3 overflow-hidden">
+                                            {% kullanici_dosya_boyutu request.user.id %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-manager-content w-100 p-3 py-0">
+                            <div class="mx-n3 pt-4 px-4 file-manager-content-scroll" data-simplebar>
+                                <div id="folder-list" class="mb-2">
+                                    <div class="row justify-content-beetwen g-2 mb-3">
+
+                                        <div class="col">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0 me-2 d-block d-lg-none">
+                                                    <button type="button" class="btn btn-soft-success btn-icon btn-sm fs-16 file-menu-btn">
+                                                        <i class="ri-menu-2-fill align-bottom"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="flex-grow-1">
+                       
+                                                     <h6 class="fs-16 mb-0"> <a href="/{{dil}}{% url 'main:depolama_sistemim' %}">{% trans 'Ana Depolama' %}</a> </h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                        <div class="col-auto">
+                                            <div class="d-flex gap-2 align-items-start">
+                                               
+    
+                                                
+                                               
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                    </div>
+                                    <!--end row-->
+                                    <div class="row" id="folderlist-data">
+                                       
+                                    </div>
+                                    <!--end row-->
+                                    
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    
+                                </div>
+                                <div class="table-responsive table-card mt-3 mb-1">
+                                    <table class="table align-middle table-nowrap" id="customerTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th scope="col" style="width: 50px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="checkAll" value="option">
+                                                    </div>
+                                                </th>
+                                                <th class="sort" data-sort="customer_name">{% trans 'Klasör Adı' %}</th>
+                                                <th class="sort" data-sort="email">{% trans 'Dosya Adı' %}</th>
+                                                <th class="sort" data-sort="date">{% trans 'Açıklama' %}</th>
+                                                <th class="sort" data-sort="phone">{% trans 'Yüklenme Tarihi' %}</th>
+                                                <th class="sort" data-sort="date">{% trans 'Boyutu' %}</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody class="list form-check-all">
+                                        {% for i in santiyeler %}
+                                            <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                <th scope="row">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
+                                                    </div>
+                                                </th>
+                                                <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
+                                                <td class="customer_name">{% trans 'Sözleşmeler' %}
+                                                </td>
+                                                <td class="email">
+                                                {% if i.dosya %}
+                                                <a target="_blank" href="{{i.dosya.url}}">{{i.dosya_adi}}</a></td>
+                                                {% else %}
+                                                
+                                                {% endif %}
+                                                
+                                                <td class="date">
+                                                    {{i.aciklama}}
+                                                
+                                                </td>
+                                                <td class="date">
+                                                    {{i.kayit_tarihi}}
+                                                
+                                                </td>
+                                                <td class="date">
+                                                {% if i.dosya %}
+                                                {% mb_donusturme i.dosya.size %} {% trans 'MB' %}
+                                                {% else %}
+                                                0 {% trans 'MB' %}
+                                                {% endif %}
+                                                    
+                                                
+                                                </td>
+                                            
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="pagination-wrap hstack gap-2">
+                                        <ul class="pagination pagination-m justify-content-center">
+
+                                            {% if medya.has_previous %}
+                                              <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
+                                            
+                                              {% if medya.number > 3 %}
+                                            
+                                                <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                {% if medya.number > 4 %}
+                                                  <li class="page-item"><span class="page-link">...</span></li>
+                                                {% endif %}
+                                              {% endif %}
+                                            {% endif %}
+                                            
+                                            {% for num in medya.paginator.page_range %}
+                                              {% if medya.number == num %}
+                                                <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                              {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                              {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% if medya.has_next %}
+                                              {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                <li class="page-item"><span class="page-link">...</span></li>
+                                                <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                              {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                              {% endif %}
+                                            
+                                              <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
+                                            {% endif %}
+                                            </ul>
+                                    </div>
+                                    <div class="noresult" style="display: none">
+                                        <div class="text-center">
+                                            <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
+                                            </lord-icon>
+                                            <h5 class="mt-2">Sorry! No Result Found</h5>
+                                            <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any
+                                                orders for you search.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-manager-detail-content p-3 py-0">
+                            <div class="mx-n3 pt-3 px-3 file-detail-content-scroll" data-simplebar>
+                                <div id="folder-overview">
+                                    <div class="d-flex align-items-center pb-3 border-bottom border-bottom-dashed">
+                                        <h5 class="flex-grow-1 fw-bold mb-0">Overview</h5>
+                                        <div>
+                                            <button type="button" class="btn btn-soft-danger btn-icon btn-sm fs-16 close-btn-overview">
+                                                <i class="ri-close-fill align-bottom"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="simple_dount_chart" data-colors='["--vz-info", "--vz-danger", "--vz-primary", "--vz-success"]' class="apex-charts mt-3" dir="ltr"></div>
+                                    <div class="mt-4">
+                                        <ul class="list-unstyled vstack gap-4">
+                                        
+                                        </ul>
+                                        
+                                    </div>
+
+                                    <div class="pb-3 mt-auto">
+                                        <div class="alert alert-danger d-flex align-items-center mb-0">
+                                            <div class="flex-shrink-0">
+                                                <i class="ri-cloud-line text-danger align-bottom display-5"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h5 class="text-danger fs-14">Upgrade to Pro</h5>
+                                                <p class="text-muted mb-2">Get more space for your...</p>
+                                                <button class="btn btn-sm btn-danger"><i class="ri-upload-cloud-line align-bottom"></i> Upgrade Now</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="file-overview" class="h-100">
+                                    <div class="d-flex h-100 flex-column">
+                                        <div class="d-flex align-items-center pb-3 border-bottom border-bottom-dashed mb-3 gap-2">
+                                            <h5 class="flex-grow-1 fw-bold mb-0">File Preview</h5>
+                                            <div>
+                                                <button type="button" class="btn btn-ghost-primary btn-icon btn-sm fs-16 favourite-btn">
+                                                    <i class="ri-star-fill align-bottom"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-soft-danger btn-icon btn-sm fs-16 close-btn-overview">
+                                                    <i class="ri-close-fill align-bottom"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="pb-3 border-bottom border-bottom-dashed mb-3">
+                                            <div class="file-details-box bg-light p-3 text-center rounded-3 border border-light mb-3">
+                                                <div class="display-4 file-icon">
+                                                    <i class="ri-file-text-fill text-secondary"></i>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-icon btn-sm btn-ghost-success float-end fs-16"><i class="ri-share-forward-line"></i></button>
+                                            <h5 class="fs-16 mb-1 file-name">html.docx</h5>
+                                            <p class="text-muted mb-0 fs-12"><span class="file-size">0.3 KB</span>, <span class="create-date">19 Apr, 2022</span></p>
+                                        </div>
+                                        <div>
+                                            <h5 class="fs-12 text-uppercase text-muted mb-3">File Description :</h5>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-borderless table-nowrap table-sm">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row" style="width: 35%;">File Name :</th>
+                                                            <td class="file-name">html.docx</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">File Type :</th>
+                                                            <td class="file-type">Documents</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Size :</th>
+                                                            <td class="file-size">0.3 KB</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Created :</th>
+                                                            <td class="create-date">19 Apr, 2022</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Path :</th>
+                                                            <td class="file-path"><div class="user-select-all text-truncate">*:\projects\src\assets\images</div></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <div>
+                                                <h5 class="fs-12 text-uppercase text-muted mb-3">Share Information:</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-borderless table-nowrap table-sm">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row" style="width: 35%;">Share Name :</th>
+                                                                <td class="share-name">\\*\Projects</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Share Path :</th>
+                                                                <td class="share-path">velzon:\Documents\</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-auto border-top border-top-dashed py-3">
+                                            <div class="hstack gap-2">
+                                                <button type="button" class="btn btn-soft-primary w-100"><i class="ri-download-2-line align-bottom me-1"></i> Download</button>
+                                                <button type="button" class="btn btn-soft-danger w-100 remove-file-overview" data-remove-id="" data-bs-toggle="modal" data-bs-target="#removeFileItemModal"><i class="ri-close-fill align-bottom me-1"></i> Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+                <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            </div>
+            <!-- End Page-content -->
+            <!-- START CREATE FOLDER MODAL -->
+        <div class="modal fade zoomIn" id="dosyaekle" tabindex="-1"  aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0">
+                    <div class="modal-header p-3 bg-success-subtle">
+                        <h5 class="modal-title" id="createFolderModalLabel">Dosya Ekle</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:dosya_ekle' %}" method="post" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <div class="mb-3" id="modal-id" style="display: none;">
+                                    <label for="id-field" class="form-label">ID</label>
+                                    <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
+                                    <input type="text" id="id-field"  name="ust_klasor" hidden value="{{id_bilgisi}}" class="form-control" placeholder="ID" readonly />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date-field" class="form-label">Dosya Adı</label>
+                                    <input type="tel" name="klasor" id="date-field" class="form-control" placeholder="Dosya Adı"  />
+                                    <div class="invalid-feedback">Lütfen telefon alanını boş bırakmayınız.</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email-field" class="form-label">Tarih</label>
+                                    <input type="date" name="tarih" class="form-control" placeholder="E-Posta giriniz" ></input>
+                                    <div class="invalid-feedback">Lütfen eposta alanını boş bırakmayınız.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email-field" class="form-label">Açıklama</label>
+                                    <textarea name="aciklama" class="form-control" placeholder="Enter Description" ></textarea>
+                                    <div class="invalid-feedback">Please enter an email.</div>
+                                </div>
+                                
+                                
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title mb-0">Sözleşmeleri Yükle</h4>
+                                            </div><!-- end card header -->
+                                        
+                                            <div class="card-body">
+                                                <p class="text-muted">Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.</p>
+                                            
+                                                <div class="dropzone">
+                                                    <div class="fallback">
+                                                        <input name="file" type="file" >
+                                                    </div>
+                                                    <div class="dz-message needsclick">
+                                                        <div class="mb-3">
+                                                            <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+                                                        </div>
+                                                    
+                                                        <h4>Drop files here or click to upload.</h4>
+                                                    </div>
+                                                </div>
+                                            
+                                                <ul class="list-unstyled mb-0" id="dropzone-preview">
+                                                    <li class="mt-2" id="dropzone-preview-list">
+                                                        <!-- This is used as the file preview template -->
+                                                        <div class="border rounded">
+                                                            <div class="d-flex p-2">
+                                                                <div class="flex-shrink-0 me-3">
+                                                                    <div class="avatar-sm bg-light rounded">
+                                                                        <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex-grow-1">
+                                                                    <div class="pt-1">
+                                                                        <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
+                                                                        <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                                                                        <strong class="error text-danger" data-dz-errormessage></strong>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex-shrink-0 ms-3">
+                                                                    <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <!-- end dropzon-preview -->
+                                            </div>
+                                            <!-- end card body -->
+                                        </div>
+                                        <!-- end card -->
+                                    </div> <!-- end col -->
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success" id="add-btn">Ekle</button>
+                                    <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END CREATE FOLDER MODAL -->
+            <!-- START CREATE FOLDER MODAL -->
+            <div class="modal fade zoomIn" id="createFolderModal" tabindex="-1" aria-labelledby="createFolderModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0">
+                        <div class="modal-header p-3 bg-success-subtle">
+                            <h5 class="modal-title" id="createFolderModalLabel">Klasör Oluştur</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="foldername-input" class="form-label">Klasör Adı</label>
+                                    <input type="text" name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
+                                    <div class="invalid-feedback">Please enter a folder name.</div>
+                                    <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
+                                </div>
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> İptal</button>
+                                    <button type="submit" class="btn btn-primary" id="addNewFolder">Klasör Oluştur</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END CREATE FOLDER MODAL -->
+            {% for i in santiyeler %}
+                <!-- START CREATE FOLDER MODAL -->
+            <div class="modal fade zoomIn" id="createFolderModal{{i.id}}" tabindex="-1" aria-labelledby="createFolderModalLabel{{i.id}}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0">
+                        <div class="modal-header p-3 bg-success-subtle">
+                            <h5 class="modal-title" id="createFolderModalLabel">Klasör Oluştur</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="foldername-input" class="form-label">Klasör Adı</label>
+                                    <input type="text" value="{{i.klasor_adi}}" name="klasor" class="form-control" id="foldername-input" required placeholder="Klasör Adı Giriniz">
+                                    <div class="invalid-feedback">Please enter a folder name.</div>
+                                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> İptal</button>
+                                    <button type="submit" class="btn btn-primary" id="addNewFolder">Klasör Oluştur</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END CREATE FOLDER MODAL -->
+            {% endfor %}
+            <!-- START CREATE FILE MODAL -->
+            <div class="modal fade zoomIn" id="createFileModal" tabindex="-1" aria-labelledby="createFileModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0">
+                        <div class="modal-header p-3 bg-success-subtle">
+                            <h5 class="modal-title" id="createFileModalLabel">Create File</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFileBtn-close" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form autocomplete="off"autocomplete="off" class="needs-validation createfile-form" id="createfile-form" novalidate>
+                                <div class="mb-4">
+                                    <label for="filename-input" class="form-label">File Name</label>
+                                    <input type="text" class="form-control" id="filename-input" value="" required placeholder="Enter file name" />
+                                    <div class="invalid-feedback">Please enter a file name.</div>
+                                    <input type="hidden" class="form-control" id="fileid-input" value="" placeholder="Enter file name">
+                                </div>
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> Close</button>
+                                    <button type="submit" class="btn btn-primary" id="addNewFile">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END CREATE FILE MODAL -->
+
+            <!-- removeFileItemModal -->
+            {% for i in santiyeler  %}
+            <div id="removeFileItemModal{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
+                        </div>
+                        <div class="modal-body">
+                        <form autocomplete="off"action="/{{dil}}{% url 'main:klasor_sil' %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    
+                                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                            <div class="mt-2 text-center">
+                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
+                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                                    <h4>Are you sure ?</h4>
+                                    <p class="text-muted mx-4 mb-0">Are you sure you want to remove this item ?</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
+                            </div>
+                        </form>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            {% endfor %}
+       
+            {% for i in santiyeler  %}
+            <div id="dosya_sil{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
+                        </div>
+                        <div class="modal-body">
+                        <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_sil' %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">
+                                    <input type="hidden" name="klasor" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                            <div class="mt-2 text-center">
+                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
+                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                                    <h4>Are you sure ?</h4>
+                                    <p class="text-muted mx-4 mb-0">Are you sure you want to remove this item ?</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">Yes, Delete It!</button>
+                            </div>
+                        </form>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            {% endfor %}
+            {% for i in santiyeler  %}
+            <div id="geri_getir{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
+                        </div>
+                        <div class="modal-body">
+                        <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_geri_getir' %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">
+                                    <input type="hidden" name="klasor" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                            <div class="mt-2 text-center">
+                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
+                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                                    <h4>Are you sure ?</h4>
+                                    <p class="text-muted mx-4 mb-0">Dosyamı Geri Yükle ?</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn w-sm btn-success" id="remove-fileitem">Yes, Delete It!</button>
+                            </div>
+                        </form>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            {% endfor %}
+        </div>
+        <!-- end main content-->
+        
+{% endblock sidebar %}

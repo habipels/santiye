@@ -1,0 +1,1181 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% load custom_tags %}
+{% block sidebar %}
+<div class="main-content">
+            <div class="page-content">
+    <div class="container">
+        <div class="row">
+            <!-- Gruplar Listesi -->
+            <div class="col-md-3 group-list">
+                <h5>{% trans "Kullanıcı Grupları" %}</h5>
+                {% for i in izinler %}
+                
+                <div class="group-item">
+                    <a style="color: black; text-decoration: none;" href="/{{dil}}{% url 'main:kullanici_yetkileri_duzenle' i.id %}"><span>{{i.isim}}</span></a>
+                    <div class="action-icons">
+                        <i class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#editGroupModal{{i.id}}"></i>
+                        <i class="fas fa-trash-alt" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal{{i.id}}"></i>
+                    </div>
+                </div>
+            
+                {% endfor %}
+                
+                
+                <!-- Diğer gruplar burada listelenecek -->
+                <button class="btn btn-primary mt-3 w-100" data-bs-toggle="modal" data-bs-target="#addGroupModal">{% trans "Yeni Grup Ekle" %}</button>
+            </div>
+
+            <!-- İzin Detayları -->
+            
+            <div class="col-md-9 permissions-panel">
+                <form autocomplete="off"action="/{{dil}}{% url 'main:kullanici_yetki_alma' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="guncellenen" hidden value="{{secili_grup.id}}">
+                {% if secili_grup %}
+                    <h5>{% trans "Seçilen Grup" %}: {{secili_grup.isim}}</h5>
+                {% else %}
+                <h5>{% trans "Grubu Seçmediniz" %}</h5>
+                {% endif %}
+                {% if secili_grup %}
+                <button type="submit">{% trans "Kaydet" %}</button>
+                {% else %}
+               
+                {% endif %}
+                
+
+                <div class="permission-matrix">
+                    <!-- Dashboard Grubu -->
+                    <div class="permission-group">
+                        <h6>
+                            {% trans "Dashboard" %}
+                            <div class="form-check form-switch">
+                                <input class="form-check-input toggle-group" type="checkbox">
+                            </div>
+                        </h6>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{% trans "Dashboard Görüntüleme" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all"    type="checkbox"></div></td>
+                                    {% if secili_grup.dashboard_gorme %}
+                                        <td><div class="form-check form-switch"><input name="dashboard_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="dashboard_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.dashboard_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="dashboard_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="dashboard_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.dashboard_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="dashboard_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="dashboard_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.dashboard_silme %}
+                                        <td><div class="form-check form-switch"><input name="dashboard_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="dashboard_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Raporlar Grubu -->
+                    <div class="permission-group">
+                        <h6>
+                            {% trans "Raporlar" %}
+                            <div class="form-check form-switch">
+                                <input class="form-check-input toggle-group" type="checkbox">
+                            </div>
+                        </h6>
+                        <table>
+                            <thead>
+                                <tr>
+                                   <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                
+                                    <td>{% trans "Gelir Özeti" %}</td>
+                                    
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gelir_ozeti_gorme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_ozeti_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_ozeti_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_ozeti_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="gelir_ozeti_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_ozeti_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_ozeti_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_ozeti_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_ozeti_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_ozeti_silme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_ozeti_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_ozeti_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Gider Özeti" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gider_ozeti_gorme %}
+                                        <td><div class="form-check form-switch"><input name="gider_ozeti_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_ozeti_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_ozeti_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="gider_ozeti_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_ozeti_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_ozeti_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="gider_ozeti_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_ozeti_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_ozeti_silme %}
+                                        <td><div class="form-check form-switch"><input name="gider_ozeti_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_ozeti_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Hesap Ekstresi" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.hesap_ekstra_gorme %}
+                                        <td><div class="form-check form-switch"><input name="hesap_ekstra_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="hesap_ekstra_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.hesap_ekstra_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="hesap_ekstra_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="hesap_ekstra_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.hesap_ekstra_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="hesap_ekstra_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="hesap_ekstra_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.hesap_ekstra_silme %}
+                                        <td><div class="form-check form-switch"><input name="hesap_ekstra_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="hesap_ekstra_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Virman Raporu" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.kasa_virman_gorme_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_virman_gorme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_virman_gorme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.kasa_virman_olusturma_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_virman_olusturma_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_virman_olusturma_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Santiye Raporu" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.santiye_raporu_gorme %}
+                                        <td><div class="form-check form-switch"><input name="santiye_raporu_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="santiye_raporu_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.santiye_raporu_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="santiye_raporu_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="santiye_raporu_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.santiye_raporu_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="santiye_raporu_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="santiye_raporu_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.santiye_raporu_silme %}
+                                        <td><div class="form-check form-switch"><input name="santiye_raporu_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="santiye_raporu_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Şantiye Yönetimi Grubu -->
+                    <div class="permission-group">
+                        <h6>
+                            {% trans "Şantiye Yönetimi" %}
+                            <div class="form-check form-switch">
+                                <input class="form-check-input toggle-group" type="checkbox">
+                            </div>
+                        </h6>
+                        <table>
+                            <thead>
+                                <tr>
+                                 <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{% trans "İlerleme Takibi" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.ilerleme_takibi_gorme %}
+                                        <td><div class="form-check form-switch"><input name="ilerleme_takibi_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="ilerleme_takibi_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.ilerleme_takibi_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="ilerleme_takibi_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="ilerleme_takibi_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.ilerleme_takibi_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="ilerleme_takibi_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="ilerleme_takibi_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.ilerleme_takibi_silme %}
+                                        <td><div class="form-check form-switch"><input name="ilerleme_takibi_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="ilerleme_takibi_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Taşeron Sözleşmeler" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.sozlesmeler_gorme %}
+                                        <td><div class="form-check form-switch"><input name="sozlesmeler_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="sozlesmeler_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.sozlesmeler_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="sozlesmeler_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="sozlesmeler_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.sozlesmeler_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="sozlesmeler_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="sozlesmeler_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.sozlesmeler_silme %}
+                                        <td><div class="form-check form-switch"><input name="sozlesmeler_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="sozlesmeler_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Üst Yüklenici Sözleşmeler" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.ust_yuklenici_gorme %}
+                                        <td><div class="form-check form-switch"><input name="ust_yuklenici_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="ust_yuklenici_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.ust_yuklenici_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="ust_yuklenici_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="ust_yuklenici_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.ust_yuklenici_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="ust_yuklenici_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="ust_yuklenici_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.ust_yuklenici_silme %}
+                                        <td><div class="form-check form-switch"><input name="ust_yuklenici_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="ust_yuklenici_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Yapılacaklar" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.yapilacaklar_gorme %}
+                                        <td><div class="form-check form-switch"><input name="yapilacaklar_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="yapilacaklar_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.yapilacaklar_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="yapilacaklar_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="yapilacaklar_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.yapilacaklar_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="yapilacaklar_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="yapilacaklar_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.yapilacaklar_silme %}
+                                        <td><div class="form-check form-switch"><input name="yapilacaklar_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="yapilacaklar_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <tr>
+                                        <td>{% trans "Taşeronlar" %}</td>
+                                        <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                        {% if secili_grup.taseronlar_gorme %}
+                                            <td><div class="form-check form-switch"><input name="taseronlar_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                        {% else %}
+                                            <td><div class="form-check form-switch"><input name="taseronlar_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                        {% endif %}
+                                        {% if secili_grup.taseronlar_olusturma %}
+                                            <td><div class="form-check form-switch"><input name="taseronlar_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                        {% else %}
+                                            <td><div class="form-check form-switch"><input name="taseronlar_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                        {% endif %}
+                                        {% if secili_grup.taseronlar_duzenleme %}
+                                            <td><div class="form-check form-switch"><input name="taseronlar_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                        {% else %}
+                                            <td><div class="form-check form-switch"><input name="taseronlar_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                        {% endif %}
+                                        {% if secili_grup.taseronlar_silme %}
+                                            <td><div class="form-check form-switch"><input name="taseronlar_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                        {% else %}
+                                            <td><div class="form-check form-switch"><input name="taseronlar_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                        {% endif %}
+                                    </tr>
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Dosya Yönetici" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.dosya_yoneticisi_gorme %}
+                                        <td><div class="form-check form-switch"><input name="dosya_yoneticisi_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="dosya_yoneticisi_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.dosya_yoneticisi_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="dosya_yoneticisi_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="dosya_yoneticisi_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.dosya_yoneticisi_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="dosya_yoneticisi_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="dosya_yoneticisi_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.dosya_yoneticisi_silme %}
+                                        <td><div class="form-check form-switch"><input name="dosya_yoneticisi_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="dosya_yoneticisi_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Proje Tipi" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.projeler_gorme %}
+                                        <td><div class="form-check form-switch"><input name="projeler_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="projeler_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.projeler_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="projeler_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="projeler_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.projeler_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="projeler_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="projeler_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.projeler_silme %}
+                                        <td><div class="form-check form-switch"><input name="projeler_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="projeler_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Şantiye" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.santiye_gorme %}
+                                        <td><div class="form-check form-switch"><input name="santiye_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="santiye_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.santiye_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="santiye_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="santiye_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.santiye_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="santiye_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="santiye_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.santiye_silme %}
+                                        <td><div class="form-check form-switch"><input name="santiye_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="santiye_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Şantiye Yapıları" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.blog_gorme %}
+                                        <td><div class="form-check form-switch"><input name="blog_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="blog_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.blog_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="blog_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="blog_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.blog_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="blog_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="blog_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.blog_silme %}
+                                        <td><div class="form-check form-switch"><input name="blog_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="blog_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Şantiye Kalemleri" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.kalemleri_gorme %}
+                                        <td><div class="form-check form-switch"><input name="kalemleri_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kalemleri_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.kalemleri_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="kalemleri_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kalemleri_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.kalemleri_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="kalemleri_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kalemleri_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.kalemleri_silme %}
+                                        <td><div class="form-check form-switch"><input name="kalemleri_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kalemleri_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Hakedişler" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.hakedisler_gorme %}
+                                        <td><div class="form-check form-switch"><input name="hakedisler_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="hakedisler_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.hakedisler_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="hakedisler_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="hakedisler_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.hakedisler_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="hakedisler_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="hakedisler_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.hakedisler_silme %}
+                                        <td><div class="form-check form-switch"><input name="hakedisler_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="hakedisler_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Muhasebe Grubu -->
+                    <div class="permission-group">
+                        <h6>
+                            {% trans "Muhasebe" %}
+                            <div class="form-check form-switch">
+                                <input class="form-check-input toggle-group" type="checkbox">
+                            </div>
+                        </h6>
+                        <table>
+                            <thead>
+                                <tr>
+                               <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{% trans "Gelirler" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gelir_faturasi_gorme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_gorme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_gorme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_faturasi_kesme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_kesme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_kesme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_faturasi_duzenleme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_duzenleme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_duzenleme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_faturasi_silme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_silme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_silme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Giderler" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gider_faturasi_gorme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_gorme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_gorme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_faturasi_kesme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_kesme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_kesme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_faturasi_duzenleme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_duzenleme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_duzenleme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_faturasi_silme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_silme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_silme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+
+                                <tr>
+                                    <td>{% trans "Kasa" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.kasa_gosterme_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_gosterme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_gosterme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.kasa_olusturma_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_olusturma_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_olusturma_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.kasa_guncelleme_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_guncelleme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_guncelleme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.Kasa_silme_izni %}
+                                        <td><div class="form-check form-switch"><input name="Kasa_silme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="Kasa_silme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Kasa Detayı" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.kasa_detay_izni %}
+                                        <td><div class="form-check form-switch"><input name="kasa_detay_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="kasa_detay_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Cari Hesapları" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.cari_gosterme_izni %}
+                                        <td><div class="form-check form-switch"><input name="cari_gosterme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_gosterme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.cari_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="cari_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.cari_guncelleme_izni %}
+                                        <td><div class="form-check form-switch"><input name="cari_guncelleme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_guncelleme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.cari_silme_izni %}
+                                        <td><div class="form-check form-switch"><input name="cari_silme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_silme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Cari Detayı" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.cari_detay_izni %}
+                                        <td><div class="form-check form-switch"><input name="cari_detay_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="cari_detay_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Gelir Makbuzu" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gelir_faturasi_makbuz_gorme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_makbuz_gorme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_makbuz_gorme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_faturasi_makbuz_kesme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_makbuz_kesme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_makbuz_kesme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_faturasi_makbuz_duzenleme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_makbuz_duzenleme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_makbuz_duzenleme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_faturasi_makbuz_silme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_makbuz_silme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_faturasi_makbuz_silme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Gider Makbuzu" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gider_faturasi_makbuz_gorme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_makbuz_gorme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_makbuz_gorme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_faturasi_makbuz_kesme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_makbuz_kesme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_makbuz_kesme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_faturasi_makbuz_duzenleme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_makbuz_duzenleme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_makbuz_duzenleme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_faturasi_makbuz_silme_izni %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_makbuz_silme_izni" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_faturasi_makbuz_silme_izni"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="permission-group">
+                        <h6>
+                           {% trans "Muhasabe Ayarları" %} 
+                            <div class="form-check form-switch">
+                                <input class="form-check-input toggle-group" type="checkbox">
+                            </div>
+                        </h6>
+                        <table>
+                            <thead>
+                                <tr>
+                              <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{% trans "Muhasabe Ayarları" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.muhasabe_ayarlari_gorme %}
+                                        <td><div class="form-check form-switch"><input name="urun_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="urun_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    <td></td>
+                                    {% if secili_grup.muhasabe_ayarlari_guncelleme %}
+                                        <td><div class="form-check form-switch"><input name="muhasabe_ayarlari_guncelleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="muhasabe_ayarlari_guncelleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    
+                                    
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Gelir Kategorisi" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gelir_kategorisi_gorme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_kategorisi_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_kategorisi_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_kategorisi_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="gelir_kategorisi_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_kategorisi_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_kategorisi_guncelleme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_kategorisi_guncelleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_kategorisi_guncelleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_kategorisi_silme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_kategorisi_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_kategorisi_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Gider Kategorisi" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gider_kategorisi_gorme %}
+                                        <td><div class="form-check form-switch"><input name="gider_kategorisi_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_kategorisi_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_kategorisi_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="gider_kategorisi_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_kategorisi_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_kategorisi_guncelleme %}
+                                        <td><div class="form-check form-switch"><input name="gider_kategorisi_guncelleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_kategorisi_guncelleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_kategorisi_silme %}
+                                        <td><div class="form-check form-switch"><input name="gider_kategorisi_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_kategorisi_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Gelir Etiketi" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gelir_etiketi_gorme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_etiketi_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_etiketi_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_etiketi_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="gelir_etiketi_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_etiketi_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_etiketi_guncelleme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_etiketi_guncelleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_etiketi_guncelleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gelir_etiketi_silme %}
+                                        <td><div class="form-check form-switch"><input name="gelir_etiketi_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gelir_etiketi_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Gider Etiketi" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.gider_etiketi_gorme %}
+                                        <td><div class="form-check form-switch"><input name="gider_etiketi_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_etiketi_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_etiketi_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="gider_etiketi_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_etiketi_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_etiketi_guncelleme %}
+                                        <td><div class="form-check form-switch"><input name="gider_etiketi_guncelleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_etiketi_guncelleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.gider_etiketi_silme %}
+                                        <td><div class="form-check form-switch"><input name="gider_etiketi_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="gider_etiketi_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td>{% trans "Ürünler" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.urun_gorme %}
+                                        <td><div class="form-check form-switch"><input name="urun_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="urun_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.urun_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="urun_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="urun_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.urun_guncelleme %}
+                                        <td><div class="form-check form-switch"><input name="urun_guncelleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="urun_guncelleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.urun_silme %}
+                                        <td><div class="form-check form-switch"><input name="urun_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="urun_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Personel Grubu -->
+                    <div class="permission-group">
+                        <h6>
+                            {% trans "Personel" %}
+                            <div class="form-check form-switch">
+                                <input class="form-check-input toggle-group" type="checkbox">
+                            </div>
+                        </h6>
+                        <table>
+                            <thead>
+                                <tr>
+                                <th>{% trans "Fonksiyon" %}</th>
+                                    <th>{% trans "Hepsi" %}</th>
+                                    <th>{% trans "Görme" %}</th>
+                                    <th>{% trans "Oluşturma" %}</th>
+                                    <th>{% trans "Düzenleme" %}</th>
+                                    <th>{% trans "Silme" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{% trans "Personel İzinleri" %}</td>
+                                    <td><div class="form-check form-switch"><input class="form-check-input toggle-all" type="checkbox"></div></td>
+                                    {% if secili_grup.personeller_gorme %}
+                                        <td><div class="form-check form-switch"><input name="personeller_gorme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="personeller_gorme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.personeller_olusturma %}
+                                        <td><div class="form-check form-switch"><input name="personeller_olusturma" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="personeller_olusturma"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.personeller_duzenleme %}
+                                        <td><div class="form-check form-switch"><input name="personeller_duzenleme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="personeller_duzenleme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                    {% if secili_grup.personeller_silme %}
+                                        <td><div class="form-check form-switch"><input name="personeller_silme" checked class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% else %}
+                                        <td><div class="form-check form-switch"><input name="personeller_silme"  class="form-check-input toggle-individual" type="checkbox"></div></td>
+                                    {% endif %}
+                                </tr>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Diğer gruplar burada listelenecek -->
+                    <button class="btn btn-primary mt-3 w-100" data-bs-toggle="modal" data-bs-target="#addGroupModal">Yeni Grup Ekle</button>
+                </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+    <!-- Modal for Adding Group -->
+    <div class="modal fade" id="addGroupModal" tabindex="-1" aria-labelledby="addGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addGroupModalLabel">Yeni Grup Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form autocomplete="off"action="/{{dil}}{% url 'main:kullanici_yetki_olustur' %}" method="post">
+                    {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="group-name" class="form-label">{% trans "Grup Adı" %}</label>
+                        <input type="text" name="grup_adi" class="form-control" id="group-name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Kapat" %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans "Kaydet" %}</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+{% for i in izinler %} 
+    <!-- Modal for Editing Group -->
+    <div class="modal fade" id="editGroupModal{{i.id}}" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGroupModalLabel">{% trans "Grup Adını Düzenle" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:kullanici_yetki_adi_duzenle' %}" method="post" enctype="multipart/form-data" >
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="text" hidden name="id" class="form-control" id="edit-group-name" value="{{i.id}}">
+                        <label for="edit-group-name" class="form-label">{% trans "Grup Adı" %}</label>
+                        <input type="text" class="form-control" id="edit-group-name" name="grup_adi" value="{{i.isim}}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Kapat" %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans "Güncelle" %}</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+    </div>
+    <!-- Modal for Deleting Group -->
+    {% for i in izinler %} 
+    <div class="modal fade" id="deleteConfirmModal{{i.id}}" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">{% trans "Grubu Sil" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
+                </div>
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:kullanici_yetki_sil' %}" method="post" enctype="multipart/form-data" >
+                    {% csrf_token %}
+                    <input type="text" name="id" id="" hidden value="{{i.id}}">
+                <div class="modal-body">
+                    {% trans "Bu grubu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz." %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Hayır" %}</button>
+                    <button type="submit" class="btn btn-danger">{% trans "Evet, Sil" %}</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+        // Toggle All Functionality
+        document.querySelectorAll('.toggle-all').forEach(function (toggle) {
+            toggle.addEventListener('change', function () {
+                let row = this.closest('tr');
+                row.querySelectorAll('.toggle-individual').forEach(function (individualToggle) {
+                    individualToggle.checked = toggle.checked;
+                });
+            });
+        });
+
+        // Group Toggle Functionality
+        document.querySelectorAll('.toggle-group').forEach(function (groupToggle) {
+            groupToggle.addEventListener('change', function () {
+                let group = this.closest('.permission-group');
+                group.querySelectorAll('.toggle-individual').forEach(function (individualToggle) {
+                    individualToggle.checked = groupToggle.checked;
+                });
+            });
+        });
+
+        // Individual Toggle Functionality
+        document.querySelectorAll('.toggle-individual').forEach(function (individualToggle) {
+            individualToggle.addEventListener('change', function () {
+                let group = this.closest('.permission-group');
+                let allToggledOn = Array.from(group.querySelectorAll('.toggle-individual')).every(function (toggle) {
+                    return toggle.checked;
+                });
+                group.querySelector('.toggle-group').checked = allToggledOn;
+
+                let row = this.closest('tr');
+                let allRowToggledOn = Array.from(row.querySelectorAll('.toggle-individual')).every(function (toggle) {
+                    return toggle.checked;
+                });
+                row.querySelector('.toggle-all').checked = allRowToggledOn;
+            });
+        });
+        document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.style.display = 'none';
+        });
+    }
+});
+
+    </script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .group-list {
+            background-color: #ffffff;
+            border-right: 1px solid #ddd;
+            height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .group-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .group-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .group-item .action-icons {
+            position: absolute;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .group-item:hover .action-icons {
+            opacity: 1;
+        }
+
+        .action-icons i {
+            margin-left: 10px;
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .permissions-panel {
+            padding: 20px;
+            background-color: #ffffff;
+            border-left: 1px solid #ddd;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .btn-primary {
+            background-color: #24d6b6;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #1ba892;
+        }
+
+        .btn-secondary {
+            background-color: #dbf226;
+            border: none;
+            color: black;
+        }
+
+        .btn-secondary:hover {
+            background-color: #c4d51f;
+        }
+
+        .permission-matrix {
+            margin-top: 20px;
+        }
+
+        .permission-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .permission-group h6 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .permission-group table {
+            width: 100%;
+        }
+
+        .permission-group th,
+        .permission-group td {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+
+        .form-check-input {
+            margin-left: 0;
+            margin-top: 0;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .group-heading {
+            font-weight: bold;
+            text-align: left;
+            padding-left: 10px;
+            background-color: #f8f9fa;
+        }
+    </style>
+
+{% endblock sidebar %}

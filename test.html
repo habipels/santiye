@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Building with Overlapping Floors</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .building-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Ekrana sığdırma için gerekli */
+            width: 100%;
+            height: 100%;
+        }
+
+        .building {
+            display: flex;
+            flex-direction: column-reverse;
+            margin: 20px;
+            width: 200px;
+            transform-origin: top center; /* Üst merkeze göre ölçekleme yapar */
+            transform: scale(1); /* Default ölçek */
+            transition: transform 0.3s ease; /* Ölçeklemenin yumuşak geçişi */
+        }
+
+        .floor {
+            position: relative;
+            margin-top: -40px; /* Overlap amount */
+            cursor: pointer;
+        }
+
+        .floor img {
+            width: 100%;
+            height: auto;
+            transition: filter 0.3s ease; /* Renk değişiminin geçişi */
+        }
+
+        /* Görselin üzerine gelindiğinde maviye dönüştürmek için */
+        .floor img:hover {
+            filter: hue-rotate(180deg) brightness(1.5); /* Rengi maviye dönüştürür */
+        }
+
+        /* Animasyon */
+        @keyframes colorChange {
+            0% { filter: none; }
+            50% { filter: hue-rotate(80deg) brightness(1.5) sepia(1) saturate(10);  } /* Mavi renk */
+            100% { filter: none; ; }
+        }
+
+        .animate-color {
+            animation: colorChange 2s infinite; /* 2 saniye süren ve sonsuz tekrar eden animasyon */
+        }
+
+        .floor-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000; /* Ensures modal is always on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="building-container">
+    <div id="building" class="building"></div>
+</div>
+
+<!-- Modal Template -->
+<div id="modal-template" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modal-text">Some text in the Modal..</p>
+    </div>
+</div>
+
+<script>
+    // Function to add floors with images
+    function addFloors(floorCount) {
+        const building = document.getElementById('building');
+        building.innerHTML = '';  // Clear existing floors
+
+        for (let i = 1; i <= floorCount; i++) {
+            const floor = document.createElement('div');
+            floor.className = 'floor';
+            floor.dataset.floorNumber = i;
+
+            // Set z-index based on the floor number
+            floor.style.zIndex = floorCount - i; // Lower floors will have higher z-index
+
+            // Add image for the floor (use your own image URLs)
+            const img = document.createElement('img');
+            img.src = 'building3.png'; // Replace with your image URL
+            img.alt = i + '. Kat';
+            floor.appendChild(img);
+
+            // Optional: Add a label on the image
+            const label = document.createElement('div');
+            label.className = 'floor-label';
+            label.textContent = i + '. Kat';
+            floor.appendChild(label);
+
+            // Add click event to open modal
+            floor.addEventListener('click', function() {
+                openModal(i);
+            });
+
+            // Add animation to the first floor (for example, you can change this to a specific floor or add conditionally)
+            if (i === 13) {
+                img.classList.add('animate-color');
+            }
+
+            building.appendChild(floor);
+        }
+
+        // Adjust the scale to fit all floors within the view
+        const buildingHeight = building.offsetHeight;
+        const containerHeight = document.querySelector('.building-container').offsetHeight;
+
+        if (buildingHeight > containerHeight) {
+            const scale = containerHeight / buildingHeight;
+            building.style.transform = `scale(${scale})`;
+        } else {
+            building.style.transform = 'scale(1)';
+        }
+    }
+
+    // Function to open modal
+    function openModal(floorNumber) {
+        const modal = document.getElementById('modal-template');
+        const modalText = document.getElementById('modal-text');
+        modalText.textContent = floorNumber + '. Katın bilgileri burada...';
+        modal.style.display = 'block';
+
+        const closeModal = modal.querySelector('.close');
+        closeModal.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    }
+
+    // Initialize with 5 floors
+    addFloors(27);
+// Add event listeners for rotating the building
+document.querySelector('.building-container').addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const dx = e.clientX - startX;
+            currentY += dx * 0.5; // Rotation speed
+            document.getElementById('building').style.transform = `rotateY(${currentY}deg)`;
+            startX = e.clientX;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+</script>
+
+</body>
+</html>

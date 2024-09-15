@@ -1,0 +1,457 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags  %}
+{% load static %}
+{% block sidebar %}
+
+
+{%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
+{% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
+{{tablo}}
+<div class="vertical-overlay"></div>
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-4 col-md-4">
+                        <div class="card card-animate">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <p class="fw-medium text-muted mb-0">{% trans 'Fiziksel İlerleme' %}</p>
+                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="{% bloglar_daireleri_kalemleri_fiziksel_bilgileri_genel blog.k  %}">0</span>%</h2>
+                                        <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0">
+                                                <i class="ri-arrow-up-line align-middle"></i> 7.05 %
+                                            </span> {% trans 'previous month' %}</p>
+                                    </div>
+                                    <div>
+                                        <div class="avatar-sm flex-shrink-0">
+                                            <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+                                                <i class="ri-building-2-line"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- end card body -->
+                        </div> <!-- end card-->
+                    </div> <!-- end col-->
+                    <div class="col-xl-4 col-md-4">
+                        <div class="card card-animate">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <p class="fw-medium text-muted mb-0">{% trans 'Finansal İlerleme' %}</p>
+                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="{% bloglar_daireleri_kalemleri_finansal_bilgileri_genel blog.k  %}">0</span>%</h2>
+                                        <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0">
+                                                <i class="ri-arrow-up-line align-middle"></i> 7.05 %
+                                            </span>{% trans 'previous month' %} </p>
+                                    </div>
+                                    <div>
+                                        <div class="avatar-sm flex-shrink-0">
+                                            <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+                                                <i class="ri-money-dollar-circle-line"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- end card body -->
+                        </div> <!-- end card-->
+                    </div> <!-- end col-->
+                    <div class="col-xl-4 col-md-4">
+                        <div class="card card-animate">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        {% days_until santiye.bitis_tarihi as kalan_gun %}
+                                        <p class="fw-medium text-muted mb-0">{% trans 'Kalan Gün' %}</p>
+                                        {% if kalan_gun < 0  %}
+                                        <h2 style="color: red !important;" class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="{% days_until santiye.bitis_tarihi %}">0</span>{% trans 'Gün' %} </h2>
+                                        {% else %}
+                                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target="{% days_until santiye.bitis_tarihi %}">0</span> {% trans 'Gün' %}</h2>
+                                        {% endif %}
+                                        
+                                        <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0">
+                                                <i class="ri-arrow-up-line align-middle"></i> 7.05 %
+                                            </span>{% trans 'previous month' %} </p>
+                                    </div>
+                                    <div>
+                                        <div class="avatar-sm flex-shrink-0">
+                                            <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+                                                <i class="ri-money-dollar-circle-line"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- end card body -->
+                        </div> <!-- end card-->
+                    </div> <!-- end col-->
+                </div>
+                <div class="row">
+                    <div class="col-xxl-6 col-xl-6">
+                        <div class="card card-height-100">
+                            <div class="card-header align-items-center d-flex">
+                                <h4 class="card-title mb-0 flex-grow-1">{% trans 'Detaylı Fiziksel İlerleme' %}</h4>
+                            </div>
+                            <div class="card-body p-0">
+                                <div>
+                                    <div id="countries_charts" data-colors='["#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271"]' class="apex-charts" dir="ltr"></div>
+                                </div>
+                            </div><!-- end card body -->
+                        </div><!-- end card -->
+                    </div> <!-- end col-->
+
+                    <div class="col-xxl-6 col-xl-6">
+                        <div class="card card-height-100">
+                            <div class="card-header align-items-center d-flex">
+                                <h4 class="card-title mb-0 flex-grow-1">{% trans 'Detaylı Finansal İlerleme' %}</h4>
+                            </div>
+                            <div class="card-body p-0">
+                                <div>
+                                    <div id="countries_charts2" data-colors='["#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271", "#00b271"]' class="apex-charts" dir="ltr"></div>
+                                </div>
+                            </div><!-- end card body -->
+                        </div><!-- end card -->
+                    </div> <!-- end col-->
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">{% trans 'Kalemlerin Fiziksel Ve Finansal Durumu' %}</h4>
+                            </div><!-- end card header -->
+
+                            <div class="card-body">
+                                <div id="shades_heatmap" data-colors='["--vz-info", "--vz-primary"]' class="apex-charts" dir="ltr"></div>
+                            </div><!-- end card-body -->
+                        </div><!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+            </div>
+        </div>
+
+
+</div>
+
+ <script src="{% static 'assets/libs/apexcharts/apexcharts.min.js' %}"></script>
+
+<script>
+function getChartColorsArray(a) {
+    if (null !== document.getElementById(a)) {
+          a = document.getElementById(a).getAttribute("data-colors");
+          if (a)
+                return (a = JSON.parse(a)).map(function (a) {
+                      var e = a.replace(" ", "");
+                      return -1 === e.indexOf(",")
+                            ? getComputedStyle(document.documentElement).getPropertyValue(e) || e
+                            : 2 == (a = a.split(",")).length
+                            ? "rgba(" + getComputedStyle(document.documentElement).getPropertyValue(a[0]) + "," + a[1] + ")"
+                            : e;
+                });
+    }
+}
+var chartHeatMapBasicColors = getChartColorsArray("basic_heatmap");
+function generateData(a, e) {
+    for (var t = 0, r = []; t < a; ) {
+          var n = (t + 1).toString(),
+                o = Math.floor(Math.random() * (e.max - e.min + 1)) + e.min;
+          r.push({ x: n, y: o }), t++;
+    }
+    return r;
+}
+
+var options,
+    chart,
+    data = [
+        {% for i in blog.blog  %}
+
+
+          { name: "{{i}}", data: [50,60]},
+          {% endfor %}
+
+    ],
+    colors = (data.reverse(), ["#f7cc53", "#f1734f", "#663f59", "#6a6e94", "#4e88b4", "#00a7c6", "#18d8d8", "#a9d794", "#46aF78", "#a93f55", "#8c5e58", "#2176ff", "#5fd0f3", "#74788d", "#51d28c"]),
+    chartHeatMapMultipleColors = (colors.reverse(), getChartColorsArray("multiple_heatmap")),
+    chartHeatMapColors =
+          (chartHeatMapMultipleColors &&
+                ((options = {
+                      series: data,
+                      chart: { height: 450, type: "heatmap", toolbar: { show: !1 } },
+                      dataLabels: { enabled: !1 },
+                      colors: [
+                            chartHeatMapMultipleColors[0],
+                            chartHeatMapMultipleColors[1],
+                            chartHeatMapMultipleColors[2],
+                            chartHeatMapMultipleColors[3],
+                            chartHeatMapMultipleColors[4],
+                            chartHeatMapMultipleColors[5],
+                            chartHeatMapMultipleColors[6],
+                            chartHeatMapMultipleColors[7],
+                      ],
+                      xaxis: { type: "category", categories: ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "01:00", "01:30"] },
+                      title: { text: "HeatMap Chart (Different color shades for each series)", style: { fontWeight: 500 } },
+                      grid: { padding: { right: 20 } },
+                      stroke: { colors: [chartHeatMapMultipleColors[8]] },
+                }),
+                (chart = new ApexCharts(document.querySelector("#multiple_heatmap"), options)).render()),
+          getChartColorsArray("color_heatmap")),
+    chartHeatMapShadesColors =
+          (chartHeatMapColors &&
+                ((options = {
+                      series: [
+                            { name: "Jan", data: generateData(20, { min: -30, max: 55 }) },
+                            { name: "Feb", data: generateData(20, { min: -30, max: 55 }) },
+                            { name: "Mar", data: generateData(20, { min: -30, max: 55 }) },
+                            { name: "Apr", data: generateData(20, { min: -30, max: 55 }) },
+                            { name: "May", data: generateData(20, { min: -30, max: 55 }) },
+                            { name: "Jun", data: generateData(20, { min: -30, max: 55 }) },
+                            { name: "Jul", data: generateData(20, { min: -30, max: 55 }) },
+                            { name: "Aug", data: generateData(20, { min: -30, max: 55 }) },
+                            { name: "Sep", data: generateData(20, { min: -30, max: 55 }) },
+                      ],
+                      chart: { height: 350, type: "heatmap", toolbar: { show: !1 } },
+                      plotOptions: {
+                            heatmap: {
+                                  shadeIntensity: 0.5,
+                                  radius: 0,
+                                  useFillColorAsStroke: !0,
+                                  colorScale: {
+                                        ranges: [
+                                              { from: -30, to: 5, name: "Low", color: chartHeatMapColors[0] },
+                                              { from: 6, to: 20, name: "Medium", color: chartHeatMapColors[1] },
+                                              { from: 21, to: 45, name: "High", color: chartHeatMapColors[2] },
+                                              { from: 46, to: 55, name: "Extreme", color: chartHeatMapColors[3] },
+                                        ],
+                                  },
+                            },
+                      },
+                      dataLabels: { enabled: !1 },
+                      stroke: { width: 1 },
+                      title: { text: "HeatMap Chart with Color Range", style: { fontWeight: 500 } },
+                }),
+                (chart = new ApexCharts(document.querySelector("#color_heatmap"), options)).render()),
+          getChartColorsArray("shades_heatmap"));
+chartHeatMapShadesColors &&
+    ((options = {
+          series: [
+                {% for i in tablo  %}
+
+
+                { name: "{{i.isim | safe}}", data: [ {{i.ilerleme1 | safe}},{{i.ilerleme2 | safe}}] },
+                {% endfor %}
+          ],
+          chart: { height: 500, type: "heatmap", toolbar: { show: !1 } },
+          stroke: { width: 0 },
+          plotOptions: {
+                heatmap: {
+                      radius: 0,
+                      enableShades: !1,
+                      colorScale: {
+                            ranges: [
+                                  { from: 0, to: 50, color: chartHeatMapShadesColors[0] },
+                                  { from: 51, to: 100, color: chartHeatMapShadesColors[1] },
+                            ],
+                      },
+                },
+          },
+          dataLabels: { enabled: !0, style: { colors: ["#fff"] } },
+          yaxis:{ labels: {minWidth:100, maxWidth:500, style:{ fontSize:'20px', marginRight:'50px' } }},
+          xaxis: { type: "category" },
+          title: { text: "Blogların Kalemlere Göre Yüzde Dağılımları", style: { fontWeight: 500 } },
+    }),
+    (chart = new ApexCharts(document.querySelector("#shades_heatmap"), options)).render());
+
+    function getChartColorsArray(e) {
+    if (null !== document.getElementById(e)) {
+        var t = document.getElementById(e).getAttribute("data-colors");
+        if (t)
+            return (t = JSON.parse(t)).map(function (e) {
+                var t = e.replace(" ", "");
+                return -1 === t.indexOf(",")
+                    ? getComputedStyle(document.documentElement).getPropertyValue(t) || t
+                    : 2 == (e = e.split(",")).length
+                    ? "rgba(" + getComputedStyle(document.documentElement).getPropertyValue(e[0]) + "," + e[1] + ")"
+                    : t;
+            });
+        console.warn("data-colors Attribute not found on:", e);
+    }
+}
+var worldlinemap,
+    columnoptions,
+    usmap,
+    vectorMapWorldLineColors = getChartColorsArray("users-by-country"),
+    barchartCountriesColors =
+        (vectorMapWorldLineColors &&
+            (worldlinemap = new jsVectorMap({
+                map: "world_merc",
+                selector: "#users-by-country",
+                zoomOnScroll: !0,
+                zoomButtons: !0,
+                markers: [
+                    { name: "Greenland", coords: [72, -42] },
+                    { name: "Canada", coords: [56.1304, -106.3468] },
+                    { name: "Brazil", coords: [-14.235, -51.9253] },
+                    { name: "Egypt", coords: [26.8206, 30.8025] },
+                    { name: "Russia", coords: [61, 105] },
+                    { name: "China", coords: [35.8617, 104.1954] },
+                    { name: "United States", coords: [37.0902, -95.7129] },
+                    { name: "Norway", coords: [60.472024, 8.468946] },
+                    { name: "Ukraine", coords: [48.379433, 31.16558] },
+                ],
+                lines: [
+                    { from: "Canada", to: "Egypt" },
+                    { from: "Russia", to: "Egypt" },
+                    { from: "Greenland", to: "Egypt" },
+                    { from: "Brazil", to: "Egypt" },
+                    { from: "United States", to: "Egypt" },
+                    { from: "China", to: "Egypt" },
+                    { from: "Norway", to: "Egypt" },
+                    { from: "Ukraine", to: "Egypt" },
+                ],
+                regionStyle: { initial: { stroke: "#9599ad", strokeWidth: 0.25, fill: vectorMapWorldLineColors, fillOpacity: 1 } },
+                lineStyle: { animation: !0, strokeDasharray: "6 3 6" },
+            })),
+        getChartColorsArray("countries_charts")),
+    chartAudienceColumnChartsColors =
+        (barchartCountriesColors &&
+            ((options = {
+                series: [{ data: [{{fiziksel_ilerleme |safe }}], name: "{{santiye.blog_adi}}" }],
+                chart: { type: "bar", height: 436, toolbar: { show: !1 } },
+                plotOptions: { bar: { borderRadius: 4, horizontal: !0, distributed: !0, dataLabels: { position: "top" } } },
+                colors: barchartCountriesColors,
+                dataLabels: { enabled: !0, offsetX: 32, style: { fontSize: "12px", fontWeight: 400, colors: ["#adb5bd"] } },
+                legend: { show: !1 },
+                grid: { show: !1 },
+                xaxis: { categories: ["{{santiye.blog_adi}}"]},
+            }),
+            (chart = new ApexCharts(document.querySelector("#countries_charts"), options)).render()),
+        getChartColorsArray("audiences_metrics_charts")),
+    vectorMapUsaColors =
+        (chartAudienceColumnChartsColors &&
+            ((columnoptions = {
+                series: [
+                    { name: "Last Year", data: [25.3, 12.5, 20.2, 18.5, 40.4, 25.4, 15.8, 22.3, 19.2, 25.3, 12.5, 20.2] },
+                    { name: "Current Year", data: [36.2, 22.4, 38.2, 30.5, 26.4, 30.4, 20.2, 29.6, 10.9, 36.2, 22.4, 38.2] },
+                ],
+                chart: { type: "bar", height: 306, stacked: !0, toolbar: { show: !1 } },
+                plotOptions: { bar: { horizontal: !1, columnWidth: "30%", borderRadius: 6 } },
+                dataLabels: { enabled: !1 },
+                legend: { show: !0, position: "bottom", horizontalAlign: "center", fontWeight: 400, fontSize: "8px", offsetX: 0, offsetY: 0, markers: { width: 9, height: 9, radius: 4 } },
+                stroke: { show: !0, width: 2, colors: ["transparent"] },
+                grid: { show: !1 },
+                colors: chartAudienceColumnChartsColors,
+                xaxis: {
+                    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    axisTicks: { show: !1 },
+                    axisBorder: { show: !0, strokeDashArray: 1, height: 1, width: "100%", offsetX: 0, offsetY: 0 },
+                },
+                yaxis: { show: !1 },
+                fill: { opacity: 1 },
+            }),
+            (chart = new ApexCharts(document.querySelector("#audiences_metrics_charts"), columnoptions)).render()),
+        getChartColorsArray("sales-by-locations")),
+    donutchartportfolioColors =
+        (vectorMapUsaColors &&
+            (usmap = new jsVectorMap({ map: "us_merc_en", selector: "#sales-by-locations", regionStyle: { initial: { stroke: "#9599ad", strokeWidth: 0.25, fill: vectorMapUsaColors, fillOpacity: 1 } }, zoomOnScroll: !1, zoomButtons: !1 })),
+        getChartColorsArray("portfolio_donut_charts"));
+
+function getChartColorsArray(e) {
+    if (null !== document.getElementById(e)) {
+        var t = document.getElementById(e).getAttribute("data-colors");
+        if (t)
+            return (t = JSON.parse(t)).map(function (e) {
+                var t = e.replace(" ", "");
+                return -1 === t.indexOf(",")
+                    ? getComputedStyle(document.documentElement).getPropertyValue(t) || t
+                    : 2 == (e = e.split(",")).length
+                    ? "rgba(" + getComputedStyle(document.documentElement).getPropertyValue(e[0]) + "," + e[1] + ")"
+                    : t;
+            });
+        console.warn("data-colors Attribute not found on:", e);
+    }
+}
+var worldlinemap,
+    columnoptions,
+    usmap,
+    vectorMapWorldLineColors = getChartColorsArray("users-by-country"),
+    barchartCountriesColors =
+        (vectorMapWorldLineColors &&
+            (worldlinemap = new jsVectorMap({
+                map: "world_merc",
+                selector: "#users-by-country",
+                zoomOnScroll: !0,
+                zoomButtons: !0,
+                markers: [
+                    { name: "Greenland", coords: [72, -42] },
+                    { name: "Canada", coords: [56.1304, -106.3468] },
+                    { name: "Brazil", coords: [-14.235, -51.9253] },
+                    { name: "Egypt", coords: [26.8206, 30.8025] },
+                    { name: "Russia", coords: [61, 105] },
+                    { name: "China", coords: [35.8617, 104.1954] },
+                    { name: "United States", coords: [37.0902, -95.7129] },
+                    { name: "Norway", coords: [60.472024, 8.468946] },
+                    { name: "Ukraine", coords: [48.379433, 31.16558] },
+                ],
+                lines: [
+                    { from: "Canada", to: "Egypt" },
+                    { from: "Russia", to: "Egypt" },
+                    { from: "Greenland", to: "Egypt" },
+                    { from: "Brazil", to: "Egypt" },
+                    { from: "United States", to: "Egypt" },
+                    { from: "China", to: "Egypt" },
+                    { from: "Norway", to: "Egypt" },
+                    { from: "Ukraine", to: "Egypt" },
+                ],
+                regionStyle: { initial: { stroke: "#9599ad", strokeWidth: 0.25, fill: vectorMapWorldLineColors, fillOpacity: 1 } },
+                lineStyle: { animation: !0, strokeDasharray: "6 3 6" },
+            })),
+        getChartColorsArray("countries_charts")),
+    chartAudienceColumnChartsColors =
+        (barchartCountriesColors &&
+            ((options = {
+                series: [{ data: [{{finansal_ilerleme |safe}}], name: "{{santiye.blog_adi}}" }],
+                chart: { type: "bar", height: 436, toolbar: { show: !1 } },
+                plotOptions: { bar: { borderRadius: 4, horizontal: !0, distributed: !0, dataLabels: { position: "top" } } },
+                colors: barchartCountriesColors,
+                dataLabels: { enabled: !0, offsetX: 32, style: { fontSize: "12px", fontWeight: 400, colors: ["#adb5bd"] } },
+                legend: { show: !1 },
+                grid: { show: !1 },
+                xaxis: { categories: ["{{santiye.blog_adi}}"] },
+            }),
+            (chart = new ApexCharts(document.querySelector("#countries_charts2"), options)).render()),
+        getChartColorsArray("audiences_metrics_charts")),
+    vectorMapUsaColors =
+        (chartAudienceColumnChartsColors &&
+            ((columnoptions = {
+                series: [
+                    { name: "Last Year", data: [25.3, 12.5, 20.2, 18.5, 40.4, 25.4, 15.8, 22.3, 19.2, 25.3, 12.5, 20.2] },
+                    { name: "Current Year", data: [36.2, 22.4, 38.2, 30.5, 26.4, 30.4, 20.2, 29.6, 10.9, 36.2, 22.4, 38.2] },
+                ],
+                chart: { type: "bar", height: 306, stacked: !0, toolbar: { show: !1 } },
+                plotOptions: { bar: { horizontal: !1, columnWidth: "30%", borderRadius: 6 } },
+                dataLabels: { enabled: !1 },
+                legend: { show: !0, position: "bottom", horizontalAlign: "center", fontWeight: 400, fontSize: "8px", offsetX: 0, offsetY: 0, markers: { width: 9, height: 9, radius: 4 } },
+                stroke: { show: !0, width: 2, colors: ["transparent"] },
+                grid: { show: !1 },
+                colors: chartAudienceColumnChartsColors,
+                xaxis: {
+                    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    axisTicks: { show: !1 },
+                    axisBorder: { show: !0, strokeDashArray: 1, height: 1, width: "100%", offsetX: 0, offsetY: 0 },
+                },
+                yaxis: { show: !1 },
+                fill: { opacity: 1 },
+            }),
+            (chart = new ApexCharts(document.querySelector("#audiences_metrics_charts"), columnoptions)).render()),
+        getChartColorsArray("sales-by-locations")),
+    donutchartportfolioColors =
+        (vectorMapUsaColors &&
+            (usmap = new jsVectorMap({ map: "us_merc_en", selector: "#sales-by-locations", regionStyle: { initial: { stroke: "#9599ad", strokeWidth: 0.25, fill: vectorMapUsaColors, fillOpacity: 1 } }, zoomOnScroll: !1, zoomButtons: !1 })),
+        getChartColorsArray("portfolio_donut_charts"));
+
+
+</script>
+{% endblock sidebar %}
+
