@@ -1151,7 +1151,10 @@ def dashboard_bilgisi(kisi):
     content = {}
     cali = calisanlar.objects.filter(calisan_kime_ait = kisi,status = "0")
     content["personel_sayisi"] = cali.count()
-    cali = cali.order_by("-id")[:2]
+    try:
+        cali = cali.order_by("-id")[:2]
+    except:
+        cali = 0
     html = []
     for i in cali:
         calismalar = calisanlar_calismalari.objects.filter(
