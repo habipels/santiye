@@ -22,6 +22,8 @@ class Kasa (models.Model):
     kasa_adi = models.CharField(max_length=400,verbose_name="Kasa Adı",blank=True,null=True)
     aciklama = models.TextField(verbose_name="Kasa Açkıklama",blank=True,null=True)
     bakiye = models.FloatField(verbose_name="Kasa Bakiyesi",default=0)
+    avans_icin_kullan = models.BooleanField(default=False)
+    maas_icin_kullan = models.BooleanField(default=False)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

@@ -448,9 +448,19 @@ def kasa_ekle(request):
             kasa_Adi   = request.POST.get("kasaadi")
             bakiye = request.POST.get("bakiye")
             konumu = request.POST.get("konumu")
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
             Kasa.objects.create(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi )
-                                ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye
-
+                                ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan
                                 )
         else:
             if request.user.kullanicilar_db:
@@ -460,8 +470,19 @@ def kasa_ekle(request):
                         kasa_Adi   = request.POST.get("kasaadi")
                         bakiye = request.POST.get("bakiye")
                         konumu = request.POST.get("konumu")
+                        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                        if maaslarda_kullan == "1":
+                            maaslarda_kullan = False
+                        else:
+                            maaslarda_kullan = True
+                        if avanslarda_kullan == "1":
+                            avanslarda_kullan = False
+                        else:
+                            avanslarda_kullan = True
                         Kasa.objects.create(kasa_kart_ait_bilgisi = request.user.kullanicilar_db
-                            ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye)
+                            ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -470,8 +491,19 @@ def kasa_ekle(request):
                 kasa_Adi   = request.POST.get("kasaadi")
                 bakiye = request.POST.get("bakiye")
                 konumu = request.POST.get("konumu")
+                maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                if maaslarda_kullan == "1":
+                    maaslarda_kullan = False
+                else:
+                    maaslarda_kullan = True
+                if avanslarda_kullan == "1":
+                    avanslarda_kullan = False
+                else:
+                    avanslarda_kullan = True
                 Kasa.objects.create(kasa_kart_ait_bilgisi = request.user
-                    ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye)
+                    ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
 
     return redirect("accounting:kasa")
 
@@ -509,14 +541,27 @@ def kasa_duzenle(request):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         silinmedurumu = request.POST.get("silinmedurumu")
         konumu = request.POST.get("konumu")
+        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+        if maaslarda_kullan == "1":
+            maaslarda_kullan = False
+        else:
+            maaslarda_kullan = True
+        if avanslarda_kullan == "1":
+            avanslarda_kullan = False
+        else:
+            avanslarda_kullan = True
         if silinmedurumu == "1":
             silinmedurumu = False
-            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
+            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         elif silinmedurumu == "2":
             silinmedurumu = True
-            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
+            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
         else:
-            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu)
+            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     else:
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -524,8 +569,19 @@ def kasa_duzenle(request):
                 if a.izinler.kasa_guncelleme_izni:
                     proje_tip_adi   = request.POST.get("yetkili_adi")
                     konumu = request.POST.get("konumu")
+                    maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                    avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                    if maaslarda_kullan == "1":
+                        maaslarda_kullan = False
+                    else:
+                        maaslarda_kullan = True
+                    if avanslarda_kullan == "1":
+                        avanslarda_kullan = False
+                    else:
+                        avanslarda_kullan = True
                     Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(kasa_adi = proje_tip_adi
-                            ,aciklama = konumu)
+                            ,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
                 else:
                     return redirect("main:yetkisiz")
             else:
@@ -533,8 +589,19 @@ def kasa_duzenle(request):
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             konumu = request.POST.get("konumu")
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
             Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(kasa_adi = proje_tip_adi
-                    ,aciklama = konumu)
+                    ,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
     return redirect("accounting:kasa")
 
 #Gelir Kategorisi
