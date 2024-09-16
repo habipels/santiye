@@ -244,7 +244,7 @@ def homepage(request):
     ip_info = None
     
     # Kullanıcının IP adresini alıyoruz
-    ip ="85.110.71.229"  #get_client_ip(request) #
+    ip = get_client_ip(request) #
     
     # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
     ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
@@ -280,6 +280,10 @@ def homepage(request):
     return render(request,"index.html",content)
 def ana_sayfa(request):
     content = sozluk_yapisi()
+    if request.user.is_authenticated:
+        pass
+    else:
+        return redirect("/users/login/")
     if request.user.is_authenticated:
         content = sozluk_yapisi()
         if super_admin_kontrolu(request):
@@ -388,7 +392,7 @@ def ana_sayfa(request):
     ip_info = None
     
     # Kullanıcının IP adresini alıyoruz
-    ip ="85.110.71.229"  #get_client_ip(request) #
+    ip = get_client_ip(request) #
     
     # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
     ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
@@ -420,7 +424,8 @@ def ana_sayfa(request):
             
     else:
         return redirect("/users/login/")
-    return render(request,"a.html",content)
+
+    return render(request,"index.html",content)
 def homepage_2(request,hash):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
