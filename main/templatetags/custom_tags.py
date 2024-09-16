@@ -1159,18 +1159,20 @@ def dashboard_bilgisi(kisi):
         cali = 0
     html = []
     for i in cali:
-        
-        calismalar = calisanlar_calismalari.objects.filter(
-                calisan=get_object_or_none(calisanlar, id=i.id)
-                ).annotate(
-                    year=ExtractYear('tarihi'),
-                    month=ExtractMonth('tarihi')
-                ).values(
-                    'year', 'month', 'maas__id'  # Maas ID ve ismi ile gruplanıyor
-                ).annotate(
-                    total_normal_calisma_saati=Sum('normal_calisma_saati'),
-                    total_mesai_calisma_saati=Sum('mesai_calisma_saati')
-                ).order_by('year', 'month', 'maas__id')
+        try:
+            calismalar = calisanlar_calismalari.objects.filter(
+                    calisan=get_object_or_none(calisanlar, id=i.id)
+                    ).annotate(
+                        year=ExtractYear('tarihi'),
+                        month=ExtractMonth('tarihi')
+                    ).values(
+                        'year', 'month', 'maas__id'  # Maas ID ve ismi ile gruplanıyor
+                    ).annotate(
+                        total_normal_calisma_saati=Sum('normal_calisma_saati'),
+                        total_mesai_calisma_saati=Sum('mesai_calisma_saati')
+                    ).order_by('year', 'month', 'maas__id')
+        except:
+            pass
         try:
             person = {"resim":i.profile.url if i.profile.url else "{% static 'go/images/avatar.png' %}",
             "isim_soyisim" : i.isim +" "+ i.soyisim,
