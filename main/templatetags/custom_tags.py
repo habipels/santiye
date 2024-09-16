@@ -804,6 +804,7 @@ def basit_toplama(a,b):
     return str(round(y,2))
 @register.simple_tag
 def kategori_bilgi_ver(b):
+    genel_tutar = 0
     if b.is_superuser:
         bilgi = gider_kategorisi.objects.filter(silinme_bilgisi = False)
     else:
@@ -815,9 +816,10 @@ def kategori_bilgi_ver(b):
     for i in bilgi:
         isimleri.append(str(i.gider_kategori_adi))
         renk.append(str(i.gider_kategorisi_renk))
-        a.append(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id).count())
+        a.append(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('kalan_tutar'))['total'] or 0)
+        genel_tutar = genel_tutar + float(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('kalan_tutar'))['total'] or 0)
     print(isimleri)
-    return {"isimleri":isimleri,"a":a,"renk":renk}
+    return {"isimleri":isimleri,"a":a,"renk":renk,"tutar":genel_tutar}
 @register.simple_tag
 def ekstra(id,k):
     bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
@@ -1178,3 +1180,273 @@ def dashboard_bilgisi(kisi):
     
     content["personeller"] = html
     return content
+from django.utils.timezone import now, timedelta
+@register.simple_tag
+def gelir_yuzde_farki(customuser):
+    # Bu haftanın başlangıcını ve geçen haftanın başlangıcını hesapla
+    today = now().date()
+    this_week_start = today - timedelta(days=today.weekday())
+    last_week_start = this_week_start - timedelta(weeks=1)
+
+    # Geçen hafta ve bu hafta yapılan ödemeleri al
+    last_week_payments = Gelir_odemesi.objects.filter(
+        tarihi__gte=last_week_start,
+        tarihi__lt=this_week_start,
+        gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+        gelir_kime_ait_oldugu__silinme_bilgisi=False
+    ).aggregate(total=models.Sum('tutar'))['total'] or 0
+
+    this_week_payments = Gelir_odemesi.objects.filter(
+        tarihi__gte=this_week_start,
+        gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+        gelir_kime_ait_oldugu__silinme_bilgisi=False
+    ).aggregate(total=models.Sum('tutar'))['total'] or 0
+
+    # Yüzde farkını hesapla
+    if last_week_payments == 0:
+        tutar = 100 if this_week_payments > 0 else 0  # Geçen hafta ödeme yoksa, bu hafta varsa %100 artış
+    else:
+        tutar = ((this_week_payments - last_week_payments) / last_week_payments) * 100
+        tutar =  round(tutar, 2)
+    if tutar >=0:
+        arti = True
+    else:
+        arti = False
+    return {"fark":tutar,"arti":arti}
+@register.simple_tag
+def gider_yuzde_farki(customuser):
+    # Bu haftanın başlangıcını ve geçen haftanın başlangıcını hesapla
+    today = now().date()
+    this_week_start = today - timedelta(days=today.weekday())
+    last_week_start = this_week_start - timedelta(weeks=1)
+
+    # Geçen hafta ve bu hafta yapılan ödemeleri al
+    last_week_payments = Gider_odemesi.objects.filter(
+        tarihi__gte=last_week_start,
+        tarihi__lt=this_week_start,
+        gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+        gelir_kime_ait_oldugu__silinme_bilgisi=False
+    ).aggregate(total=models.Sum('tutar'))['total'] or 0
+
+    this_week_payments = Gider_odemesi.objects.filter(
+        tarihi__gte=this_week_start,
+        gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+        gelir_kime_ait_oldugu__silinme_bilgisi=False
+    ).aggregate(total=models.Sum('tutar'))['total'] or 0
+
+    # Yüzde farkını hesapla
+    if last_week_payments == 0:
+        tutar = 100 if this_week_payments > 0 else 0  # Geçen hafta ödeme yoksa, bu hafta varsa %100 artış
+    else:
+        tutar = ((this_week_payments - last_week_payments) / last_week_payments) * 100
+        tutar =  round(tutar, 2)
+    if tutar >=0:
+        arti = True
+    else:
+        arti = False
+    return {"fark":tutar,"arti":arti}
+    
+
+
+
+
+# yourapp/templatetags/gelir_tags.py
+# yourapp/templatetags/gelir_tags.py
+
+from django import template
+from django.utils.translation import gettext as _
+from django.db.models import Sum
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
+
+@register.simple_tag
+def son_dort_ay_tutar(customuser):
+    today = datetime.today()
+    aylar = []
+    tutarlar = []
+
+    # Ay isimleri için kullanılacak format
+    month_names = {
+        1: _("January"),
+        2: _("February"),
+        3: _("March"),
+        4: _("April"),
+        5: _("May"),
+        6: _("June"),
+        7: _("July"),
+        8: _("August"),
+        9: _("September"),
+        10: _("October"),
+        11: _("November"),
+        12: _("December"),
+    }
+
+    # Son 4 ayı bul ve her aya ait ödemeleri hesapla
+    for i in range(4):
+        # Bu aydan i ay geriye git
+        start_of_month = (today - relativedelta(months=i)).replace(day=1)
+        end_of_month = (start_of_month + relativedelta(months=1)) - relativedelta(days=1)
+
+        # O ay içerisindeki ödemeleri al
+        total_payment = Gelir_odemesi.objects.filter(
+            tarihi__gte=start_of_month,
+            tarihi__lte=end_of_month,
+            gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+            gelir_kime_ait_oldugu__silinme_bilgisi=False
+        ).aggregate(total=Sum('tutar'))['total'] or 0
+
+        # Ay adı ve toplam tutarı listeye ekle
+        ay_adi = f"{month_names[start_of_month.month]} {start_of_month.year}"  # Örneğin: "September 2023"
+        tutarlar.append(round(total_payment, 2))
+        aylar.append(ay_adi)
+
+    return {"aylar": aylar, "tutarlar": tutarlar}
+
+@register.simple_tag
+def son_dort_ay_tutar_gider(customuser):
+    today = datetime.today()
+    aylar = []
+    tutarlar = []
+
+    # Ay isimleri için kullanılacak format
+    month_names = {
+        1: _("January"),
+        2: _("February"),
+        3: _("March"),
+        4: _("April"),
+        5: _("May"),
+        6: _("June"),
+        7: _("July"),
+        8: _("August"),
+        9: _("September"),
+        10: _("October"),
+        11: _("November"),
+        12: _("December"),
+    }
+
+    # Son 4 ayı bul ve her aya ait ödemeleri hesapla
+    for i in range(4):
+        # Bu aydan i ay geriye git
+        start_of_month = (today - relativedelta(months=i)).replace(day=1)
+        end_of_month = (start_of_month + relativedelta(months=1)) - relativedelta(days=1)
+
+        # O ay içerisindeki ödemeleri al
+        total_payment = Gider_odemesi.objects.filter(
+            tarihi__gte=start_of_month,
+            tarihi__lte=end_of_month,
+            gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+            gelir_kime_ait_oldugu__silinme_bilgisi=False
+        ).aggregate(total=Sum('tutar'))['total'] or 0
+
+        # Ay adı ve toplam tutarı listeye ekle
+        ay_adi = f"{month_names[start_of_month.month]} {start_of_month.year}"  # Örneğin: "September 2023"
+        tutarlar.append(round(total_payment, 2))
+        aylar.append(ay_adi)
+
+    return {"aylar": aylar, "tutarlar": tutarlar}
+
+
+
+from django import template
+from django.utils.timezone import now
+from datetime import timedelta
+from django.db.models import Sum
+
+
+
+@register.simple_tag
+def borc_yuzde_farki(customuser):
+    today = now()
+    start_of_week = today - timedelta(days=today.weekday())
+    end_of_last_week = start_of_week - timedelta(days=1)
+    start_of_last_week = end_of_last_week - timedelta(days=6)
+    
+    # Bu haftanın giderleri
+    this_week_total = Gider_Bilgisi.objects.filter(
+        fatura_tarihi__gte=start_of_week,
+        fatura_tarihi__lte=end_of_last_week,
+        gelir_kime_ait_oldugu=customuser,
+        silinme_bilgisi=False
+    ).aggregate(total=Sum('kalan_tutar'))['total'] or 0
+    
+    # Geçen haftanın giderleri
+    last_week_total = Gider_Bilgisi.objects.filter(
+        fatura_tarihi__gte=start_of_last_week,
+        fatura_tarihi__lte=end_of_last_week,
+        gelir_kime_ait_oldugu=customuser,
+        silinme_bilgisi=False
+    ).aggregate(total=Sum('kalan_tutar'))['total'] or 0
+
+    
+    # Yüzde farkını hesapla
+    if last_week_total == 0:
+        tutar = 100 if this_week_total > 0 else 0  # Geçen hafta ödeme yoksa, bu hafta varsa %100 artış
+    else:
+        tutar = ((this_week_total - last_week_total) / last_week_total) * 100
+        tutar =  round(tutar, 2)
+    if tutar >=0:
+        arti = True
+    else:
+        arti = False
+    return {"fark":tutar,"arti":arti}
+    
+
+@register.simple_tag
+def borc_son_dort_ay_tutar(customuser):
+    today = datetime.today()
+    aylar = []
+    tutarlar = []
+
+    # Son 4 ayı bul ve her aya ait ödemeleri hesapla
+    for i in range(4):
+        # Bu aydan i ay geriye git
+        start_of_month = (today - relativedelta(months=i)).replace(day=1)
+        end_of_month = (start_of_month + relativedelta(months=1)) - relativedelta(days=1)
+
+        # O ay içerisindeki giderleri al
+        total_payment = Gider_Bilgisi.objects.filter(
+            fatura_tarihi__gte=start_of_month,
+            fatura_tarihi__lte=end_of_month,
+            gelir_kime_ait_oldugu=customuser,
+            silinme_bilgisi=False
+        ).aggregate(total=Sum('kalan_tutar'))['total'] or 0
+
+        # Ayın adını çevir
+        ay_adi = start_of_month.strftime('%Y-%m')
+        ay_adlari = {
+            '01': _('January'),
+            '02': _('February'),
+            '03': _('March'),
+            '04': _('April'),
+            '05': _('May'),
+            '06': _('June'),
+            '07': _('July'),
+            '08': _('August'),
+            '09': _('September'),
+            '10': _('October'),
+            '11': _('November'),
+            '12': _('December')
+        }
+
+        ay_kod = start_of_month.strftime('%m')
+        ay_isim = f"{start_of_month.strftime('%Y')} {ay_adlari.get(ay_kod, 'Unknown')}"
+        
+        # Listeye ekle
+        tutarlar.append(round(total_payment, 2))
+        aylar.append(ay_isim)
+
+    return {"aylar": aylar, "tutarlar": tutarlar}
+
+
+
+
+
+
+
+
+
+
+
+
+
