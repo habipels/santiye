@@ -140,7 +140,8 @@ urlpatterns = [
     path('adddebit/', views.zimmet_ekle, name='zimmet_ekle'),
     path('zimmet/<int:id>/', views.zimmet, name='zimmet'),
     path('teslim/<int:id>/<int:iz>/', views.zimmeti_teslim_Al, name='zimmeti_teslim_Al'),
+    path('salaryandadvance/', views.avans_maas, name='avans_maas'),
 ]
 #zimmeti_teslim_Al_1
 #accounting
-
+#maas:avans 

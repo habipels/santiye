@@ -4833,3 +4833,46 @@ def zimmet(request,id):
                 
         }
         return JsonResponse(fatura_data)
+
+def avans_maas(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_odeme_gorme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        maas_ve_avanslar_iptal_edilen_faturalar = calisanlar_calismalari_odemeleri.objects.filter(
+            calisan__calisan_kime_ait=kullanici,
+            fatura__isnull=False
+            
+            ).exclude(
+                fatura__silinme_bilgisi=True
+            )
+        maas_ve_avanslar_faturasi_olmayan = calisanlar_calismalari_odemeleri.objects.filter(
+            calisan__calisan_kime_ait=kullanici,
+            fatura__isnull=True)
+        maas_ve_avanslar__faturalar = calisanlar_calismalari_odemeleri.objects.filter(
+            calisan__calisan_kime_ait=kullanici,
+            fatura__isnull=False
+            
+            ).exclude(
+                fatura__silinme_bilgisi=False
+            )     
+    content["silinen_faturali"] = maas_ve_avanslar_iptal_edilen_faturalar
+    content["faturasi_olmayan"] = maas_ve_avanslar_faturasi_olmayan
+    content["faturasi_olan"] = maas_ve_avanslar__faturalar
+    return render(request,"personel/maas_avans_sayfasi.html",content)
+
+
+
+

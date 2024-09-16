@@ -1254,13 +1254,6 @@ def gider_yuzde_farki(customuser):
         arti = False
     return {"fark":tutar,"arti":arti}
     
-
-
-
-
-# yourapp/templatetags/gelir_tags.py
-# yourapp/templatetags/gelir_tags.py
-
 from django import template
 from django.utils.translation import gettext as _
 from django.db.models import Sum
@@ -1447,7 +1440,11 @@ def borc_son_dort_ay_tutar(customuser):
     return {"aylar": aylar, "tutarlar": tutarlar}
 
 
+@register.simple_tag
+def odeme_para_birimi(bilgi2):
 
+    para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
+    return para_birimi.para_birimi
 
 
 
