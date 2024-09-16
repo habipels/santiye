@@ -114,7 +114,8 @@
     {% url 'accounting:giderler_sayfasi' as giderler_sayfasi_url %}
     {% url 'accounting:kasa' as kasa_url %}
     {% url 'accounting:cari' as cari_url %}
-    <li class="{% if request.path == gelirler_sayfasi_url or request.path == giderler_sayfasi_url or request.path == kasa_url or request.path == cari_url %}active{% endif %}">
+    {% url 'accounting:avans_maas' as avans_maas_url %}
+    <li class="{% if request.path == gelirler_sayfasi_url or request.path == giderler_sayfasi_url or request.path == kasa_url or request.path == cari_url or request.path == avans_maas_url %}active{% endif %}">
         <a class="sidebar-sub-toggle" href="#"><i class="icon icon-muhasebe"></i> <span>{% trans 'Muhasebe' %}</span> <i class="icon icon-caret"></i></a>
         <ul class="sidebar-sub-menu">
             <li class="{% if request.path == gelirler_sayfasi_url %}active{% endif %}">
@@ -122,6 +123,9 @@
             </li>
             <li class="{% if request.path == giderler_sayfasi_url %}active{% endif %}">
                 <a href="{{ giderler_sayfasi_url }}" class="sidebar-sub-item">{% trans 'Gider Faturası' %}</a>
+            </li>
+            <li class="{% if request.path == avans_maas_url %}active{% endif %}">
+                <a href="{{ avans_maas_url }}" class="sidebar-sub-item">{% trans 'Maaş Ve Avans' %}</a>
             </li>
             <li class="{% if request.path == kasa_url %}active{% endif %}">
                 <a href="{{ kasa_url }}" class="sidebar-sub-item">{% trans 'Kasa' %}</a>
