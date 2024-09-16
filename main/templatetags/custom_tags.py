@@ -1159,22 +1159,25 @@ def dashboard_bilgisi(kisi):
         cali = 0
     html = []
     for i in cali:
-        calismalar = calisanlar_calismalari.objects.filter(
-            calisan=get_object_or_none(calisanlar, id=i.id)
-            ).annotate(
-                year=ExtractYear('tarihi'),
-                month=ExtractMonth('tarihi')
-            ).values(
-                'year', 'month', 'maas__id'  # Maas ID ve ismi ile gruplanıyor
-            ).annotate(
-                total_normal_calisma_saati=Sum('normal_calisma_saati'),
-                total_mesai_calisma_saati=Sum('mesai_calisma_saati')
-            ).order_by('year', 'month', 'maas__id')
-        person = {"resim":i.profile.url if i.profile.url else "{% static 'go/images/avatar.png' %}",
-         "isim_soyisim" : i.isim +" "+ i.soyisim,
-         "toplam_calisma_saati" : calismalar.last()["total_normal_calisma_saati"],
-         "iletisim" : i.telefon_numarasi}
-        html.append(person)
+        try:
+            calismalar = calisanlar_calismalari.objects.filter(
+                calisan=get_object_or_none(calisanlar, id=i.id)
+                ).annotate(
+                    year=ExtractYear('tarihi'),
+                    month=ExtractMonth('tarihi')
+                ).values(
+                    'year', 'month', 'maas__id'  # Maas ID ve ismi ile gruplanıyor
+                ).annotate(
+                    total_normal_calisma_saati=Sum('normal_calisma_saati'),
+                    total_mesai_calisma_saati=Sum('mesai_calisma_saati')
+                ).order_by('year', 'month', 'maas__id')
+            person = {"resim":i.profile.url if i.profile.url else "{% static 'go/images/avatar.png' %}",
+            "isim_soyisim" : i.isim +" "+ i.soyisim,
+            "toplam_calisma_saati" : calismalar.last()["total_normal_calisma_saati"],
+            "iletisim" : i.telefon_numarasi}
+            html.append(person)
+        except:
+            continue
     content["aktif_santiye"] = santiye.objects.filter(proje_ait_bilgisi = kisi,silinme_bilgisi = False).count()
     content["aktif_proje"] = proje_tipi.objects.filter(proje_ait_bilgisi = kisi,silinme_bilgisi = False).count()
     
