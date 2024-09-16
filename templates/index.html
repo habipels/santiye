@@ -797,7 +797,21 @@
                         {% trans '<a href="#" class="card-details">Detayını Gör <i class="icon icon-chevron-right"></i></a>' %}
                     </div>
                     <div class="card-body">
-                        <img class="building-img" src="./content/images/bina.png' %}" alt="Bina">
+                             <div class="building-container">
+                                    <div class="building" id="building">
+                                        <div class="face" id="face1"><div class="roof">Kuzey</div></div>
+                                        <div class="face" id="face2"><div class="roof">Doğu</div></div>
+                                        <div class="face" id="face3"><div class="roof">Güney</div></div>
+                                        <div class="face" id="face4"><div class="roof">Batı</div></div>
+                                    </div>
+                                </div>
+
+                                <!-- Mouse yanında çıkan mini modal -->
+                                <div id="infoModal" class="info-modal">
+                                    <span class="close-btn" onclick="closeInfoModal()">×</span>
+                                    <p id="modalText"></p>
+                                    <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+                                </div>
                     </div>
                 </div>
 
@@ -1761,11 +1775,23 @@
             <div class="large-cards-second-row">
 
                 <div class="card">
-                    <div class="card-header">
-                        <a href="#" class="card-details">{% trans 'Detayını Gör <i class="icon icon-chevron-right"></i>' %}</a>
-                    </div>
+
                     <div class="card-body">
-                        <img class="building-img" src="./content/images/bina.png' %}" alt="Bina">
+                        <div class="building-container">
+                            <div class="building" id="building">
+                                <div class="face" id="face1"><div class="roof">Kuzey</div></div>
+                                <div class="face" id="face2"><div class="roof">Doğu</div></div>
+                                <div class="face" id="face3"><div class="roof">Güney</div></div>
+                                <div class="face" id="face4"><div class="roof">Batı</div></div>
+                            </div>
+                        </div>
+
+                        <!-- Mouse yanında çıkan mini modal -->
+                        <div id="infoModal" class="info-modal">
+                            <span class="close-btn" onclick="closeInfoModal()">×</span>
+                            <p id="modalText"></p>
+                            <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+                        </div>
                     </div>
                 </div>
 
@@ -1899,6 +1925,100 @@
     
     // Sayfa yüklendiğinde saati güncelle
     updateWeatherClock();
+</script>
+
+<script>
+    // Resim URL'si statik dosya olarak ayarlanıyor
+    const imageUrl = "{% static 'go/images/3dbuild.png' %}";
+</script>
+
+<script>
+let currentRotation = 0;
+let isDragging = false; // Fare sürükleme durumu
+let startX = 0;
+const infoModal = document.getElementById('infoModal');
+
+// Bina oluşturma fonksiyonu
+function createBuilding() {
+    const floors = 27; // Kat sayısı
+
+    for (let i = 1; i <= 4; i++) {
+        const face = document.getElementById(`face${i}`);
+        face.innerHTML = ''; // Yüzeyi temizle
+
+        for (let j = floors; j >= 1; j--) { // Katları oluştur
+            const floor = document.createElement('div');
+            floor.className = 'floor';
+            floor.style.backgroundImage = `url(${imageUrl})`;  // Resim URL'si
+            floor.setAttribute('data-floor', `Kat ${j}`);
+            floor.innerHTML = `Kat ${j}`;
+
+            // Yanıp sönen katlara tıklanabilir link ekleyin
+            if (['Kat 5', 'Kat 9', 'Kat 20', 'Kat 21'].includes(`Kat ${j}`)) {
+                floor.addEventListener('click', function(event) {
+                    showInfoModal(event, `R5 - Kat ${j} görevi`);
+                });
+            }
+
+            face.appendChild(floor);
+        }
+    }
+}
+
+// Mini modal gösterimi (mouse yanında çıkar)
+function showInfoModal(event, message) {
+    const modalText = document.getElementById('modalText');
+    modalText.innerHTML = message;
+    infoModal.classList.add('visible'); // Görünür hale getir
+}
+
+// Mini modal kapatma
+function closeInfoModal() {
+    infoModal.classList.remove('visible'); // Gizle
+}
+
+// İş Emrine Git fonksiyonu
+function goToTask() {
+    alert("İş Emrine gidiliyor...");
+    closeInfoModal(); // Modal kapatılıyor
+}
+
+// Bina döndürme işlevi (Fare ve Touch Eventleri ile)
+document.body.addEventListener('pointerdown', function(e) {
+    isDragging = true;
+    startX = e.clientX; // Başlangıç noktası kaydediliyor
+});
+
+document.body.addEventListener('pointermove', function(e) {
+    if (!isDragging) return;
+    const deltaX = e.clientX - startX;
+    currentRotation += deltaX * 0.1; // Döndürme hassasiyeti ayarlandı
+    document.querySelector('.building').style.transform = `rotateY(${currentRotation}deg)`;
+    startX = e.clientX; // Yeni başlangıç pozisyonu
+});
+
+document.body.addEventListener('pointerup', function() {
+    isDragging = false; // Sürükleme sonlandırıldı
+});
+
+// Dokunmatik cihazlarda döndürme işlevi
+document.body.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) {
+        startX = e.touches[0].clientX; // Tek parmakla başla
+    }
+});
+
+document.body.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 1) {
+        const deltaX = e.touches[0].clientX - startX;
+        currentRotation += deltaX * 0.1; // Dokunmatik döndürme hassasiyeti
+        document.querySelector('.building').style.transform = `rotateY(${currentRotation}deg)`;
+        startX = e.touches[0].clientX; // Yeni başlangıç pozisyonu
+    }
+});
+
+createBuilding();
+
 </script>
 
     
