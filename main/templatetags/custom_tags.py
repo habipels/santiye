@@ -188,8 +188,11 @@ def kullanici_dosya_boyutu(id):
         a = klasor_dosyalari.objects.filter(dosya_sahibi__id = id)
     except:
         a = 0
-    for  i in a:
-        boyut = boyut+ i.dosya.size
+    try:
+        for  i in a:
+            boyut = boyut+ i.dosya.size
+    except:
+        pass
         
     boyut = boyut/1024
     #kb oldu
@@ -221,7 +224,10 @@ def dosya_ekleme_yetenegi(id):
     boyut = 0
     a = klasor_dosyalari.objects.filter(dosya_sahibi__id = id)
     for  i in a:
-        boyut = boyut+ i.dosya.size
+        try:
+            boyut = boyut+ i.dosya.size
+        except:
+            continue
     boyut = boyut/1024
     #kb oldu
     boyut = boyut /1024
@@ -241,9 +247,13 @@ def dosya_ekleme_yetenegi(id):
         return mark_safe(k)
 @register.simple_tag
 def mb_donusturme(id):
-    id  = id /1024
-    id = id /1024
-    return round(float(id),2)
+    try:
+        id = id.size
+        id  = id /1024
+        id = id /1024
+        return round(float(id),2)
+    except:
+        return 0
 
 @register.simple_tag
 def dosya_sayisi_ve_boyutu (id):
@@ -252,9 +262,12 @@ def dosya_sayisi_ve_boyutu (id):
     dosya_sayisi =  klasor_dosyalari.objects.filter(proje_ait_bilgisi__id=id).count()
     dosya_boyutu  = 0
     z = klasor_dosyalari.objects.filter(proje_ait_bilgisi__id=id)
-    for i in z:
-        dosya_boyutu = dosya_boyutu+i.dosya.size
-    dosya_boyutu = ((dosya_boyutu/1024)/1024)/1024
+    try:
+        for i in z:
+            dosya_boyutu = dosya_boyutu+i.dosya.size
+        dosya_boyutu = ((dosya_boyutu/1024)/1024)/1024
+    except:
+        dosya_boyutu = 0
     a = """<span class="me-auto"><b>{}</b> Files</span>
             <span><b>{}</b>GB</span>""".format(klasor_sayisi+dosya_sayisi,round(float(dosya_boyutu),2))
     return mark_safe(a)
