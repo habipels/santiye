@@ -48,9 +48,9 @@
     {% endblock head %}
 {% block sidebar %}
 <!-- ============================================================== -->
-<form autocomplete="off"method="post" action="/{{dil}}{% url 'accounting:gider_faturasi_kaydet' %}" enctype="multipart/form-data">
+<form autocomplete="off"method="post" action="/{{dil}}{% url 'accounting:gider_faturasi_kaydet_personel' %}" enctype="multipart/form-data">
     {% csrf_token %}
-
+            <input type="text" hidden value="{{veri.id}}" name="faturaya_bagla">
             <div class="container-fluid">
 
                 <!-- start page title -->
@@ -127,7 +127,8 @@
                             <div class="form-group">
                                 <label>{% trans 'Toplam IQD' %}</label>
                                 <div class="input-group">
-                                    <input type="text" id="toplam_iqd" name="toplam_iqd" class="form-control" disabled />
+                                    {% odeme_para_birimi_hesabi_deger veri.calisan veri.kur veri.tutar as gelen_tutar %}
+                                    <input value="{{gelen_tutar | stringformat:'.2f' }}" type="text" id="toplam_iqd" name="toplam_iqd" class="form-control" disabled />
                                     <span class="input-group-text">{% trans 'IQD' %}</span>
                                 </div>
                             </div>
@@ -234,6 +235,7 @@
     <div class="card-body">
         <div class="form2" id="form2" >
             <div class="table-item">
+                {% odeme_para_birimi_hesabi veri.calisan veri.kur veri.tutar as tutar %}
                 <div class="urun">
                     <input type="search" value="{{urunler.urun_adi}}" disabled class="den" required id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
                 </div>
@@ -241,7 +243,7 @@
                     <input class="miktarInput"  disabled type="number" value="1" oninput="hesaplama_islemi()" />
                 </div>
                 <div class="bfiyat">
-                    <input id="bfiyatInput" value="{{veri.tutar |stringformat:'.2f'}}" disabled class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                    <input id="bfiyatInput" value="{{tutar |stringformat:'.2f'}}" disabled class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
                     <span class="mdi mdi-currency-usd"></span>
                 </div>
                 <br>
@@ -252,7 +254,7 @@
                     <input class="miktarInput" hidden  name="miktari" type="number" value="1" oninput="hesaplama_islemi()" />
                 </div>
                 <div class="bfiyat">
-                    <input id="bfiyatInput" hidden value="{{veri.tutar |stringformat:'.2f'}}" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                    <input id="bfiyatInput" hidden value="{{tutar |stringformat:'.2f'}}" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
                     
                 </div>
                 
@@ -1059,7 +1061,7 @@ var multiSelectInstance = initializeMultiSelectTag();
     return false; //<---- move it here
   });
 });
-
+hesaplama_islemi();
 </script>
 {% endif %}
 

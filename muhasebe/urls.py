@@ -89,6 +89,7 @@ urlpatterns = [
     path("expensessummary", views.giderler_ozeti, name="giderler_ozeti"),
     path("viewexpenses/<int:id>", views.fatura_goster2, name="fatura_goster2"),
     path("personnelinvoice/<int:id>", views.personel_gider_faturasi_kesme, name="personel_gider_faturasi_kesme"),
+    path("savepersonnelinvoice/", views.gider_faturasi_kaydet_personel, name="gider_faturasi_kaydet_personel"),
     #giderler Sayfası #
     path('control/search/<str:hash>', views.search_2, name='search_2'),
     path('control/cari/<str:hash>', views.cariler_bilgisi_2, name='cariler_bilgisi_2'),

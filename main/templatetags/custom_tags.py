@@ -1438,14 +1438,27 @@ def borc_son_dort_ay_tutar(customuser):
 
 @register.simple_tag
 def odeme_para_birimi(bilgi2):
-
     para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
     return para_birimi.para_birimi
 
 
+@register.simple_tag
+def odeme_para_birimi_hesabi(bilgi2,kur,tutar):
+    para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
+    if para_birimi.para_birimi:
+        veri = tutar
+    else:
+        veri = tutar/kur
+    return veri
 
-
-
+@register.simple_tag
+def odeme_para_birimi_hesabi_deger(bilgi2,kur,tutar):
+    para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
+    if para_birimi.para_birimi:
+        veri = tutar*kur
+    else:
+        veri = tutar
+    return veri
 
 
 
