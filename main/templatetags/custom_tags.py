@@ -816,9 +816,9 @@ def kategori_bilgi_ver(b):
     for i in bilgi:
         isimleri.append(str(i.gider_kategori_adi))
         renk.append(str(i.gider_kategorisi_renk))
-        a.append(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('kalan_tutar'))['total'] or 0)
-        genel_tutar = genel_tutar + float(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('kalan_tutar'))['total'] or 0)
-    print(isimleri)
+        a.append(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('toplam_tutar'))['total'] or 0)
+        genel_tutar = genel_tutar + float(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('toplam_tutar'))['total'] or 0)
+    print({"isimleri":isimleri,"a":a,"renk":renk,"tutar":genel_tutar})
     return {"isimleri":isimleri,"a":a,"renk":renk,"tutar":genel_tutar}
 @register.simple_tag
 def ekstra(id,k):
