@@ -323,67 +323,85 @@
                 <a href="#"><i class="icon icon-notification"></i></a>
                 <div class="actions-dropdown-content">
                     <div class="actions-dropdown-content-title">
+                    {% if request.user.kullanicilar_db %}
+                            {% bildirimler request.user.kullanicilar_db as bildirim %}
+                        {% else %}
+                        {% bildirimler request.user as bildirim %}
+                        {% endif %}
                         Bildirimler
-                        <span>12 adet yeni bildiriminiz var.</span>
+                        <span>{{bildirim | length }} adet yeni bildiriminiz var.</span>
                     </div>
                     <div class="notifications-tabs">
                         <button onclick="notificationTab(event, 'notification-all')"
                             class="notification-tab-btn active">Hepsi
-                            <span>22</span></button>
-                        <button onclick="notificationTab(event, 'notification-unread')"
-                            class="notification-tab-btn">Okunmamış <span>3</span></button>
+                            <span>{{bildirim | length }}</span></button>
+                        <!--<button onclick="notificationTab(event, 'notification-unread')"
+                            class="notification-tab-btn">Okunmamış <span>3</span></button>-->
                     </div>
                     <div class="notifications" id="notification-all">
-                        <div class="notification">
+                    {% for i in bildirim %}
+                        {% if i.type == "Gelir" %}
+                            <div class="notification">
                             <div class="notification-avatar">
-                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                                <i class="icon icon-muhasebe"></i>
                             </div>
                             <div class="notification-content notification-unread">
-                                <div class="notification-title">tolga_info@biadagroup.com</div>
-                                <div class="notification-subtitle">site_info - klasörler</div>
-                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-title notification-title-danger">{% trans 'Ödeme tarihini geçen bir Gelir faturanız bulunmaktadır.'%} </div>
+                                <div class="notification-date">{{i.vade_tarihi | date:'d m Y' }}</div>
                                 <div class="notification-actions">
-                                    <button class="notification-inspect-button">İncele</button>
-                                    <button class="notification-confirm-button">Onayla</button>
+                                    <a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="notification-inspect-button">İncele</button></a> 
                                 </div>
                             </div>
                         </div>
-                        <div class="notification">
+                        {% elif i.type == "Gider" %}
+                            <div class="notification">
                             <div class="notification-avatar">
-                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                                <i class="icon icon-muhasebe"></i>
                             </div>
                             <div class="notification-content notification-unread">
-                                <div class="notification-title">tolga_info@biadagroup.com</div>
-                                <div class="notification-subtitle">site_info - klasörler</div>
-                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-title notification-title-danger">{% trans 'Ödeme tarihini geçen bir Gider faturanız bulunmaktadır.'%} </div>
+                                <div class="notification-date">{{i.vade_tarihi | date:'d m Y' }}</div>
                                 <div class="notification-actions">
-                                    <button class="notification-inspect-button">İncele</button>
-                                    <button class="notification-confirm-button">Onayla</button>
+                                    <a href="/{{dil}}{{ giderler_sayfasi_url }}"><button class="notification-inspect-button">İncele</button></a> 
                                 </div>
                             </div>
                         </div>
-                        <div class="notification">
+                        {% elif i.type == "UrunTalebi" %}
+                            <div class="notification">
                             <div class="notification-avatar">
-                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                                <i class="icon icon-stok"></i>
                             </div>
                             <div class="notification-content notification-unread">
-                                <div class="notification-title notification-title-success">Görevinizi tamamladınız</div>
-                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
-                            </div>
-                        </div>
-                        <div class="notification">
-                            <div class="notification-avatar">
-                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
-                            </div>
-                            <div class="notification-content notification-unread">
-                                <div class="notification-title notification-title-danger">Ödeme tarihini geçen bir
-                                    faturanız bulunmaktadır.</div>
-                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-title notification-title-danger">{% trans 'İşlem Yapılmamış Ürün Talebi '%} </div>
+                                <div class="notification-date">{% blocktrans %}İstenen Ürün{% endblocktrans %}: {{ i.urun.urun_adi }}<br>
+                                    {% blocktrans %}Miktar{% endblocktrans %}: {{ i.miktar }}<br>
+                                    {% blocktrans %}Tarih{% endblocktrans %}: {{ i.kayit_tarihi }}</div>
                                 <div class="notification-actions">
-                                    <button class="notification-inspect-button">İncele</button>
+                                    <a href="/{{dil}}{{ satin_alma_talabi_onaylama_url }}"><button class="notification-inspect-button">İncele</button></a> 
                                 </div>
                             </div>
                         </div>
+                        {% elif i.type == "IsplaniPlan" %}
+                            <div class="notification">
+                            <div class="notification-avatar">
+                                <i class="icon icon-santiye-yonetimi"></i>
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">{% trans 'Bitmemiş İş Planı'%} </div>
+                                <div class="notification-date">{% blocktrans %}Görev : {% endblocktrans %} {{ i.title }}<br>
+                                    {% blocktrans %}Açıklama : {% endblocktrans %} {{ i.aciklama }}<br>
+                                    {% blocktrans %}Teslim Tarihi : {% endblocktrans %} {{ i.teslim_tarihi }}</div>
+                                <div class="notification-actions">
+                                    <a href="/{{dil}}{{ yapilacaklar_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        {% endif %}
+                        
+                        {% endfor %}
+                        
+                       
                     </div>
 
                     <div class="notifications" id="notification-unread" style="display: none;">
@@ -421,7 +439,7 @@
                     </script>
 
                     <div class="notifications-footer">
-                        <a href="#">Tümünü Gör <i class="icon icon-forward"></i></a>
+                        <a href="/{{dil}}{% url 'main:bildirimler' %}">Tümünü Gör <i class="icon icon-forward"></i></a>
                     </div>
                 </div>
             </div>
@@ -447,7 +465,7 @@
                             {% if i.dil_kisaltması == lang.code %}
                 <div class="language-selector">
                     <a href="/{{ lang.code }}/{{linki}}" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
-                                <img src="{{i.dil_bayragi_icon.url}}" alt="TR" height="18px">
+                                <img src="{{i.dil_bayragi_icon.url}}" alt="{{ lang.code }}" height="18px">
                                 <span>{{ lang.name_local }}</span>
                                 </a>
                     

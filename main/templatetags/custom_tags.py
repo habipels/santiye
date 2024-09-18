@@ -1473,7 +1473,57 @@ def odeme_para_birimi_hesabi_deger(bilgi2,kur,tutar):
         veri = tutar
     return veri
 
+from operator import attrgetter
+from django.utils.timezone import now
+from itertools import chain
+@register.simple_tag
+def bildirimler(kul):
+    bil_gelir = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kul, kalan_tutar__gt=0, vade_tarihi__lt=now())
+    bil_gider = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kul, kalan_tutar__gt=0, vade_tarihi__lt=now())
+    bil_urun_talebi = urun_talepleri.objects.filter(talebin_ait_oldugu=kul, talep_durumu="1").order_by("-kayit_tarihi")
+    bil_IsplaniPlanlari = IsplaniPlanlari.objects.filter(proje_ait_bilgisi=kul).exclude(status="Completed")
+    
+    combined_list = list(chain(bil_gelir, bil_gider, bil_urun_talebi, bil_IsplaniPlanlari))
+    sorted_list = sorted(combined_list, key=attrgetter('kayit_tarihi', 'id'), reverse=True)[:20]
+    
+    # Verilere model tipini ekle
+    for item in sorted_list:
+        if isinstance(item, Gelir_Bilgisi):
+            item.type = 'Gelir'
+        elif isinstance(item, Gider_Bilgisi):
+            item.type = 'Gider'
+        elif isinstance(item, urun_talepleri):
+            item.type = 'UrunTalebi'
+        elif isinstance(item, IsplaniPlanlari):
+            item.type = 'IsplaniPlan'
+    
+    return sorted_list
 
 
+from operator import attrgetter
+from django.utils.timezone import now
+from itertools import chain
+@register.simple_tag
+def bildirimler_tumu(kul):
+    bil_gelir = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kul, kalan_tutar__gt=0, vade_tarihi__lt=now())
+    bil_gider = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kul, kalan_tutar__gt=0, vade_tarihi__lt=now())
+    bil_urun_talebi = urun_talepleri.objects.filter(talebin_ait_oldugu=kul, talep_durumu="1").order_by("-kayit_tarihi")
+    bil_IsplaniPlanlari = IsplaniPlanlari.objects.filter(proje_ait_bilgisi=kul).exclude(status="Completed")
+    
+    combined_list = list(chain(bil_gelir, bil_gider, bil_urun_talebi, bil_IsplaniPlanlari))
+    sorted_list = sorted(combined_list, key=attrgetter('kayit_tarihi', 'id'), reverse=True)
+    
+    # Verilere model tipini ekle
+    for item in sorted_list:
+        if isinstance(item, Gelir_Bilgisi):
+            item.type = 'Gelir'
+        elif isinstance(item, Gider_Bilgisi):
+            item.type = 'Gider'
+        elif isinstance(item, urun_talepleri):
+            item.type = 'UrunTalebi'
+        elif isinstance(item, IsplaniPlanlari):
+            item.type = 'IsplaniPlan'
+    
+    return sorted_list
 
 

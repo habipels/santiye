@@ -1,258 +1,77 @@
-  <div class="modal" id="personelDetailsModal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal('personelDetailsModal')">&times;</span>
-
-        <div class="personel-info-header">
-            <div class="personel-basic-info">
-                <h2 id="personelName">Ahmet Yılmaz</h2>
-                <p><span>Departman:</span> <span id="personelDepartment">Yönetim</span></p>
-                <p><span>Pozisyon:</span> <span id="personelPosition">Usta</span></p>
-            </div>
-            <img id="personelPhoto" src="https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png" alt="Personel Fotoğrafı" class="personel-photo-large">
-        </div>
-
-        <!-- Tablar -->
-        <div class="tabs">
-            <div class="tab active" data-tab="personelBilgileri">Personel Bilgileri</div>
-            <div class="tab" data-tab="ucretYonetimi">Ücret Yönetimi</div>
-            <div class="tab" data-tab="puantajYonetimi">Puantaj Yönetimi</div>
-        </div> 
-
-
-
-        <!-- Personel Bilgileri Tabı -->
-        <div class="tab-content active" id="personelBilgileri">
-            <div class="card">
-                <h3>Personel Bilgileri</h3>
-                <div class="card-box">
-                    <div class="box">
-                        <h4>Genel Bilgiler</h4>
-                        <p>Pasaport No:<span id="detailpasaportno"></span> </p>
-                        <p>Uyruğu: <span id="detailuygugu"></span> </p>
-                        <p>Doğum Tarihi: <span id="detaildogumtarihi"></span></p>
-                        <p>Telefon Numarası: <span id="detailtelefon"></span></p>
-                        <p>Ücret Tipi: <span id="detailucrettipi"></span> </p>
-                        <p>Günlük Ücret: <span id="detailucret"></span></p>
-                        <p>Saatlik Ücret: <span id="detailsaatlikucret"></span> </p>
-                        <p>Para Birimi: <span id="detailparabirimi"></span> </p>
+{% if request.user.kullanicilar_db %}
+                            {% bildirimler request.user.kullanicilar_db as bildirim %}
+                        {% else %}
+                        {% bildirimler request.user as bildirim %}
+                        {% endif %}
+                        Bildirimler
+                        <span>{{bildirim | length }} adet yeni bildiriminiz var.</span>
                     </div>
-                    <div class="box">
-                        <h4>Belgeler</h4>
-                        <p>Pasaport: <a href="#">İndir</a></p>
-                        <p>Oturum Belgesi: <a href="#">İndir</a></p>
+                    <div class="notifications-tabs">
+                        <button onclick="notificationTab(event, 'notification-all')"
+                            class="notification-tab-btn active">Hepsi
+                            <span>{{bildirim | length }}</span></button>
+                        <!--<button onclick="notificationTab(event, 'notification-unread')"
+                            class="notification-tab-btn">Okunmamış <span>3</span></button>-->
                     </div>
-
-
- 
-
-                        <!-- Ücret özeti grafiği buraya gelecek -->
-                    </div>
-                    <div class="box">
-                        <h4>Ücretler Grafiği</h4>
-                        <!-- 12 aylık maaş grafiği buraya gelecek -->
-                    </div>
-                </div>
-                <div style="margin-top: 20px;">
-                    <button class="btn" onclick="editPerson()">Düzenle</button>
-                    <button class="btn danger" onclick="openModal('istenAyrilmaModal')">İşten Ayrıl</button>
-                </div>
-            </div>
-
-
-        <!-- Ücret Yönetimi Tabı -->
-        <div class="tab-content" id="ucretYonetimi">
-            <div class="card">
-                <h3>Ücret Yönetimi</h3>
-                <!-- Ücret Yönetimi içeriği burada olacak -->
-<!-- Ücret Yönetimi Tabı -->
-  <!-- Maaş Oluştur Butonu -->
-        <button class="btn" onclick="openModal('maasOlusturModal')">Maaş Oluştur</button>
-
-        <!-- Maaş Öde Butonu -->
-        <button class="btn" onclick="openModal('maasOdeModal')">Maaş Öde</button>
-
-        <!-- Avans Öde Butonu -->
-        <button class="btn" onclick="openModal('avansOdeModal')">Avans Öde</button>
-
-        <!-- Tablolar -->
-        <div class="table-container">
-            <h4>Maaş Özeti</h4>
-            <table class="salary-table">
-                <thead>
-                    <tr>
-                        <th>Ay</th>
-                        <th>Hakediş</th>
-                        <th>Ödenen</th>
-                        <th>Kalan</th>
-                        <th>Bordro</th>
-                    </tr>
-                </thead>
-                <tbody id="salaryTableBody">
-                    <tr>
-                        <td>Ocak 2024</td>
-                        <td>5000 ₺</td>
-                        <td>3000 ₺</td>
-                        <td>2000 ₺</td>
-                        <td><a href="#"><i class="fas fa-file-pdf"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td>Şubat 2024</td>
-                        <td>5200 ₺</td>
-                        <td>5200 ₺</td>
-                        <td>0 ₺</td>
-                        <td><a href="#"><i class="fas fa-file-pdf"></i></a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- Avans Öde Modalı -->
-<div class="modal" id="avansOdeModal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal('avansOdeModal')">&times;</span>
-        <h2>Avans Öde</h2>
-        <form id="avansOdeForm">
-            <div class="form-group">
-                <label for="avansAy">Ay Seçimi</label>
-                <select id="avansAy" class="form-control">
-                    <option value="Ocak">Ocak</option>
-                    <option value="Şubat">Şubat</option>
-                    <!-- Diğer aylar -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="avansTutar">Tutar</label>
-                <input type="number" id="avansTutar" class="form-control" placeholder="Avans Tutarı">
-            </div>
-            <div class="form-group">
-                <label for="avansAciklama">Açıklama</label>
-                <textarea id="avansAciklama" class="form-control" placeholder="Açıklama"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="avansDosya">Dosya Yükleme</label>
-                <input type="file" id="avansDosya" class="form-control">
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn save-btn">Avansı Öde</button>
-                <button type="button" class="btn cancel-btn" onclick="closeModal('avansOdeModal')">İptal</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Maaş Öde Modalı -->
-<div class="modal" id="maasOdeModal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal('maasOdeModal')">&times;</span>
-        <h2>Maaş Öde</h2>
-        <form id="maasOdeForm">
-            <div class="form-group">
-                <label for="maasAy">Maaş Ayı</label>
-                <select id="maasAy" class="form-control">
-                    <option value="Ocak">Ocak</option>
-                    <option value="Şubat">Şubat</option>
-                    <!-- Diğer aylar -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="maasBakiye">Kalan Bakiye</label>
-                <input type="number" id="maasBakiye" class="form-control" value="2000 ₺" readonly>
-            </div>
-            <div class="form-group">
-                <label for="maasAciklama">Açıklama</label>
-                <textarea id="maasAciklama" class="form-control" placeholder="Açıklama"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="maasDosya">Dosya Yükleme</label>
-                <input type="file" id="maasDosya" class="form-control">
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn save-btn">Maaşı Öde</button>
-                <button type="button" class="btn cancel-btn" onclick="closeModal('maasOdeModal')">İptal</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Maaş Oluştur Modalı -->
-<div class="modal" id="maasOlusturModal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal('maasOlusturModal')">&times;</span>
-        <h2>Maaş Oluştur</h2>
-        <form id="maasOlusturForm">
-            <div class="form-group">
-                <label for="maasOlusturAy">Ay Seçimi</label>
-                <select id="maasOlusturAy" class="form-control">
-                    <option value="Ocak">Ocak</option>
-                    <option value="Şubat">Şubat</option>
-                    <!-- Diğer aylar -->
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn save-btn">Maaş Bordrosu Oluştur</button>
-                <button type="button" class="btn cancel-btn" onclick="closeModal('maasOlusturModal')">İptal</button>
-            </div>
-        </form>
-    </div>
-</div>
-              <!-- Ücret Yönetimi sonu -->
-
-        <!-- Puantaj Yönetimi Tabı -->
-<div class="tab-content" id="puantajYonetimi">
-    <div class="tabs">
-        <div class="tab active" data-tab="puantajGirisi">Puantaj Girişi</div>
-        <div class="tab" data-tab="puantajRaporu">Puantaj Raporu</div>
-    </div>
-
-    <!-- Puantaj Girişi -->
-    <div class="tab-content active" id="puantajGirisi">
-        <h3>Puantaj Girişi</h3>
-        <div class="form-group">
-            <label for="puantajDate">Tarih Seçin</label>
-            <input type="date" id="puantajDate" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="normalMesai">Normal Mesai (saat)</label>
-            <input type="number" id="normalMesai" class="form-control" placeholder="Normal mesai saatini girin">
-        </div>
-        <div class="form-group">
-            <label for="fazlaMesai">Fazla Mesai (saat)</label>
-            <input type="number" id="fazlaMesai" class="form-control" placeholder="Fazla mesai saatini girin">
-        </div>
-        <button id="puantajKaydetBtn" class="btn save-btn">Kaydet</button>
-    </div>
-
-    <!-- Puantaj Raporu -->
-    <div class="tab-content" id="puantajRaporu">
-        <h3>Puantaj Raporu</h3>
-        <div class="form-group">
-            <label for="raporAy">Ay Seçin</label>
-            <input type="month" id="raporAy" class="form-control">
-        </div>
-        <button id="raporGoruntuleBtn" class="btn minimal-btn">Raporu Görüntüle</button>
-
-        <table class="puantaj-table">
-            <thead>
-                <tr>
-                    <th>Tarih</th>
-                    <th>Normal Mesai (saat)</th>
-                    <th>Fazla Mesai (saat)</th>
-                </tr>
-            </thead>
-            <tbody id="puantajRaporuTableBody">
-                <!-- Tablo içeriği dinamik olarak buraya eklenecek -->
-            </tbody>
-        </table>
-
-        <button class="btn export-btn" onclick="exportToPDF()">PDF Export</button>
-        <button class="btn export-btn" onclick="printTable()">Yazdır</button>
-    </div>
-</div>
-
-
-<!-- Puantaj Yönetimi içeriği sonu -->
-    <!-- Personel Kartı (Personel Detayları Modalı) -->
-</div>
-</div>
+                    <div class="notifications" id="notification-all">
+                    {% for i in bildirim %}
+                        {% if i.type == "Gelir" %}
+                            <div class="notification">
+                            <div class="notification-avatar">
+                                <i class="icon icon-muhasebe"></i>
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">{% trans 'Ödeme tarihini geçen bir Gelir faturanız bulunmaktadır.'%} </div>
+                                <div class="notification-date">{{i.vade_tarihi | date:'d m Y' }}</div>
+                                <div class="notification-actions">
+                                    <a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                </div>
+                            </div>
+                        </div>
+                        {% elif i.type == "Gider" %}
+                            <div class="notification">
+                            <div class="notification-avatar">
+                                <i class="icon icon-muhasebe"></i>
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">{% trans 'Ödeme tarihini geçen bir Gider faturanız bulunmaktadır.'%} </div>
+                                <div class="notification-date">{{i.vade_tarihi | date:'d m Y' }}</div>
+                                <div class="notification-actions">
+                                    <a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                </div>
+                            </div>
+                        </div>
+                        {% elif i.type == "UrunTalebi" %}
+                            <div class="notification">
+                            <div class="notification-avatar">
+                                <i class="icon icon-stok"></i>
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">{% trans 'İşlem Yapılmamış Ürün Talebi '%} </div>
+                                <div class="notification-date">{% blocktrans %}İstenen Ürün{% endblocktrans %}: {{ i.urun.urun_adi }}<br>
+                                    {% blocktrans %}Miktar{% endblocktrans %}: {{ i.miktar }}<br>
+                                    {% blocktrans %}Tarih{% endblocktrans %}: {{ i.kayit_tarihi }}</div>
+                                <div class="notification-actions">
+                                    <a href="/{{dil}}{{ satin_alma_talabi_onaylama_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                </div>
+                            </div>
+                        </div>
+                        {% elif i.type == "IsplaniPlan" %}
+                            <div class="notification">
+                            <div class="notification-avatar">
+                                <i class="icon icon-santiye-yonetimi"></i>
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">{% trans 'Bitmemiş İş Planı'%} </div>
+                                <div class="notification-date">{% blocktrans %}Görev : {% endblocktrans %} {{ i.title }}<br>
+                                    {% blocktrans %}Açıklama : {% endblocktrans %} {{ i.aciklama }}<br>
+                                    {% blocktrans %}Teslim Tarihi : {% endblocktrans %} {{ i.teslim_tarihi }}</div>
+                                <div class="notification-actions">
+                                    <a href="/{{dil}}{{ yapilacaklar_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        {% endif %}
+                        
+                        {% endfor %}

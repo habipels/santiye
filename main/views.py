@@ -231,6 +231,7 @@ def homepage(request):
                     content["gider"] = sonuc
                     content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")[:5]
                     content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:3]
+                    kul = request.user.kullanicilar_db
                 else:
                     return redirect("main:yetkisiz")
 
@@ -240,6 +241,8 @@ def homepage(request):
             content["gider"] = sonuc
             content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
             content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:3]
+            kul = request.user
+        
     weather_data = None
     ip_info = None
     
@@ -5060,3 +5063,6 @@ def gelirleri_excelden_ekle(request,id):
 def sayfa_denemeleri(request):
     content = sozluk_yapisi()
     return render(request,"xxpuantaj.html",content)
+def bildirimler(request):
+    content = sozluk_yapisi()
+    return render(request,"bildirimler.html",content)
