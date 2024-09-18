@@ -28,7 +28,7 @@
     <!-- App favicon -->
      <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BiadaGo</title>
+    <title>BiadaGo - ERP</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
@@ -48,6 +48,16 @@
 
 </head>
 <body>
+<!-- Çevrimdışı Barı (üstte gösterilecek) -->
+<div class="offline-bar" id="offline-bar" style="display: none; position: fixed; top: 0; left: 0; right: 0; background-color: #f44336; color: white; text-align: center; padding: 10px; z-index: 10000; margin-top: 50px;">
+  {% trans 'Bağlantınız kesildi. Çevrimdışı moddasınız!' %}
+</div>
+
+<!-- Çevrimiçi Barı (üstte gösterilecek) -->
+<div class="online-bar" id="online-bar" style="display: none; position: fixed; top: 0; left: 0; right: 0; background-color: #24d6b5; color: white; text-align: center; padding: 10px; z-index: 10000; margin-top: 50px;">
+  {% trans 'Bağlantı geri geldi! Sayfayı yenileyebilirsiniz.' %}
+</div>
+
 
 
 {% block header %}
@@ -82,6 +92,44 @@
 {% block javascriptcodeadd %}
 
 {% endblock javascriptcodeadd %}
+<script>let hasGoneOffline = false;  // Kullanıcının internetinin gidip gelmiş olup olmadığını kontrol eden değişken
 
+function checkInternetConnection() {
+  if (!navigator.onLine) {
+    document.getElementById('offline-bar').style.display = 'block';
+    document.getElementById('online-bar').style.display = 'none';
+    hasGoneOffline = true;  // Bağlantı gitti
+  } else {
+    if (hasGoneOffline) {
+      // Sadece internet daha önce gittiyse çevrimiçi barı göster
+      document.getElementById('online-bar').style.display = 'block';
+      setTimeout(function() {
+        document.getElementById('online-bar').style.display = 'none';
+      }, 3000);
+      hasGoneOffline = false;  // Bağlantı geri geldiğinde sıfırla
+    }
+    document.getElementById('offline-bar').style.display = 'none';
+  }
+}
+
+window.addEventListener('load', function() {
+  checkInternetConnection();
+
+  window.addEventListener('online', function() {
+    checkInternetConnection();
+  });
+
+  window.addEventListener('offline', function() {
+    checkInternetConnection();
+  });
+});
+
+</script>
+<script>
+    document.getElementById('geriButonu').addEventListener('click', function() {
+        window.history.back();  // Bir önceki sayfaya gider
+    });
+    
+</script>
 </body>
 </html>

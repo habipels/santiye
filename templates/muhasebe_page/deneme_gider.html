@@ -4,119 +4,65 @@
 {% load custom_tags %}
 {% load static %}
 {% block slider %}
-<style>/* SearchBuilder'ın daha düzgün ve estetik görünümü */
-    .dataTables_wrapper .searchBuilderContainer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-        background-color: #f8f9fa;
-        position: relative;
-    }
-    
-    .dataTables_wrapper .searchBuilderContainer .dt-buttons {
-        margin-left: 10px;
-    }
-    
-    .dataTables_wrapper .searchBuilderContainer .searchBuilder {
-        flex-grow: 1;
-    }
-    
-    .dataTables_wrapper .searchBuilderContainer .dt-buttons {
-        display: flex;
-        justify-content: flex-end;
-        margin-left: auto;
-    }
-    
-    /* Temizle butonunun SearchBuilder'ın yanına yerleşimi */
-    .dataTables_wrapper .searchBuilderContainer .searchBuilder-clearAll {
-        margin-left: 10px;
-    }
-    
-    /* Modal düzenlemeleri */
-    .modal-content {
-        border-radius: 5px;
-    }
-    
-    .modal-header {
-        background-color: #343a40;
-        color: white;
-    }
-    
-    .modal-body {
-        padding: 20px;
-    }
-    
-    /* DataTables tablolarının genel düzenlemeleri */
-    table.dataTable {
-        width: 100% !important;
-        margin: 0 auto;
-        clear: both;
-        border-collapse: separate !important;
-        border-spacing: 0 10px !important;
-    }
-    
-    table.dataTable thead th {
-        background-color: #003643;
-        color: white;
-        text-align: center;
-    }
-    
-    table.dataTable tbody td {
-        text-align: center;
-        vertical-align: middle;
-    }
-    
-    </style>
-<!-- ============================================================== -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
-    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
-<!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="{% static 'assets/js/layout.js' %}"></script>
-    <!-- Bootstrap Css -->
-    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- custom Css-->
     <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
-    <!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
 
-            <div class="container-fluid">
+    <!-- Basit ve küçük kaydırma çubuğu -->
+<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
 
-                <!-- start page title -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">{% trans "Gider Faturaları" %}</h4>
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans "Dashboard" %}</a></li>
-                                    <li class="breadcrumb-item active">{% trans "Gider Faturaları" %}</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
+<!-- Dalgalanma efekti -->
+<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+
+<!-- Feather simgeleri -->
+<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+
+<!-- Lord ikon -->
+<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+
+<!-- Genel eklentiler -->
+<script src="{% static 'assets/js/plugins.js' %}"></script>
+
+<!-- Özel script dosyanız -->
+<script src="{% static 'assets/js/custom.js' %}"></script>
+
+
+<main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                        <a href="javascript:void(0);" onclick="window.history.back();">
+                            <i class="icon icon-arrow-circle-left"></i>
+                        </a>  {% trans 'Gider Faturaları' %}
                 </div>
-                <!-- end page title -->
+                <ul class="page-breadcrumb">
+                    <li><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Muhasebe' %}</a></li>
+                    <li><a href="#">{% trans 'Gider Faturası' %}</a></li>
+                </ul>
+            </div>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card" id="invoiceList">
-                            
-                            <div class="card-body bg-light-subtle border border-dashed border-start-0 border-end-0">
-                            </div>
-                            <div class="card-body">
-                                <div>
-                                    <div class="table-responsive table-card">
+            <div class="page-actions">
+                    <button class="page-primary-btn" onclick="window.location.href='/{{dil}}{% url 'accounting:gider_ekle' %}'">
+                    {% trans 'Gider Faturası Oluştur' %}</button>
+            </div>
+        </div>
+
+                
+                        <div class="large-stats-card table-card table-detail-card">
+                                <!-- Tablo arama inputu <div class="stats-header">
+                                    <div class="stats-title">{% trans 'Hakedişler' %}</div>
+                                    
+                                    <div class="stats-search">
+                                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                                        <button><i class="icon icon-search"></i></button>
+                                    
+                                    </div>
+                                </div>-->
+                              
+                                    <div class="table-wrapper">
                                         <table id="example" class="display nowrap" style="width:100%">
                                             <thead>
                                                 <tr>
@@ -151,18 +97,9 @@
                                                 </tr>
                                             </tfoot>
                                         </table>
-                                        <div class="noresult" style="display: none">
-                                            <div class="text-center">
-                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
-                                                </lord-icon>
-                                                <h5 class="mt-2">Sorry! No Result Found</h5>
-                                                <p class="text-muted mb-0">We've searched more than 150+ invoices We did not find any
-                                                    invoices for you search.</p>
-                                            </div>
-                                        </div>
+
                                     </div>
 
-                                </div>
                         
                             </div>
                         </div>
@@ -178,35 +115,19 @@
         <div id="tahsilat-makbuzu-modal" class="tahsilat-makbuzu-modal">
           
         </div>
-      
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="text-sm-end d-none d-sm-block">
 
-                        </div>
-                    </div>
-                </div>
-           
-        </footer>
  
     
     <!-- end main content-->
 <div id="fatura_silme_divi">
 
-</div>
+</main>
 {% endblock slider %}
 {% block footer %}
 
 
 <!--start back-to-top-->
-<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
-    <i class="ri-arrow-up-line"></i>
-</button>
+
 <link href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css" rel="stylesheet" type="text/css" />
@@ -238,7 +159,18 @@ $(document).ready(function () {
         data: [
         {% for i in santiyeler_i %}
         
-        {'incele': '<button class="faturabilgisi bg-sucsses" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">{% trans "İncele" %}</button>', 'fatura_no': '{{i.fatura_no}}', 'cari': '{{i.cari_bilgisi.cari_adi}}', 'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gider_etiketi_adi|escapejs }}{% endif %}', 'duzenleme_tarihi': '{{i.fatura_tarihi | date:'d.m.Y' }}', 'vade_tarihi': '{{i.vade_tarihi | date:'d.m.Y' }}', 'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}Ödenmedi{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
+            {'incele': '<a href="#" class="status-primary stats-lg" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">{% trans "İncele" %}</a>', 
+            'fatura_no': '{{i.fatura_no}}', 
+            'cari': '{{i.cari_bilgisi.cari_adi}}', 
+            'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 
+            'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gider_etiketi_adi|escapejs }}{% endif %}', 
+            'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gider_etiketi_adi|escapejs }}{% endif %}', 
+            'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gider_etiketi_adi|escapejs }}{% endif %}', 
+            'duzenleme_tarihi': '{{i.fatura_tarihi | date:"d.m.Y" }}', 
+            'vade_tarihi': '{{i.vade_tarihi | date:"d.m.Y" }}', 
+            'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 
+            'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 
+            'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}Ödenmedi{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
         {% if not forloop.last %},{% endif %}
         
         
@@ -260,8 +192,22 @@ $(document).ready(function () {
         ],
         language: { 
 
+     
+        lengthMenu: "_MENU_ {% trans 'kayıt göster' %}",
+        zeroRecords: "{% trans 'Eşleşen kayıt bulunamadı' %}",
+        info: "{% trans 'Toplam _TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor' %}",
+        infoEmpty: "{% trans 'Kayıt bulunamadı' %}",
+        infoFiltered: "(_MAX_ kayıt içinde filtrelendi)",
+        search: "{% trans 'Ara:' %}",
+        paginate: {
+            first: "{% trans 'İlk' %}",
+            last: "{% trans 'Son' %}",
+            next: "{% trans 'Sonraki' %}",
+            previous: "Önceki"
+    },
+    
     searchBuilder: {
-        add: '{% trans "Ekle" %}',
+        add: '{% trans "Gelişmiş Filitre" %}',
         clearAll: '{% trans "Tümünü Temizle" %}',
         condition: '{% trans "Koşul" %}',
         data: '{% trans "Veri" %}',
@@ -270,7 +216,7 @@ $(document).ready(function () {
         logicOr: '{% trans "Veya" %}',
         title: {
             _: '{% trans "Şu anda %d adet filitre aktif." %}',
-            0: '{% trans "Gelişmiş Filitre" %}'
+            0: '{% trans "" %}'
         },
         value: '{% trans "Değer" %}',
         column: '{% trans "Kolon" %}',
@@ -329,22 +275,94 @@ $(document).ready(function () {
         },
         dom: '<"row align-items-center"' +
                 '<"col-sm-3 d-flex gap-2"B>' +  // Butonlar
-                '<"col-sm-4"Q>' +              // Custom Search
-                '<"col-sm-2"l>' +              // Satır Gösterme
-                '<"col-sm-3"f>' +              // Arama Kutusu
+                '<"col-sm-6"Q>' +              // Custom Search
+                '<"col-sm-3"l>' +              // Satır Gösterme
              '>' +
              'rt' +
              '<"row"<"col-sm-5"i><"col-sm-7"p>>',
-          buttons: [
-            '{% trans "copy" %}', '{% trans "csv" %}', '{% trans "excel" %}', '{% trans "pdf" %}', '{% trans "print" %}',
-            {
-                text: '{% trans "Fatura Ekle" %}',
-                className: 'btn btn-danger',
-                action: function () {
-                    window.location.href = "/{{dil}}{% url 'accounting:gider_ekle' %}";
-                }
+           buttons: [
+        {
+            extend: 'copy',
+            text: '{% trans "Kopyala" %}',
+            exportOptions: {
+                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
             }
-        ],
+        },
+        {
+            extend: 'csv',
+            text: '{% trans "Csv" %}',
+            charset: 'utf-8',
+            bom: true,
+            exportOptions: {
+                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
+            }
+        },
+        {
+            extend: 'excel',
+            text: '{% trans "Excel" %}',
+            exportOptions: {
+                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
+            }
+        },
+        {
+            extend: 'pdf',
+            text: '{% trans "Pdf" %}',
+            orientation: 'landscape',
+            pageSize: 'A4',
+            exportOptions: {
+                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
+            },
+            customize: function(doc) {
+                doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');  // PDF tablosu genişlik ayarı
+                doc.styles.tableHeader = {
+                    alignment: 'center',
+                    bold: true,
+                    fillColor: '#24d6b5'
+                };
+                doc.defaultStyle.alignment = 'center';
+
+                // Her sayfanın altına sabit metin ekleyelim
+                doc['footer'] = function(currentPage, pageCount) {
+                    return {
+                        columns: [
+                            {
+                                text: 'BiadaGO ERP Software www.biadago.com',
+                                alignment: 'right',  // Sağ alt köşeye hizalanır
+                                margin: [0, 0, 40, 20],  // Sağ köşe için margin
+                                fontSize: 8
+                            }
+                        ]
+                    };
+                };
+            }
+        },
+        {
+            extend: 'print',
+            text: '{% trans "Yazdır" %}',
+            exportOptions: {
+                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
+            },
+            customize: function(win) {
+                $(win.document.body).css('font-size', '10pt');
+                $(win.document.body).find('table')
+                    .addClass('compact')
+                    .css('font-size', 'inherit')
+                    .css('width', '100%');  // Tablonun genişliğini tam sayfa yap
+
+                // Sabit footer ekleyelim (her sayfanın altına)
+                $(win.document.body).append('<div style="position: fixed; bottom: 0; right: 0; font-size: 8pt; margin-right: 20px;">BiadaGO ERP Software www.biadago.com</div>');
+            }
+        }
+    ],
+       
+    columnDefs: [
+        {
+            targets: [0, 4, 5, 6],  // 0: "İncele", 4: "Etiket 1", 5: "Etiket 2", 6: "Etiket 3"
+            className: 'no-export',  // Bu sütunları no-export sınıfıyla işaretliyoruz
+            searchable: false,
+            orderable: false
+        }
+    ],
         
     });
 });
