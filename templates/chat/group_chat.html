@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -110,7 +111,7 @@
                                             <a href="{% url 'users:group_chat' group.id %}" class="group-box">
                                               <div class="profile"><img class="bg-img" src="{% static 'go/chat/resimler/grup.png' %}" alt="Avatar"/></div>
                                               <div class="details">
-                                                <h5>{{ group.name }}</h5>
+                                                <h5>{% grup_kullanici_ayrimi group.id request.user  %}</h5>
                                                 <h6></h6>
                                               </div>
                                               <div class="date-status">
@@ -328,7 +329,7 @@
                       <div class="profile online menu-trigger"><img class="bg-img" src="assets/images/contact/2.jpg" alt="Avatar"/></div>
                     </div>
                     <div class="flex-grow-1">
-                      <h5 class="mb-0">{{ room_name }}</h5>
+                      <h5 class="mb-0">{% grup_kullanici_ayrimi group.id request.user  %}</h5>
                       <div class="badge badge-success">Active</div>
                     </div>
                     <div class="media-right">
@@ -351,7 +352,7 @@
                     <div class="flex-grow-1">
                       <div class="contact-name">
                         <h5>{{ message.sender.last_name }}</h5>
-                        <h6>01:40 AM</h6>
+                        <h6>{{ message.timestamp }}</h6>
                         <ul class="msg-box">
                           <li class="msg-setting-main">
                             <div class="msg-dropdown-main">
@@ -381,7 +382,7 @@
                     <div class="flex-grow-1">
                       <div class="contact-name">
                         <h5>{{ message.sender.last_name }}</h5>
-                        <h6>01:40 AM</h6>
+                        <h6>{{ message.timestamp }}</h6>
                         <ul class="msg-box">
                           <li class="msg-setting-main">
                             <div class="msg-dropdown-main">
@@ -962,10 +963,11 @@
       </div>
     </div>
     <script>
+        
         document.addEventListener('DOMContentLoaded', function() {
             const roomName = document.querySelector('body').dataset.roomName;  
             const chatSocket = new WebSocket(
-                'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+                'ws://' + window.location.host + '/ws/chat/' + '{{group.name}}/'
             );
 
             chatSocket.onmessage = function(e) {
@@ -1052,6 +1054,7 @@
         });
 
     </script>
+        
     <script src="{% static 'go/chat/assets/js/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'go/chat/assets/js/owl.carousel.js' %}"></script>
     <script src="{% static 'go/chat/assets/js/popper.min.js' %}"></script>

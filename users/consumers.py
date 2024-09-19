@@ -37,7 +37,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         try:
-            # Mesajı veritabanına kaydet
             group = await database_sync_to_async(Group.objects.get)(name=self.room_name)
             await database_sync_to_async(Message.objects.create)(
                 sender=user,  # 'user' değişkeni, oturum açmış kullanıcıyı temsil etmeli
