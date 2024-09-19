@@ -51,6 +51,7 @@ if DEPLOY__:
         'rest_framework',
         'rest_framework.authtoken',
          'drf_yasg',
+         'channels',
         #
         'main',
         'users',
@@ -139,7 +140,13 @@ if DEPLOY__:
     CSRF_TRUSTED_ORIGINS = ['https://cloud.biadago.com',
         'http://cloud.biadago.com',]
     CSRF_COOKIE_SECURE = False
-
+    # Django Channels ayarları
+    ASGI_APPLICATION = 'djang_website.asgi.application'
+    CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+    }
     # Password validation
     # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -220,9 +227,12 @@ else:
     DEBUG = True
 
     ALLOWED_HOSTS = ["*"]
-
-
-    # Application definition
+    ASGI_APPLICATION = 'djang_website.asgi.application'
+    CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+    }
 
     INSTALLED_APPS = [
         'django.contrib.admin',
@@ -239,6 +249,7 @@ else:
         'rest_framework',
         'rest_framework.authtoken',
          'drf_yasg',
+         'channels',
         #
         'main',
         'users',
@@ -373,3 +384,4 @@ else:
     MEDIA_URL = ''
     MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 #Sunucuda Güncelleme Atarken Dosyaların Kabolmasını Sağlar
+

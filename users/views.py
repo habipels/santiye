@@ -794,3 +794,90 @@ def weather_view(request):
             a = weather_data["weather"][0]
             icon = a["icon"] 
     return render(request, 'weather.html', {'weather_data': weather_data, 'ip_info': ip_info,"icon":icon})
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Group, Message
+
+@login_required
+def group_chat(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    messages = group.messages.all()
+    if request.method == "POST":
+        content = request.POST.get('content')
+        Message.objects.create(sender=request.user, group=group, content=content)
+    return render(request, 'chat/group_chat.html', {'group': group, 'messages': messages})
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Group, Message
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+@login_required
+def user_list(request):
+    content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        users = User.objects.filter(Q(kullanicilar_db = request.user.kullanicilar_db) | Q(id = request.user.kullanicilar_db.id) ).exclude(id=request.user.id)
+    else:
+        users = User.objects.filter(kullanicilar_db = request.user ).exclude(id=request.user.id)
+    groups = Group.objects.filter(members=request.user)
+    content["users"] = users
+    content["groups"] = groups
+    return render(request, 'chat/chat.html', {'users': users})
+
+@login_required
+def user_chat(request, user_id):
+    recipient = get_object_or_404(User, id=user_id)
+    messages = Message.objects.filter(sender=request.user, group__members=recipient) | \
+               Message.objects.filter(sender=recipient, group__members=request.user)
+    messages = messages.order_by('timestamp')
+    context = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        users = User.objects.filter(kullanicilar_db = request.user.kullanicilar_db ).exclude(id=request.user.id)
+    else:
+        users = User.objects.filter(kullanicilar_db = request.user ).exclude(id=request.user.id)
+    groups = Group.objects.filter(members=request.user)
+    context["users"] = users
+    context["groups"] = groups
+    context["recipient"] = recipient
+    context["messages"] = messages
+    if request.POST:
+        content = request.POST.get('setemoj')
+        print(content,"setemoj")
+        group, created = Group.objects.get_or_create(name=f"{request.user.username}-{recipient.username}")
+        if created:
+            group.members.set([request.user, recipient])
+            group.save()
+        Message.objects.create(sender=request.user, group=group, content=content)
+    
+    return render(request, 'chat/user_chat.html', context)
+@login_required
+def create_group(request):
+    if request.method == "POST":
+        group_name = request.POST.get('group_name')
+        member_ids = request.POST.getlist('members')
+        group, created = Group.objects.get_or_create(name=group_name)
+        
+        if created:
+            group.members.set(member_ids + [request.user.id])
+            group.save()
+        
+        return redirect('users:group_chat', group_id=group.id)
+    
+    users = CustomUser.objects.exclude(id=request.user.id)
+    return render(request, 'chat/create_group.html', {'users': users})
+
+@login_required
+def group_chat(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    messages = group.messages.all().order_by('timestamp')
+
+    if request.method == "POST":
+        content = request.POST.get('content')
+        Message.objects.create(sender=request.user, group=group, content=content)
+    
+    return render(request, 'chat/group_chat.html', {'group': group, 'messages': messages})
+@login_required
+def group_list(request):
+    groups = Group.objects.filter(members=request.user)
+    return render(request, 'chat/group_list.html', {'groups': groups})

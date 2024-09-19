@@ -26,8 +26,9 @@ class CustomUser(AbstractUser):
     telefon_numarasi =  models.CharField(max_length= 20 , verbose_name="Telefon Numarası ",blank=True,null = True)
     gorevi = models.CharField(max_length = 250 ,verbose_name="Görevi",blank = True,null = True)
     adrrsi = models.TextField("Adres", max_length=600, default='', blank=True)
+    online  = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
+    
 
     def __str__(self):
         return self.username
@@ -313,4 +314,21 @@ class calisanlar_calismalari(models.Model):
     guncelleme_tarihi = models.DateTimeField("Date modified", default=timezone.now)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+from django.db import models
 
+
+class Group(models.Model):
+    name = models.CharField(max_length=100)
+    members = models.ManyToManyField(CustomUser, related_name='groups_in')
+
+    def __str__(self):
+        return self.name
+
+class Message(models.Model):
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.content[:50]}"
