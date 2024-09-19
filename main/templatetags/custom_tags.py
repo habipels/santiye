@@ -1527,3 +1527,17 @@ def bildirimler_tumu(kul):
     return sorted_list
 
 
+@register.simple_tag
+
+def grup_kullanici_ayrimi(grup_id, kullanici):
+    # Grup nesnesini al
+    grup = get_object_or_404(Group, id=grup_id)
+
+    # Kullanıcı grup adında var mı kontrol et
+    if kullanici.username in grup.name:
+        # Grup üyelerini kontrol et
+        for member in grup.members.all():
+            if kullanici.username != member.username:
+                return member.last_name
+    else:
+        return grup.name

@@ -13,3 +13,6 @@ admin.site.register(calisanlar_pozisyonu)
 admin.site.register(calisanlar)
 admin.site.register(calisan_maas_durumlari)
 admin.site.register(calisanlar_calismalari)
+admin.site.register(Message)
+
+admin.site.register(Group)

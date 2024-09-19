@@ -41,6 +41,11 @@ urlpatterns = [
     path('taketally/',views.calismalari_cek,name = "calismalari_cek"),
 
     path('havadurumu/',views.weather_view,name = "weather_view"),
+    path('users/', views.user_list, name='user_list'),
+    path('user/<int:user_id>/', views.user_chat, name='user_chat'),
+    path('create_group/', views.create_group, name='create_group'),
+    path('group/<int:group_id>/', views.group_chat, name='group_chat'),
+    path('groups/', views.group_list, name='group_list'),  # Grup listeleme URL'si
 #
 #
 ]
