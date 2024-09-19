@@ -869,14 +869,24 @@ def create_group(request):
 
 @login_required
 def group_chat(request, group_id):
+    context = sozluk_yapisi()
     group = get_object_or_404(Group, id=group_id)
-    messages = group.messages.all().order_by('timestamp')
-
+    messages = Message.objects.filter(group=group)
+    messages = messages.order_by('timestamp')
+    if request.user.kullanicilar_db:
+        users = User.objects.filter(kullanicilar_db = request.user.kullanicilar_db ).exclude(id=request.user.id)
+    else:
+        users = User.objects.filter(kullanicilar_db = request.user ).exclude(id=request.user.id)
+    groups = Group.objects.filter(members=request.user)
+    context["messages"] = messages
+    context["users"] = users
+    context["groups"] = groups
+    context["group"] = group
     if request.method == "POST":
         content = request.POST.get('content')
         Message.objects.create(sender=request.user, group=group, content=content)
     
-    return render(request, 'chat/group_chat.html', {'group': group, 'messages': messages})
+    return render(request, 'chat/group_chat.html', context)
 @login_required
 def group_list(request):
     groups = Group.objects.filter(members=request.user)

@@ -1,10 +1,9 @@
-# consumers.py
-
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from .models import Group, Message
 from channels.db import database_sync_to_async
+
 User = get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -32,6 +31,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json['message']
         user = self.scope["user"]  # Oturum açmış kullanıcıyı al
 
+        # Oturum açmamış kullanıcıları kontrol et
+        if not user.is_authenticated:
+            print("Oturum açmamış kullanıcıdan mesaj alındı. Veritabanına kaydedilmeyecek.")
+            return
+
         try:
             # Mesajı veritabanına kaydet
             group = await database_sync_to_async(Group.objects.get)(name=self.room_name)
@@ -43,24 +47,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"Veritabanına mesaj kaydedilemedi: {e}")
 
-        
-
         # Mesajı grup içinde yayınla
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
                 'message': message,
-                'user': user.username,
+                'username': user.username,  # Sadece kullanıcı adını gönderiyoruz
             }
         )
 
     async def chat_message(self, event):
         message = event['message']
-        user = event['user']
+        username = event['username']
+
+        # Kullanıcıyı username ile bul
+        user = await database_sync_to_async(User.objects.get)(username=username)
 
         # Mesajı WebSocket'ten gönder
         await self.send(text_data=json.dumps({
             'message': message,
-            'user': user,
+            'user': username,
         }))
+
+        # `chat_message` fonksiyonunda veritabanına tekrar mesaj kaydedilmesine gerek yok
