@@ -1,3 +1,5 @@
+# consumers.py
+
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
@@ -8,10 +10,10 @@ User = get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'chat_{self.room_name}'
+        self.group_id = int(self.scope['url_route']['kwargs']['group_id'])
+        self.room_group_name = f'chat_{self.group_id}'
 
-        # Room'a katıl
+        # Odaya katıl
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -20,7 +22,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Room'dan çık
+        # Odayı terk et
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -29,7 +31,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        user = self.scope["user"]  # Oturum açmış kullanıcıyı al
+        user = self.scope["user"]
 
         # Oturum açmamış kullanıcıları kontrol et
         if not user.is_authenticated:
@@ -37,11 +39,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         try:
-            group = await database_sync_to_async(Group.objects.get)(name=self.room_name)
+            group = await database_sync_to_async(Group.objects.get)(id=self.group_id)
             await database_sync_to_async(Message.objects.create)(
-                sender=user,  # 'user' değişkeni, oturum açmış kullanıcıyı temsil etmeli
-                group=group,  # Mesajın gönderileceği grup
-                content=message  # Mesaj içeriği
+                sender=user,
+                group=group,
+                content=message
             )
         except Exception as e:
             print(f"Veritabanına mesaj kaydedilemedi: {e}")
@@ -52,7 +54,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message,
-                'username': user.username,  # Sadece kullanıcı adını gönderiyoruz
+                'username': user.username,
             }
         )
 
@@ -60,13 +62,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         username = event['username']
 
-        # Kullanıcıyı username ile bul
-        user = await database_sync_to_async(User.objects.get)(username=username)
-
         # Mesajı WebSocket'ten gönder
         await self.send(text_data=json.dumps({
             'message': message,
             'user': username,
         }))
-
-        # `chat_message` fonksiyonunda veritabanına tekrar mesaj kaydedilmesine gerek yok
