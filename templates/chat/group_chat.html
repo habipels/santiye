@@ -967,7 +967,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const roomName = document.querySelector('body').dataset.roomName;  
             const chatSocket = new WebSocket(
-                'ws://' + window.location.host + '/ws/chat/' + '{{group.name}}/'
+                'ws://' + window.location.host + '/ws/chat/' + '{{group.id}}/'
             );
 
             chatSocket.onmessage = function(e) {
@@ -985,6 +985,7 @@
                             <div class="flex-grow-1">
                                 <div class="contact-name">
                                     <h5>${data.user}</h5>
+                                    <h6>${new Date().toLocaleTimeString()}</h6>
                                     <ul class="msg-box">
                                         <li class="msg-setting-main">
                                             <div class="msg-dropdown-main">
@@ -1015,6 +1016,7 @@
                             <div class="flex-grow-1">
                                 <div class="contact-name">
                                     <h5>${data.user}</h5>
+                                    <h6>${new Date().toLocaleTimeString()}</h6>
                                     <ul class="msg-box">
                                         <li class="msg-setting-main">
                                             <div class="msg-dropdown-main">
