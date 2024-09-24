@@ -26,7 +26,72 @@
     <link rel="stylesheet" type="text/css" href="{% static 'go/chat/assets/js/ckeditor/plugins/tableselection/styles/tableselection.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'go/chat/assets/js/ckeditor/plugins/wsc/skins/moono-lisa/wsc.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'go/chat/assets/js/ckeditor/plugins/copyformatting/styles/copyformatting.css' %}">
-  </head>
+    <style>
+        .group-form {
+    max-width: 400px; /* Form genişliği */
+    margin: 20px auto; /* Ortalama */
+    padding: 20px; /* İç boşluk */
+    border: 1px solid #ccc; /* Çerçeve */
+    border-radius: 8px; /* Köşeleri yuvarlar */
+    background-color: #f9f9f9; /* Arka plan rengi */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Gölge efekti */
+}
+
+.form-group {
+    margin-bottom: 20px; /* Grup arası boşluk */
+}
+
+.form-label {
+    font-weight: bold; /* Kalın yazı */
+    display: block; /* Satır blok yapar */
+    margin-bottom: 5px; /* Etiket ile input arası boşluk */
+}
+
+.form-input {
+    width: calc(100% - 22px); /* Genişlik ayarı */
+    padding: 10px; /* İç boşluk */
+    border: 1px solid #ccc; /* Çerçeve */
+    border-radius: 4px; /* Köşeleri yuvarlar */
+    box-sizing: border-box; /* Genişlik hesabı */
+    outline: none; /* Odaklanınca çerçeveyi kaldır */
+}
+
+.checkbox-group {
+    padding-left: 10px; /* Checkbox grubu iç boşluk */
+}
+
+.checkbox-item {
+    margin-bottom: 10px; /* Checkbox item boşluk */
+}
+
+.form-checkbox {
+    margin-right: 10px; /* Checkbox ile etiket arası boşluk */
+}
+
+.checkbox-label {
+    font-size: 14px; /* Checkbox etiket yazı boyutu */
+}
+
+.form-button {
+    display: block; /* Tam genişlik */
+    width: 100%; /* Buton genişliği */
+    padding: 10px; /* İç boşluk */
+    background-color: #4CAF50; /* Buton rengi */
+    color: white; /* Yazı rengi */
+    border: none; /* Çerçeve yok */
+    border-radius: 4px; /* Köşeleri yuvarlar */
+    cursor: pointer; /* Fare işaretçisi */
+    font-size: 16px; /* Yazı boyutu */
+    font-weight: bold; /* Yazı kalınlığı */
+    margin-top: 10px; /* Üst boşluk */
+}
+
+.form-button:hover {
+    background-color: #45a049; /* Hover efekti */
+}
+
+    </style>
+</head>
   <body class="sidebar">
     <div class="chitchat-loader">
       <div><img src="assets/images/logo/logo_big.png" alt=""/>
@@ -41,8 +106,18 @@
             
             <li><a class="icon-btn btn-light button-effect" href="favourite" data-tippy-content="Favourite"><i class="fa fa-star">               </i></a></li>
             <li><a class="icon-btn btn-light button-effect" href="document" data-tippy-content="Document"> <i class="fa fa-file-text">       </i></a></li>
-            <li><a class="icon-btn btn-light button-effect" href="contact-list" data-tippy-content="Contact List"> <i class="fa fa-users">  </i></a></li>
-         
+            <li>
+                <a class="icon-btn btn-light button-effect" href="contact-list" data-tippy-content="Contact List"> 
+                    <i class="fa fa-envelope"></i>
+                </a>
+            </li>
+            <li>
+                <div class="dot-btn dot-success grow">
+                    <a class="icon-btn btn-light button-effect" href="notification" data-tippy-content="Grup Oluştur"> 
+                        <i class="fa fa-users"></i>
+                    </a>
+                </div>
+            </li>
             
           </ul>
           <ul class="sidebar-bottom">         
@@ -65,7 +140,7 @@
             </div>
             
           </div>
-          <div style="margin-top: 0px !important ;margin-bottom: 0px !important;" class="chat custom-scroll">
+          <div style="margin-top: 0px !important ;margin-bottom: 0px !important; height: calc(100vh ) !important;" class="chat custom-scroll">
             <ul class="chat-cont-setting">
               <li> <a href="#" data-bs-toggle="modal" data-bs-target="#msgchatModal"><span>new chat</span>
                   <div class="icon-btn btn-outline-primary button-effect btn-sm"><i data-feather="message-square"></i></div></a></li>
@@ -103,27 +178,36 @@
                     <div class="tab-content" id="myTabContent1">
                       <div class="tab-pane fade show active" id="direct" role="tabpanel" aria-labelledby="direct-tab"> 
                         <ul class="chat-main">
-                            {% for group in groups %}
-                  
+
                         
-                                          <li style="border: 1px solid black;" data-to="group_chat">
-                                          
-                                            <a href="{% url 'users:group_chat' group.id %}" class="group-box">
-                                              <div class="profile"><img class="bg-img" src="{% static 'go/chat/resimler/grup.png' %}" alt="Avatar"/></div>
+                            {% for group in groups %}
+                                       
+                                          <a href="{% url 'users:group_chat' group.id %}" >
+                                            <li  data-to="group_blank">
+                                            {% grup_kullanici_ayrimi group.id request.user as grp %}
+                                            
+                                            <div class="group-box">
+                                              <div class="profile">
+                                              {% if grp.resim == "0" %}
+                                                <img class="bg-img" src="{% static 'go/chat/resimler/grup.png' %}" alt="Avatar"/>
+                                              {% elif grp.resim == "1" %}
+                                              <img class="bg-img" src="{% static 'go/images/avatar.png' %}" alt="Avatar"/>
+                                              {% else %}
+                                              <img class="bg-img" src="{{grp.resim}}" alt="Avatar"/>
+                                              {% endif %}
+                                              </div>
                                               <div class="details">
-                                                <h5>{% grup_kullanici_ayrimi group.id request.user  %}</h5>
-                                                <h6></h6>
+                                                <h5>{{grp.isim}}</h5>
+                                                <h6>{% sonmesaj group.id  %}</h6>
                                               </div>
                                               <div class="date-status">
                                                 <ul class="grop-icon">
-                                                  <li><a class="group-tp" href="#" data-tippy-content="Josephin"> <img src="{% static 'go/chat/assets/images/contact/1.jpg' %}" alt="group-icon-img"/></a></li>
-                                                  <li><a class="group-tp" href="#" data-tippy-content="Jony "> <img src="{% static 'go/chat/assets/images/contact/2.jpg' %}" alt="group-icon-img"/></a></li>
-                                                  
-                                                  
+                                                 
                                                 </ul>
                                               </div>
-                                            </a>
-                                          </li>
+                                              </div>
+                                            
+                                          </li></a>
                                           {% endfor %}
                         </ul>
                       </div>
@@ -310,6 +394,47 @@
           </ul>
         </div>
         <div class="status-tab custom-scroll dynemic-sidebar" id="status">
+            <div class="theme-title">
+                <div class="d-flex">
+                  <div> 
+                    <h2>Grup Oluştur</h2>
+                    <h4>Kullanıcılarınızı Seçin</h4>
+                  </div>
+                  <div class="flex-grow-1"> <a class="icon-btn btn-outline-light btn-sm m-r-15 search" href="#"> <i data-feather="search"></i></a>
+                    <form class="form-inline search-form">
+                      <div class="form-group">
+                        <input class="form-control-plaintext" type="search" placeholder="Search.."/>
+                        <div class="icon-close close-search"> <i data-feather="x">                    </i></div>
+                      </div>
+                    </form><a class="icon-btn btn-outline-light btn-sm close-panel" href="#"><i data-feather="x"></i></a>
+                  </div>
+                </div>
+              </div>
+              <form method="post" action="/{{dil}}{% url 'users:create_group' %}" class="group-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="group_name" class="form-label">Group Name:</label>
+                    <input type="text" id="group_name" name="group_name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="group_name" class="form-label">Group image:</label>
+                    <input type="text" id="group_name" name="image" class="form-input" >
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Members:</label>
+                    <div class="checkbox-group">
+                        {% for user in users %}
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="user_{{ user.id }}" required name="members" value="{{ user.id }}" class="form-checkbox">
+                                <label for="user_{{ user.id }}" class="checkbox-label">{{ user.last_name }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <button type="submit" class="form-button">Create Group</button>
+            </form>
+            
         </div>
       </aside>
       <div class="chitchat-main small-sidebar" id="content">
@@ -324,18 +449,33 @@
                   </div>
                 </form>
                 <div class="col-7">
-                  <div class="d-flex left">
+                    {% if group %}
+                        <div class="d-flex left">
                     <div class="media-left">
-                      <div class="profile online menu-trigger"><img class="bg-img" src="assets/images/contact/2.jpg" alt="Avatar"/></div>
+                      <div class="profile online menu-trigger">
+                      {% grup_kullanici_ayrimi group.id request.user as grb  %}
+                        {% if grb.resim == "0" %}
+                            <img class="bg-img" src="{% static 'go/chat/resimler/grup.png' %}" alt="Avatar"/>
+                    
+                        {% elif grb.resim == "1" %}
+                            <img class="bg-img" src="{% static 'go/images/avatar.png' %}" alt="Avatar"/>
+                        {% else %}
+                            <img class="bg-img" src="{{grb.resim}}" alt="Avatar"/>
+                        {% endif %}
+                      
+                      </div>
                     </div>
                     <div class="flex-grow-1">
-                      <h5 class="mb-0">{% grup_kullanici_ayrimi group.id request.user  %}</h5>
+                      <h5 class="mb-0">{{grb.isim}}</h5>
                       <div class="badge badge-success">Active</div>
                     </div>
                     <div class="media-right">
                       
                     </div>
                   </div>
+                    {% else %}
+                    {% endif %}
+                  
                 </div>
                 <div class="col px-0">
                 
@@ -343,7 +483,8 @@
               </div>
             </div>
             <div class="contact-chat">
-              <ul class="chatappend" id="chatappend">
+            {% if group %}
+                     <ul class="chatappend" id="chatappend">
                 {% for message in messages %}
                 {% if message.sender == request.user %}
                     <li class="replies">
@@ -410,6 +551,9 @@
             {% endfor %}
 
               </ul>
+                    {% else %}
+                    {% endif %}
+              
             </div>
           </div>
           <div class="messages custom-scroll" id="blank">

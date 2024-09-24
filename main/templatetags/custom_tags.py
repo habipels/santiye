@@ -1528,7 +1528,6 @@ def bildirimler_tumu(kul):
 
 
 @register.simple_tag
-
 def grup_kullanici_ayrimi(grup_id, kullanici):
     # Grup nesnesini al
     grup = get_object_or_404(Group, id=grup_id)
@@ -1538,6 +1537,23 @@ def grup_kullanici_ayrimi(grup_id, kullanici):
         # Grup üyelerini kontrol et
         for member in grup.members.all():
             if kullanici.username != member.username:
-                return member.last_name
+                if member.image:
+                   return {"isim":member.last_name ,"resim":member.image.url  } 
+                else:
+                    return {"isim":member.last_name ,"resim":"1"} 
     else:
-        return grup.name
+        if grup.image:
+            return {"isim":grup.name ,"resim":grup.image.url } 
+        else:
+            return {"isim":grup.name ,"resim":"0" } 
+
+@register.simple_tag
+def sonmesaj(grup_id):
+    # Grup nesnesini al
+    grup = get_object_or_404(Group, id=grup_id)
+    mes = Message.objects.filter(group = grup).order_by("-timestamp").last()
+    # Kullanıcı grup adında var mı kontrol et
+    if mes:
+        return mes.content
+    else:
+        return "" 
