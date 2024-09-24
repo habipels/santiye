@@ -320,7 +320,7 @@ from django.db import models
 class Group(models.Model):
     name = models.CharField(max_length=100)
     members = models.ManyToManyField(CustomUser, related_name='groups_in')
-
+    image  = models.FileField(upload_to='chatgrup_resimleri/',verbose_name="Profile",blank=True,null=True,)
     def __str__(self):
         return self.name
 

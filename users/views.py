@@ -841,7 +841,11 @@ def create_group(request):
     if request.method == "POST":
         group_name = request.POST.get('group_name')
         member_ids = request.POST.getlist('members')
-        group, created = Group.objects.get_or_create(name=group_name)
+        image = request.FILES.get("image")
+        if image:
+            group, created = Group.objects.get_or_create(name=group_name,image = image)
+        else:
+            group, created = Group.objects.get_or_create(name=group_name)
         
         if created:
             group.members.set(member_ids + [request.user.id])

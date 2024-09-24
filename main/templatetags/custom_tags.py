@@ -1542,7 +1542,10 @@ def grup_kullanici_ayrimi(grup_id, kullanici):
                 else:
                     return {"isim":member.last_name ,"resim":"1"} 
     else:
-        return {"isim":grup.name ,"resim":"0" } 
+        if grup.image:
+            return {"isim":grup.name ,"resim":grup.image.url } 
+        else:
+            return {"isim":grup.name ,"resim":"0" } 
 
 @register.simple_tag
 def sonmesaj(grup_id):
