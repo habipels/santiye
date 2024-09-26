@@ -4,52 +4,52 @@
 {% load custom_tags %}
 {% block sidebar %}
 
-<main>
+    <main>
+
 
         <div class="page-header">
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    {% trans 'Hakedişler' %}
+                    Hakedişler
                 </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
-                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
-                    <li><a href="#">{% trans 'Hakedişler' %}</a></li>
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#">Şantiye Yönetimi</a></li>
+                    <li><a href="#">Hakedişler</a></li>
                 </ul>
             </div>
 
             <div class="page-actions">
                 <button class="page-primary-btn" onclick="openModal('yeni-hakedis-hesap')"><i class="icon icon-new"></i>
-                    {% trans 'Yeni Hakediş Ekle' %}</button>
+                    Yeni Hakediş Ekle</button>
             </div>
         </div>
 
         <div class="page-stats">
             <div class="page-stat">
                 <div class="page-stat-info">
-                {% hakedistoplam_kalan santiyeler as bilgileri %}
                     <div class="page-stat-icon">
-                        <img src="{% static 'go/images/wallet.png' %}" alt="wallet">
+                        <img src="./content/images/wallet.png" alt="wallet">
                     </div>
-                    <div class="page-stat-title">{% trans 'Toplam Hakediş:' %} </div>
+                    <div class="page-stat-title">Toplam Hakediş: </div>
                 </div>
-                <div class="page-stat-value">${{bilgileri.toplam}}</div>
+                <div class="page-stat-value">$ 999.999,000</div>
             </div>
             <div class="page-stat">
                 <div class="page-stat-info">
                     <div class="page-stat-icon">
-                        <img src="{% static 'go/images/wallet.png' %}" alt="wallet">
+                        <img src="./content/images/wallet.png" alt="wallet">
                     </div>
-                    <div class="page-stat-title">{% trans 'Ödenmemiş Hakediş:' %}</div>
+                    <div class="page-stat-title">Okul: </div>
                 </div>
-                <div class="page-stat-value">${{bilgileri.kalan}}</div>
+                <div class="page-stat-value">$ 999.999,000</div>
             </div>
         </div>
 
         <div class="large-stats-card table-card table-detail-card">
             <div class="stats-header">
-                <div class="stats-title">{% trans 'Hakedişler' %}</div>
+                <div class="stats-title">Hakedişler</div>
                 <div class="stats-search">
                     <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
                     <button><i class="icon icon-search"></i></button>
@@ -60,39 +60,45 @@
                 <table id="datatable">
                     <thead>
                         <tr>
-                            <th>{% trans 'Taşeron' %}</th>
-                            <th>{% trans 'Proje' %}</th>
-                            <th>{% trans 'Açıklama' %}</th>
-                            <th>{% trans 'Eklenme Tarihi' %}</th>
-                            <th>{% trans 'Fatura Numarası' %}</th>
-                            <th>{% trans 'Tutar' %}</th>
-                            <th>{% trans 'Kalan' %}</th>
-                            <th>{% trans 'İndir' %}</th>
+                            <th>Taşeron</th>
+                            <th>Proje</th>
+                            <th>Açıklama</th>
+                            <th>Eklenme Tarihi</th>
+                            <th>Fatura Numarası</th>
+                            <th>Tutar</th>
+                            <th>Kalan</th>
+                            <th>İndir</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-            {% for i in santiyeler %}
-                <tr>
-                    <td>{{i.proje_ait_bilgisi.taseron_adi}}</td>
-                    <td>{{i.dosya_adi}}</td>
-                    <td>{{ i.aciklama }}</td>
-                    <td>{% if i.tarih %}
-                                                        {{ i.tarih | date:'d.m.Y'}}
-                                                    {% else %}
-                                                    {{ i.kayit_tarihi | date:'d.m.Y'}}
-                                                    {% endif %}</td>
-                    <td>{{i.fatura_numarasi}}</td>
-                    {% fatura_hakedis_baglama i.fatura_numarasi i.proje_ait_bilgisi.taseron_ait_bilgisi as bilgi %}
-                    <td>${{bilgi.tutar}}</td>
-                    <td>${{bilgi.kalan_tuar}}</td>
-            {% endfor %}
+                        <tr>
+                            <td>Jane Cooper</td>
+                            <td>Group 1 - Proje Adı</td>
+                            <td>ZONE C1 TUNEL HAK 1</td>
+                            <td>01.01.2000</td>
+                            <td>INV123128736</td>
+                            <td>$ 34.099,99</td>
+                            <td>$ 34.099,99</td>
+                            <td>
+                                <div class="td-actions">
+                                    <a href="#" class="status-info"><i class="icon icon-action-file"></i></a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="td-actions">
+                                    <a class="status-success"><i class="icon icon-action-edit"></i></a>
+                                    <a href="#" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+
                     </tbody>
                 </table>
             </div>
 
         </div>
-</main>
+
         <script>
             let datatable = new DataTable('#datatable', {
                 paging: false,
@@ -108,160 +114,5 @@
         </script>
 
 
-
-    <div class="modal" id="yeni-hakedis-hesap">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                {% trans 'Yeni Hakediş Ekle' %}
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-element">
-                        <label for="hesap-sec">Hesap Seç</label>
-                        <select name="hesap-sec" id="hesap-sec">
-                            <option value="" selected disabled></option>
-                            <option value="Hesap">Hesap</option>
-                            <option value="Hesap">Hesap</option>
-                            <option value="Hesap">Hesap</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="button" onclick="openModal('yeni-hakedis')">Devam
-                            Et</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="modal" id="yeni-hakedis">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                Yeni Hakediş Ekle
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-element">
-                        <label for="taseron">Taşeron</label>
-                        <input type="text" name="taseron" id="taseron">
-                    </div>
-                    <div class="form-element">
-                        <label for="dosya-adi">Dosya Adı</label>
-                        <input type="text" name="dosya-adi" id="dosya-adi">
-                    </div>
-                    <div class="form-element">
-                        <label for="tarih">Tarih</label>
-                        <input type="date" name="tarih" id="tarih">
-                    </div>
-                    <div class="form-element">
-                        <label for="aciklama">Açıklama</label>
-                        <textarea name="aciklama" id="aciklama"></textarea>
-                    </div>
-                    <div class="form-element">
-                        <label for="durum">Durum</label>
-                        <select name="durum" id="durum">
-                            <option value="" selected disabled></option>
-                            <option value="Durum">Durum</option>
-                            <option value="Durum">Durum</option>
-                            <option value="Durum">Durum</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-element">
-                            <label for="tutar">Tutar</label>
-                            <input type="text" name="tutar" id="tutar">
-                        </div>
-                        <div class="form-element">
-                            <label for="fatura-no">Fatura No</label>
-                            <input type="text" name="fatura-no" id="fatura-no">
-                        </div>
-                    </div>
-                    <div class="form-element">
-                        <label for="sozlesme-yukle">Sözleşme Yükle</label>
-
-                        <div class="file-input">
-                            <label for="sozlesme-yukle">
-                                <img src="{% static 'go/images/illustration-upload.png' %}">
-
-                                <button><i class="icon icon-file"></i> Dosya Seç</button>
-                            </label>
-
-                            <input type="file" name="sozlesme-yukle" id="sozlesme-yukle">
-                        </div>
-
-                        <ul class="fileList">
-                        </ul>
-                    </div>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Oluştur</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-
-    <script>
-        function openModal(modalID) {
-            closeModal();
-            $("#" + modalID).css("display", "flex").hide().fadeIn()
-        }
-
-        function closeModal(modalID = "") {
-            console.log(modalID.length);
-            if (modalID.length === 0) {
-                $(".modal").fadeOut();
-            } else {
-                $("#" + modalID).fadeOut();
-            }
-        }
-
-        $(".modal").on("click", function (e) {
-            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
-                closeModal();
-            }
-        });
-
-        $('input[type="file"]').on('change', function () {
-            var files = $(this).prop('files');
-            var formElement = $(this).closest('.form-element');
-            var fileList = formElement.find('.fileList');
-            fileList.empty();
-
-            for (var i = 0; i < files.length; i++) {
-                fileList.append('<li>' + files[i].name + '</li>');
-            }
-        });
-
-    </script>
-
-
-    <script>
-        function toggleFullScreen() {
-            var doc = window.document;
-            var docEl = doc.documentElement;
-
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
-            }
-        }
-
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
-        }
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
+    </main>
 {% endblock sidebar %}
