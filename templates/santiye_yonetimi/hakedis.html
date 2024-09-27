@@ -268,22 +268,28 @@
             </div>
         </div>
 </div>
-<div id="deleteConfirmationModal{{i.id}}" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('deleteConfirmationModal{{i.id}}')">&times;</span>
-            <h2>{% trans 'Hakedişi Sil' %}</h2>
-            <p>{% trans 'Bu hakedişi silmek istediğinizden emin misiniz?' %}</p>
-            <form autocomplete="off"action="/{{dil}}{% url 'main:hakedis_silme' %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-            <div class="modal-footer inline">
-                <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
-                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmationModal')">{% trans 'Vazgeç' %}</button>
+<div class="modal" id="deleteConfirmationModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                <h2>{% trans 'Silmek İstediğinden Emin misin?' %}</h2>
+            <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
             </div>
-            </form>
+            <div class="modal-body">
+                 <form autocomplete="off"action="/{{dil}}{% url 'main:hakedis_silme' %}" method="post">
+                                    {% csrf_token %}
+                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
+                    
+                 
+                    <div class="form-actions">
+                                       <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary"  onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+</div>
 {% endfor %}
+
   <script>
         function openModal(modalID) {
             closeModal();

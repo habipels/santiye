@@ -1,8 +1,9 @@
 {% extends "homebase.html" %}
+{% load static %}
 {% load i18n %}
 {% load custom_tags %}
 {% block sidebar %}
-{% load static %}
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
     <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
 <!--Multi Select Date Picker Calender-->
@@ -19,40 +20,52 @@
     <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
     <!--Multi Select Date Picker Calender-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
             <div class="container-fluid">
                 <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">{% trans 'Proje Yönetimi' %}</h4>
+                            <h4 class="mb-sm-0">{% trans "Proje Tipi" %}</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Şantiye Yönetimi' %}</a></li>
-                                    <li class="breadcrumb-item active">{% trans 'Proje Yönetimi' %}</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans "Dashboard" %}</a></li>
+                                    <li class="breadcrumb-item active">{% trans "Projeler" %}</li>
                                 </ol>
                             </div>
                         </div>
-                    </div>
-                </div>
+                   
+          
                 <!-- end page title -->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">{% trans 'İlerleme Takibi' %}</h4>
+                                <h4 class="card-title mb-0">{% trans "Dil Ayarları" %}</h4>
                             </div><!-- end card header -->
                             <div class="card-body">
                                 <div class="listjs-table" id="customerList">
                                     <div class="row g-4 mb-3">
                                         <div class="col-sm-auto">
                                             <div>
+                                            {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.projeler_olusturma %}
+                                                      <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i> {% trans "Ekle" %}</button>                                              
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                                   <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i> {% trans "Ekle" %}</button>                                                 
+                                            {% endif %}
+                                                
                                             </div>
                                         </div>
                                         <div class="col-sm">
                                             <div class="d-flex justify-content-sm-end">
                                                 <div class="search-box ms-2">
-                                                    <form autocomplete="off"method="get">
-                                                    <input type="text" name="search" class="form-control search" placeholder="{% trans 'Search...' %}">
+                                                    <form autocomplete="off" method="get">
+                                                    <input type="text" name="search" class="form-control search" placeholder="{% trans "Arama..." %}">
                                                     <i class="ri-search-line search-icon"></i>
                                                     </form>
                                                 </div>
@@ -63,65 +76,71 @@
                                         <table class="table align-middle table-nowrap" id="customerTable">
                                             <thead class="table-light">
                                                 <tr>
-
-                                                    <th class="sort" data-sort="customer_name">{% trans 'Rapor' %}</th>
-                                                    <th class="sort" data-sort="customer_name">{% trans 'Yapı Adı' %}</th>
-                                                    <th class="sort" data-sort="email">{% trans 'Kat Sayısı' %}</th>
-                                                    <th class="sort" data-sort="customer_name">{% trans 'Proje Kime Ait' %}</th>
-
-                                                    <th class="sort" data-sort="date">{% trans 'Yapı İlerleme Takibi' %} </th>
+                                                    <th scope="col" style="width: 50px;">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="checkAll" value="option">
+                                                        </div>
+                                                    </th>
+                                                    <th class="sort" data-sort="customer_name">{% trans "Proje Tipi Kime Ait" %}</th>
+                                                    <th class="sort" data-sort="email">{% trans "Proje Tip Adı" %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans "Proje Tip Kayıt Tarihi" %}</th>
+                                                    <th class="sort" data-sort="date">{% trans "Durum" %}</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
                                             {% for i in santiyeler %}
-                                                <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white;{% endif %}{% endif %}">
                                                     <th scope="row">
-                                                    {% if request.user.kullanicilar_db %}
-                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                    {% if yetki.santiye_raporu_gorme %}
-                                                              <a href="/{{dil}}{% url 'main:santiye_raporu' i.id %}" class="fw-medium link-primary"> Raporu Göster </a>                                              
-                                                    {% else %}
-                                                                                                                    
-                                                    {% endif %}
-                                                    {% else %}
-                                                            <a href="/{{dil}}{% url 'main:santiye_raporu' i.id %}" class="fw-medium link-primary"> Raporu Göster </a>                                                
-                                                    {% endif %}
-                                                        
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
+                                                        </div>
                                                     </th>
-                                                    <td class="customer_name">{{i.blog_adi}}
+                                                    <td class="id" style="display:none;"><a href="javascript:void(0);" class="fw-medium link-primary"></a></td>
+                                                    <td class="customer_name">{{ i.proje_ait_bilgisi.first_name }}</td>
+                                                    <td class="email">{{ i.Proje_tipi_adi }}</td>
+                                                    <td class="date">{{ i.kayit_tarihi }}</td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-start">
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_duzenleme %}
+                                                                <div class="edit">
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{ i.id }}">{% trans "Edit" %}</button>
+                                                            </div>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <div class="edit">
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{ i.id }}">{% trans "Edit" %}</button>
+                                                            </div>
+                                                        {% endif %}
+                                                            
+                                                            {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_silme %}
+                                                                <div class="remove" style="margin-left:10px;">
+                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{ i.id }}">{% trans "Remove" %}</button>
+                                                            </div>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <div class="remove" style="margin-left:10px;">
+                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{ i.id }}">{% trans "Remove" %}</button>
+                                                            </div>
+                                                        {% endif %}
+                                                        </div>
                                                     </td>
-                                                    <td class="customer_name">{{i.kat_sayisi | stringformat:'.f'}}
-                                                    </td>
-                                                    <td class="customer_name">{{i.proje_ait_bilgisi.first_name}}
-                                                    </td>
-                                                    <td class="customer_name">
-                                                    <b>{{i.blog_sayisi}} :  </b>
-                                                    {% if request.user.kullanicilar_db %}
-                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                    {% if yetki.ilerleme_takibi_gorme %}
-                                                               <a style="padding:2px !important;margin:0px 2px 0px 0px!important;" class="btn btn-info " href="/{{dil}}{% url 'main:blogtan_kaleme_ilerleme_takibi' i.id i.blog_adi %}" >{{i.blog_adi}}</a>                                              
-                                                    {% else %}
-                                                                                                                    
-                                                    {% endif %}
-                                                    {% else %}
-                                                              <a style="padding:2px !important;margin:0px 2px 0px 0px!important;" class="btn btn-info " href="/{{dil}}{% url 'main:blogtan_kaleme_ilerleme_takibi' i.id i.blog_adi %}" >{{i.blog_adi}}</a>                                               
-                                                    {% endif %}
-                                                       
-
-
-                                                    </td>
-
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
                                         </table>
                                         <div class="noresult" style="display: none">
                                             <div class="text-center">
-                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
-                                                </lord-icon>
-                                                <h5 class="mt-2">Sorry! No Result Found</h5>
-                                                <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any
-                                                    orders for you search.</p>
+                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
+                                                <h5 class="mt-2">{% trans "Sorry! No Result Found" %}</h5>
+                                                <p class="text-muted mb-0">{% trans "We've searched more than 150+ Orders We did not find any orders for you search." %}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -130,7 +149,7 @@
                                             <ul class="pagination pagination-m justify-content-center">
 
                                                 {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« {% trans "Previous page" %}</a></li>
 
                                                   {% if medya.number > 3 %}
 
@@ -143,51 +162,31 @@
 
                                                 {% for num in medya.paginator.page_range %}
                                                   {% if medya.number == num %}
-                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
-                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                    <li class="page-item"><a class="page-link" style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% elif num > medya.number|add:"-3" and num < medya.number|add:"3" %}
                                                     <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
                                                   {% endif %}
                                                 {% endfor %}
 
                                                 {% if medya.has_next %}
-                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                  {% if medya.number < medya.paginator.num_pages|add:"-3" %}
                                                     <li class="page-item"><span class="page-link">...</span></li>
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
-                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                  {% elif medya.number < medya.paginator.num_pages|add:"-2" %}
                                                     <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
                                                   {% endif %}
-
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans "Next page" %} »</a></li>
                                                 {% endif %}
-                                                </ul>
+                                                
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
                             </div><!-- end card -->
-                        </div>
-                        <!-- end col -->
-                    </div>
-                    <!-- end col -->
-                </div>
-                <!-- end row -->
-
-
-            </div>
-        <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-
-
-{% endblock sidebar %}
-
+                        </div><!-- end .col-->
+                    </div><!-- end row-->
+                </div><!-- container-fluid -->
+            </div><!-- End Page-content -->
+        </div><!-- end main-content-->
+    </div>
+{% endblock %}
