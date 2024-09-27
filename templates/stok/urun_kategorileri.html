@@ -3,267 +3,164 @@
 {% load custom_tags %}
 {% block sidebar %}
 {% load static%}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
-    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
-<!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="{% static 'assets/js/layout.js' %}"></script>
-    <!-- Bootstrap Css -->
-    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- custom Css-->
-    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
-    <!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            <div class="container-fluid">
-                <!-- start page title -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">{% trans 'Ürünler Kategorisi' %}</h4>
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Stok' %}</a></li>
-                                    <li class="breadcrumb-item active">{% trans 'Ürün Kategorisi' %}</li>
-                                </ol>
-                            </div>
-                        </div>
-                
-                <!-- end page title -->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title mb-0">{% trans 'Ürünler Kategorileri' %}</h4>
-                            </div><!-- end card header -->
-                            <div class="card-body">
-                                <div class="listjs-table" id="customerList">
-                                    <div class="row g-4 mb-3">
-                                        <div class="col-sm">
-                                            <div class="d-flex justify-content-sm-end align-items-center">
-                                                <div class="col-sm">
-                                            <div class="d-flex justify-content-sm-end">
-                                                <div class="search-box ms-2">
-                                                    <form autocomplete="off"method="get">
-                                                    <input type="text" name="search" class="form-control search" placeholder="{% trans 'Search...' %}">
-                                                    <i class="ri-search-line search-icon"></i>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                                <div class="addKasaBtn">
-                                                    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#kasaEkleModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'kategori Ekle' %}</button>
-                                                </div>
-                                                
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive table-card mt-3 mb-1">
-                                        <table class="table align-middle table-nowrap" id="customerTable">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th scope="col" style="width: 50px;">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="checkAll" value="option">
-                                                        </div>
-                                                    </th>
-                                                    {% if request.user.is_superuser %}
-                                                    <th class="sort" data-sort="customer_name">{% trans 'Ürünler Kategorisi Kime Ait' %}</th>
-                                                    {% endif %}
-                                                    <th class="sort" data-sort="customer_name">{% trans 'Ürünler Kategori Adı' %}</th>
-                                                    <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
-                                                    <th class="sort" data-sort="date">{% trans 'Aksiyonlar' %}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="list form-check-all">
-                                                {% for i in santiyeler %}                      
-                                                <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
-                                                    <th scope="row">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
-                                                        </div>
-                                                    </th>
-                                                    {% if request.user.is_superuser %}
+   <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Ürünler Kategorisi' %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Satın Alma ve Stok' %}</a></li>
+                    <li><a href="#">{% trans 'Ürün Kategorisi' %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+                <button class="page-primary-btn" onclick="openModal('yeni-kategori')"><i class="icon icon-new"></i>
+                    {% trans 'kategori Ekle' %}</button>
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Kategoriler' %}</div>
+                <div class="stats-search">
+                    <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                    <button><i class="icon icon-search"></i></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="datatable">
+                    <thead>
+                        <tr>
+                        {% if request.user.is_superuser %}
+                          <th>{% trans 'Ürünler Kategorisi Kime Ait' %}</th>
+                        {% endif %}
+                            
+                            <th>{% trans 'Ürünler Kategori Adı' %}</th>
+                            <th>{% trans 'Kayıt Tarihi' %}</th>
+                            <th>{% trans 'Aksiyonlar' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in santiyeler %}                      
+                    <tr>
+                           {% if request.user.is_superuser %}
                                                     <td class="kasa">{{i.kategrori_ait_oldugu.first_name}}</td>
                                                     {% endif %}
-                                                    <td class="id" style="display:none;"><a href="javascript:void(0);" class="fw-medium link-primary">#VZ2101</a></td>
+                                                    
                                                     <td class="kasa">{{i.kategori_adi}}</td>
                                                     
                                                     <td class="konum">{{i.kayit_tarihi}}</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-end">
-                                                            <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Ürünler Kategorisi Düzenle' %}</button>
-                                                            </div>
-                                                            <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Ürünler Kategorisi Sil' %}</button>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        <div class="noresult" style="display: none">
-                                            <div class="text-center">
-                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
-                                                </lord-icon>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-end">
-                                        <div class="pagination-wrap hstack gap-2">
-                                            <ul class="pagination pagination-m justify-content-center">
-
-                                                {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
-                                                
-                                                  {% if medya.number > 3 %}
-                                                
-                                                    <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
-                                                    {% if medya.number > 4 %}
-                                                      <li class="page-item"><span class="page-link">...</span></li>
-                                                    {% endif %}
-                                                  {% endif %}
-                                                {% endif %}
-                                                
-                                                {% for num in medya.paginator.page_range %}
-                                                  {% if medya.number == num %}
-                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
-                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
-                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
-                                                  {% endif %}
-                                                {% endfor %}
-                                                
-                                                {% if medya.has_next %}
-                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
-                                                    <li class="page-item"><span class="page-link">...</span></li>
-                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
-                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
-                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
-                                                  {% endif %}
-                                                
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
-                                                {% endif %}
-                                                </ul>
-                                        </div>
-                                    </div>
+                            <td>
+                                <div class="td-actions">
+                                    <a onclick="openModal('yeni-kategori{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                    <a onclick="openModal('deleteRecordModal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
                                 </div>
-                            </div><!-- end card -->
-                        </div>
-                        <!-- end col -->
-                    </div>
-                    <!-- end col -->
-                </div>
-                <!-- end row -->
-                
-                <!--KASA EKLE POPUP-->
-                <div class="modal fade" id="kasaEkleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel">{% trans 'Ürünler Kategorisi' %}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form autocomplete="off"class="tablelist-form" method="post" action="/{{dil}}{% url 'accounting:urunler_kategorisi_ekle' %}"  autocomplete="off">
+                            </td>
+                        </tr>
+
+                                
+                    {% endfor %}
+                        
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <script>
+            let datatable = new DataTable('#datatable', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                console.log($(this).val());
+                datatable.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+
+    <div class="modal" id="yeni-kategori">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Kategori Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" method="post" action="/{{dil}}{% url 'accounting:urunler_kategorisi_ekle' %}"  autocomplete="off">
                                 {% csrf_token %}
-                                <div class="modal-body">
-                                    {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
-                                            <select class="form-control" name="kullanici" id="date-field">
-                                                <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.first_name}}</option>
-                                                {% for j in kullanicilar %}
+                    {% if request.user.is_superuser %}
+            <div class="form-element">
+                        <label for="hesap-sec">{% trans 'Hesap Seç' %}</label>
+                        <select name="kullanici" id="hesap-sec">
+                            <option value="" selected disabled></option>
+                            {% for j in kullanicilar %}
                                                     <option value="{{j.id}}">{{j.first_name}}</option>
                                                 {% endfor %}
-                                                
-                                                
-                                            </select>
-                                        </div>
+                        </select>
+                    </div>
                                         {% else %}
                                         {% endif %}
-
-                                    <div class="mb-3">
-                                        <label for="customername-field" class="form-label">{% trans 'Kategori Adı' %}</label>
-                                        <input name="kasaadi" type="text" id="customername-field" class="form-control" placeholder="{% trans 'Kategori Adı' %}" required />
-                                        <div class="invalid-feedback">{% trans 'Lütfen Boş Bırakmayınız' %}</div>
-                                    </div>
-                                    
-                                    
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Kategori Ekle' %}</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                    
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Kategori Adı' %}</label>
+                        <input type="text" name="kasaadi" required id="kategori-adi">
                     </div>
-                </div>
-
-                <!-- end row -->
-                {% for i in santiyeler %}
-                <div class="modal fade" id="showModal{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'accounting:urunler_kategorisi_duzenle' %}" method="post" enctype="multipart/form-data" >
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kategori Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% for i in santiyeler %}
+<div class="modal" id="yeni-kategori{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Kategori Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'accounting:urunler_kategorisi_duzenle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
-                                <div class="modal-body">
-                                    <div class="mb-3" id="modal-id" style="display: none;">
-                                        
-                                        <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
-                                    </div>
-
-                                    {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
-                                            <select class="form-control" name="kullanici" id="date-field">
-                                                <option value="{{i.kategrori_ait_oldugu.id}}">{{i.kategrori_ait_oldugu.first_name}}</option>
-                                                {% for j in kullanicilar %}
+                                <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
+                    {% if request.user.is_superuser %}
+            <div class="form-element">
+                        <label for="hesap-sec">{% trans 'Hesap Seç' %}</label>
+                        <select name="kullanici" id="hesap-sec">
+                            <option value="{{i.kategrori_ait_oldugu.id}}">{{i.kategrori_ait_oldugu.first_name}}</option>
+                            {% for j in kullanicilar %}
                                                     <option value="{{j.id}}">{{j.first_name}}</option>
                                                 {% endfor %}
-                                                
-                                                
-                                            </select>
-                                        </div>
+                        </select>
+                    </div>
                                         {% else %}
                                         {% endif %}
-    
-                                        <div class="mb-3">
-                                        <label for="customername-field" class="form-label">{% trans 'Kategori Adı' %}</label>
-                                        <input name="kasaadi" value="{{i.kategori_adi}}" type="text" id="customername-field" class="form-control" placeholder="{% trans 'Kategori Adı' %}" required />
-                                        <div class="invalid-feedback">{% trans 'Lütfen Boş Bırakmayınız' %}</div>
-                                    </div>
-                                    
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans 'KAtegoriyi Güncelle' %}</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                    
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Kategori Adı' %}</label>
+                        <input type="text" value="{{i.kategori_adi}}" name="kasaadi" required id="kategori-adi">
                     </div>
-                </div>
-                {% endfor %}
-                {% for i in santiyeler %}
-                <!-- Modal -->
-                <div class="modal fade zoomIn" id="deleteRecordModal{{i.id}}" tabindex="-1" aria-hidden="true">
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kategori Düzenle' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade zoomIn" id="deleteRecordModal{{i.id}}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -292,25 +189,53 @@
                     </div>
                 </div>
                 {% endfor %}
-                <!--end modal -->
-            </div>
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-        </div>
-        
-</div>
-<!-- end main content-->
+
+    <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 {% endblock sidebar %}
 

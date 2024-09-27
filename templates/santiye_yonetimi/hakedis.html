@@ -100,7 +100,7 @@
                                 <div class="td-actions">
                                
                                     <a class="status-success" onclick="openModal('yeni-hakedis{{i.id}}')"><i class="icon icon-action-edit"></i></a>
-                                    <a href="#" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                    <a onclick="openModal('deleteConfirmationModal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
                                 </div>
                             </td>
                         </tr>
@@ -268,6 +268,21 @@
             </div>
         </div>
 </div>
+<div id="deleteConfirmationModal{{i.id}}" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteConfirmationModal{{i.id}}')">&times;</span>
+            <h2>{% trans 'Hakedişi Sil' %}</h2>
+            <p>{% trans 'Bu hakedişi silmek istediğinizden emin misiniz?' %}</p>
+            <form autocomplete="off"action="/{{dil}}{% url 'main:hakedis_silme' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+            <div class="modal-footer inline">
+                <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmationModal')">{% trans 'Vazgeç' %}</button>
+            </div>
+            </form>
+        </div>
+    </div>
 {% endfor %}
   <script>
         function openModal(modalID) {
@@ -327,4 +342,5 @@
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
+   
 {% endblock sidebar %}
