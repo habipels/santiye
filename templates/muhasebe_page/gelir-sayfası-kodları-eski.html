@@ -4,65 +4,53 @@
 {% load custom_tags %}
 {% load static %}
 {% block slider %}
-    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
-      <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+
+<!-- ============================================================== -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
     <!-- Icons Css -->
     <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Basit ve küçük kaydırma çubuğu -->
-<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+            <div class="container-fluid">
 
-<!-- Dalgalanma efekti -->
-<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
-
-<!-- Feather simgeleri -->
-<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
-
-<!-- Lord ikon -->
-<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-
-<!-- Genel eklentiler -->
-<script src="{% static 'assets/js/plugins.js' %}"></script>
-
-<!-- Özel script dosyanız -->
-<script src="{% static 'assets/js/custom.js' %}"></script>
-
-
-<main>
-        <div class="page-header">
-            <div class="page-info">
-                <div class="page-title">
-                        <a href="javascript:void(0);" onclick="window.history.back();">
-                            <i class="icon icon-arrow-circle-left"></i>
-                        </a>  {% trans 'Gelir Faturaları' %}
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">{% trans "Gelir Faturaları" %}</h4>
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans "Dashboard" %}</a></li>
+                                    <li class="breadcrumb-item active">{% trans "Gelir Faturaları" %}</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <ul class="page-breadcrumb">
-                    <li><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
-                    <li><a href="#">{% trans 'Muhasebe' %}</a></li>
-                    <li><a href="#">{% trans 'Gelir Faturası' %}</a></li>
-                </ul>
-            </div>
+                <!-- end page title -->
 
-            <div class="page-actions">
-                    <button class="page-primary-btn" onclick="window.location.href='/{{dil}}{% url 'accounting:gelir_ekle' %}'">
-                    {% trans 'Gelir Faturası Oluştur' %}</button>
-            </div>
-        </div>
-
-                
-                        <div class="large-stats-card table-card table-detail-card">
-                                <!-- Tablo arama inputu <div class="stats-header">
-                                    <div class="stats-title">{% trans 'Hakedişler' %}</div>
-                                    
-                                    <div class="stats-search">
-                                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
-                                        <button><i class="icon icon-search"></i></button>
-                                    
-                                    </div>-->
-                                </div>
-                              
-                                    <div class="table-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card" id="invoiceList">
+                            
+                            <div class="card-body bg-light-subtle border border-dashed border-start-0 border-end-0">
+                            </div>
+                            <div class="card-body">
+                                <div>
+                                    <div class="table-responsive table-card">
                                         <table id="example" class="display nowrap" style="width:100%">
                                             <thead>
                                                 <tr>
@@ -82,7 +70,7 @@
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    <th>{% trans "İncele" %}</th>
+                                                <th>{% trans "İncele" %}</th>
                                                     <th>{% trans "Fatura No" %}</th>
                                                     <th>{% trans "Cari" %}</th>
                                                     <th>{% trans "Açıklama" %}</th>
@@ -97,10 +85,75 @@
                                                 </tr>
                                             </tfoot>
                                         </table>
-
+                                        <div class="noresult" style="display: none">
+                                            <div class="text-center">
+                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
+                                                </lord-icon>
+                                                <h5 class="mt-2">Sorry! No Result Found</h5>
+                                                <p class="text-muted mb-0">We've searched more than 150+ invoices We did not find any
+                                                    invoices for you search.</p>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <div class="pagination-wrap hstack gap-2">
+                                            <ul class="pagination pagination-m justify-content-center">
 
-                        
+                                                {% if medya.has_previous %}
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans "« Previous page" %}</a></li>
+
+                                                  {% if medya.number > 3 %}
+
+                                                    <li class="page-item"><a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                    {% if medya.number > 4 %}
+                                                      <li class="page-item"><span class="page-link">...</span></li>
+                                                    {% endif %}
+                                                  {% endif %}
+                                                {% endif %}
+
+                                                {% for num in medya.paginator.page_range %}
+                                                  {% if medya.number == num %}
+                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                                  {% endif %}
+                                                {% endfor %}
+
+                                                {% if medya.has_next %}
+                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                    <li class="page-item"><span class="page-link">...</span></li>
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                                  {% endif %}
+
+                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans "Next Page »" %}</a></li>
+                                                {% endif %}
+                                                </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal -->
+                                <div class="modal fade flip" id="deleteOrder" tabindex="-1" aria-labelledby="deleteOrderLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body p-5 text-center">
+                                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px">
+                                                </lord-icon>
+                                                <div class="mt-4 text-center">
+                                                    <h4>You are about to delete a order ?</h4>
+                                                    <p class="text-muted fs-15 mb-4">Deleting your order will remove all of
+                                                        your information from our database.</p>
+                                                    <div class="hstack gap-2 justify-content-center remove">
+                                                        <button class="btn btn-link link-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Close</button>
+                                                        <button class="btn btn-danger" id="delete-record">Yes, Delete It</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end modal -->
                             </div>
                         </div>
                     </div>
@@ -115,19 +168,32 @@
         <div id="tahsilat-makbuzu-modal" class="tahsilat-makbuzu-modal">
           
         </div>
+      
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
 
- 
-    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
     <!-- end main content-->
 <div id="fatura_silme_divi">
 
-</main>
 {% endblock slider %}
 {% block footer %}
 
 
 <!--start back-to-top-->
 
+<!--end back-to-top-->
 <link href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css" rel="stylesheet" type="text/css" />
@@ -153,29 +219,89 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<script>
+ 
+</script>
+<style>/* SearchBuilder'ın daha düzgün ve estetik görünümü */
+.dataTables_wrapper .searchBuilderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+.dataTables_wrapper .searchBuilderContainer .dt-buttons {
+    margin-left: 10px;
+}
+
+.dataTables_wrapper .searchBuilderContainer .searchBuilder {
+    flex-grow: 1;
+}
+
+.dataTables_wrapper .searchBuilderContainer .dt-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+/* Temizle butonunun SearchBuilder'ın yanına yerleşimi */
+.dataTables_wrapper .searchBuilderContainer .searchBuilder-clearAll {
+    margin-left: 10px;
+}
+
+/* Modal düzenlemeleri */
+.modal-content {
+    border-radius: 5px;
+}
+
+.modal-header {
+    background-color: #343a40;
+    color: white;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* DataTables tablolarının genel düzenlemeleri */
+table.dataTable {
+    width: 100% !important;
+    margin: 0 auto;
+    clear: both;
+    border-collapse: separate !important;
+    border-spacing: 0 10px !important;
+}
+
+table.dataTable thead th {
+    background-color: #003643;
+    color: white;
+    text-align: center;
+}
+
+table.dataTable tbody td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+</style>
+
 <script>
 $(document).ready(function () {
     var table = $('#example').DataTable({
         data: [
         {% for i in santiyeler_i %}
         
-            {'incele': '<a href="#" class="status-primary stats-lg" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">{% trans "İncele" %}</a>', 
-            'fatura_no': '{{i.fatura_no}}', 
-            'cari': '{{i.cari_bilgisi.cari_adi}}', 
-            'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 
-            'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gelir_etiketi_adi|escapejs }}{% endif %}', 
-            'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gelir_etiketi_adi|escapejs }}{% endif %}', 
-            'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gelir_etiketi_adi|escapejs }}{% endif %}', 
-            'duzenleme_tarihi': '{{i.fatura_tarihi | date:"d.m.Y" }}', 
-            'vade_tarihi': '{{i.vade_tarihi | date:"d.m.Y" }}', 
-            'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 
-            'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 
-            'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}Ödenmedi{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
+        {'incele': '<button class="faturabilgisi bg-sucsses" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">{% trans "İncele" %}</button>', 'fatura_no': '{{i.fatura_no}}', 'cari': '{{i.cari_bilgisi.cari_adi}}', 'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gelir_etiketi_adi|escapejs }}{% endif %}', 'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gelir_etiketi_adi|escapejs }}{% endif %}', 'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gelir_etiketi_adi|escapejs }}{% endif %}', 'duzenleme_tarihi': '{{i.fatura_tarihi | date:'d.m.Y' }}', 'vade_tarihi': '{{i.vade_tarihi | date:'d.m.Y' }}', 'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}Ödenmedi{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
         {% if not forloop.last %},{% endif %}
         
         
-        {% endfor %}
-        ],
+        {% endfor %}],
         columns: [
             { data: 'incele' },
             { data: 'fatura_no' },
@@ -189,182 +315,93 @@ $(document).ready(function () {
             { data: 'fatura_bedeli' },
             { data: 'kalan_tutar' },
             { data: 'durum' }
-        ],
-        language: { 
-
-     
-        lengthMenu: "_MENU_ {% trans 'kayıt göster' %}",
-        zeroRecords: "{% trans 'Eşleşen kayıt bulunamadı' %}",
-        info: "{% trans 'Toplam _TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor' %}",
-        infoEmpty: "{% trans 'Kayıt bulunamadı' %}",
-        infoFiltered: "(_MAX_ kayıt içinde filtrelendi)",
-        search: "{% trans 'Ara:' %}",
-        paginate: {
-            first: "{% trans 'İlk' %}",
-            last: "{% trans 'Son' %}",
-            next: "{% trans 'Sonraki' %}",
-            previous: "Önceki"
-    },
-    
-    searchBuilder: {
-        add: '{% trans "Gelişmiş Filitre" %}',
-        clearAll: '{% trans "Tümünü Temizle" %}',
-        condition: '{% trans "Koşul" %}',
-        data: '{% trans "Veri" %}',
-        deleteTitle: '{% trans "Sil" %}',
-        logicAnd: '{% trans "Ve" %}',
-        logicOr: '{% trans "Veya" %}',
-        title: {
-            _: '{% trans "Şu anda %d adet filitre aktif." %}',
-            0: '{% trans "" %}'
-        },
-        value: '{% trans "Değer" %}',
-        column: '{% trans "Kolon" %}',
-        condition: '{% trans "Koşul" %}',
-        operator: '{% trans "Operatör" %}',
-        conditions: {
-            string: {
-                contains: '{% trans "İçerir" %}',
-                not: '{% trans "İçermez" %}',
-                empty: '{% trans "Boş" %}',
-                equals: '{% trans "Eşittir" %}',
-                notEquals: '{% trans "Eşit Değil" %}',
-                startsWith: '{% trans "İle Başlar" %}',
-                notStartsWith: '{% trans "İle Başlamaz" %}',
-                notContains: '{% trans "İçermez" %}',
-                endsWith: '{% trans "İle Biter" %}',
-                notEndsWith: '{% trans "İle Bitmez" %}',
-                notEmpty: '{% trans "Boş Değil" %}'
-            },
-            date: {
-                before: '{% trans "Önce" %}',
-                after: '{% trans "Sonra" %}',
-                between: '{% trans "Arasında" %}',
-                empty: '{% trans "Boş" %}',
-                equals: '{% trans "Eşittir" %}',
-                notBetween: '{% trans "Arasında Değil" %}'
-            },
-            number: {
-                lessThan: '{% trans "Daha Az" %}',
-                lessThanEqual: '{% trans "Daha Az veya Eşit" %}',
-                greaterThan: '{% trans "Daha Fazla" %}',
-                greaterThanEqual: '{% trans "Daha Fazla veya Eşit" %}',
-                between: '{% trans "Arasında" %}',
-                empty: '{% trans "Boş" %}',
-                equals: '{% trans "Eşittir" %}',
-                notBetween: '{% trans "Arasında Değil" %}'
-            },
-            array: {
-                contains: '{% trans "İçerir" %}',
-                not: '{% trans "İçermez" %}',
-                empty: '{% trans "Boş" %}',
-                equals: '{% trans "Eşittir" %}',
-                notEquals: '{% trans "Eşit Değil" %}',
-                startsWith: '{% trans "İle Başlar" %}',
-                notStartsWith: '{% trans "İle Başlamaz" %}',
-                notContains: '{% trans "İçermez" %}',
-                endsWith: '{% trans "İle Biter" %}',
-                notEndsWith: '{% trans "İle Bitmez" %}',
-                notEmpty: '{% trans "Boş Değil" %}'
+        ], language: { 
+            searchBuilder: {
+                add: '{% trans "search builder add" %}',
+                clearAll: '{% trans "search builder clearAll" %}',
+                condition: '{% trans "search builder condition" %}',
+                data: '{% trans "search builder data" %}',
+                deleteTitle: '{% trans "search builder deleteTitle" %}',
+                logicAnd: '{% trans "search builder logicAnd" %}',
+                logicOr: '{% trans "search builder logicOr" %}',
+                title: {
+                    _: '{% trans "search builder Filtreler (%d)" %}',
+                    0: '{% trans "search builder Filtreler" %}'
+                },
+                value: '{% trans "search builder Değer" %}',
+                column: '{% trans "search builder column" %}',
+                condition: '{% trans "search builder condition" %}',
+                operator: '{% trans "search builder operator" %}',
+                conditions: {
+                    // Örnek koşullar, ihtiyacınıza göre düzenleyebilirsiniz
+                    string: {
+                        contains: '{% trans "search builder contains" %}',
+                        not: '{% trans "search builder not" %}',
+                        empty: '{% trans "search builder empty" %}',
+                        equals: '{% trans "search builder equals" %}',
+                        notEquals: '{% trans "search builder notEquals" %}',
+                        startsWith: '{% trans "search builder startswith" %}',
+                        doesNotStartWith: '{% trans "search builder doesnotstartwith" %}',
+                        doesNotContrain: '{% trans "search builder doesnotcontrain" %}',
+                        endsWith: '{% trans "search builder endswith" %}',
+                        doesNotEndWith: '{% trans "search builder doesnotendwith" %}',
+                        notEmpty: '{% trans "search builder notempty" %}'
+                        
+                    },
+                    date: {
+                        before: '{% trans "search builder before" %}',
+                        after: '{% trans "search builder after" %}',
+                        between: '{% trans "search builder between" %}',
+                        empty: '{% trans "search builder empty" %}',
+                        equals: '{% trans "search builder equals" %}',
+                        notBetween: '{% trans "search builder notBetween" %}'
+                    },
+                    number: {
+                        lessThan: '{% trans "search builder lessThan" %}',
+                        lessThanEqual: '{% trans "search builder lessThanEqual" %}',
+                        greaterThan: '{% trans "search builder greaterThan" %}',
+                        greaterThanEqual: '{% trans "search builder greaterThanEqual" %}',
+                        between: '{% trans "search builder between" %}',
+                        empty: '{% trans "search builder empty" %}',
+                        equals: '{% trans "search builder equals" %}',
+                        notBetween: '{% trans "search builder notBetween" %}'
+                    },
+                    array: {
+                        contains: '{% trans "search builder contains" %}',
+                        not: '{% trans "search builder not" %}',
+                        empty: '{% trans "search builder empty" %}',
+                        equals: '{% trans "search builder equals" %}',
+                        notEquals: '{% trans "search builder notEquals" %}',
+                        startsWith: '{% trans "search builder startswith" %}',
+                        doesNotStartWith: '{% trans "search builder doesnotstartwith" %}',
+                        doesNotContrain: '{% trans "search builder doesnotcontrain" %}',
+                        endsWith: '{% trans "search builder endswith" %}',
+                        doesNotEndWith: '{% trans "search builder doesnotendwith" %}',
+                        notEmpty: '{% trans "search builder notempty" %}'
+                    }
+                }
             }
-            
-        }
-    }
-
-
         },
+        
         dom: '<"row align-items-center"' +
                 '<"col-sm-3 d-flex gap-2"B>' +  // Butonlar
-                '<"col-sm-6"Q>' +              // Custom Search
-                '<"col-sm-3"l>' +              // Satır Gösterme
+                '<"col-sm-4"Q>' +              // Custom Search
+                '<"col-sm-2"l>' +              // Satır Gösterme
+                '<"col-sm-3"f>' +              // Arama Kutusu
              '>' +
              'rt' +
              '<"row"<"col-sm-5"i><"col-sm-7"p>>',
-           buttons: [
-        {
-            extend: 'copy',
-            text: '{% trans "Kopyala" %}',
-            exportOptions: {
-                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
+        buttons: [
+            '{% trans "copy" %}', '{% trans "csv" %}', '{% trans "excel" %}', '{% trans "pdf" %}', '{% trans "print" %}',
+            {
+                text: '{% trans "Fatura Ekle" %}',
+                className: 'btn btn-danger',
+                action: function () {
+                    window.location.href = "/{{dil}}{% url 'accounting:gelir_ekle' %}";
+                }
             }
-        },
-        {
-            extend: 'csv',
-            text: '{% trans "Csv" %}',
-            charset: 'utf-8',
-            bom: true,
-            exportOptions: {
-                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
-            }
-        },
-        {
-            extend: 'excel',
-            text: '{% trans "Excel" %}',
-            exportOptions: {
-                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
-            }
-        },
-        {
-            extend: 'pdf',
-            text: '{% trans "Pdf" %}',
-            orientation: 'landscape',
-            pageSize: 'A4',
-            exportOptions: {
-                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
-            },
-            customize: function(doc) {
-                doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');  // PDF tablosu genişlik ayarı
-                doc.styles.tableHeader = {
-                    alignment: 'center',
-                    bold: true,
-                    fillColor: '#24d6b5'
-                };
-                doc.defaultStyle.alignment = 'center';
-
-                // Her sayfanın altına sabit metin ekleyelim
-                doc['footer'] = function(currentPage, pageCount) {
-                    return {
-                        columns: [
-                            {
-                                text: 'BiadaGO ERP Software www.biadago.com',
-                                alignment: 'right',  // Sağ alt köşeye hizalanır
-                                margin: [0, 0, 40, 20],  // Sağ köşe için margin
-                                fontSize: 8
-                            }
-                        ]
-                    };
-                };
-            }
-        },
-        {
-            extend: 'print',
-            text: '{% trans "Yazdır" %}',
-            exportOptions: {
-                columns: ':not(.no-export)'  // "İncele", "Etiket 1", "Etiket 2", "Etiket 3" sütunları hariç tutulacak
-            },
-            customize: function(win) {
-                $(win.document.body).css('font-size', '10pt');
-                $(win.document.body).find('table')
-                    .addClass('compact')
-                    .css('font-size', 'inherit')
-                    .css('width', '100%');  // Tablonun genişliğini tam sayfa yap
-
-                // Sabit footer ekleyelim (her sayfanın altına)
-                $(win.document.body).append('<div style="position: fixed; bottom: 0; right: 0; font-size: 8pt; margin-right: 20px;">BiadaGO ERP Software www.biadago.com</div>');
-            }
-        }
-    ],
-       
-    columnDefs: [
-        {
-            targets: [0, 4, 5, 6],  // 0: "İncele", 4: "Etiket 1", 5: "Etiket 2", 6: "Etiket 3"
-            className: 'no-export',  // Bu sütunları no-export sınıfıyla işaretliyoruz
-            searchable: false,
-            orderable: false
-        }
-    ],
-        
-    });
+        ],
+      });
 });
 
 
@@ -386,70 +423,70 @@ $(document).ready(function () {
                  <div class="wrapper">
                 <div class="modal-head">
                     <div class="invoice-title">
-                        <a>Fatura Adı : ${data.cari}</a>
+                        <a>{% trans "Fatura Adı" %} : ${data.cari}</a>
                     </div>
                     <div class="invoice-icons">
-                        <div class="icon-item print-icon"><a href="/accounting/viewcome/${data.id}"><span title='{% trans "Yazdır" %}' class="mdi mdi-printer-outline"></a></span></div>
+                        <div class="icon-item print-icon"><a href="/accounting/viewcome/${data.id}"><span title="{% trans 'Yazdır' %}" class="mdi mdi-printer-outline"></a></span></div>
                         {% if request.user.kullanicilar_db %}
                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                         {% if yetki.gelir_faturasi_silme_izni %}
-                              <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>                                                  
+                               <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>                                                 
                         {% else %}
                                                                                         
                         {% endif %}
                         {% else %}
-                             <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>                                                   
+                                <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>                                                
                         {% endif %}
                         {% if request.user.kullanicilar_db %}
                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                         {% if yetki.gelir_faturasi_duzenleme_izni %}
-                              <div class="icon-item edit-icon"><a href="/accounting/settheycome/${data.id}"><span title="{% trans 'Düzenle' %}" class="mdi mdi-pencil-circle-outline"></a></span></div>                                                  
+                             <div class="icon-item edit-icon"><a href="/accounting/settheycome/${data.id}"><span title='{% trans "Düzenle" %}' class="mdi mdi-pencil-circle-outline"></a></span></div>                                                   
                         {% else %}
                                                                                         
                         {% endif %}
                         {% else %}
-                               <div class="icon-item edit-icon"><a href="/accounting/settheycome/${data.id}"><span title="{% trans 'Düzenle' %}" class="mdi mdi-pencil-circle-outline"></a></span></div>                                                 
+                           <div class="icon-item edit-icon"><a href="/accounting/settheycome/${data.id}"><span title='{% trans "Düzenle" %}' class="mdi mdi-pencil-circle-outline"></a></span></div>                                                     
                         {% endif %}
                         
-                        <div class="icon-item close-icon"><span type="button" onclick="kapat()" data-close title="{% trans 'Kapat' %}" class="mdi mdi-close-circle-outline"></span></div>
+                        <div class="icon-item close-icon"><span type="button" onclick="kapat()" data-close title='{% trans "Kapat" %}' class="mdi mdi-close-circle-outline"></span></div>
                     </div>
                 </div>
                 <div class="modal-body">
                     <div class="top">
-                        <div class="title"><h4>{% trans 'Alış Faturası' %}</h4></div>
+                        <div class="title"><h4>{% trans "Satış Faturası" %}</h4></div>
                         <div class="category"><span>${data.kategori}</span></div>
                     </div>
                     <div class="fatura-info">
                         <div class="info-item">
-                            <div class="title"><h5>{% trans 'Fatura no' %}</h5></div>
+                            <div class="title"><h5>{% trans "Fatura no" %}</h5></div>
                             <div class="value"><span>${data.fatura_no}</span></div>
                         </div>
                         <div class="info-item">
-                            <div class="title"><h5>{% trans 'DÖVİZ KURU' %}</h5></div>
+                            <div class="title"><h5>{% trans "DÖVİZ KURU" %}</h5></div>
                             <div class="value">${data.doviz}</span></span></div>
                         </div>
                         <div class="info-item">
-                            <div class="title"><h5>{% trans 'Düzenleme Tarihi' %}</h5></div>
+                            <div class="title"><h5>{% trans "Düzenleme Tarihi" %}</h5></div>
                             <div class="value"><span>${data.fatura_tarihi}</span></div>
                         </div>
                         <div class="info-item">
-                            <div class="title"><h5>{% trans 'VADE TARİHİ' %}</h5></div>
+                            <div class="title"><h5>{% trans "VADE TARİHİ" %}</h5></div>
                             <div class="value"><span>${data.vade_tarihi}</span></div>
                         </div>
                     </div>
                     <div class="fature-desc">
-                        <div class="title"><h5>{% trans 'Açıklama' %}</h5></div>
+                        <div class="title"><h5>{% trans "Açıklama" %}</h5></div>
                         <div class="value"><span>${data.aciklama}</span></div>
                     </div>
                     <div class="title">
-                        <h5>{% trans 'Fatura Kalemleri' %}</h5>
+                        <h5>{% trans "Fatura Kalemleri" %}</h5>
                     </div>
                     <div class="satis-table">
                         <div class="table-titles">
-                            <h5>{% trans 'Ürün' %}</h5>
-                            <h5>{% trans 'Adet' %}</h5>
-                            <h5>{% trans 'Fiyat' %}</h5>
-                            <h5>{% trans 'Toplam' %}</h5>
+                            <h5>{% trans "Ürün" %}</h5>
+                            <h5>{% trans "Adet" %}</h5>
+                            <h5>{% trans "Fiyat" %}</h5>
+                            <h5>{% trans "Toplam" %}</h5>
                         </div>
                         ${data.kalemler.map(kalem => `
                             <div class="table-item">
@@ -469,9 +506,9 @@ $(document).ready(function () {
                             <div class="tarih">
                                 <span></span>
                             </div>
-                            <div title="{% trans 'Makbuzu Görüntüle' %}" class="makbuz">
+                            <div title='{% trans "Makbuzu Görüntüle" %}' class="makbuz">
                                 <span type="button" onclick="makbuzlari_goruntule()" id="${data.id}" class="mdi mdi-text-box-search-outline"></span>
-                                <span>{% trans 'Kasa Hesabı' %}</span>
+                                <span>{% trans "Kasa Hesabı" %}</span>
                             </div>
                             <div class="fiyat"><span>${data.genel_toplam}<span>$</span></div>
                         </div>
@@ -484,13 +521,13 @@ $(document).ready(function () {
                             {% if yetki.gelir_faturasi_makbuz_kesme_izni %}
                                   <span type="button" onclick="tahsilat_ekleme()"  class="mdi mdi-plus-circle"></span>                                                  
                             {% else %}
-                                  <span type="button"   class="mdi mdi-plus-circle"></span>                                                          
+                                   <span type="button"  class="mdi mdi-plus-circle"></span>                                                         
                             {% endif %}
                             {% else %}
-                                  <span type="button" onclick="tahsilat_ekleme()"  class="mdi mdi-plus-circle"></span>                                                  
+                                    <span type="button" onclick="tahsilat_ekleme()"  class="mdi mdi-plus-circle"></span>                                                
                             {% endif %}
                                 
-                                <span>{% trans 'KALAN' %}</span>
+                                <span>{% trans "KALAN" %}</span>
                             </div>
                             <div class="price">
                                 <span>${data.kalan_tutar}<span>$</span></span>
@@ -502,16 +539,16 @@ $(document).ready(function () {
                                     {% csrf_token %}
                                 <input type="text" hidden value="${data.id}" name="faturabilgisi">
                             <div class="input-item">
-                                <label>{% trans 'TÜR' %}</label>
+                                <label>{% trans "TÜR" %}</label>
                                 <select name="odemeturu">
-                                    <option value="nakitBanka">{% trans 'Nakit / Banka' %}</option>
-                                    <option disabled>{% trans 'ÇEK VEYA SENET' %}</option>
-                                    <option value="cek">{% trans 'ÇEK' %}</option>
-                                    <option value="senet">{% trans 'SENET' %}</option>
+                                    <option value="nakitBanka">{% trans "Nakit / Banka" %}</option>
+                                    <option disabled>{% trans "ÇEK VEYA SENET" %}</option>
+                                    <option value="cek">{% trans "ÇEK" %}</option>
+                                    <option value="senet">{% trans "SENET" %}</option>
                                 </select>
                             </div>
                             <div class="input-item">
-                                <label>{% trans 'HESAP' %}</label>
+                                <label>{% trans "HESAP" %}</label>
                                 <select name="kasabilgisi">
                                      ${data.kasalar.map(kasa => `
                             <option value="${kasa.id}">${kasa.kasa_adi}</option>
@@ -520,29 +557,29 @@ $(document).ready(function () {
                                 </select>
                             </div>
                             <div class="input-item">
-                                <label>{% trans 'TARİH' %}</label>
+                                <label>{% trans "TARİH" %}</label>
                                 <input name="islemtarihi" type="date" />
                             </div>
                             <div class="input-item">
-                                <label>{% trans 'TUTAR' %}</label>
+                                <label>{% trans "TUTAR" %}</label>
                                 <input type="text"  name="islemtutari" value="${data.kalan_tutar}" max="${data.kalan_tutar}" placeholder="105000.41" />
                                 <span class="mdi mdi-currency-usd"></span>
                             </div>
                             <div class="input-item">
-                                <label>{% trans 'MAKBUZ NO' %}</label>
+                                <label>{% trans "MAKBUZ NO" %}</label>
                                 <input name="makbuznumarasi" type="text" />
                             </div>
                             <div class="input-item">
-                                <label>{% trans 'AÇIKLAMA' %}</label>
+                                <label>{% trans "AÇIKLAMA" %}</label>
                                 <input name="aciklama_bilgisi" type="text" />
                             </div>
                             <div class="input-item">
-                                <label>{% trans 'DOSYA' %}</label>
+                                <label>{% trans "DOSYA" %}</label>
                                 <input name="dosya" type="file" />
                             </div>
                             <div class="buttons">
-                                <span type="button" onclick="tahsilat_kapat()">{% trans 'Vazgeç' %}</span>
-                                <input type="submit" value="{% trans 'Tahsilat İşle' %}" />
+                                <span type="button" onclick="tahsilat_kapat()">{% trans "Vazgeç" %}</span>
+                                <input type="submit" value="{% trans "Tahsilat İşle" %}" />
                             </div>
                         </form>
                     </div>
@@ -553,13 +590,13 @@ $(document).ready(function () {
                    <div class="wrapper">
                 <div class="modal-head">
                     <div class="invoice-title">
-                        <h2>Tahsilat Makbuzu</h2>
+                        <h2>{% trans "Tahsilat Makbuzu" %}</h2>
                     </div>
                     <div class="invoice-icons">
-                        <div class="icon-item print-icon"><span title="{% trans 'Yazdır' %}" class="mdi mdi-printer-outline"></span></div>
-                        <div class="icon-item cancel-icon"><span title="{% trans 'İptal et' %}" class="mdi mdi-alert-circle-outline"></span></div>
-                        <div class="icon-item edit-icon"><span title="{% trans 'Düzenle' %}" class="mdi mdi-pencil-circle-outline"></span></div>
-                        <div class="icon-item close-icon"><span id="{{i.id}}" type="button" onclick="makbuzlari_kapat()" title="{% trans 'Kapat' %}" class="mdi mdi-close-circle-outline"></span></div>
+                        <div class="icon-item print-icon"><span title='{% trans "Yazdır" %}' class="mdi mdi-printer-outline"></span></div>
+                        <div class="icon-item cancel-icon"><span title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>
+                        <div class="icon-item edit-icon"><span title='{% trans "Düzenle" %}' class="mdi mdi-pencil-circle-outline"></span></div>
+                        <div class="icon-item close-icon"><span id="{{i.id}}" type="button" onclick="makbuzlari_kapat()" title="Kapat" class="mdi mdi-close-circle-outline"></span></div>
                     </div>
                 </div>
                 <style>
@@ -575,7 +612,7 @@ $(document).ready(function () {
                 
                 <div id="guncelle{{i.id}}" class="modal-body scroll ">
                     <div class="hesap">
-                        <h2>{% trans 'CARİ HESABI' %}</h2>
+                        <h2>{% trans "CARİ HESABI" %}</h2>
                         <span><a href="">${data.cari}</a></span>
                     </div>
                     
@@ -589,11 +626,11 @@ $(document).ready(function () {
                     <table>
                         <thead>
                             <tr>
-                                <th>{% trans 'ÖDEME TARİHİ' %}</th>
-                                <th>{% trans 'KASA HESABI' %}</th>
-                                <th>{% trans 'İŞLEM TARİHİ' %}</th>
-                                <th>{% trans 'KULLANICI' %}</th>
-                                <th>{% trans 'TUTAR' %}</th>
+                                <th>{% trans "ÖDEME TARİHİ" %}</th>
+                                <th>{% trans "KASA HESABI" %}</th>
+                                <th>{% trans "İŞLEM TARİHİ" %}</th>
+                                <th>{% trans "KULLANICI" %}</th>
+                                <th>{% trans "TUTAR" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -603,7 +640,7 @@ $(document).ready(function () {
                             {% if request.user.kullanicilar_db %}
                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                             {% if yetki.gelir_faturasi_makbuz_gorme_izni %}
-                            <tr>
+                                 <tr>
                                 
                                 <td>${makbuz.tarihi}</td>
                                 <td>${makbuz.kasa_adi}</td>
@@ -612,24 +649,24 @@ $(document).ready(function () {
                                 <td></td>
                             </tr>
                             <tr>
-                                
-                                ${makbuz.resim ? `
-                            <td colspan="2"><a target="_blank" href="${makbuz.resim}">{% trans 'Resmi Göster' %}</a></td>
+                                   ${makbuz.resim ? `
+                            <td colspan="2"><a target="_blank" href="${makbuz.resim}">{% trans "Resmi Göster" %}</a></td>
                             ` : '<td colspan="2"><a >{% trans "Resmi Yok" %}</a></td>'}  
-                                {% if yetki.gelir_faturasi_makbuz_silme_izni %}
-                                      <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">{% trans 'SİL' %}</button></td>                                              
-                                {% else %}
-                                      <td colspan="2"></td>                                                          
-                                {% endif %} 
+                                    
                                 
+                                {% if yetki.gelir_faturasi_makbuz_silme_izni %}
+                                <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">{% trans "SİL" %}</button></td>
                                 <td>${makbuz.tutar} $</td>
-                            </tr>
-                                                                                   
+                                {% else %}
+                                 <td colspan="2"> </td>
+                                <td>${makbuz.tutar} $</td>
+                                {% endif %}
+                            </tr>                                                   
                             {% else %}
                                                                                             
                             {% endif %}
                             {% else %}
-                                <tr>
+                                  <tr>
                                 
                                 <td>${makbuz.tarihi}</td>
                                 <td>${makbuz.kasa_adi}</td>
@@ -638,14 +675,15 @@ $(document).ready(function () {
                                 <td></td>
                             </tr>
                             <tr>
-                                
-                                ${makbuz.resim ? `
-                            <td colspan="2"><a target="_blank" href="${makbuz.resim}">{% trans 'Resmi Göster' %}</a></td>
+                                   ${makbuz.resim ? `
+                            <td colspan="2"><a target="_blank" href="${makbuz.resim}">{% trans "Resmi Göster" %}</a></td>
                             ` : '<td colspan="2"><a >{% trans "Resmi Yok" %}</a></td>'}  
+                                    
+                                
         
-                                <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">{% trans 'SİL' %}</button></td>
+                                <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">{% trans "SİL" %}</button></td>
                                 <td>${makbuz.tutar} $</td>
-                            </tr>                                                    
+                            </tr>                                                  
                             {% endif %}
                             
                            
@@ -657,9 +695,9 @@ $(document).ready(function () {
                     
                     <div class="fatura-table">
                         <div class="table-head">
-                            <div class="item"><h2>{% trans 'İŞLENEN FATURA' %}</h2></div>
-                            <div class="item"><h2>{% trans 'FATURA TUTARI' %}</h2></div>
-                            <div class="item"><h2>{% trans 'MAHSUP TUTARI' %}</h2></div>
+                            <div class="item"><h2>{% trans "İŞLENEN FATURA" %}</h2></div>
+                            <div class="item"><h2>{% trans "FATURA TUTARI" %}</h2></div>
+                            <div class="item"><h2>{% trans "MAHSUP TUTARI" %}</h2></div>
                         </div>
                         <div class="table-body">
                             <div class="fatura-item">
@@ -670,7 +708,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                     <div class="kalan">
-                        <h2>{% trans 'KALAN' %}</h2>
+                        <h2>{% trans "KALAN" %}</h2>
                         <span> $</span>
                     </div>
                 </div>
@@ -684,22 +722,22 @@ $(document).ready(function () {
 
   
       <div class="modal-header">
-        <h4 class="modal-title">{% trans 'Faturayı İptal Et' %}</h4>
+        <h4 class="modal-title">{% trans "Faturayı İptal Et" %}</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
         <form autocomplete="off"action="/{{dil}}{% url 'accounting:fatura_sil' %}" method="post">
         {% csrf_token %}
      
       <div class="modal-body">
-        {% trans 'Faturayı iptal etmek istediğinizden emin misiniz ?' %}
-        <input type="text" name="gelir_gelir" value="1" hidden>
+        {% trans "Faturayı iptal etmek istediğinizden emin misiniz ?" %}
+        <input type="text" name="gelir_gider" value="0" hidden>
         <input type="text" name="idbilgisicek" value="${faturaId}" hidden>
       </div>
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-bs-dismiss="modal">{% trans 'İptal' %}</button>
-        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">{% trans 'Sil' %}</button>
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">{% trans "İptal" %}</button>
+        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">{% trans "Sil" %}</button>
       </div>
     </form>
     </div>
@@ -712,22 +750,22 @@ $(document).ready(function () {
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">{% trans 'Ödeme Sil' %}</h4>
+                    <h4 class="modal-title">{% trans "Ödeme Sil" %}</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                  <form autocomplete="off"action="/{{dil}}{% url 'accounting:makbuz_sil' %}" method="post">
                  {% csrf_token %}
                 <!-- Modal body -->
                 <div class="modal-body">
-                    {% trans 'Ödemeyi Silmek İstediğinizden Emin Misiniz ?' %}
-                    <input type="text" name="makbuz" value="1" hidden>
+                    {% trans "Ödemeyi Silmek İstediğinizden Emin Misiniz ?" %}
+                    <input type="text" name="makbuz" value="0" hidden>
                     <input type="text" name="makbuzidsi" value="${makbuz.id}" hidden>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">{% trans 'İptal' %}</button>
-                    <button type="submit"   id="${makbuz.id}- type" data-bs-dismiss="modal" class="btn btn-danger makbuzsill" >{% trans 'Sil' %}</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">{% trans "İptal" %}</button>
+                    <button type="submit"   id="${makbuz.id}- type" data-bs-dismiss="modal" class="btn btn-danger makbuzsill" >{% trans "Sil" %}</button>
                 </div>
                 </form >
                 </div>
@@ -953,5 +991,6 @@ $(document).ready(function () {
     </script>
     
 {% endblock footer %}
+
 
 
