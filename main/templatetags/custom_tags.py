@@ -79,7 +79,56 @@ def bloglar_daireleri_kalemleri_finansal_bilgileri(id,k_b):
         except:
             genel_toplam = genel_toplam
     return round(genel_toplam,2)
+from collections import defaultdict
+from datetime import timedelta
+from django import template
+from django.utils import timezone
 @register.simple_tag
+def get_son_bir_hafta_icinde_degisenler(id):
+    """
+    Son bir hafta içinde değişen ve tamamlanma bilgisi True olan santiye_kalemlerin_dagilisi kayıtlarını gün gün ayırarak
+    ve her gün için değişen kalem sayısını getirir. Günler yazı ile ifade edilir.
+    """
+    now = timezone.now()
+    one_week_ago = now - timedelta(days=7)
+
+    # Son bir hafta içinde değişen ve tamamlanma bilgisi True olan kayıtlar
+    degisen_kalemler = santiye_kalemlerin_dagilisi.objects.filter(
+        blog_bilgisi__id=id,
+        degistirme_tarihi__gte=one_week_ago,
+        tamamlanma_bilgisi=True
+    )
+
+    # Gün gün ayırmak için defaultdict kullanıyoruz
+    gun_gun_kalemler = defaultdict(list)
+
+    for kalem in degisen_kalemler:
+        # Her kalemin degistirme_tarihi'ne göre gününü alıyoruz
+        degisme_gunu = kalem.degistirme_tarihi.date()  # .date() burada gerekli
+        gun_gun_kalemler[degisme_gunu].append(kalem)
+
+    # Gün adlarını tanımlıyoruz (Pazartesi'den başlayarak)
+    gun_adlari = [
+        "Pazartesi", "Salı", "Çarşamba", "Perşembe", 
+        "Cuma", "Cumartesi", "Pazar"
+    ]
+    
+    # Son bir haftadaki günlerin listesini oluşturuyoruz
+    gunler = [now.date() - timedelta(days=i) for i in range(7)]  # .date() burada gereksiz
+
+    # Günleri sıraya göre döndürüyoruz ve o günün kayıtlarını varsa ekliyoruz
+    gun_kalem_sayilari = []
+    gun_gonder = []
+    deger_gonder = []
+    for i, gun in enumerate(gunler):
+        # Gün adını alıyoruz (Pazartesi = 0, Salı = 1, ... )
+        gun_ad = gun_adlari[(i + 0) % 7]  # (i + 0) ile Pazartesi'den başlatıyoruz
+        sayi = len(gun_gun_kalemler.get(gun, []))
+        gun_kalem_sayilari.append((gun_ad, sayi))
+        gun_gonder.append(gun_ad)
+        deger_gonder.append(sayi)
+
+    return {"gunler":gun_gonder,"degerler":deger_gonder}
 def bloglar_daireleri_kalemleri_fiziksel_bilgileri_genel(k_b):
     genel_toplam = 0
     for i in k_b:
@@ -107,11 +156,11 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme(id,k_b):
         toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
         toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
         try:
-            a = round(((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)*100/(i.santiye_agirligi),2)
-            b =round(((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)*100/(i.santiye_finansal_agirligi),2)
+            a = round((toplam_yapilan_kalem*100/toplam_kalem),2)
+            b =round((toplam_yapilan_kalem*100/toplam_kalem),2)
         except:
             pass
-        genel_toplam.append({"isim":i.kalem_adi,"ilerleme1":a,"ilerleme2":b})
+        genel_toplam.append({"isim":i.kalem_adi,"ilerleme1":int(a),"ilerleme2":int(b)})
 
     return genel_toplam
 @register.simple_tag
@@ -1573,3 +1622,5 @@ def sonmesaj(grup_id):
         return mes.content
     else:
         return "" 
+    
+
