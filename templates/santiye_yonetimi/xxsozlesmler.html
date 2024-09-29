@@ -1,612 +1,288 @@
+
 {% extends "homebase.html" %}
 {% load i18n %}
-{% load static %}
 {% load custom_tags %}
+{% load static %}
+
 {% block sidebar %}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-        }
+    <main>
 
-        .container-fluid {
-            padding: 20px;
-        }
 
-        .nav-tabs .nav-link {
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            color: #333;
-        }
-
-        .nav-tabs .nav-link.active {
-            background-color: #24d6b6;
-            color: #fff;
-        }
-
-        .table th {
-            background-color: #24d6b6;
-            color: #ffffff;
-        }
-
-        .btn-primary {
-            background-color: #24d6b6;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #1ba892;
-        }
-
-        .btn-secondary {
-            background-color: #dbf226;
-            border: none;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background-color: #c4d51f;
-        }
-
-        .modal-content {
-            border-radius: 10px;
-            padding: 20px;
-            background-color: #ffffff;
-        }
-
-        .file-drop-area {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 10px;
-            border: 2px dashed #ccc;
-            border-radius: 5px;
-            background-color: #fafafa;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
-
-        .file-drop-area:hover {
-            background-color: #f1f1f1;
-        }
-
-        .fake-btn {
-            background-color: #24d6b6;
-            color: #ffffff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-
-        .file-msg {
-            font-size: 14px;
-            color: #999;
-        }
-
-        .icon-cell i {
-            color: #6c757d;
-            cursor: pointer;
-        }
-
-        .icon-cell i:hover {
-            color: #333;
-        }
-
-        .contract-table tr:hover .actions i {
-            visibility: visible;
-        }
-
-        .container-fluid {
-            padding: 20px;
-        }
-
-        .group-list {
-            background-color: #ffffff;
-            border-right: 1px solid #ddd;
-            height: 100%;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .group-item {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .group-item:hover {
-            background-color: #f1f1f1;
-        }
-
-        .group-item .action-icons {
-            position: absolute;
-            right: 10px;
-            display: flex;
-            gap: 5px;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .group-item:hover .action-icons {
-            opacity: 1;
-        }
-
-        .action-icons i {
-            margin-left: 10px;
-            color: #6c757d;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .permissions-panel {
-            padding: 20px;
-            background-color: #ffffff;
-            border-left: 1px solid #ddd;
-            height: 100%;
-            overflow-y: auto;
-        }
-
-        .permission-matrix {
-            margin-top: 20px;
-        }
-
-        .permission-group {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-
-        .permission-group h6 {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .permission-group table {
-            width: 100%;
-        }
-
-        .permission-group th,
-        .permission-group td {
-            text-align: center;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            vertical-align: middle;
-        }
-
-        .form-check-input {
-            margin-left: 0;
-            margin-top: 0;
-            position: relative;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .group-heading {
-            font-weight: bold;
-            text-align: left;
-            padding-left: 10px;
-            background-color: #f8f9fa;
-        }
-
-        .icon-cell {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: right;
-        }
-
-        .icon-cell i {
-            margin-right: 10px;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .icon-cell i:hover {
-            color: #555;
-        }
-
-        .actions i {
-            visibility: hidden;
-        }
-
-        .contract-table tr:hover .actions i {
-            visibility: visible;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1050;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .small-modal {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 550px;
-            /* Daha küçük modal boyutu */
-            max-width: 90%;
-            position: relative;
-        }
-
-        .modal-content h2 {
-            margin-top: 0;
-        }
-
-        .modal-content .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .table-bordered {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table-bordered th,
-        .table-bordered td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-
-        .table-bordered th {
-            background-color: #f2f2f2;
-            text-align: left;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .table-hover tbody tr:hover .icon-cell i {
-            visibility: visible;
-        }
-
-        /* File upload styling */
-        .file-drop-area {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 10px;
-            border: 2px dashed #ccc;
-            border-radius: 5px;
-            background-color: #fafafa;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
-
-        .file-drop-area:hover {
-            background-color: #f1f1f1;
-        }
-
-        .fake-btn {
-            background-color: #24d6b6;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-
-        .file-msg {
-            font-size: 14px;
-            color: #999;
-        }
-
-        .file-input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        /* Stats box styling */
-        .stats-box {
-            padding: 10px;
-            background-color: #e9f7f3;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            width: 49%; /* Stats box genişliği */
-            justify-content: center;
-        }
-
-        /* Tablo stil güncellemeleri */
-        .table {
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .table th {
-            background-color: #24d6b6;
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .table td {
-            background-color: #fff;
-            color: #333;
-        }
-
-        .btn-primary.btn-block {
-            display: block;
-            width: 50%;
-            /* Buton genişliğini ayarlayabilirsiniz */
-            margin: 20px auto 0 auto;
-            /* Üstten 20px boşluk, sağ ve sol ortalama */
-            padding: 10px 0;
-            /* Butonun içindeki yazının yukarıdan ve aşağıdan boşluğu */
-            text-align: center;
-        }
-       @media (max-width: 768px) {
-            .stat-box,
-            .hakediş-button {
-                margin-bottom: 10px;
-                width: 100%;
-            }
-
-            .filter-section {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .table {
-                display: block;
-                overflow-x: auto;
-            }
-
-            .table th, .table td {
-                white-space: nowrap;
-                text-align: left;
-            }
-        }
-
-        .modal-footer.inline {
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
-<div class="main-content">
-        <div class="page-content">
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sözleşme Kategorileri -->
-            <div class="col-md-3 group-list">
-                <h5>{% trans 'Sözleşmeler' %}</h5>
-                <div class="group-item" onclick="switchCategory('anaFirma')">
-                    
-                    <a style="color: black; text-decoration: none;" href="/{{dil}}{% url 'main:ana_yuklenici_sozlesmler_sayfasi' %}">
-                        <span>{% trans 'Ana Firma Sözleşmeleri' %}</span></a>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Sözleşmeler' %}
                     
                 </div>
-                <div style="background-color: rgb(153, 150, 150);" class="group-item" onclick="switchCategory('altYuklenici')">
-                    <a style="color: black; text-decoration: none; " href="/{{dil}}{% url 'main:sozlesmler_sayfasi' %}">
-                    <span>{% trans 'Alt Yüklenici Sözleşmeleri' %}</span></a>
-                    
-                </div>
-                <button class="btn btn-primary mt-3 w-100" onclick="openModal('contractModal')">{% trans '+ Sözleşme Ekle' %}</button>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Sözleşmeler' %}</a></li>
+                </ul>
             </div>
 
-            <!-- Sözleşme Detayları -->
-            <div class="col-md-9 permissions-panel">
-                <h5>{% trans 'Seçilen Kategori: Alt Yüklenici Sözleşmeleri' %}</h5>
+            <div class="page-actions">
+            {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.taseronlar_olusturma %}
+                                                   <button class="page-primary-btn" onclick="openModal('yeni-sozlesme')"><i
+                        class="icon icon-new"></i>
+                    {% trans 'Yeni Sözleşme Ekle' %}</button>                                   
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                                 <button class="page-primary-btn" onclick="openModal('yeni-sozlesme')"><i
+                        class="icon icon-new"></i>
+                    {% trans 'Yeni Sözleşme Ekle' %}</button>                                     
+                                            {% endif %}
+                
+            </div>
+        </div>
 
-                <!-- Filtreleme ve Hesaplamalar -->
-                <div class="mb-4">
-                    <input type="text" id="filterInput" class="form-control mb-2" placeholder="{% trans 'Filtrele...' %}">
-                    <div class="d-flex justify-content-between">
-                        <div class="stats-box">
-                            <span>{% trans 'Aktif Taşeron:' %}</span> <span id="activeTasaronCount">0</span>
-                        </div>
-                        <div class="stats-box">
-                            <span>{% trans 'Aktif Sözleşme:' %}</span> <span id="activeContractCount">0</span>
-                        </div>
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Sözleşmeler' %}</div>
+                <div class="stats-right">
+                    <div class="stats-search">
+                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                        <button><i class="icon icon-search"></i></button>
                     </div>
+                    <div class="stats-info">{% trans 'Aktif Taşeron:' %} {{top.count}}</div>
+                    <div class="stats-info">{% trans 'Aktif Sözleşme:' %} {{top.count}}</div>
                 </div>
+            </div>
 
-                <div class="permission-matrix">
-                    <table class="table contract-table table-hover">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'Taşeron' %}</th>
-                                <th>{% trans 'Projeler' %}</th>
-                                <th>{% trans 'İmalat' %}</th>
+
+            <div class="tab-navs">
+                <button class="tab-navs-btn " ><a  href="/{{dil}}{% url 'main:ana_yuklenici_sozlesmler_sayfasi' %}">{% trans 'Ana Firma Sözleşmeleri' %}</a></button>
+                <button class="tab-navs-btn active " data-tab="alt-yuklenizi-sozlesmeleri"><a href="/{{dil}}{% url 'main:sozlesmler_sayfasi' %}">{% trans 'Alt Yüklenizi Sözleşmeleri' %}</a></button>
+            </div>
+
+            <div class="tab-contents">
+
+                <div class="tab-content active" id="ana-firma-sozlesmeleri">
+                    <div class="table-wrapper">
+                        <table id="ana-firma-sozlesmeleri-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Alt Yüklenici' %}</th>
+                                <th>{% trans 'Telefon' %}</th>
+                                <th>{% trans 'Email' %}</th>
                                 <th>{% trans 'Eklenme Tarihi' %}</th>
                                 <th>{% trans 'Açıklama' %}</th>
+                                
                                 <th>{% trans 'Durum' %}</th>
-                                <th>{% trans 'Aksiyon' %}</th> <!-- Iconlar için boş sütun -->
-                            </tr>
-                        </thead>
-                        <tbody id="contractList">
-                            <!-- Örnek Sözleşmeler -->
+                                <th>{% trans 'Sözleşme' %}</th>
+                                <th>{% trans 'İşlemler' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            
                             {% for i in santiyeler %}
-                            <tr>
+                                <tr>
                                 <td>{{i.proje_ait_bilgisi.taseron_adi}}</td>
-                                <td>{% for yazar in i.proje_ait_bilgisi.proje_bilgisi.all %}
-                                                     <span> {{ yazar.kalem_bilgisi.proje_santiye_Ait.proje_adi}}</span>,
-                                                    {% endfor %}</td>
-                                <td>{% for yazar in i.proje_ait_bilgisi.proje_bilgisi.all %}
-                                                     <span> {{ yazar.kalem_bilgisi.kalem_adi}}</span>,
-                                                    {% endfor %}</td>
-                                <td>{% if i.tarih %}
+                                 <td>{{i.proje_ait_bilgisi.telefon_numarasi}}</td>
+                                  <td>{{i.proje_ait_bilgisi.email}}</td>
+                                    <td>{% if i.tarih %}
                                                         {{ i.tarih | date:'d.m.Y'}}
                                                     {% else %}
                                                     {{ i.kayit_tarihi | date:'d.m.Y'}}
                                                     {% endif %}</td>
-                                <td>{{i.aciklama}}</td>
+                                     <td>{{i.aciklama}}</td>
                                 <td>{% if i.durum %}Aktif{% else %}Pasif{% endif %}</td>
-                                <td class="icon-cell">
-                                    <i class="fas fa-file-alt" onclick="openModal('viewContractsModal{{i.id}}')"></i>
-                                    <div class="actions">
-                                        <i class="fas fa-edit" onclick="openModal('editContractModal{{i.id}}', event)"></i>
-                                        <i class="fas fa-trash" onclick="openModal('deleteConfirmationModal{{i.id}}', event)"></i>
-                                    </div>
-                                </td>
-                            </tr>
+                                    
+                                    <td>
+                                        <div class="td-actions">
+                                            {% if i.dosya %}
+                                                <a onclick="openModal('sozlesme-indir{{i.id}}')" class="status-info"><i class="icon icon-action-file"></i></a>
+                                            {% else %}
+                                            {% endif %}
+                                            
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="td-actions">
+                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.ust_yuklenici_duzenleme %}
+                                                               <a onclick="openModal('yeni-sozlesme{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                               
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                         <a onclick="openModal('yeni-sozlesme{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                               
+                                                                                                           
+                                                        {% endif %}
+                                                            
+                                                            {% if request.user.kullanicilar_db %}
+                                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                            {% if yetki.ust_yuklenici_silme %}
+                                                                    <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>                                     
+                                                            {% else %}
+                                                                                                                            
+                                                            {% endif %}
+                                                            {% else %}
+                                                                       <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>                                     
+                                                            {% endif %}
+                                            
+                                            
+                                        </div>
+                                    </td>
+                                </tr>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
+                <div class="tab-content" id="alt-yuklenizi-sozlesmeleri">
+                    <div class="table-wrapper">
+                        <table id="alt-yuklenizi-sozlesmeleri-table">
+                            <thead>
+                                <tr>
+                                    <th>Taşeron</th>
+                                    <th>Proje</th>
+                                    <th>Açıklama</th>
+                                    <th>Eklenme Tarihi</th>
+                                    <th>Fatura Numarası</th>
+                                    <th>Tutar</th>
+                                    <th>Kalan</th>
+                                    <th>İndir</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Jane Cooper</td>
+                                    <td>Group 1 - Proje Adı</td>
+                                    <td>ZONE C1 TUNEL HAK 1</td>
+                                    <td>01.01.2000</td>
+                                    <td>INV123128736</td>
+                                    <td>$ 34.099,99</td>
+                                    <td>$ 34.099,99</td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <a onclick="openModal('sozlesme-indir')" class="status-info"><i class="icon icon-action-file"></i></a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <a class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a href="#" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <script>
+                $(".tab-navs-btn").on("click", function () {
+                    $(".tab-navs-btn").removeClass("active");
+                    $(".tab-content").removeClass("active");
+
+                    $(this).addClass("active");
+                    $("#" + $(this).attr("data-tab")).addClass("active");
+                })
+            </script>
+
+        </div>
+
+        <script>
+            let ana_firma_sozlesmeleri = new DataTable('#ana-firma-sozlesmeleri-table', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+            let alt_yuklenizi_sozlesmeleri_table = new DataTable('#alt-yuklenizi-sozlesmeleri-table', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                ana_firma_sozlesmeleri.search($(this).val()).draw();
+                alt_yuklenizi_sozlesmeleri_table.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+{% for i in santiyeler %}
+    <div class="modal" id="sozlesme-indir{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Sözleşme İndir' %}
+            </div>
+            <div class="modal-body">
+
+                <ul class="sozlesme-indir">
+                {% if i.dosya %}
+                    
+                    
+                        <li><a href="{{i.dosya.url}}" class="btn btn-sm btn-secondary">{% isim i.dosya.name %}</a></li>
+
+                    {% else %}
+                    {% endif %}
+                   
+                </ul>
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-primary" type="button">İndir (3)</button>
+                </div>
+
             </div>
         </div>
     </div>
-</div>
-</div>
-    <!-- Add Contract Modal -->
-    <div id="contractModal" class="modal">
-        <div class="modal-content small-modal">
-            <span class="close" onclick="closeModal('contractModal')">&times;</span>
-            <h2>{% trans 'Sözleşme Ekle' %}</h2>
-            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:sozlesme_ekle' %}" method="post" enctype="multipart/form-data" >
+<div class="modal" id="yeni-sozlesme{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+               {% trans 'Sözleşme Düzenle' %} 
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:sozlesme_duzenle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
-                                <div class="modal-body">
-                                    <div class="mb-3" id="modal-id" style="display: none;">
-                                        <label for="id-field" class="form-label">ID</label>
-                                        <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
-                                    </div>
-                                    {% if request.user.is_superuser %}
-                                        <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
-                                        <select class="form-control" name="kullanici" id="date-field">
-                                            {% for i in kullanicilar %}
-                                                <option value="{{i.id}}">{{i.first_name}}</option>
-                                            {% endfor %}
-                                            
-                                            
-                                        </select>
-                                    </div>
-                                    {% else %}
-                                    <div class="mb-3">
-                                        <label for="customername-field" class="form-label">{% trans 'Taşeron' %}</label>
-                                        <select class="form-control" name="taseron" id="date-field">
+                                 <input type="text" id="id-field" name="id_bilgisi" hidden value="{{i.id}}" class="form-control" />
+                    <div class="form-element">
+                        <label for="taseron">{% trans 'Alt Yükleniciler' %} </label>
+                        <select class="form-control" name="taseron" id="taseron">
+                             <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.taseron_adi}}</option>
                                                 {% for j in taseronlar %}
                                                     <option value="{{j.id}}">{{j.taseron_adi}}</option>
                                                 {% endfor %}
                                                 
                                                 
                                             </select>
-                                        <div class="invalid-feedback">{% trans 'Lütfen Taşeron Adını Boş Bırakmayınız.' %}</div>
-                                    </div>
+                    </div>
+                    <div class="form-element">
 
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Dosya Adı' %}</label>
-                                        <input type="tel" name="dosyaadi" id="date-field" class="form-control"   />
-                                        <div class="invalid-feedback">{% trans 'Lütfen telefon alanını boş bırakmayınız.' %}</div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="email-field" class="form-label">{% trans 'Tarih' %}</label>
-                                        <input type="date" name="tarih" class="form-control" >
-                                        <div class="invalid-feedback">{% trans 'Lütfen eposta alanını boş bırakmayınız.' %}</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                                        <textarea name="aciklama" class="form-control"  ></textarea>
-                                        <div class="invalid-feedback">{% trans 'Please enter an email.' %}</div>
-                                    </div>
-                                    <div>
-                                        <label for="status-field" class="form-label">{% trans 'Durum' %}</label>
-                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
-                                            <option value="">{% trans 'Durum' %}</option>
-                                            <option value="1">{% trans 'Active' %}</option>
-                                            <option value="0">{% trans 'Block' %}</option>
-                                        </select>
-                                    </div>
-                                    
-                                    
-                                  <div class="md-4">
-                                        <div class="form-group">
-                                            <label>{% trans 'Dosya Yükle' %}</label>
-                                            <input name="file" type="file"class="form-control" />
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                               <button type="submit" class="btn btn-primary btn-block">{% trans 'Sözleşme Ekle' %}</button>
-                            </form>
-            
-        </div>
-    </div>
-
-    <!-- Edit Contract Modal -->
-    {% for i in santiyeler %}
-    <div id="editContractModal{{i.id}}" class="modal">
-        <div class="modal-content small-modal">
-            <span class="close" onclick="closeModal('editContractModal{{i.id}}')">&times;</span>
-            <h2>{% trans 'Sözleşme Düzenle' %}</h2>
-            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:sozlesme_duzenle' %}" method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                    <div class="mb-3" id="modal-id" style="display: none;">
-                                        <label for="id-field" class="form-label">ID</label>
-                                        <input type="text" id="id-field" name="id_bilgisi" hidden value="{{i.id}}" class="form-control" />
-                                  </div>
-             
-                                    <div class="mb-3">
-                                        <label for="customername-field" class="form-label">{% trans 'Taşeron' %}</label>
-                                        <select class="form-control" name="taseron" id="date-field">
-                                            <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.taseron_adi}}</option>
-                                                {% for j in taseronlar %}
-                                                    <option value="{{j.id}}">{{j.taseron_adi}}</option>
-                                                {% endfor %}
-                                                
-                                                
-                                            </select>
-                                        <div class="invalid-feedback">{% trans 'Lütfen Taşeron Adını Boş Bırakmayınız.' %}</div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Dosya Adı' %}</label>
-                                        <input type="tel" value="{{i.dosya_adi}}" name="dosyaadi" id="date-field" class="form-control"  />
-                                        <div class="invalid-feedback">{% trans 'Lütfen telefon alanını boş bırakmayınız.' %}</div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="email-field" class="form-label">{% trans 'Tarih' %}</label>
-                                        <input type="date" value="{{i.tarih | date:'Y-m-d' }}" name="tarih" class="form-control"  >
-                                        <div class="invalid-feedback">{% trans 'Lütfen eposta alanını boş bırakmayınız.' %}</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                                        <textarea name="aciklama" class="form-control" placeholder="Enter Description" >{{i.aciklama }}</textarea>
-                                        <div class="invalid-feedback">{% trans 'Please enter an email.' %}</div>
-                                    </div>
-                                    <div>
-                                        <label for="status-field" class="form-label">{% trans 'Durum' %}</label>
-                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
-                                            {% if i.durum %}
+                        <label for="dosya-adi">{% trans 'Dosya Adı' %}</label>
+                        <input type="tel" value="{{i.dosya_adi}}" name="dosyaadi" id="dosya-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="tarih">{% trans 'Tarih' %}</label>
+                        <input type="date"  value="{{i.tarih | date:'Y-m-d' }}" required name="tarih" id="tarih">
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea name="aciklama" id="aciklama">{{i.aciklama }}</textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="durum">{% trans 'Durum' %}</label>
+                        <select name="durumu" id="durum" required>
+                        {% if i.durum %}
                                                 <option value="1">{% trans 'Active' %}</option>
                                             {% else %}  
                                             <option value="0">{% trans 'Block' %}</option>
@@ -615,171 +291,172 @@
                                             <option value="1">{% trans 'Active' %}</option>
                                             <option value="0">{% trans 'Block' %}</option>
                                         </select>
-                                    </div>
-                                    
-                                    
-                                  <div class="md-4">
-                                        <div class="form-group">
-                                            <label>{% trans 'Dosya Yükle' %}</label>
-                                            <input name="file" type="file" value="{{i.dosya}}" class="form-control" />
-                                        </div>
-                                    </div>
-                                    {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">{% trans 'Proje Silinme Durumu' %}</label>
-                                            <select name="silinmedurumu"  class="form-control" id="">
-                                                <option value="3">{% trans 'Karışma' %}</option>
-                                                <option value="2">{% trans 'Sil' %}</option>
-                                                {% if i.silinme_bilgisi %}
-                                                    <option value="1">{% trans 'Geri Getir' %}</option>
-                                                {% else %}
-                                                {% endif %}
-                                                
-                                            </select>
-                                        </div>
-                                        
-                                        {% endif %}
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-block">{% trans 'Güncelle' %}</button>
-                            </form>
-                
+                    </div>
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Sözleşme Yükle' %}</label>
 
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Düzenle' %}</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    {% endfor %}
-    {% for i in santiyeler %}
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmationModal{{i.id}}" class="modal">
-        <div class="modal-content small-modal">
-            <span class="close" onclick="closeModal('deleteConfirmationModal{{i.id}}')">&times;</span>
-            <form autocomplete="off"action="/{{dil}}{% url 'main:sozlesme_silme' %}" method="post">
+<div class="modal" id="deleteConfirmationModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                <h2>{% trans 'Silmek İstediğinden Emin misin?' %}</h2>
+            <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
+            </div>
+            <div class="modal-body">
+                      <form autocomplete="off"action="/{{dil}}{% url 'main:sozlesme_silme' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-            <h2>{% trans 'Sözleşmeyi Sil' %}</h2>
-            <p>{% trans 'Bu sözleşmeyi silmek istediğinize emin misiniz?' %}</p>
-            <button type = "submit" class="btn btn-danger btn-block" onclick="confirmDelete()">{% trans 'Evet, Sil' %}</button>
-            <button type="button" class="btn btn-secondary btn-block" onclick="closeModal('deleteConfirmationModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
-            </form>
+                    
+                 
+                    <div class="form-actions">
+                                       <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary"  onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+{% endfor %}
+    <div class="modal" id="yeni-sozlesme">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+               {% trans 'Yeni Sözleşme Ekle' %} 
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:sozlesme_ekle' %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                    <div class="form-element">
+                        <label for="taseron">{% trans 'Alt Yükleniciler' %} </label>
+                        <select class="form-control" name="taseron" id="taseron">
+                                                {% for j in taseronlar %}
+                                                    <option value="{{j.id}}">{{j.taseron_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                    </div>
+                    <div class="form-element">
+
+                        <label for="dosya-adi">{% trans 'Dosya Adı' %}</label>
+                        <input type="tel" name="dosyaadi" id="dosya-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="tarih">{% trans 'Tarih' %}</label>
+                        <input type="date"  required name="tarih" id="tarih">
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea name="aciklama" id="aciklama"></textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="durum">{% trans 'Durum' %}</label>
+                        <select name="durumu" id="durum" required>
+                                            <option value="">{% trans 'Durum' %}</option>
+                                            <option value="1">{% trans 'Active' %}</option>
+                                            <option value="0">{% trans 'Block' %}</option>
+                                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Sözleşme Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    {% endfor %}
-    <!-- View Contracts Modal -->
-    {% for i in santiyeler %}
-    <div id="viewContractsModal{{i.id}}" class="modal">
-        <div class="modal-content small-modal">
-            <span class="close" onclick="closeModal('viewContractsModal{{i.id}}')">&times;</span>
-            <h2>{% trans 'Yüklü Sözleşmeler' %}</h2>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>{% trans 'Dosya Adı' %}</th>
-                        <th>{% trans 'İndirme' %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    {% if i.dosya %}
-                    
-                    
-                        <td><a href="{{i.dosya.url}}" class="btn btn-sm btn-secondary">{% isim i.dosya.name %}</a></td>
-                        <td><a href="{{i.dosya.url}}" download="{{i.dosya.url}}" class="btn btn-sm btn-secondary">{% trans 'İndir' %}</a></td>
-                    {% else %}
-                    {% endif %}
-                    </tr>
-                    
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endfor %}
+
     <script>
-        // Category switch functionality
-        function switchCategory(category) {
-            const currentCategory = document.getElementById('currentCategory');
-            if (category === 'anaFirma') {
-                currentCategory.textContent = 'Ana Firma Sözleşmeleri';
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
             } else {
-                currentCategory.textContent = 'Alt Yüklenici Sözleşmeleri';
+                $("#" + modalID).fadeOut();
             }
         }
 
-        // Modal functionality
-        function openModal(modalId, event) {
-            if (event) event.stopPropagation(); // Sadece iconlara tıklandığında tetiklenmesi için
-            document.getElementById(modalId).style.display = 'flex';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        
-
-        // File upload handling
-        document.querySelectorAll('.file-drop-area').forEach(area => {
-            const input = area.querySelector('.file-input');
-            const msg = area.querySelector('.file-msg');
-
-            area.addEventListener('dragover', (event) => {
-                event.preventDefault();
-                area.classList.add('dragging');
-            });
-
-            area.addEventListener('dragleave', () => {
-                area.classList.remove('dragging');
-            });
-
-            area.addEventListener('drop', (event) => {
-                event.preventDefault();
-                input.files = event.dataTransfer.files;
-                msg.textContent = input.files.length > 1 ? `${input.files.length} dosya seçildi` : input.files[0].name;
-                area.classList.remove('dragging');
-            });
-
-            input.addEventListener('change', () => {
-                msg.textContent = input.files.length > 1 ? `${input.files.length} dosya seçildi` : input.files[0].name;
-            });
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
         });
 
-        // Filtering functionality
-        document.getElementById('filterInput').addEventListener('input', function() {
-            const filterValue = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.contract-table tbody tr');
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
-                row.style.display = rowText.includes(filterValue) ? '' : 'none';
-            });
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
         });
-
-        // Stats calculation
-        function calculateStats() {
-            const rows = document.querySelectorAll('.contract-table tbody tr');
-            let activeTasaronCount = 0;
-            let activeContractCount = 0;
-
-            rows.forEach(row => {
-                const statusCell = row.querySelector('td:nth-child(6)').textContent.toLowerCase();
-                if (statusCell === 'aktif') {
-                    activeTasaronCount++;
-                    activeContractCount += parseInt(row.querySelector('td:nth-child(7)').textContent);
-                }
-            });
-
-            document.getElementById('activeTasaronCount').textContent = activeTasaronCount;
-            document.getElementById('activeContractCount').textContent = activeContractCount;
-        }
-
-        document.addEventListener('DOMContentLoaded', calculateStats);
-
-        document.addEventListener('keydown', function(event) {
-    if (event.key === "Escape") {
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.style.display = 'none';
-        });
-    }
-});
 
     </script>
 
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 {% endblock sidebar %}

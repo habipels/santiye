@@ -156,7 +156,9 @@ def taseron_gorev_saysisi(id):
 @register.simple_tag
 def isim(id):
     a = id.split("/")
-    return a[1]
+    if len(a) >1:
+        return a[1]
+    return a[0]
 @register.simple_tag
 def kullanici_dosya_sayisi(id):
     a = personel_dosyalari.objects.filter(kullanici__id = id).count()
