@@ -129,6 +129,56 @@ def get_son_bir_hafta_icinde_degisenler(id):
         deger_gonder.append(sayi)
 
     return {"gunler":gun_gonder,"degerler":deger_gonder}
+
+
+@register.simple_tag
+def get_son_bir_yil_icinde_degisenler(id):
+    """
+    Son 12 ay içinde değişen ve tamamlanma bilgisi True olan santiye_kalemlerin_dagilisi kayıtlarını ay ay ayırarak
+    ve her ay için değişen kalem sayısını getirir. Aylar yazı ile ifade edilir.
+    """
+    now = timezone.now()
+    one_year_ago = now - timedelta(days=365)
+
+    # Son 12 ay içinde değişen ve tamamlanma bilgisi True olan kayıtlar
+    degisen_kalemler = santiye_kalemlerin_dagilisi.objects.filter(
+        blog_bilgisi__id=id,
+        degistirme_tarihi__gte=one_year_ago,
+        tamamlanma_bilgisi=True
+    )
+
+    # Ay ay ayırmak için defaultdict kullanıyoruz
+    ay_kalemler = defaultdict(list)
+
+    for kalem in degisen_kalemler:
+        # Her kalemin degistirme_tarihi'ne göre ayını alıyoruz (YYYY-MM formatında)
+        degisme_ayi = kalem.degistirme_tarihi.strftime('%Y-%m')  # Yıl-Ay formatında
+        ay_kalemler[degisme_ayi].append(kalem)
+
+    # Ay adlarını tanımlıyoruz
+    ay_adlari = [
+        "Ocak", "Şubat", "Mart", "Nisan", 
+        "Mayıs", "Haziran", "Temmuz", "Ağustos", 
+        "Eylül", "Ekim", "Kasım", "Aralık"
+    ]
+
+    # Son 12 ayın listesini oluşturuyoruz
+    son_12_ay = [(now - timedelta(days=i * 30)).strftime('%Y-%m') for i in range(12)]
+
+    # Ayları sıraya göre döndürüyoruz ve o ayın kayıtlarını varsa ekliyoruz
+    ay_gonder = []
+    deger_gonder = []
+    
+    for i, ay in enumerate(son_12_ay):
+        # Ay adını alıyoruz
+        ay_ad = ay_adlari[int(ay.split('-')[1]) - 1]  # Ay ismini alıyoruz
+        sayi = len(ay_kalemler.get(ay, []))
+        ay_gonder.append(ay_ad)
+        deger_gonder.append(sayi)
+
+    return {"aylar": ay_gonder, "degerler": deger_gonder}
+
+@register.simple_tag
 def bloglar_daireleri_kalemleri_fiziksel_bilgileri_genel(k_b):
     genel_toplam = 0
     for i in k_b:

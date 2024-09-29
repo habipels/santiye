@@ -10,6 +10,7 @@
 {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
 {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
     {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
+     {% get_son_bir_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
     <main>
 
 
@@ -124,10 +125,10 @@
                         var options = {
                             series: [{
                                 name: "{% trans 'Finansal' %} ",
-                                data: [31, 40, 28, 51, 42, 109, 100, 80, 90, 70, 60, 50]
+                                data: {{ay_kalem_sayilari.degerler |safe}}
                             }, {
                                 name:"{% trans 'Fiziksel' %} " ,
-                                data: [11, 32, 45, 32, 34, 52, 41, 62, 51, 43, 34, 23]
+                                data:  {{ay_kalem_sayilari.degerler |safe}}
                             }],
                             chart: {
                                 height: 350,
@@ -144,10 +145,7 @@
                             },
                             xaxis: {
                                 type: 'category',
-                                categories: [
-                                    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                                    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
-                                ]
+                                categories: {{ay_kalem_sayilari.aylar |safe}}
                             },
                             legend: {
                                 show: false
