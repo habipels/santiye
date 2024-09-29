@@ -1752,8 +1752,6 @@ def ilerleme_kaydet(request):
                     pass
                 else:
                     santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = False)
-        print(a)
-        print(kalem)
     return redirect("main:blogtan_kaleme_ilerleme_takibi",geri_don,veri_cek)
 
 
