@@ -10,36 +10,55 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    İlerleme Takibi
+                    {% trans 'İlerleme Takibi' %}
                 </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="#">Şantiye Yönetimi</a></li>
-                    <li><a href="#">Proje Yönetimi</a></li>
-                    <li><a href="#">İlerleme Takibi</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Proje Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'İlerleme Takibi' %}</a></li>
                 </ul>
             </div>
 
         </div>
-
+        <form autocomplete="off"action="/{{dil}}{% url 'main:ilerleme_kaydet' %}" method="post">
         <div class="large-stats-card table-card table-detail-card">
-            <div class="stats-header">
-                <div class="stats-title">İlerleme Takibi (C1 Blok)</div>
+            <div class="stats-header"> {% toplam_kalem_orani_toplami santiyeler as bilgi  %}
+                <div class="stats-title">{% trans 'İlerleme Takibi' %} ( {{id.blog_adi}})</div>
                 <div class="stats-right">
-                    <div class="stats-info">Fiziksel Ağırlık: 2</div>
-                    <div class="stats-info">Finansal Ağırlık: 2</div>
+                    <div class="stats-info">{% trans 'Fiziksel Ağırlık:' %}  {{bilgi.a}}</div>
+                    <div class="stats-info">{% trans 'Finansal Ağırlık:' %} {{bilgi.b}}</div>
+                    <div class="stats-info" style="background-color: rgb(231, 62, 62);"><a style="text-decoration: none; color: white;" href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" type="button" class="btn btn-info btn-animation waves-effect waves-light"  data-text="Geri"><span>{% trans 'Geri' %}</span></a></div>
+                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.ilerleme_takibi_duzenleme %}
+                                                      
+                                                    <button style="background-color: rgb(115, 115, 228);color: white;" type="submit" ><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i>{% trans 'Kaydet' %} </button>
+                                                                                                
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                <div style="background-color: rgb(115, 115, 228);color: white;"  class="stats-info">  
+                                                <button style="background-color: rgb(115, 115, 228);color: white; border: 0px;" type="submit" ><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i>{% trans 'Kaydet' %} </button>
+                                                </div>                              
+                                                {% endif %}
                 </div>
+            
             </div>
 
 
             <div class="tab-navs tab-navs-right">
-                <button class="tab-navs-btn active" data-tab="1-10-kat">1-10 kat</button>
-                <button class="tab-navs-btn " data-tab="11-20-kat">11-20 kat</button>
-                <button class="tab-navs-btn " data-tab="21-30-kat">21-30 kat</button>
-                <button class="tab-navs-btn " data-tab="31-40-kat">31-40 kat</button>
-                <button class="tab-navs-btn " data-tab="41-50-kat">41-50 kat</button>
-                <button class="tab-navs-btn " data-tab="51-60-kat">51-60 kat</button>
+                <button class="tab-navs-btn active" type="button" data-tab="1-10-kat">{% trans '1-10 kat' %}</button>
+                <button class="tab-navs-btn " type="button" data-tab="11-20-kat">{% trans '11-20 kat' %}</button>
+                <button class="tab-navs-btn " type="button" data-tab="21-30-kat">{% trans '21-30 kat' %}</button>
+                <button class="tab-navs-btn " type="button" data-tab="31-40-kat">{% trans '31-40 kat' %}</button>
+                <button class="tab-navs-btn "  type="button" data-tab="41-50-kat">{% trans '41-50 kat' %}</button>
+                <button class="tab-navs-btn " type="button" data-tab="51-60-kat">{% trans '51-60 kat' %}</button>
             </div>
-
+            
+                {% csrf_token %}
+                <input type="text" hidden name="geri_don" value="{{id.id}}">
+                <input type="text" hidden name="veri_cek" value="{{id.blog_adi}}{{id.blog_numarasi}}">
             <div class="tab-contents">
 
                 <div class="tab-content active" id="1-10-kat">
@@ -47,100 +66,192 @@
                         <table id="1-10-kat-table">
                             <thead>
                                 <tr>
-                                    <th>Görev Adı</th>
-                                    <th>Fiziksel Ağırlığı</th>
-                                    <th>Finansal Ağırlığı</th>
+                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'Fiziksel Ağırlığı' %}</th>
+                                    <th>{% trans 'Finansal Ağırlığı' %}</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
+                           {% for i in santiyeler %} <input type="text" hidden name="tumbilgi" value="{% tum_bilgiler blog_id i.id  %}">
                                 <tr>
-                                    <td>Blok Duvar İşleri</td>
-                                    <td>15.0</td>
-                                    <td>13.0</td>
+                                    <td>{{i.kalem_adi}}</td>
+                                    <td>{{i.santiye_agirligi}}</td>
+                                    <td>{{i.santiye_finansal_agirligi}}</td>
                                     <td>
                                         <div class="progress-tracking">
-                                            <div class="progress-tracking-toggle">
-                                                <span>1</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox" checked>
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>2</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox" checked>
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>3</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox" checked>
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>4</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox" checked>
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>5</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox" checked>
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>6</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox">
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>7</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox">
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>8</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox">
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>9</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox">
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
-                                            <div class="progress-tracking-toggle">
-                                                <span>10</span>
-                                                <label class="progress-tracking-toggle-input">
-                                                    <input type="checkbox">
-                                                    <span class="ptti-slide"></span>
-                                                </label>
-                                            </div>
+                                          {% ckboxlar blog_id i.id 10 %}
+          
                                         </div>
                                     </td>
                                 </tr>
-
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
-
             </div>
+            <div class="tab-contents">
 
+                <div class="tab-content" id="11-20-kat">
+                    <div class="table-wrapper">
+                        <table id="11-20-kat-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'Fiziksel Ağırlığı' %}</th>
+                                    <th>{% trans 'Finansal Ağırlığı' %}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                           {% for i in santiyeler %} <input type="text" hidden name="tumbilgi" value="{% tum_bilgiler blog_id i.id  %}">
+                                <tr>
+                                    <td>{{i.kalem_adi}}</td>
+                                    <td>{{i.santiye_agirligi}}</td>
+                                    <td>{{i.santiye_finansal_agirligi}}</td>
+                                    <td>
+                                        <div class="progress-tracking">
+                                          {% ckboxlar blog_id i.id 20 %}
+          
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-contents">
+
+                <div class="tab-content" id="21-30-kat">
+                    <div class="table-wrapper">
+                        <table id="21-30-kat-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'Fiziksel Ağırlığı' %}</th>
+                                    <th>{% trans 'Finansal Ağırlığı' %}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                           {% for i in santiyeler %} <input type="text" hidden name="tumbilgi" value="{% tum_bilgiler blog_id i.id  %}">
+                                <tr>
+                                    <td>{{i.kalem_adi}}</td>
+                                    <td>{{i.santiye_agirligi}}</td>
+                                    <td>{{i.santiye_finansal_agirligi}}</td>
+                                    <td>
+                                        <div class="progress-tracking">
+                                          {% ckboxlar blog_id i.id 30 %}
+          
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-contents">
+
+                <div class="tab-content" id="31-40-kat">
+                    <div class="table-wrapper">
+                        <table id="31-40-kat-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'Fiziksel Ağırlığı' %}</th>
+                                    <th>{% trans 'Finansal Ağırlığı' %}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                           {% for i in santiyeler %} <input type="text" hidden name="tumbilgi" value="{% tum_bilgiler blog_id i.id  %}">
+                                <tr>
+                                    <td>{{i.kalem_adi}}</td>
+                                    <td>{{i.santiye_agirligi}}</td>
+                                    <td>{{i.santiye_finansal_agirligi}}</td>
+                                    <td>
+                                        <div class="progress-tracking">
+                                          {% ckboxlar blog_id i.id 40 %}
+          
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-contents">
+
+                <div class="tab-content" id="41-50-kat">
+                    <div class="table-wrapper">
+                        <table id="41-50-kat-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'Fiziksel Ağırlığı' %}</th>
+                                    <th>{% trans 'Finansal Ağırlığı' %}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                           {% for i in santiyeler %} <input type="text" hidden name="tumbilgi" value="{% tum_bilgiler blog_id i.id  %}">
+                                <tr>
+                                    <td>{{i.kalem_adi}}</td>
+                                    <td>{{i.santiye_agirligi}}</td>
+                                    <td>{{i.santiye_finansal_agirligi}}</td>
+                                    <td>
+                                        <div class="progress-tracking">
+                                          {% ckboxlar blog_id i.id 50 %}
+          
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-contents">
+
+                <div class="tab-content" id="51-60-kat">
+                    <div class="table-wrapper">
+                        <table id="51-60-kat-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'Fiziksel Ağırlığı' %}</th>
+                                    <th>{% trans 'Finansal Ağırlığı' %}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                           {% for i in santiyeler %} <input type="text" hidden name="tumbilgi" value="{% tum_bilgiler blog_id i.id  %}">
+                                <tr>
+                                    <td>{{i.kalem_adi}}</td>
+                                    <td>{{i.santiye_agirligi}}</td>
+                                    <td>{{i.santiye_finansal_agirligi}}</td>
+                                    <td>
+                                        <div class="progress-tracking">
+                                          {% ckboxlar blog_id i.id 60 %}
+          
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
             <script>
                 $(".tab-navs-btn").on("click", function () {
                     $(".tab-navs-btn").removeClass("active");
@@ -152,9 +263,34 @@
             </script>
 
         </div>
-
+        </form>
         <script>
             let kat_1_10 = new DataTable('#1-10-kat-table', {
+                paging: false,
+                searching: false,
+                info: false
+            });
+            let kat_11_20 = new DataTable('#11-20-kat-table', {
+                paging: false,
+                searching: false,
+                info: false
+            });
+            let kat_21_30 = new DataTable('#21-30-kat-table', {
+                paging: false,
+                searching: false,
+                info: false
+            });
+            let kat_31_40 = new DataTable('#31-40-kat-table', {
+                paging: false,
+                searching: false,
+                info: false
+            });
+            let kat_41_50 = new DataTable('#41-50-kat-table', {
+                paging: false,
+                searching: false,
+                info: false
+            });
+            let kat_51_60 = new DataTable('#51-60-kat-table', {
                 paging: false,
                 searching: false,
                 info: false

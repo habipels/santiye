@@ -1742,14 +1742,18 @@ def ilerleme_kaydet(request):
             k = i.split(",")
             for j in k :
                 a.append(j)
-        print(a)
+        
         for i in kalem:
             a.remove(i)
             santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = True)
         for i in a:
-            if i != "":
-                santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = False)
-
+            if i != ""  :
+                if i in kalem:
+                    pass
+                else:
+                    santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = False)
+        print(a)
+        print(kalem)
     return redirect("main:blogtan_kaleme_ilerleme_takibi",geri_don,veri_cek)
 
 

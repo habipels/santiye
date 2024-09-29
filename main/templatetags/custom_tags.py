@@ -371,14 +371,28 @@ def kat_sirala(id):
         a = a+'<th class="text-uppercase" data-sort="{}">{}</th>'.format(i,i)
     return mark_safe(a)
 @register.simple_tag
-def ckboxlar(id,kalem):
+def ckboxlar(id,kalem,kat_siniri):
     bilgi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id =kalem).order_by("kat")
     a = ""
     for i in bilgi:
-        if i.tamamlanma_bilgisi:
-            a = a+'<td class="kat"><input checked type="checkbox" name="kalem" value="{}" ></td>'.format(str(i.id))
-        else:
-            a = a+'<td class="kat"><input  type="checkbox" name="kalem" value="{}" ></td>'.format(str(i.id))
+        if kat_siniri > i.kat and kat_siniri -10 <= i.kat :
+            if i.tamamlanma_bilgisi:
+                a = a+"""<div class="progress-tracking-toggle">
+                                                    <span>{}</span>
+                                                    <label class="progress-tracking-toggle-input">
+                                                        <input name="kalem" type="checkbox" value="{}" checked>
+                                                        <span class="ptti-slide"></span>
+                                                    </label>
+                                                </div>""".format(i.kat+1,str(i.id))
+            else:
+                a = a+"""<div class="progress-tracking-toggle">
+                                                    <span>{}</span>
+                                                    <label class="progress-tracking-toggle-input">
+                                                        <input name="kalem" type="checkbox" value="{}" >
+                                                        <span class="ptti-slide"></span>
+                                                    </label>
+                                                </div>""".format(i.kat+1,str(i.id))
+        
     return mark_safe(a)
 @register.simple_tag
 def tum_bilgiler(id,kalem):
