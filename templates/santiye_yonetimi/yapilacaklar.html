@@ -2,1029 +2,489 @@
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
-{% block head %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
-    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
-<!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="{% static '' %}assets/js/layout.js"></script>
-    <!-- Bootstrap Css -->
-    <link href="{% static '' %}assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="{% static '' %}assets/css/icons.min.css" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="{% static '' %}assets/css/app.min.css" rel="stylesheet" type="text/css">
-    <!-- custom Css-->
-    <link href="{% static '' %}assets/css/custom.min.css" rel="stylesheet" type="text/css">
-    <link href="{% static '' %}assets/css/custom.css" rel="stylesheet" type="text/css">
-    <!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-{% endblock head %}
+
 {% block sidebar %}
-<style>
-    .gosterme{
-        display: none;
-    }
-</style>
-<!-- ============================================================== -->
-        <div class="container-fluid">
 
-            <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
-                <div class="file-manager-sidebar">
-                            <div class="p-4 d-flex flex-column h-100">
-                                <div class="mb-3">
-                                {% if request.user.kullanicilar_db %}
-                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                {% if yetki.yapilacaklar_olusturma %}
-                                       <button class="btn btn-primary w-100 createTask" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#createTask">
-                                    <i class="ri-add-fill align-bottom"></i>{% trans 'Görev Ata' %} 
-                                </button>                                                 
-                                {% else %}
-                                                                                                
-                                {% endif %}
-                                {% else %}
-                                       <button class="btn btn-primary w-100 createTask" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#createTask">
-                                    <i class="ri-add-fill align-bottom"></i> {% trans 'Görev Ata' %}
-                                </button>                                                 
-                                {% endif %}
-                                    
-                                </div>
-
-                                <div class="px-4 mx-n4 simplebar-scrollable-y" data-simplebar="init" style="height: calc(100vh - 468px);"><div class="simplebar-wrapper" style="margin: 0px -24px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;"><div class="simplebar-content" style="padding: 0px 24px;">
-                                 
-                                </div></div></div></div><div class="simplebar-placeholder" style="width: 300px; height: 351px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 146px; transform: translate3d(0px, 0px, 0px); display: block;"></div></div></div>
+    <main>
 
 
-                                <div class="mt-auto text-center">
-                                    <img src="{% static 'assets/images/task.png' %}" alt="Task" class="img-fluid">
-                                </div>
-                            </div>
-                        </div>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'İş Emri' %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'İş Emri' %}</a></li>
+                </ul>
+            </div>
 
-                <div class="file-manager-content w-100 p-4 pb-0">
-                    <div class="row mb-4">
-                        <div class="col-auto order-1 d-block d-lg-none">
-                            <button type="button" class="btn btn-soft-success btn-icon btn-sm fs-16 file-menu-btn">
-                                <i class="ri-menu-2-fill align-bottom"></i>
-                            </button>
-                        </div>
-                        <div class="col-sm order-3 order-sm-2 mt-3 mt-sm-0">
-                            <h5 class="fw-semibold mb-0">{% trans 'İş Planı' %}</h5>
-                        </div>
+            <div class="page-actions">
+                <button class="page-primary-btn" onclick="openModal('is-emri-olustur')"><i class="icon icon-new"></i>
+                   {% trans 'İş Emri Oluştur' %} </button>
+            </div>
+        </div>
 
-                        <div class="col-auto order-2 order-sm-3 ms-auto">
-                            <div class="hstack gap-2">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button class="btn btn-icon fw-semibold btn-soft-danger"><i
-                                            class="ri-arrow-go-back-line"></i></button>
-                                    <button class="btn btn-icon fw-semibold btn-soft-success"><i
-                                            class="ri-arrow-go-forward-line"></i></button>
-                                </div>
-                            </div>
-                        </div>
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'İş Emri' %}</div>
+                <div class="stats-right">
+                    <div class="stats-search">
+                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                        <button><i class="icon icon-search"></i></button>
                     </div>
-                    <div class="p-3 bg-light rounded mb-4">
-                        <form autocomplete="off"method="get">
-                        <div class="row g-2">
-                            <div class="col-lg-auto">
-                                <select class="form-control" data-choices data-choices-search-false
-                                    name="siralama" id="choices-select-sortlist">
-                                    {% if request.GET.siralama == "1" %}
-                                    <option value="{{ request.GET.siralama }}">{% trans 'By ID' %}</option>
-                                    {% elif request.GET.siralama == "2" %}
-                                    <option value="2">{% trans 'By Name' %}</option>
-                                    {% else %}
-                                    {% endif %}
-                                    <option value="">{% trans 'Sort' %}</option>
-                                    <option value="1">{% trans 'By ID' %}</option>
-                                    <option value="2">{% trans 'By Name' %}</option>
-                                </select>
-                                
-                            </div>
-                            <div class="col-lg-auto">
-                                <select class="form-control" data-choices data-choices-search-false
-                                    name="status" id="choices-select-status">
-                                    {% if request.GET.status %}
-                                    <option value="{{ request.GET.status }}">{{ request.GET.status }}</option>
-                                    
-                                    {% endif %}
-                                    <option value="">{% trans 'All Tasks' %}</option>
-                                    <option value="Completed">{% trans 'Completed' %}</option>
-                                    <option value="Inprogress">{% trans 'Inprogress' %}</option>
-                                    <option value="Pending">{% trans 'Pending' %}</option>
-                                    <option value="New">{% trans 'New' %}</option>
-                                </select>
-                            </div>
-                            <div class="col-lg">
-                                <div class="search-box">
-                                    <input type="text" id="searchTaskList" class="form-control search"
-                                      name="search" value="{% if request.GET.search %}{{ request.GET.search }}{% endif %}"  placeholder="{% trans 'Search task name' %}">
-                                    <i class="ri-search-line search-icon"></i>
-                                </div>
-                            </div>
-                            <div class="col-lg-auto">
-                            <button class="btn btn-success createTask" type="submit">
-                                    <i class="ri-search align-bottom"></i>{% trans 'Ara' %} 
-                                </button>
-                            <a href="/{{dil}}{% url 'main:yapilacaklar' %}" class="btn btn-success createTask" >
-                                    <i class="ri-search align-bottom"></i> {% trans 'Filtreyi Temizle' %}
-                                </a>
-                                {% if request.user.kullanicilar_db %}
-                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                {% if yetki.yapilacaklar_olusturma %}
-                                       <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#createTasktoplu">
-                                    <i class="ri-add-fill align-bottom"></i> {% trans 'Görev Ata' %}
-                                </button>                                                
-                                {% else %}
-                                                                                                
-                                {% endif %}
-                                {% else %}
-                                    <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#createTasktoplu">
-                                    <i class="ri-add-fill align-bottom"></i> {% trans 'Görev Ata' %}
-                                </button>                                                
-                                {% endif %}
-                                {% if request.user.kullanicilar_db %}
-                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                {% if yetki.yapilacaklar_olusturma %}
-                                       <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#createTasktoplu">
-                                    <i class="ri-add-fill align-bottom"></i> {% trans 'Toplu Görev Ata' %}
-                                </button>                                               
-                                {% else %}
-                                                                                                
-                                {% endif %}
-                                {% else %}
-                                   <button class="btn btn-primary createTask" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#createTasktoplu">
-                                    <i class="ri-add-fill align-bottom"></i> {% trans 'Toplu Görev Ata' %}
-                                </button>                                               
-                                {% endif %}
-                                
-                            </div>
-                        </div>
-                    </form>
-                    </div>
+                </div>
+            </div>
 
-                    <div class="todo-content position-relative px-4 mx-n4" id="todo-content">
-                        <div id="elmLoader">
-                            
-                        </div>
-                        <div class="todo-task" id="todo-task">
-                            <div class="table-responsive">
-                                <table class="table align-middle position-relative table-nowrap">
-                                    <thead class="table-active">
-                                        <tr>
-                                            <th scope="col">{% trans 'Task Name' %}</th>
+
+            <div class="tab-navs">
+                <button class="tab-navs-btn active" data-tab="Tümü">{% trans 'Tümü' %}</button>
+                <button class="tab-navs-btn " data-tab="New">{% trans 'Yeniler' %}</button>
+                <button class="tab-navs-btn " data-tab="Tamamlandı">{% trans 'Tamamlanan' %}</button>
+                <button class="tab-navs-btn " data-tab="Beklemede">{% trans 'Devam Eden' %}</button>
+                <button class="tab-navs-btn " data-tab="İptal Edildi">{% trans 'İptal Edilen' %}</button>
+            </div>
+
+            <div class="tab-contents">
+
+                <div class="tab-content active" id="tumu">
+                    <div class="table-wrapper">
+                        <table id="tumu-table">
+                            <thead>
+                                <tr>
+                                          <th scope="col">{% trans 'Task Name' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
                                             <th scope="col">{% trans 'Assigned' %}</th>
                                             <th scope="col">{% trans 'Due Date' %}</th>
                                             <th scope="col">{% trans 'Status' %}</th>
                                             <th scope="col">{% trans 'Priority' %}</th>
                                             <th scope="col">{% trans 'Action' %}</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody id="task-list">
-                                        {% for i in santiyeler %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in santiyeler %}
                                         {% if request.user.kullanicilar_db %}
                                                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                 {% if yetki.yapilacaklar_olusturma %}
-                                                       <tr>
-                                            <td>
-                                                <div class="d-flex align-items-start">
-                                                    
-                                                    <div class="flex-grow-1">
-                                                        <div class="form-check"> <input class="form-check-input"
-                                                                type="checkbox" value="15" id="todo15"> <label
-                                                                class="form-check-label" for="todo15">{{i.title}}</label> </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                {{i.aciklama}}
-                                            </td>
-                                            <td>
-                                                <div class="avatar-group flex-nowrap">
-                                                {% for yazar in i.yapacaklar.all %}
-                                                       <a href="javascript: void(0);"
-                                                        class="avatar-group-item"
-                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
-                                                            class="rounded-circle avatar-xxs"> </a>
-                                                {% endfor %}
-                                               </div>
-                                            </td>
-                                            <td>{{i.teslim_tarihi}}</td>
-                                            <td>
-                                                {% isplani_durumu_kontrol i.id as b %}
-                                                {% if b == "Inprogress" %}
-                                                    <span
-                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
-                                                {% elif b == "New" %}
-                                                <span
-                                                    class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
-                                                {% elif b == "Pending" %}
-                                                <span
-                                                    class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
-                                                 {% elif b == "Completed" %}
-                                                 <span
-                                                    class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
-                                                {% else %}
-                                                {% if i.status == "Inprogress" %}
-                                                    <span
-                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
-                                                {% elif i.status == "New" %}
-                                                <span
-                                                    class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
-                                                {% elif i.status == "Pending" %}
-                                                <span
-                                                    class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
-                                                 {% elif i.status == "Completed" %}
-                                                 <span
-                                                    class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
-                                                    {% endif %}
-                                                {% endif %}
-                                            
-                                            </td>
-                                            <td>
-                                            {% if i.oncelik_durumu == "High" %}
-                                            <span class="badge bg-danger text-uppercase">{{i.oncelik_durumu}}</span>
-                                            {% elif i.oncelik_durumu == "Medium" %}
-                                            <span class="badge bg-warning text-uppercase">{{i.oncelik_durumu}}</span>
-                                            {% elif i.oncelik_durumu == "Low" %}
-                                            <span class="badge bg-success text-uppercase">{{i.oncelik_durumu}}</span>
-                                            {% endif %}
-                                            </td>
-                                            <td>
-                                                <div class="hstack gap-2">
-                                                {% if request.user.kullanicilar_db %}
-                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                {% if yetki.yapilacaklar_silme %}
-                                                       <button
-                                                        class="btn btn-sm btn-soft-danger remove-list"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
-                                                        data-remove-id="15"><i
-                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>                                                  
-                                                {% else %}
-                                                                                                                
-                                                {% endif %}
-                                                {% else %}
-                                                      <button
-                                                        class="btn btn-sm btn-soft-danger remove-list"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
-                                                        data-remove-id="15"><i
-                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>                                                   
-                                                {% endif %}
-                                                
-                                                {% if request.user.kullanicilar_db %}
-                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                {% if yetki.yapilacaklar_duzenleme %}
-                                                       <button class="btn btn-sm btn-soft-info edit-list"
-                                                        data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}"
-                                                        data-edit-id="15"><i
-                                                            class="ri-pencil-fill align-bottom"></i></button>                                                 
-                                                {% else %}
-                                                                                                                
-                                                {% endif %}
-                                                {% else %}
-                                                       <button class="btn btn-sm btn-soft-info edit-list"
-                                                        data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}}"
-                                                        data-edit-id="15"><i
-                                                            class="ri-pencil-fill align-bottom"></i></button>                                                 
-                                                {% endif %}
-                                                    
-                                                            <button class="btn btn-sm btn-soft-success edit-list"
-                                                            data-bs-toggle="modal" data-bs-target="#durumyenile{{i.id}}"
-                                                            data-edit-id="15">{% trans 'Durum yenile' %}</button>
-                                                            
-                                                                <button class="btn btn-sm btn-soft-warning edit-list"
-                                                                data-bs-toggle="modal" data-bs-target="#ilerleme{{i.id}}"
-                                                                data-edit-id="15">{% trans 'İlerleme Durumu' %}</button></div>
-                                            </td>
-                                        </tr>
-                                                {% else %}
-                                                {% if request.user in i.yapacaklar.all %}
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-start">
-                                                            
-                                                            <div class="flex-grow-1">
-                                                                <div class="form-check"> <input class="form-check-input"
-                                                                        type="checkbox" value="15" id="todo15"> <label
-                                                                        class="form-check-label" for="todo15">{{i.title}}</label> </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        {{i.aciklama}}
-                                                    </td>
-                                                    <td>
-                                                        <div class="avatar-group flex-nowrap">
-                                                        {% for yazar in i.yapacaklar.all %}
-                                                               <a href="javascript: void(0);"
-                                                                class="avatar-group-item"
-                                                                data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                data-bs-title="{{yazar.last_name}}"> <img
-                                                                    src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
-                                                                    class="rounded-circle avatar-xxs"> </a>
-                                                        {% endfor %}
-                                                       </div>
-                                                    </td>
-                                                    <td>{{i.teslim_tarihi}}</td>
-                                                    <td>
-                                                        {% isplani_durumu_kontrol i.id as b %}
-                                                        {% if b == "Inprogress" %}
-                                                            <span
-                                                            class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
-                                                        {% elif b == "New" %}
-                                                        <span
-                                                            class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
-                                                        {% elif b == "Pending" %}
-                                                        <span
-                                                            class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
-                                                         {% elif b == "Completed" %}
-                                                         <span
-                                                            class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
-                                                        {% else %}
-                                                        {% if i.status == "Inprogress" %}
-                                                            <span
-                                                            class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
-                                                        {% elif i.status == "New" %}
-                                                        <span
-                                                            class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
-                                                        {% elif i.status == "Pending" %}
-                                                        <span
-                                                            class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
-                                                         {% elif i.status == "Completed" %}
-                                                         <span
-                                                            class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    
-                                                    </td>
-                                                    <td>
-                                                    {% if i.oncelik_durumu == "High" %}
-                                                    <span class="badge bg-danger text-uppercase">{{i.oncelik_durumu}}</span>
-                                                    {% elif i.oncelik_durumu == "Medium" %}
-                                                    <span class="badge bg-warning text-uppercase">{{i.oncelik_durumu}}</span>
-                                                    {% elif i.oncelik_durumu == "Low" %}
-                                                    <span class="badge bg-success text-uppercase">{{i.oncelik_durumu}}</span>
-                                                    {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        <div class="hstack gap-2">
-                                                        {% if request.user.kullanicilar_db %}
-                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                        {% if yetki.yapilacaklar_silme %}
-                                                               <button
-                                                                class="btn btn-sm btn-soft-danger remove-list"
-                                                                data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
-                                                                data-remove-id="15"><i
-                                                                    class="ri-delete-bin-5-fill align-bottom"></i></button>                                                  
-                                                        {% else %}
-                                                                                                                        
-                                                        {% endif %}
-                                                        {% else %}
-                                                              <button
-                                                                class="btn btn-sm btn-soft-danger remove-list"
-                                                                data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
-                                                                data-remove-id="15"><i
-                                                                    class="ri-delete-bin-5-fill align-bottom"></i></button>                                                   
-                                                        {% endif %}
-                                                        
-                                                        {% if request.user.kullanicilar_db %}
-                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                        {% if yetki.yapilacaklar_duzenleme %}
-                                                               <button class="btn btn-sm btn-soft-info edit-list"
-                                                                data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}"
-                                                                data-edit-id="15"><i
-                                                                    class="ri-pencil-fill align-bottom"></i></button>                                                 
-                                                        {% else %}
-                                                                                                                        
-                                                        {% endif %}
-                                                        {% else %}
-                                                               <button class="btn btn-sm btn-soft-info edit-list"
-                                                                data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}}"
-                                                                data-edit-id="15"><i
-                                                                    class="ri-pencil-fill align-bottom"></i></button>                                                 
-                                                        {% endif %}
-                                                            
-                                                                    <button class="btn btn-sm btn-soft-success edit-list"
-                                                                    data-bs-toggle="modal" data-bs-target="#durumyenile{{i.id}}"
-                                                                    data-edit-id="15">{% trans 'Durum yenile' %}</button>
-                                                                    
-                                                                        <button class="btn btn-sm btn-soft-warning edit-list"
-                                                                        data-bs-toggle="modal" data-bs-target="#ilerleme{{i.id}}"
-                                                                        data-edit-id="15">{% trans 'İlerleme Durumu' %}</button></div>
-                                                    </td>
-                                                </tr>  
-                                                {% endif %}                                                        
-                                                {% endif %}
-                                        
-                                        {% else %}
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-start">
-                                                    
-                                                    <div class="flex-grow-1">
-                                                        <div class="form-check"> <input class="form-check-input"
-                                                                type="checkbox" value="15" id="todo15"> <label
-                                                                class="form-check-label" for="todo15">{{i.title}}</label> </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                {{i.aciklama}}
-                                            </td>
-                                            <td>
-                                                <div class="avatar-group flex-nowrap">
-                                                {% for yazar in i.yapacaklar.all %}
-                                                       <a href="javascript: void(0);"
-                                                        class="avatar-group-item"
-                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
-                                                            class="rounded-circle avatar-xxs"> </a>
-                                                {% endfor %}
-                                               </div>
-                                            </td>
-                                            <td>{{i.teslim_tarihi}}</td>
-                                            <td>
-                                                {% isplani_durumu_kontrol i.id as b %}
-                                                {% if b == "Inprogress" %}
-                                                    <span
-                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
-                                                {% elif b == "New" %}
-                                                <span
-                                                    class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
-                                                {% elif b == "Pending" %}
-                                                <span
-                                                    class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
-                                                 {% elif b == "Completed" %}
-                                                 <span
-                                                    class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
-                                                {% else %}
-                                                {% if i.status == "Inprogress" %}
-                                                    <span
-                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
-                                                {% elif i.status == "New" %}
-                                                <span
-                                                    class="badge bg-info-subtle text-info text-uppercase">{{i.status}}</span>
-                                                {% elif i.status == "Pending" %}
-                                                <span
-                                                    class="badge bg-warning-subtle text-warning text-uppercase">{{i.status}}</span>
-                                                 {% elif i.status == "Completed" %}
-                                                 <span
-                                                    class="badge bg-success-subtle text-success text-uppercase">{{i.status}}</span>
-                                                    {% endif %}
-                                                {% endif %}
-                                            
-                                            </td>
-                                            <td>
-                                            {% if i.oncelik_durumu == "High" %}
-                                            <span class="badge bg-danger text-uppercase">{{i.oncelik_durumu}}</span>
-                                            {% elif i.oncelik_durumu == "Medium" %}
-                                            <span class="badge bg-warning text-uppercase">{{i.oncelik_durumu}}</span>
-                                            {% elif i.oncelik_durumu == "Low" %}
-                                            <span class="badge bg-success text-uppercase">{{i.oncelik_durumu}}</span>
-                                            {% endif %}
-                                            </td>
-                                            <td>
-                                                <div class="hstack gap-2">
-                                                {% if request.user.kullanicilar_db %}
-                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                {% if yetki.yapilacaklar_silme %}
-                                                       <button
-                                                        class="btn btn-sm btn-soft-danger remove-list"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
-                                                        data-remove-id="15"><i
-                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>                                                  
-                                                {% else %}
-                                                                                                                
-                                                {% endif %}
-                                                {% else %}
-                                                      <button
-                                                        class="btn btn-sm btn-soft-danger remove-list"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}"
-                                                        data-remove-id="15"><i
-                                                            class="ri-delete-bin-5-fill align-bottom"></i></button>                                                   
-                                                {% endif %}
-                                                
-                                                {% if request.user.kullanicilar_db %}
-                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                {% if yetki.yapilacaklar_duzenleme %}
-                                                       <button class="btn btn-sm btn-soft-info edit-list"
-                                                        data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}"
-                                                        data-edit-id="15"><i
-                                                            class="ri-pencil-fill align-bottom"></i></button>                                                 
-                                                {% else %}
-                                                                                                                
-                                                {% endif %}
-                                                {% else %}
-                                                       <button class="btn btn-sm btn-soft-info edit-list"
-                                                        data-bs-toggle="modal" data-bs-target="#duzenleme{{i.id}}"
-                                                        data-edit-id="15"><i
-                                                            class="ri-pencil-fill align-bottom"></i></button>                                                 
-                                                {% endif %}
-                                                    
-                                                            <button class="btn btn-sm btn-soft-success edit-list"
-                                                            data-bs-toggle="modal" data-bs-target="#durumyenile{{i.id}}"
-                                                            data-edit-id="15">{% trans 'Durum yenile' %}</button>
-                                                            
-                                                                <button class="btn btn-sm btn-soft-warning edit-list"
-                                                                data-bs-toggle="modal" data-bs-target="#ilerleme{{i.id}}"
-                                                                data-edit-id="15">{% trans 'İlerleme Durumu' %}</button></div>
-                                            </td>
-                                        </tr>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                             <div class="d-flex justify-content-end">
-                                        <div class="pagination-wrap hstack gap-2">
-                                            <ul class="pagination pagination-m justify-content-center">
-
-                                                {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans '« Previous page' %}</a></li>
-                                                
-                                                  {% if medya.number > 3 %}
-                                                
-                                                    <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
-                                                    {% if medya.number > 4 %}
-                                                      <li class="page-item"><span class="page-link">...</span></li>
-                                                    {% endif %}
-                                                  {% endif %}
-                                                {% endif %}
-                                                
-                                                {% for num in medya.paginator.page_range %}
-                                                  {% if medya.number == num %}
-                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
-                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
-                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
-                                                  {% endif %}
-                                                {% endfor %}
-                                                
-                                                {% if medya.has_next %}
-                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
-                                                    <li class="page-item"><span class="page-link">...</span></li>
-                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
-                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
-                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
-                                                  {% endif %}
-                                                
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.siralama %}&siralama={{ request.GET.siralama }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans 'Next Page »' %}</a></li>
-                                                {% endif %}
-                                                </ul>
+                                <tr>
+                                    <td>
+                                        <div class="task-check">
+                                            <input type="checkbox" id="task-check-1">
+                                            {{i.title}}
                                         </div>
-                                    </div>
-                        </div>
+                                    </td>
+                                    <td> {{i.aciklama}}</td>
+                                    <td>
+                                        <div class="td-assigned-people">
+                                            <div class="td-assigned-people-profiles">
+                                                 {% for yazar in i.yapacaklar.all %}
+                                                       <a href="javascript: void(0);"
+                                                        class="avatar-group-item"
+                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        data-bs-title="{{yazar.last_name}}"> <img
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            class="rounded-circle avatar-xxs"> </a>
+                                                {% endfor %}
+                                                <span>+{{i.yapacaklar.all | length}}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>
+                                    {% isplani_durumu_kontrol i.id as b %}
+                                                
+                                                {% if i.status == "Inprogress" %}
+                                                    <span
+                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "New" %}
+                                                <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                                {% elif i.status == "Pending" %}
+                                                <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                                 {% elif i.status == "Completed" %}
+                                                <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                                    {% endif %}
+                                                
+                                        
+                                    </td>
+                                    <td>
+                                         {% if i.oncelik_durumu == "High" %}
+                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
                         
+                                            {% elif i.oncelik_durumu == "Medium" %}
+                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            {% elif i.oncelik_durumu == "Low" %}
+                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <a onclick="openModal('is-emri-olustur{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>
+                                            <div class="biadago-tooltip">
+                                                <a><i class="icon icon-three-dots"></i></a>
+                                                <div class="biadago-tooltip-content">
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                 {% else %}
+                                    {% if request.user in i.yapacaklar.all %}
+                                      <tr>
+                                    <td>
+                                        <div class="task-check">
+                                            <input type="checkbox" id="task-check-1">
+                                            {{i.title}}
+                                        </div>
+                                    </td>
+                                    <td> {{i.aciklama}}</td>
+                                    <td>
+                                        <div class="td-assigned-people">
+                                            <div class="td-assigned-people-profiles">
+                                                 {% for yazar in i.yapacaklar.all %}
+                                                       <a href="javascript: void(0);"
+                                                        class="avatar-group-item"
+                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        data-bs-title="{{yazar.last_name}}"> <img
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            class="rounded-circle avatar-xxs"> </a>
+                                                {% endfor %}
+                                                <span>+{{i.yapacaklar.all | length}}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>
+                                    {% isplani_durumu_kontrol i.id as b %}
+                                                
+                                                {% if i.status == "Inprogress" %}
+                                                    <span
+                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "New" %}
+                                                <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                                {% elif i.status == "Pending" %}
+                                                <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                                 {% elif i.status == "Completed" %}
+                                                <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                                    {% endif %}
+                                                
+                                        
+                                    </td>
+                                    <td>
+                                      {% if i.oncelik_durumu == "High" %}
+                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+                        
+                                            {% elif i.oncelik_durumu == "Medium" %}
+                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            {% elif i.oncelik_durumu == "Low" %}
+                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            {% endif %}
+                                     </td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <a onclick="openModal('is-emri-olustur{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>
+                                            <div class="biadago-tooltip">
+                                                <a><i class="icon icon-three-dots"></i></a>
+                                                <div class="biadago-tooltip-content">
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                   {% endif %}                                                        
+                                                
+                                {% endif %}
+                                        
+                                {% else %}
+                                  <tr>
+                                    <td>
+                                        <div class="task-check">
+                                            <input type="checkbox" id="task-check-1">
+                                            {{i.title}}
+                                        </div>
+                                    </td>
+                                    <td> {{i.aciklama}}</td>
+                                    <td>
+                                        <div class="td-assigned-people">
+                                            <div class="td-assigned-people-profiles">
+                                                 {% for yazar in i.yapacaklar.all %}
+                                                       <a href="javascript: void(0);"
+                                                        class="avatar-group-item"
+                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        data-bs-title="{{yazar.last_name}}"> <img
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            class="rounded-circle avatar-xxs"> </a>
+                                                {% endfor %}
+                                                <span>+{{i.yapacaklar.all | length}}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>
+                                    {% isplani_durumu_kontrol i.id as b %}
+                                                
+                                                {% if i.status == "Inprogress" %}
+                                                    <span
+                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                {% elif i.status == "New" %}
+                                                <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                                {% elif i.status == "Pending" %}
+                                                <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                                 {% elif i.status == "Completed" %}
+                                                <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                                    {% endif %}
+                                                
+                                        
+                                    </td>
+                                    <td>
+                                    {% if i.oncelik_durumu == "High" %}
+                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+                        
+                                            {% elif i.oncelik_durumu == "Medium" %}
+                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            {% elif i.oncelik_durumu == "Low" %}
+                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            {% endif %}
+                                        
+                                    </td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <a onclick="openModal('is-emri-olustur{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>
+                                            <div class="biadago-tooltip">
+                                                <a><i class="icon icon-three-dots"></i></a>
+                                                <div class="biadago-tooltip-content">
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                                </tbody>
+                        </table>
                     </div>
-
                 </div>
+
+
+
             </div>
 
         </div>
-         <!-- Modal -->
-    <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
 
-    <!--end create taks-->
-        <!-- container-fluid -->
-    <div class="modal fade" id="createTasktoplu" tabindex="-1" aria-labelledby="createTaskLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header p-3 bg-success-subtle">
-                    <h5 class="modal-title" id="createTaskLabel">{% trans 'Toplu Görev Ekle' %}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="createTaskBtn-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="task-error-msg" class="alert alert-danger py-2"></div>
-                    <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacalar_ekle_toplu' %}" method="post" enctype="multipart/form-data" >
+        <script>
+            let table = new DataTable('#tumu-table', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+            $('.tab-navs-btn').on('click', function () {
+                $(".tab-navs-btn").removeClass("active");
+                $(this).addClass("active");
+
+                if ($(this).attr("data-tab") == "Tümü") {
+                    table.search('').columns().search('').draw();
+                } else {
+                    table.column(4).search($(this).attr("data-tab")).draw();
+                }
+
+            });
+
+
+
+            $('#stats-search').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+
+    <div class="modal" id="is-emri-olustur">
+        <div class="modal-inner" style="width: 1000px">
+            <div class="modal-header">
+            {% trans 'İş Emri Oluştur' %}
+               
+            </div>
+            <div class="modal-body">
+               <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacalar_ekle_toplu' %}" method="post" enctype="multipart/form-data" >
                         {% csrf_token %}
-                        <input type="hidden" id="taskid-input" class="form-control">
-                        <div class="mb-3">
-                            <label for="task-title-input" class="form-label">{% trans 'Başlık Ekle' %}</label>
-                            <input type="text" name="baslik" id="task-title-input" class="form-control" >
-                        </div>
-                        <div class="mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="row g-4 mb-3">
-                            <div class="col-lg-6">
-                                <label for="task-status" class="form-label">{% trans 'Durum' %}</label>
-                                <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
+                    <div class="modal-form-rows">
+                        <div class="modal-form-row">
+                            <div class="form-element">
+                                <label for="baslik">{% trans 'Başlık Ekle' %}</label>
+                                <input type="text" name="baslik"  name="baslik" id="baslik">
+                            </div>
+                            <div class="form-element">
+                                <label for="aciklama">{% trans 'Açıklama' %}</label>
+                                <input type="text" name="aciklama" id="aciklama">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-element">
+                                    <label for="durum">{% trans 'Durum' %}</label>
+                                   <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
                                     <option value="">{% trans 'Status' %}</option>
                                     <option value="New" selected>{% trans 'New' %}</option>
                                     <option value="Inprogress">{% trans 'Inprogress' %}</option>
                                     <option value="Pending">{% trans 'Pending' %}</option>
                                     <option value="Completed">{% trans 'Completed' %}</option>
                                 </select>
-                            </div>
-                            <!--end col-->
-                            <div class="col-lg-6">
-                                <label for="priority-field" class="form-label">{% trans 'Priority' %}</label>
-                                <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
+                                </div>
+                                <div class="form-element">
+                                    <label for="aciliyet">{% trans 'Priority' %}</label>
+                                    <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
                                     
                                     <option value="High">{% trans 'High' %}</option>
                                     <option value="Medium">{% trans 'Medium' %}</option>
                                     <option value="Low">{% trans 'Low' %}</option>
                                 </select>
+                                </div>
                             </div>
-                            <!--end col-->
-                        </div>
-                        <div>
-                            <label for="status-field" class="form-label">{% trans 'Kişiler' %}</label>
-                            <select name="blogbilgisi" hidden class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
+                            <div class="form-element">
+                                <label for="kisiler">{% trans 'Kişi & Kişiler Ata' %}</label>
+                                <select name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
                                 {% endfor %}
                             </select>
+                            </div>
+                            <div class="form-element">
+                                <label for="tarih">{% trans 'Due Date:' %}</label>
+                                <input type="date" name="teslim_tarihi"  id="tarih">
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="task-duedate-input" class="form-label">{% trans 'Due Date:' %}</label>
-                            <input type="date" name="teslim_tarihi" id="task-duedate-input" class="form-control" placeholder="Due date">
-                        </div>
-                        <div class="md-4">
-                        <div class="form-group">
-                            <label>{% trans 'Dosya Yükle' %}</label>
-                            <input name="file" type="file" multiple="multiple" class="form-control" />
+                        <div class="modal-form-row">
+                            <div class="form-element">
+                                <label for="katman">{% trans 'Katman' %}</label>
+                                <input type="text" name="katman" id="katman">
+                            </div>
+                            <div class="form-element">
+                                <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
+                                    <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">
+                                </div>
+                            </div>
+                            <div class="form-element">
+                                <label for="ekler">{% trans 'Ekler' %}</label>
+
+                                <div class="file-input file-preview-input">
+                                    <ul class="fileList">
+
+
+
+                                        <label for="ekler">
+                                            <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                        </label>
+                                    </ul>
+
+                                    <input multiple type="file" name="file" id="ekler">
+                                </div>
+
+
+                            </div>
                         </div>
                     </div>
-                        <div class="hstack gap-2 justify-content-end">
-                            <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-fill align-bottom"></i>{% trans 'Kapat' %} </button>
-                            <button type="submit" class="btn btn-primary" id="addNewTodo">{% trans 'Add Task' %}</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Görevi Ata' %}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="createTask" tabindex="-1" aria-labelledby="createTaskLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header p-3 bg-success-subtle">
-                    <h5 class="modal-title" id="createTaskLabel">{% trans 'Toplu Görev Ekle' %}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="createTaskBtn-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="task-error-msg" class="alert alert-danger py-2"></div>
-                    <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacalar_ekle_toplu' %}" method="post" enctype="multipart/form-data" >
-                        {% csrf_token %}
-                        <input type="hidden" id="taskid-input" class="form-control">
-                        <div class="mb-3">
-                            <label for="task-title-input" class="form-label">{% trans 'Başlık Ekle' %}</label>
-                            <input type="text" name="baslik" id="task-title-input" class="form-control" >
-                        </div>
-                        <div class="mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="gosterme mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Lütfen Açıklamayı Doldurunuz' %}</div>
-                        </div>
-                        <div class="row g-4 mb-3">
-                            <div class="col-lg-6">
-                                <label for="task-status" class="form-label">{% trans 'Durum' %}</label>
-                                <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
-                                    <option value="">{% trans 'Status' %}</option>
-                                    <option value="New" selected>{% trans 'New' %}</option>
-                                    <option value="Inprogress">{% trans 'Inprogress' %}</option>
-                                    <option value="Pending">{% trans 'Pending' %}</option>
-                                    <option value="Completed">{% trans 'Completed' %}</option>
-                                </select>
-                            </div>
-                            <!--end col-->
-                            <div class="col-lg-6">
-                                <label for="priority-field" class="form-label">{% trans 'Priority' %}</label>
-                                <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
-                                    
-                                    <option value="High">{% trans 'High' %}</option>
-                                    <option value="Medium">{% trans 'Medium' %}</option>
-                                    <option value="Low">{% trans 'Low' %}</option>
-                                </select>
-                            </div>
-                            <!--end col-->
-                        </div>
-                        <div>
-                            <label for="status-field" class="form-label">{% trans 'Kişiler' %}</label>
-                            <select name="blogbilgisi" hidden class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
-                                {% for blog in blog_bilgisi %}
-                                <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label for="task-duedate-input" class="form-label">{% trans 'Due Date:' %}</label>
-                            <input type="date" name="teslim_tarihi" id="task-duedate-input" class="form-control" placeholder="Due date">
-                        </div>
-                        <div class="md-4">
-                        <div class="form-group">
-                            <label>{% trans 'Dosya Yükle' %}</label>
-                            <input name="file" type="file" multiple="multiple" class="form-control" />
-                        </div>
+    <div class="modal" id="plan-konumu">
+        <div class="modal-inner modal-fullscreen">
+            <div class="modal-header">
+                <div class="modal-title">{% trans 'Plan Konumu' %}</div>
+                <div class="modal-actions">
+                   <!-- <a href="#" class="modal-action-primary"><i class="icon icon-pin"></i> Plan Konumunu Değiştir</a>
+                    <a href="#" class="modal-action-remove">Plan Konumunu Sil <i class="icon icon-action-delete"></i></a>-->
+                                <!-- Araç Çubuğu -->
+                    <div id="toolbar">
+                        <label for="file-upload">{% trans 'Proje Resmi Yükle (PDF veya JPG/PNG)' %}</label>
+                        <input type="file" id="file-upload" accept=".pdf,.jpg,.jpeg,.png"/>
+                        <button id="save-btn" class="modal-action-primary"><i class="icon icon-pin"></i>{% trans 'Pinleri Kaydet' %}</button>
+                        <button id="capture-btn">{% trans 'Alanı Kırp ve Göster' %}</button>
                     </div>
-                        <div class="hstack gap-2 justify-content-end">
-                            <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-fill align-bottom"></i>{% trans 'Kapat' %} </button>
-                            <button type="submit" class="btn btn-primary" id="addNewTodo">{% trans 'Add Task' %}</button>
-                        </div>
-                    </form>
+                    <a onclick="closeModal('plan-konumu')" class="modal-close-btn"><i class="icon icon-modal-close"></i></a>
                 </div>
             </div>
+
+                <!-- Konva Container -->
+                <div id="container"></div>
+                <!-- Modal -->
+                <div id="capture-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn">&times;</span>
+                        <h3>{% trans 'Kırpılmış Alan:' %}</h3>
+                        <img id="captured-image" src="" alt="Captured Area">
+                        <a id="download-link" href="#" download="captured_area.png">{% trans 'İndir' %}</a>
+                    </div>
+                </div>
         </div>
     </div>
 {% for i in santiyeler %}
-<div class="modal fade" id="duzenleme{{i.id}}" tabindex="-1" aria-labelledby="createTaskLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header p-3 bg-success-subtle">
-                    <h5 class="modal-title" id="createTaskLabel">{% trans 'Düzenleme' %}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="createTaskBtn-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="task-error-msg" class="alert alert-danger py-2"></div>
-                    <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacalar_ekle_duzenleme' %}" method="post" enctype="multipart/form-data" >
+ <div class="modal" id="is-emri-olustur{{i.id}}">
+        <div class="modal-inner" style="width: 1000px">
+            <div class="modal-header">
+            {% trans 'İş Emri Düzenle' %}
+               
+            </div>
+            <div class="modal-body">
+               <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacalar_ekle_duzenleme' %}" method="post" enctype="multipart/form-data" >
                         {% csrf_token %}
                         <input type="hidden" id="taskid-input" value="{{i.id}}" name="id" class="form-control">
-                        <div class="mb-3">
-                            <label for="task-title-input" class="form-label">{% trans 'Başlık Ekle' %}</label>
-                            <input type="text" value="{{i.title}}" name="baslik" id="task-title-input" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control" >{{i.aciklama}}</textarea>
-                            <div class="invalid-feedback">{% trans 'Please enter an email.' %}</div>
-                        </div>
-                        <div class="row g-4 mb-3">
-                            <div class="col-lg-6">
-                                <label for="task-status" class="form-label">{% trans 'Durum' %}</label>
-                                <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
+                    <div class="modal-form-rows">
+                        <div class="modal-form-row">
+                            <div class="form-element">
+                                <label for="baslik">{% trans 'Başlık Ekle' %}</label>
+                                <input type="text"  value="{{i.title}}" name="baslik"  name="baslik" id="baslik">
+                            </div>
+                            <div class="form-element">
+                                <label for="aciklama">{% trans 'Açıklama' %}</label>
+                                <input type="text" value="{{i.aciklama}}" name="aciklama" id="aciklama">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-element">
+                                    <label for="durum">{% trans 'Durum' %}</label>
+                                   <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
                                     <option value="{{i.status}}">{{i.status}}</option>
                                     <option value="New" selected>{% trans 'New' %}</option>
                                     <option value="Inprogress">{% trans 'Inprogress' %}</option>
                                     <option value="Pending">{% trans 'Pending' %}</option>
                                     <option value="Completed">{% trans 'Completed' %}</option>
                                 </select>
-                            </div>
-                            <!--end col-->
-                            <div class="col-lg-6">
-                                <label for="priority-field" class="form-label">{% trans 'Priority' %}</label>
-                                <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
+                                </div>
+                                <div class="form-element">
+                                    <label for="aciliyet">{% trans 'Priority' %}</label>
+                                    <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
                                     <option value="{{i.oncelik_durumu}}">{{i.oncelik_durumu}}</option>
                                     <option value="High">{% trans 'High' %}</option>
                                     <option value="Medium">{% trans 'Medium' %}</option>
                                     <option value="Low">{% trans 'Low' %}</option>
                                 </select>
+                                </div>
                             </div>
-                            <!--end col-->
-                        </div>
-                        <div>
-                            <label for="status-field" class="form-label">{% trans 'Kişiler' %}</label>
-                            <select name="blogbilgisi" hidden class="form-control cokluetiket{{i.id}}" data-trigger multiple  id="cokluetiket{{i.id}}" >
-                                
-                                {% for blog in blog_bilgisi %}
+                            <div class="form-element">
+                                <label for="kisiler">{% trans 'Kişi & Kişiler Ata' %}</label>
+                                <select name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
+                                 {% for blog in blog_bilgisi %}
                                     {% if blog in  i.yapacaklar.all %}
                                         <option selected value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
                                     {% else %}
@@ -1033,37 +493,80 @@
                                 
                                 {% endfor %}
                             </select>
+                            </div>
+                            <div class="form-element">
+                                <label for="tarih">{% trans 'Due Date:' %}</label>
+                                <input type="date" value="{{i.teslim_tarihi | date:'Y-m-d'}}" name="teslim_tarihi"  id="tarih">
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="task-duedate-input" class="form-label">{% trans 'Due Date:' %}</label>
-                            <input type="date" name="teslim_tarihi" value="{{i.teslim_tarihi | date:'Y-m-d'}}" id="task-duedate-input" class="form-control" >
-                        </div>
-                        <div class="md-4">
-                    <div class="form-group">
-                        <label>{% trans 'Dosya Yükle' %}</label>
-                        <input name="file" type="file" multiple="multiple"  class="form-control" />
-                    </div>
-                </div>
+                        <div class="modal-form-row">
+                            <div class="form-element">
+                                <label for="katman">{% trans 'Katman' %}</label>
+                                <input type="text" name="katman" id="katman">
+                            </div>
+                            <div class="form-element">
+                                <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
+                                    <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">
+                                </div>
+                            </div>
+                            <div class="form-element">
+                                <label for="ekler">{% trans 'Ekler' %}</label>
 
-                        <div class="hstack gap-2 justify-content-end">
-                            <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-fill align-bottom"></i>{% trans 'Kapat' %} </button>
-                            <button type="submit" class="btn btn-primary" id="addNewTodo">{% trans 'Add Task' %}</button>
+                                <div class="file-input file-preview-input">
+                                    <ul class="fileList">
+
+
+
+                                        <label for="ekler">
+                                            <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                        </label>
+                                    </ul>
+
+                                    <input multiple type="file" name="file" id="ekler">
+                                </div>
+
+
+                            </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Görevi Ata' %}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    </div>
-    {% for i in santiyeler %}
-    <div class="modal fade" id="ilerleme{{i.id}}" tabindex="-1" aria-labelledby="createTaskLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header p-3 bg-success-subtle">
-                    <h5 class="modal-title" id="createTaskLabel">{{i.title}}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="createTaskBtn-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
+
+
+
+<div class="modal" id="deleteConfirmationModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                <h2>{% trans 'Silmek İstediğinden Emin misin?' %}</h2>
+            <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
+            </div>
+            <div class="modal-body">
+                 <form autocomplete="off"action="/{{dil}}{% url 'main:yapilacalar_sil' %}" method="post">
+                                    {% csrf_token %}
+                    <input type="hidden" id="buttonIdInput" name="id_bilgisi" value="{{i.id}}">
+                    
+                 
+                    <div class="form-actions">
+                                       <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary"  onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+ <div class="modal" id="ilerleme{{i.id}}">
+        <div class="modal-inner" style="width: 1000px">
+            <div class="modal-header">
+            {% trans 'İlerleme Takibi' %}
+               
+            </div>
+            <div class="modal-body">
                     <div id="task-error-msg" class="alert alert-danger py-2"></div>
                     <div class="mb-3">
                             <label for="email-field" class="form-label">{% trans 'Başlık :' %}</label>
@@ -1120,207 +623,562 @@
                         <hr>
                         {% endfor %}
 
-                </div>
+                
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Kapat' %} </button>
+                       
+                    </div>
+                
             </div>
         </div>
     </div>
-    {% endfor %}
-    <!-- End Page-content -->
-    {% for i in santiyeler %}
-    <!-- Modal -->
-    <div class="modal fade zoomIn" id="deleteRecordModal{{i.id}}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"></button>
-                </div>
-                <div class="modal-body">
-                    
-                    <div class="mt-2 text-center">
-                        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                            <h4>{% trans 'Are you Sure ?' %}</h4>
-                            <p class="text-muted mx-4 mb-0">{% trans 'Are you Sure You want to Remove this Record ?' %}</p>
-                        </div>
-                    </div>
-                    <form autocomplete="off"action="/{{dil}}{% url 'main:yapilacalar_sil' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" id="buttonIdInput" name="id_bilgisi" value="{{i.id}}">
-                    
-                    <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                        <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                        <button type="submit" class="btn w-sm btn-danger " id="delete-record">{% trans 'Evet, Sil' %}</button>
-                    </div>
-                </form>
-                </div>
+
+
+ <div class="modal" id="durumyenile{{i.id}}">
+        <div class="modal-inner" style="width: 1000px">
+            <div class="modal-header">
+            {% trans 'İş Emri Düzenle' %}
+               
             </div>
-        </div>
-    </div>
-    {% endfor %}
-    {% for i in santiyeler %}
-    <div class="modal fade" id="durumyenile{{i.id}}" tabindex="-1" aria-labelledby="createTaskLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header p-3 bg-success-subtle">
-                    <h5 class="modal-title" id="createTaskLabel">{{i.title}}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="createTaskBtn-close" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="task-error-msg" class="alert alert-danger py-2"></div>
-                    <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacak_durumu_yenileme' %}" method="post" enctype="multipart/form-data" >
+            <div class="modal-body">
+              <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacak_durumu_yenileme' %}" method="post" enctype="multipart/form-data" >
                         {% csrf_token %}
                         <input type="hidden" id="taskid-input" name="yenilenecekeklemeyapilacak" value="{{i.id}}" class="form-control">
-                        <div class="mb-3">
-                            <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
-                            <textarea name="aciklama" class="form-control"  ></textarea>
-                            <div class="invalid-feedback">{% trans 'Please enter an email.' %}</div>
-                        </div>
-                        
-                        <div class="row g-4 mb-3">
-                            <div class="col-lg-6">
-                                <label for="task-status" class="form-label">{% trans 'Durum' %}</label>
-                                <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
-                                    <option value="">{% trans 'Status' %}</option>
+                        <div class="modal-form-rows">
+                        <div class="modal-form-row">
+                          
+                            <div class="form-element">
+                                <label for="aciklama">{% trans 'Açıklama' %}</label>
+                                <input type="text"  name="aciklama" id="aciklama">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-element">
+                                    <label for="durum">{% trans 'Durum' %}</label>
+                                   <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
                                     <option value="New" selected>{% trans 'New' %}</option>
                                     <option value="Inprogress">{% trans 'Inprogress' %}</option>
                                     <option value="Pending">{% trans 'Pending' %}</option>
                                     <option value="Completed">{% trans 'Completed' %}</option>
                                 </select>
+                                </div>
+                                
                             </div>
-                            <!--end col-->
                            
-                            <!--end col-->
+                            </div>
+                            <div class="form-element">
+                                <label for="tarih">{% trans 'Due Date:' %}</label>
+                                <input type="date" value="{{i.teslim_tarihi | date:'Y-m-d'}}" name="teslim_tarihi"  id="tarih">
+                            </div>
                         </div>
-                      
-                        <div class="mb-4">
-                            <label for="task-duedate-input" class="form-label">{% trans 'Due Date:' %}</label>
-                            <input type="date" name="teslim_tarihi" id="task-duedate-input" class="form-control" >
+                        <div class="modal-form-row">
+                           
+                            <div class="form-element">
+                                <label for="ekler">{% trans 'Ekler' %}</label>
+
+                                <div class="file-input file-preview-input">
+                                    <ul class="fileList">
+
+
+
+                                        <label for="ekler">
+                                            <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                        </label>
+                                    </ul>
+
+                                    <input multiple type="file" name="file" id="ekler">
+                                </div>
+
+
+                            </div>
                         </div>
-                        <div class="md-4">
-                    <div class="form-group">
-                        <label>{% trans 'Dosya Yükle' %}</label>
-                        <input name="file" type="file" multiple="multiple" class="form-control" />
                     </div>
-                </div>
-                        <div class="hstack gap-2 justify-content-end">
-                            <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-fill align-bottom"></i> {% trans 'Kapat' %}</button>
-                            <button type="submit" class="btn btn-primary" id="addNewTodo">{% trans 'Add Task' %}</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Görev Durumunu değiştir' %}</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-    {% endfor %}
+
+
+
+
 
 {% endfor %}
-<script>
-                    function initializeMultiSelectTaga() {
-                       return new MultiSelectTag('cokluetiketa', {
-                           rounded: true,
-                           shadow: true,
-                           placeholder: '{% trans "Search" %}',
-                           tagColor: {
-                               textColor: '#327b2c',
-                               borderColor: '#92e681',
-                               bgColor: '#eaffe6',
-                           },
-                           onChange: function(values) {
-                               console.log(values);
-                           }
-                       });
-                   }
-                   function initializeMultiSelectTagb() {
-                       return new MultiSelectTag('cokluetiketb', {
-                           rounded: true,
-                           shadow: true,
-                           placeholder: '{% trans "Search" %}',
-                           tagColor: {
-                               textColor: '#327b2c',
-                               borderColor: '#92e681',
-                               bgColor: '#eaffe6',
-                           },
-                           onChange: function(values) {
-                               console.log(values);
-                           }
-                       });
-                   }
-                   
-                   var multiSelectInstancea = initializeMultiSelectTaga();
-                   var multiSelectInstanceb = initializeMultiSelectTagb();
-                   {% for  i in santiyeler %}
-                    function initializeMultiSelectTag{{i.id}}() {
-                       return new MultiSelectTag('cokluetiket{{i.id}}', {
-                           rounded: true,
-                           shadow: true,
-                           placeholder: '{% trans "Search" %}',
-                           tagColor: {
-                               textColor: '#327b2c',
-                               borderColor: '#92e681',
-                               bgColor: '#eaffe6',
-                           },
-                           onChange: function(values) {
-                               console.log(values);
-                           }
-                       });
-                   }
-                    var multiSelectInstance{{i.id}} = initializeMultiSelectTag{{i.id}}();
-                   {% endfor %}
-               </script>
+    <script>
+        // Konva Stage ve Layer'ları oluşturma
+        const stage = new Konva.Stage({
+            container: 'container',
+            width: window.innerWidth,
+            height: window.innerHeight,
+            draggable: true  // Panning
+        });
 
-<!-- end main content-->
-<script>
-let z = 0;
-  function ekleYeniSatir() {
-    
-    var elements = document.getElementsByClassName('gosterme');
+        const gridLayer = new Konva.Layer();      // Izgara katmanı
+        const imageLayer = new Konva.Layer();     // PDF veya Resim katmanı
+        const pinLayer = new Konva.Layer();       // Pinler katmanı
 
-    if (elements[z]) {
-        elements[z].classList.remove('gosterme');
-    } else {
-        console.error("{% trans 'Ürün Sınırına Ulaştınız' %}");
-    }
+        // Katmanları doğru sırayla ekleyerek pinLayer'ın en üstte olmasını sağla
+        stage.add(gridLayer);
+        stage.add(imageLayer);
+        stage.add(pinLayer);
 
-    yeniselect();
-  }
-</script>
+        // Izgara çizme fonksiyonu
+        function drawGrid(layer, gridSize = 100) {
+            layer.destroyChildren(); // Önceki çizimleri temizle
+            const lines = [];
+
+            // Izgara alanını çok geniş tutarak "sonsuz" gibi görünmesini sağlıyoruz
+            const gridLimit = 10000; // Gridin genişliği ve yüksekliği
+
+            // Dikey çizgiler
+            for (let i = -gridLimit; i <= gridLimit; i += gridSize) {
+                lines.push(new Konva.Line({
+                    points: [i, -gridLimit, i, gridLimit],
+                    stroke: '#ddd', // Izgara çizgi rengi
+                    strokeWidth: 1
+                }));
+            }
+
+            // Yatay çizgiler
+            for (let j = -gridLimit; j <= gridLimit; j += gridSize) {
+                lines.push(new Konva.Line({
+                    points: [-gridLimit, j, gridLimit, j],
+                    stroke: '#ddd', // Izgara çizgi rengi
+                    strokeWidth: 1
+                }));
+            }
+
+            layer.add(...lines);
+            layer.batchDraw();
+        }
+
+        drawGrid(gridLayer, 100); // Izgara katmanını çiz
+
+        // Pin simgesi için SVG veri URI
+        const pinSVG = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path fill="red" d="M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5 14.5 7.6 14.5 9 13.4 11.5 12 11.5z"/>
+            </svg>
+        `;
+        const pinImageSrc = 'data:image/svg+xml;base64,' + btoa(pinSVG);
+
+        // Tek pin için referans
+        let currentPin = null;
+
+        // Pin ekleme fonksiyonu
+        function addPin(x, y) {
+            // Önceki pin varsa sil
+            if (currentPin) {
+                currentPin.destroy();
+                currentPin = null;
+            }
+
+            const pin = new Konva.Image({
+                x: x - 12,  // Centering (pin genişliği yarısı)
+                y: y - 24,  // Adjust to show tip (pin yüksekliği)
+                width: 24,
+                height: 24,
+                image: new Image(),
+                draggable: false  // Pin sürüklenemez
+            });
+
+            const img = new Image();
+            img.onload = () => {
+                pin.image(img);
+                pinLayer.add(pin);
+                pinLayer.batchDraw();
+                currentPin = pin; // Yeni pin referansını güncelle
+            };
+            img.src = pinImageSrc;
+
+            // Sağ tıklama ile pin silme (masaüstü)
+            pin.on('contextmenu', function(e) {
+                e.evt.preventDefault();
+                pin.destroy();
+                pinLayer.batchDraw();
+                currentPin = null;
+            });
+
+            // Uzun basma ile pin silme (mobil)
+            pin.on('touchstart', function(e) {
+                if (e.evt.touches && e.evt.touches.length > 1) return; // Çoklu dokunuşları yoksay
+                // Uzun basma algılama
+                const duration = 500; // 500ms uzun basma
+                let timer;
+
+                const touchMoveHandler = () => {
+                    clearTimeout(timer);
+                };
+
+                const touchEndHandler = () => {
+                    clearTimeout(timer);
+                    window.removeEventListener('touchmove', touchMoveHandler);
+                    window.removeEventListener('touchend', touchEndHandler);
+                };
+
+                window.addEventListener('touchmove', touchMoveHandler);
+                window.addEventListener('touchend', touchEndHandler);
+
+                timer = setTimeout(() => {
+                    pin.destroy();
+                    pinLayer.batchDraw();
+                    currentPin = null;
+                    window.removeEventListener('touchmove', touchMoveHandler);
+                    window.removeEventListener('touchend', touchEndHandler);
+                }, duration);
+            });
+        }
+
+        // Stage'in scale ve position bilgilerine göre içerik koordinatlarını hesaplama
+        function getTransformedPointerPosition() {
+            const pointer = stage.getPointerPosition();
+            if (!pointer) return null;
+            const transform = stage.getAbsoluteTransform().copy().invert();
+            return transform.point(pointer);
+        }
+
+        // Pin ekleme fonksiyonu - Sahneye tıklama veya dokunma
+        stage.on('click tap', function(e) {
+            // Dragging olmadığında pin ekle
+            if (!stage.isDragging()) {
+                const pos = getTransformedPointerPosition();
+                if (pos) {
+                    addPin(pos.x, pos.y);
+                }
+            }
+        });
+
+        // Zoom işlevi - Konva.js örneğinden uyarlanmıştır
+        stage.on('wheel', (e) => {
+            e.evt.preventDefault();
+            const oldScale = stage.scaleX();
+            const pointer = stage.getPointerPosition();
+
+            const scaleBy = 1.1;
+            let newScale = e.evt.deltaY > 0 ? oldScale / scaleBy : oldScale * scaleBy;
+            newScale = Math.max(0.1, Math.min(newScale, 10)); // Zoom sınırları
+
+            stage.scale({ x: newScale, y: newScale });
+
+            // Zoom odak noktası
+            const mousePointTo = {
+                x: (pointer.x - stage.x()) / oldScale,
+                y: (pointer.y - stage.y()) / oldScale,
+            };
+
+            const newPos = {
+                x: pointer.x - mousePointTo.x * newScale,
+                y: pointer.y - mousePointTo.y * newScale,
+            };
+            stage.position(newPos);
+            stage.batchDraw();
+
+            // Pinlerin ölçeğini sabit tutmak için her zoom işleminde pinleri ters orantılı ölçeklendir
+            if (currentPin) {
+                currentPin.scale({ x: 1 / newScale, y: 1 / newScale });
+                pinLayer.batchDraw();
+            }
+        });
+
+        // PDF yükleme fonksiyonu
+        async function loadPDF(file) {
+            try {
+                const fileReader = new FileReader();
+                fileReader.onload = async function(event) {
+                    const typedArray = new Uint8Array(event.target.result);
+                    const pdf = await pdfjsLib.getDocument(typedArray).promise;
+                    console.log("PDF Yüklendi:", pdf);
+
+                    const page = await pdf.getPage(1);  // İlk sayfayı yükle
+
+                    const scale = 1.5;  // Performans için ölçek
+                    const viewport = page.getViewport({ scale: scale });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    await page.render(renderContext).promise;
+                    console.log("PDF Render Edildi.");
+
+                    // PDF'in canvas'ını Konva sahnesine ekle
+                    const pdfImage = new Konva.Image({
+                        x: 0,
+                        y: 0,
+                        image: canvas,
+                        width: viewport.width,
+                        height: viewport.height,
+                        draggable: false,
+                    });
+
+                    imageLayer.destroyChildren(); // Önceki görüntüyü sil
+                    imageLayer.add(pdfImage);
+                    imageLayer.batchDraw();
+                };
+                fileReader.readAsArrayBuffer(file);
+            } catch (error) {
+                console.error("PDF Yükleme Hatası:", error);
+                alert("PDF dosyası yüklenemedi. Lütfen geçerli bir PDF dosyası yükleyin.");
+            }
+        }
+
+        // Resim yükleme fonksiyonu
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const konvaImage = new Konva.Image({
+                        x: 0,
+                        y: 0,
+                        image: img,
+                        width: img.width,
+                        height: img.height,
+                        draggable: false,
+                    });
+                    imageLayer.destroyChildren(); // Önceki görüntüyü sil
+                    imageLayer.add(konvaImage);
+                    imageLayer.batchDraw();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Dosya yükleme işlemi
+        document.getElementById('file-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.type === 'application/pdf') {
+                    loadPDF(file);
+                } else if (file.type.startsWith('image/')) {
+                    loadImage(file);
+                } else {
+                    alert("Lütfen geçerli bir PDF veya resim dosyası yükleyin!");
+                }
+            }
+        });
+
+        // Kaydet butonu - pin koordinatlarını kaydetme
+        document.getElementById('save-btn').addEventListener('click', function() {
+            if (currentPin) {
+                const pinData = {
+                    x: currentPin.x(),
+                    y: currentPin.y(),
+                };
+                console.log('Pin Bilgileri:', JSON.stringify(pinData));
+                alert('Pin başarıyla kaydedildi! Konsolu kontrol edin.');
+            }
+            else{
+                alert("Henüz pin eklenmedi.");
+            }
+        });
+
+        // Pencere yeniden boyutlandırıldığında sahneyi yeniden ayarlama
+        window.addEventListener('resize', function() {
+            stage.width(window.innerWidth);
+            stage.height(window.innerHeight);
+            drawGrid(gridLayer, 100); // Izgara katmanını yeniden çiz
+            imageLayer.batchDraw();
+            pinLayer.batchDraw();
+        });
+
+        // Modal kontrolü
+        const modal = document.getElementById('capture-modal');
+        const closeBtn = document.querySelector('.close-btn');
+
+        // Modalı kapatma fonksiyonu
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Modal dışında tıklayınca kapatma
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Area Capture (700x250 px) fonksiyonu
+        document.getElementById('capture-btn').addEventListener('click', function() {
+            if (!currentPin) {
+                alert("Lütfen bir pin ekleyin.");
+                return;
+            }
+
+            // Pin'in sahnedeki tam konumunu al
+            const pinStagePos = currentPin.getAbsolutePosition();
+            if (!pinStagePos) {
+                alert("Pin pozisyonu alınamadı.");
+                return;
+            }
+            const pinStageX = pinStagePos.x;
+            const pinStageY = pinStagePos.y;
+
+            console.log(`Pin'in stage koordinatları: (${pinStageX}, ${pinStageY})`);
+
+            // 700x250 px'lik alanın sol üst köşesini hesapla (pin merkezde olacak)
+            const captureWidth = 700;
+            const captureHeight = 250;
+            let captureX = pinStageX - (captureWidth / 2);
+            let captureY = pinStageY - (captureHeight / 2);
+
+            console.log(`Kırpılacak alanın sol üst köşesi: (${captureX}, ${captureY})`);
+
+            // Kırpılacak alanın stage sınırları içinde kalmasını sağla
+            captureX = Math.max(0, Math.min(captureX, stage.width() - captureWidth));
+            captureY = Math.max(0, Math.min(captureY, stage.height() - captureHeight));
+
+            console.log(`Sınırlandırılmış kırpma koordinatları: (${captureX}, ${captureY})`);
+
+            // stage.toDataURL ile tüm katmanları dahil ederek kırp
+            stage.toDataURL({
+                x: captureX,
+                y: captureY,
+                width: captureWidth,
+                height: captureHeight,
+                pixelRatio: 1,
+                callback: function(dataURL) {
+                    // PNG oluştur ve göster
+                    const capturedImage = document.getElementById('captured-image');
+                    capturedImage.src = dataURL;
+
+                    // İndirme linkini güncelle
+                    const downloadLink = document.getElementById('download-link');
+                    downloadLink.href = dataURL;
+                    downloadLink.download = 'captured_area.png';
+
+                    // Modalı göster
+                    modal.style.display = "block";
+                }
+            });
+        });
+    </script>
+    <script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+        $(document).ready(function () {
+            $('input[type="file"]').on('change', function () {
+                var files = $(this).prop('files');
+                var formElement = $(this).closest('.form-element');
+                var fileList = formElement.find('.fileList');
+                fileList.find('li:not(label)').remove();
+
+                var selectedFiles = Array.from(files);
+
+                for (var i = 0; i < selectedFiles.length; i++) {
+                    (function (file) {
+                        var listItem = $('<li></li>');
+
+                        if (file.type.startsWith('image/') && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                listItem.append(`
+                                    <div class="file-input-uploaded">
+                                        <div class="file-input-uploaded-head">
+                                            <div class="file-input-uploaded-title" title="${file.name}">${file.name}</div>
+                                            <button type="button" class="file-input-uploaded-remove"><i class="icon icon-trash"></i></button>
+                                        </div>
+                                        <div class="file-input-uploaded-preview">
+                                            <img src="${e.target.result}">
+                                        </div>
+                                    </div>
+                                `);
+                                fileList.append(listItem);
+
+                                listItem.find('.file-input-uploaded-remove').on('click', function () {
+                                    $(this).closest('li').remove();
+                                    selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+                                    updateInput(selectedFiles);
+                                });
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            listItem.append(`
+                                <div class="file-input-uploaded">
+                                    <div class="file-input-uploaded-head">
+                                        <div class="file-input-uploaded-title" title="${file.name}">${file.name}</div>
+                                        <button type="button" class="file-input-uploaded-remove"><i class="icon icon-trash"></i></button>
+                                    </div>
+                                    <div class="file-input-uploaded-no-preview">
+                                        <img src="./content/images/illustration-upload.png">
+                                    </div>
+                                </div>
+                            `);
+                            fileList.append(listItem);
+
+                            listItem.find('.file-input-uploaded-remove').on('click', function () {
+                                $(this).closest('li').remove();
+                                selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+                                updateInput(selectedFiles);
+                            });
+                        }
+                    })(selectedFiles[i]);
+                }
+            });
+        });
+
+        function updateInput(selectedFiles) {
+            var dataTransfer = new DataTransfer();
+            selectedFiles.forEach(function (file) {
+                dataTransfer.items.add(file);
+            });
+            $('input[type="file"]').prop('files', dataTransfer.files);
+        }
+
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 {% endblock sidebar %}
-
-{% block javascriptcode %}
-<!-- JAVASCRIPT -->
-    <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
-    <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
-    <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
-    <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-    <script src="{% static 'assets/js/plugins.js' %}"></script>
-
-    <!-- apexcharts -->
-    <script src="{% static 'assets/libs/apexcharts/apexcharts.min.js' %}"></script>
-
-    <!-- piecharts init -->
-    <script src="{% static 'assets/js/pages/apexcharts-pie.init.html' %}"></script>
-
-    <!-- apexcharts init -->
-    <script src="{% static 'assets/js/pages/apexcharts-column.init.js' %}"></script>
-
-    <!-- projects js -->
-    <script src="{% static 'assets/js/pages/dashboard-projects.init.js' %}"></script>
-    
-    <!-- App js -->
-    <script src="{% static 'assets/js/app.js' %}"></script>
-        <!-- JAVASCRIPT -->
-
-    
-
-    <!--file Upload-->
-    <script src="{% static 'assets/js/pages/form-file-upload.init.js' %}"></script>
-
-    
-    <!-- listjs init -->
-    <script src="{% static 'assets/js/pages/listjs.init.js' %}"></script>
-
-    <!-- Sweet Alerts js -->
-    <script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
-
-{% endblock javascriptcode %}
