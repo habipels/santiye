@@ -171,29 +171,29 @@
         <div class="report-card">
             <div class="report-header">
                 <div class="report-details">
-                    <div class="report-title"><i class="icon icon-yellow-circle"></i> Süleymaniye Şantiyesi</div>
+                    <div class="report-title"><i class="icon icon-yellow-circle"></i> {{santiye.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</div>
                     <div class="report-infos">
-                        <div class="report-info">{% trans 'Proje Adı:' %}  <b>Yeşil Konutlar</b></div>
-                        <div class="report-info">{% trans 'Yapı Adı:' %} <b>Apartman</b></div>
+                        <div class="report-info">{% trans 'Proje Adı:' %}  <b>{{santiye.proje_santiye_Ait.proje_adi}}</b></div>
+                        <div class="report-info">{% trans 'Yapı Adı:' %} <b>{{santiye.blog_adi}}</b></div>
                     </div>
                 </div>
             </div>
 
             <div class="report-building-body">
                 <div class="report-bb-preview">
-                    <img src="./content/images/bina.png" alt="bina">
+                    <img src="{% static 'go/content/images/bina.png' %}" alt="bina">
                 </div>
                 <div class="report-bb-chart">
                     <div id="report-bb-chart"></div>
 
                     <div class="report-bb-stats">
                         <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i> Tamamlanan</div>
-                            <div class="report-bb-stat-value">%50</div>
+                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i>{% trans 'Tamamlanan' %} </div>
+                            <div class="report-bb-stat-value">%{{fiziksel_ilerleme |safe }}</div>
                         </div>
                         <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i> Devam Eden</div>
-                            <div class="report-bb-stat-value">%49</div>
+                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i>{% trans 'Devam Eden' %} </div>
+                            <div class="report-bb-stat-value">%{% basit_cikarma 100 fiziksel_ilerleme  %}</div>
                         </div>
                         <div class="report-bb-stat">
                             <div class="report-bb-stat-title"><i class="icon icon-red-circle"></i> Duran</div>
@@ -203,7 +203,7 @@
 
                     <script>
                         var options = {
-                            series: [50, 49, 1],
+                            series: [{{fiziksel_ilerleme |safe }}, {% basit_cikarma 100 fiziksel_ilerleme  %}, 1],
                             chart: {
                                 height: 500,
                                 type: 'radialBar',
