@@ -1,36 +1,29 @@
-import os
-deneme = []
-def find_unicode_errors_in_files(directory):
-    # Desteklenmeyen karakterleri toplayacağımız liste
-    error_files = []
+import requests
 
-    # Verilen dizindeki tüm dosyaları gez
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            file_path = os.path.join(root, file)
-            try:
-                with open(file_path, "r", encoding="utf-8") as f:
-                    for i, line in enumerate(f, 1):
-                        try:
-                            line.encode('cp1254')
-                        except UnicodeEncodeError as e:
-                            print(f"Dosya: {file_path} - Satır: {i}")
-                            print(f"Detaylar: {e}")
-                            error_files.append(file_path)
-                            break  # Dosya içindeki ilk hatayı bulduğumuzda çıkıyoruz
-            except Exception as e:
-                print(f"Başka bir hata tespit edildi: {file_path}")
-                print(f"Detaylar: {e}")
+# Giriş URL'si (bu URL, API'deki CustomAuthToken view'e gider)
+url = "http://127.0.0.1:8000/biadago/api/api-token-auth/"
 
-    if error_files:
-        
-        #print(f"\n{len(error_files)} dosyada UnicodeEncodeError hatası bulundu:")
-        for ef in error_files:
-            print(ef)
-            deneme.append(error_files)
-    else:
-        print("Hiçbir dosyada UnicodeEncodeError hatası bulunamadı.")
+# Giriş bilgileri
+data = {
+    "username": "habipelis65@gmail.com",
+    "password": "Habip6565."
+}
 
-# Kontrol etmek istediğiniz klasörün yolunu buraya girin
-find_unicode_errors_in_files("C:/Users/habip/Documents/GitHub/santiye/templates")
-print(deneme)
+# İstek gönderme
+response = requests.post(url, data=data)
+
+# Yanıtı kontrol etme
+if response.status_code == 200:
+    try:
+        # Başarılı ise token alınıyor
+        token = response.json().get('token')
+        print(f"Giriş başarılı! Token: {token}")
+    except ValueError:
+        # JSON formatında bir yanıt yoksa yanıtı ham haliyle yazdır
+        print("Yanıt JSON formatında değil!")
+        print(response.text)
+else:
+    # Hatalı ise hata mesajı ve yanıtı gösteriliyor
+    print(f"Giriş başarısız! Status kodu: {response.status_code}")
+    print("Yanıt içeriği:")
+    print(response.text)

@@ -28,11 +28,23 @@ class CustomAuthToken(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
+        if user.image:
+            return Response({
+                'token': token.key,
+                'user_id': user.pk,
+                'email': user.email,
+                "user_name":user.username,
+                "name_sorname":user.last_name,
+                "image":user.image.url
+            })
         return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email
-        })
+                'token': token.key,
+                'user_id': user.pk,
+                'email': user.email,
+                "user_name":user.username,
+                "name_sorname":user.last_name,
+                "image":0
+            })
 def super_admin_kontrolu(request):
     if request.user.is_superuser:
             return 1
