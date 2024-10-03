@@ -1005,30 +1005,13 @@
           </div>
           
           <div class="message-input">
-            <div class="wrap emojis-main"><a class="icon-btn btn-outline-primary button-effect toggle-sticker outside" href="#">
-                <svg id="Layer_1" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="2158px" height="2148px" viewbox="0 0 2158 2148" enable-background="new 0 0 2158 2148" xml:space="preserve">
-                  <path fill-rule="evenodd" clip-rule="evenodd" fill="none" stroke="#000000" stroke-width="60" stroke-miterlimit="10" d="M699,693                        c0,175.649,0,351.351,0,527c36.996,0,74.004,0,111,0c18.058,0,40.812-2.485,57,1c11.332,0.333,22.668,0.667,34,1                        c7.664,2.148,20.769,14.091,25,20c8.857,12.368,6,41.794,6,62c0,49.329,0,98.672,0,148c175.649,0,351.351,0,527,0                        c0-252.975,0-506.025,0-759C1205.692,693,952.308,693,699,693z"></path>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M886,799c59.172-0.765,93.431,25.289,111,66c6.416,14.867,14.612,39.858,9,63                        c-2.391,9.857-5.076,20.138-9,29c-15.794,35.671-47.129,53.674-90,63c-20.979,4.563-42.463-4.543-55-10                        c-42.773-18.617-85.652-77.246-59-141c10.637-25.445,31.024-49,56-60c7.999-2.667,16.001-5.333,24-8                        C877.255,799.833,882.716,801.036,886,799z"></path>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M1258,799c59.172-0.765,93.431,25.289,111,66c6.416,14.867,14.612,39.858,9,63                        c-2.391,9.857-5.076,20.138-9,29c-15.794,35.671-47.129,53.674-90,63c-20.979,4.563-42.463-4.543-55-10                        c-42.773-18.617-85.652-77.246-59-141c10.637-25.445,31.024-49,56-60c7.999-2.667,16.001-5.333,24-8                        C1249.255,799.833,1254.716,801.036,1258,799z"></path>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M1345,1184c-0.723,18.71-11.658,29.82-20,41c-18.271,24.489-50.129,37.183-83,47                        c-7.333,1-14.667,2-22,3c-12.013,2.798-33.636,5.15-44,3c-11.332-0.333-22.668-0.667-34-1c-15.332-3-30.668-6-46-9                        c-44.066-14.426-80.944-31.937-110-61c-22.348-22.353-38.992-45.628-37-90c0.667,0,1.333,0,2,0c9.163,5.585,24.723,3.168,36,6                        c26.211,6.583,54.736,7.174,82,14c34.068,8.53,71.961,10.531,106,19c9.999,1.333,20.001,2.667,30,4c26.193,6.703,54.673,7.211,82,14                        C1304.894,1178.445,1325.573,1182.959,1345,1184z"></path>
-                  <polygon fill-rule="evenodd" clip-rule="evenodd" points="668.333,1248.667 901.667,1482 941.667,1432 922.498,1237.846                         687,1210.667 "></polygon>
-                </svg></a>
+            <div class="wrap emojis-main">
               <div class="dot-btn dot-primary"><a class="icon-btn btn-outline-primary button-effect toggle-emoji" href="#"><i data-feather="smile"></i></a></div>
-              <div class="contact-poll"><a class="icon-btn btn-outline-primary outside" href="#"><i class="fa fa-plus"></i></a>
-                <div class="contact-poll-content">
-                  <ul>
-                    <li><a href="#"><i data-feather="image"></i>gallery</a></li>
-                    <li><a href="#"><i data-feather="camera"></i>camera</a></li>
-                    <li><a data-bs-toggle="modal" data-bs-target="#snippetModal"><i data-feather="code">                       </i>Code Snippest</a></li>
-                    <li><a href="#"><i data-feather="user">                              </i>contact</a></li>
-                    <li><a href="#"><i data-feather="map-pin">                       </i>location</a></li>
-                    <li><a href="#"><i data-feather="clipboard"> </i>document</a></li>
-                    <li><a data-bs-toggle="modal" data-bs-target="#pollModal"><i data-feather="bar-chart-2">                       </i>poll</a></li>
-                    <li><a href="#"><i data-feather="paperclip">                       </i>attach</a></li>
-                  </ul>
-                </div>
-              </div>
+              <div class="contact-poll">
               
+
+              </div>
+              <input type="file" id="file-input" accept="image/*,application/pdf" />
               <input class="setemoj" id="message-input" name="content" type="text" placeholder="Write your message..."/>
               <button class=" icon-btn btn-primary " id="send-message" type="submit"  ><i data-feather="send"></i></button>
               
@@ -1106,101 +1089,104 @@
 
       </div>
     </div>
-    <script>
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const roomName = document.querySelector('body').dataset.roomName;  
-            const chatSocket = new WebSocket(
-                'ws://' + window.location.host + '/ws/chat/' + '{{group.id}}/'
-            );
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const roomName = document.querySelector('body').dataset.roomName;  
+    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + '{{ group.id }}/');
 
-            chatSocket.onmessage = function(e) {
-                const data = JSON.parse(e.data);
-                const chatLog = document.querySelector('#chatappend');
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const chatLog = document.querySelector('#chatappend');
 
-                const isSender = data.user === 'current_user';  // current_user'ı oturum açmış kullanıcı adıyla değiştir
-                if (data.user == "{{user.username}}") {
-                    chatLog.innerHTML += `
-                    <li class="replies">
-                        <div class="d-flex">
-                            <div class="profile">
-                                <img class="bg-img" src="/static/go/chat/assets/images/contact/2.jpg" alt="Avatar"/>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="contact-name">
-                                    <h5>${data.user}</h5>
-                                    <h6>${new Date().toLocaleTimeString()}</h6>
-                                    <ul class="msg-box">
-                                        <li class="msg-setting-main">
-                                            <div class="msg-dropdown-main">
-                                                <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                                                <div class="msg-dropdown">
-                                                    <ul>
-                                                        <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                                        <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                                        <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                                        <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <h5>${data.message}</h5>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+        const isSender = data.user === "{{ user.username }}";
+
+        if (data.message_type === 'text') {
+            chatLog.innerHTML += `
+            <li class="${isSender ? 'replies' : 'send'}">
+                <div class="d-flex">
+                    <div class="profile">
+                        <img class="bg-img" src="/static/go/chat/assets/images/contact/2.jpg" alt="Avatar"/>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="contact-name">
+                            <h5>${data.user}</h5>
+                            <h6>${new Date().toLocaleTimeString()}</h6>
+                            <ul class="msg-box">
+                                <li class="msg-setting-main">
+                                    <h5>${data.message}</h5>
+                                </li>
+                            </ul>
                         </div>
-                    </li>`;
-                } else {
-                    chatLog.innerHTML += `
-                    <li class="send">
-                        <div class="d-flex">
-                            <div class="profile">
-                                <img class="bg-img" src="/static/go/chat/assets/images/contact/2.jpg" alt="Avatar"/>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="contact-name">
-                                    <h5>${data.user}</h5>
-                                    <h6>${new Date().toLocaleTimeString()}</h6>
-                                    <ul class="msg-box">
-                                        <li class="msg-setting-main">
-                                            <div class="msg-dropdown-main">
-                                                <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                                                <div class="msg-dropdown">
-                                                    <ul>
-                                                        <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                                        <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                                        <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                                        <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <h5>${data.message}</h5>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+            </li>`;
+        } else if (data.message_type === 'file') {
+            chatLog.innerHTML += `
+            <li class="${isSender ? 'replies' : 'send'}">
+                <div class="d-flex">
+                    <div class="profile">
+                        <img class="bg-img" src="/static/go/chat/assets/images/contact/2.jpg" alt="Avatar"/>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="contact-name">
+                            <h5>${data.user}</h5>
+                            <h6>${new Date().toLocaleTimeString()}</h6>
+                            <ul class="msg-box">
+                                <li class="msg-setting-main">
+                                    <a href="${data.file_url}" target="_blank">Dosyayı Görüntüle</a>
+                                </li>
+                            </ul>
                         </div>
-                    </li>`;
-                }
-                
-            };
+                    </div>
+                </div>
+            </li>`;
+        }
+    };
 
-            chatSocket.onclose = function(e) {
-                console.error('Chat socket closed unexpectedly');
-            };
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
 
-            document.querySelector('#send-message').onclick = function(e) {
-                const messageInputDom = document.querySelector('#message-input');
-                const message = messageInputDom.value;
+    // Metin mesajı gönderme
+    document.querySelector('#send-message').onclick = function(e) {
+        const messageInputDom = document.querySelector('#message-input');
+        const message = messageInputDom.value;
+
+        if (message.trim() !== "") {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'message_type': 'text'  // Mesajın türünü belirtelim
+            }));
+        }
+
+        messageInputDom.value = '';
+    };
+
+    // Dosya gönderme
+    document.querySelector('#upload-file-button').onclick = function(e) {
+        const fileInput = document.querySelector('#file-input');
+        const file = fileInput.files[0];
+
+        if (file) {
+            // Dosyayı Blob olarak okuyoruz
+            const reader = new FileReader();
+            reader.readAsDataURL(file);  // Dosyayı base64 formatında okuyoruz
+            reader.onload = function() {
+                const base64File = reader.result;
+                // Dosyayı WebSocket ile gönderiyoruz
                 chatSocket.send(JSON.stringify({
-                    'message': message
+                    'message_type': 'file',  // Mesajın dosya olduğunu belirtiyoruz
+                    'file_data': base64File,
+                    'file_name': file.name,
+                    'file_type': file.type
                 }));
-                messageInputDom.value = '';
             };
-        });
+        }
+    };
+});
 
-    </script>
-        
+</script>
+
     <script src="{% static 'go/chat/assets/js/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'go/chat/assets/js/owl.carousel.js' %}"></script>
     <script src="{% static 'go/chat/assets/js/popper.min.js' %}"></script>

@@ -327,6 +327,7 @@ class Group(models.Model):
 class Message(models.Model):
     sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='messages')
+    file = models.FileField(upload_to='uploads/', blank=True, null=True)  # Yeni dosya alanı
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
