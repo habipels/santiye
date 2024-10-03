@@ -287,13 +287,68 @@ button:hover {
 }
 
 /* Dark Mode Styles */
+/* Dark Mode için Input ve Label Stilleri */
+body.dark-mode .input-group input {
+    background-color: #333; /* Koyu gri arka plan */
+    color: #eee; /* Açık renk metin */
+    border: 1px solid #555; /* Daha açık renkli kenar */
+}
+
+body.dark-mode .input-group label {
+    color: #aaa; /* Açık gri etiket rengi */
+}
+
+body.dark-mode .input-group input::placeholder {
+    color: #888; /* Placeholder için açık gri */
+}
+
+body.dark-mode .input-group input:focus {
+    background-color: #444; /* Daha koyu gri arka plan */
+    border: 1px solid #24d6b6; /* Vurgu rengi */
+    color: #ffffff; /* Beyaz renk metin */
+    outline: none; /* Focus olduğunda outline kaldırılır */
+}
+
+body.dark-mode .password-group .toggle-password {
+    color: #bbb; /* Koyu modda şifre göster/gizle ikonunun rengi */
+}
+
+/* Button Stilleri */
+body.dark-mode button {
+    background-color: #333; /* Koyu gri buton arka planı */
+    color: #eee; /* Açık metin rengi */
+    border: 1px solid #555; /* Gri buton kenar rengi */
+}
+
+body.dark-mode button:hover {
+    background-color: #444; /* Hover durumunda daha koyu gri */
+}
+
+/* Form Çerçevesi ve Giriş Kutusu */
+body.dark-mode .login-box {
+    background-color: #1e1e1e; /* Koyu arka plan rengi */
+    border: 1px solid #444; /* Gri çerçeve */
+    color: #eee; /* Açık metin rengi */
+}
+
+body.dark-mode .login-box .input-group input {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Hafif gölge efekti */
+}
+
+/* Focus Durumu için Özel Stiller */
+body.dark-mode .input-group input:focus {
+    border-color: #24d6b6; /* Vurgu rengi */
+    background-color: #2c2c2c; /* Focus durumunda daha açık gri */
+    color: #ffffff;
+}
+
 body.dark-mode {
     background-color: #121212;
     color: #eee;
 }
 
 body.dark-mode .login-box {
-    background-color: #1e1e1e;
+    background-color: #1d1d1d;
     box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -381,7 +436,7 @@ body.dark-mode .loading-message {
     <div id="globeViz"></div>
     <div class="login-container">
         <div class="login-box">
-            <img src="https://cloud.biadago.com/logo/biadago-icon-1536px_GGsH0Pj.png" alt="Logo" class="logo">
+            <img src="{% static 'go/images/logo-light.png' %}" alt="Logo" class="logo" id="logo">
             <div id="loadingSection" class="loading-section">
                 <div id="loadingAnimation" class="loading-animation"></div>
                 <p id="loadingMessage" class="loading-message">{% trans "Sisteme giriş yapılıyor..." %}</p>
@@ -524,5 +579,38 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('offline', updateOnlineStatus);
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const logo = document.getElementById('logo');
+
+    // Kullanıcı tercihini Local Storage'dan al ve sayfayı buna göre başlat
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    applyTheme(isDarkMode);
+
+    // Toggle değiştiğinde temayı uygula
+    darkModeToggle.addEventListener('change', function () {
+        const isDarkMode = darkModeToggle.checked;
+        applyTheme(isDarkMode);
+
+        // Kullanıcı tercihine göre dark mode'u kaydet
+        localStorage.setItem('darkMode', isDarkMode);
+    });
+
+    // Temayı uygulayan fonksiyon
+    function applyTheme(isDark) {
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+            logo.src = "{% static 'go/images/logo-dark.png' %}"; // Dark mod için logo
+        } else {
+            document.body.classList.remove('dark-mode');
+            logo.src = "{% static 'go/images/logo-light.png' %}"; // Light mod için logo
+        }
+        darkModeToggle.checked = isDark;
+    }
+});
+
+
+
 </script>
+
 </html>
