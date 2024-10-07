@@ -14,7 +14,20 @@
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
 </head>
@@ -134,6 +147,10 @@
             $(this).next('.sidebar-sub-menu').toggleClass("open");
             $(this).find('.icon-caret').toggleClass('rotate');
         });
+
+        if ($(window).width() <= 1000 && $(window).width() >= 420) {
+            sidebar.classList.add("sidebar-collapsed");   
+        }
     </script>
 
     <header>
@@ -507,6 +524,16 @@
                     <img src="./content/images/bina.png" alt="bina">
                 </div>
                 <div class="report-bb-chart">
+
+                    <div class="form-element">
+                        <select name="imalat-kalemi-select" id="imalat-kalemi-select">
+                            <option value="imalat-kalemi-check-1" selected>Kalem - 1</option>
+                            <option value="imalat-kalemi-check-2">Kalem - 2</option>
+                            <option value="imalat-kalemi-check-3">Kalem - 3</option>
+                        </select>
+                    </div>
+
+
                     <div id="report-bb-chart"></div>
 
                     <div class="report-bb-stats">
@@ -589,11 +616,11 @@
                     </div>
                     <div class="imalat-kalemi">
                         <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-1" checked>
+                            <input type="checkbox" id="imalat-kalemi-check-2" >
                         </div>
                         <div class="imalat-kalemi-progress">
                             <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
+                                <div class="imalat-kalemi-progress-title">Kalem - 2</div>
                                 <div class="imalat-kalemi-progress-info">
                                     <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
                                     <span><i class="icon icon-green-circle"></i> Finansal %24</span>
@@ -607,11 +634,11 @@
                     </div>
                     <div class="imalat-kalemi">
                         <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-1">
+                            <input type="checkbox" id="imalat-kalemi-check-3">
                         </div>
                         <div class="imalat-kalemi-progress">
                             <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
+                                <div class="imalat-kalemi-progress-title">Kalem - 3</div>
                                 <div class="imalat-kalemi-progress-info">
                                     <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
                                     <span><i class="icon icon-green-circle"></i> Finansal %24</span>
@@ -698,6 +725,21 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            $("input[type='checkbox']").on("change", function () {
+                $("input[type='checkbox']").prop("checked", false);
+                $(this).prop("checked", true);
+
+                $("#imalat-kalemi-select").val($(this).attr("id"));
+            });
+
+            $("#imalat-kalemi-select").on("change", function () {
+                $("input[type='checkbox']").prop("checked", false);
+                $("#" + $("#imalat-kalemi-select").val()).prop("checked", true)
+                console.log($("#imalat-kalemi-select").val())
+            })
+        </script>
 
 
 

@@ -14,22 +14,107 @@
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
-    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
-    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+        <!-- Konva.js ve PDF.js Kütüphaneleri -->
+    <script src="https://cdn.jsdelivr.net/npm/konva@8.3.7/konva.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+        <style>
 
+        #toolbar {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: max-content; 
+        }
+
+        /* Buton ve input stilleri */
+        #toolbar input[type="file"] {
+            display: none;
+        }
+        #toolbar label {
+            background-color: #052941;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+        #toolbar button {
+            background-color: #22D6B5;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #toolbar button:hover, #toolbar label:hover {
+            opacity: 0.8;
+        }
+        /* Responsive Düzen */
+        @media (max-width: 600px) {
+            #toolbar {
+                flex-direction: column;
+                align-items: center;
+            }
+            #toolbar label, #toolbar button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+               .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: 5% auto; /* Ekranın ortasında yer alması için */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 720px; /* Resim genişliğine uygun */
+            max-width: 90%; /* Responsive için maksimum genişlik */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-radius: 5px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+            text-decoration: none;
+        }
+        #captured-image {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+        }
+        #download-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        #download-link:hover {
+            opacity: 0.8;
+        }
+    </style>
 
 </head>
 
@@ -54,7 +139,7 @@
                             Admin</span> <i class="icon icon-caret"></i></a>
                     <ul class="sidebar-sub-menu">
                         <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
-                        <li><a href="#" class="sidebar-sub-item active">Altmenü...</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Altmenü...</a></li>
                         <li>
                             <a class="sidebar-sub-toggle" href="#"><span>AltAltmenü</span> <i
                                     class="icon icon-caret"></i></a>
@@ -148,10 +233,6 @@
             $(this).next('.sidebar-sub-menu').toggleClass("open");
             $(this).find('.icon-caret').toggleClass('rotate');
         });
-
-        if ($(window).width() <= 1000 && $(window).width() >= 420) {
-            sidebar.classList.add("sidebar-collapsed");
-        }
     </script>
 
     <header>
@@ -436,14 +517,13 @@
                                     <td>
                                         <div class="td-actions">
                                             <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                            <a onclick="openModal('delete-modal')" class="status-cancel"><i
+                                            <a href="#" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durum-yenile')">Durumu Yenile</a>
-                                                    <a onclick="openModal('ilerleme-durumunu-incele')">İlerleme Durumunu
-                                                        İncele</a>
+                                                    <a href="#">Durumu Yenile</a>
+                                                    <a href="#">İlerleme Durumunu İncele</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -476,14 +556,13 @@
                                     <td>
                                         <div class="td-actions">
                                             <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                            <a onclick="openModal('delete-modal')" class="status-cancel"><i
+                                            <a href="#" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durum-yenile')">Durumu Yenile</a>
-                                                    <a onclick="openModal('ilerleme-durumunu-incele')">İlerleme Durumunu
-                                                        İncele</a>
+                                                    <a href="#">Durumu Yenile</a>
+                                                    <a href="#">İlerleme Durumunu İncele</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -515,14 +594,13 @@
                                     <td>
                                         <div class="td-actions">
                                             <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                            <a onclick="openModal('delete-modal')" class="status-cancel"><i
+                                            <a href="#" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durum-yenile')">Durumu Yenile</a>
-                                                    <a onclick="openModal('ilerleme-durumunu-incele')">İlerleme Durumunu
-                                                        İncele</a>
+                                                    <a href="#">Durumu Yenile</a>
+                                                    <a href="#">İlerleme Durumunu İncele</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -556,14 +634,13 @@
                                     <td>
                                         <div class="td-actions">
                                             <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                            <a onclick="openModal('delete-modal')" class="status-cancel"><i
+                                            <a href="#" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durum-yenile')">Durumu Yenile</a>
-                                                    <a onclick="openModal('ilerleme-durumunu-incele')">İlerleme Durumunu
-                                                        İncele</a>
+                                                    <a href="#">Durumu Yenile</a>
+                                                    <a href="#">İlerleme Durumunu İncele</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -579,24 +656,13 @@
 
             </div>
 
-            <div class="large-stats-card-footer-actions">
-                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
-                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-zip"></i></a>
-                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
-            </div>
-
         </div>
 
         <script>
             let table = new DataTable('#tumu-table', {
                 paging: false,
                 searching: true,
-                info: false,
-                layout: {
-                    topStart: {
-                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                    }
-                }
+                info: false
             });
 
             $('.tab-navs-btn').on('click', function () {
@@ -721,161 +787,388 @@
             <div class="modal-header">
                 <div class="modal-title">Plan Konumu</div>
                 <div class="modal-actions">
-                    <a href="#" class="modal-action-primary"><i class="icon icon-pin"></i> Plan Konumunu Değiştir</a>
-                    <a href="#" class="modal-action-remove">Plan Konumunu Sil <i
-                            class="icon icon-action-delete"></i></a>
-                    <a onclick="closeModal('plan-konumu')" class="modal-close-btn"><i
-                            class="icon icon-modal-close"></i></a>
+                   <!-- <a href="#" class="modal-action-primary"><i class="icon icon-pin"></i> Plan Konumunu Değiştir</a>
+                    <a href="#" class="modal-action-remove">Plan Konumunu Sil <i class="icon icon-action-delete"></i></a>-->
+                                <!-- Araç Çubuğu -->
+                    <div id="toolbar">
+                        <label for="file-upload">Proje Resmi Yükle (PDF veya JPG/PNG)</label>
+                        <input type="file" id="file-upload" accept=".pdf,.jpg,.jpeg,.png"/>
+                        <button id="save-btn" class="modal-action-primary"><i class="icon icon-pin"></i>Pinleri Kaydet</button>
+                        <button id="capture-btn">Alanı Kırp ve Göster</button>
+                    </div>
+                    <a onclick="closeModal('plan-konumu')" class="modal-close-btn"><i class="icon icon-modal-close"></i></a>
                 </div>
             </div>
-        </div>
-    </div>
 
-
-    <div class="modal" id="delete-modal">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                Silmek istediğinize emin misiniz?
-            </div>
-            <div class="modal-body">
-                <form>
-                    <p>Bu işlemin geri dönüşü olmayacaktır.</p>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-danger" type="button">Evet, silinsin</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="durum-yenile">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                Durumu Yenile
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-element">
-                        <label for="durum">Durum</label>
-                        <select name="durum" id="durum">
-                            <option value="" selected disabled></option>
-                            <option value="Durum">Durum</option>
-                            <option value="Durum">Durum</option>
-                            <option value="Durum">Durum</option>
-                        </select>
-                    </div>
-                    <div class="form-element">
-                        <label for="aciliyet">Aciliyet</label>
-                        <select name="aciliyet" id="aciliyet">
-                            <option value="" selected disabled></option>
-                            <option value="Aciliyet">Aciliyet</option>
-                            <option value="Aciliyet">Aciliyet</option>
-                            <option value="Aciliyet">Aciliyet</option>
-                        </select>
-                    </div>
-                    <div class="form-element">
-                        <label for="aciklama">Açıklama</label>
-                        <textarea name="aciklama" id="aciklama"></textarea>
-                    </div>
-                    <div class="form-element">
-                        <label for="belge-yukle">Belge Yükle</label>
-
-                        <div class="file-input">
-                            <label for="belge-yukle">
-                                <img src="./content/images/illustration-upload.png">
-
-                                <button><i class="icon icon-file"></i> Dosya Seç</button>
-                            </label>
-
-                            <input type="file" name="belge-yukle" id="belge-yukle">
-                        </div>
-
-                        <ul class="fileList">
-                        </ul>
-                    </div>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Devam Et</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="ilerleme-durumunu-incele">
-        <div class="modal-inner" style="width: 500px;">
-            <div class="modal-header">
-                İlerleme Durumu
-            </div>
-            <div class="modal-body">
-                <div class="ilerleme-durumlari">
-                    <div class="ilerleme-durumu">
-                        <span>21.09.2024 10:00</span>
-                        <div class="ilerleme-durumu-content">
-                            İş emri oluşturuldu ve x x kişilerine ataması yapıldı
-                        </div>
-                    </div>
-                    <div class="ilerleme-durumu">
-                        <span>21.09.2024 10:00</span>
-                        <div class="ilerleme-durumu-content">
-                            İş emri oluşturuldu ve x x kişilerine ataması yapıldı
-                        </div>
-                    </div>
-                    <div class="ilerleme-durumu">
-                        <span>21.09.2024 10:00</span>
-                        <div class="ilerleme-durumu-content">
-                            İş emri oluşturuldu ve x x kişilerine ataması yapıldı
-
-                            <div class="ilerleme-durumu-dosyalar">
-                                <div class="ilerleme-durumu-dosya">
-                                    <span>Belges</span>
-                                    <img src="./content/images/oturum-belgesi.png">
-                                </div>
-                                <div class="ilerleme-durumu-dosya">
-                                    <span>Belge</span>
-                                    <img src="./content/images/oturum-belgesi.png">
-                                </div>
-                                <div class="ilerleme-durumu-dosya">
-                                    <span>Belge</span>
-                                    <img src="./content/images/oturum-belgesi.png">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ilerleme-durumu">
-                        <span>21.09.2024 10:00</span>
-                        <div class="ilerleme-durumu-content">
-                            İş emri oluşturuldu ve x x kişilerine ataması yapıldı
-                        </div>
-                    </div>
-                    <div class="ilerleme-durumu">
-                        <span>21.09.2024 10:00</span>
-                        <div class="ilerleme-durumu-content">
-                            İş emri oluşturuldu ve x x kişilerine ataması yapıldı
-                        </div>
-                    </div>
-                    <div class="ilerleme-durumu">
-                        <span>21.09.2024 10:00</span>
-                        <div class="ilerleme-durumu-content">
-                            İş emri oluşturuldu ve x x kişilerine ataması yapıldı
-                        </div>
-                    </div>
-                    <div class="ilerleme-durumu">
-                        <span>21.09.2024 10:00</span>
-                        <div class="ilerleme-durumu-content">
-                            İş emri oluşturuldu ve x x kişilerine ataması yapıldı
-                        </div>
+                <!-- Konva Container -->
+                <div id="container"></div>
+                <!-- Modal -->
+                <div id="capture-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn">&times;</span>
+                        <h3>Kırpılmış Alan:</h3>
+                        <img id="captured-image" src="" alt="Captured Area">
+                        <a id="download-link" href="#" download="captured_area.png">İndir</a>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 
+    <script>
+        // Konva Stage ve Layer'ları oluşturma
+        const stage = new Konva.Stage({
+            container: 'container',
+            width: window.innerWidth,
+            height: window.innerHeight,
+            draggable: true  // Panning
+        });
 
+        const gridLayer = new Konva.Layer();      // Izgara katmanı
+        const imageLayer = new Konva.Layer();     // PDF veya Resim katmanı
+        const pinLayer = new Konva.Layer();       // Pinler katmanı
 
+        // Katmanları doğru sırayla ekleyerek pinLayer'ın en üstte olmasını sağla
+        stage.add(gridLayer);
+        stage.add(imageLayer);
+        stage.add(pinLayer);
 
+        // Izgara çizme fonksiyonu
+        function drawGrid(layer, gridSize = 100) {
+            layer.destroyChildren(); // Önceki çizimleri temizle
+            const lines = [];
 
+            // Izgara alanını çok geniş tutarak "sonsuz" gibi görünmesini sağlıyoruz
+            const gridLimit = 10000; // Gridin genişliği ve yüksekliği
+
+            // Dikey çizgiler
+            for (let i = -gridLimit; i <= gridLimit; i += gridSize) {
+                lines.push(new Konva.Line({
+                    points: [i, -gridLimit, i, gridLimit],
+                    stroke: '#ddd', // Izgara çizgi rengi
+                    strokeWidth: 1
+                }));
+            }
+
+            // Yatay çizgiler
+            for (let j = -gridLimit; j <= gridLimit; j += gridSize) {
+                lines.push(new Konva.Line({
+                    points: [-gridLimit, j, gridLimit, j],
+                    stroke: '#ddd', // Izgara çizgi rengi
+                    strokeWidth: 1
+                }));
+            }
+
+            layer.add(...lines);
+            layer.batchDraw();
+        }
+
+        drawGrid(gridLayer, 100); // Izgara katmanını çiz
+
+        // Pin simgesi için SVG veri URI
+        const pinSVG = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path fill="red" d="M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5 14.5 7.6 14.5 9 13.4 11.5 12 11.5z"/>
+            </svg>
+        `;
+        const pinImageSrc = 'data:image/svg+xml;base64,' + btoa(pinSVG);
+
+        // Tek pin için referans
+        let currentPin = null;
+
+        // Pin ekleme fonksiyonu
+        function addPin(x, y) {
+            // Önceki pin varsa sil
+            if (currentPin) {
+                currentPin.destroy();
+                currentPin = null;
+            }
+
+            const pin = new Konva.Image({
+                x: x - 12,  // Centering (pin genişliği yarısı)
+                y: y - 24,  // Adjust to show tip (pin yüksekliği)
+                width: 24,
+                height: 24,
+                image: new Image(),
+                draggable: false  // Pin sürüklenemez
+            });
+
+            const img = new Image();
+            img.onload = () => {
+                pin.image(img);
+                pinLayer.add(pin);
+                pinLayer.batchDraw();
+                currentPin = pin; // Yeni pin referansını güncelle
+            };
+            img.src = pinImageSrc;
+
+            // Sağ tıklama ile pin silme (masaüstü)
+            pin.on('contextmenu', function(e) {
+                e.evt.preventDefault();
+                pin.destroy();
+                pinLayer.batchDraw();
+                currentPin = null;
+            });
+
+            // Uzun basma ile pin silme (mobil)
+            pin.on('touchstart', function(e) {
+                if (e.evt.touches && e.evt.touches.length > 1) return; // Çoklu dokunuşları yoksay
+                // Uzun basma algılama
+                const duration = 500; // 500ms uzun basma
+                let timer;
+
+                const touchMoveHandler = () => {
+                    clearTimeout(timer);
+                };
+
+                const touchEndHandler = () => {
+                    clearTimeout(timer);
+                    window.removeEventListener('touchmove', touchMoveHandler);
+                    window.removeEventListener('touchend', touchEndHandler);
+                };
+
+                window.addEventListener('touchmove', touchMoveHandler);
+                window.addEventListener('touchend', touchEndHandler);
+
+                timer = setTimeout(() => {
+                    pin.destroy();
+                    pinLayer.batchDraw();
+                    currentPin = null;
+                    window.removeEventListener('touchmove', touchMoveHandler);
+                    window.removeEventListener('touchend', touchEndHandler);
+                }, duration);
+            });
+        }
+
+        // Stage'in scale ve position bilgilerine göre içerik koordinatlarını hesaplama
+        function getTransformedPointerPosition() {
+            const pointer = stage.getPointerPosition();
+            if (!pointer) return null;
+            const transform = stage.getAbsoluteTransform().copy().invert();
+            return transform.point(pointer);
+        }
+
+        // Pin ekleme fonksiyonu - Sahneye tıklama veya dokunma
+        stage.on('click tap', function(e) {
+            // Dragging olmadığında pin ekle
+            if (!stage.isDragging()) {
+                const pos = getTransformedPointerPosition();
+                if (pos) {
+                    addPin(pos.x, pos.y);
+                }
+            }
+        });
+
+        // Zoom işlevi - Konva.js örneğinden uyarlanmıştır
+        stage.on('wheel', (e) => {
+            e.evt.preventDefault();
+            const oldScale = stage.scaleX();
+            const pointer = stage.getPointerPosition();
+
+            const scaleBy = 1.1;
+            let newScale = e.evt.deltaY > 0 ? oldScale / scaleBy : oldScale * scaleBy;
+            newScale = Math.max(0.1, Math.min(newScale, 10)); // Zoom sınırları
+
+            stage.scale({ x: newScale, y: newScale });
+
+            // Zoom odak noktası
+            const mousePointTo = {
+                x: (pointer.x - stage.x()) / oldScale,
+                y: (pointer.y - stage.y()) / oldScale,
+            };
+
+            const newPos = {
+                x: pointer.x - mousePointTo.x * newScale,
+                y: pointer.y - mousePointTo.y * newScale,
+            };
+            stage.position(newPos);
+            stage.batchDraw();
+
+            // Pinlerin ölçeğini sabit tutmak için her zoom işleminde pinleri ters orantılı ölçeklendir
+            if (currentPin) {
+                currentPin.scale({ x: 1 / newScale, y: 1 / newScale });
+                pinLayer.batchDraw();
+            }
+        });
+
+        // PDF yükleme fonksiyonu
+        async function loadPDF(file) {
+            try {
+                const fileReader = new FileReader();
+                fileReader.onload = async function(event) {
+                    const typedArray = new Uint8Array(event.target.result);
+                    const pdf = await pdfjsLib.getDocument(typedArray).promise;
+                    console.log("PDF Yüklendi:", pdf);
+
+                    const page = await pdf.getPage(1);  // İlk sayfayı yükle
+
+                    const scale = 1.5;  // Performans için ölçek
+                    const viewport = page.getViewport({ scale: scale });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    await page.render(renderContext).promise;
+                    console.log("PDF Render Edildi.");
+
+                    // PDF'in canvas'ını Konva sahnesine ekle
+                    const pdfImage = new Konva.Image({
+                        x: 0,
+                        y: 0,
+                        image: canvas,
+                        width: viewport.width,
+                        height: viewport.height,
+                        draggable: false,
+                    });
+
+                    imageLayer.destroyChildren(); // Önceki görüntüyü sil
+                    imageLayer.add(pdfImage);
+                    imageLayer.batchDraw();
+                };
+                fileReader.readAsArrayBuffer(file);
+            } catch (error) {
+                console.error("PDF Yükleme Hatası:", error);
+                alert("PDF dosyası yüklenemedi. Lütfen geçerli bir PDF dosyası yükleyin.");
+            }
+        }
+
+        // Resim yükleme fonksiyonu
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const konvaImage = new Konva.Image({
+                        x: 0,
+                        y: 0,
+                        image: img,
+                        width: img.width,
+                        height: img.height,
+                        draggable: false,
+                    });
+                    imageLayer.destroyChildren(); // Önceki görüntüyü sil
+                    imageLayer.add(konvaImage);
+                    imageLayer.batchDraw();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Dosya yükleme işlemi
+        document.getElementById('file-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.type === 'application/pdf') {
+                    loadPDF(file);
+                } else if (file.type.startsWith('image/')) {
+                    loadImage(file);
+                } else {
+                    alert("Lütfen geçerli bir PDF veya resim dosyası yükleyin!");
+                }
+            }
+        });
+
+        // Kaydet butonu - pin koordinatlarını kaydetme
+        document.getElementById('save-btn').addEventListener('click', function() {
+            if (currentPin) {
+                const pinData = {
+                    x: currentPin.x(),
+                    y: currentPin.y(),
+                };
+                console.log('Pin Bilgileri:', JSON.stringify(pinData));
+                alert('Pin başarıyla kaydedildi! Konsolu kontrol edin.');
+            }
+            else{
+                alert("Henüz pin eklenmedi.");
+            }
+        });
+
+        // Pencere yeniden boyutlandırıldığında sahneyi yeniden ayarlama
+        window.addEventListener('resize', function() {
+            stage.width(window.innerWidth);
+            stage.height(window.innerHeight);
+            drawGrid(gridLayer, 100); // Izgara katmanını yeniden çiz
+            imageLayer.batchDraw();
+            pinLayer.batchDraw();
+        });
+
+        // Modal kontrolü
+        const modal = document.getElementById('capture-modal');
+        const closeBtn = document.querySelector('.close-btn');
+
+        // Modalı kapatma fonksiyonu
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Modal dışında tıklayınca kapatma
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Area Capture (700x250 px) fonksiyonu
+        document.getElementById('capture-btn').addEventListener('click', function() {
+            if (!currentPin) {
+                alert("Lütfen bir pin ekleyin.");
+                return;
+            }
+
+            // Pin'in sahnedeki tam konumunu al
+            const pinStagePos = currentPin.getAbsolutePosition();
+            if (!pinStagePos) {
+                alert("Pin pozisyonu alınamadı.");
+                return;
+            }
+            const pinStageX = pinStagePos.x;
+            const pinStageY = pinStagePos.y;
+
+            console.log(`Pin'in stage koordinatları: (${pinStageX}, ${pinStageY})`);
+
+            // 700x250 px'lik alanın sol üst köşesini hesapla (pin merkezde olacak)
+            const captureWidth = 700;
+            const captureHeight = 250;
+            let captureX = pinStageX - (captureWidth / 2);
+            let captureY = pinStageY - (captureHeight / 2);
+
+            console.log(`Kırpılacak alanın sol üst köşesi: (${captureX}, ${captureY})`);
+
+            // Kırpılacak alanın stage sınırları içinde kalmasını sağla
+            captureX = Math.max(0, Math.min(captureX, stage.width() - captureWidth));
+            captureY = Math.max(0, Math.min(captureY, stage.height() - captureHeight));
+
+            console.log(`Sınırlandırılmış kırpma koordinatları: (${captureX}, ${captureY})`);
+
+            // stage.toDataURL ile tüm katmanları dahil ederek kırp
+            stage.toDataURL({
+                x: captureX,
+                y: captureY,
+                width: captureWidth,
+                height: captureHeight,
+                pixelRatio: 1,
+                callback: function(dataURL) {
+                    // PNG oluştur ve göster
+                    const capturedImage = document.getElementById('captured-image');
+                    capturedImage.src = dataURL;
+
+                    // İndirme linkini güncelle
+                    const downloadLink = document.getElementById('download-link');
+                    downloadLink.href = dataURL;
+                    downloadLink.download = 'captured_area.png';
+
+                    // Modalı göster
+                    modal.style.display = "block";
+                }
+            });
+        });
+    </script>
     <script>
         function openModal(modalID, close = true) {
             if (close) {

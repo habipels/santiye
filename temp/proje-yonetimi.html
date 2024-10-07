@@ -14,7 +14,20 @@
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
 </head>
@@ -134,6 +147,10 @@
             $(this).next('.sidebar-sub-menu').toggleClass("open");
             $(this).find('.icon-caret').toggleClass('rotate');
         });
+
+        if ($(window).width() <= 1000 && $(window).width() >= 420) {
+            sidebar.classList.add("sidebar-collapsed");   
+        }
     </script>
 
     <header>
@@ -391,13 +408,24 @@
                 </table>
             </div>
 
+            <div class="large-stats-card-footer-actions">
+                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-zip"></i></a>
+                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+            </div>
+
         </div>
 
         <script>
             let datatable = new DataTable('#datatable', {
                 paging: false,
                 searching: true,
-                info: false
+                info: false,
+                layout: {
+                    topStart: {
+                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    }
+                }
             });
 
 
@@ -448,8 +476,10 @@
 
 
     <script>
-        function openModal(modalID) {
-            closeModal();
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
             $("#" + modalID).css("display", "flex").hide().fadeIn()
         }
 

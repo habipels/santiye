@@ -14,7 +14,20 @@
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
 </head>
@@ -56,7 +69,8 @@
                 <li><a href="#"><i class="icon icon-document"></i> <span>Raporlar</span> </a></li>
 
                 <li>
-                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>Şantiye Yönetimi</span> <i class="icon icon-caret"></i></a>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>Şantiye
+                            Yönetimi</span> <i class="icon icon-caret"></i></a>
                     <ul class="sidebar-sub-menu">
                         <li><a href="#" class="sidebar-sub-item">Proje Yönetimi</a></li>
                         <li><a href="#" class="sidebar-sub-item">Görevler</a></li>
@@ -80,23 +94,27 @@
                 <li><a href="#"><i class="icon icon-notifications"></i> <span>Bildirimler</span> </a></li>
 
                 <li>
-                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-settings"></i> <span>Ayarlar</span> <i class="icon icon-caret"></i></a>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-settings"></i> <span>Ayarlar</span> <i
+                            class="icon icon-caret"></i></a>
                     <ul class="sidebar-sub-menu">
                         <li>
-                            <a class="sidebar-sub-toggle" href="#"><span>Kullanıcı Ayarları</span> <i class="icon icon-caret"></i></a>
+                            <a class="sidebar-sub-toggle" href="#"><span>Kullanıcı Ayarları</span> <i
+                                    class="icon icon-caret"></i></a>
                             <ul class="sidebar-sub-menu">
                                 <li><a href="#" class="sidebar-sub-item">...</a></li>
                             </ul>
                         </li>
                         <li>
-                            <a class="sidebar-sub-toggle" href="#"><span>Şantiye Ayarları</span> <i class="icon icon-caret"></i></a>
+                            <a class="sidebar-sub-toggle" href="#"><span>Şantiye Ayarları</span> <i
+                                    class="icon icon-caret"></i></a>
                             <ul class="sidebar-sub-menu">
                                 <li><a href="#" class="sidebar-sub-item">Proje Tipi</a></li>
                                 <li><a href="#" class="sidebar-sub-item">Şantiye</a></li>
                             </ul>
                         </li>
                         <li>
-                            <a class="sidebar-sub-toggle" href="#"><span>Muhasebe Ayarları</span> <i class="icon icon-caret"></i></a>
+                            <a class="sidebar-sub-toggle" href="#"><span>Muhasebe Ayarları</span> <i
+                                    class="icon icon-caret"></i></a>
                             <ul class="sidebar-sub-menu">
                                 <li><a href="#" class="sidebar-sub-item">...</a></li>
                             </ul>
@@ -129,6 +147,10 @@
             $(this).next('.sidebar-sub-menu').toggleClass("open");
             $(this).find('.icon-caret').toggleClass('rotate');
         });
+
+        if ($(window).width() <= 1000 && $(window).width() >= 420) {
+            sidebar.classList.add("sidebar-collapsed");
+        }
     </script>
 
     <header>
@@ -305,7 +327,7 @@
                 </div>
                 <div class="profile-title">
                     <span>Welcome back 👋</span>
-                    Johnathan
+                    Johnathan William
                 </div>
                 <i class="icon icon-chevron-bottom"></i>
             </div>
@@ -1096,21 +1118,33 @@
                     paging: false,
                     searching: false,
                     info: false,
-                    // responsive: true
+                    layout: {
+                        topStart: {
+                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                        }
+                    }
                 });
 
                 let borcfaturalar = new DataTable('#borc-faturalar', {
                     paging: false,
                     searching: false,
                     info: false,
-                    // responsive: true
+                    layout: {
+                        topStart: {
+                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                        }
+                    }
                 });
 
                 let gorevler = new DataTable('#gorevler', {
                     paging: false,
                     searching: false,
                     info: false,
-                    // responsive: true
+                    layout: {
+                        topStart: {
+                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                        }
+                    }
                 });
             </script>
 
