@@ -1,346 +1,57 @@
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load custom_tags %}
+{% load static %}
 {% block sidebar %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
-<style>/* Global Styles for BiadaGO ERP */
-    /* Modal CSS */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 400px;
-            margin: auto;
-        }
-        .close {
-            float: right;
-            cursor: pointer;
-        }
-        /* Kategori Listbox ve Input Uyumu */
-        .filter-section input, .filter-section select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        .filter-section select {
-            width: auto;
-        }
+    <main>
 
-        /* Düzenleme Modalı CSS */
-        #editProductForm input, #editProductForm select, #stockTransactionForm input, #stockTransactionForm select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        #editProductForm button, #stockTransactionForm button {
-            padding: 10px;
-            background-color: #24d6b5;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        /* Stok Tablosu */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #042940;
-            color: white;
-        }
 
-        /* İşlem Türü Listbox CSS */
-        #transactionType {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 100%;
-            font-size: 16px;
-        }
-    /* Color Variables */
-    :root {
-        --primary-color: #24d6b5;
-        --secondary-color: #042940;
-        --text-color: #333;
-        --background-color: #fff;
-        --border-color: #e0e0e0;
-        --modal-background: rgba(0, 0, 0, 0.6);
-        --transition-duration: 0.3s;
-        --button-radius: 4px;
-        --font-family: 'Arial', sans-serif;
-    }
-    
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Zimmet' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Satın Alma ve Stok' %}</a></li>
+                    <li><a href="#">{% trans 'Zimmet' %}</a></li>
+                </ul>
+            </div>
 
-    
-    h1 {
-        color: var(--primary-color);
-        margin-bottom: 20px;
-        font-size: 24px;
-    }
-    
-    button {
-        background-color: var(--primary-color);
-        color: #fff;
-        border: none;
-        border-radius: var(--button-radius);
-        padding: 10px 20px;
-        cursor: pointer;
-        transition: background-color var(--transition-duration);
-    }
-    
-    button:hover {
-        background-color: #042940;  /* Arka plan beyaz olduğunda */
-        color: #24d6b5;  /* Yazı rengi düzeltiliyor */
-    }
-    
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    .flex-row {
-        display: flex;
-        flex-direction: row;
-        gap: 20px;
-    }
-    
-    .flex-column {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .space-between {
-        justify-content: space-between;
-    }
-    
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
-    
-    th, td {
-        border: 1px solid var(--border-color);
-        padding: 10px;
-        text-align: left;
-    }
-    
-    th {
-        background-color: var(--secondary-color);
-        color: #fff;
-    }
-    
-    /* Modals - updated design for cleaner form layout */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
-        justify-content: center;
-        align-items: center;
-        z-index: 999;
-    }
-    
-    .modal-content {
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 8px;
-        width: 90%;
-        max-width: 600px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        position: relative;
-    }
-    
-    .modal-content h2 {
-        font-size: 22px;
-        color: #042940;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-    
-    .modal-content form {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .modal-content label {
-        font-weight: bold;
-        color: #042940;
-        margin-bottom: 5px;
-    }
-    
-    .modal-content input,
-    .modal-content textarea {
-        padding: 12px;
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        width: 100%;
-        font-size: 16px;
-    }
-    
-    .modal-content textarea {
-        resize: vertical;
-        min-height: 100px;
-    }
-    
-    .modal-content .flex-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-    }
-    
-    .modal-content .cancel-btn {
-        background-color: #042940;
-        padding: 10px 20px;
-        color: white;
-        border-radius: 4px;
-    }
-    
-    .close {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        font-size: 20px;
-        cursor: pointer;
-    }
-    
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .flex-row {
-            flex-direction: column;
-        }
-    
-        .modal-content {
-            padding: 20px;
-            max-width: 90%;
-        }
-    
-        .modal-content h2 {
-            font-size: 20px;
-        }
-    }
-    
-    
-    .close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 20px;
-        cursor: pointer;
-    }
-    
-    .cancel-btn {
-        background-color: var(--secondary-color);
-        color: white;
-        border-radius: var(--button-radius);
-    }
-    
-    .cancel-btn:hover {
-        background-color: darken(var(--secondary-color), 10%);
-    }
-    
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .flex-row {
-            flex-direction: column;
-        }
-    
-        h1 {
-            font-size: 20px;
-        }
-    
-        button {
-            padding: 8px 16px;
-        }
-    
-        table, thead, tbody, th, td, tr {
-            display: block;
-        }
-    
-        thead {
-            display: none;
-        }
-    
-        tr {
-            margin-bottom: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--button-radius);
-            padding: 20px;
-        }
-    
-        td {
-            padding: 10px;
-            border: none;
-            background-color: #f9f9f9;
-            margin-bottom: 10px;
-            border-radius: var(--button-radius);
-        }
-    
-        td::before {
-            content: attr(data-label);
-            font-weight: bold;
-            color: var(--primary-color);
-            display: block;
-            margin-bottom: 5px;
-        }
-    }
-    </style>
-<div class="main-content">
-        <div class="page-content">
+            <div class="page-actions">
+                <button class="page-primary-btn" onclick="openModal('zimmet-olustur')"><i class="icon icon-new"></i>Yeni
+                    {% trans 'Teslim ve Zimmet Oluştur' %}</button>
+            </div>
+        </div>
 
-<div class="container">
-    <h1>Malzeme Teslim ve Zimmet</h1>
-    <div class="flex-row space-between">
-        <button onclick="openModal('createZimmetModal')">Yeni Teslim ve Zimmet Oluştur</button>
-    </div>
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Satın Alma' %}</div>
+                <div class="stats-right">
+                    <div class="stats-search">
+                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                        <button><i class="icon icon-search"></i></button>
+                    </div>
+                </div>
+            </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Zimmet ID</th>
-                <th>Personel</th>
-                <th>Malzeme</th>
-                <th>Miktar</th>
-                <th>Teslim Tarihi</th>
-                <th>Durum</th>
-                <th>Aksiyonlar</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in urun_kategorisi %}
+            <div class="table-wrapper">
+                <table id="tumu-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Zimmet ID' %}</th>
+                            <th>{% trans 'Personel' %}</th>
+                            <th>{% trans 'Malzeme' %}</th>
+                            <th>{% trans 'Miktar' %}</th>
+                            <th>{% trans 'Teslim Tarihi' %}</th>
+                            <th>{% trans 'Durum' %}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                     {% for i in urun_kategorisi %}
             <tr>
                 <td data-label="{% trans 'ID' %}">{{i.id}}</td>
                 <td data-label="{% trans 'Personel' %}">{{i.zimmet_alan_personel.isim}} {{i.zimmet_alan_personel.soyisim}}</td>
@@ -349,117 +60,250 @@
                 <td data-label="{% trans 'Teslim Tarihi' %}">{{i.zimmet_verilis_tarihi | date:'d.m.Y' }}</td>
                 <td data-label="{% trans 'Durum' %}">
                 {% if i.zimmet_durumu == "0" %}
-                {% trans 'Zimmet Verildi' %}
+                <div class="td-info"><span class="status-danger stats-lg">{% trans 'Zimmet Verildi' %}</span></div>
+                
                 {% elif i.zimmet_durumu == "1" %}
-                    {% trans 'Teslim Alındı' %}
+                <div class="td-info"><span class="status-success stats-lg">{% trans 'Teslim Alındı' %}</span></div>   
                 {% else %}
-                {% trans 'Hasarlı Alındı' %}
+                <div class="td-info"><span class="status-warning stats-lg">{% trans 'Hasarlı Alındı' %}</span></div>
+                
                 {% endif %}
                 </td>
                 <td data-label="{% trans 'Aksiyonlar' %}">
+                
                 {% if i.zimmet_durumu == "0" %}
-                    <button onclick="zimmet_gonder('{{i.id}}')">{% trans 'Görüntüle' %}</button>
+                <div class="td-actions">
+                                    <a class="status-info"><i class="icon icon-action-file"></i></a>
+                                    <a onclick="zimmet_gonder('{{i.id}}')" class="status-view"><i
+                                            class="icon icon-view"></i></a>
+                                </div>
+                    
                 {% else %}
-                    <button onclick="zimmet_gonder('{{i.id}}')">{% trans 'Görüntüle' %}</button>
+                <div class="td-actions">
+                                    <a class="status-info"><i class="icon icon-action-file"></i></a>
+                                    <a onclick="zimmet_gonder('{{i.id}}')" class="status-view"><i
+                                            class="icon icon-view"></i></a>
+                                </div>
+                    
                     
                 {% endif %}
-                {% if i.zimet_teslim_belgesi %}
+                <!--{% if i.zimet_teslim_belgesi %}
                
                 {% else %}
                 <button onclick="openModal('uploadSignedDocumentModal')">{% trans 'Belge Yükle' %}</button>
-                {% endif %}
+                {% endif %}-->
                     
                 </td>
             </tr>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
-</div>
-</div>
 
-<!-- Create Zimmet Modal -->
-<div id="createZimmetModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('createZimmetModal')">&times;</span>
-        <h2>{% trans 'Yeni Teslim ve Zimmet Oluştur' %}</h2>
-<form id="createZimmetForm" action="/{{dil}}{% url 'accounting:zimmet_ekle' %}" method="POST">
-    {% csrf_token %}
-    <div class="flex-column">
-        <label for="personel">{% trans 'Personel' %}:</label>
-        <select id="personel" name="personel">
-            {% for i in personeller %}
-                <option value="{{i.id}}">{{i.isim}} {{i.soyisim}}</option>
-            {% endfor %}
-        </select>
-        
-        
-        <label for="malzeme">{% trans 'Malzeme' %}:</label>
-        <select id="malzeme" name="malzeme">
-            {% for i in santiyeler %}
-                <option value="{{i.id}}">{{i.urun_adi}}</option>
-            {% endfor %}
-        </select>
-        
-        <label for="miktar">{% trans 'Miktar' %}:</label>
-        <input type="number" id="miktar" name="miktar" placeholder="{% trans 'Malzeme miktarı' %}">
-        
-        <label for="teslimTarihi">{% trans 'Teslim Tarihi' %}:</label>
-        <input type="date" id="teslimTarihi" name="teslimTarihi">
-        
-        <div class="flex-row space-between">
-            <button type="submit" >{% trans 'Kaydet' %}</button>
-            <button type="button" onclick="generatePDF(event)">{% trans 'PDF Oluştur' %}</button>
-            <button type="button" class="cancel-btn" onclick="closeModal('createZimmetModal')">{% trans 'İptal' %}</button>
+                    </tbody>
+                </table>
+
+
+
+            </div>
+
         </div>
-    </div>
-</form>
 
-    </div>
-</div>
+        <script>
+            let table = new DataTable('#tumu-table', {
+                paging: false,
+                searching: true,
+                info: false
+            });
 
-<!-- Zimmet Detay Modal -->
-<div id="zimmetDetailModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('zimmetDetailModal')">&times;</span>
-        <h2>{% trans 'Zimmet Detayları' %}</h2>
-        <div class="flex-column">
-            <p><strong>{% trans 'Personel' %}:</strong> <span id="isim"></span></p>
-            <p><strong>{% trans 'Malzeme' %}:</strong> <span id="urun"></span></p>
-            <p><strong>{% trans 'Miktar' %}:</strong> <span id="adet"></span></p>
-            <p><strong>{% trans 'Teslim Tarihi' %}:</strong> <span id="verilis"></span></p>
-            <p><strong>{% trans 'Teslim Alma Tarihi' %}:</strong> <span id="alis"></span></p>
-            <p><strong>{% trans 'Durum' %}:</strong> <span id="durumu"></span></p>
+            $('.tab-navs-btn').on('click', function () {
+                $(".tab-navs-btn").removeClass("active");
+                $(this).addClass("active");
+
+                if ($(this).attr("data-tab") == "Tümü") {
+                    table.search('').columns().search('').draw();
+                } else {
+                    table.column(7).search($(this).attr("data-tab")).draw();
+                }
+
+            });
+
+
+
+            $('#stats-search').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+
+
+    <div class="modal" id="zimmet-detay">
+        <div class="modal-inner" style="width: 724px;">
+            <div class="modal-header">
+            {% trans 'Zimmet Detay' %}
+                
+            </div>
+            <div class="modal-body">
+                <div class="employee-details-modal-header">
+                    <div class="employee-details-modal-header-info">
+                        <img id="resimi" src="./content/images/avatar-2.png">
+                        <span id="isim"></span>
+                    </div>
+                </div>
+
+                <div class="employee-modal-infos" style="margin-top: 20px;">
+                    <div class="employee-modal-info"><span>{% trans 'Malzeme' %}: </span> <span id="urun"></span></div>
+                    <div class="employee-modal-info"><span>{% trans 'Miktar' %}:</span> <span id="adet"></span></div>
+                    <div class="employee-modal-info"><span>{% trans 'Teslim Tarihi' %}: </span> <span id="verilis"></span></div>
+                    <div class="employee-modal-info"><span>{% trans 'Teslim Alma Tarihi' %}:</span>  <span id="alis"></span></div>
+                    <div class="employee-modal-info"><span>{% trans 'Durum' %}:</span><span id="durumu"></span></p>
             <p id="teslim_al">
                 
-            </p>
-        </div>
-    </div>
-</div>
+            </p></div>
+                </div>
 
-<!-- Upload Signed Document Modal -->
-<div id="uploadSignedDocumentModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('uploadSignedDocumentModal')">&times;</span>
-        <h2>{% trans 'İmzalı Belge Yükle' %}</h2>
-        <form id="uploadSignedDocumentForm">
-            <div class="flex-column">
-                <label for="signedDocument">{% trans 'İmzalı Belge' %}:</label>
-                <input type="file" id="signedDocument" name="signedDocument" accept=".pdf,.jpg,.jpeg,.png">
-
-                <div class="flex-row space-between">
-                    <button type="submit">{% trans 'Belge Yükle' %}</button>
-                    <button type="button" class="cancel-btn" onclick="closeModal('uploadSignedDocumentModal')">{% trans 'İptal' %}</button>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal('zimmet-detay')">Vazgeç</button>
+                    <button class="form-action-primary" type="button">Hasarlı Teslim Alındı</button>
+                    <button class="form-action-highlight" type="button">Teslim Alındı</button>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+
+
+
+
+    <div class="modal" id="zimmet-olustur">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+               {% trans 'Yeni Teslim ve Zimmet Oluştur' %}
+            </div>
+            <div class="modal-body">
+               <form id="createZimmetForm" action="/{{dil}}{% url 'accounting:zimmet_ekle' %}" method="POST">
+                {% csrf_token %}
+                    <div class="form-element">
+                        <input type="hidden" name="personel" name="personel-id" id="personel-id">
+
+                        <label style="margin-bottom: 6px;">{% trans 'Personel Seç' %}</label>
+                        <div class="personel-secimi">
+                            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+                            <span></span>
+                        </div>
+                        <div class="personel-secimi-listesi ">
+                        {% for i in personeller %}
+                        <div class="personel-secimi-listesi-item" data-personel-id="{{i.id}}">
+                                {% if i.profile %}
+                                    <img src="{{i.profile.url}}">
+                                {% else %}
+                                <img src="{% static 'go/content/images/avatar-2.png' %}">
+                                {% endif %}
+                                
+                                <span>{{i.isim}} {{i.soyisim}}</span>
+                            </div>
+               
+                        {% endfor %}
+                          
+                        </div>
+
+                        <script>
+                            $(".personel-secimi").on("click", function () {
+                                $(".personel-secimi-listesi").toggleClass("open");
+                            })
+
+                            $(".personel-secimi-listesi-item").on("click", function () {
+                                $(".personel-secimi img").attr("src", $(this).children("img").attr("src"));
+                                $(".personel-secimi span").text($(this).children("span").text());
+                                $("#personel-id").val($(this).attr("data-personel-id"));
+                                $(".personel-secimi-listesi").removeClass("open");
+                            })
+                        </script>
+                    </div>
+                    <div class="form-element">
+                        <label for="malzeme">{% trans 'Malzeme' %}:</label>
+                        <select id="malzeme" required name="malzeme">
+                            {% for i in santiyeler %}
+                                <option value="{{i.id}}">{{i.urun_adi}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="miktar">{% trans 'Miktar' %}:</label>
+        <input type="number" id="miktar" required name="miktar" placeholder="{% trans 'Malzeme miktarı' %}">
+                    </div>
+                    <div class="form-element">
+                       <label required for="teslimTarihi">{% trans 'Teslim Tarihi' %}:</label>
+        <input type="date" id="teslimTarihi" name="teslimTarihi">
+                    </div>
+                    <div class="form-actions">
+                      
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'İptal' %}</button>
+                        <button class="form-action-highlight"  type="button" onclick="generatePDF(event)">{% trans 'PDF Oluştur' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+
+
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 <script>
     function zimmet_gonder(faturaId) {
         fetch(`/accounting/zimmet/${faturaId}/`)
             .then(response => response.json())
             .then(data => { 
+                document.getElementById("resimi").src = data.resim;
                 document.getElementById("isim").textContent = data.personel;
                 document.getElementById("urun").textContent = data.urun;
                 document.getElementById("adet").textContent = data.adet;
@@ -469,7 +313,7 @@
                 // Durum kontrolü
                 if (data.durum == "0") {
                     document.getElementById("durumu").textContent = "{% trans 'Teslim Verildi' %}";
-                    document.getElementById("teslim_al").innerHTML = `
+                    document.getElementsByClassName("form-actions").innerHTML = `
                         <a id="teslim_alma" href="/{{dil}}/accounting/teslim/${data.id}/1/">{% trans 'Teslim Alındı' %}</a>
                         <a href="/{{dil}}/accounting/teslim/${data.id}/2/">{% trans 'Hasarlı Teslim Alındı' %}</a>
                         <button onclick="closeModal('zimmetDetailModal')">{% trans 'İptal' %}</button>`;
@@ -481,7 +325,7 @@
                     document.getElementById("teslim_al").innerHTML = ''; // Hasarlı teslim alındıysa linkleri gizliyoruz
                 }
 
-                document.getElementById("zimmetDetailModal").style.display = 'flex';
+                document.getElementById("zimmet-detay").style.display = 'flex';
             });
     }
 </script>

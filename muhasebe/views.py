@@ -4778,16 +4778,30 @@ def zimmeti_teslim_Al(request,id,iz):
 def zimmet(request,id):
     if True:
         kalem = get_object_or_none(zimmet_olayi , id = id)
-        fatura_data = {
-            "id" : id,
-                "urun":kalem.zimmet_verilen_urun.urun_adi,
-                "personel": str(kalem.zimmet_alan_personel.isim) +" "+str(kalem.zimmet_alan_personel.soyisim),
-                "adet": str(kalem.zimmet_miktari),
-                "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
-                "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y") if kalem.zimmet_teslim_edilme_tarihi else "" ,
-                "durum":kalem.zimmet_durumu,
-                
-        }
+        if kalem.zimmet_alan_personel.profile:
+            fatura_data = {
+                "id" : id,
+                "resim" : kalem.zimmet_alan_personel.profile.url,
+                    "urun":kalem.zimmet_verilen_urun.urun_adi,
+                    "personel": str(kalem.zimmet_alan_personel.isim) +" "+str(kalem.zimmet_alan_personel.soyisim),
+                    "adet": str(kalem.zimmet_miktari),
+                    "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
+                    "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y") if kalem.zimmet_teslim_edilme_tarihi else "" ,
+                    "durum":kalem.zimmet_durumu,
+                    
+            }
+        else:
+            fatura_data = {
+                "id" : id,
+                "resim" : "0",
+                    "urun":kalem.zimmet_verilen_urun.urun_adi,
+                    "personel": str(kalem.zimmet_alan_personel.isim) +" "+str(kalem.zimmet_alan_personel.soyisim),
+                    "adet": str(kalem.zimmet_miktari),
+                    "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
+                    "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y") if kalem.zimmet_teslim_edilme_tarihi else "" ,
+                    "durum":kalem.zimmet_durumu,
+                    
+            }
         return JsonResponse(fatura_data)
 
 def avans_maas(request):
