@@ -157,6 +157,8 @@ urlpatterns = [#
     path("yukleme2/<int:id>", views.gelirleri_excelden_ekle, name="gelirleri_excelden_ekle"),
     path("pageshow", views.sayfa_denemeleri, name="sayfa_denemeleri"),
     path("notifications", views.bildirimler, name="bildirimler"),
+    #katmanlar
+    path("layer/<int:id>/", views.katman_sayfasi, name="katman_sayfasi"),
 
 ]
 #
