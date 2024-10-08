@@ -52,6 +52,15 @@ class santiye_kalemleri(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class katman(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    kalem_bilgisi = models.ForeignKey(santiye_kalemleri,verbose_name="Kalem Ait Olduğu",blank=True,null=True,on_delete=models.CASCADE)
+    blog_bilgisi = models.ForeignKey(bloglar,verbose_name="Blog Ait Olduğu",blank=True,null=True,on_delete=models.CASCADE)
+    katman_dosyasi = models.FileField(upload_to='katman_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class santiye_kalemlerin_dagilisi (models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.CASCADE)
