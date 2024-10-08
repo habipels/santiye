@@ -122,7 +122,84 @@
             </div>
            
             <div class="tab-content" id="yapilar">
-                
+                <div class="temizle" >
+                    <div class="table-wrapper">
+                        <table id="yapilar-table">
+                            <thead>
+                                <tr>
+                                    
+                                                    <th class="sort" data-sort="email">{% trans 'Şantiye Adı' %} </th>
+                                                    <th class="sort" data-sort="email">{% trans 'Kalem Adı'  %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Şantiye Ağırlığı' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Finansal Ağırlığı' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Birim' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Metraj' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Tutar' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Yapı Bilgisi' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %} </th>
+                                                    <th class="sort" data-sort="date">{% trans 'Durum' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="kalemler">
+                                <div class="div">
+                                    {% for i in santiyeler %}
+                                    <tr id="{{i.id}}">
+                                        <td>{{i.proje_ait_bilgisi.first_name}}</td>
+                                        <td>{{i.proje_adi}}</td>
+                                        <td>{{i.proje_tipi.Proje_tipi_adi}}</td>
+                                        <td>
+                                            +{% bloglar_getir i %}
+                                            <div class="td-actions">
+                                                <a href="#" class="status-info stats-lg"><i class="icon icon-add"></i> Yapı Ekle</a>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            + {% kalemler_getir i %}
+                                            {% if request.user.kullanicilar_db %}
+                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                    {% if yetki.kalemleri_olusturma %}
+                                                    <div class="td-actions">
+                                                        <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> Kalem Ekle</a>
+                                                    </div>    
+                                                    {% else %}
+                                                                                                                    
+                                                    {% endif %}
+                                                    {% else %}
+                                                    <div class="td-actions">
+                                                        <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> Kalem Ekle</a>
+                                                    </div>
+                                                    {% endif %}
+                                            
+                                        </td>
+                                        <td>
+                                            <div class="td-actions">
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.santiye_duzenleme %}
+                                                <a onclick="openModal('santiye_duzelt{{i.id}}')"class="status-success"><i class="icon icon-action-edit"></i></a>                                           
+                                                {% else %} 
+                                                                                                                                
+                                                {% endif %}
+                                                {% if yetki.santiye_silme %}
+                                                <a onclick="openModal('delete-modal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                {% else %} 
+                                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                <a onclick="openModal('santiye_duzelt{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                                               
+                                                <a onclick="openModal('delete-modal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                {% endif %}
+                                                
+                                                
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
         <!--
@@ -143,7 +220,13 @@
                 info: false,
                 buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
             });
-
+            let yapilar_table = $('#yapilar-table').DataTable({
+                dom: 'Bfrtip',
+                paging: false,
+                searching: true,
+                info: false,
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            });
             $('#stats-search').keyup(function () {
                 santiyeler_table.search($(this).val()).draw();
             });
