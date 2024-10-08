@@ -23,10 +23,10 @@
             {% if request.user.kullanicilar_db %}
                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                 {% if yetki.santiye_olusturma %}
-                    <button class="page-primary-btn"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
+                    <button class="page-primary-btn" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
                 {% endif %}
             {% else %}
-                <button class="page-primary-btn"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
+                <button class="page-primary-btn"  onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
             {% endif %}
         </div>
     </div>
@@ -82,8 +82,24 @@
                                 </td>
                                 <td>
                                     <div class="td-actions">
-                                        <a href="#" class="status-success"><i class="icon icon-action-edit"></i></a>
-                                        <a href="#" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                        {% if request.user.kullanicilar_db %}
+                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                        {% if yetki.santiye_duzenleme %}
+                                        <a onclick="openModal('santiye_duzelt{{i.id}}')"class="status-success"><i class="icon icon-action-edit"></i></a>                                           
+                                        {% else %} 
+                                                                                                                        
+                                        {% endif %}
+                                        {% if yetki.santiye_silme %}
+                                        <a onclick="openModal('delete-modal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                        {% else %} 
+                                                                                                                        
+                                        {% endif %}
+                                        {% else %}
+                                        <a onclick="openModal('santiye_duzelt{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                                               
+                                        <a onclick="openModal('delete-modal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                        {% endif %}
+                                        
+                                        
                                     </div>
                                 </td>
                             </tr>
@@ -120,6 +136,191 @@
         });
     </script>
 </main>
+ 
+<div class="modal" id="yeni-santiye">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Yeni Şantiye Ekle' %}
+                
+            </div>
+            <div class="modal-body">
+                 <form autocomplete="off"class="tablelist-form" action="/addsite"  method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                    {% if request.user.is_superuser %}
+                    <div class="form-element">
+                        <label for="hesap-sec">{% trans 'Hesap Seç' %}</label>
+                        <select  name="kullanici"  id="hesap-sec">
+                            {% for j in kullanicilar %}
+                                                    <option value="{{j.id}}">{{j.first_name}}</option>
+                                                {% endfor %}
+
+                        </select>
+                    </div>
+                                          
+                                        {% else %}
+                                            <div class="form-element">
+                                            <label  class="form-label">{% trans 'Proje Tipi Seç' %}</label>
+                                            <select  name="projetipi">
+
+                                                {% for j in proje_tipleri %}
+                                                    <option value="{{j.id}}">{{j.Proje_tipi_adi}}</option>
+                                                {% endfor %}
+
+
+                                            </select>
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" class="form-label">{% trans 'Proje Adı' %}</label>
+                                            <input type="text"   name="yetkili_adi" id="date-field"  placeholder="{% trans 'Proje Adı' %}" />
+                                        </div>
+
+
+                                        {% endif %}
+                  
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit" >{% trans 'Kaydet' %}
+                            </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+{% for i in santiyeler %}
+<div class="modal" id="santiye_duzelt{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Şantiye Düzenle' %}
+                
+            </div>
+            <div class="modal-body">
+                 <form autocomplete="off"class="tablelist-form" action="/setsiteprojetc" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                 <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
+                    {% if request.user.is_superuser %}
+                    <div class="form-element">
+                        <label for="hesap-sec">{% trans 'Hesap Seç' %}</label>
+                        <select  name="kullanici"  id="hesap-sec">
+                            {% for j in kullanicilar %}
+                                                    <option value="{{j.id}}">{{j.first_name}}</option>
+                                                {% endfor %}
+
+                        </select>
+                    </div>
+                                          
+                                        {% else %}
+                                            
+                                        <div class="form-element">
+                                            <label for="date-field" class="form-label">{% trans 'Proje Adı' %}</label>
+                                            <input type="text" value="{{i.proje_adi}}"    name="yetkili_adi" id="date-field"  placeholder="{% trans 'Proje Adı' %}" />
+                                        </div>
+
+
+                                        {% endif %}
+                  
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit" >{% trans 'Kaydet' %}
+                            </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+    <div class="modal" id="delete-modal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/delsiteproject" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    <p>{% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit">{% trans 'Evet, silinsin' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+   {% endfor %}
+    <div class="modal" id="yeni-kalem">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Yeni Ekle
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="hesap-sec">Hesap Seç</label>
+                        <select name="hesap-sec" id="hesap-sec">
+                            <option value="" selected disabled></option>
+                            <option value="Hesap">Hesap</option>
+                            <option value="Hesap">Hesap</option>
+                            <option value="Hesap">Hesap</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="button" onclick="openModal('yeni-kalem')">Devam
+                            Et</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal" id="yeni-kalem">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Yeni Kalem Ekle
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="santiye-bilgisi">Şantiye Bilgisi</label>
+                        <input type="text" name="santiye-bilgisi" id="santiye-bilgisi">
+                    </div>
+                    <div class="form-element">
+                        <label for="kalem-adi">Kalem Adı</label>
+                        <input type="text" name="kalem-adi" id="kalem-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="santiye-agirligi">Şantiye Ağırlığı</label>
+                        <input type="text" name="santiye-agirligi" id="santiye-agirligi">
+                    </div>
+                    <div class="form-element">
+                        <label for="finansal-agirligi">Finansal Ağırlığı</label>
+                        <input type="text" name="finansal-agirligi" id="finansal-agirligi">
+                    </div>
+                    <div class="form-element">
+                        <label for="birim">Birim</label>
+                        <input type="text" name="birim" id="birim">
+                    </div>
+                    <div class="form-element">
+                        <label for="metraj">Metraj</label>
+                        <input type="text" name="metraj" id="metraj">
+                    </div>
+                    <div class="form-element">
+                        <label for="tutar">Tutar</label>
+                        <input type="text" name="tutar" id="tutar">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Devam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 
     <script>
         function openModal(modalID, close = true) {
