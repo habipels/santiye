@@ -158,7 +158,7 @@ urlpatterns = [#
     path("pageshow", views.sayfa_denemeleri, name="sayfa_denemeleri"),
     path("notifications", views.bildirimler, name="bildirimler"),
     #katmanlar
-    path("layer/<int:id>/", views.katman_sayfasi, name="katman_sayfasi"),
+    path("layer", views.katman_sayfasi, name="katman_sayfasi"),
 
 ]
 #

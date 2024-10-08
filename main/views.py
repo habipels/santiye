@@ -5069,7 +5069,7 @@ def bildirimler(request):
     content = sozluk_yapisi()
     return render(request,"bildirimler.html",content)
 
-def katman_sayfasi(request,id):
+def katman_sayfasi(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         profile =proje_tipi.objects.all()

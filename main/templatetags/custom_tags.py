@@ -16,7 +16,13 @@ def bloglar_getir(veri):
     veri_esiti = ""
     for i in  deger:
         veri_esiti = veri_esiti + str(i.blog_adi)+" ,"
-    return str(veri_esiti)
+    return int(deger.count())
+
+@register.simple_tag
+def kalemler_getir(veri):
+    deger = santiye_kalemleri.objects.filter(proje_santiye_Ait = veri)
+
+    return int(deger.count())
 
 @register.simple_tag
 def bloglari_rapora_yansitma(veri):
