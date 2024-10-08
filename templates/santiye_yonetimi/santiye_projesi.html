@@ -64,7 +64,7 @@
                         </thead>
                         <tbody>
                         {% for i in santiyeler %}
-                            <tr>
+                            <tr id="{{i.id}}">
                                 <td>{{i.proje_ait_bilgisi.first_name}}</td>
                                 <td>{{i.proje_adi}}</td>
                                 <td>{{i.proje_tipi.Proje_tipi_adi}}</td>
@@ -76,9 +76,21 @@
                                 </td>
                                 <td>
                                     + {% kalemler_getir i %}
-                                    <div class="td-actions">
-                                        <a onclick="openModal('yeni-kalem-hesap')" class="status-info stats-lg"><i class="icon icon-add"></i> Kalem Ekle</a>
-                                    </div>
+                                    {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.kalemleri_olusturma %}
+                                            <div class="td-actions">
+                                                <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> Kalem Ekle</a>
+                                            </div>    
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                            <div class="td-actions">
+                                                <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> Kalem Ekle</a>
+                                            </div>
+                                            {% endif %}
+                                    
                                 </td>
                                 <td>
                                     <div class="td-actions">
@@ -108,9 +120,17 @@
                     </table>
                 </div>
             </div>
-            <div class="tab-content" id="yapilar">...</div>
-            <div class="tab-content" id="kalemler">...</div>
+           
+            <div class="tab-content" id="yapilar">
+                
+            </div>
         </div>
+        <!--
+        <div class="large-stats-card-footer-actions">
+            <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+            <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-zip"></i></a>
+            <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+        </div>-->
     </div>
 
 
@@ -159,7 +179,7 @@
                                           
                                         {% else %}
                                             <div class="form-element">
-                                            <label  class="form-label">{% trans 'Proje Tipi Seç' %}</label>
+                                            <label  >{% trans 'Proje Tipi Seç' %}</label>
                                             <select  name="projetipi">
 
                                                 {% for j in proje_tipleri %}
@@ -170,7 +190,7 @@
                                             </select>
                                         </div>
                                         <div class="form-element">
-                                            <label for="date-field" class="form-label">{% trans 'Proje Adı' %}</label>
+                                            <label for="date-field" >{% trans 'Proje Adı' %}</label>
                                             <input type="text"   name="yetkili_adi" id="date-field"  placeholder="{% trans 'Proje Adı' %}" />
                                         </div>
 
@@ -211,7 +231,7 @@
                                         {% else %}
                                             
                                         <div class="form-element">
-                                            <label for="date-field" class="form-label">{% trans 'Proje Adı' %}</label>
+                                            <label for="date-field" >{% trans 'Proje Adı' %}</label>
                                             <input type="text" value="{{i.proje_adi}}"    name="yetkili_adi" id="date-field"  placeholder="{% trans 'Proje Adı' %}" />
                                         </div>
 
@@ -247,6 +267,93 @@
             </div>
         </div>
     </div>
+
+    <div class="modal" id="yeni-kalem{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Yeni Kalem Ekle' %}
+               
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:santiyeye_kalem_ekle' %}"  method="post" enctype="multipart/form-data" >
+                    {% csrf_token %}
+                    {% if request.user.is_superuser %}
+                                            <div class="form-element">
+                                            <label for="date-field" >{% trans 'Hesap Seç' %}</label>
+                                            <select  name="kullanici" id="date-field">
+
+                                                {% for j in kullanicilar %}
+                                                    <option value="{{j.id}}">{{j.first_name}}</option>
+                                                {% endfor %}
+
+
+                                            </select>
+                                        </div>
+                                        {% else %}
+                                            
+                                            <div class="col-md-3">
+
+                                            <label for="date-field" >{% trans 'Yapılar' %}</label>
+                                           
+                                       
+                                    <select name="projetipi" required id="cokluetiket"  class="etkett me-2" multiple>
+                                        {% bloglar_form_gonder i %}
+                                    </select>
+                                    
+                                </div>
+                                <div class="form-element">
+                                    <label for="date-field" >{% trans 'Kalemin Tercihi' %}</label>
+                                    <select  required name="kata_veya_binaya_daihil" id="date-field">
+                                        <option >Lütfen Seçiniz</option>
+                                        <option value="0">{% trans 'Kata Dahil' %}</option>
+                                        <option value="1">{% trans 'Binaya Dahil' %}</option>
+                                        <option value="2">{% trans 'Cephe' %}</option>
+                                    </select>
+                                </div> 
+                                        
+
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Kalem Adı' %}</label>
+                                            <input type="text"   name="yetkili_adi" id="date-field"  placeholder="{% trans 'Kalem Adı' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Şantiye Ağırlığı' %}</label>
+                                            <input type="number" step="0.001" value="0"  name="katsayisi" id="date-field"  placeholder="{% trans 'Şantiye Ağırlığı' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Finansal Ağırlığı' %}</label>
+                                            <input type="number" step="0.001" value="0"  name="blogsayisi" id="date-field"  placeholder="{% trans 'Fİnansal Ağırlığı' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Birimi' %}</label>
+                                            <select  name="birim_bilgisi" id="date-field">
+
+                                                {% for l in birim_bilgisi %}
+                                                    <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
+                                                {% endfor %}
+
+
+                                            </select>
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Metraj' %}</label>
+                                            <input type="number" step="0.001" value="0"  name="metraj" id="date-field"  placeholder="{% trans 'Metraj' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Tutar' %}</label>
+                                            <input type="number" step="0.001" value="0"  name="tutar" id="date-field"  placeholder="{% trans 'Tutar' %}" />
+                                        </div>
+                                        {% endif %}
+
+                    
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Devam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
    {% endfor %}
     <div class="modal" id="yeni-kalem">
         <div class="modal-inner" style="width: 500px">
@@ -276,49 +383,7 @@
 
 
 
-    <div class="modal" id="yeni-kalem">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                Yeni Kalem Ekle
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-element">
-                        <label for="santiye-bilgisi">Şantiye Bilgisi</label>
-                        <input type="text" name="santiye-bilgisi" id="santiye-bilgisi">
-                    </div>
-                    <div class="form-element">
-                        <label for="kalem-adi">Kalem Adı</label>
-                        <input type="text" name="kalem-adi" id="kalem-adi">
-                    </div>
-                    <div class="form-element">
-                        <label for="santiye-agirligi">Şantiye Ağırlığı</label>
-                        <input type="text" name="santiye-agirligi" id="santiye-agirligi">
-                    </div>
-                    <div class="form-element">
-                        <label for="finansal-agirligi">Finansal Ağırlığı</label>
-                        <input type="text" name="finansal-agirligi" id="finansal-agirligi">
-                    </div>
-                    <div class="form-element">
-                        <label for="birim">Birim</label>
-                        <input type="text" name="birim" id="birim">
-                    </div>
-                    <div class="form-element">
-                        <label for="metraj">Metraj</label>
-                        <input type="text" name="metraj" id="metraj">
-                    </div>
-                    <div class="form-element">
-                        <label for="tutar">Tutar</label>
-                        <input type="text" name="tutar" id="tutar">
-                    </div>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Devam</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
 
 
 
@@ -372,4 +437,14 @@
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
+ <script>
+    $(".tab-navs-btn").on("click", function () {
+        $(".tab-navs-btn").removeClass("active");
+        $(".tab-content").removeClass("active");
+
+        $(this).addClass("active");
+        $("#" + $(this).attr("data-tab")).addClass("active");
+    })
+</script>
+
 {% endblock sidebar %}

@@ -19,6 +19,14 @@ def bloglar_getir(veri):
     return int(deger.count())
 
 @register.simple_tag
+def bloglar_form_gonder(veri):
+    deger = bloglar.objects.filter(proje_santiye_Ait = veri)
+    veri_esiti = ""
+    for i in deger:
+        veri_esiti = veri_esiti + """<option value="{}">{}</option>""".format(i.id,i.blog_adi)
+    return mark_safe(veri_esiti)
+
+@register.simple_tag
 def kalemler_getir(veri):
     deger = santiye_kalemleri.objects.filter(proje_santiye_Ait = veri)
 
