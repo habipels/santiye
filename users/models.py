@@ -238,6 +238,11 @@ class personel_izinleri(models.Model):
     personeller_odeme_silme = models.BooleanField(default = False)
     personeller_odeme_gorme = models.BooleanField(default = False)
     personeller_odeme_duzenleme = models.BooleanField(default = False)
+    #personel maaş ödeme
+    katman_olusturma = models.BooleanField(default = False)
+    katman_silme = models.BooleanField(default = False)
+    katman_gorme = models.BooleanField(default = False)
+    katman_duzenleme = models.BooleanField(default = False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):
