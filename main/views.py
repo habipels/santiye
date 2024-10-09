@@ -986,6 +986,7 @@ def proje_duzenle(request):
 #Şantiye Projesi Ekleme
 def santiye_projesi_ekle_(request):
     content = sozluk_yapisi()
+    content["birim_bilgisi"] = birimler.objects.filter(silinme_bilgisi = False)
     content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user)
     if super_admin_kontrolu(request):
         profile =santiye.objects.all()
@@ -1147,7 +1148,7 @@ def blog_ekle(request):
             baslangic_tarihi = baslangictarihi,bitis_tarihi = bitistarihi
         )
         y = "/siteblog/"+santiye_bilgisi+"/"
-    return redirect(y)
+    return redirect("main:santiye_projesi_ekle_")
 
 def blog_duzenle(request):
     if request.user.kullanicilar_db:
@@ -1173,7 +1174,7 @@ def blog_duzenle(request):
             baslangic_tarihi = baslangictarihi,bitis_tarihi = bitistarihi
         )
         y = "/siteblog/"+santiye_bilgisi+"/"
-    return redirect(y)
+    return redirect("main:santiye_projesi_ekle_")
 def blog_sil(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -1190,7 +1191,7 @@ def blog_sil(request):
         blog_bilgisi = get_object_or_404(bloglar,id = buttonId)
         bloglar.objects.filter(id = buttonId).delete()
         y = "/siteblog/"+geri+"/"
-    return redirect(y)
+    return redirect("main:santiye_projesi_ekle_")
 def santiye_ekleme_sahibi(request):
     if request.POST:
         if super_admin_kontrolu(request):
@@ -1473,7 +1474,7 @@ def santiyeye_kalem_ekle(request):
                                 kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
                             )
                         
-    return redirect("main:santtiye_kalemleri",id.proje_santiye_Ait.id)
+    return redirect("main:santiye_projesi_ekle_")
 
 def kalem_sil(request):
     if request.POST:
@@ -1496,7 +1497,7 @@ def kalem_sil(request):
             santiye_kalemleri.objects.filter(id = buttonId).update(
                 silinme_bilgisi = True
             )
-    return redirect("main:santtiye_kalemleri",geri_don)
+    return redirect("main:santiye_projesi_ekle_")
 def santiye_kalemleri_duzenle(request):
     if request.POST:
         buttonId = request.POST.get("buttonId")
@@ -1551,7 +1552,7 @@ def santiye_kalemleri_duzenle(request):
                             santiye_finansal_agirligi = finansal_agirlik,birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
                         tutari = tutar
                         )
-        return redirect("main:santtiye_kalemleri",geri_don)
+        return redirect("main:santiye_projesi_ekle_")
 
 def kalem_blog_dagilis_sil(request,id,ik):
     a = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id).first()

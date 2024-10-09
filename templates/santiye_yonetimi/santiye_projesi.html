@@ -121,10 +121,10 @@
                 </div>
             </div>
            
-            <div class="tab-content" id="yapilar">
+            <div class="tab-content" id="kalemler">
                 <div class="temizle" >
                     <div class="table-wrapper">
-                        <table id="yapilar-table">
+                        <table id="kalemler-table">
                             <thead>
                                 <tr>
                                     
@@ -141,61 +141,150 @@
                                 </tr>
                             </thead>
                             <tbody class="kalemler">
-                                <div class="div">
-                                    {% for i in santiyeler %}
-                                    <tr id="{{i.id}}">
-                                        <td>{{i.proje_ait_bilgisi.first_name}}</td>
-                                        <td>{{i.proje_adi}}</td>
-                                        <td>{{i.proje_tipi.Proje_tipi_adi}}</td>
-                                        <td>
-                                            +{% bloglar_getir i %}
-                                            <div class="td-actions">
-                                                <a href="#" class="status-info stats-lg"><i class="icon icon-add"></i> Yapı Ekle</a>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            + {% kalemler_getir i %}
-                                            {% if request.user.kullanicilar_db %}
-                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                    {% if yetki.kalemleri_olusturma %}
-                                                    <div class="td-actions">
-                                                        <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> Kalem Ekle</a>
-                                                    </div>    
-                                                    {% else %}
-                                                                                                                    
-                                                    {% endif %}
-                                                    {% else %}
-                                                    <div class="td-actions">
-                                                        <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> Kalem Ekle</a>
-                                                    </div>
-                                                    {% endif %}
-                                            
-                                        </td>
-                                        <td>
-                                            <div class="td-actions">
-                                                {% if request.user.kullanicilar_db %}
-                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                {% if yetki.santiye_duzenleme %}
-                                                <a onclick="openModal('santiye_duzelt{{i.id}}')"class="status-success"><i class="icon icon-action-edit"></i></a>                                           
-                                                {% else %} 
-                                                                                                                                
-                                                {% endif %}
-                                                {% if yetki.santiye_silme %}
-                                                <a onclick="openModal('delete-modal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                                                {% else %} 
-                                                                                                                                
-                                                {% endif %}
-                                                {% else %}
-                                                <a onclick="openModal('santiye_duzelt{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                                               
-                                                <a onclick="openModal('delete-modal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                                                {% endif %}
-                                                
-                                                
-                                            </div>
-                                        </td>
-                                    </tr>
+                                {% for j in santiyeler %}
+                                {% kalemleri_td_gonder j as bilgi %}
+                                {% for i in bilgi %}
+                                      <tr id="{{j.id}}" class="kalemleri">
+                                
+                                <td>{{i.proje_santiye_Ait.proje_adi}}</td>
+                                <td>{{i.kalem_adi}}</td>
+                             <td class="date">
+                                                        {{i.santiye_agirligi}}
+
+                                                    </td>
+                                                    <td class="date">
+
+                                                    {{i.santiye_finansal_agirligi}}
+                                                    </td>
+                                <td class="date">
+
+                                                    {{i.birimi.Proje_tipi_adi}}
+                                                    </td>
+                                                     <td class="date">
+
+                                                    {{i.metraj}}
+                                                    </td>
+                                                    <td class="date">
+
+                                                    {{i.tutari}}
+                                                    </td>
+
+                                                    <td class="date">
+
+                                                    {% kalem_blog  i.id %}
+                                                    </td>
+                                                    <td class="date">
+                                                    <b>{{i.kayit_tarihi}}  </b>
+
+
+
+                                                    </td>
+                                                 <td>
+                                                 <div class="td-actions">
+                                                    {% if request.user.kullanicilar_db %}
+                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                        {% if yetki.kalemleri_duzenleme %}
+                                        <a onclick="openModal('kalem-duzenle{{i.id}}')"class="status-success"><i class="icon icon-action-edit"></i></a>                                           
+                                        {% else %} 
+                                                                                                                        
+                                        {% endif %}
+                                        {% if yetki.kalemleri_silme %}
+                                        <a onclick="openModal('delete-kalem{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                        {% else %} 
+                                                                                                                        
+                                        {% endif %}
+                                        {% else %}
+                                        <a onclick="openModal('kalem-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                                               
+                                        <a onclick="openModal('delete-kalem{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                        {% endif %}
+                                        </div>
+                                                    </td>
+                            </tr>
                                 {% endfor %}
-                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="yapilar">
+                <div class="temizle" >
+                    <div class="table-wrapper">
+                        <table id="yapilar-table">
+                            <thead>
+                                <tr>
+                                <th class="sort" data-sort="customer_name">{% trans 'Proje Kime Ait' %}</th>
+                                                    <th class="sort" data-sort="email">{% trans 'Proje Tipi' %} </th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Proje Adı' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Yapı Adı' %} </th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Yapı Kat Sayısı' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Başlangıç Tarihi' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Bitiş Tarihi' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Durum' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="kalemler">
+                                {% for j in santiyeler %}
+                                {% kalemleri_td_gonder j as bilgi %}
+                                {% for i in bilgi %}
+                                      <tr id="{{j.id}}" class="kalemleri">
+                                
+                                <td>{{i.proje_santiye_Ait.proje_adi}}</td>
+                                <td>{{i.kalem_adi}}</td>
+                             <td class="date">
+                                                        {{i.santiye_agirligi}}
+
+                                                    </td>
+                                                    <td class="date">
+
+                                                    {{i.santiye_finansal_agirligi}}
+                                                    </td>
+                                <td class="date">
+
+                                                    {{i.birimi.Proje_tipi_adi}}
+                                                    </td>
+                                                     <td class="date">
+
+                                                    {{i.metraj}}
+                                                    </td>
+                                                    <td class="date">
+
+                                                    {{i.tutari}}
+                                                    </td>
+
+                                                    <td class="date">
+
+                                                    {% kalem_blog  i.id %}
+                                                    </td>
+                                                    <td class="date">
+                                                    <b>{{i.kayit_tarihi}}  </b>
+
+
+
+                                                    </td>
+                                                 <td>
+                                                 <div class="td-actions">
+                                                    {% if request.user.kullanicilar_db %}
+                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                        {% if yetki.kalemleri_duzenleme %}
+                                        <a onclick="openModal('kalem-duzenle{{i.id}}')"class="status-success"><i class="icon icon-action-edit"></i></a>                                           
+                                        {% else %} 
+                                                                                                                        
+                                        {% endif %}
+                                        {% if yetki.kalemleri_silme %}
+                                        <a onclick="openModal('delete-kalem{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                        {% else %} 
+                                                                                                                        
+                                        {% endif %}
+                                        {% else %}
+                                        <a onclick="openModal('kalem-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                                               
+                                        <a onclick="openModal('delete-kalem{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                        {% endif %}
+                                        </div>
+                                                    </td>
+                            </tr>
+                                {% endfor %}
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -220,7 +309,14 @@
                 info: false,
                 buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
             });
-            let yapilar_table = $('#yapilar-table').DataTable({
+            let yapilar_tables = $('#yapilar-table').DataTable({
+                dom: 'Bfrtip',
+                paging: false,
+                searching: true,
+                info: false,
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            });
+            let yapilar_table = $('#kalemler-table').DataTable({
                 dom: 'Bfrtip',
                 paging: false,
                 searching: true,
@@ -232,11 +328,44 @@
             });
 
             $("#santiyeler-table tr").on("click", function () {
+                // Satıra tıklama olayı
+                $("#santiyeler-table").on("click", "tr", function () {
+                    let santiyeId = $(this).attr("id"); // Tıklanan tr'nin id'sini al
+                    guncelleVeri(this, santiyeId); // Fonksiyonu çağır
+                });
                 $(".tab-navs-btn:not(.active)").attr("disabled", false);
                 $("#santiyeler-table tr").removeClass("selected");
                 $(this).addClass("selected");
             });
         });
+         // Fonksiyon tanımlaması
+    // Tablo satırına tıklandığında çağrılacak fonksiyon
+function guncelleVeri(row) {
+    // Satırın id'sini al
+    const santiyeId = row.id;
+
+    // Tüm kalem satırlarını al
+    const allRows = document.querySelectorAll('.kalemleri');
+
+    // Tüm kalem satırlarını gizle
+    allRows.forEach(function (r) {
+        r.style.display = 'none'; // Tüm satırları gizle
+    });
+
+    // İlgili id'ye sahip satırları göster
+    allRows.forEach(function (r) {
+        if (r.id === santiyeId) {
+            r.style.display = ''; // Eşleşen satırı göster
+        }
+    });
+}
+
+// Tüm satırlara tıklama olayı ekle
+document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
+    row.addEventListener('click', function () {
+        guncelleVeri(row); // Tıklanan satırı fonksiyona gönder
+    });
+});
     </script>
 </main>
  
@@ -438,38 +567,100 @@
         </div>
     </div>
    {% endfor %}
-    <div class="modal" id="yeni-kalem">
+{% for j in santiyeler %}
+{% kalemleri_td_gonder j as bilgi %}
+    {% for i in bilgi %}
+<div class="modal" id="kalem-duzenle{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Yeni Ekle
+                {% trans 'Kalem Düzenle' %}
+               
             </div>
             <div class="modal-body">
-                <form>
-                    <div class="form-element">
-                        <label for="hesap-sec">Hesap Seç</label>
-                        <select name="hesap-sec" id="hesap-sec">
-                            <option value="" selected disabled></option>
-                            <option value="Hesap">Hesap</option>
-                            <option value="Hesap">Hesap</option>
-                            <option value="Hesap">Hesap</option>
-                        </select>
-                    </div>
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:santiye_kalemleri_duzenle' %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                        <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
+                        <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
+                    {% if request.user.is_superuser %}
+                                            <div class="form-element">
+                                            <label for="date-field" >{% trans 'Hesap Seç' %}</label>
+                                            <select  name="kullanici" id="date-field">
+
+                                                {% for j in kullanicilar %}
+                                                    <option value="{{j.id}}">{{j.first_name}}</option>
+                                                {% endfor %}
+
+
+                                            </select>
+                                        </div>
+                                        {% else %}
+                                            
+                                            
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Kalem Adı' %}</label>
+                                            <input type="text" value="{{i.kalem_adi}}"  name="yetkili_adi" id="date-field"  placeholder="{% trans 'Kalem Adı' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Şantiye Ağırlığı' %}</label>
+                                            <input type="number" step="0.001" value="{{i.santiye_agirligi | stringformat:'.2F'  }}"  name="katsayisi" id="date-field"  placeholder="{% trans 'Şantiye Ağırlığı' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Finansal Ağırlığı' %}</label>
+                                            <input type="number" step="0.001" value="{{i.santiye_finansal_agirligi | stringformat:'.2F'  }}"  name="blogsayisi" id="date-field"  placeholder="{% trans 'Fİnansal Ağırlığı' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Birimi' %}</label>
+                                            <select  name="birim_bilgisi" id="date-field">
+                                                <option selected value="{{i.birimi.id}}">{{i.birimi.Proje_tipi_adi}}</option>
+                                                {% for l in birim_bilgisi %}
+                                                    <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
+                                                {% endfor %}
+
+
+                                            </select>
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Metraj' %}</label>
+                                            <input type="number" step="0.001" value="{{i.metraj|stringformat:'.2f'}}"  name="metraj" id="date-field"  placeholder="{% trans 'Metraj' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field" >{% trans 'Tutar' %}</label>
+                                            <input type="number" step="0.001" value="{{i.tutari|stringformat:'.2f'}}"  name="tutar" id="date-field"  placeholder="{% trans 'Tutar' %}" />
+                                        </div>
+                                        {% endif %}
+
+                    
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="button" onclick="openModal('yeni-kalem')">Devam
-                            Et</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Onayla' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+    <div class="modal" id="delete-kalem{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'main:kalem_sil' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    <p>{% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit">{% trans 'Evet, silinsin' %}</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
+{% endfor %}
+{% endfor %}
     <script>
         function openModal(modalID, close = true) {
             if (close) {

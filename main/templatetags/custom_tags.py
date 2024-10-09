@@ -9,7 +9,11 @@ register = template.Library()
 @register.simple_tag
 def to_int(veri):
     return int(veri)
+@register.simple_tag
+def kalemleri_td_gonder(veri):
+    deger = santiye_kalemleri.objects.filter(proje_santiye_Ait = veri,silinme_bilgisi = False)
 
+    return deger
 @register.simple_tag
 def bloglar_getir(veri):
     deger = bloglar.objects.filter(proje_santiye_Ait = veri)
@@ -28,7 +32,7 @@ def bloglar_form_gonder(veri):
 
 @register.simple_tag
 def kalemler_getir(veri):
-    deger = santiye_kalemleri.objects.filter(proje_santiye_Ait = veri)
+    deger = santiye_kalemleri.objects.filter(proje_santiye_Ait = veri,silinme_bilgisi = False)
 
     return int(deger.count())
 
