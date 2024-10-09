@@ -15,6 +15,11 @@ def kalemleri_td_gonder(veri):
 
     return deger
 @register.simple_tag
+def blog_td_gonder(veri):
+    deger = bloglar.objects.filter(proje_santiye_Ait = veri)
+
+    return deger
+@register.simple_tag
 def bloglar_getir(veri):
     deger = bloglar.objects.filter(proje_santiye_Ait = veri)
     veri_esiti = ""
