@@ -55,6 +55,7 @@ class santiye_kalemleri(models.Model):
 class katman(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    katman_adi = models.CharField(max_length=200,verbose_name="Katman Adı",blank=True,null = True)
     katman_dosyasi = models.FileField(upload_to='katman_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)

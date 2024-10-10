@@ -159,6 +159,8 @@ urlpatterns = [#
     path("notifications", views.bildirimler, name="bildirimler"),
     #katmanlar
     path("layer", views.katman_sayfasi, name="katman_sayfasi"),
-
+    path("savelayer", views.katman_ekle, name="katman_ekle"),
+    path("dellayer", views.katman_sil, name="katman_sil"),
+    path("setlayer", views.katman_duzenle, name="katman_duzenle"),
 ]
 #

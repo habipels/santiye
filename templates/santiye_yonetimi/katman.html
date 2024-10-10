@@ -23,15 +23,15 @@
             <div class="page-actions">
              {% if request.user.kullanicilar_db %}
                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                            {% if yetki.projeler_olusturma %}
+                                            {% if yetki.katman_olusturma %}
                                                      <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
-                    {% trans "Yeni Proje Ekle" %}</button>                                            
+                    {% trans "Yeni Katman Ekle" %}</button>                                            
                                             {% else %}
                                                                                                             
                                             {% endif %}
                                             {% else %}
                                                   <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
-                    {% trans "Yeni Proje Ekle" %}</button>                                                
+                    {% trans "Yeni Katman Ekle" %}</button>                                                
                                             {% endif %}
                 
             </div>
@@ -51,10 +51,11 @@
                     <thead>
                         <tr>
 
-                            <th>{% trans "Proje Tipi Kime Ait" %}</th>
-                            <th>{% trans "Proje Tip Adı" %}</th>
+                            <th>{% trans "Proje Katmanı Kime Ait" %}</th>
+                            <th>{% trans "Katman Hangi Şantiyeye Ait" %}</th>
+                            <th>{% trans "Proje Katman Adı" %}</th>
+                            <th>{% trans "Proje Katman Dosyası" %}</th>
                             <th>{% trans "Proje Tip Kayıt Tarihi" %}</th>
-                           
                             <th>{% trans "Durum" %}</th>
                         </tr>
                     </thead>
@@ -62,8 +63,15 @@
                     {% for i in santiyeler %}
                       <tr>
                             <td>{{ i.proje_ait_bilgisi.first_name }}</td>
-                            <td>{{ i.Proje_tipi_adi }}</td>
-                            <td>{{ i.kayit_tarihi }}</td>
+                             <td>{{ i.proje_santiye_Ait.proje_adi }}</td>
+                            <td>{{ i.katman_adi }}</td>
+                            <td><div class="td-actions">
+                                {% if i.katman_dosyasi %}
+                                    <a target="_blank" href="{{i.katman_dosyasi.url}}"class="status-info"><i class="icon icon-action-file"></i></a>
+                                {% else %}
+                                {% endif %}               
+                                </div></td>
+                             <td>{{ i.kayit_tarihi }}</td>
                             <td>
                                 <div class="td-actions">
                                 {% if request.user.kullanicilar_db %}
@@ -120,19 +128,59 @@
     <div class="modal" id="yeni-proje{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                {% trans "Projeyi Düzenle" %}
+            {% trans 'Katman Düzenle' %}
+                
             </div>
             <div class="modal-body">
-                 <form class="tablelist-form" action="/setprojecttype" method="post" enctype="multipart/form-data" >
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:katman_duzenle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
-                                 <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
+                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    {% if request.user.is_superuser %}
+                                        <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
+                                        <select class="form-control" name="kullanici" id="date-field">
+                                            {% for i in kullanicilar %}
+                                                <option value="{{i.id}}">{{i.first_name}}</option>
+                                            {% endfor %}
+                                            
+                                            
+                                        </select>
+                                    </div>
+                                    {% else %}
                     <div class="form-element">
-                        <label for="proje-tipi">{% trans "Proje Tipi" %}</label>
-                        <input type="text" value="{{i.Proje_tipi_adi}}"  name="yetkili_adi" id="proje-tipi"  />
+                        <label for="taseron-adi">{% trans 'katman Adı' %}</label>
+                        <input type="text" name="taseron_adi" value="{{i.katman_adi}}" required id="taseron-adi">
                     </div>
+                    <div class="form-element">
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye' %}</label>
+                        <select name="blogbilgisi"   data-trigger >
+                        <option value="{{i.proje_santiye_Ait.id}}">{{i.proje_santiye_Ait.proje_adi}}</option>
+                                            {% for blog in insaatlar %}
+                                            <option value="{{blog.id}}">{{blog.proje_adi}}</option>
+                                            {% endfor %}
+                        </select>
+                    </div>
+                   
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    {% endif %}
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
-                        <button class="form-action-primary" type="submit">{% trans 'Devam' %}</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
                     </div>
                 </form>
             </div>
@@ -145,7 +193,7 @@
             <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
             </div>
             <div class="modal-body">
-                 <form action="/delprojectstype" method="post">
+                 <form action="/{{dil}}{% url 'main:katman_sil' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                     
@@ -159,26 +207,66 @@
         </div>
 </div>
 {% endfor %}
-    <div class="modal" id="yeni-proje">
+<div class="modal" id="yeni-proje">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                {% trans "Yeni Proje Ekle" %}
+            {% trans 'Yeni Katman Ekle' %}
+                
             </div>
             <div class="modal-body">
-                <form class="tablelist-form" action="/addprojectstype"  method="post" enctype="multipart/form-data" >
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:katman_ekle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
+                    {% if request.user.is_superuser %}
+                                        <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
+                                        <select class="form-control" name="kullanici" id="date-field">
+                                            {% for i in kullanicilar %}
+                                                <option value="{{i.id}}">{{i.first_name}}</option>
+                                            {% endfor %}
+                                            
+                                            
+                                        </select>
+                                    </div>
+                                    {% else %}
                     <div class="form-element">
-                        <label for="proje-tipi">{% trans "Proje Tipi" %}</label>
-                        <input type="text"  name="yetkili_adi" id="proje-tipi"  />
+                        <label for="taseron-adi">{% trans 'katman Adı' %}</label>
+                        <input type="text" name="taseron_adi" required id="taseron-adi">
                     </div>
+                    <div class="form-element">
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye' %}</label>
+                        <select name="blogbilgisi"   data-trigger >
+                                            {% for blog in insaatlar %}
+                                            <option value="{{blog.id}}">{{blog.proje_adi}}</option>
+                                            {% endfor %}
+                        </select>
+                    </div>
+                   
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    {% endif %}
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
-                        <button class="form-action-primary" type="submit">{% trans 'Devam' %}</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 
 
     <script>
