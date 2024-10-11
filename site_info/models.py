@@ -206,6 +206,8 @@ class IsplaniPlanlari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
     katman = models.ForeignKey(katman, verbose_name="Proje KAtmanı", blank=True, null=True, on_delete=models.SET_NULL)
     locasyon = models.CharField(max_length=400, verbose_name="Lokasyon", blank=True, null=True)
+    blok = models.ForeignKey(bloglar, verbose_name="Proje bloglari", blank=True, null=True, on_delete=models.SET_NULL)
+    kat = models.IntegerField(default=0)
     title = models.CharField(max_length=400, verbose_name="Adı", blank=True, null=True)
     teslim_tarihi = models.DateField(verbose_name="Proje Tarihi", blank=True, null=True)
     aciklama = models.TextField(verbose_name="Açıklama", blank=True, null=True)

@@ -3801,6 +3801,8 @@ def yapilacaklar(request):
                     profile = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
                     if a.izinler.yapilacaklar_olusturma:
                         content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user.kullanicilar_db,kullanici_silme_bilgisi = False,is_active = True)
+                        content["katmanlar"] = katman.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,silinme_bilgisi = False)
+    
                 else:
                     return redirect("main:yetkisiz")
             else:
@@ -3808,52 +3810,11 @@ def yapilacaklar(request):
         else:
             content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False,is_active = True)
             profile = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
-
-    if request.GET:
-        siralama = request.GET.get("siralama")
-        status = request.GET.get("status")
-        search = request.GET.get("search")
-        if super_admin_kontrolu(request):
-            profile =IsplaniPlanlari.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search))
-            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
-            content["kullanicilar"] =kullanicilar
-        else:
-            if request.user.kullanicilar_db:
-                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
-                if a:
-                    if a.izinler.yapilacaklar_gorme:
-                        profile = IsplaniPlanlari.objects.filter(Q(proje_ait_bilgisi = request.user.kullanicilar_db) & Q(silinme_bilgisi = False))
-                        if a.izinler.yapilacaklar_olusturma:
-                            content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user.kullanicilar_db,kullanici_silme_bilgisi = False,is_active = True)
-                    else:
-                        return redirect("main:yetkisiz")
-                else:
-                    return redirect("main:yetkisiz")
-            else:
-                #content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False,is_active = True)
-                profile = IsplaniPlanlari.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(silinme_bilgisi = False))
-        if status:
-            profile = profile.filter(status = status)
-        if search:
-            profile = profile.filter(title__icontains=search )
-        if siralama == "1":
-            profile = profile.order_by("-id")
-        elif siralama == "2":
-            profile = profile.order_by("-title")
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
-
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+            content["katmanlar"] = katman.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    
+    content["santiyeler"] = profile
     content["top"]  = profile
-    content["medya"] = page_obj
+    content["medya"] = profile
     
     return render(request,"santiye_yonetimi/yapilacaklar.html",content)
 #yapilacakalr
