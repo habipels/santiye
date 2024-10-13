@@ -125,6 +125,10 @@ urlpatterns = [#deneme
  path('update/todo/', views.yapilacaklar_time_line_duzenle_api, name='yapilacaklar_time_line_duzenle_api'),
  #######
  path('report/<int:id>', views.santiye_raporu_api, name='santiye_raporu_api'),
+  path('layer/', views.api_katman_sayfasi, name="api_katman_sayfasi"),
+ path('create/layer/', views.api_katman_ekle, name="api_katman_ekle"),
+    path('del/layer/', views.api_katman_sil, name="api_katman_sil"),
+    path('set/layer/', views.api_katman_duzenle, name="api_katman_duzenle"),
 
 ]#
 #

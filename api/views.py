@@ -1869,3 +1869,127 @@ def santiye_raporu_api(request, id):
         return Response(content, status=status.HTTP_200_OK)
     except bloglar.DoesNotExist:
         return Response({"detail": "Santiye raporu bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def api_katman_ekle(request):
+    if request.user.is_superuser:
+        kullanici = request.data.get("kullanici")
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_404(bagli_kullanicilar, kullanicilar=request.user)
+            if a and a.izinler.katman_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return Response({"detail": "Yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            kullanici = request.user
+
+    katman_adi = request.data.get("taseron_adi")
+    santiye_al = request.data.get("blogbilgisi")
+    dosya = request.FILES.get("file")
+    
+    katman_instance = katman.objects.create(
+        proje_ait_bilgisi=kullanici,
+        proje_santiye_Ait=get_object_or_404(santiye, id=santiye_al),
+        katman_adi=katman_adi,
+        katman_dosyasi=dosya
+    )
+    
+    return Response({"detail": "Katman başarıyla eklendi.", "katman_id": katman_instance.id}, status=status.HTTP_201_CREATED)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def api_katman_sil(request):
+    buttonIdInput = request.data.get("buttonId")
+    
+    if request.user.is_superuser:
+        katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_404(bagli_kullanicilar, kullanicilar=request.user)
+            if a and a.izinler.katman_silme:
+                katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
+            else:
+                return Response({"detail": "Yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
+    
+    return Response({"detail": "Katman başarıyla silindi."}, status=status.HTTP_200_OK)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def api_katman_sil(request):
+    buttonIdInput = request.data.get("buttonId")
+    
+    if request.user.is_superuser:
+        katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_404(bagli_kullanicilar, kullanicilar=request.user)
+            if a and a.izinler.katman_silme:
+                katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
+            else:
+                return Response({"detail": "Yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
+    
+    return Response({"detail": "Katman başarıyla silindi."}, status=status.HTTP_200_OK)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def api_katman_duzenle(request):
+    buttonId = request.data.get("buttonId")
+    
+    if request.user.is_superuser:
+        kullanici = request.data.get("kullanici")
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_404(bagli_kullanicilar, kullanicilar=request.user)
+            if a and a.izinler.katman_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return Response({"detail": "Yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            kullanici = request.user
+    
+    katman_adi = request.data.get("taseron_adi")
+    santiye_al = request.data.get("blogbilgisi")
+    dosya = request.FILES.get("file")
+
+    update_fields = {
+        "proje_ait_bilgisi": kullanici,
+        "proje_santiye_Ait": get_object_or_404(santiye, id=santiye_al),
+        "katman_adi": katman_adi,
+    }
+    
+    if dosya:
+        update_fields["katman_dosyasi"] = dosya
+
+    katman.objects.filter(id=buttonId).update(**update_fields)
+    
+    return Response({"detail": "Katman başarıyla güncellendi."}, status=status.HTTP_200_OK)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_katman_sayfasi(request):
+    content = {}
+    
+    # Check for super admin
+    if request.user.is_superuser:
+        content["profile"] = katman.objects.all().values()
+        content["kullanicilar"] = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id").values()
+    else:
+        # Regular user with `kullanicilar_db` access level
+        if request.user.kullanicilar_db:
+            a = get_object_or_404(bagli_kullanicilar, kullanicilar=request.user)
+            if a and a.izinler.katman_gorme:
+                content["profile"] = katman.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user.kullanicilar_db).values()
+                content["insaatlar"] = santiye.objects.filter(proje_ait_bilgisi=request.user.kullanicilar_db, silinme_bilgisi=False).values()
+            else:
+                return Response({"detail": "Yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            content["profile"] = katman.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user).values()
+            content["insaatlar"] = santiye.objects.filter(proje_ait_bilgisi=request.user, silinme_bilgisi=False).values()
+
+    content["santiyeler"] = content.get("profile", [])
+    content["top"] = content.get("profile", [])
+    content["medya"] = content.get("profile", [])
+
+    return Response(content, status=status.HTTP_200_OK)
