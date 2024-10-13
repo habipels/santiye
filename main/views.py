@@ -3834,13 +3834,19 @@ def yapilacalar_ekle(request):
                         teslim_tarihi = request.POST.get("teslim_tarihi")
                         blogbilgisi = request.POST.getlist("blogbilgisi")
                         aciklama = request.POST.get("aciklama")
+                        katman_bilgisi = request.POST.get("katman")
+                        yapi_gonder = request.POST.get("yapi_gonder")
+                        kat = request.POST.get("kat")
                         new_project = IsplaniPlanlari(
                             proje_ait_bilgisi = request.user.kullanicilar_db,
                             title = baslik,
                             status = durum,
                             aciklama = aciklama,
                             oncelik_durumu =aciliyet,
-                            teslim_tarihi = teslim_tarihi,silinme_bilgisi = False
+                            teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                            blok = get_object_or_none(bloglar,id = yapi_gonder),
+                            katman = get_object_or_none(katman,id = katman_bilgisi),
+                            kat = kat,locasyon = ""
                         )
                         new_project.save()
                         bloglar_bilgisi = []
@@ -3864,13 +3870,19 @@ def yapilacalar_ekle(request):
                 teslim_tarihi = request.POST.get("teslim_tarihi")
                 blogbilgisi = request.POST.getlist("blogbilgisi")
                 aciklama = request.POST.get("aciklama")
+                katman_bilgisi = request.POST.get("katman")
+                yapi_gonder = request.POST.get("yapi_gonder")
+                kat = request.POST.get("kat")
                 new_project = IsplaniPlanlari(
                     proje_ait_bilgisi = request.user,
                     title = baslik,
                     status = durum,
                     aciklama = aciklama,
                     oncelik_durumu =aciliyet,
-                    teslim_tarihi = teslim_tarihi,silinme_bilgisi = False
+                    teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                    blok = get_object_or_none(bloglar,id = yapi_gonder),
+                    katman = get_object_or_none(katman,id = katman_bilgisi),
+                    kat = kat,locasyon = ""
                 )
                 new_project.save()
                 bloglar_bilgisi = []

@@ -372,9 +372,9 @@
                         <div class="modal-form-row">
                             <div class="form-element">
                                 <label for="katman">{% trans 'Katman' %}</label>
-                                 <select name="katman"  data-trigger >
+                                 <select name="katman" id="katmanSelect"  data-trigger >
                                 {% for blog in katmanlar %}
-                                <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
+                                <option data-id="{{blog.proje_santiye_Ait.id}}" data-img="{{blog.katman_dosyasi.url}}" value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
                                 {% endfor %}
                             </select>
                                 
@@ -382,11 +382,10 @@
                        
                             <div class="form-element">
                                 <label for="yapi_gonder">{% trans 'Yapı' %}</label>
-                                 <select name="yapi_gonder"  data-trigger >
-                                {% for blog in katmanlar %}
-                                <option data-img="{{blog.katman_dosyasi.url}}" value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
-                                {% endfor %}
+                                 <select name="yapi_gonder" id="yapiSelect"  data-trigger >
+                                
                             </select>
+                        </div>
                               <div class="form-element">
                                 <label for="kat">{% trans 'kat' %}</label>
                                  <select name="kat"  data-trigger >

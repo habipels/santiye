@@ -1574,6 +1574,10 @@ def yapilacalar_ekle_api(request):
         teslim_tarihi = request.data.get("teslim_tarihi")
         blogbilgisi = request.data.getlist("kullanicilari")
         aciklama = request.data.get("aciklama")
+        katman_bilgisi = request.data.get("katman_bilgisi")
+        yapi_gonder = request.data.get("yapi_gonder")
+        kat = request.data.get("kat")
+        locasyon = request.data.get("locasyon")
         
         new_project = IsplaniPlanlari(
             proje_ait_bilgisi=request.user,
@@ -1582,7 +1586,10 @@ def yapilacalar_ekle_api(request):
             aciklama=aciklama,
             oncelik_durumu=aciliyet,
             teslim_tarihi=teslim_tarihi,
-            silinme_bilgisi=False
+            silinme_bilgisi=False,
+            blok = get_object_or_404(bloglar,id = yapi_gonder),
+            katman = get_object_or_404(katman,id = katman_bilgisi),
+            kat = kat,locasyon = ""
         )
         new_project.save()
         
