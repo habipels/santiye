@@ -12,18 +12,80 @@
     {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
      {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
     <main>
+<style>
+/* Rapor bina görseli başlangıcı */
 
+.building-container-report {
+    width: 300px; /* Yapı konteynerinin genişliği */
+    height: 600px; /* Yapı konteynerinin yüksekliği */
+    perspective: 1000px;
+    position: relative;
+}
 
+.building-report {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateY(0deg);
+    transition: transform 0.5s ease;
+    display: flex; /* Katları yan yana sıralamak için */
+    flex-direction: column; /* Katları dikey olarak yerleştirmek için */
+}
+
+.face-report {
+    position: relative; /* Değiştirdik */
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+    backface-visibility: hidden;
+}
+
+.floor-report {
+    width: 100%; /* Kat genişliği */
+    height: calc(100% / 17); /* 17 kat */
+    background-size: contain; /* Resmin boyutunu koruyarak içeriye sığdırma */
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    opacity: 1; /* Varsayılan görünürlük ayarı */
+}
+
+.completed-report {
+    opacity: 1; /* Tamamlanmış katlar normal görünümde */
+}
+
+.not-completed-report {
+    opacity: 0.4; /* Tamamlanmamış katlar soluk görünümde */
+}
+
+.roof-report {
+    position: absolute;
+    top: -30px; /* Çatının biraz üstünde */
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+/* Rapor bina görseli sonu */
+</style>
         <div class="page-header">
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                   {% trans 'Rapor' %} 
+                    Rapor
                 </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="#">{% trans 'Dashboard' %} </a></li>
-                    <li><a href="#">{% trans 'Şantiye Yönetimi' %} </a></li>
-                    <li><a href="#">{% trans 'Rapor' %} </a></li>
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#">Şantiye Yönetimi</a></li>
+                    <li><a href="#">Rapor</a></li>
                 </ul>
             </div>
         </div>
@@ -33,10 +95,10 @@
 
             <div class="report-card">
                 <div class="report-header">
-                    <div class="report-title">{% trans 'İlerleme' %} </div>
+                    <div class="report-title">İlerleme</div>
                     <div class="report-stats-info">
-                        <span><i class="icon icon-purple-circle"></i>{% trans 'Fiziksel' %}  </span>
-                        <span><i class="icon icon-yellow-circle"></i>{% trans 'Finansal' %}  </span>
+                        <span><i class="icon icon-purple-circle"></i> Fiziksel</span>
+                        <span><i class="icon icon-yellow-circle"></i> Finansal</span>
                     </div>
                 </div>
 
@@ -46,11 +108,11 @@
                     <script>
                         var options = {
                             series: [{
-                                name: "{% trans 'Finansal' %} ",
-                                data: {{gun_kalem_sayilari.degerler2 | safe}},
+                                name: 'Finansal',
+                                data: [44, 55, 71, 67, 22, 43, 12],
                             }, {
-                                name: "{% trans 'Fiziksel' %} ",
-                                data: {{gun_kalem_sayilari.degerler | safe}}
+                                name: 'Fiziksel',
+                                data: [13, 23, 20, 8, 13, 27, 12]
                             },],
                             chart: {
                                 type: 'bar',
@@ -93,7 +155,7 @@
                             },
                             xaxis: {
                                 type: 'text',
-                                categories: {{gun_kalem_sayilari.gunler | safe}},
+                                categories: ['P', 'S', 'Ç', 'P', 'C', 'C', 'P'],
                             },
                             legend: {
                                 show: false
@@ -111,10 +173,10 @@
 
             <div class="report-card">
                 <div class="report-header">
-                    <div class="report-title">{% trans 'İlerleme Tablosu' %} </div>
+                    <div class="report-title">İlerleme Tablosu</div>
                     <div class="report-stats-info">
-                        <span><i class="icon icon-purple-circle"></i>{% trans 'Fiziksel' %}  </span>
-                        <span><i class="icon icon-yellow-circle"></i> {% trans 'Finansal' %} </span>
+                        <span><i class="icon icon-purple-circle"></i> Fiziksel</span>
+                        <span><i class="icon icon-yellow-circle"></i> Finansal</span>
                     </div>
                 </div>
                 <div class="report-body">
@@ -124,11 +186,11 @@
                     <script>
                         var options = {
                             series: [{
-                                name: "{% trans 'Finansal' %} ",
-                                data: {{ay_kalem_sayilari.degerler2 |safe}}
+                                name: 'Finansal',
+                                data: [31, 40, 28, 51, 42, 109, 100, 80, 90, 70, 60, 50]
                             }, {
-                                name:"{% trans 'Fiziksel' %} " ,
-                                data:  {{ay_kalem_sayilari.degerler |safe}}
+                                name: 'Fiziksel',
+                                data: [11, 32, 45, 32, 34, 52, 41, 62, 51, 43, 34, 23]
                             }],
                             chart: {
                                 height: 350,
@@ -145,7 +207,10 @@
                             },
                             xaxis: {
                                 type: 'category',
-                                categories: {{ay_kalem_sayilari.aylar |safe}}
+                                categories: [
+                                    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                                    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+                                ]
                             },
                             legend: {
                                 show: false
@@ -171,39 +236,56 @@
         <div class="report-card">
             <div class="report-header">
                 <div class="report-details">
-                    <div class="report-title"><i class="icon icon-yellow-circle"></i> {{santiye.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</div>
+                    <div class="report-title"><i class="icon icon-yellow-circle"></i> Süleymaniye Şantiyesi</div>
                     <div class="report-infos">
-                        <div class="report-info">{% trans 'Proje Adı:' %}  <b>{{santiye.proje_santiye_Ait.proje_adi}}</b></div>
-                        <div class="report-info">{% trans 'Yapı Adı:' %} <b>{{santiye.blog_adi}}</b></div>
+                        <div class="report-info">Proje Adı: <b>Yeşil Konutlar</b></div>
+                        <div class="report-info">Tipi: <b>Apartman</b></div>
                     </div>
                 </div>
             </div>
 
-            <div class="report-building-body">
+             <div class="report-building-body">
                 <div class="report-bb-preview">
-                    <img src="{% static 'go/content/images/bina.png' %}" alt="bina">
+                        <div class="building-container-report">
+                            <div class="building-report" id="building-report">
+                                <div class="face-report" id="face1"></div>
+                                <div class="face-report" id="face2"></div>
+                                <div class="face-report" id="face3"></div>
+                                <div class="face-report" id="face4"></div>
+                            </div>
+                        </div>
                 </div>
                 <div class="report-bb-chart">
+
+                    <div class="form-element">
+                        <select name="imalat-kalemi-select" id="imalat-kalemi-select">
+                            <option value="imalat-kalemi-check-1" selected>Kalem - 1</option>
+                            <option value="imalat-kalemi-check-2">Kalem - 2</option>
+                            <option value="imalat-kalemi-check-3">Kalem - 3</option>
+                        </select>
+                    </div>
+
+
                     <div id="report-bb-chart"></div>
 
                     <div class="report-bb-stats">
                         <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i>{% trans 'Tamamlanan' %} </div>
-                            <div class="report-bb-stat-value">%{{fiziksel_ilerleme |safe }}</div>
+                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i> Tamamlanan</div>
+                            <div class="report-bb-stat-value">%50</div>
                         </div>
                         <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i>{% trans 'Devam Eden' %} </div>
-                            <div class="report-bb-stat-value">%{% basit_cikarma 100 fiziksel_ilerleme  %}</div>
+                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i> Devam Eden</div>
+                            <div class="report-bb-stat-value">%49</div>
                         </div>
-                        <div class="report-bb-stat">
+                        <!-- <div class="report-bb-stat">
                             <div class="report-bb-stat-title"><i class="icon icon-red-circle"></i> Duran</div>
                             <div class="report-bb-stat-value">%1</div>
-                        </div>
+                        </div>-->
                     </div>
 
                     <script>
                         var options = {
-                            series: [{{fiziksel_ilerleme |safe }}, {% basit_cikarma 100 fiziksel_ilerleme  %}, 1],
+                            series: [50, 49],
                             chart: {
                                 height: 500,
                                 type: 'radialBar',
@@ -228,8 +310,8 @@
 
                                 },
                             },
-                            labels: ['Tamamlanan', 'Devam Eden', 'Duran'],
-                            colors: ['#00A76F', '#DCDCDE', '#FF5630']
+                            labels: ['Tamamlanan', 'Devam Eden'],
+                            colors: ['#00A76F', '#DCDCDE']
                         };
 
                         var chart = new ApexCharts(document.querySelector("#report-bb-chart"), options);
@@ -242,39 +324,185 @@
 
         <div class="report-card">
             <div class="report-header">
-                <div class="report-title">{% trans 'İmalat Kalemleri' %}</div>
+                <div class="report-title">İmalat Kalemleri</div>
             </div>
             <div class="report-body">
                 <div class="imalat-kalemleri">
-                {% for i in tablo %}
-                
                     <div class="imalat-kalemi">
                         <div class="imalat-kalemi-check">
                             <input type="checkbox" id="imalat-kalemi-check-1" checked>
                         </div>
                         <div class="imalat-kalemi-progress">
                             <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">{{i.isim}}</div>
+                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
                                 <div class="imalat-kalemi-progress-info">
-                                    <span><i class="icon icon-green-accent-circle"></i>{% trans 'Fiziksel' %}  %{{i.ilerleme1}}</span>
-                                    <span><i class="icon icon-green-circle"></i>{% trans 'Finansal' %}  %{{i.ilerleme2}}</span>
+                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
+                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
                                 </div>
                             </div>
                             <div class="imalat-kalemi-progress-bar">
-                                <div class="ik-progress-bar-fiziksel" style="--percentage: {{i.ilerleme1}}%"></div>
-                                <div class="ik-progress-bar-finansal" style="--percentage: {{i.ilerleme2}}%"></div>
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
                             </div>
                         </div>
                     </div>
-
-                 {% endfor %}
+                    <div class="imalat-kalemi">
+                        <div class="imalat-kalemi-check">
+                            <input type="checkbox" id="imalat-kalemi-check-2" >
+                        </div>
+                        <div class="imalat-kalemi-progress">
+                            <div class="imalat-kalemi-progress-details">
+                                <div class="imalat-kalemi-progress-title">Kalem - 2</div>
+                                <div class="imalat-kalemi-progress-info">
+                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
+                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
+                                </div>
+                            </div>
+                            <div class="imalat-kalemi-progress-bar">
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="imalat-kalemi">
+                        <div class="imalat-kalemi-check">
+                            <input type="checkbox" id="imalat-kalemi-check-3">
+                        </div>
+                        <div class="imalat-kalemi-progress">
+                            <div class="imalat-kalemi-progress-details">
+                                <div class="imalat-kalemi-progress-title">Kalem - 3</div>
+                                <div class="imalat-kalemi-progress-info">
+                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
+                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
+                                </div>
+                            </div>
+                            <div class="imalat-kalemi-progress-bar">
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="imalat-kalemi">
+                        <div class="imalat-kalemi-check">
+                            <input type="checkbox" id="imalat-kalemi-check-1">
+                        </div>
+                        <div class="imalat-kalemi-progress">
+                            <div class="imalat-kalemi-progress-details">
+                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
+                                <div class="imalat-kalemi-progress-info">
+                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
+                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
+                                </div>
+                            </div>
+                            <div class="imalat-kalemi-progress-bar">
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="imalat-kalemi">
+                        <div class="imalat-kalemi-check">
+                            <input type="checkbox" id="imalat-kalemi-check-1">
+                        </div>
+                        <div class="imalat-kalemi-progress">
+                            <div class="imalat-kalemi-progress-details">
+                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
+                                <div class="imalat-kalemi-progress-info">
+                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
+                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
+                                </div>
+                            </div>
+                            <div class="imalat-kalemi-progress-bar">
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="imalat-kalemi">
+                        <div class="imalat-kalemi-check">
+                            <input type="checkbox" id="imalat-kalemi-check-1">
+                        </div>
+                        <div class="imalat-kalemi-progress">
+                            <div class="imalat-kalemi-progress-details">
+                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
+                                <div class="imalat-kalemi-progress-info">
+                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
+                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
+                                </div>
+                            </div>
+                            <div class="imalat-kalemi-progress-bar">
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="imalat-kalemi">
+                        <div class="imalat-kalemi-check">
+                            <input type="checkbox" id="imalat-kalemi-check-1">
+                        </div>
+                        <div class="imalat-kalemi-progress">
+                            <div class="imalat-kalemi-progress-details">
+                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
+                                <div class="imalat-kalemi-progress-info">
+                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
+                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
+                                </div>
+                            </div>
+                            <div class="imalat-kalemi-progress-bar">
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <script>
+            $("input[type='checkbox']").on("change", function () {
+                $("input[type='checkbox']").prop("checked", false);
+                $(this).prop("checked", true);
 
+                $("#imalat-kalemi-select").val($(this).attr("id"));
+            });
+
+            $("#imalat-kalemi-select").on("change", function () {
+                $("input[type='checkbox']").prop("checked", false);
+                $("#" + $("#imalat-kalemi-select").val()).prop("checked", true)
+                console.log($("#imalat-kalemi-select").val())
+            })
+        </script>
 
     </main>
+       <script>
+        function createBuilding() {
+            const floors = 22;
+            const imageUrl = 'http://127.0.0.1:8000/static/go/images/3dbuild.png'; // Resmin doğru yolu
+            const completionPercentages = [100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // İlk 3 kat %100 tamamlanmış, diğerleri %0
 
+            const face = document.getElementById('face1'); // İlk yüzeyi kullanalım
+
+            for (let j = floors; j >= 1; j--) { // Aşağıdan yukarı doğru artan sıra
+                const floor = document.createElement('div');
+                floor.className = 'floor-report';
+                floor.style.backgroundImage = `url(${imageUrl})`;
+                floor.setAttribute('data-floor', `{% trans 'Kat' %} ${j}`);
+
+                // Tamamlanma durumu kontrolü
+                if (completionPercentages[j - 1] === 100) {
+                    floor.classList.add('completed-report');
+                    floor.innerHTML = `{% trans 'Kat' %} ${j}: {% trans 'Tamamlandı' %}`;
+                } else {
+                    floor.classList.add('not-completed-report');
+                    floor.innerHTML = `{% trans 'Kat' %} ${j}: {% trans 'Tamamlanmadı' %}`;
+                }
+
+                face.appendChild(floor);
+            }
+        }
+
+        createBuilding();
+    </script>
+    
 {% endblock sidebar %}
 
