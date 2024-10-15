@@ -2391,6 +2391,12 @@ main:has(.page-header) .status-cancel {
     transition: all .2s ease-in-out;
 }
 
+@media screen and (max-width: 500px) {
+    .stats-search {
+        width: 150px;
+    }
+}
+
 .stats-search input {
     border-radius: 100px 0 0 100px;
     border: none;
@@ -2560,6 +2566,12 @@ main:has(.page-header) .status-cancel {
 
 .form-row>.form-element {
     width: 100%;
+}
+
+@media screen and (max-width: 410px) {
+    .form-row > .form-element {
+        width: 46%;
+    }
 }
 
 .form-element {
@@ -2969,6 +2981,20 @@ main:has(.page-header) .status-cancel {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    position: relative;
+}
+
+@media screen and (max-width: 694px) {
+    .report-building-body {
+        padding-top: 30px;
+    }
+
+    .report-building-body select {
+        position: absolute;
+        top: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
 
 .report-building-body>div {
@@ -3655,6 +3681,10 @@ main:has(.page-header) .status-cancel {
     justify-content: end;
 }
 
+.large-stats-card:has(.large-stats-card-footer-actions) {
+    padding-bottom: 60px;
+}
+
 .large-stats-card-footer-actions {
     position: absolute;
     bottom: 10px;
@@ -3671,6 +3701,7 @@ main:has(.page-header) .status-cancel {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 .td-puantaj {
@@ -3679,6 +3710,10 @@ main:has(.page-header) .status-cancel {
     justify-content: center;
     gap: 6px;
     flex-direction: column;
+}
+
+#aylik-table .td-puantaj {
+    padding-inline: 10px;
 }
 
 .puantaj-table tbody tr {
@@ -3695,6 +3730,18 @@ main:has(.page-header) .status-cancel {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
+}
+
+.td-puantaj-part::-webkit-outer-spin-button,
+.td-puantaj-part::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.td-puantaj-part.number-to-text {
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .td-puantaj-primary {
@@ -3820,60 +3867,38 @@ main:has(.page-header) .status-cancel {
     align-items: center;
     color: #052941;
     gap: 4px;
+    cursor: pointer;
+}
+
+.fatura-kalemleri-wrapper {
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.fatura-kalemleri-wrapper::-webkit-scrollbar {
+    display: none;
 }
 
 .fatura-kalemleri {
-    display: flex;
-    row-gap: 24px;
-    padding-inline: 24px;
+    table-layout: fixed;
 }
 
-@media screen and (max-width: 800px) {
-    .fatura-kalemleri {
-        flex-wrap: wrap;
-    }
+.fatura-kalemleri tr td {
+    padding: 10px;
+    vertical-align: baseline;
 }
 
-.fatura-kalemleri .form-element {
-    padding-inline: 10px;
+.fatura-kalemleri tr td .form-element:first-child {
+    margin-bottom: 10px;
 }
 
-.fatura-kalemleri span {
-    padding-inline: 10px;
-    background-color: #F4F6F8;
-    font-size: 14px;
-    color: #637381;
-    font-weight: 500;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.fatura-kalemleri tr td:first-child {
+    width: 300px;
 }
 
-.fatura-kalemi {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-@media screen and (max-width: 600px) {
-    .fatura-kalemi {
-        width: 100%;
-    }
-}
-
-.fatura-kalemi input {
-    width: 100%;
-}
-
-.fatura-kalemi:first-child {
-    flex: 0 0 30%;
-}
-
-@media screen and (max-width: 600px) {
-    .fatura-kalemi:first-child {
-        flex: unset;
-    }
+.fatura-kalemleri tr td .status-cancel {
+    margin-left: auto;
 }
 
 .iqd-input input {
@@ -3965,6 +3990,197 @@ main:has(.page-header) .status-cancel {
     color: #24D6B6;
 }
 
+/*.dt-buttons {
+    opacity: 0;
+    height: 0;
+    position: fixed;
+    top: 10000px;
+    left: 10000px;
+} data tables export butonları yeni tasarımda görünmesin diye eklenmişti kontrol et*/
+
+.dt-print-view {
+    padding: 12px;
+}
+
+.dt-layout-cell.dt-layout-full {
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.dt-layout-cell.dt-layout-full::-webkit-scrollbar {
+    display: none;
+}
+
+.ui-menu.ui-autocomplete {
+    max-width: 200px;
+    list-style-type: none;
+    padding: 12px;
+    background-color: #fff;
+    border: 1px solid #D9D9D9;
+    border-radius: 8px;
+}
+
+.ui-menu.ui-autocomplete li {
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: all .1s ease-in-out;
+    cursor: pointer;
+}
+
+.ui-menu.ui-autocomplete li:hover {
+    background-color: #ededed;
+}
+
+.applyBtn.btn.btn-sm.btn-primary {
+    height: 24px;
+    background-color: #1C252E;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
+
+.cancelBtn.btn.btn-sm.btn-default {
+    height: 24px;
+    border: 1px solid #D0D5DD;
+    background-color: transparent;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #052941;
+    outline: 0;
+    cursor: pointer;
+    margin-bottom: 6px;
+}
+
+.mult-select-tag .body { 
+    min-width: 30px!important;
+    height: 44px;
+}
+
+.mult-select-tag ul li {
+    display: flex;
+    align-items: center;
+    height: 30px;
+}
+
+a.status-cancel.stats-lg {
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+.ilerleme-durumlari {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+}
+
+.ilerleme-durumlari::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    background-color: rgb(233, 233, 233);
+    border-radius: 8px;
+    top: 0;
+    bottom: 0;
+    left: 2%;
+    margin-left: -3px;
+}
+
+.ilerleme-durumlari .ilerleme-durumu {
+    position: relative;
+    left: 10%;
+    width: 90%;
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 400px) {
+    .ilerleme-durumlari .ilerleme-durumu {
+        left: 14%;
+    }
+}
+
+.ilerleme-durumlari .ilerleme-durumu span {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.ilerleme-durumlari .ilerleme-durumu::before {
+    content: " ";
+    height: 0;
+    position: absolute;
+    top: 30px;
+    width: 0;
+    z-index: 1;
+    left: -9px;
+    border: medium solid rgb(233, 233, 233);
+    border-width: 10px 10px 10px 0;
+    border-color: transparent rgb(233, 233, 233) transparent transparent;
+}
+
+.ilerleme-durumlari .ilerleme-durumu::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    left: -54px;
+    background-color: white;
+    border: 6px solid rgb(233, 233, 233);
+    top: 20px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.ilerleme-durumlari .ilerleme-durumu .ilerleme-durumu-content {
+    background-color: rgb(233, 233, 233);
+    padding: 12px;
+}
+
+
+.ilerleme-durumu-dosyalar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.ilerleme-durumu-dosya {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    border: 1px solid #E0E0E0;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: rgb(239, 239, 239);
+}
+
+.ilerleme-durumu-dosya img {
+    max-height: 80px;
+    width: 100px;
+    object-fit: contain;
+}
+
+.ilerleme-durumu-dosya span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 /*3d Bina CSS Düzeni BAŞLANGIÇ*/
 
 .cardbuild-body {
