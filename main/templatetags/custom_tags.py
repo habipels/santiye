@@ -106,11 +106,15 @@ from collections import defaultdict
 from datetime import timedelta
 from django import template
 from django.utils import timezone
+from collections import defaultdict
+from django.utils import timezone
+from datetime import timedelta
+
 @register.simple_tag
 def get_son_bir_hafta_icinde_degisenler(id):
     """
     Son bir hafta içinde değişen ve tamamlanma bilgisi True olan santiye_kalemlerin_dagilisi kayıtlarını gün gün ayırarak
-    ve her gün için değişen kalem sayısını getirir. Günler yazı ile ifade edilir.
+    fiziksel ve finansal değerleri gün bazında döndürür.
     """
     now = timezone.now()
     one_week_ago = now - timedelta(days=7)
@@ -124,80 +128,102 @@ def get_son_bir_hafta_icinde_degisenler(id):
 
     # Gün gün ayırmak için defaultdict kullanıyoruz
     gun_gun_kalemler = defaultdict(list)
+    gun_gun_kalemlerfiz = defaultdict(list)
+    gun_gun_kalemlerfin = defaultdict(list)
 
     for kalem in degisen_kalemler:
-        # Her kalemin degistirme_tarihi'ne göre gününü alıyoruz
-        degisme_gunu = kalem.degistirme_tarihi.date()  # .date() burada gerekli
+        degisme_gunu = kalem.degistirme_tarihi.date()
+        fiziksel = kalem.kalem_bilgisi.santiye_agirligi
+        finansal = kalem.kalem_bilgisi.santiye_finansal_agirligi
+        kat = kalem.blog_bilgisi.kat_sayisi
+
+        sonuc_fiziksel = fiziksel / kat
+        sonuc_finansal = finansal / kat
+
         gun_gun_kalemler[degisme_gunu].append(kalem)
+        gun_gun_kalemlerfiz[degisme_gunu].append(sonuc_fiziksel)
+        gun_gun_kalemlerfin[degisme_gunu].append(sonuc_finansal)
 
     # Gün adlarını tanımlıyoruz (Pazartesi'den başlayarak)
-    gun_adlari = [
-        "Pazartesi", "Salı", "Çarşamba", "Perşembe", 
-        "Cuma", "Cumartesi", "Pazar"
-    ]
+    gun_adlari = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
     
     # Son bir haftadaki günlerin listesini oluşturuyoruz
-    gunler = [now.date() - timedelta(days=i) for i in range(7)]  # .date() burada gereksiz
-
+    gunler = [now.date() - timedelta(days=i) for i in range(7)]
+    
     # Günleri sıraya göre döndürüyoruz ve o günün kayıtlarını varsa ekliyoruz
-    gun_kalem_sayilari = []
     gun_gonder = []
-    deger_gonder = []
-    for i, gun in enumerate(gunler):
-        # Gün adını alıyoruz (Pazartesi = 0, Salı = 1, ... )
-        gun_ad = gun_adlari[(i + 0) % 7]  # (i + 0) ile Pazartesi'den başlatıyoruz
+    deger_gonder_fizi = []
+    deger_gonder_finn = []
+
+    for gun in reversed(gunler):  # Günleri doğru sırada döndürecek
+        gun_ad = gun_adlari[gun.weekday()]  # Doğrudan gun.weekday() ile günü alıyoruz
+
         sayi = len(gun_gun_kalemler.get(gun, []))
-        gun_kalem_sayilari.append((gun_ad, sayi))
+        fiziksel_toplam = round(sum(gun_gun_kalemlerfiz.get(gun, [])), 2)
+        finansal_toplam = round(sum(gun_gun_kalemlerfin.get(gun, [])), 2)
+
         gun_gonder.append(gun_ad)
-        deger_gonder.append(sayi)
+        deger_gonder_fizi.append(fiziksel_toplam)
+        deger_gonder_finn.append(finansal_toplam)
 
-    return {"gunler":gun_gonder,"degerler":deger_gonder}
+    return {
+        "gunler": gun_gonder,
+        "degerler": deger_gonder_fizi,
+        "degerler2": deger_gonder_finn
+    }
+
 
 
 @register.simple_tag
-@register.simple_tag
-def get_son_bir_yil_icinde_degisenler(id):
+def get_yil_icinde_degisenler(id):
     """
-    Bulunduğumuz yıl içinde değişen ve tamamlanma bilgisi True olan santiye_kalemlerin_dagilisi kayıtlarını ay ay ayırarak
-    ve her ay için değişen kalem sayısını getirir. Aylar yazı ile ifade edilir.
+    Yıl içinde değişen ve tamamlanma bilgisi True olan santiye_kalemlerin_dagilisi kayıtlarını ay bazında ayırarak
+    fiziksel ve finansal değerleri ay bazında döndürür.
     """
     now = timezone.now()
-    current_year = now.year
+    baslangic_tarihi = now.replace(month=1, day=1)  # Yıl başına gidiyoruz
 
-    # Bulunduğumuz yıl içinde değişen ve tamamlanma bilgisi True olan kayıtlar
+    # Yıl içinde değişen ve tamamlanma bilgisi True olan kayıtlar
     degisen_kalemler = santiye_kalemlerin_dagilisi.objects.filter(
         blog_bilgisi__id=id,
-        degistirme_tarihi__year=current_year,
+        degistirme_tarihi__gte=baslangic_tarihi,
         tamamlanma_bilgisi=True
     )
 
-    # Ay ay ayırmak için defaultdict kullanıyoruz
-    ay_kalemler = defaultdict(list)
+    # Ay bazında ayırmak için defaultdict kullanıyoruz
+    ay_bazinda_kalemlerfiz = defaultdict(float)
+    ay_bazinda_kalemlerfin = defaultdict(float)
 
     for kalem in degisen_kalemler:
-        # Her kalemin degistirme_tarihi'ne göre ayını alıyoruz (YYYY-MM formatında)
-        degisme_ayi = kalem.degistirme_tarihi.strftime('%Y-%m')  # Yıl-Ay formatında
-        ay_kalemler[degisme_ayi].append(kalem)
+        degisme_ayi = kalem.degistirme_tarihi.strftime("%Y-%m")  # Ay ve yılı belirlemek için
+        fiziksel = kalem.kalem_bilgisi.santiye_agirligi
+        finansal = kalem.kalem_bilgisi.santiye_finansal_agirligi
+        kat = kalem.blog_bilgisi.kat_sayisi
 
-    # Ay adlarını tanımlıyoruz
-    ay_adlari = [
-        "Ocak", "Şubat", "Mart", "Nisan", 
-        "Mayıs", "Haziran", "Temmuz", "Ağustos", 
-        "Eylül", "Ekim", "Kasım", "Aralık"
-    ]
+        sonuc_fiziksel = fiziksel / kat
+        sonuc_finansal = finansal / kat
 
-    # Bu yılın aylarını oluşturuyoruz
-    ay_gonder = []
-    deger_gonder = []
-    
-    for month in range(1, 13):  # 1'den 12'ye kadar döngü
-        ay_str = f"{current_year}-{month:02d}"  # YYYY-MM formatında
-        ay_ad = ay_adlari[month - 1]  # Ay ismini alıyoruz
-        sayi = len(ay_kalemler.get(ay_str, []))
-        ay_gonder.append(ay_ad)
-        deger_gonder.append(sayi)
+        ay_bazinda_kalemlerfiz[degisme_ayi] += sonuc_fiziksel
+        ay_bazinda_kalemlerfin[degisme_ayi] += sonuc_finansal
 
-    return {"aylar": ay_gonder, "degerler": deger_gonder}
+    # Yılın tüm aylarını sıraya göre döndürüyoruz
+    aylar = [f"{now.year}-{str(i).zfill(2)}" for i in range(1, 13)]
+    deger_gonder_fizi = []
+    deger_gonder_finn = []
+
+    for ay in aylar:
+        fiziksel_toplam = round(ay_bazinda_kalemlerfiz.get(ay, 0), 2)
+        finansal_toplam = round(ay_bazinda_kalemlerfin.get(ay, 0), 2)
+
+        deger_gonder_fizi.append(fiziksel_toplam)
+        deger_gonder_finn.append(finansal_toplam)
+
+    return {
+        "aylar": aylar,
+        "degerler": deger_gonder_fizi,
+        "degerler2": deger_gonder_finn
+    }
+
 @register.simple_tag
 def bloglar_daireleri_kalemleri_fiziksel_bilgileri_genel(k_b):
     genel_toplam = 0
@@ -221,16 +247,18 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme(id,k_b):
     genel_toplam = []
     a = 0
     b = 0
+    kat = get_object_or_404(bloglar,id = id).kat_sayisi
     for i in k_b:
+        
         toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id = i.id).count()
         toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
         toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
         try:
-            a = round((toplam_yapilan_kalem*100/toplam_kalem),2)
-            b =round((toplam_yapilan_kalem*100/toplam_kalem),2)
+            a = int(((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)*100/(i.santiye_agirligi))
+            b =int(((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)*100/(i.santiye_finansal_agirligi))
         except:
             pass
-        genel_toplam.append({"isim":i.kalem_adi,"ilerleme1":int(a),"ilerleme2":int(b)})
+        genel_toplam.append({"isim":i.kalem_adi,"ilerleme1":a,"ilerleme2":b})
 
     return genel_toplam
 @register.simple_tag

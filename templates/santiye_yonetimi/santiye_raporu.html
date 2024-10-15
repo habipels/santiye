@@ -10,7 +10,7 @@
 {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
 {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
     {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
-     {% get_son_bir_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
+     {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
     <main>
 
 
@@ -47,10 +47,10 @@
                         var options = {
                             series: [{
                                 name: "{% trans 'Finansal' %} ",
-                                data: {{gun_kalem_sayilari.finansal_yuzdeler | safe}},
+                                data: {{gun_kalem_sayilari.degerler2 | safe}},
                             }, {
                                 name: "{% trans 'Fiziksel' %} ",
-                                data: {{gun_kalem_sayilari.fiziksel_yuzdeler | safe}}
+                                data: {{gun_kalem_sayilari.degerler | safe}}
                             },],
                             chart: {
                                 type: 'bar',
@@ -125,7 +125,7 @@
                         var options = {
                             series: [{
                                 name: "{% trans 'Finansal' %} ",
-                                data: {{ay_kalem_sayilari.degerler |safe}}
+                                data: {{ay_kalem_sayilari.degerler2 |safe}}
                             }, {
                                 name:"{% trans 'Fiziksel' %} " ,
                                 data:  {{ay_kalem_sayilari.degerler |safe}}
@@ -247,7 +247,6 @@
             <div class="report-body">
                 <div class="imalat-kalemleri">
                 {% for i in tablo %}
-                
                 
                     <div class="imalat-kalemi">
                         <div class="imalat-kalemi-check">
