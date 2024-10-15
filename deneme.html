@@ -20,17 +20,16 @@
     <!--Multi Select Date Picker Calender-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
             <div class="container-fluid">
                 <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">{% trans 'Personel Departmanları' %}</h4>
+                            <h4 class="mb-sm-0">{% trans 'Personel Pozisyonları' %}</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Çalışan Yönetimi' %}</a></li>
-                                    <li class="breadcrumb-item active">{% trans 'Personel Departmanı' %}</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Personel >>' %}</a></li>
+                                    <li class="breadcrumb-item active">{% trans 'Personel Pozisyonu' %}</li>
                                 </ol>
                             </div>
                         </div>
@@ -40,7 +39,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">{% trans 'Personel Departmanları' %}</h4>
+                                <h4 class="card-title mb-0">{% trans 'Personel Pozisyonları' %}</h4>
                             </div><!-- end card header -->
                             <div class="card-body">
                                 <div class="listjs-table" id="customerList">
@@ -50,13 +49,13 @@
                                             {% if request.user.kullanicilar_db %}
                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                             {% if yetki.personeller_olusturma %}
-                                                  <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Departman Ekle' %}</button>
+                                                  <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Pozisyon Ekle' %}</button>
                                                   
                                             {% else %}
                                                                                                             
                                             {% endif %}
                                             {% else %}
-                                                <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Departman Ekle' %}</button>
+                                                <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Pozisyon Ekle' %}</button>
                                                     
                                             {% endif %}
                                                 
@@ -83,11 +82,10 @@
                                                         </div>
                                                     </th>
                                                     {% if request.user.is_superuser %}
-                                                    <th class="sort" data-sort="customer_name">{% trans 'Departman Kime Ait' %}</th>
+                                                    <th class="sort" data-sort="customer_name">{% trans 'Pozisyon Kime Ait' %}</th>
                                                     {% endif %}
-                                                    <th class="sort" data-sort="email">{% trans 'Departman Adı' %}</th>
-                                                    <th class="sort" data-sort="phone">{% trans 'Departmandaki Personel Sayısı' %}</th>
-                                                    <th class="sort" data-sort="date">{% trans 'Kalan Departman Ödemesi' %}</th>
+                                                    <th class="sort" data-sort="email">{% trans 'Pozisyon Adı' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Pozisyondaki Personel Sayısı' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Durum' %}</th>
                                                 </tr>
@@ -107,9 +105,8 @@
                                                     <td class="customer_name">{{i.kategori_isimi}}
                                                     </td>
                                                     <td class="email">
-                                                    {% departman_calisan_sayisi i %}</td>
-                                                    <td class="email">
-                                                    Toplam Ödeme Gelecek</td>
+                                                    {% pozisyon_calisan_sayisi i %}</td>
+                                                    
                                                     <td class="date">
                                                         {{i.kayit_tarihi}}
                                                     
@@ -127,7 +124,7 @@
                                                         {% endif %}
                                                         {% else %}
                                                             <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Departmanu Düzenle' %}</button>
+                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Pozisyonu Düzenle' %}</button>
                                                             </div>                                                    
                                                         {% endif %}
                                                             
@@ -135,7 +132,7 @@
                                                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                         {% if yetki.personeller_silme %}
                                                                  <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Departmanu Sil' %}</button>
+                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Pozisyonu Sil' %}</button>
                                                             </div>                                               
                                                         {% else %}
                                                                                                                         
@@ -216,7 +213,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'users:personelleri_departman_düzenle' %}" method="post" enctype="multipart/form-data" >
+                            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'users:personelleri_kategori_düzenle' %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     <div class="mb-3" id="modal-id" style="display: none;">
@@ -241,8 +238,8 @@
     
                                         
                                         <div class="mb-3">
-                                            <label for="date-field" class="form-label">{% trans 'Departman  Adı' %}</label>
-                                            <input type="text" value="{{i.kategori_isimi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="{% trans 'Departman Adı' %}" />
+                                            <label for="date-field" class="form-label">{% trans 'Pozisyon  Adı' %}</label>
+                                            <input type="text" value="{{i.kategori_isimi}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder="{% trans 'Pozisyon Adı' %}" />
                                         </div>
                                     
                                         
@@ -273,10 +270,10 @@
                                     <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
                                     <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                                         <h4>{% trans 'Are you Sure ?' %}</h4>
-                                        <p class="text-muted mx-4 mb-0">{% trans 'Departmanı Silmek İstediğinden Emin Misin ? ' %}</p>
+                                        <p class="text-muted mx-4 mb-0">{% trans 'Pozisyonu Silmek İstediğinden Emin Misin ? ' %}</p>
                                     </div>
                                 </div>
-                                <form autocomplete="off"action="/{{dil}}{% url 'users:personeller_departman_sil' %}" method="post">
+                                <form autocomplete="off"action="/{{dil}}{% url 'users:personeller_kategori_sil' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                                 
@@ -317,7 +314,7 @@
                                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                             </div>
-                            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'users:personeller_departman_ekle' %}"  method="post" enctype="multipart/form-data" >
+                            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'users:personeller_kategori_ekle' %}"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="modal-body">
                                     {% if request.user.is_superuser %}
@@ -335,14 +332,14 @@
                                     {% endif %}
 
                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Departman Adı' %}</label>
-                                        <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="{% trans 'Departman Adı' %}" />
+                                        <label for="date-field" class="form-label">{% trans 'Pozisyon Adı' %}</label>
+                                        <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="{% trans 'Pozisyon Adı' %}" />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Departman Ekle' %}</button>
+                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Pozisyonu Ekle' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
