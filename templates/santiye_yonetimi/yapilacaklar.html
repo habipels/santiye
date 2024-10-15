@@ -390,7 +390,7 @@
                         </div>
                               <div class="form-element">
                                 <label for="kat">{% trans 'kat' %}</label>
-                                 <select name="kat"  data-trigger >
+                                 <select name="kat" id="odaSelect"  data-trigger >
                                 {% for blog in katmanlar %}
                                 <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
                                 {% endfor %}
@@ -398,6 +398,7 @@
                             </div>
                             <div class="form-element">
                                 <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
+                                <img src="" alt="Plan Konumu" id="alan" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
                                     <div class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
                                 </div>
@@ -730,6 +731,57 @@
 
 
 {% endfor %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('katmanSelect').addEventListener('change', function() {
+        const katmanId = this.value;
+        const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
+        loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
+        const imgElement = document.getElementById('alan');
+        imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+        fetch(`/get_yapi/${santiyeId}/`)
+            .then(response => response.json())
+            .then(data => {
+                const yapiSelect = document.getElementById('yapiSelect');
+                const odaSelect = document.getElementById('odaSelect');
+                // Hata kontrolü ekleyelim
+                if (!yapiSelect || !odaSelect) {
+                    console.error("Yapı veya oda select öğesi bulunamadı.");
+                    return; // Hata varsa burada çıkalım
+                }
+                yapiSelect.innerHTML = '';
+                odaSelect.innerHTML = '';
+
+                // Yapılar yapiSelect içine ekleniyor
+                data.yapilar.forEach(yapi => {
+                    const option = document.createElement('option');
+                    option.value = yapi.id;
+                    option.setAttribute('data-kat-sayisi', yapi.kat_sayisi);
+                    option.textContent = yapi.blog_adi;
+                    yapiSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Fetch hatası:", error));
+    });
+
+    // Yapı seçildiğinde kat numaralarını odaSelect alanına ekleme
+    document.getElementById('yapiSelect').addEventListener('change', function() {
+        const selectedYapi = this.options[this.selectedIndex];
+        const katSayisi = selectedYapi.getAttribute('data-kat-sayisi');
+        const odaSelect = document.getElementById('odaSelect');
+        odaSelect.innerHTML = '';
+
+        // Kat numaralarını ekliyoruz
+        for (let i = 1; i <= katSayisi; i++) {
+            const odaOption = document.createElement('option');
+            odaOption.value = i;
+            odaOption.textContent = `Kat ${i}`;
+            odaSelect.appendChild(odaOption);
+        }
+    });
+});
+</script>
+
 
    <script>
         // Konva Stage ve Layer'ları oluşturma
@@ -975,7 +1027,7 @@
 }
 
 // Dosyayı sunucudan yüklemek için tam URL ile çağırın:
-loadImage('http://127.0.0.1:8000/katman_dosyalari/2.png');
+
 
         // Dosya yükleme işlemi
         document.getElementById('file-upload').addEventListener('change', function(event) {
@@ -998,6 +1050,57 @@ loadImage('http://127.0.0.1:8000/katman_dosyalari/2.png');
                     x: currentPin.x(),
                     y: currentPin.y(),
                 };
+                closeModal('plan-konumu', false)
+                if (!currentPin) {
+                alert("Lütfen bir pin ekleyin.");
+                return;
+            }
+
+            // Pin'in sahnedeki tam konumunu al
+            const pinStagePos = currentPin.getAbsolutePosition();
+            if (!pinStagePos) {
+                alert("Pin pozisyonu alınamadı.");
+                return;
+            }
+            const pinStageX = pinStagePos.x;
+            const pinStageY = pinStagePos.y;
+
+            console.log(`Pin'in stage koordinatları: (${pinStageX}, ${pinStageY})`);
+
+            // 700x250 px'lik alanın sol üst köşesini hesapla (pin merkezde olacak)
+            const captureWidth = 700;
+            const captureHeight = 250;
+            let captureX = pinStageX - (captureWidth / 2);
+            let captureY = pinStageY - (captureHeight / 2);
+
+            console.log(`Kırpılacak alanın sol üst köşesi: (${captureX}, ${captureY})`);
+
+            // Kırpılacak alanın stage sınırları içinde kalmasını sağla
+            captureX = Math.max(0, Math.min(captureX, stage.width() - captureWidth));
+            captureY = Math.max(0, Math.min(captureY, stage.height() - captureHeight));
+
+            console.log(`Sınırlandırılmış kırpma koordinatları: (${captureX}, ${captureY})`);
+
+            // stage.toDataURL ile tüm katmanları dahil ederek kırp
+            stage.toDataURL({
+                x: captureX,
+                y: captureY,
+                width: captureWidth,
+                height: captureHeight,
+                pixelRatio: 1,
+                callback: function(dataURL) {
+                    // PNG oluştur ve göster
+                    const capturedImage = document.getElementById('captured-image');
+                    capturedImage.src = dataURL;
+
+                    // İndirme linkini güncelle
+                    const downloadLink = document.getElementById('download-link');
+                    downloadLink.href = dataURL;
+                    document.getElementById('alan').src = dataURL;
+                   
+                }
+            });
+                
                 console.log('Pin Bilgileri:', JSON.stringify(pinData));
                 alert('Pin başarıyla kaydedildi! Konsolu kontrol edin.');
             }
