@@ -95,10 +95,10 @@
 
             <div class="report-card">
                 <div class="report-header">
-                    <div class="report-title">İlerleme</div>
+                    <div class="report-title">{% trans 'İlerleme' %}</div>
                     <div class="report-stats-info">
-                        <span><i class="icon icon-purple-circle"></i> Fiziksel</span>
-                        <span><i class="icon icon-yellow-circle"></i> Finansal</span>
+                        <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
+                        <span><i class="icon icon-yellow-circle"></i> {% trans 'Finansal' %}</span>
                     </div>
                 </div>
 
@@ -108,11 +108,11 @@
                     <script>
                         var options = {
                             series: [{
-                                name: 'Finansal',
-                                data: [44, 55, 71, 67, 22, 43, 12],
+                                name: "{% trans 'Finansal' %} ",
+                                data: {{gun_kalem_sayilari.degerler2 | safe}},
                             }, {
-                                name: 'Fiziksel',
-                                data: [13, 23, 20, 8, 13, 27, 12]
+                                name:  "{% trans 'Fiziksel' %} ",
+                                data: {{gun_kalem_sayilari.degerler | safe}} 
                             },],
                             chart: {
                                 type: 'bar',
@@ -155,7 +155,7 @@
                             },
                             xaxis: {
                                 type: 'text',
-                                categories: ['P', 'S', 'Ç', 'P', 'C', 'C', 'P'],
+                                categories: {{gun_kalem_sayilari.gunler | safe}},
                             },
                             legend: {
                                 show: false
@@ -173,10 +173,10 @@
 
             <div class="report-card">
                 <div class="report-header">
-                    <div class="report-title">İlerleme Tablosu</div>
+                    <div class="report-title">{% trans 'İlerleme Tablosu' %}</div>
                     <div class="report-stats-info">
-                        <span><i class="icon icon-purple-circle"></i> Fiziksel</span>
-                        <span><i class="icon icon-yellow-circle"></i> Finansal</span>
+                        <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
+                        <span><i class="icon icon-yellow-circle"></i>  {% trans 'Finansal' %}</span>
                     </div>
                 </div>
                 <div class="report-body">
@@ -186,11 +186,11 @@
                     <script>
                         var options = {
                             series: [{
-                                name: 'Finansal',
-                                data: [31, 40, 28, 51, 42, 109, 100, 80, 90, 70, 60, 50]
+                                name: "{% trans 'Finansal' %} ",
+                                data: {{ay_kalem_sayilari.degerler2 |safe}}
                             }, {
-                                name: 'Fiziksel',
-                                data: [11, 32, 45, 32, 34, 52, 41, 62, 51, 43, 34, 23]
+                                name:"{% trans 'Fiziksel' %} " ,
+                                data:  {{ay_kalem_sayilari.degerler |safe}}
                             }],
                             chart: {
                                 height: 350,
@@ -207,10 +207,7 @@
                             },
                             xaxis: {
                                 type: 'category',
-                                categories: [
-                                    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                                    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
-                                ]
+                                categories: {{ay_kalem_sayilari.aylar |safe}}
                             },
                             legend: {
                                 show: false
@@ -236,10 +233,10 @@
         <div class="report-card">
             <div class="report-header">
                 <div class="report-details">
-                    <div class="report-title"><i class="icon icon-yellow-circle"></i> Süleymaniye Şantiyesi</div>
+                    <div class="report-title"><i class="icon icon-yellow-circle"></i>  {{santiye.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</div>
                     <div class="report-infos">
-                        <div class="report-info">Proje Adı: <b>Yeşil Konutlar</b></div>
-                        <div class="report-info">Tipi: <b>Apartman</b></div>
+                        <div class="report-info">{% trans 'Proje Adı:' %}  <b>{{santiye.proje_santiye_Ait.proje_adi}}</b></div>
+                        <div class="report-info">{% trans 'Yapı Adı:' %} <b>{{santiye.blog_adi}}</b></div>
                     </div>
                 </div>
             </div>
@@ -259,9 +256,10 @@
 
                     <div class="form-element">
                         <select name="imalat-kalemi-select" id="imalat-kalemi-select">
-                            <option value="imalat-kalemi-check-1" selected>Kalem - 1</option>
-                            <option value="imalat-kalemi-check-2">Kalem - 2</option>
-                            <option value="imalat-kalemi-check-3">Kalem - 3</option>
+                        {% for i in tablo %}
+                            <option value="{{i.ilerleme1}}" >{{i.isim}}</option>
+                 {% endfor %}
+                           
                         </select>
                     </div>
 
@@ -270,13 +268,14 @@
 
                     <div class="report-bb-stats">
                         <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i> Tamamlanan</div>
-                            <div class="report-bb-stat-value">%50</div>
+                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i>{% trans 'Tamamlanan' %} </div>
+                            <div class="report-bb-stat-value">%{{fiziksel_ilerleme |safe }}</div>
                         </div>
                         <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i> Devam Eden</div>
-                            <div class="report-bb-stat-value">%49</div>
+                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i>{% trans 'Devam Eden' %} </div>
+                            <div class="report-bb-stat-value">%{% basit_cikarma 100 fiziksel_ilerleme  %}</div>
                         </div>
+                        
                         <!-- <div class="report-bb-stat">
                             <div class="report-bb-stat-title"><i class="icon icon-red-circle"></i> Duran</div>
                             <div class="report-bb-stat-value">%1</div>
@@ -285,7 +284,7 @@
 
                     <script>
                         var options = {
-                            series: [50, 49],
+                            series:  [{{fiziksel_ilerleme |safe }}, {% basit_cikarma 100 fiziksel_ilerleme  %}],
                             chart: {
                                 height: 500,
                                 type: 'radialBar',
@@ -324,136 +323,32 @@
 
         <div class="report-card">
             <div class="report-header">
-                <div class="report-title">İmalat Kalemleri</div>
+                <div class="report-title">{% trans 'İmalat Kalemleri' %}</div>
             </div>
             <div class="report-body">
                 <div class="imalat-kalemleri">
+                    {% for i in tablo %}
+                
                     <div class="imalat-kalemi">
                         <div class="imalat-kalemi-check">
                             <input type="checkbox" id="imalat-kalemi-check-1" checked>
                         </div>
                         <div class="imalat-kalemi-progress">
                             <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
+                                <div class="imalat-kalemi-progress-title">{{i.isim}}</div>
                                 <div class="imalat-kalemi-progress-info">
-                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
-                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
+                                    <span><i class="icon icon-green-accent-circle"></i>{% trans 'Fiziksel' %}  %{{i.ilerleme1}}</span>
+                                    <span><i class="icon icon-green-circle"></i>{% trans 'Finansal' %}  %{{i.ilerleme2}}</span>
                                 </div>
                             </div>
                             <div class="imalat-kalemi-progress-bar">
-                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
-                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: {{i.ilerleme1}}%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: {{i.ilerleme2}}%"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="imalat-kalemi">
-                        <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-2" >
-                        </div>
-                        <div class="imalat-kalemi-progress">
-                            <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 2</div>
-                                <div class="imalat-kalemi-progress-info">
-                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
-                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
-                                </div>
-                            </div>
-                            <div class="imalat-kalemi-progress-bar">
-                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
-                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="imalat-kalemi">
-                        <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-3">
-                        </div>
-                        <div class="imalat-kalemi-progress">
-                            <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 3</div>
-                                <div class="imalat-kalemi-progress-info">
-                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
-                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
-                                </div>
-                            </div>
-                            <div class="imalat-kalemi-progress-bar">
-                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
-                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="imalat-kalemi">
-                        <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-1">
-                        </div>
-                        <div class="imalat-kalemi-progress">
-                            <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
-                                <div class="imalat-kalemi-progress-info">
-                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
-                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
-                                </div>
-                            </div>
-                            <div class="imalat-kalemi-progress-bar">
-                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
-                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="imalat-kalemi">
-                        <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-1">
-                        </div>
-                        <div class="imalat-kalemi-progress">
-                            <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
-                                <div class="imalat-kalemi-progress-info">
-                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
-                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
-                                </div>
-                            </div>
-                            <div class="imalat-kalemi-progress-bar">
-                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
-                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="imalat-kalemi">
-                        <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-1">
-                        </div>
-                        <div class="imalat-kalemi-progress">
-                            <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
-                                <div class="imalat-kalemi-progress-info">
-                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
-                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
-                                </div>
-                            </div>
-                            <div class="imalat-kalemi-progress-bar">
-                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
-                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="imalat-kalemi">
-                        <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-1">
-                        </div>
-                        <div class="imalat-kalemi-progress">
-                            <div class="imalat-kalemi-progress-details">
-                                <div class="imalat-kalemi-progress-title">Kalem - 1</div>
-                                <div class="imalat-kalemi-progress-info">
-                                    <span><i class="icon icon-green-accent-circle"></i> Fiziksel %52</span>
-                                    <span><i class="icon icon-green-circle"></i> Finansal %24</span>
-                                </div>
-                            </div>
-                            <div class="imalat-kalemi-progress-bar">
-                                <div class="ik-progress-bar-fiziksel" style="--percentage: 52%"></div>
-                                <div class="ik-progress-bar-finansal" style="--percentage: 24%"></div>
-                            </div>
-                        </div>
-                    </div>
+
+                 {% endfor %}
                 </div>
             </div>
         </div>
