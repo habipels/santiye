@@ -56,13 +56,13 @@
                         <table id="tumu-table">
                             <thead>
                                 <tr>
-                                          <th scope="col">{% trans 'Task Name' %}</th>
+                                          <th scope="col">{% trans 'İş Emri Adı' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
-                                            <th scope="col">{% trans 'Assigned' %}</th>
-                                            <th scope="col">{% trans 'Due Date' %}</th>
-                                            <th scope="col">{% trans 'Status' %}</th>
-                                            <th scope="col">{% trans 'Priority' %}</th>
-                                            <th scope="col">{% trans 'Action' %}</th>
+                                            <th scope="col">{% trans 'İlgililer' %}</th>
+                                            <th scope="col">{% trans 'Tamamlanma Tarihi' %}</th>
+                                            <th scope="col">{% trans 'Durum' %}</th>
+                                            <th scope="col">{% trans 'Öncelik' %}</th>
+                                            <th scope="col">{% trans 'Aksiyon' %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -100,9 +100,9 @@
                                                 
                                                 {% if i.status == "Inprogress" %}
                                                     <span
-                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                    class="status-inprogress stats-lg">{{i.status}}</span>
                                                 {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                                <div class="td-info"><span class="status-highlight stats-lg">Yeni</span></div>
                                                 {% elif i.status == "Pending" %}
                                                 <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
                                                  {% elif i.status == "Completed" %}
@@ -168,7 +168,7 @@
                                                 
                                                 {% if i.status == "Inprogress" %}
                                                     <span
-                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                    class="status-inprogress stats-lg">{{i.status}}</span>
                                                 {% elif i.status == "New" %}
                                                 <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
                                                 {% elif i.status == "Pending" %}
@@ -181,12 +181,12 @@
                                     </td>
                                     <td>
                                       {% if i.oncelik_durumu == "High" %}
-                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+                                    <div class="td-info"><span class="status-cancel stats-lg">{% trans 'Acil' %}</span></div>
                         
                                             {% elif i.oncelik_durumu == "Medium" %}
-                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            <div class="td-info"><span class="status-orange stats-lg">{% trans 'Orta' %}</span></div>
                                             {% elif i.oncelik_durumu == "Low" %}
-                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            <div class="td-info"><span class="status-dark stats-lg">{% trans 'Düşük' %}</span></div>
                                             {% endif %}
                                      </td>
                                     <td>
@@ -239,9 +239,9 @@
                                                 
                                                 {% if i.status == "Inprogress" %}
                                                     <span
-                                                    class="badge bg-secondary-subtle text-secondary text-uppercase">{{i.status}}</span>
+                                                    class="status-inprogress stats-lg">Devam Ediyor</span>
                                                 {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                                <div class="td-info"><span class="status-highlight stats-lg">Yeni</span></div>
                                                 {% elif i.status == "Pending" %}
                                                 <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
                                                  {% elif i.status == "Completed" %}
@@ -252,12 +252,12 @@
                                     </td>
                                     <td>
                                     {% if i.oncelik_durumu == "High" %}
-                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+                                    <div class="td-info"><span class="status-cancel stats-lg">{% trans 'Acil' %}</span></div>
                         
                                             {% elif i.oncelik_durumu == "Medium" %}
-                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            <div class="td-info"><span class="status-orange stats-lg">{% trans 'Orta' %}</span></div>
                                             {% elif i.oncelik_durumu == "Low" %}
-                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            <div class="td-info"><span class="status-dark stats-lg">{% trans 'Düşük' %}</span></div>
                                             {% endif %}
                                         
                                     </td>
@@ -342,19 +342,19 @@
                                     <label for="durum">{% trans 'Durum' %}</label>
                                    <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
                                     <option value="">{% trans 'Status' %}</option>
-                                    <option value="New" selected>{% trans 'New' %}</option>
-                                    <option value="Inprogress">{% trans 'Inprogress' %}</option>
-                                    <option value="Pending">{% trans 'Pending' %}</option>
-                                    <option value="Completed">{% trans 'Completed' %}</option>
+                                    <option value="New" selected>{% trans 'Yeni' %}</option>
+                                    <option value="Inprogress">{% trans 'Devam Ediyor' %}</option>
+                                    <option value="Pending">{% trans 'Beklemede' %}</option>
+                                    <option value="Completed">{% trans 'Tamamlandı' %}</option>
                                 </select>
                                 </div>
                                 <div class="form-element">
-                                    <label for="aciliyet">{% trans 'Priority' %}</label>
+                                    <label for="aciliyet">{% trans 'Öncelik' %}</label>
                                     <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
                                     
-                                    <option value="High">{% trans 'High' %}</option>
-                                    <option value="Medium">{% trans 'Medium' %}</option>
-                                    <option value="Low">{% trans 'Low' %}</option>
+                                    <option value="High">{% trans 'Acil' %}</option>
+                                    <option value="Medium">{% trans 'Orta' %}</option>
+                                    <option value="Low">{% trans 'Düşük' %}</option>
                                 </select>
                                 </div>
                             </div>
@@ -489,19 +489,19 @@
                                     <label for="durum">{% trans 'Durum' %}</label>
                                    <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
                                     <option value="{{i.status}}">{{i.status}}</option>
-                                    <option value="New" selected>{% trans 'New' %}</option>
-                                    <option value="Inprogress">{% trans 'Inprogress' %}</option>
-                                    <option value="Pending">{% trans 'Pending' %}</option>
-                                    <option value="Completed">{% trans 'Completed' %}</option>
+                                    <option value="New" selected>{% trans 'Yeni' %}</option>
+                                    <option value="Inprogress">{% trans 'Devam Ediyor' %}</option>
+                                    <option value="Pending">{% trans 'Beklemede' %}</option>
+                                    <option value="Completed">{% trans 'Tamamlandı' %}</option>
                                 </select>
                                 </div>
                                 <div class="form-element">
-                                    <label for="aciliyet">{% trans 'Priority' %}</label>
+                                    <label for="aciliyet">{% trans 'Öncelik' %}</label>
                                     <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
                                     <option value="{{i.oncelik_durumu}}">{{i.oncelik_durumu}}</option>
-                                    <option value="High">{% trans 'High' %}</option>
-                                    <option value="Medium">{% trans 'Medium' %}</option>
-                                    <option value="Low">{% trans 'Low' %}</option>
+                                    <option value="High">{% trans 'Acil' %}</option>
+                                    <option value="Medium">{% trans 'Orta' %}</option>
+                                    <option value="Low">{% trans 'Düşük' %}</option>
                                 </select>
                                 </div>
                             </div>
@@ -679,10 +679,10 @@
                                 <div class="form-element">
                                     <label for="durum">{% trans 'Durum' %}</label>
                                    <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
-                                    <option value="New" selected>{% trans 'New' %}</option>
-                                    <option value="Inprogress">{% trans 'Inprogress' %}</option>
-                                    <option value="Pending">{% trans 'Pending' %}</option>
-                                    <option value="Completed">{% trans 'Completed' %}</option>
+                                    <option value="New" selected>{% trans 'Yeni' %}</option>
+                                    <option value="Inprogress">{% trans 'Devam Ediyor' %}</option>
+                                    <option value="Pending">{% trans 'Beklemede' %}</option>
+                                    <option value="Completed">{% trans 'Tamamlandı' %}</option>
                                 </select>
                                 </div>
                                 
