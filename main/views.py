@@ -3873,6 +3873,7 @@ def yapilacalar_ekle(request):
                 katman_bilgisi = request.POST.get("katman")
                 yapi_gonder = request.POST.get("yapi_gonder")
                 kat = request.POST.get("kat")
+                print(katman_bilgisi,yapi_gonder,kat,"veriler")
                 new_project = IsplaniPlanlari(
                     proje_ait_bilgisi = request.user,
                     title = baslik,
@@ -5148,3 +5149,9 @@ def katman_duzenle(request):
             katman_adi  = katman_adi
         )
     return redirect("main:katman_sayfasi")
+
+
+def get_yapi(request, santiye_id):
+    yapilar = bloglar.objects.filter(proje_santiye_Ait__id=santiye_id).values('id', 'blog_adi',"kat_sayisi")
+    yapilar_list = list(yapilar)
+    return JsonResponse({'yapilar': yapilar_list})

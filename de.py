@@ -1,29 +1,18 @@
 import requests
 
-# Giriş URL'si (bu URL, API'deki CustomAuthToken view'e gider)
-url = "http://127.0.0.1:8000/biadago/api/api-token-auth/"
+# API URL
+url = "https://cloud.biadago.com/biadago/api/thingstodo/"  # API URL'nizi buraya yazın
 
-# Giriş bilgileri
-data = {
-    "username": "habipelis65@gmail.com",
-    "password": "Habip6565."
+# Kullanıcıya ait JWT veya diğer kimlik doğrulama bilgileri
+headers = {
+    'Authorization': 'Token 728799007d33d1be1ab3f4d03e9dc183d5f8f8d1',  # Token'ınızı buraya girin
 }
 
-# İstek gönderme
-response = requests.post(url, data=data)
-
-# Yanıtı kontrol etme
-if response.status_code == 200:
-    try:
-        # Başarılı ise token alınıyor
-        token = response.json().get('token')
-        print(f"Giriş başarılı! Token: {token}")
-    except ValueError:
-        # JSON formatında bir yanıt yoksa yanıtı ham haliyle yazdır
-        print("Yanıt JSON formatında değil!")
-        print(response.text)
+# API'ye istek gönderin
+response = requests.get(url, headers=headers)
+print(response.json())
+# Yanıtı kontrol et
+if response.status_code == 201 or response.status_code == 200:
+    print('Yanıt:')
 else:
-    # Hatalı ise hata mesajı ve yanıtı gösteriliyor
-    print(f"Giriş başarısız! Status kodu: {response.status_code}")
-    print("Yanıt içeriği:")
-    print(response.text)
+    print('Durum Kodu:', response.status_code)
