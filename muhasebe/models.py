@@ -264,7 +264,7 @@ class gelir_qr(models.Model):
     def _str_(self):
         return str(self.name)
     def save(self, *args, **kwargs):
-        qr_code_data = "https://iq.biadago.com"+str("/accounting/viewcomeqr/")+str(self.gelir_kime_ait_oldugu.id)
+        qr_code_data = "https://cloud.biadago.com"+str("/accounting/viewcomeqr/")+str(self.gelir_kime_ait_oldugu.id)
         
         qr = qrcode.QRCode(
             version=1,
@@ -296,7 +296,7 @@ class gider_qr(models.Model):
     def _str_(self):
         return str(self.name)
     def save(self, *args, **kwargs):
-        qr_code_data = "https://iq.biadago.com"+str("/accounting/viewexpensesqr/")+str(self.gelir_kime_ait_oldugu.id)
+        qr_code_data = "https://cloud.biadago.com"+str("/accounting/viewexpensesqr/")+str(self.gelir_kime_ait_oldugu.id)
         
         qr = qrcode.QRCode(
             version=1,
