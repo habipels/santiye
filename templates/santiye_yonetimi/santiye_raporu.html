@@ -11,6 +11,7 @@
 {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
     {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
      {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
+     {% to_int santiye.kat_sayisi as kat_bilgisi %}
     <main>
 <style>
 /* Rapor bina görseli başlangıcı */
@@ -255,10 +256,11 @@
                 <div class="report-bb-chart">
 
                     <div class="form-element">
-                        <select name="imalat-kalemi-select" id="imalat-kalemi-select">
-                        {% for i in tablo %}
-                            <option value="{{i.ilerleme1}}" >{{i.isim}}</option>
-                 {% endfor %}
+                        <select onchange="optionSelected()" name="imalat-kalemi-select" id="imalat-kalemi-select">
+                            <option value="{% ilk_giris_verileri_kalem kat_bilgisi santiye 0 %}" >Tümü</option>
+                            {% for i in tablo %}
+                            <option value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" >{{i.isim}}</option>
+                        {% endfor %}
                            
                         </select>
                     </div>
@@ -370,10 +372,15 @@
 
     </main>
        <script>
-        function createBuilding() {
-            const floors = 10;
+       
+       {% ilk_giris_verileri kat_bilgisi santiye as sonuc_gonder %}
+       {{sonuc_gonder}}
+        const completionPercentages = {{sonuc_gonder  | safe}} ;
+        
+        function createBuilding(value) {
+            const floors = {{kat_bilgisi}} ;
             const imageUrl = 'http://127.0.0.1:8000/static/go/images/3dbuild.png'; // Resmin doğru yolu
-            const completionPercentages = [100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // İlk 3 kat %100 tamamlanmış, diğerleri %0
+             // İlk 3 kat %100 tamamlanmış, diğerleri %0
 
             const face = document.getElementById('face1'); // İlk yüzeyi kullanalım
 
@@ -384,7 +391,7 @@
                 floor.setAttribute('data-floor', `{% trans 'Kat' %} ${j}`);
 
                 // Tamamlanma durumu kontrolü
-                if (completionPercentages[j - 1] === 100) {
+                if (value[j - 1] === 100) {
                     floor.classList.add('completed-report');
                     floor.innerHTML = `{% trans 'Kat' %} ${j}: {% trans 'Tamamlandı' %}`;
                 } else {
@@ -396,7 +403,35 @@
             }
         }
 
-        createBuilding();
+        createBuilding(completionPercentages);
+        function optionSelected() {
+    const selectElement = document.getElementById('imalat-kalemi-select');
+    const selectedValue = selectElement.value; // Seçilen değeri al
+    const array = []; // Yeni bir dizi oluştur
+    const kat_bilgisi = {{kat_bilgisi}}; // Burada kat_bilgisi verisini al
+
+    // Face report elemanlarını temizle
+    const faceReports = document.getElementsByClassName('face-report');
+    for (let i = 0; i < faceReports.length; i++) {
+        faceReports[i].innerHTML = ''; // Her bir face-report'un içeriğini temizle
+    }
+
+    // Kat bilgisi bir dizi ise length ile döngüyü kontrol et
+    for (let index = 0; index < kat_bilgisi; index++) {
+        if (index < selectedValue) {
+            array[index] = 100; // Koşul sağlanıyorsa 100 ata
+        } else {
+            array[index] = 0; // Koşul sağlanmıyorsa 0 ata
+        }
+    }
+
+    console.log(array); // Boş array kontrolü için
+    createBuilding(array); // completionPercentages'ı burada tanımlıyoruz
+
+}
+
+
+    
     </script>
     
 {% endblock sidebar %}

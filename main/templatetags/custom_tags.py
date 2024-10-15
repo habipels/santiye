@@ -40,7 +40,41 @@ def kalemler_getir(veri):
     deger = santiye_kalemleri.objects.filter(proje_santiye_Ait = veri,silinme_bilgisi = False)
 
     return int(deger.count())
-
+@register.simple_tag
+def ilk_giris_verileri(kat_sayis,blok):
+    veri_gonder = []
+    for i in range(0,kat_sayis):
+        santiye_kalemleri_bilgisi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ).count()
+        santiye_kalemleri_bilgisi_tamamlanan = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True).count()
+        print(santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ),santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True))
+        if santiye_kalemleri_bilgisi == santiye_kalemleri_bilgisi_tamamlanan:
+            veri_gonder.append(100)
+        else:
+            veri_gonder.append(0)
+    return veri_gonder
+@register.simple_tag
+def ilk_giris_verileri_kalem(kat_sayis,blok,kalem):
+    if kalem == "0"  or kalem == 0 :
+        veri_gonder = 0
+        for i in range(0,kat_sayis):
+            santiye_kalemleri_bilgisi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ).count()
+            santiye_kalemleri_bilgisi_tamamlanan = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True).count()
+            print(santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ),santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True))
+            if santiye_kalemleri_bilgisi == santiye_kalemleri_bilgisi_tamamlanan:
+                veri_gonder += 1
+            else:
+                veri_gonder += 0
+        return veri_gonder
+    else:
+        veri_gonder =  0
+        for i in range(0,kat_sayis):
+            santiye_kalemleri_bilgisi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi = kalem,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ).count()
+            santiye_kalemleri_bilgisi_tamamlanan = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,kalem_bilgisi = kalem,tamamlanma_bilgisi = True).count()
+            if santiye_kalemleri_bilgisi == santiye_kalemleri_bilgisi_tamamlanan:
+                veri_gonder +=1
+            else:
+                pass
+        return veri_gonder
 @register.simple_tag
 def bloglari_rapora_yansitma(veri):
     deger = bloglar.objects.filter(proje_santiye_Ait = veri)
@@ -258,7 +292,7 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme(id,k_b):
             b =int(((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)*100/(i.santiye_finansal_agirligi))
         except:
             pass
-        genel_toplam.append({"isim":i.kalem_adi,"ilerleme1":a,"ilerleme2":b})
+        genel_toplam.append({"isim":i.kalem_adi,"id": i.id,"ilerleme1":a,"ilerleme2":b})
 
     return genel_toplam
 @register.simple_tag
@@ -1720,5 +1754,3 @@ def sonmesaj(grup_id):
         return mes.content
     else:
         return "" 
-    
-
