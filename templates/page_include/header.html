@@ -483,7 +483,13 @@
         <div class="header-profile-wrapper">
             <div class="header-profile">
                 <div class="profile-avatar">
-                    <img src="{% static 'go/images/avatar.png' %}" alt="Avatar">
+                {% if request.user.image %}
+                        <img src="{{request.user.image.url}}" style="max-width: 80px; max-height: 80px;" alt="Profile">
+
+                        {% else %}
+                        <img src="{% static 'go/images/profile.png' %}" alt="Profile">
+                        {% endif %}
+                    
                     
                 </div>
                 <div class="profile-title">
