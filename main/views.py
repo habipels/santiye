@@ -230,7 +230,7 @@ def homepage(request):
                 if a.izinler.dashboard_gorme:
                     content["gider"] = sonuc
                     content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")[:5]
-                    content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:3]
+                    content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:5]
                     kul = request.user.kullanicilar_db
                 else:
                     return redirect("main:yetkisiz")
@@ -240,7 +240,7 @@ def homepage(request):
         else:
             content["gider"] = sonuc
             content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
-            content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:3]
+            content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:5]
             kul = request.user
         
     weather_data = None
@@ -381,7 +381,7 @@ def ana_sayfa(request):
                 if a.izinler.dashboard_gorme:
                     content["gider"] = sonuc
                     content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")[:5]
-                    content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:3]
+                    content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:5]
                 else:
                     return redirect("main:yetkisiz")
 
@@ -390,7 +390,7 @@ def ana_sayfa(request):
         else:
             content["gider"] = sonuc
             content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
-            content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:3]
+            content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:5]
     weather_data = None
     ip_info = None
     
