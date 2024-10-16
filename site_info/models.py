@@ -25,6 +25,8 @@ class santiye(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_tipi = models.ForeignKey(proje_tipi,verbose_name="Proje Tipi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_adi = models.CharField(max_length = 200,verbose_name="Proje Adı",blank=True,null = True)
+    lat = models.TextField(null = True,blank=True)
+    lon = models.TextField(null = True,blank=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

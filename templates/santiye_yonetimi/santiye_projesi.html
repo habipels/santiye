@@ -4,7 +4,13 @@
 {% load static %}
 
 {% block sidebar %}
+<style>
 
+    #map {
+        height: 100%; /* Haritanın yüksekliğini %100 yap */
+        width: 100%;  /* Haritanın genişliğini %100 yap */
+    }
+</style>
 <main>
     <div class="page-header">
         <div class="page-info">
@@ -408,6 +414,13 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 
 
                                             </select>
+                                            <div id="map" class="form-element">
+                                                
+                                            <label  >{% trans 'Şantiye Konumu' %}</label>
+                                           
+                                        </div>
+                                        <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
                                         </div>
                                         <div class="form-element">
                                             <label for="date-field" >{% trans 'Proje Adı' %}</label>
@@ -829,5 +842,26 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
         $("#" + $(this).attr("data-tab")).addClass("active");
     })
 </script>
+ <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Haritayı oluştur
+        var map = L.map('map').setView([20, 0], 2); // Başlangıç konumu ve zoom seviyesi
 
+        // Harita katmanını ekle
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Harita tıklama olayını dinle
+        map.on('click', function(e) {
+            // Haritayı tıklanan noktaya merkezle
+            map.setView(e.latlng, 13); // Zoom seviyesini ayarlayın (örneğin 13)
+
+            // Yeni bir marker oluştur ve haritaya ekle
+            var marker = L.marker(e.latlng).addTo(map);
+            // Popup mesajı ekle
+            marker.bindPopup("Tıklanan Konum: " + e.latlng.toString()).openPopup(); 
+        });
+    </script>
 {% endblock sidebar %}

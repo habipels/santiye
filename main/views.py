@@ -953,6 +953,7 @@ def proje_Adi_sil(request):
             proje_tipi.objects.filter(proje_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
     return redirect("main:proje_tipi_")
 #Proje Düzenlme
+import folium
 def proje_duzenle(request):
     content = {}
     if request.POST:
@@ -986,6 +987,10 @@ def proje_duzenle(request):
 #Şantiye Projesi Ekleme
 def santiye_projesi_ekle_(request):
     content = sozluk_yapisi()
+    m = folium.Map(location=[20, 0], zoom_start=2)
+    # Haritayı HTML'ye dönüştürme
+    map_html = m._repr_html_()
+    content['map'] = map_html
     content["birim_bilgisi"] = birimler.objects.filter(silinme_bilgisi = False)
     content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user)
     if super_admin_kontrolu(request):
@@ -1236,9 +1241,11 @@ def santiye_ekleme_super_admin(request,id):
         proje_adi = request.POST.get("yetkili_adi")
         baslangic_tarihi = request.POST.get("baslangic_tarihi")
         bitis_tarihi = request.POST.get("bitis_tarihi")
+        latitude = request.POST.get("latitude")
+        longitude = request.POST.get("longitude")
         a = santiye.objects.create(proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
                                proje_adi = proje_adi,baslangic_tarihi = baslangic_tarihi,
-                               tahmini_bitis_tarihi = bitis_tarihi
+                               tahmini_bitis_tarihi = bitis_tarihi,lat = latitude,lon = longitude
                                )
         return redirect("main:santiye_projesi_ekle_")
     return render(request,"santiye_yonetimi/super_admin_santiye_ekleme.html",content)

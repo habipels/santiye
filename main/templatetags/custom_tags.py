@@ -3,6 +3,16 @@ from django.utils.safestring import mark_safe
 from site_info.models import *
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from site_settings.models import *
+import locale
+def fiyat_duzelt(deger,i = 0):
+    locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+    if deger < 0:
+        deger = deger * (-1)
+        y =  locale.format_string("%.2f", deger, grouping=True)
+        y = "-"+y
+        return y
+    else:
+        return locale.format_string("%.2f", deger, grouping=True)
 register = template.Library()
 
 #@register.filter
@@ -841,7 +851,7 @@ def kalan_tutuar(id):
     for i in a:
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
         indirim = indirim+ i.urun_indirimi
-    return round(float(genel_toplam - toplam-indirim),2)
+    return fiyat_duzelt(float(genel_toplam - toplam-indirim))
 @register.simple_tag
 def kalan_tutuari(id):
     a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
@@ -854,7 +864,7 @@ def kalan_tutuari(id):
     for i in a:
         genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
         indirim = indirim+ i.urun_indirimi
-    return round(float(genel_toplam - toplam -indirim),2)
+    return fiyat_duzelt(float(genel_toplam - toplam -indirim),2)
 @register.simple_tag
 
 def makbuzlari_getir(id):
@@ -885,7 +895,7 @@ def cari_gelirlerii(bilgi):
     d = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__id = b.id,silinme_bilgisi = False)
     for j in d:
         gider_odemesi = gider_odemesi+j.tutar
-    return round(float(gelir_toplami-gider_odemesi),2)
+    return fiyat_duzelt(float(gelir_toplami-gider_odemesi),2)
 @register.simple_tag
 def cikarma(a,b):
     y = float(a)+float(b)
@@ -916,7 +926,7 @@ def cari_giderlerii(bilgi):
     d = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__id = b.id,silinme_bilgisi = False)
     for j in d:
         gider_odemesi = gider_odemesi+j.tutar
-    return round(float(gelir_toplami-gider_odemesi),2)
+    return fiyat_duzelt(float(gelir_toplami-gider_odemesi),2)
 @register.simple_tag
 def cari_islemleri(bilgi):
     b = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,cari_bilgisi__id = bilgi.id).order_by("-fatura_tarihi")
@@ -958,7 +968,7 @@ def gelirler_tutari(bilgi):
         for i in a:
             genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
             indirim = indirim+ i.urun_indirimi
-        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+        return {"tutar":str(fiyat_duzelt(float(genel_toplam),2)),"genel_odeme":fiyat_duzelt(float(toplam-indirim),2)}
     else:
         a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,gelir_kime_ait_oldugu__silinme_bilgisi= False)
         toplam = 0
@@ -970,7 +980,7 @@ def gelirler_tutari(bilgi):
         for i in a:
             genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
             indirim = indirim+ i.urun_indirimi
-        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+        return {"tutar":str(fiyat_duzelt(float(genel_toplam),2)),"genel_odeme":fiyat_duzelt(float(toplam-indirim),2)}
 
 @register.simple_tag
 def giderler_tutari(bilgi):
@@ -986,7 +996,7 @@ def giderler_tutari(bilgi):
             genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
             indirim = indirim+ i.urun_indirimi
 
-        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2),"genel_odeme2":str(round(float(toplam-indirim),2))}
+        return {"tutar":str(fiyat_duzelt(float(genel_toplam),2)),"genel_odeme":fiyat_duzelt(float(toplam-indirim),2),"genel_odeme2":str(fiyat_duzelt(float(toplam-indirim),2))}
     else:
         a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,gelir_kime_ait_oldugu__silinme_bilgisi= False)
         toplam = 0
@@ -998,12 +1008,16 @@ def giderler_tutari(bilgi):
         for i in a:
             genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
             indirim = indirim+ i.urun_indirimi
-        return {"tutar":str(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2),"genel_odeme2":str(round(float(toplam-indirim),2))}
+        return {"tutar":str(fiyat_duzelt(float(genel_toplam),2)),"genel_odeme":fiyat_duzelt(float(toplam-indirim),2),"genel_odeme2":str(fiyat_duzelt(float(toplam-indirim),2))}
 #
 @register.simple_tag
 def basit_cikarma(a,b):
+    a = a.replace('.', '')
+    b = b.replace('.', '')
+    a = a.replace(',', '.')
+    b = b.replace(',', '.')
     y = float(a)-float(b)
-    return str(round(y,2))
+    return str(fiyat_duzelt(y,2))
 @register.simple_tag
 def sorgu(a):
     y = float(a)
@@ -1028,8 +1042,8 @@ def kategori_bilgi_ver(b):
         renk.append(str(i.gider_kategorisi_renk))
         a.append(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('toplam_tutar'))['total'] or 0)
         genel_tutar = genel_tutar + float(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('toplam_tutar'))['total'] or 0)
-    print({"isimleri":isimleri,"a":a,"renk":renk,"tutar":genel_tutar})
-    return {"isimleri":isimleri,"a":a,"renk":renk,"tutar":genel_tutar}
+    print({"isimleri":isimleri,"a":a,"renk":renk,"tutar":fiyat_duzelt(genel_tutar)})
+    return {"isimleri":isimleri,"a":a,"renk":renk,"tutar":fiyat_duzelt(genel_tutar)}
 @register.simple_tag
 def ekstra(id,k):
     bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
@@ -1090,7 +1104,7 @@ def kasa_toplam(bilgi):
         for i in b : 
             toplam = toplam + i.tutar
         toplam = toplam + bilgi.bakiye
-        return round(float(toplam),2)
+        return fiyat_duzelt(float(toplam),2)
     return 0
 """@register.simple_tag
 def generate_token(object_id):
@@ -1236,10 +1250,12 @@ def decode_id(hash_id):
     return ids[0] if ids else None
 @register.simple_tag
 def mutlak_deger(a):
+    a = a.replace('.', '')
+    a = a.replace(',', '.')
     if float(a) < 0:
-        return round((float(a)*-1),2)
+        return fiyat_duzelt((float(a)*-1),2)
     elif float(a) > 0:
-        return (round((float(a)),2))
+        return (fiyat_duzelt((float(a)),2))
     return 0.0
 @register.simple_tag
 def get_object_or_none(model, *args, **kwargs):
@@ -1324,7 +1340,7 @@ def stok_sayisi(id):
     zimmet = zimmet_olayi.objects.filter(zimmet_verilen_urun = id).filter(Q(zimmet_durumu = "0")|Q(zimmet_durumu = "2"))
     for i in zimmet:
         toplam = toplam - float(i.zimmet_miktari)
-    return toplam
+    return fiyat_duzelt(toplam)
 
 @register.simple_tag
 def zimmet_sayisi(id):

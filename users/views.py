@@ -15,6 +15,8 @@ from django.db.models.query_utils import Q
 from django.http import JsonResponse
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth, ExtractYear
+from django.core.files.storage import FileSystemStorage
+
 def personel_bilgisi_axaj(request, id):
     
     if True:
@@ -316,10 +318,10 @@ def lock_screen(request):
 
     return render(request, 'account/lock_screen.html')
 #lockscreen
-from django.core.files.storage import FileSystemStorage
 
 def profile_edit_kismi(request):
     content = sozluk_yapisi()
+    
     if request.POST:
         background = request.FILES.get("background_bilgisi")
         profile = request.FILES.get("profile_bilgisi")
