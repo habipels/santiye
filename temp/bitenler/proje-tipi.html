@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiadaGo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./content/style/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-toggle"><i class="icon icon-sidebar-right"></i><i class="icon icon-sidebar-left"></i></div>
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-main-part"></div>
+            <div class="sidebar-logo-second-part"></div>
+            <div class="sidebar-logo-large-parts">
+                <img src="./content/images/half-o.png">
+                <img src="./content/images/o.png">
+            </div>
+        </div>
+        <div class="sidebar-navs">
+            <ul class="sidebar-nav">
+                <li class="active"><a href="#"><i class="icon icon-dashboard"></i> <span>Dashboard</span> </a></li>
+
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-super-admin"></i> <span>Super
+                            Admin</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Altmenü...</a></li>
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>AltAltmenü</span> <i
+                                    class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
+                                <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
+                                <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li><a href="#"><i class="icon icon-document"></i> <span>Raporlar</span> </a></li>
+
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>Şantiye Yönetimi</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li><a href="#" class="sidebar-sub-item">Proje Yönetimi</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Görevler</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Dosya Yöneticisi</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Taşeronlar</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Üst Yönetici</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Hakedişler</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Sözleşmeler</a></li>
+                    </ul>
+                </li>
+
+
+                <li></li>
+                <li><a href="#"><i class="icon icon-muhasebe"></i> <span>Muhasebe</span> </a></li>
+                <li><a href="#"><i class="icon icon-profile"></i> <span>Personel</span> </a></li>
+                <li><a href="#"><i class="icon icon-stok"></i> <span>Satın Alma ve Stok</span> </a></li>
+                <li><a href="#"><i class="icon icon-users"></i> <span>Kullanıcılar</span> </a></li>
+            </ul>
+            <hr>
+            <ul class="sidebar-nav">
+                <li><a href="#"><i class="icon icon-notifications"></i> <span>Bildirimler</span> </a></li>
+
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-settings"></i> <span>Ayarlar</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>Kullanıcı Ayarları</span> <i class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="#" class="sidebar-sub-item">...</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>Şantiye Ayarları</span> <i class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="#" class="sidebar-sub-item">Proje Tipi</a></li>
+                                <li><a href="#" class="sidebar-sub-item">Şantiye</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>Muhasebe Ayarları</span> <i class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="#" class="sidebar-sub-item">...</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="icon icon-help"></i> <span>Destek ve Yardım</span> </a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <div class="sidebar-mobile-toggle">
+        <img src="./content/images/logo-sm.png" class="sidebar-mobile-sm-logo" alt="" />
+        <i class="icon icon-chevron-right"></i>
+    </div>
+
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarToggle = document.querySelector(".sidebar-toggle");
+        let sidebarMobileToggle = document.querySelector(".sidebar-mobile-toggle");
+        sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-collapsed");
+        })
+        sidebarMobileToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-collapsed");
+        })
+
+        $('.sidebar-sub-toggle').click(function () {
+            $(this).next('.sidebar-sub-menu').slideToggle();
+            $(this).next('.sidebar-sub-menu').toggleClass("open");
+            $(this).find('.icon-caret').toggleClass('rotate');
+        });
+
+        if ($(window).width() <= 1000 && $(window).width() >= 420) {
+            sidebar.classList.add("sidebar-collapsed");   
+        }
+    </script>
+
+    <header>
+        <div class="header-search">
+            <input type="search" name="search" id="search" placeholder="Uygulama içerisinde ara">
+            <button><i class="icon icon-search"></i></button>
+        </div>
+        <div class="header-actions">
+            <div class="header-actions-dropdown">
+                <a href="#"><i class="icon icon-dashboard"></i></a>
+                <div class="actions-dropdown-content">
+                    <div class="actions-dropdown-content-title">
+                        Web Apps
+                    </div>
+                    <div class="actions-dropdown-content-apps">
+                        <a href="#" class="adc-app">
+                            <div class="adc-app-icon">
+                                <img src="./content/images/google-play.png" alt="Google Play">
+                            </div>
+                            <div class="adc-app-title">Android</div>
+                        </a>
+                        <a href="#" class="adc-app">
+                            <div class="adc-app-icon">
+                                <img src="./content/images/appstore.png" alt="App Store">
+                            </div>
+                            <div class="adc-app-title">IOS</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" onclick="toggleFullScreen()"><i class="icon icon-fullscreen"></i></a>
+            <a href="#"><i class="icon icon-moon"></i></a>
+            <div class="header-actions-dropdown notifications-dropdown">
+                <a href="#"><i class="icon icon-notification"></i></a>
+                <div class="actions-dropdown-content">
+                    <div class="actions-dropdown-content-title">
+                        Bildirimler
+                        <span>12 adet yeni bildiriminiz var.</span>
+                    </div>
+                    <div class="notifications-tabs">
+                        <button onclick="notificationTab(event, 'notification-all')"
+                            class="notification-tab-btn active">Hepsi
+                            <span>22</span></button>
+                        <button onclick="notificationTab(event, 'notification-unread')"
+                            class="notification-tab-btn">Okunmamış <span>3</span></button>
+                    </div>
+                    <div class="notifications" id="notification-all">
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">İncele</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">İncele</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-success">Görevinizi tamamladınız</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">Ödeme tarihini geçen bir
+                                    faturanız bulunmaktadır.</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">İncele</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notifications" id="notification-unread" style="display: none;">
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">İncele</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        function notificationTab(e, id) {
+                            var i, x, notificationTabBtn;
+                            x = document.getElementsByClassName("notifications");
+                            for (i = 0; i < x.length; i++) {
+                                x[i].style.display = "none";
+                            }
+                            notificationTabBtn = document.getElementsByClassName("notification-tab-btn");
+                            for (i = 0; i < x.length; i++) {
+                                notificationTabBtn[i].className = notificationTabBtn[i].className.replace(" active", "");
+                            }
+                            document.getElementById(id).style.display = "block";
+                            e.currentTarget.className += " active";
+                        }
+                    </script>
+
+                    <div class="notifications-footer">
+                        <a href="#">Tümünü Gör <i class="icon icon-forward"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-language-wrapper">
+            <div class="header-language">
+                <img src="./content/images/tr.png" alt="TR" class="header-language-flag">
+                <span>Türkçe</span>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+            <div class="header-language-dropdown">
+                <div class="language-selector">
+                    <input type="radio" name="lang" id="lang-tr" checked>
+                    <label for="lang-tr">
+                        <img src="./content/images/tr.png" alt="TR">
+                        Türkçe
+                    </label>
+                </div>
+                <div class="language-selector">
+                    <input type="radio" name="lang" id="lang-en">
+                    <label for="lang-en">
+                        <img src="./content/images/tr.png" alt="TR">
+                        İngilizce
+                    </label>
+                </div>
+                <div class="language-selector">
+                    <input type="radio" name="lang" id="lang-ar">
+                    <label for="lang-ar">
+                        <img src="./content/images/tr.png" alt="TR">
+                        Arapça
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="header-profile-wrapper">
+            <div class="header-profile">
+                <div class="profile-avatar">
+                    <img src="./content/images/avatar.png" alt="Avatar">
+                </div>
+                <div class="profile-title">
+                    <span>Welcome back 👋</span>
+                    Johnathan
+                </div>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+            <div class="header-profile-dropdown">
+                <div class="profile-dropdown-title">
+                    Johnathan
+                    <span>Admin...</span>
+                </div>
+                <div class="profile-dropdown-actions">
+                    <a href="#"><i class="icon icon-profile"></i> Profil</a>
+                    <a href="#"><i class="icon icon-settings"></i> Ayarlar</a>
+                    <a href="#"><i class="icon icon-lock"></i> Ekranı Kilitle</a>
+                </div>
+                <div class="profile-dropdown-logout">
+                    <a href="#">Çıkış Yap</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    Ayarlar
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#">Şantiye Ayarlar</a></li>
+                    <li><a href="#">Proje Tipi</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+                <button class="page-primary-btn" onclick="openModal('yeni-proje-hesap')"><i class="icon icon-new"></i>
+                    Yeni Proje Ekle</button>
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">Projeler</div>
+                <div class="stats-search">
+                    <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                    <button><i class="icon icon-search"></i></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="datatable">
+                    <thead>
+                        <tr>
+                            <th>Proje Kime Ait</th>
+                            <th>Şantiye</th>
+                            <th>Proje Tipi</th>
+                            <th>Proje Adı</th>
+                            <th>Yapılar</th>
+                            <th>Kalemler</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Biada.go</td>
+                            <td>Süleymaniye Şantiyesi</td>
+                            <td>Apartman</td>
+                            <td>Yeşil Bölge Konutları</td>
+                            <td>
+                                +3
+                                <div class="td-actions">
+                                    <a href="#" class="status-info stats-lg"><i class="icon icon-add"></i> Yapı Ekle</a>
+                                </div>
+                            </td>
+                            <td>
+                                +7
+                                <div class="td-actions">
+                                    <a onclick="openModal('yeni-kalem-hesap')" class="status-info stats-lg"><i class="icon icon-add"></i> Kalem Ekle</a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="td-actions">
+                                    <a href="#" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                    <a href="#" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="large-stats-card-footer-actions">
+                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+            </div>
+
+        </div>
+
+        <script>
+            let datatable = new DataTable('#datatable', {
+                paging: false,
+                searching: true,
+                info: false,
+                layout: {
+                    topStart: {
+                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    }
+                }
+            });
+
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+
+
+
+
+    <div class="modal" id="yeni-proje-hesap">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Yeni Ekle
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="hesap-sec">Hesap Seç</label>
+                        <select name="hesap-sec" id="hesap-sec">
+                            <option value="" selected disabled></option>
+                            <option value="Hesap">Hesap</option>
+                            <option value="Hesap">Hesap</option>
+                            <option value="Hesap">Hesap</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="button" onclick="openModal('yeni-proje')">Devam Et</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal" id="yeni-proje">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Yeni Proje Ekle
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="proje-tipi">Proje Tipi</label>
+                        <select name="proje-tipi" id="proje-tipi">
+                            <option value="" selected disabled></option>
+                            <option value="Apartman">Apartman</option>
+                            <option value="Apartman">Apartman</option>
+                            <option value="Apartman">Apartman</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="blok">Blok</label>
+                        <select name="blok" id="blok">
+                            <option value="" selected disabled></option>
+                            <option value="A Blok">A Blok</option>
+                            <option value="B Blok">B Blok</option>
+                            <option value="C Blok">C Blok</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">Açıklama</label>
+                        <textarea name="aciklama" id="aciklama"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Devam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="modal" id="yeni-kalem-hesap">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Yeni Ekle
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="hesap-sec">Hesap Seç</label>
+                        <select name="hesap-sec" id="hesap-sec">
+                            <option value="" selected disabled></option>
+                            <option value="Hesap">Hesap</option>
+                            <option value="Hesap">Hesap</option>
+                            <option value="Hesap">Hesap</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="button" onclick="openModal('yeni-kalem')">Devam Et</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal" id="yeni-kalem">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Yeni Kalem Ekle
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="santiye-bilgisi">Şantiye Bilgisi</label>
+                        <input type="text" name="santiye-bilgisi" id="santiye-bilgisi">
+                    </div>
+                    <div class="form-element">
+                        <label for="kalem-adi">Kalem Adı</label>
+                        <input type="text" name="kalem-adi" id="kalem-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="santiye-agirligi">Şantiye Ağırlığı</label>
+                        <input type="text" name="santiye-agirligi" id="santiye-agirligi">
+                    </div>
+                    <div class="form-element">
+                        <label for="finansal-agirligi">Finansal Ağırlığı</label>
+                        <input type="text" name="finansal-agirligi" id="finansal-agirligi">
+                    </div>
+                    <div class="form-element">
+                        <label for="birim">Birim</label>
+                        <input type="text" name="birim" id="birim">
+                    </div>
+                    <div class="form-element">
+                        <label for="metraj">Metraj</label>
+                        <input type="text" name="metraj" id="metraj">
+                    </div>
+                    <div class="form-element">
+                        <label for="tutar">Tutar</label>
+                        <input type="text" name="tutar" id="tutar">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Devam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="delete-modal">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Silmek istediğinize emin misiniz?
+            </div>
+            <div class="modal-body">
+                <form>
+                    <p>Bu işlemin geri dönüşü olmayacaktır.</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-danger" type="button">Evet, silinsin</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+</body>
+
+</html>
