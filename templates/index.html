@@ -1925,6 +1925,14 @@
     // Resim URL'si statik dosya olarak ayarlanıyor
     const imageUrl = "{% static 'go/images/3dbuild.png' %}";
 </script>
+<style>
+    {% for i in bina_3d_bilgiler.kat_bilgileri %}
+        .floor[data-floor="{{ i }}"]{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    {
+        animation: red-flash 1s infinite;
+    }
+</style>
 
 <script>
 let currentRotation = 0;
@@ -1946,13 +1954,17 @@ function createBuilding() {
             floor.style.backgroundImage = `url(${imageUrl})`;  // Resim URL'si
             floor.setAttribute('data-floor', `Kat ${j}`);
             floor.innerHTML = `Kat ${j}`;
-
+             const targetFloors = [
+        {% for kat in bina_3d_bilgiler.kat_bilgileri %}
+            "Kat {{ kat }}"{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    ];
             // Yanıp sönen katlara tıklanabilir link ekleyin
-            if (['Kat 5', 'Kat 9', 'Kat 20', 'Kat 21'].includes(`Kat ${j}`)) {
-                floor.addEventListener('click', function(event) {
-                    showInfoModal(event, `R5 - Kat ${j} görevi`);
-                });
-            }
+           if (targetFloors.includes(`Kat ${j}`)) {
+        floor.addEventListener('click', function(event) {
+            showInfoModal(event, `R5 - Kat ${j} görevi`);
+        });
+    }
 
             face.appendChild(floor);
         }

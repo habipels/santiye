@@ -28,9 +28,14 @@ def fiyat_duzelt_html(deger):
 @register.simple_tag
 def bina_3d(veri):
     try:
+        katlar = []
         bina_kat_sayisi = veri.blok.kat_sayisi
         gor_olan_katlar = IsplaniPlanlari.objects.filter(blok = veri.blok).exclude(status = "Completed")
-        return {"kat_sayisi" : int(bina_kat_sayisi)}
+        for i in gor_olan_katlar:
+            a = "Kat " + str(i.kat)
+            katlar.append(a)
+        print(katlar)
+        return {"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar}
     except:
         return {"kat_sayisi" : int(20)}
 #@register.filter
