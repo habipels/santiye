@@ -493,7 +493,12 @@
                     
                 </div>
                 <div class="profile-title">
+                    {% if request.is_superuser %}
+                    <span class="superadmin">SUPER ADMIN</span>
+                    {% else %}
                     <span>{% trans 'Hoşgeldin' %} </span>
+                    {% endif %}
+                    
                     {{request.user.last_name}}
                 </div>
                 <i class="icon icon-chevron-bottom"></i>
