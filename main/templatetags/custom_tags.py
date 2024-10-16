@@ -15,8 +15,16 @@ def fiyat_duzelt(deger,i = 0):
         return y
     else:
         return locale.format_string("%.2f", deger, grouping=True)
-register = template.Library()
 
+register = template.Library()
+@register.simple_tag
+def fiyat_duzelt_html(deger):
+    deger = str(deger)
+    deger = deger.replace('.', '')
+    deger = deger.replace(',', '.')
+    deger = float(deger)
+    locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+    return locale.format_string("%.2f", deger, grouping=True)
 @register.simple_tag
 def bina_3d(veri):
     try:
