@@ -7,9 +7,17 @@
 <style>
 
     #map {
-        height: 100%; /* Haritanın yüksekliğini %100 yap */
-        width: 100%;  /* Haritanın genişliğini %100 yap */
-    }
+        height: 300px; /* Haritanın yüksekliği */
+        width: 100%;   /* Haritanın genişliği */
+        border: 1px solid #ccc; /* Harita etrafında hafif bir çerçeve */
+        }
+        .modal-body {
+        overflow-y: auto; /* Modal içindeki diğer içeriklerin taşmasını engeller */
+        }
+        .modal-content {
+            height: auto;  /* Modalın içeriğe göre otomatik boyutlanmasını sağlar */
+            max-height: 90vh;  /* Ekranın %90'ını aşmaması için sınırlama */
+        }
 </style>
 <main>
     <div class="page-header">
@@ -383,60 +391,55 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
     </script>
 </main>
  
-<div class="modal" id="yeni-santiye">
+<div class="modal fade" id="yeni-santiye" tabindex="-1" aria-labelledby="yeniSantiyeLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
                 {% trans 'Yeni Şantiye Ekle' %}
                 
             </div>
-            <div class="modal-body">
-                 <form autocomplete="off"class="tablelist-form" action="/addsite"  method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                    {% if request.user.is_superuser %}
-                    <div class="form-element">
-                        <label for="hesap-sec">{% trans 'Hesap Seç' %}</label>
-                        <select  name="kullanici"  id="hesap-sec">
-                            {% for j in kullanicilar %}
-                                                    <option value="{{j.id}}">{{j.first_name}}</option>
-                                                {% endfor %}
+<div class="modal-body">
+    <form autocomplete="off" class="tablelist-form" action="/addsite" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if request.user.is_superuser %}
+        <div class="form-element">
+            <label for="hesap-sec">{% trans 'Hesap Seç' %}</label>
+            <select name="kullanici" id="hesap-sec">
+                {% for j in kullanicilar %}
+                    <option value="{{ j.id }}">{{ j.first_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% else %}
+        <div class="form-element">
+            <label>{% trans 'Proje Tipi Seç' %}</label>
+            <select name="projetipi">
+                {% for j in proje_tipleri %}
+                    <option value="{{ j.id }}">{{ j.Proje_tipi_adi }}</option>
+                {% endfor %}
+            </select>
 
-                        </select>
-                    </div>
-                                          
-                                        {% else %}
-                                            <div class="form-element">
-                                            <label  >{% trans 'Proje Tipi Seç' %}</label>
-                                            <select  name="projetipi">
+            <label>{% trans 'Şantiye Konumu' %}</label>
+            <div id="map" style="height: 400px; width: 100%;"></div>
+        </div>
 
-                                                {% for j in proje_tipleri %}
-                                                    <option value="{{j.id}}">{{j.Proje_tipi_adi}}</option>
-                                                {% endfor %}
+        <div>
+            <input type="hidden" name="latitude" id="latitude">
+            <input type="hidden" name="longitude" id="longitude">
+        </div>
 
+        <div class="form-element">
+            <label for="date-field">{% trans 'Proje Adı' %}</label>
+            <input type="text" name="yetkili_adi" id="date-field" placeholder="{% trans 'Proje Adı' %}" />
+        </div>
+        {% endif %}
 
-                                            </select>
-                                            <div id="map" class="form-element">
-                                                
-                                            <label  >{% trans 'Şantiye Konumu' %}</label>
-                                           
-                                        </div>
-                                        <input type="hidden" name="latitude" id="latitude">
-                    <input type="hidden" name="longitude" id="longitude">
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Proje Adı' %}</label>
-                                            <input type="text"   name="yetkili_adi" id="date-field"  placeholder="{% trans 'Proje Adı' %}" />
-                                        </div>
+        <div class="form-actions">
+            <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+            <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+        </div>
+    </form>
+</div>
 
-
-                                        {% endif %}
-                  
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit" >{% trans 'Kaydet' %}
-                            </button>
-                    </div>
-                </form>
-            </div>
         </div>
 </div>
 {% for i in santiyeler %}
@@ -842,26 +845,42 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
         $("#" + $(this).attr("data-tab")).addClass("active");
     })
 </script>
- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        // Haritayı oluştur
-        var map = L.map('map').setView([20, 0], 2); // Başlangıç konumu ve zoom seviyesi
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-        // Harita katmanını ekle
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(map);
+<script>
+    // Haritayı başlat ve başlangıç konumunu ayarla (Ankara koordinatları)
+    var map = L.map('map').setView([39.9334, 32.8597], 6);  // Türkiye'nin ortalama koordinatları
 
-        // Harita tıklama olayını dinle
-        map.on('click', function(e) {
-            // Haritayı tıklanan noktaya merkezle
-            map.setView(e.latlng, 13); // Zoom seviyesini ayarlayın (örneğin 13)
+    // OpenStreetMap harita katmanını ekle
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
 
-            // Yeni bir marker oluştur ve haritaya ekle
-            var marker = L.marker(e.latlng).addTo(map);
-            // Popup mesajı ekle
-            marker.bindPopup("Tıklanan Konum: " + e.latlng.toString()).openPopup(); 
-        });
-    </script>
+    // Haritaya işaretçi (marker) ekle ve sürüklenebilir hale getir
+    var marker = L.marker([39.9334, 32.8597], {draggable: true}).addTo(map);
+
+    // Haritaya tıklandığında marker'ı o konuma taşı ve koordinatları gizli alanlara ekle
+    map.on('click', function (e) {
+        marker.setLatLng(e.latlng);  // Marker'ı yeni tıklanan konuma taşır
+        document.getElementById('latitude').value = e.latlng.lat;
+        document.getElementById('longitude').value = e.latlng.lng;
+        marker.bindPopup("Tıklanan Konum: " + e.latlng.toString()).openPopup();
+    });
+
+    // Marker sürüklendiğinde de koordinatları gizli alanlara güncelle
+    marker.on('dragend', function (e) {
+        var latLng = marker.getLatLng();
+        document.getElementById('latitude').value = latLng.lat;
+        document.getElementById('longitude').value = latLng.lng;
+    });
+
+    // Modal açıldığında haritanın boyutlarını güncelleme
+    $('#yeni-santiye').on('shown.bs.modal', function () {
+        setTimeout(function() {
+            map.invalidateSize();  // Haritanın boyutlarını modal açıldıktan sonra güncelle
+        }, 500);  // 500ms gecikme ile yeniden boyutlandırma
+    });
+</script>
+
 {% endblock sidebar %}
