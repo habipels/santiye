@@ -264,11 +264,11 @@ def homepage(request):
             print(loc)
             location = loc.split(',')
             lat, lon = location[0], location[1]
-            
-    if True:
-        if konum.blok.proje_santiye_Ait.lat and konum.blok.proje_santiye_Ait.lon:
+    if konum.blok.proje_santiye_Ait.lat and konum.blok.proje_santiye_Ait.lon:
             lat, lon = konum.blok.proje_santiye_Ait.lat, konum.blok.proje_santiye_Ait.lon
-            print(lat,lon,"veri")
+            print(lat,lon,"veri")      
+    if True:
+        if True:
             
             # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
             api_key = 'dee0661903df4f2c76ccfd8afab8be69'
