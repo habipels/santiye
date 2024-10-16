@@ -4,6 +4,8 @@ from site_info.models import *
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from site_settings.models import *
 import locale
+
+
 def fiyat_duzelt(deger,i = 0):
     locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
     if deger < 0:
@@ -15,6 +17,14 @@ def fiyat_duzelt(deger,i = 0):
         return locale.format_string("%.2f", deger, grouping=True)
 register = template.Library()
 
+@register.simple_tag
+def bina_3d(veri):
+    try:
+        bina_kat_sayisi = veri.blok.kat_sayisi
+        gor_olan_katlar = IsplaniPlanlari.objects.filter(blok = veri.blok).exclude(status = "Completed")
+        return {"kat_sayisi" : int(bina_kat_sayisi)}
+    except:
+        return {"kat_sayisi" : int(20)}
 #@register.filter
 @register.simple_tag
 def to_int(veri):
