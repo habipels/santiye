@@ -1746,7 +1746,7 @@ def ilerleme_kaydet(request):
         
         for i in kalem:
             a.remove(i)
-            santiye_kalemlerin_dagilisi.objects.filter(id = int(i)).update(tamamlanma_bilgisi = True, degistirme_tarihi=timezone.now() )
+            santiye_kalemlerin_dagilisi.objects.filter(id = int(i),tamamlanma_bilgisi = False).update(tamamlanma_bilgisi = True, degistirme_tarihi=timezone.now() )
         for i in a:
             if i != ""  :
                 if i in kalem:

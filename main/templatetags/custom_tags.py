@@ -55,25 +55,25 @@ def ilk_giris_verileri(kat_sayis,blok):
 @register.simple_tag
 def ilk_giris_verileri_kalem(kat_sayis,blok,kalem):
     if kalem == "0"  or kalem == 0 :
-        veri_gonder = 0
+        veri_gonder = []
         for i in range(0,kat_sayis):
             santiye_kalemleri_bilgisi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ).count()
             santiye_kalemleri_bilgisi_tamamlanan = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True).count()
             print(santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ),santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True))
             if santiye_kalemleri_bilgisi == santiye_kalemleri_bilgisi_tamamlanan:
-                veri_gonder += 1
+                veri_gonder.append(100)
             else:
-                veri_gonder += 0
+                veri_gonder.append(0)
         return veri_gonder
     else:
-        veri_gonder =  0
+        veri_gonder =  []
         for i in range(0,kat_sayis):
             santiye_kalemleri_bilgisi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi = kalem,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ).count()
             santiye_kalemleri_bilgisi_tamamlanan = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,kalem_bilgisi = kalem,tamamlanma_bilgisi = True).count()
             if santiye_kalemleri_bilgisi == santiye_kalemleri_bilgisi_tamamlanan:
-                veri_gonder +=1
+                veri_gonder.append(100)
             else:
-                pass
+                veri_gonder.append(0)
         return veri_gonder
 @register.simple_tag
 def bloglari_rapora_yansitma(veri):

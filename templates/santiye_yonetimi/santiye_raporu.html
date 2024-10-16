@@ -259,7 +259,7 @@
                         <select onchange="optionSelected()" name="imalat-kalemi-select" id="imalat-kalemi-select">
                             <option value="{% ilk_giris_verileri_kalem kat_bilgisi santiye 0 %}" >Tümü</option>
                             {% for i in tablo %}
-                            <option value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" >{{i.isim}}</option>
+                            <option data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" >{{i.isim}}</option>
                         {% endfor %}
                            
                         </select>
@@ -406,9 +406,13 @@
         createBuilding(completionPercentages);
         function optionSelected() {
     const selectElement = document.getElementById('imalat-kalemi-select');
-    const selectedValue = selectElement.value; // Seçilen değeri al
+    const selectedOption = selectElement.options[selectElement.selectedIndex]; // Seçilen option'u al
+    const selectedData = selectedOption.getAttribute('data-completion'); // `data-completion` özniteliğini al
+
+    // JSON dizisini ayrıştır
+    const completionPercentages = JSON.parse(selectedData);
     const array = []; // Yeni bir dizi oluştur
-    const kat_bilgisi = {{kat_bilgisi}}; // Burada kat_bilgisi verisini al
+    const kat_bilgisi = {{ kat_bilgisi|safe }}; // Burada kat_bilgisi verisini al ve güvenli hale getir
 
     // Face report elemanlarını temizle
     const faceReports = document.getElementsByClassName('face-report');
@@ -416,9 +420,9 @@
         faceReports[i].innerHTML = ''; // Her bir face-report'un içeriğini temizle
     }
 
-    // Kat bilgisi bir dizi ise length ile döngüyü kontrol et
+    // Kat bilgisi bir sayı ise length ile döngüyü kontrol et
     for (let index = 0; index < kat_bilgisi; index++) {
-        if (index < selectedValue) {
+        if (index < completionPercentages.length && completionPercentages[index] === 100) {
             array[index] = 100; // Koşul sağlanıyorsa 100 ata
         } else {
             array[index] = 0; // Koşul sağlanmıyorsa 0 ata
@@ -426,9 +430,10 @@
     }
 
     console.log(array); // Boş array kontrolü için
-    createBuilding(array); // completionPercentages'ı burada tanımlıyoruz
-
+    createBuilding(array); // Oluşturulan array'i createBuilding'e gönder
 }
+
+
 
 
     
