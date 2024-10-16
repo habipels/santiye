@@ -2,137 +2,70 @@
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
+
 {% block head %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
-    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
-    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
-<!--Multi Select Date Picker Calender-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./content/style/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="{% static 'assets/js/layout.js' %}"></script>
-    <!-- Bootstrap Css -->
-    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- custom Css-->
-    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
-    <!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
-<style>
-    .ui-menu .ui-menu-item a{
-    background:red;
-    height:10px;
-    font-size:8px;
-
-}
-</style>
-<!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="{% static '' %}assets/js/layout.js"></script>
-    <!-- Bootstrap Css -->
-    <link href="{% static '' %}assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="{% static '' %}assets/css/icons.min.css" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="{% static '' %}assets/css/app.min.css" rel="stylesheet" type="text/css">
-    <!-- custom Css-->
-    <link href="{% static '' %}assets/css/custom.min.css" rel="stylesheet" type="text/css">
-    <link href="{% static '' %}assets/css/custom.css" rel="stylesheet" type="text/css">
-    <!--Multi Select Date Picker Calender-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-    {% endblock head %}
+{% endblock head %}
 {% block sidebar %}
-<!-- ============================================================== -->
 <form autocomplete="off" method="post" action="/{{dil}}{% url 'accounting:gelir_faturasi_kaydet' %}" enctype="multipart/form-data">
     {% csrf_token %}
+  <main>
 
-            <div class="container-fluid">
 
-                <!-- start page title -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">{% trans 'Satış Ekle' %}</h4>
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
-                                    <li class="breadcrumb-item active">{% trans 'Satış Ekle' %}</li>
-                                </ol>
-                            </div>
-                        </div>
-                 
-                <!-- end page title -->
-
-                <div id="satis-ekle" class="row">
-                    <div class="card">
-<div class="card-header d-flex justify-content-between align-items-center">
-    <h2 class="title">{% trans 'Genel Bilgiler' %}</h2>
-    <div class="buttons">
-        <a class="btn btn-warning btn-label waves-effect waves-light" href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}">
-            <i class="ri-error-warning-line label-icon align-middle fs-16 me-2"></i>{% trans 'Vazgeç' %} 
-        </a>
-        <button type="submit" class="btn btn-success btn-label waves-effect waves-light">
-            <i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i>{% trans 'Kaydet' %} 
-        </button>
-    </div>
-</div>
-<div class="card-body">
-    <div class="row g-3">
-        <!-- Cari Kutusu -->
-        <div class="col-md-2">
-            <div class="input-item musteri-input">
-                <label>Cari</label>
-                <input type="search" required name="musteri_bilgisi" class="form-control cari" title="{% trans 'Kayıtlı cariler için cari adının ilk üç karekterini giriniz.' %}" placeholder="{% trans 'Cari Hesabı' %}" autocomplete="off">
-            </div>
-        </div>
-
-        <!-- Düzenleme ve Vade Tarihi -->
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>{% trans 'Düzenleme ve Vade Tarihi' %}</label>
-                <input type="text" required name="daterange" class="form-control" value="{% tarih_cek %}">
-            </div>
-        </div>
-
-        <!-- Döviz Kuru ve Toplam IQD Kutusu -->
-        <div class="col-md-4">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>{% trans 'Döviz Kuru (Sadece IQD)' %}</label>
-                        <div class="input-group">
-                            <input type="text" id="doviz_kuru" name="doviz_kuru" class="form-control" 
-                                placeholder="{% trans 'Örn: 1450 veya 1450.06' %}" 
-                                pattern="\d+(\.\d{1,2})?" 
-                                title="{% trans 'Lütfen sadece sayısal değer giriniz' %}" 
-                                oninput="hesaplama_islemi()" />
-                            <span class="input-group-text">{% trans 'IQD' %}</span>
-                        </div>
-                    </div>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Fatura Oluştur' %}
+                    
                 </div>
-
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>{% trans 'Toplam IQD' %}</label>
-                        <div class="input-group">
-                            <input type="text" id="toplam_iqd" name="toplam_iqd" class="form-control" disabled />
-                            <span class="input-group-text">{% trans 'IQD' %}</span>
-                        </div>
-                    </div>
-                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Satın Alma ve Stok' %}</a></li>
+                    <li><a href="#">{% trans 'Fatura Oluştur' %}</a></li>
+                </ul>
             </div>
+
         </div>
 
-        <!-- Fatura No Kutusu -->
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>{% trans 'Fatura No' %}</label>
-                {% if request.user.kullanicilar_db %}
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Genel Bilgiler' %}</div>
+            </div>
+
+
+            <div class="fatura-olustur">
+
+                <div class="fatura-doviz">
+
+                    <div class="fatura-doviz-form-row">
+                        <div class="form-element">
+                            <label for="kategori-adi">{% trans 'Fatura No' %}</label>
+                            {% if request.user.kullanicilar_db %}
                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                 {% if yetki.gelir_faturasi_kesme_izni %}
                      <input type="text" required name="faturano" class="form-control" value="{% gelir_faturasi_no request.user.kullanicilar_db.id %}" disabled />
@@ -144,403 +77,380 @@
                        <input type="text" required name="faturano" class="form-control" value="{% gelir_faturasi_no request.user.id %}" disabled />
                 <input type="text" required name="faturano" hidden class="form-control" value="{% gelir_faturasi_no request.user.id %}" />                                                 
                 {% endif %}
-                
-            </div>
-        </div>
+                        </div>
+                        <div class="form-element">
+                            <label for="kategori-adi">{% trans 'Cari' %}</label>
+                            <input type="search" required name="musteri_bilgisi"
+                                class="form-control cari ui-autocomplete-input"
+                                title="Enter the first three characters of the current name for the registered current account."
+                                placeholder="Current Account" autocomplete="off">
 
-        <!-- Açıklama Kutusu -->
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>{% trans 'Açıklama' %}</label>
-                <input type="text" required name="cari_aciklma" class="form-control" placeholder="{% trans 'Açıklama' %}">
-            </div>
-        </div>
 
-        <!-- Kategori ve Etiket Kutuları -->
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>{% trans 'Kategori' %}</label>
-                <div class="input-group" id="kategori">
-                    <select required name="gelir_kategorisi" class="form-select">
-                        {% for i in gelir_kategoerisi %}
-                        <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#showModal">
-                        <i class="ri-add-line align-bottom me-1"></i>{% trans 'Gelir Kategorisi Ekle' %}
-                    </button>
-                </div>
-            </div>
-        </div>
+                            <script>
+                                $(document).ready(function () {
 
-        <div class="col-md-3">
-            <div class="input-item etiket">
-                <label>{% trans 'Etiketler' %}</label>
-                <div id="etkett" class="d-flex align-items-center">
-                    <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
-                        {% for i in gelir_etiketi %}
+                                    var testVerileri = [
+                                        "test1",
+                                        "test2",
+                                        "test3",
+                                        "test4",
+                                        "deneme",
+                                        "merhaba",
+                                    ];
+
+                                    $('.cari').autocomplete({
+                                        source: testVerileri,
+                                        minLength: 2,
+                                        select: function (event, ui) {
+                                            $('.cari').val(ui.item.label);
+                                            return false;
+                                        }
+                                    }).data('ui-autocomplete')._renderItem = function (ul, item) {
+                                        return $('<li>')
+                                            .append('<div>' + item.label + '<br>' + item.value + '</div>')
+                                            .appendTo(ul);
+                                    };
+                                });
+                            </script>
+
+                        </div>
+                        <div class="form-element">
+                            <label for="daterange">{% trans 'Düzenleme ve Vade Tarihi' %}</label>
+                            <input type="text" name="daterange" id="daterange">
+                        </div>
+                        <script>
+                            $('input[name="daterange"]').daterangepicker({
+                                opens: 'left'
+                            }, function (start, end, label) {
+                                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                            });
+                        </script>
+                        <div class="form-element">
+                            <label for="aciklama">{% trans 'Açıklama' %}</label>
+                            <input type="text" name="cari_aciklma"  id="aciklama">
+                        </div>
+                    </div>
+
+                    <div class="fatura-doviz-form-row">
+                        <div class="form-element iqd-input">
+                            <label for="doviz-kuru">{% trans 'Döviz Kuru' %}</label>
+                            <input type="number" name="doviz-kuru" id="doviz-kuru">
+                        </div>
+                        <div class="form-element iqd-input">
+                            <label for="head-toplam-iqd">{% trans 'Toplam IQD' %}</label>
+                            <input type="text" name="head-toplam-iqd" id="head-toplam-iqd">
+                        </div>
+                        <div class="form-element">
+                            <label for="kategori">{% trans 'Kategori' %} <a onclick="openModal('kategori-ekle')">{% trans '+Ekle' %}</a></label>
+                            <select name="kategori"  name="gelir_kategorisi" id="kategori">
+                                <option value="" selected disabled></option>
+                                {% for i in gelir_kategoerisi %}
+                                    <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
+                                    {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label for="etiketler">{% trans 'Etiketler' %} <a onclick="openModal('etiket-ekle')">{% trans '+Ekle' %}</a></label>
+                            <select name="etiketler"  id="etiketler" multiple>
+                                {% for i in gelir_etiketi %}
                         <option value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
                         {% endfor %}
-                    </select>
-                    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#gideretiketiekle">
-                        <i class="ri-add-line align-bottom me-1"></i>{% trans 'Etiketi Ekle' %}
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-                    <div class="form-group">
-                        <label>{% trans 'Belge Yükle' %}</label>
-                        <input type="file"  name="fatura_belgesi" class="form-control" />
-                    </div>
-                </div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-head">
-        <div class="title"><h2>{% trans 'Fatura Kalemleri' %}</h2></div>
-    </div>
-    <div class="fatura-tablosu-basliklar">
-        <h2 class="urun">{% trans 'HİZMET / ÜRÜN' %}</h2>
-        <h2 class="miktar">{% trans 'MİKTAR' %}</h2>
-        <h2 class="bfiyat">{% trans 'BİRİM FİYAT' %}</h2>
-        <h2 class="toplam">{% trans 'TOPLAM' %}</h2>
-    </div>
-    <div class="card-body">
-        <div class="form2" id="form2" >
-            <div class="table-item">
-                <div class="urun">
-                    <input type="search" name="urunadi" class="den" required id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
-                </div>
-                <div class="miktar">
-                    <input class="miktarInput" name="miktari" type="number" value="1" oninput="hesaplama_islemi()" />
-                </div>
-                <div class="bfiyat">
-                    <input id="bfiyatInput" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
-                    <span class="mdi mdi-currency-usd"></span>
-                </div>
-                <div class="toplam">
-                    <input class="toplamInput" type="text" step="0.01" value="0" disabled/>
-                    <span class="mdi mdi-currency-usd"></span>
-                </div>
-                <div class="icons">
-                    <span class="mdi mdi-pan-left specBtn" onclick="specAc(event)"></span>
-                    <ul class="specs">
-                        <li class="addDesc" onclick="aciklamaEkle(event)">{% trans 'Açıklama Ekle' %}</li>
-                        <li class="addSale" onclick="indirimEkle(event)">{% trans 'İndirim Ekle' %}</li>
-                    </ul>
-                    <span style="display: flex !important;" class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
-                </div>
-                <div class="indirim"><input id="indirim" class="indirim" name="indirim" value="0" type="number" placeholder="{% trans 'İndirim gir %' %}"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
-                <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="{% trans 'Açıklama Giriniz' %}"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
-            </div>
-        </div>
-    </div>
-    <div class="addNewItem">
-        <span>{% trans 'Yeni Satır Ekle' %}</span>
-    </div>
-</div>
-
-<div class="card hesaplar">
-    <div class="card-body">
-        <div class="row mb-4">
-            <div class="col text-center">
-                <h5 class="fw-bold">{% trans 'ARA TOPLAM' %}</h5>
-                <h2 class="fw-bold text-primary">$<span class="aratoplam">0.00</span></h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col text-center">
-                <h5 class="fw-bold">{% trans 'ÖDENECEK TUTAR' %}</h5>
-                <h2 class="fw-bold text-success">$<span class="odenecektutar">0.00</span></h2>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-                </div>
-                <!--end row-->
-            </div>
-        </div>
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
-                    </div>
-                    <div class="col-sm-6">
-                        <div  class="text-sm-end d-none d-sm-block">
-
+                            </select>
                         </div>
+                        <script>
+                            // Function to initialize MultiSelectTag
+                            function initializeMultiSelectTag() {
+                                return new MultiSelectTag('etiketler', {
+                                    rounded: true,
+                                    shadow: true,
+                                    placeholder: 'Arama',
+                                    tagColor: {
+                                        textColor: '#327b2c',
+                                        borderColor: '#92e681',
+                                        bgColor: '#eaffe6',
+                                    },
+                                    onChange: function (values) {
+                                        console.log(values);
+                                    }
+                                });
+                            }
+                            var multiSelectInstance = initializeMultiSelectTag();
+                        </script>
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="fatura-head">
+                    <h3>{% trans 'Fatura Kalemleri' %}</h3>
+                    <div class="fatura-head-action">
+                        <a id="kalem-ekle" ><i class="icon icon-add"></i> {% trans 'Kalem Ekle' %}</a>
                     </div>
                 </div>
+
+             
+                <div class="fatura-kalemleri-wrapper">
+                    <table class="dataTable fatura-kalemleri">
+                        <thead>
+                            <tr>
+                                <th>{% trans 'Hizmet / ürün' %}</th>
+                                <th>{% trans 'İndirim' %}</th>
+                                <th>{% trans 'Miktar' %}</th>
+                                <th>{% trans 'Birim Fiyatı' %}</th>
+                                <th>{% trans 'Toplam' %}</th>
+                                <th>{% trans 'Toplam IQD' %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-id="1">
+                                <td>
+                                    <div class="form-element">
+                                        <input type="text" name="urunadi" class="den" required 
+                                            placeholder="Ürün/Hizmet Adı Giriniz">
+                                    </div>
+                                    <div class="form-element">
+                                        <input type="text" name="aciklama" id="kalem-aciklama"
+                                            placeholder="Açıklama">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" name="indirim" id="kalem-indirim">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" name="miktari" id="kalem-miktar">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" id="bfiyatInput"  name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" >
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" name="kalem-toplam" id="kalem-toplam">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element iqd-input">
+                                        <input type="number" name="kalem-toplam-iqd" id="kalem-toplam-iqd">
+                                    </div>
+                                    <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))"
+                                        class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> Sil</a>
+                                </td>
+                            </tr>
+                           
+                        </tbody>
+                    </table>
+                </div>
+
+                <script>
+                    let indirim_input = $("input[name='kalem-indirim']");
+                    let miktar_input = $("input[name='kalem-miktar']");
+                    let birim_fiyati_input = $("input[name='kalem-birim-fiyati']");
+                    let toplam_input = $("input[name='kalem-toplam']");
+                    let toplam_iqd_input = $("input[name='kalem-toplam-iqd']");
+
+                    $(".fatura-kalemleri tbody tr input[type='number']").on("change", faturaFiyatHesapla)
+                    $("input[name='doviz-kuru']").on("change", faturaFiyatHesapla)
+
+                    function faturaFiyatHesapla() {
+                        let doviz_kuru = parseFloat($("input[name='doviz-kuru']").val()) > 0 ? parseFloat($("input[name='doviz-kuru']").val()) : 0;
+
+                        let ara_toplam = 0;
+                        let toplam_indirim = 0;
+                        let toplam_iqd = 0;
+                        let toplam_fiyat = 0;
+
+                        for (let i = 0; i < miktar_input.length; i++) {
+                            let miktar = parseFloat(miktar_input[i].value) > 0 ? parseFloat(miktar_input[i].value) : 1;
+                            let birim_fiyati = parseFloat(birim_fiyati_input[i].value) > 0 ? parseFloat(birim_fiyati_input[i].value) : 1;
+                            let indirim = parseFloat(indirim_input[i].value) > 0 ? parseFloat(indirim_input[i].value) : 0;
+
+                            let urun_toplam_fiyat = 0;
+
+                            if (indirim > 0) {
+                                urun_toplam_fiyat = (miktar * birim_fiyati) - ((miktar * birim_fiyati) * indirim / 100)
+                                toplam_indirim += ((miktar * birim_fiyati) * indirim / 100);
+                            } else {
+                                urun_toplam_fiyat = (miktar * birim_fiyati)
+                            }
+
+                            ara_toplam += (miktar * birim_fiyati);
+
+                            toplam_input[i].value = urun_toplam_fiyat;
+
+                            toplam_iqd_input[i].value = urun_toplam_fiyat * doviz_kuru;
+
+                            toplam_iqd += urun_toplam_fiyat * doviz_kuru;
+                            toplam_fiyat += urun_toplam_fiyat;
+
+
+                        }
+
+                        $("#info-ara-toplam").text("$" + ara_toplam);
+                        $("#info-toplam-indirim").text("$" + toplam_indirim);
+                        $("#info-toplam-iqd").text("$" + toplam_iqd);
+                        $("#head-toplam-iqd").val(toplam_iqd);
+                        $("#info-toplam").text("$" + toplam_fiyat);
+
+                    }
+                </script>
+
+
+
+                <div class="fatura-detaylar">
+
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>{% trans 'Ara Toplam' %}</td>
+                                <th id="info-ara-toplam">$0,00</th>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'İndirim' %}</td>
+                                <td id="info-toplam-indirim" style="color: #ff0000;">-$0,00</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Toplam IQD' %}</td>
+                                <td id="info-toplam-iqd">$0,00</td>
+                            </tr>
+                            <tr>
+                                <th>{% trans 'Toplam' %}</th>
+                                <th id="info-toplam">$0,00</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                    </div>
+                </div>
+
+
+
+
             </div>
-        </footer>
-    </div>
-    <!-- end main content-->
+
+
+
+        </div>
+
+
+
+    </main>
 </form>
-<!-- JAVASCRIPT -->
+  <div class="modal" id="etiket-ekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Etiket Ekle
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="etiket-adi">Etiket Adı</label>
+                        <input type="text" name="etiket-adi" id="etiket-adi">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Etiket Ekle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-<script src="{% static '' %}assets/libs/simplebar/simplebar.min.js"></script>
-<script src="{% static '' %}assets/libs/node-waves/waves.min.js"></script>
-<script src="{% static '' %}assets/libs/feather-icons/feather.min.js"></script>
-<script src="{% static '' %}assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
-<script src="{% static '' %}assets/js/plugins.js"></script>
-<script src="{% static '' %}assets/js/pages/satis-ekle.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<!-- Sweet Alerts js -->
-<script src="{% static '' %}assets/libs/sweetalert2/sweetalert2.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css">
 
-<!-- App js -->
-<script src="{% static '' %}assets/js/app.js"></script>
-<!--Multi Select Date Calender-->
+
+    <div class="modal" id="kategori-ekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Kategori Ekle
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="kategori-adi">Kategori Adı</label>
+                        <input type="text" name="kategori-adi" id="kategori-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="kategori-aciklamasi">Kategori Açıklaması</label>
+                        <input type="text" name="kategori-aciklamasi" id="kategori-aciklamasi">
+                    </div>
+                    <div class="form-element">
+                        <label for="kategori-rengi">Kategori Rengi</label>
+                        <input type="color" name="kategori-rengi" id="kategori-rengi">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Kategori Oluştur</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 <script>
-    $(function () {
-        $('input[name="daterange"]').daterangepicker({
-            opens: 'left'
-        }, function (start, end, label) {
-            console.log("{% trans 'A new date selection was made:' %} " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-        });
-    });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Döviz kuru değeri ayarlama
-    var dovizKuruInput = document.getElementById('doviz_kuru');
-    var dovizKuruValue = "{{ data.doviz }}"; 
-    dovizKuruInput.value = dovizKuruValue;
-
-    // Döviz kuru alanına değer girişi olduğunda
-    dovizKuruInput.addEventListener('input', function () {
-        validateDovizKuru();
-        hesaplama_islemi();
-        showToast();
-    });
-
-    // Birim fiyat (USD) değiştiğinde IQD'yi hesapla
-    document.getElementById('bfiyatInput').addEventListener('input', function() {
-        hesaplama_islemi();
-    });
-
-    // Birim fiyat (IQD) değiştiğinde USD'yi hesapla
-    document.getElementById('bfiyat_iqd').addEventListener('input', function() {
-        hesaplama_islemi();
-    });
-});
-document.addEventListener('DOMContentLoaded', function() {
-    function hesaplama_islemi() {
-        var dovizKuru = parseFloat(document.getElementById('doviz_kuru').value) || 0;
-        var odenecekTutar = parseFloat(document.querySelector('.odenecektutar').textContent.replace('$', '').trim()) || 0;
-
-        if (dovizKuru && odenecekTutar) {
-            var toplamIQD = odenecekTutar * dovizKuru;
-            document.getElementById('toplam_iqd').value = toplamIQD.toFixed(2);
-        }
-    }
-
-    // Döviz kuru değiştikçe hesaplama yap
-    document.getElementById('doviz_kuru').addEventListener('input', hesaplama_islemi);
-
-    // Ürün miktarı veya fiyatı değiştiğinde hesaplama yap
-    document.querySelectorAll('.miktarInput, .bfiyatInput').forEach(function(element) {
-        element.addEventListener('input', function() {
-            // Önce ara toplamı ve ödenecek tutarı güncelleyin
-            updateTotals();
-            // Ardından IQD değerini güncelleyin
-            hesaplama_islemi();
-        });
-    });
-
-    // İlk yüklemede hesaplama yap
-    hesaplama_islemi();
-});
-
-function updateTotals() {
-    var brimtutar = document.querySelectorAll(".bfiyatInput");
-    var miktar = document.querySelectorAll(".miktarInput");
-    var ana_toplam = document.querySelectorAll(".toplamInput");
-    var indirim = document.querySelectorAll(".indirim");
-    var indirim_toplam = 0;
-
-    for (var u = 0; u < brimtutar.length; u++) {
-        ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
-    }
-
-    var islem_sonucu = 0;
-    var aratoplam = document.querySelector(".aratoplam");
-    for (var u = 0; u < ana_toplam.length; u++) {
-        islem_sonucu += parseFloat(ana_toplam[u].value);
-    }
-
-    for (var u = 0; u < indirim.length; u++) {
-        indirim_toplam += parseFloat(indirim[u].value);
-    }
-
-    aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
-    document.querySelector(".odenecektutar").textContent = (islem_sonucu).toFixed(2) + " $";
-}
+        $(".delete-modal-button").on("click", function () {
+            $(".fatura-kalemleri [data-id=" + $(this).attr("data-delete-id") + "]").remove();
+            closeModal();
+        })
+    </script>
 
 
-function hesaplama_islemi() {
-    var dovizKuru = parseFloat(document.getElementById('doviz_kuru').value) || 0;
-    var bfiyatUSD = parseFloat(document.getElementById('bfiyatInput').value) || 0;
-    var bfiyatIQD = parseFloat(document.getElementById('bfiyat_iqd').value) || 0;
-
-    // USD'den IQD'ye çeviri
-    if (bfiyatUSD && dovizKuru) {
-        document.getElementById('bfiyat_iqd').value = (bfiyatUSD * dovizKuru).toFixed(2);
-    }
-
-    // IQD'den USD'ye çeviri
-    if (bfiyatIQD && dovizKuru) {
-        document.getElementById('bfiyatInput').value = (bfiyatIQD / dovizKuru).toFixed(2);
-    }
-}
-
-var isToastVisible = false;  // Toast'ın görünür olup olmadığını takip etmek için
-
-function validateDovizKuru() {
-    var dovizKuruInput = document.getElementById('doviz_kuru');
-    var dovizKuruValue = dovizKuruInput.value;
-
-    // Sadece sayısal değer ve ondalık sayı kontrolü (örn: 1450 veya 1450.06)
-    var validPattern = /^\d*\.?\d{0,2}$/;
-
-    if (!validPattern.test(dovizKuruValue)) {
-        // Eğer mevcut bir toast görünüyorsa, yeni bir toast göstermeyin
-        if (!isToastVisible) {
-            showCustomToast('{% trans "Geçersiz Döviz Kuru" %}', '{% trans "Lütfen geçerli bir döviz kuru giriniz. Sadece sayısal değer ve ondalık olabilir." %}');
+    <script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
         }
 
-        dovizKuruInput.value = "";  // Geçerli olmayan değeri temizle
-    }
-}
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
 
-function showCustomToast(title, message) {
-    isToastVisible = true;  // Toast'ın görünür olduğunu belirleyin
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
 
-    var toastContainer = document.createElement('div');
-    toastContainer.className = 'custom-toast-container';
-    
-    var toast = document.createElement('div');
-    toast.className = 'custom-toast';
-    
-    var icon = document.createElement('div');
-    icon.className = 'custom-toast-icon';
-    icon.innerHTML = '<i class="mdi mdi-alert-circle-outline"></i>';
-    
-    var toastContent = document.createElement('div');
-    toastContent.className = 'custom-toast-content';
-    
-    var toastTitle = document.createElement('strong');
-    toastTitle.textContent = title;
-    
-    var toastMessage = document.createElement('p');
-    toastMessage.textContent = message;
-    
-    toastContent.appendChild(toastTitle);
-    toastContent.appendChild(toastMessage);
-    toast.appendChild(icon);
-    toast.appendChild(toastContent);
-    toastContainer.appendChild(toast);
-    
-    document.body.appendChild(toastContainer);
-    
-    setTimeout(function() {
-        toastContainer.classList.add('show');
-    }, 100);
-    
-    setTimeout(function() {
-        toastContainer.classList.remove('show');
-        setTimeout(function() {
-            document.body.removeChild(toastContainer);
-            isToastVisible = false;  // Toast kapandı, yeni toastlar gösterilebilir
-        }, 500);
-    }, 4000);
-}
+    </script>
 
 
-</script>
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
 
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
-<div class="daterangepicker ltr show-calendar opensleft">
-    <div class="ranges"></div>
-    <div class="drp-calendar left">
-        <div class="calendar-table"></div>
-        <div class="calendar-time" style="display: none;"></div>
-    </div>
-    <div class="drp-calendar right">
-        <div class="calendar-table"></div>
-        <div class="calendar-time" style="display: none;"></div>
-    </div>
-    <div   class="drp-buttons"><span class="drp-selected">01/01/2024 - 01/30/2024</span><button
-            class="cancelBtn btn btn-sm btn-default" type="button">Cancel</button><button
-            class="applyBtn btn btn-sm btn-primary" disabled="disabled" type="button">Apply</button> </div>
-</div>
-<div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
 
-                                <div class="modal-body">
-                                    <input type="text" name="tur" id="tur" hidden value="0">
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Adı' %}</label>
-                                        <input type="text"  name="adi" id="adi" class="form-control" placeholder="{% trans 'Kategori Adı' %}" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Açıklaması' %}</label>
-                                        <input type="text"  name="aciklama" id="aciklama" class="form-control" placeholder="{% trans 'Kategori Açıklaması' %}" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Rengi' %}</label>
-                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="{% trans 'Gider Rengi' %}" />
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">{% trans 'Kategori Ekle' %}</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="gideretiketiekle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-
-                                <div class="modal-body">
-                                    <input type="text" name="tur2" id="tur2" hidden value="0">
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Gider Etiketi Adı' %}</label>
-                                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder" class="form-control" placeholder="{% trans 'Etiket Adı' %}" />
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">{% trans 'Etiketi Ekle' %}</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                        </div>
-                    </div>
-                </div>
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 {% endblock sidebar %}
 {% block javascriptcodeadd %}
 
@@ -634,30 +544,7 @@ function showCustomToast(title, message) {
     <script>
 
        function enableAutocompleteForNewItems() {
-    function hesaplama_islemi(){
-        var brimtutar = document.querySelectorAll(".bfiyatInput");
-        var miktar = document.querySelectorAll(".miktarInput");
-        var ana_toplam = document.querySelectorAll(".toplamInput");
-        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
-        var indirim_toplam = 0;
 
-        for (var u = 0; u < brimtutar.length; u++) {
-            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
-        }
-
-        var islem_sonucu = 0;
-        var aratoplam = document.querySelector(".aratoplam");
-        for (var u = 0; u < ana_toplam.length; u++) {
-            islem_sonucu += parseFloat(ana_toplam[u].value);
-        }
-
-        for (var u = 0; u < indirim.length; u++) {
-            indirim_toplam += parseFloat(indirim[u].value);
-        }
-
-        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
-        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
-    }
 
     $('.den').autocomplete({
         source: "/{{dil}}{% url 'accounting:search_2' hashler %}",
@@ -668,7 +555,7 @@ function showCustomToast(title, message) {
             $(this).siblings().val(ui.item.label);
             id = id.replace("searchInput", "bfiyatInput");
             document.getElementById(id).value = ui.item.value;
-            hesaplama_islemi();
+            
             return false;
         }
     }).data('ui-autocomplete')._renderItem = function(ul, item) {
@@ -706,57 +593,6 @@ $(document).ready(function(){
             };
         });
 
-/*
-$(document).ready(function(){
-    $('.den').each(function() {
-        $(this).keyup(function() {
-            $(this).autocomplete({
-                source: '/accounting/search/',
-                minLength: 2,
-                select: function(event, ui) {
-                    $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
-                    $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
-                    $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
-                    return false;
-                }
-            }).data('ui-autocomplete')._renderItem = function(ul, item) {
-                return $('<li>')
-                    .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
-                    .appendTo(ul);
-            };
-        });
-    });
-
-    $('.bfiyatInput').on('input', function(){
-        // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
-        $('#hiddenBfiyatInput').val($(this).val());
-    });
-});
-*/
-       function hesaplama_islemi(){
-        var brimtutar = document.querySelectorAll(".bfiyatInput");
-        var miktar = document.querySelectorAll(".miktarInput");
-        var ana_toplam = document.querySelectorAll(".toplamInput");
-        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
-        var indirim_toplam = 0;
-
-        for (var u = 0; u < brimtutar.length; u++) {
-            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
-        }
-
-        var islem_sonucu = 0;
-        var aratoplam = document.querySelector(".aratoplam");
-        for (var u = 0; u < ana_toplam.length; u++) {
-            islem_sonucu += parseFloat(ana_toplam[u].value);
-        }
-
-        for (var u = 0; u < indirim.length; u++) {
-            indirim_toplam += parseFloat(indirim[u].value);
-        }
-
-        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
-        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
-    }
 
     </script>
 <style>
@@ -766,23 +602,6 @@ $(document).ready(function(){
 </style>
 <script>
 
-    // Function to initialize MultiSelectTag
-    function initializeMultiSelectTag() {
-        return new MultiSelectTag('cokluetiket', {
-            rounded: true,
-            shadow: true,
-            placeholder: '{% trans "Search" %}',
-            tagColor: {
-                textColor: '#327b2c',
-                borderColor: '#92e681',
-                bgColor: '#eaffe6',
-            },
-            onChange: function(values) {
-                console.log(values);
-            }
-        });
-    }
-var multiSelectInstance = initializeMultiSelectTag();
 
 
     $(document).ready(function () {
@@ -825,7 +644,7 @@ var multiSelectInstance = initializeMultiSelectTag();
       success: function (data) {
 
         $("#etkett").load(window.location.href + " #etkett", function() {
-        multiSelectInstance = initializeMultiSelectTag() });
+        });
 
       }
     });
@@ -840,30 +659,7 @@ var multiSelectInstance = initializeMultiSelectTag();
     <script>
 
        function enableAutocompleteForNewItems() {
-    function hesaplama_islemi(){
-        var brimtutar = document.querySelectorAll(".bfiyatInput");
-        var miktar = document.querySelectorAll(".miktarInput");
-        var ana_toplam = document.querySelectorAll(".toplamInput");
-        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
-        var indirim_toplam = 0;
 
-        for (var u = 0; u < brimtutar.length; u++) {
-            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
-        }
-
-        var islem_sonucu = 0;
-        var aratoplam = document.querySelector(".aratoplam");
-        for (var u = 0; u < ana_toplam.length; u++) {
-            islem_sonucu += parseFloat(ana_toplam[u].value);
-        }
-
-        for (var u = 0; u < indirim.length; u++) {
-            indirim_toplam += parseFloat(indirim[u].value);
-        }
-
-        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
-        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
-    }
 
     $('.den').autocomplete({
         source: '/accounting/search/',
@@ -874,7 +670,6 @@ var multiSelectInstance = initializeMultiSelectTag();
             $(this).siblings().val(ui.item.label);
             id = id.replace("searchInput", "bfiyatInput");
             document.getElementById(id).value = ui.item.value;
-            hesaplama_islemi();
             return false;
         }
     }).data('ui-autocomplete')._renderItem = function(ul, item) {
@@ -912,57 +707,7 @@ $(document).ready(function(){
             };
         });
 
-/*
-$(document).ready(function(){
-    $('.den').each(function() {
-        $(this).keyup(function() {
-            $(this).autocomplete({
-                source: '/accounting/search/',
-                minLength: 2,
-                select: function(event, ui) {
-                    $('#searchInput').val(ui.item.label); // Seçilen ürün adını input alanına ekleyin
-                    $('.bfiyatInput').val(ui.item.value); // Seçilen ürünün birim fiyatını otomatik olarak doldurun
-                    $('.bfiyatInput').trigger('input'); // İkinci input alanının değişiklik eventini tetikle
-                    return false;
-                }
-            }).data('ui-autocomplete')._renderItem = function(ul, item) {
-                return $('<li>')
-                    .append('<div>' + item.label + '<br>' + item.value + ' USD</div>') // Görünümü özelleştirin (ürün adı ve birim fiyat)
-                    .appendTo(ul);
-            };
-        });
-    });
 
-    $('.bfiyatInput').on('input', function(){
-        // Birim fiyat alanına değer girildiğinde, bu değeri autocomplete sonuçlarında da göstermek için gizli bir input alanına atayın
-        $('#hiddenBfiyatInput').val($(this).val());
-    });
-});
-*/
-       function hesaplama_islemi(){
-        var brimtutar = document.querySelectorAll(".bfiyatInput");
-        var miktar = document.querySelectorAll(".miktarInput");
-        var ana_toplam = document.querySelectorAll(".toplamInput");
-        var indirim = document.querySelectorAll(".indirim"); // Düzeltildi: indiirm yerine indirim
-        var indirim_toplam = 0;
-
-        for (var u = 0; u < brimtutar.length; u++) {
-            ana_toplam[u].value = (parseFloat(miktar[u].value) * parseFloat(brimtutar[u].value)).toFixed(2);
-        }
-
-        var islem_sonucu = 0;
-        var aratoplam = document.querySelector(".aratoplam");
-        for (var u = 0; u < ana_toplam.length; u++) {
-            islem_sonucu += parseFloat(ana_toplam[u].value);
-        }
-
-        for (var u = 0; u < indirim.length; u++) {
-            indirim_toplam += parseFloat(indirim[u].value);
-        }
-
-        aratoplam.textContent = islem_sonucu.toFixed(2) + " $";
-        document.querySelector(".odenecektutar").textContent = (islem_sonucu ).toFixed(2) + " $";
-    }
 
     </script>
 <style>
@@ -973,22 +718,7 @@ $(document).ready(function(){
 <script>
 
     // Function to initialize MultiSelectTag
-    function initializeMultiSelectTag() {
-        return new MultiSelectTag('cokluetiket', {
-            rounded: true,
-            shadow: true,
-            placeholder: '{% trans "Search" %}',
-            tagColor: {
-                textColor: '#327b2c',
-                borderColor: '#92e681',
-                bgColor: '#eaffe6',
-            },
-            onChange: function(values) {
-                console.log(values);
-            }
-        });
-    }
-var multiSelectInstance = initializeMultiSelectTag();
+
 
 
     $(document).ready(function () {
@@ -1031,7 +761,7 @@ var multiSelectInstance = initializeMultiSelectTag();
       success: function (data) {
 
         $("#etkett").load(window.location.href + " #etkett", function() {
-        multiSelectInstance = initializeMultiSelectTag() });
+         });
 
       }
     });
