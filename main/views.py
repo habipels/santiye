@@ -135,6 +135,7 @@ def homepage(request):
     if request.user.is_authenticated:
         pass
     else:
+        print("login")
         return redirect("/users/login/")
     if request.user.is_authenticated:
         content = sozluk_yapisi()
@@ -300,8 +301,7 @@ def homepage(request):
   
             
             
-    else:
-        return redirect("/users/login/")
+    
 
     return render(request,"index.html",content)
 def ana_sayfa(request):
