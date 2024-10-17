@@ -266,6 +266,8 @@
                                             <a onclick="openModal('is-emri-duzenle')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                             <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
+                                                    <a onclick="openModal('ilerleme{{i.id}}')" class="status-view"><i
+                                                        class="icon icon-view"></i></a>
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
@@ -273,6 +275,7 @@
                                                     <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </td>
                                 </tr>
@@ -616,6 +619,15 @@
                             {% trans 'Açıklama ' %} {{i.aciklama}}<br>
                             {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
                             {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
+                            {% trans 'Yapacak Kişiler ' %} {% for yazar in i.yapacaklar.all %}
+                            <a href="javascript: void(0);"
+                             class="avatar-group-item"
+                             data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                             data-bs-toggle="tooltip" data-bs-placement="top"
+                             data-bs-title="{{yazar.last_name}}"> <img style="max-width: 40px !important;max-height: 40px !important;"
+                                 src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                 class="rounded-circle avatar-xxs"> </a>
+                     {% endfor %}
 
                         </div>
                     </div>
