@@ -313,26 +313,27 @@
             </div>
         </div>
     </div>
+
 <div class="modal" id="deleteConfirmationModal{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                <h2>{% trans 'Silmek İstediğinden Emin misin?' %}</h2>
-            <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
             </div>
             <div class="modal-body">
-                      <form autocomplete="off"action="/{{dil}}{% url 'main:ust_yuklenici_silme' %}" method="post">
+                 <form autocomplete="off"action="/{{dil}}{% url 'main:ust_yuklenici_silme' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                     
-                 
+                    <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
                     <div class="form-actions">
-                                       <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
-                <button type="button" class="btn btn-secondary"  onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal('deleteConfirmationModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
                     </div>
                 </form>
             </div>
         </div>
-</div>
+    </div>
 {% endfor %}
     <div class="modal" id="yeni-sozlesme">
         <div class="modal-inner" style="width: 500px">

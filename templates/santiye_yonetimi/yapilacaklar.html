@@ -73,7 +73,7 @@
                                 <tr>
                                     <td>
                                         <div class="task-check">
-                                            <input type="checkbox" id="task-check-1">
+                                            
                                             {{i.title}}
                                         </div>
                                     </td>
@@ -141,7 +141,7 @@
                                       <tr>
                                     <td>
                                         <div class="task-check">
-                                            <input type="checkbox" id="task-check-1">
+                                            
                                             {{i.title}}
                                         </div>
                                     </td>
@@ -212,7 +212,7 @@
                                   <tr>
                                     <td>
                                         <div class="task-check">
-                                            <input type="checkbox" id="task-check-1">
+                                           
                                             {{i.title}}
                                         </div>
                                     </td>
@@ -331,16 +331,16 @@
                         <div class="modal-form-row">
                             <div class="form-element">
                                 <label for="baslik">{% trans 'Başlık Ekle' %}</label>
-                                <input type="text" name="baslik"  name="baslik" id="baslik">
+                                <input type="text" required name="baslik"  name="baslik" id="baslik">
                             </div>
                             <div class="form-element">
                                 <label for="aciklama">{% trans 'Açıklama' %}</label>
-                                <input type="text" name="aciklama" id="aciklama">
+                                <input type="text" required name="aciklama" id="aciklama">
                             </div>
                             <div class="form-row">
                                 <div class="form-element">
                                     <label for="durum">{% trans 'Durum' %}</label>
-                                   <select name="durum" class="form-control" data-choices data-choices-search-false id="task-status-input">
+                                   <select name="durum" required class="form-control" data-choices data-choices-search-false id="task-status-input">
                                     <option value="">{% trans 'Status' %}</option>
                                     <option value="New" selected>{% trans 'Yeni' %}</option>
                                     <option value="Inprogress">{% trans 'Devam Ediyor' %}</option>
@@ -350,7 +350,7 @@
                                 </div>
                                 <div class="form-element">
                                     <label for="aciliyet">{% trans 'Öncelik' %}</label>
-                                    <select name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
+                                    <select required name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
                                     
                                     <option value="High">{% trans 'Acil' %}</option>
                                     <option value="Medium">{% trans 'Orta' %}</option>
@@ -360,7 +360,7 @@
                             </div>
                             <div class="form-element">
                                 <label for="kisiler">{% trans 'Kişi & Kişiler Ata' %}</label>
-                                <select name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
+                                <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
                                 {% endfor %}
@@ -368,7 +368,7 @@
                             </div>
                             <div class="form-element">
                                 <label for="tarih">{% trans 'Due Date:' %}</label>
-                                <input type="date" name="teslim_tarihi"  id="tarih">
+                                <input required type="date" name="teslim_tarihi"  id="tarih">
                             </div>
                         </div>
                         <div class="modal-form-row">
@@ -398,9 +398,10 @@
                             </div>
                             <div class="form-element">
                                 <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
-                                <img src="" alt="Plan Konumu" id="alan" class="alan">
+                                    <canvas style="display: none; max-width: 400px !important; max-height: 400px !important;" id="alanpdf"  width="200" height="200" ></canvas>
+                                    <img src="#" style="display: none; max-width: 200px !important;" alt="Plan Konumu" id="alan" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
-                                    <div class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
+                                    <div id="gizle" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
                                 </div>
                             </div>
                             <div class="form-element">
@@ -736,9 +737,47 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('katmanSelect').addEventListener('change', function() {
         const katmanId = this.value;
         const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
-        loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
-        const imgElement = document.getElementById('alan');
-        imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+        //loadPDF(file)
+        
+        
+        document.getElementById('gizle').style.display = "none";
+        //alanpdf
+        // Tüm elementleri gizle
+
+        // Dosya uzantısını al
+        const fileExtension = this.options[this.selectedIndex].getAttribute('data-img').split('.').pop().toLowerCase();
+
+        // Dosya türüne göre işlem yap
+        if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
+            const imgElement = document.getElementById('alan');
+            imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+            imgElement.style.display = "block";
+            document.getElementById('alanpdf').style.display = "none";
+            loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
+        } else if (fileExtension === "pdf") {
+            var url = this.options[this.selectedIndex].getAttribute('data-img');
+            const imgElement = document.getElementById('alan');
+            loadPDF(this.options[this.selectedIndex].getAttribute('data-img'));
+            //imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+            imgElement.style.display = "none";
+            pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+                var canvas = document.getElementById('alanpdf');
+                document.getElementById('alanpdf').style.display = "block";
+                var context = canvas.getContext('2d');
+                var viewport = page.getViewport({ scale: 1.5 });
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                page.render({
+                canvasContext: context,
+                viewport: viewport
+                });
+            });
+            }); // Yükleniyor mesajını gizle
+        }
+
         fetch(`/get_yapi/${santiyeId}/`)
             .then(response => response.json())
             .then(data => {
@@ -960,51 +999,56 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         // PDF yükleme fonksiyonu
-        async function loadPDF(file) {
-            try {
-                const fileReader = new FileReader();
-                fileReader.onload = async function(event) {
-                    const typedArray = new Uint8Array(event.target.result);
-                    const pdf = await pdfjsLib.getDocument(typedArray).promise;
-                    console.log("PDF Yüklendi:", pdf);
+        async function loadPDF(fileUrl) {
+    try {
+        // PDF URL'den alınarak Blob'a dönüştürülüyor
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error("PDF yüklenemedi.");
+        const fileBlob = await response.blob();
+        
+        const fileReader = new FileReader();
+        fileReader.onload = async function(event) {
+            const typedArray = new Uint8Array(event.target.result);
+            const pdf = await pdfjsLib.getDocument(typedArray).promise;
+            console.log("PDF Yüklendi:", pdf);
 
-                    const page = await pdf.getPage(1);  // İlk sayfayı yükle
+            const page = await pdf.getPage(1);  // İlk sayfayı yükle
+            const scale = 1.5;  // Performans için ölçek
+            const viewport = page.getViewport({ scale: scale });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
 
-                    const scale = 1.5;  // Performans için ölçek
-                    const viewport = page.getViewport({ scale: scale });
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
 
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            await page.render(renderContext).promise;
+            console.log("PDF Render Edildi.");
 
-                    const renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-                    await page.render(renderContext).promise;
-                    console.log("PDF Render Edildi.");
+            // PDF'in canvas'ını Konva sahnesine ekle
+            const pdfImage = new Konva.Image({
+                x: 0,
+                y: 0,
+                image: canvas,
+                width: viewport.width,
+                height: viewport.height,
+                draggable: false,
+            });
 
-                    // PDF'in canvas'ını Konva sahnesine ekle
-                    const pdfImage = new Konva.Image({
-                        x: 0,
-                        y: 0,
-                        image: canvas,
-                        width: viewport.width,
-                        height: viewport.height,
-                        draggable: false,
-                    });
+            imageLayer.destroyChildren(); // Önceki görüntüyü sil
+            imageLayer.add(pdfImage);
+            imageLayer.batchDraw();
+        };
+        fileReader.readAsArrayBuffer(fileBlob);
+    } catch (error) {
+        console.error("PDF Yükleme Hatası:", error);
+        alert("PDF dosyası yüklenemedi. Lütfen geçerli bir PDF dosyası yükleyin.");
+    }
+}
 
-                    imageLayer.destroyChildren(); // Önceki görüntüyü sil
-                    imageLayer.add(pdfImage);
-                    imageLayer.batchDraw();
-                };
-                fileReader.readAsArrayBuffer(file);
-            } catch (error) {
-                console.error("PDF Yükleme Hatası:", error);
-                alert("PDF dosyası yüklenemedi. Lütfen geçerli bir PDF dosyası yükleyin.");
-            }
-        }
 
         function loadImage(filePath) {
     const img = new Image();
@@ -1092,11 +1136,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     // PNG oluştur ve göster
                     const capturedImage = document.getElementById('captured-image');
                     capturedImage.src = dataURL;
-
+                    const isImage = dataURL.startsWith("data:image/");
+                    const isPDF = dataURL.startsWith("data:application/pdf");
                     // İndirme linkini güncelle
-                    const downloadLink = document.getElementById('download-link');
+                    if (isImage) {
+                        const downloadLink = document.getElementById('download-link');
                     downloadLink.href = dataURL;
                     document.getElementById('alan').src = dataURL;
+                    document.getElementById('alan').style.display = "block";
+                    document.getElementById('alanpdf').style.display = "none";
+                    }
+                    else if(isPDF){
+                        alert("pf")
+                    }
+                    
                    
                 }
             });
