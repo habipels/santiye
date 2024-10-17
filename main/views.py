@@ -3867,6 +3867,9 @@ def yapilacalar_ekle(request):
                         katman_bilgisi = request.POST.get("katman")
                         yapi_gonder = request.POST.get("yapi_gonder")
                         kat = request.POST.get("kat")
+                        if kat or kat  == ""  :
+                            kat = 0
+
                         new_project = IsplaniPlanlari(
                             proje_ait_bilgisi = request.user.kullanicilar_db,
                             title = baslik,
