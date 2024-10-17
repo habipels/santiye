@@ -1051,6 +1051,8 @@ def giderler_tutari(bilgi):
 #
 @register.simple_tag
 def basit_cikarma(a,b):
+    a = str(a)
+    b = str(b)
     a = a.replace('.', '')
     b = b.replace('.', '')
     a = a.replace(',', '.')

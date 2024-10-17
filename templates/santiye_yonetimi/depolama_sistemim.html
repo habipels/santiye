@@ -21,9 +21,22 @@
     <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
     <!--Multi Select Date Picker Calender-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-                <div class="container-fluid">
-
-                    <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
+                <main >
+                    <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Dosya Yöneticisi' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Dosya Yöneticisi' %}</a></li>
+                </ul>
+            </div>
+        </div>
+                    <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-1 p-1">
                         <div class="file-manager-sidebar">
                             <div class="p-3 d-flex flex-column h-100">
                                 <div class="mb-3">
@@ -110,13 +123,13 @@
                                                 {% if request.user.kullanicilar_db %}
                                                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                 {% if yetki.dosya_yoneticisi_olusturma %}
-                                                          <button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Klasör Oluştur' %} </button>
+                                                          <button class="status-primary status-btn" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Klasör Oluştur' %} </button>
                                                                                           
                                                 {% else %}
                                                                                                                 
                                                 {% endif %}
                                                 {% else %}
-                                                         <button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Klasör Oluştur' %}</button>
+                                                         <button class="status-primary status-btn" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Klasör Oluştur' %}</button>
                                                                                            
                                                 {% endif %}
                                                 </div>
@@ -357,7 +370,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </main>
                 <!-- container-fluid -->
                 <footer class="footer">
                 <div class="container-fluid">
