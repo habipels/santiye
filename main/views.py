@@ -3867,7 +3867,7 @@ def yapilacalar_ekle(request):
                         katman_bilgisi = request.POST.get("katman")
                         yapi_gonder = request.POST.get("yapi_gonder")
                         kat = request.POST.get("kat")
-                        if kat or kat  == ""  :
+                        if kat== None or kat  == ""  :
                             kat = 0
 
                         new_project = IsplaniPlanlari(
@@ -3906,7 +3906,9 @@ def yapilacalar_ekle(request):
                 katman_bilgisi = request.POST.get("katman")
                 yapi_gonder = request.POST.get("yapi_gonder")
                 kat = request.POST.get("kat")
-                print(katman_bilgisi,yapi_gonder,kat,"veriler")
+                if kat == None or kat  == ""  :
+                    kat = 0
+                print(kat)
                 new_project = IsplaniPlanlari(
                     proje_ait_bilgisi = request.user,
                     title = baslik,
