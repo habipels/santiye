@@ -791,30 +791,28 @@
 
 
             <div class="large-cards-second-row">
-
-                <div class="cardbuild">
-                    <div class="card-header">
-                        {% trans '<a href="#" class="card-details">Detayını Gör <i class="icon icon-chevron-right"></i></a>' %}
+                <div class="card">
+                    <div class="stats-header">
+                    <div class="isemri-title">{% trans 'Aktif İş Emirleri' %}</div>
                     </div>
-                    <div class="cardbuild-body">
-                             <div class="building-container">
-                                    <div class="building" id="building">
-                                        <div class="face" id="face1"><div class="roof">Kuzey</div></div>
-                                        <div class="face" id="face2"><div class="roof">Doğu</div></div>
-                                        <div class="face" id="face3"><div class="roof">Güney</div></div>
-                                        <div class="face" id="face4"><div class="roof">Batı</div></div>
-                                    </div>
-                                </div>
-
-                                <!-- Mouse yanında çıkan mini modal -->
-                                <div id="infoModal" class="info-modal">
-                                    <span class="close-btn" onclick="closeInfoModal()">×</span>
-                                    <p id="modalText"></p>
-                                    <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
-                                </div>
+                    <div class="card-body">
+                        <div class="building-container">
+                                                    <div class="building" id="building">
+                                                        <div class="face" id="face1"><div class="roof">Kuzey</div></div>
+                                                        <div class="face" id="face2"><div class="roof">Doğu</div></div>
+                                                        <div class="face" id="face3"><div class="roof">Güney</div></div>
+                                                        <div class="face" id="face4"><div class="roof">Batı</div></div>
+                                                    </div>
+                        
+                                                    <!-- Mouse yanında çıkan mini modal -->
+                                                    <div id="infoModal" class="info-modal">
+                                                        <span class="close-btn" onclick="closeInfoModal()">×</span>
+                                                        <p id="modalText"></p>
+                                                        <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+                                                    </div>
+                        </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
@@ -2138,11 +2136,11 @@
 
                 <div class="large-stats-card table-card">
                     <div class="stats-header">
-                        <div class="stats-title">{% trans 'Görevler' %}</div>
+                        <div class="stats-title">{% trans 'İş Emirleri' %}</div>
                         <div class="stats-period-dropdown">
-                            <div class="stats-period">{% trans 'Tüm Görevler' %}</div>
+                            <div class="stats-period">{% trans 'Tüm İş Emirleri' %}</div>
                             <div class="stats-period-content">
-                                <a href="/{{dil}}{% url 'main:yapilacaklar' %}">{% trans 'Tüm Görevler' %}</a>
+                                <a href="/{{dil}}{% url 'main:yapilacaklar' %}">{% trans 'Tüm İş Emirleri' %}</a>
                             </div>
                         </div>
                     </div>
@@ -2151,7 +2149,7 @@
                         <table id="gorevler">
                             <thead>
                                 <tr>
-                                    <th>{% trans 'Görev Adı' %}</th>
+                                    <th>{% trans 'İş Emri Adı' %}</th>
                                     <th>{% trans 'Açıklama' %}</th>
                                     
                                     <th>{% trans 'Bitiş Tarihi' %}</th>
@@ -2419,26 +2417,56 @@
 
             <div class="large-cards-second-row">
 
-                <div class="cardbuild">
-
-                    <div class="cardbuild-body">
+             <div class="card">
+                    <div class="stats-header">
+                    <div class="isemri-title">{% trans 'Aktif İş Emirleri' %}</div>
+                    </div>
+                    <div class="card-body">
                         <div class="building-container">
-                            <div class="building" id="building">
-                                <div class="face" id="face1"><div class="roof">Kuzey</div></div>
-                                <div class="face" id="face2"><div class="roof">Doğu</div></div>
-                                <div class="face" id="face3"><div class="roof">Güney</div></div>
-                                <div class="face" id="face4"><div class="roof">Batı</div></div>
-                            </div>
-                        </div>
-
-                        <!-- Mouse yanında çıkan mini modal -->
-                        <div id="infoModal" class="info-modal">
-                            <span class="close-btn" onclick="closeInfoModal()">×</span>
-                            <p id="modalText"></p>
-                            <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+                                                    <div class="building" id="building">
+                                                        <div class="face" id="face1"><div class="roof">Kuzey</div></div>
+                                                        <div class="face" id="face2"><div class="roof">Doğu</div></div>
+                                                        <div class="face" id="face3"><div class="roof">Güney</div></div>
+                                                        <div class="face" id="face4"><div class="roof">Batı</div></div>
+                                                    </div>
+                        
+                                                    <!-- Mouse yanında çıkan mini modal -->
+                                                    <div id="infoModal" class="info-modal">
+                                                        <span class="close-btn" onclick="closeInfoModal()">×</span>
+                                                        <p id="modalText"></p>
+                                                        <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+                                                    </div>
                         </div>
                     </div>
+                        <div class="card-footer">
+                           <a href="/{{dil}}{% url 'main:yapilacaklar' %}" class="card-show-all"> {% trans 'Tümünü Gör <i class="icon icon-forward"></i>' %}</a>
+                        </div>
                 </div>
+<!-- Eski 3d bina bloğu
+                <div class="card">
+                    <div class="cardbuild">
+                                <div class="stats-header">
+                                    <div class="stats-title">
+                                        {% trans 'Aktif İş Emirleri' %}
+                                    </div>
+                                </div>
+                                    <div class="cardbuild-body">
+                                                <div class="building-container">
+                                                    <div class="building" id="building">
+                                                        <div class="face" id="face1"><div class="roof">Kuzey</div></div>
+                                                        <div class="face" id="face2"><div class="roof">Doğu</div></div>
+                                                        <div class="face" id="face3"><div class="roof">Güney</div></div>
+                                                        <div class="face" id="face4"><div class="roof">Batı</div></div>
+                                                    </div>
+                                                </div>
+                                                    <div id="infoModal" class="info-modal">
+                                                        <span class="close-btn" onclick="closeInfoModal()">×</span>
+                                                        <p id="modalText"></p>
+                                                        <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+                                                    </div>
+                                        </div>
+                    </div>
+                </div>-->
                                 {% if request.user.kullanicilar_db %}
 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
 {% if yetki.personeller_odeme_gorme %}  

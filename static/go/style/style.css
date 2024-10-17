@@ -3,11 +3,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    text-decoration: none;
 }
 
 body {
     padding-left: 280px;
     transition: padding .2s ease-in-out;
+    overflow-x: hidden;
+    
 }
 
 body:has(.sidebar-collapsed) {
@@ -1552,9 +1555,17 @@ main {
 
 .stats-card .stats-title {
     text-transform: uppercase;
-    font-size: 14px;
+    font-size: 18px;
     color: #052941;
-    font-weight: 500;
+    font-weight: bold;
+}
+
+.isemri-title {
+    text-transform: capitalize;
+    font-size: 18px;
+    color: #052941;
+    font-weight: bold;
+    margin-bottom: 10%;
 }
 
 .stats-card .stats-value {
@@ -4226,34 +4237,36 @@ a.status-cancel.stats-lg {
 }
 
 .building-container {
-    width: 300px;
-    height: 50vh;
-    display: flex;
+    width: 300px; /* Container'ın genişliğine uyum sağlamak için genişlik ayarlandı */
+    height: 50vh; /* Yükseklik biraz azaltıldı */
+    display: block;
     justify-content: center;
     align-items: center;
-    perspective: 1000px;
+    perspective: 1000px; /* Perspektif değeri daha iyi görünüm için artırıldı */
     position: relative;
+    margin: auto; /* Sağa sola ortalanması için */
+    padding-top: 20px;
+    box-sizing: border-box;
 }
 
 .building {
     width: 100%;
-    height: 100%;
     transform-style: preserve-3d;
-    transform: rotateY(0deg);
+    transform: rotateY(45deg);
     transition: transform 0.5s ease;
+    margin: auto;
 }
 
 .face {
     position: absolute;
     width: 100%;
-    height: 100%;
     transform-origin: center center;
     backface-visibility: hidden;
 }
 
 .floor {
     width: 100%;
-    height: calc(100% / 27); /* 27 kat */
+    height: 100%;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -4266,6 +4279,7 @@ a.status-cancel.stats-lg {
     font-weight: bold;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     cursor: pointer;
+    user-select: none;
 }
 
 /* 5., 9., 20. ve 21. katlar için kırmızı yanıp sönme efekti */
@@ -4333,7 +4347,10 @@ a.status-cancel.stats-lg {
 /* Medya sorguları - Mobil cihazlar */
 @media (max-width: 768px) {
     .building-container {
+        width: auto;
         height: 70vh; /* Mobilde yükseklik %70 olacak */
+        padding-top: 20px;
+        box-sizing: border-box;
     }
 
     .floor {
