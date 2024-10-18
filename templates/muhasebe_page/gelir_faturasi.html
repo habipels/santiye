@@ -148,7 +148,7 @@
                                     {% endfor %}
                             </select>
                         </div>
-                        <div class="form-element">
+                        <div class="form-element" id="etiket">
                             <label for="etiketler">{% trans 'Etiketler' %} <a onclick="openModal('etiket-ekle')">{% trans '+Ekle' %}</a></label>
                             <select name="etiketler"  id="etiketler" multiple>
                                 {% for i in gelir_etiketi %}
@@ -286,12 +286,12 @@
                 
                     <div class="form-element">
                         <label for="etiket-adi">Etiket Adı</label>
-                        <input type="text" name="etiket-adi" id="etiket-adi">
+                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder"  placeholder="{% trans 'Etiket Adı' %}" />
                         <input type="text" name="tur2" id="tur2" hidden value="0">
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('etiket-ekle')">Vazgeç</button>
-                        <button class="form-action-primary" type="submit" onclick="closeModal('etiket-ekle')">Etiket Ekle</button>
+                        <button class="form-action-primary" type="submit"  id="ekle2" onclick="closeModal('etiket-ekle')">Etiket Ekle</button>
                     </div>
               
             </div>
@@ -744,9 +744,8 @@ $(document).ready(function () {
         csrfmiddlewaretoken: '{{ csrf_token }}'
       },
       success: function (data) {
-
-        $("#etkett").load(window.location.href + " #etkett", function() { });
-
+        $("#etiket").load(window.location.href + " #etiket", function() {
+            multiSelectInstance = initializeMultiSelectTag() });
       }
     });
     return false; //<---- move it here
