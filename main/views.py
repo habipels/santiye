@@ -3915,6 +3915,7 @@ def yapilacalar_ekle(request):
                         katman_bilgisi = request.POST.get("katman")
                         yapi_gonder = request.POST.get("yapi_gonder")
                         kat = request.POST.get("kat")
+                        base_64_format = request.POST.get('base_64_format', '')
                         if kat== None or kat  == ""  :
                             kat = 0
 
@@ -3954,6 +3955,7 @@ def yapilacalar_ekle(request):
                 katman_bilgisi = request.POST.get("katman")
                 yapi_gonder = request.POST.get("yapi_gonder")
                 kat = request.POST.get("kat")
+                base_64_format = request.POST.get('base_64_format', '')
                 if kat == None or kat  == ""  :
                     kat = 0
                 print(kat)
@@ -3979,6 +3981,8 @@ def yapilacalar_ekle(request):
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
+                if base_64_format:
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=base_64_format)
     return redirect("main:yapilacaklar")
 def yapilacalar_ekle_duzenleme(request):
     if request.POST:

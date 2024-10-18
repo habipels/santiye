@@ -409,6 +409,7 @@
                                     <img src="#" style="display: none; max-width: 50vh !important;" alt="Plan Konumu" id="alan" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
                                     <div id="gizle" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
+                                    <textarea name="base_64_format" hidden  id="base_64_format"></textarea>
                                 </div>
                             </div>
                             <div class="form-element">
@@ -1261,6 +1262,8 @@ document.getElementById('yapiSelectd').addEventListener('change', function() {
                     document.getElementById('alan').src = dataURL;
                     document.getElementById('alan').style.display = "block";
                     document.getElementById('alanpdf').style.display = "none";
+                    //document.getElementById('base_64_format').src = dataURL;
+                    closeModal("plan-konumu");
                     }
                     else if(isPDF){
                         alert("pdf")
@@ -1271,7 +1274,7 @@ document.getElementById('yapiSelectd').addEventListener('change', function() {
             });
                 
                 console.log('Pin Bilgileri:', JSON.stringify(pinData));
-                alert('{% trans 'Pin başarıyla kaydedildi!' %}');
+                alert("{% trans 'Pin başarıyla kaydedildi!' %}");
             }
             else{
                 alert("{% trans 'Henüz pin eklenmedi.' %}");
