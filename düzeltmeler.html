@@ -48,8 +48,10 @@
     {% endblock head %}
 {% block sidebar %}
 <!-- ============================================================== -->
-<form autocomplete="off"method="post" action="/{{dil}}{% url 'accounting:gider_faturasi_kaydet' %}" enctype="multipart/form-data">
+<form autocomplete="off"method="post" action="/{{dil}}{% url 'accounting:gelir_gider_duzelt' %}" enctype="multipart/form-data">
     {% csrf_token %}
+    <input type="text" name="bilgi" value="1">
+    <input type="text" name="degisen" value="{{bilgi.id}}">
 
             <div class="container-fluid">
 
@@ -57,150 +59,137 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">{% trans 'Alış Ekle' %}</h4>
+                            <h4 class="mb-sm-0">{% trans 'Alış Düzelt' %}</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
-                                    <li class="breadcrumb-item active">{% trans 'Satış Ekle' %}</li>
+                                    <li class="breadcrumb-item active">{% trans 'Alış Düzelt' %}</li>
                                 </ol>
                             </div>
                         </div>
-                    
+                
                 <!-- end page title -->
 
                 <div id="satis-ekle" class="row">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h2 class="title">{% trans 'Genel Bilgiler' %}</h2>
-            <div class="buttons">
-                <a class="btn btn-warning btn-label waves-effect waves-light" href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}">
-                    <i class="ri-error-warning-line label-icon align-middle fs-16 me-2"></i> {% trans 'Vazgeç' %}
-                </a>
-                <button type="submit" class="btn btn-success btn-label waves-effect waves-light">
-                    <i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i> {% trans 'Kaydet' %}
-                </button>
+                    <div class="card">
+<div class="card-header d-flex justify-content-between align-items-center">
+    <h2 class="title">{% trans 'Genel Bilgiler' %}</h2>
+    <div class="buttons">
+        <a class="btn btn-warning btn-label waves-effect waves-light" href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}">
+            <i class="ri-error-warning-line label-icon align-middle fs-16 me-2"></i>{% trans 'Vazgeç' %}
+        </a>
+        <button type="submit" class="btn btn-success btn-label waves-effect waves-light">
+            <i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i>{% trans 'Kaydet' %}
+        </button>
+    </div>
+</div>
+<div class="card-body">
+    <div class="row g-3">
+        <!-- Cari Kutusu -->
+        <div class="col-md-2">
+            <div class="input-item musteri-input">
+                <label>{% trans 'Cari' %}</label>
+                <input type="search" value="{{bilgi.cari_bilgisi.cari_adi}}" required name="musteri_bilgisi" class="form-control cari" title="{% trans 'Kayıtlı cariler için cari adının ilk üç karekterini giriniz.' %}" placeholder="{% trans 'Cari Hesabı' %}" autocomplete="off">
             </div>
         </div>
-        <div class="card-body">
-            <div class="row g-3">
-                <!-- Cari Kutusu -->
-                <div class="col-md-2">
-                    <div class="input-item musteri-input">
-                        <label>{% trans 'Cari' %}</label>
-                        <input type="search" required name="musteri_bilgisi" class="form-control cari" title="{% trans 'Kayıtlı cariler için cari adının ilk üç karekterini giriniz.' %}" placeholder="{% trans 'Cari Hesabı' %}" autocomplete="off">
-                    </div>
-                </div>
 
-                <!-- Düzenleme ve Vade Tarihi -->
-                <div class="col-md-3">
+        <!-- Düzenleme ve Vade Tarihi -->
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>{% trans 'Düzenleme ve Vade Tarihi' %}</label>
+                <input type="text" required name="daterange" class="form-control" value="{{bilgi.fatura_tarihi|date:'m-d-Y'}} - {{bilgi.vade_tarihi|date:'m-d-Y'}}">
+            </div>
+        </div>
+
+        <!-- Döviz Kuru ve Toplam IQD Kutusu -->
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label>{% trans 'Düzenleme ve Vade Tarihi' %}</label>
-                        <input type="text" required name="daterange" class="form-control" value="{% tarih_cek %}">
-                    </div>
-                </div>
-
-                <!-- Döviz Kuru ve Toplam IQD Kutusu -->
-                <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>{% trans 'Döviz Kuru (Sadece IQD)' %}</label>
-                                <div class="input-group">
-                                    <input type="text" id="doviz_kuru" name="doviz_kuru" class="form-control" 
-                                        placeholder="{% trans 'Örn: 1450 veya 1450.06' %}" 
-                                        pattern="\d+(\.\d{1,2})?" 
-                                        title="{% trans 'Lütfen sadece sayısal değer giriniz' %}" 
-                                        oninput="hesaplama_islemi()" />
-                                    <span class="input-group-text">{% trans 'IQD' %}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>{% trans 'Toplam IQD' %}</label>
-                                <div class="input-group">
-                                    <input type="text" id="toplam_iqd" name="toplam_iqd" class="form-control" disabled />
-                                    <span class="input-group-text">{% trans 'IQD' %}</span>
-                                </div>
-                            </div>
+                        <label>{% trans 'Döviz Kuru (Sadece IQD)' %}</label>
+                        <div class="input-group">
+                            <input type="text" id="doviz_kuru" name="doviz_kuru" class="form-control" 
+                                placeholder="{% trans 'Örn: 1450 veya 1450.06' %}" 
+                                pattern="\d+(\.\d{1,2})?" 
+                                title="{% trans 'Lütfen sadece sayısal değer giriniz' %}" 
+                                oninput="hesaplama_islemi()" value="{{bilgi.doviz }}" />
+                            <span class="input-group-text">IQD</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Fatura No Kutusu -->
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label>{% trans 'Fatura No' %}</label>
-                        {% if request.user.kullanicilar_db %}
-                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                        {% if yetki.gider_faturasi_kesme_izni %}
-                                <input type="text" required class="form-control" value="{% gider_faturasi_no request.user.kullanicilar_db.id %}" disabled />
-                        <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no request.user.kullanicilar_db.id %}" />                                                
-                        {% else %}
-                                                                                        
-                        {% endif %}
-                        {% else %}
-                               <input type="text" required class="form-control" value="{% gider_faturasi_no request.user.id %}" disabled />
-                        <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no request.user.id %}" />                                                 
-                        {% endif %}
-                        
-                    </div>
-                </div>
-
-                <!-- Açıklama Kutusu -->
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>{% trans 'Açıklama' %}</label>
-                        <input type="text" required name="cari_aciklma" class="form-control" placeholder="{% trans 'Açıklama' %}">
-                    </div>
-                </div>
-
-                <!-- Kategori Kutusu -->
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>{% trans 'Kategori' %}</label>
-                        <div class="input-group" id="kategori">
-                            <select required name="gelir_kategorisi" class="form-select">
-                                {% for i in gelir_kategoerisi %}
-                                <option value="{{i.id}}">{{i.gider_kategori_adi}}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#showModal">
-                                <i class="ri-add-line align-bottom me-1"></i>{% trans 'Ekle' %}
-                            </button>
+                        <label>{% trans 'Toplam IQD' %}</label>
+                        <div class="input-group">
+                            <input type="text" id="toplam_iqd" name="toplam_iqd" class="form-control" disabled />
+                            <span class="input-group-text">{% trans 'IQD' %}</span>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Etiket ve Dosya Yükleme Kutuları -->
-                <div class="col-md-3">
-                    <div class="input-item etiket">
-                        <label>{% trans 'Etiketler' %}</label>
-                        <div id="etkett" class="d-flex align-items-center">
-                            <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
-                                {% for i in gelir_etiketi %}
-                                <option value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#gideretiketiekle">
-                                <i class="ri-add-line align-bottom me-1"></i>{% trans 'Ekle' %}
-                            </button>
-                        </div>
-                    </div>
+        <!-- Fatura No Kutusu -->
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>{% trans 'Fatura No' %}</label>
+                <input type="text" required name="faturano" class="form-control" value="{{bilgi.fatura_no}}" disabled />
+                <input type="text" required name="faturano_hidden" hidden class="form-control" value="{{bilgi.fatura_no}}" />
+            </div>
+        </div>
+
+        <!-- Açıklama Kutusu -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>{% trans 'Açıklama' %}</label>
+                <input type="text" value="{{bilgi.aciklama}}" required name="cari_aciklma" class="form-control" placeholder="{% trans 'Açıklama' %}">
+            </div>
+        </div>
+
+        <!-- Kategori ve Etiket Kutuları -->
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>{% trans 'Kategori' %}</label>
+                <div class="input-group" id="kategori">
+                    <select required name="gelir_kategorisi" class="form-select">
+                        <option selected value="{{bilgi.gelir_kategorisii.id}}">{{bilgi.gelir_kategorisii.gider_kategori_adi}}</option>
+                                        {% for i in gelir_kategoerisi %}
+                                            <option value="{{i.id}}">{{i.gider_kategori_adi}}</option>
+                                        {% endfor %}
+                    </select>
+                    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#showModal">
+                        <i class="ri-add-line align-bottom me-1"></i>{% trans 'Gider Kategorisini Ekle' %}
+                    </button>
                 </div>
+            </div>
+        </div>
 
-                <!-- Dosya Yükleme Kutusu -->
-                <div class="col-md-3">
+        <div class="col-md-3">
+            <div class="input-item etiket">
+                <label>{% trans 'Etiketler' %}</label>
+                <div id="etkett" class="d-flex align-items-center">
+                    <select name="etiketler" required id="cokluetiket" class="etkett me-2" multiple>
+                        {% for i in gelir_etiketi %}
+                                        {% if i in bilgi.gelir_etiketi_sec.all %}
+                                            <option selected value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
+                                        {% else %}
+                                        <option value="{{i.id}}">{{i.gider_etiketi_adi}}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                    </select>
+                    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#gideretiketiekle">
+                        <i class="ri-add-line align-bottom me-1"></i>{% trans 'Gider Etiketini Ekle' %}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
                     <div class="form-group">
                         <label>{% trans 'Belge Yükle' %}</label>
                         <input type="file"  name="fatura_belgesi" class="form-control" />
                     </div>
                 </div>
-
-            </div>
-
-
     </div>
 </div>
 
@@ -216,32 +205,36 @@
     </div>
     <div class="card-body">
         <div class="form2" id="form2" >
-            <div class="table-item">
-                <div class="urun">
-                    <input type="search" name="urunadi" class="den" required id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
-                </div>
-                <div class="miktar">
-                    <input class="miktarInput" name="miktari" type="number" value="1" oninput="hesaplama_islemi()" />
-                </div>
-                <div class="bfiyat">
-                    <input id="bfiyatInput" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
-                    <span class="mdi mdi-currency-usd"></span>
-                </div>
-                <div class="toplam">
-                    <input class="toplamInput" type="text" step="0.01" value="0" disabled/>
-                    <span class="mdi mdi-currency-usd"></span>
-                </div>
-                <div class="icons">
-                    <span class="mdi mdi-pan-left specBtn" onclick="specAc(event)"></span>
-                    <ul class="specs">
-                        <li class="addDesc" onclick="aciklamaEkle(event)">{% trans 'Açıklama Ekle' %}</li>
-                        <li class="addSale" onclick="indirimEkle(event)">{% trans 'İndirim Ekle' %}</li>
-                    </ul>
-                    <span style="display: flex !important;" class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
-                </div>
-                <div class="indirim"><input id="indirim" class="indirim" name="indirim" value="0" type="number" placeholder="{% trans 'İndirim gir %' %}"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
-                <div class="aciklama"><input id="aciklama" name="aciklama" type="text" placeholder="{% trans 'Açıklama Giriniz' %}"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
-            </div>
+             {% for i in urunler %}
+                                <div class="table-item">
+                                    <div class="urun">
+                                        <input type="search" name="urunadi" value="{{i.urun_bilgisi.urun_adi}}" class="den"  id="searchInput" placeholder="{% trans 'Ürün / Hizmet Adı' %}" />
+
+                                    </div>
+                                    <div class="miktar">
+                                        <input class="miktarInput" name="miktari"   value="{{i.urun_adeti}}" type="number" value="1" oninput="hesaplama_islemi()" />
+                                    </div>
+                                    <div class="bfiyat">
+                                        <input id="bfiyatInput" name="bfiyatInput" value="{{i.urun_fiyati|stringformat:'.2f'}}" class="bfiyatInput" step="0.01" type="number" value="0" oninput="hesaplama_islemi()" />
+                                        <span class="mdi mdi-currency-usd"></span>
+                                    </div>
+                                    <div class="toplam">
+                                        <input class="toplamInput" value="{%  carpma_islemi i.urun_adeti i.urun_fiyati %}" type="text" step="0.01" value="0" disabled/>
+                                        <span class="mdi mdi-currency-usd"></span>
+                                    </div>
+
+                                    <div class="icons">
+                                        <span class="mdi mdi-pan-left specBtn" onclick="specAc(event)"></span>
+                                        <ul class="specs">
+                                            <li class="addDesc" onclick="aciklamaEkle(event)">{% trans 'Açıklama Ekle' %}</li>
+                                            <li class="addSale" onclick="indirimEkle(event)">{% trans 'İndirim Ekle' %}</li>
+                                        </ul>
+                                        <span style="display: flex !important;" class="mdi mdi-close closeBtn" onclick="itemDelete(event)"></span>
+                                    </div>
+                                    <div class="indirim"><input id="indirim" class="indiirm" name="indirim" value="{{i.urun_indirimi|stringformat:'.2f'}}" type="number" placeholder="{% trans 'İndirim gir %' %}"><span class="mdi mdi-close-box-outline" onclick="indirimSil(event)"></span></div>
+                                    <div class="aciklama"><input id="aciklama" name="aciklama" type="text" value="{{i.aciklama}}" placeholder="{% trans 'Açıklama Giriniz' %}"><span class="mdi mdi-close-box-outline" onclick="aciklamaDelete(event)"></span></div>
+                                </div>
+                                {% endfor %}
         </div>
     </div>
     <div class="addNewItem">
@@ -311,7 +304,7 @@
         $('input[name="daterange"]').daterangepicker({
             opens: 'left'
         }, function (start, end, label) {
-            console.log("{% trans 'A new date selection was made' %}: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+            console.log("{% trans 'A new date selection was made:' %} " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
     });
 </script>
@@ -319,7 +312,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Döviz kuru değeri ayarlama
     var dovizKuruInput = document.getElementById('doviz_kuru');
-    var dovizKuruValue = "{{ data.doviz }}"; 
+    var dovizKuruValue = "{{ bilgi.doviz }}"; 
     dovizKuruInput.value = dovizKuruValue;
 
     // Döviz kuru alanına değer girişi olduğunda
@@ -509,13 +502,13 @@ function showCustomToast(title, message) {
                                     </div>
                                     <div class="mb-3">
                                         <label for="date-field" class="form-label">{% trans 'Gider Kategorisi Rengi' %}</label>
-                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="{% trans 'Gider Kategorisi' %}" />
+                                        <input type="color"  name="renk" id="renk" class="form-control" placeholder="{% trans 'Gider Kategorisi rengi' %}" />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">{% trans 'Gider Kategorisini Ekle' %}</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle">{% trans 'Gider Kategorisi Kaydet' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -541,7 +534,7 @@ function showCustomToast(title, message) {
                                 <div class="modal-footer">
                                     <div class="hstack gap-2 justify-content-end">
                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">{% trans 'Gider Etiketini Ekle' %}</button>
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="ekle2">{% trans 'Etiketi Ekle' %}</button>
                                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                     </div>
                                 </div>
@@ -558,7 +551,7 @@ function showCustomToast(title, message) {
       $('input[name="daterange"]').daterangepicker({
         opens: 'left'
       }, function(start, end, label) {
-        console.log("{% trans 'A new date selection was made' %}: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
       });
 
 </script>
@@ -778,7 +771,7 @@ $(document).ready(function(){
         return new MultiSelectTag('cokluetiket', {
             rounded: true,
             shadow: true,
-            placeholder: '{% trans "Search" %}',
+            placeholder: "{% trans 'Search' %}",
             tagColor: {
                 textColor: '#327b2c',
                 borderColor: '#92e681',
@@ -984,7 +977,7 @@ $(document).ready(function(){
         return new MultiSelectTag('cokluetiket', {
             rounded: true,
             shadow: true,
-            placeholder: '{% trans "Search" %}',
+            placeholder: "{% trans 'Search' %}",
             tagColor: {
                 textColor: '#327b2c',
                 borderColor: '#92e681',

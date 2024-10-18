@@ -3282,7 +3282,7 @@ def gelir_gider_duzelt(request):
         degisen = request.POST.get("degisen")
         musteri_bilgisi = request.POST.get("musteri_bilgisi")
         daterange = request.POST.get("daterange")
-        gelir_kategorisii = request.POST.get("gelir_kategorisi")
+        gelir_kategorisii = request.POST.get("gelir_kategorisi_gonder")
         cari_aciklma = request.POST.get("cari_aciklma")
         etiketler = request.POST.getlist("etiketler")
         faturano = request.POST.get("faturano")
