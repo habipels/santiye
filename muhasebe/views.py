@@ -46,6 +46,11 @@ def get_fatura_gelir(request, fatura_id):
         makbuzlar = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu = fatura)
         kasalar = Kasa.objects.filter(kasa_kart_ait_bilgisi = fatura.gelir_kime_ait_oldugu,silinme_bilgisi = False)
         toplam_fiyat  = 0
+        sonuc = 0
+        try:
+           sonuc =  float(fatura.doviz) * float(fatura.toplam_tutar)
+        except:
+            sonuc = ""
         toplam_genel = 0
         for j in kalemler:
             toplam_fiyat = toplam_fiyat + j.urun_fiyati
@@ -54,6 +59,7 @@ def get_fatura_gelir(request, fatura_id):
             'cari':fatura.cari_bilgisi.cari_adi,
         'fatura_no': fatura.fatura_no,
         'doviz': fatura.doviz,
+        'genel_doviz_tutari': sonuc,
         'aciklama': fatura.aciklama,
         "kategori" : fatura.gelir_kategorisii.gelir_kategori_adi if fatura.gelir_kategorisii else "Kategori Belirtilmemiş",
         "fatura_tarihi" : fatura.fatura_tarihi.strftime("%d.%m.%Y"),
@@ -103,6 +109,11 @@ def get_fatura_gider(request, fatura_id):
         kasalar = Kasa.objects.filter(kasa_kart_ait_bilgisi = fatura.gelir_kime_ait_oldugu,silinme_bilgisi = False)
         toplam_fiyat  = 0
         toplam_genel = 0
+        sonuc = 0
+        try:
+           sonuc =  float(fatura.doviz) * float(fatura.toplam_tutar)
+        except:
+            sonuc = ""
         for j in kalemler:
             toplam_fiyat = toplam_fiyat + j.urun_fiyati
             toplam_genel = toplam_genel + (j.urun_adeti*j.urun_fiyati)
@@ -110,6 +121,7 @@ def get_fatura_gider(request, fatura_id):
             'cari': fatura.cari_bilgisi.cari_adi if fatura.cari_bilgisi.cari_adi else "",
         'fatura_no': fatura.fatura_no,
         'doviz': fatura.doviz,
+        'genel_doviz_tutari': sonuc,
         'aciklama': fatura.aciklama,
         "kategori" : fatura.gelir_kategorisii.gider_kategori_adi if fatura.gelir_kategorisii else "Kategori Belirtilmemiş",
         "fatura_tarihi" : fatura.fatura_tarihi.strftime("%d.%m.%Y"),
