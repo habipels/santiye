@@ -4,7 +4,43 @@ from site_info.models import *
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from site_settings.models import *
 import locale
+"""
+# İşletim sistemi kontrolü ile locale ayarı
+def set_locale():
+    try:
+        if os.name == 'nt':  # Windows
+            locale.setlocale(locale.LC_ALL, 'Turkish_Turkey.1254')
+        else:  # MacOS ve Linux
+            locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+    except locale.Error:
+        # Eğer locale ayarı başarısız olursa, varsayılanı kullan
+        print("Uyarı: Sisteminizde bu yerel ayar desteklenmiyor.")
 
+# İlk fonksiyon: fiyat_duzelt
+def fiyat_duzelt(deger, i=0):
+    set_locale()  # Locale ayarını işletim sistemine göre yap
+    if deger < 0:
+        deger = abs(deger)
+        y = locale.format_string("%.2f", deger, grouping=True)
+        y = "-" + y
+        return y
+    else:
+        return locale.format_string("%.2f", deger, grouping=True)
+
+# İkinci fonksiyon: fiyat_duzelt_html
+register = template.Library()
+
+@register.simple_tag
+def fiyat_duzelt_html(deger):
+    deger = str(deger)
+    deger = deger.replace('.', '')  # Noktaları kaldır
+    deger = deger.replace(',', '.')  # Virgülleri noktayla değiştir
+    deger = float(deger)
+    
+    set_locale()  # Locale ayarını işletim sistemine göre yap
+    return locale.format_string("%.2f", deger, grouping=True)
+
+"""
 
 def fiyat_duzelt(deger,i = 0):
     locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
