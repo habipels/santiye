@@ -383,6 +383,7 @@
                             <div class="form-element">
                                 <label for="katman">{% trans 'Katman' %}</label>
                                  <select name="katman" id="katmanSelect"  data-trigger >
+                                 <option>Lütfen katman seçiniz.</option>
                                 {% for blog in katmanlar %}
                                 <option data-id="{{blog.proje_santiye_Ait.id}}" data-img="{{blog.katman_dosyasi.url}}" value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
                                 {% endfor %}
@@ -404,8 +405,8 @@
                             </div>
                             <div class="form-element">
                                 <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
-                                    <canvas style="display: none; max-width: 400px !important; max-height: 400px !important;" id="alanpdf"  width="200" height="200" ></canvas>
-                                    <img src="#" style="display: none; max-width: 200px !important;" alt="Plan Konumu" id="alan" class="alan">
+                                    <canvas style="display: none; width: 50vh !important; max-height: 50vh !important;" id="alanpdf"  ></canvas>
+                                    <img src="#" style="display: none; max-width: 50vh !important;" alt="Plan Konumu" id="alan" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
                                     <div id="gizle" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
                                 </div>
@@ -448,8 +449,6 @@
                     <a href="#" class="modal-action-remove">Plan Konumunu Sil <i class="icon icon-action-delete"></i></a>-->
                                 <!-- Araç Çubuğu -->
                     <div id="toolbar">
-                        <label for="file-upload">{% trans 'Proje Resmi Yükle (PDF veya JPG/PNG)' %}</label>
-                        <input type="file" id="file-upload" accept=".pdf,.jpg,.jpeg,.png"/>
                         <button id="save-btn" class="modal-action-primary"><i class="icon icon-pin"></i>{% trans 'Pinleri Kaydet' %}</button>
                         <button id="capture-btn">{% trans 'Alanı Kırp ve Göster' %}</button>
                     </div>
@@ -549,8 +548,8 @@
                             </div>
                             <div class="form-element">
                                 <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
-                                    <canvas style="display: none; max-width: 400px !important; max-height: 400px !important;" id="alanpdfd"  width="200" height="200" ></canvas>
-                                    <img src="#" style="display: none; max-width: 200px !important;" alt="Plan Konumu" id="aland" class="alan">
+                                    <canvas style="display: block; width: 50vh !important; height: 50vh !important;" id="alanpdfd"></canvas>
+                                    <img src="#" style="display: none; max-width: 50vh !important;" alt="Plan Konumu" id="aland" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
                                     <div id="gizled" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
                                 </div>
@@ -625,7 +624,7 @@
                             {% trans 'Açıklama ' %} {{i.aciklama}}<br>
                             {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
                             {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
-                            {% trans 'Yapacak Kişiler ' %} {% for yazar in i.yapacaklar.all %}
+                            {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
                             {{yazar.last_name}},
                      {% endfor %}
 
@@ -1264,7 +1263,7 @@ document.getElementById('yapiSelectd').addEventListener('change', function() {
                     document.getElementById('alanpdf').style.display = "none";
                     }
                     else if(isPDF){
-                        alert("pf")
+                        alert("pdf")
                     }
                     
                    
@@ -1272,10 +1271,10 @@ document.getElementById('yapiSelectd').addEventListener('change', function() {
             });
                 
                 console.log('Pin Bilgileri:', JSON.stringify(pinData));
-                alert('Pin başarıyla kaydedildi! Konsolu kontrol edin.');
+                alert('{% trans 'Pin başarıyla kaydedildi!' %}');
             }
             else{
-                alert("Henüz pin eklenmedi.");
+                alert("{% trans 'Henüz pin eklenmedi.' %}");
             }
         });
 
@@ -1426,7 +1425,7 @@ document.getElementById('yapiSelectd').addEventListener('change', function() {
                                         <button type="button" class="file-input-uploaded-remove"><i class="icon icon-trash"></i></button>
                                     </div>
                                     <div class="file-input-uploaded-no-preview">
-                                        <img src="./content/images/illustration-upload.png">
+                                        <img src="{% static 'go/content/images/illustration-upload.png' %}">
                                     </div>
                                 </div>
                             `);
