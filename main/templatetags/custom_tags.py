@@ -1757,6 +1757,7 @@ def odeme_para_birimi_hesabi(bilgi2,kur,tutar):
 @register.simple_tag
 def odeme_para_birimi_hesabi_deger(bilgi2,kur,tutar):
     para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
+    print(para_birimi)
     if para_birimi.para_birimi:
         veri = tutar*kur
     else:

@@ -2986,7 +2986,7 @@ def gider_faturasi_kaydet(request):
     if request.POST:
         musteri_bilgisi  = request.POST.get("musteri_bilgisi")
         daterange = request.POST.get("daterange")
-        gelir_kategorisii = request.POST.get("gelir_kategorisi")
+        gelir_kategorisii = request.POST.get("gelir_kategorisi_gonder")
         cari_aciklma = request.POST.get("cari_aciklma")
         etiketler = request.POST.getlist("etiketler")
         faturano = request.POST.get("faturano")
@@ -3050,7 +3050,7 @@ def gider_faturasi_kaydet(request):
             new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = kullanici,
             cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = faturano,
-            gelir_kategorisii_id =get_object_or_none(gelir_kategorisi,gelir_kategorisii = id),doviz = doviz_kuru,aciklama = cari_aciklma
+            gelir_kategorisii_id =get_object_or_none(gelir_kategorisi,id = gelir_kategorisii),doviz = doviz_kuru,aciklama = cari_aciklma
                                          )
             new_project.save()
             gelir_etiketi_sec = []
@@ -3282,7 +3282,7 @@ def gelir_gider_duzelt(request):
         degisen = request.POST.get("degisen")
         musteri_bilgisi = request.POST.get("musteri_bilgisi")
         daterange = request.POST.get("daterange")
-        gelir_kategorisii = request.POST.get("gelir_kategorisi")
+        gelir_kategorisii = request.POST.get("gelir_kategorisi_gonder")
         cari_aciklma = request.POST.get("cari_aciklma")
         etiketler = request.POST.getlist("etiketler")
         faturano = request.POST.get("faturano")
