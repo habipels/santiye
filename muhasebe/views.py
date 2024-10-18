@@ -1081,20 +1081,8 @@ def cari_viev(request):
                     return redirect("main:yetkisiz")
             else:
                 profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
 
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
+    content["santiyeler"] = profile
     return render(request,"muhasebe_page/cariler.html",content)
 def cari_viev_2(request,hash):
     content = sozluk_yapisi()
