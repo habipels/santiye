@@ -719,177 +719,177 @@
 
 {% endfor %}
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('katmanSelect').addEventListener('change', function() {
-        const katmanId = this.value;
-        const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
-        //loadPDF(file)
-        
-        
-        document.getElementById('gizle').style.display = "none";
-        //alanpdf
-        // Tüm elementleri gizle
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('katmanSelect').addEventListener('change', function() {
+            const katmanId = this.value;
+            const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
+            //loadPDF(file)
+            
+            
+            document.getElementById('gizle').style.display = "none";
+            //alanpdf
+            // Tüm elementleri gizle
 
-        // Dosya uzantısını al
-        const fileExtension = this.options[this.selectedIndex].getAttribute('data-img').split('.').pop().toLowerCase();
+            // Dosya uzantısını al
+            const fileExtension = this.options[this.selectedIndex].getAttribute('data-img').split('.').pop().toLowerCase();
 
-        // Dosya türüne göre işlem yap
-        if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
-            const imgElement = document.getElementById('alan');
-            imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
-            imgElement.style.display = "block";
-            document.getElementById('alanpdf').style.display = "none";
-            loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
-        } else if (fileExtension === "pdf") {
-            var url = this.options[this.selectedIndex].getAttribute('data-img');
-            const imgElement = document.getElementById('alan');
-            loadPDF(this.options[this.selectedIndex].getAttribute('data-img'));
-            //imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
-            imgElement.style.display = "none";
-            pdfjsLib.getDocument(url).promise.then(function(pdf) {
-            pdf.getPage(1).then(function(page) {
-                var canvas = document.getElementById('alanpdf');
-                document.getElementById('alanpdf').style.display = "block";
-                var context = canvas.getContext('2d');
-                var viewport = page.getViewport({ scale: 1.5 });
+            // Dosya türüne göre işlem yap
+            if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
+                const imgElement = document.getElementById('alan');
+                imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+                imgElement.style.display = "block";
+                document.getElementById('alanpdf').style.display = "none";
+                loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
+            } else if (fileExtension === "pdf") {
+                var url = this.options[this.selectedIndex].getAttribute('data-img');
+                const imgElement = document.getElementById('alan');
+                loadPDF(this.options[this.selectedIndex].getAttribute('data-img'));
+                //imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+                imgElement.style.display = "none";
+                pdfjsLib.getDocument(url).promise.then(function(pdf) {
+                pdf.getPage(1).then(function(page) {
+                    var canvas = document.getElementById('alanpdf');
+                    document.getElementById('alanpdf').style.display = "block";
+                    var context = canvas.getContext('2d');
+                    var viewport = page.getViewport({ scale: 1.5 });
 
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-                page.render({
-                canvasContext: context,
-                viewport: viewport
+                    page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                    });
                 });
-            });
-            }); // Yükleniyor mesajını gizle
-        }
+                }); // Yükleniyor mesajını gizle
+            }
 
-        fetch(`/get_yapi/${santiyeId}/`)
-            .then(response => response.json())
-            .then(data => {
-                const yapiSelect = document.getElementById('yapiSelect');
-                const odaSelect = document.getElementById('odaSelect');
-                // Hata kontrolü ekleyelim
-                if (!yapiSelect || !odaSelect) {
-                    console.error("Yapı veya oda select öğesi bulunamadı.");
-                    return; // Hata varsa burada çıkalım
-                }
-                yapiSelect.innerHTML = '';
-                odaSelect.innerHTML = '';
+            fetch(`/get_yapi/${santiyeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const yapiSelect = document.getElementById('yapiSelect');
+                    const odaSelect = document.getElementById('odaSelect');
+                    // Hata kontrolü ekleyelim
+                    if (!yapiSelect || !odaSelect) {
+                        console.error("Yapı veya oda select öğesi bulunamadı.");
+                        return; // Hata varsa burada çıkalım
+                    }
+                    yapiSelect.innerHTML = '';
+                    odaSelect.innerHTML = '';
 
-                // Yapılar yapiSelect içine ekleniyor
-                data.yapilar.forEach(yapi => {
-                    const option = document.createElement('option');
-                    option.value = yapi.id;
-                    option.setAttribute('data-kat-sayisi', yapi.kat_sayisi);
-                    option.textContent = yapi.blog_adi;
-                    yapiSelect.appendChild(option);
+                    // Yapılar yapiSelect içine ekleniyor
+                    data.yapilar.forEach(yapi => {
+                        const option = document.createElement('option');
+                        option.value = yapi.id;
+                        option.setAttribute('data-kat-sayisi', yapi.kat_sayisi);
+                        option.textContent = yapi.blog_adi;
+                        yapiSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Fetch hatası:", error));
+        });
+
+        // Yapı seçildiğinde kat numaralarını odaSelect alanına ekleme
+        document.getElementById('yapiSelect').addEventListener('change', function() {
+            const selectedYapi = this.options[this.selectedIndex];
+            const katSayisi = selectedYapi.getAttribute('data-kat-sayisi');
+            const odaSelect = document.getElementById('odaSelect');
+            odaSelect.innerHTML = '';
+
+            // Kat numaralarını ekliyoruz
+            for (let i = 1; i <= katSayisi; i++) {
+                const odaOption = document.createElement('option');
+                odaOption.value = i;
+                odaOption.textContent = `Kat ${i}`;
+                odaSelect.appendChild(odaOption);
+            }
+        });
+
+        document.getElementById('katmanSelectd').addEventListener('change', function() {
+            const katmanId = this.value;
+            const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
+            //loadPDF(file)
+            
+            
+            document.getElementById('gizled').style.display = "none";
+            //alanpdf
+            // Tüm elementleri gizle
+            // Dosya uzantısını al
+            const fileExtension = this.options[this.selectedIndex].getAttribute('data-img').split('.').pop().toLowerCase();
+
+            // Dosya türüne göre işlem yap
+            if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
+                const imgElement = document.getElementById('aland');
+                imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+                imgElement.style.display = "block";
+                document.getElementById('alanpdfd').style.display = "none";
+                loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
+            } else if (fileExtension === "pdf") {
+                var url = this.options[this.selectedIndex].getAttribute('data-img');
+                const imgElement = document.getElementById('aland');
+                loadPDF(this.options[this.selectedIndex].getAttribute('data-img'));
+                //imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+                imgElement.style.display = "none";
+                pdfjsLib.getDocument(url).promise.then(function(pdf) {
+                pdf.getPage(1).then(function(page) {
+                    var canvas = document.getElementById('alanpdfd');
+                    document.getElementById('alanpdfd').style.display = "block";
+                    var context = canvas.getContext('2d');
+                    var viewport = page.getViewport({ scale: 1.5 });
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                    });
                 });
-            })
-            .catch(error => console.error("Fetch hatası:", error));
+                }); // Yükleniyor mesajını gizle
+            }
+
+            fetch(`/get_yapi/${santiyeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const yapiSelectd = document.getElementById('yapiSelectd');
+                    const odaSelectd = document.getElementById('odaSelectd');
+                    // Hata kontrolü ekleyelim
+                    if (!yapiSelectd || !odaSelectd) {
+                        console.error("Yapı veya oda select öğesi bulunamadı.");
+                        return; // Hata varsa burada çıkalım
+                    }
+                    yapiSelectd.innerHTML = '';
+                    odaSelectd.innerHTML = '';
+
+                    // Yapılar yapiSelect içine ekleniyor
+                    data.yapilar.forEach(yapi => {
+                        const option = document.createElement('option');
+                        option.value = yapi.id;
+                        option.setAttribute('data-kat-sayisi', yapi.kat_sayisi);
+                        option.textContent = yapi.blog_adi;
+                        yapiSelectd.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Fetch hatası:", error));
+        });
+
     });
+</script>
+<script>
+    document.getElementById('yapiSelectd').addEventListener('change', function() {
+            const selectedYapi = this.options[this.selectedIndex];
+            const katSayisi = selectedYapi.getAttribute('data-kat-sayisi');
+            const odaSelect = document.getElementById('odaSelectd');
+            odaSelect.innerHTML = '';
 
-    // Yapı seçildiğinde kat numaralarını odaSelect alanına ekleme
-    document.getElementById('yapiSelect').addEventListener('change', function() {
-        const selectedYapi = this.options[this.selectedIndex];
-        const katSayisi = selectedYapi.getAttribute('data-kat-sayisi');
-        const odaSelect = document.getElementById('odaSelect');
-        odaSelect.innerHTML = '';
-
-        // Kat numaralarını ekliyoruz
-        for (let i = 1; i <= katSayisi; i++) {
-            const odaOption = document.createElement('option');
-            odaOption.value = i;
-            odaOption.textContent = `Kat ${i}`;
-            odaSelect.appendChild(odaOption);
-        }
-    });
-
-    document.getElementById('katmanSelectd').addEventListener('change', function() {
-        const katmanId = this.value;
-        const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
-        //loadPDF(file)
-        
-        
-        document.getElementById('gizled').style.display = "none";
-        //alanpdf
-        // Tüm elementleri gizle
-        // Dosya uzantısını al
-        const fileExtension = this.options[this.selectedIndex].getAttribute('data-img').split('.').pop().toLowerCase();
-
-        // Dosya türüne göre işlem yap
-        if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
-            const imgElement = document.getElementById('aland');
-            imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
-            imgElement.style.display = "block";
-            document.getElementById('alanpdfd').style.display = "none";
-            loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
-        } else if (fileExtension === "pdf") {
-            var url = this.options[this.selectedIndex].getAttribute('data-img');
-            const imgElement = document.getElementById('aland');
-            loadPDF(this.options[this.selectedIndex].getAttribute('data-img'));
-            //imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
-            imgElement.style.display = "none";
-            pdfjsLib.getDocument(url).promise.then(function(pdf) {
-            pdf.getPage(1).then(function(page) {
-                var canvas = document.getElementById('alanpdfd');
-                document.getElementById('alanpdfd').style.display = "block";
-                var context = canvas.getContext('2d');
-                var viewport = page.getViewport({ scale: 1.5 });
-
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                page.render({
-                canvasContext: context,
-                viewport: viewport
-                });
-            });
-            }); // Yükleniyor mesajını gizle
-        }
-
-        fetch(`/get_yapi/${santiyeId}/`)
-            .then(response => response.json())
-            .then(data => {
-                const yapiSelectd = document.getElementById('yapiSelectd');
-                const odaSelectd = document.getElementById('odaSelectd');
-                // Hata kontrolü ekleyelim
-                if (!yapiSelectd || !odaSelectd) {
-                    console.error("Yapı veya oda select öğesi bulunamadı.");
-                    return; // Hata varsa burada çıkalım
-                }
-                yapiSelectd.innerHTML = '';
-                odaSelectd.innerHTML = '';
-
-                // Yapılar yapiSelect içine ekleniyor
-                data.yapilar.forEach(yapi => {
-                    const option = document.createElement('option');
-                    option.value = yapi.id;
-                    option.setAttribute('data-kat-sayisi', yapi.kat_sayisi);
-                    option.textContent = yapi.blog_adi;
-                    yapiSelectd.appendChild(option);
-                });
-            })
-            .catch(error => console.error("Fetch hatası:", error));
-    });
-
-});
-
-document.getElementById('yapiSelectd').addEventListener('change', function() {
-        const selectedYapi = this.options[this.selectedIndex];
-        const katSayisi = selectedYapi.getAttribute('data-kat-sayisi');
-        const odaSelect = document.getElementById('odaSelectd');
-        odaSelect.innerHTML = '';
-
-        // Kat numaralarını ekliyoruz
-        for (let i = 1; i <= katSayisi; i++) {
-            const odaOption = document.createElement('option');
-            odaOption.value = i;
-            odaOption.textContent = `Kat ${i}`;
-            odaSelect.appendChild(odaOption);
-        }
-    });
-
+            // Kat numaralarını ekliyoruz
+            for (let i = 1; i <= katSayisi; i++) {
+                const odaOption = document.createElement('option');
+                odaOption.value = i;
+                odaOption.textContent = `Kat ${i}`;
+                odaSelect.appendChild(odaOption);
+            }
+        });
 </script>
 <script>
     
@@ -938,9 +938,7 @@ document.getElementById('yapiSelectd').addEventListener('change', function() {
       
 </script>
 
-
-
-   <script>
+<script>
         // Konva Stage ve Layer'ları oluşturma
         const stage = new Konva.Stage({
             container: 'container',
@@ -1457,29 +1455,4 @@ document.getElementById('yapiSelectd').addEventListener('change', function() {
 
     </script>
 
-
-    <script>
-        function toggleFullScreen() {
-            var doc = window.document;
-            var docEl = doc.documentElement;
-
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
-            }
-        }
-
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
-        }
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
-    
 {% endblock sidebar %}
