@@ -504,7 +504,7 @@ $(document).ready(function () {
                                 <input type="text" hidden value="${data.id}" name="faturabilgisi">
                             <div class="input-item">
                                 <label>{% trans 'TÜR' %}</label>
-                                <select name="odemeturu">
+                                <select required name="odemeturu">
                                     <option value="nakitBanka">{% trans 'Nakit / Banka' %}</option>
                                     <option disabled>{% trans 'ÇEK VEYA SENET' %}</option>
                                     <option value="cek">{% trans 'ÇEK' %}</option>
@@ -513,7 +513,7 @@ $(document).ready(function () {
                             </div>
                             <div class="input-item">
                                 <label>{% trans 'HESAP' %}</label>
-                                <select name="kasabilgisi">
+                                <select required name="kasabilgisi">
                                      ${data.kasalar.map(kasa => `
                             <option value="${kasa.id}">${kasa.kasa_adi}</option>
                         `).join('')}
@@ -522,24 +522,24 @@ $(document).ready(function () {
                             </div>
                             <div class="input-item">
                                 <label>{% trans 'TARİH' %}</label>
-                                <input name="islemtarihi" type="date" />
+                                <input required name="islemtarihi" type="date" />
                             </div>
                             <div class="input-item">
                                 <label>{% trans 'TUTAR' %}</label>
-                                <input type="text"  name="islemtutari" value="${data.kalan_tutar}" max="${data.kalan_tutar}" placeholder="105000.41" />
+                                <input required type="text"  name="islemtutari" value="${data.kalan_tutar}" max="${data.kalan_tutar}" placeholder="105000.41" />
                                 <span class="mdi mdi-currency-usd"></span>
                             </div>
                             <div class="input-item">
                                 <label>{% trans 'MAKBUZ NO' %}</label>
-                                <input name="makbuznumarasi" type="text" />
+                                <input required name="makbuznumarasi" type="text" />
                             </div>
                             <div class="input-item">
                                 <label>{% trans 'AÇIKLAMA' %}</label>
-                                <input name="aciklama_bilgisi" type="text" />
+                                <input required name="aciklama_bilgisi" type="text" />
                             </div>
                             <div class="input-item">
                                 <label>{% trans 'DOSYA' %}</label>
-                                <input name="dosya" type="file" />
+                                <input required name="dosya" type="file" />
                             </div>
                             <div class="buttons">
                                 <span type="button" onclick="tahsilat_kapat()">{% trans 'Vazgeç' %}</span>
@@ -612,8 +612,8 @@ $(document).ready(function () {
                             <tr>
                                 
                                 ${makbuz.resim ? `
-                            <td colspan="2"><a target="_blank" href="${makbuz.resim}">{% trans 'Resmi Göster' %}</a></td>
-                            ` : '<td colspan="2"><a >{% trans "Resmi Yok" %}</a></td>'}  
+                            <td colspan="2"><a target="_blank" href="${makbuz.resim}"><i class="icon icon-action-file"></i></a></td>
+                            ` : '<td colspan="2"></td>'}  
                                 {% if yetki.gider_faturasi_makbuz_silme_izni %}
                                       <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">{% trans 'SİL' %}</button></td>                                              
                                 {% else %}
@@ -638,8 +638,8 @@ $(document).ready(function () {
                             <tr>
                                 
                                 ${makbuz.resim ? `
-                            <td colspan="2"><a target="_blank" href="${makbuz.resim}">{% trans 'Resmi Göster' %}</a></td>
-                            ` : '<td colspan="2"><a >{% trans "Resmi Yok" %}</a></td>'}  
+                            <td colspan="2"><a target="_blank" href="${makbuz.resim}"><i class="icon icon-action-file"></i></a></td>
+                            ` : '<td colspan="2"></td>'}  
         
                                 <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">{% trans 'SİL' %}</button></td>
                                 <td>${makbuz.tutar} $</td>
@@ -669,7 +669,7 @@ $(document).ready(function () {
                     </div>
                     <div class="kalan">
                         <h2>{% trans 'KALAN' %}</h2>
-                        <span> $</span>
+                        <span>$ ${data.kalan_tutar}</span>
                     </div>
                 </div>
             </div>
