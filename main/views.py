@@ -3897,6 +3897,8 @@ def yapilacak_gonder_json(request,id):
         sonuc["kat"] = a.kat
 
     return JsonResponse(sonuc)
+import base64
+from django.core.files.base import ContentFile
 def yapilacalar_ekle(request):
     if request.POST:
         if request.user.is_superuser:
@@ -3915,7 +3917,16 @@ def yapilacalar_ekle(request):
                         katman_bilgisi = request.POST.get("katman")
                         yapi_gonder = request.POST.get("yapi_gonder")
                         kat = request.POST.get("kat")
-                        base_64_format = request.POST.get('base_64_format', '')
+                        base64_image = request.POST.get('base_64_format', '')
+                        if base64_image.startswith('data:image/png;base64,'):
+                            base64_image = base64_image.replace('data:image/png;base64,', '')
+                            file_extension = 'png'
+                        elif base64_image.startswith('data:image/jpeg;base64,'):
+                            base64_image = base64_image.replace('data:image/jpeg;base64,', '')
+                            file_extension = 'jpeg'
+                        
+                        image_data = base64.b64decode(base64_image)
+                        image_file = ContentFile(image_data, name=f'image.{file_extension}')
                         if kat== None or kat  == ""  :
                             kat = 0
 
@@ -3941,6 +3952,8 @@ def yapilacalar_ekle(request):
                         for images in images:
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
+                        if image_file:
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file)
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -3955,7 +3968,16 @@ def yapilacalar_ekle(request):
                 katman_bilgisi = request.POST.get("katman")
                 yapi_gonder = request.POST.get("yapi_gonder")
                 kat = request.POST.get("kat")
-                base_64_format = request.POST.get('base_64_format', '')
+                base64_image = request.POST.get('base_64_format', '')
+                if base64_image.startswith('data:image/png;base64,'):
+                    base64_image = base64_image.replace('data:image/png;base64,', '')
+                    file_extension = 'png'
+                elif base64_image.startswith('data:image/jpeg;base64,'):
+                    base64_image = base64_image.replace('data:image/jpeg;base64,', '')
+                    file_extension = 'jpeg'
+                
+                image_data = base64.b64decode(base64_image)
+                image_file = ContentFile(image_data, name=f'image.{file_extension}')
                 if kat == None or kat  == ""  :
                     kat = 0
                 print(kat)
@@ -3981,8 +4003,8 @@ def yapilacalar_ekle(request):
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
-                if base_64_format:
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=base_64_format)
+                if image_file:
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file)
     return redirect("main:yapilacaklar")
 def yapilacalar_ekle_duzenleme(request):
     if request.POST:
