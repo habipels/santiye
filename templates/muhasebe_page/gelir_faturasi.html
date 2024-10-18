@@ -133,7 +133,7 @@
                     <div class="fatura-doviz-form-row">
                         <div class="form-element iqd-input">
                             <label for="doviz-kuru">{% trans 'Döviz Kuru' %}</label>
-                            <input type="number" name="doviz-kuru" id="doviz-kuru">
+                            <input type="number" name="doviz_kuru" id="doviz-kuru">
                         </div>
                         <div class="form-element iqd-input">
                             <label for="head-toplam-iqd">{% trans 'Toplam IQD' %}</label>
@@ -141,14 +141,14 @@
                         </div>
                         <div class="form-element" id="kategori">
                             <label for="kategori">{% trans 'Kategori' %} <a onclick="openModal('kategori-ekle')">{% trans '+Ekle' %}</a></label>
-                            <select name="kategori"  name="gelir_kategorisi" >
+                            <select   name="gelir_kategorisi_gonder" >
                                 <option value="" selected disabled></option>
                                 {% for i in gelir_kategoerisi %}
                                     <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
                                     {% endfor %}
                             </select>
                         </div>
-                        <div class="form-element">
+                        <div class="form-element" id="etiket">
                             <label for="etiketler">{% trans 'Etiketler' %} <a onclick="openModal('etiket-ekle')">{% trans '+Ekle' %}</a></label>
                             <select name="etiketler"  id="etiketler" multiple>
                                 {% for i in gelir_etiketi %}
@@ -286,12 +286,12 @@
                 
                     <div class="form-element">
                         <label for="etiket-adi">Etiket Adı</label>
-                        <input type="text" name="etiket-adi" id="etiket-adi">
+                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder"  placeholder="{% trans 'Etiket Adı' %}" />
                         <input type="text" name="tur2" id="tur2" hidden value="0">
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('etiket-ekle')">Vazgeç</button>
-                        <button class="form-action-primary" type="submit" onclick="closeModal('etiket-ekle')">Etiket Ekle</button>
+                        <button class="form-action-primary" type="submit"  id="ekle2" onclick="closeModal('etiket-ekle')">Etiket Ekle</button>
                     </div>
               
             </div>
@@ -511,46 +511,48 @@
                         </script>       
                         <script>
                     $("#kalem-ekle").on("click", function () {
-                        
-                        let lastID = $(".fatura-kalemleri tbody tr:last-child").attr("data-id");
-                        $(".fatura-kalemleri tbody").append(`<tr data-id="${++lastID}">
-                            <td>
-                                <div class="form-element">
-                                    <input type="text" class="den"  name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="Ürün/Hizmet Adı Giriniz">
-                                </div>
-                                <div class="form-element">
-                                    <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="Açıklama">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element">
-                                    <input type="number" name="kalem-indirim" id="kalem-indirim">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element">
-                                    <input type="number" name="kalem-miktar" id="kalem-miktar">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element">
-                                    <input type="number" name="kalem-birim-fiyati" id="kalem-birim-fiyati">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element">
-                                    <input type="number" name="kalem-toplam" id="kalem-toplam">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element iqd-input">
-                                    <input type="number" name="kalem-toplam-iqd" id="kalem-toplam-iqd">
-                                </div>
-                                <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i
-                                        class="icon icon-action-delete"></i> Sil</a>
-                            </td>
-                        </tr>`)
-                    })
+    let lastID = $(".fatura-kalemleri tbody tr:last-child").attr("data-id");
+    $(".fatura-kalemleri tbody").append(`<tr data-id="${++lastID}">
+        <td>
+            <div class="form-element">
+                <input type="text" class="den" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi-${lastID}" placeholder="Ürün/Hizmet Adı Giriniz">
+            </div>
+            <div class="form-element">
+                <input type="text" name="kalem-aciklama" id="kalem-aciklama-${lastID}" placeholder="Açıklama">
+            </div>
+        </td>
+        <td>
+            <div class="form-element">
+                <input type="number" name="kalem-indirim" id="kalem-indirim-${lastID}">
+            </div>
+        </td>
+        <td>
+            <div class="form-element">
+                <input type="number" name="kalem-miktar" id="kalem-miktar-${lastID}">
+            </div>
+        </td>
+        <td>
+            <div class="form-element">
+                <input type="number" name="kalem-birim-fiyati" id="kalem-birim-fiyati-${lastID}">
+            </div>
+        </td>
+        <td>
+            <div class="form-element">
+                <input type="number" name="kalem-toplam" id="kalem-toplam-${lastID}">
+            </div>
+        </td>
+        <td>
+            <div class="form-element iqd-input">
+                <input type="number" name="kalem-toplam-iqd" id="kalem-toplam-iqd-${lastID}">
+            </div>
+            <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> Sil</a>
+        </td>
+    </tr>`);
+
+    // Her yeni satır eklediğinizde otomatik tamamlama fonksiyonunu çağırın
+    enableAutocompleteForNewItems();
+});
+
                 </script>
  <script>
                     let indirim_input = $("input[name='kalem-indirim']");
@@ -687,15 +689,20 @@ $(document).ready(function(){
                     .appendTo(ul);
             };
 });
-$('.den').autocomplete({
+function enableAutocompleteForNewItems() {
+    $('.den').autocomplete({
         source: '/accounting/search/',
         minLength: 2,
         select: function(event, ui) {
             var id = this.id;
+
+            // Ürün/Hizmet Adı girdi alanına doğru değeri atayın
             $(this).val(ui.item.label);
-            $(this).siblings().val(ui.item.label);
-            id = id.replace("searchInput", "bfiyatInput");
-            document.getElementById(id).value = ui.item.value;
+            
+            // Fiyatı ilgili birim fiyatı girdi alanına atayın
+            //var bfiyatId = id.replace("kalem-urun-hizmet-adi", "kalem-birim-fiyati");
+            //document.getElementById(bfiyatId).value = ui.item.value;
+
             hesaplama_islemi();
             return false;
         }
@@ -704,7 +711,9 @@ $('.den').autocomplete({
             .append('<div>' + item.label + '  ' + item.value + ' USD</div>')
             .appendTo(ul);
     };
+}
 
+enableAutocompleteForNewItems();
 //gelir -gider kategorisi Ekleme 
 $(document).ready(function () {
         $("#ekle").click(function (event) {
@@ -744,9 +753,8 @@ $(document).ready(function () {
         csrfmiddlewaretoken: '{{ csrf_token }}'
       },
       success: function (data) {
-
-        $("#etkett").load(window.location.href + " #etkett", function() { });
-
+        $("#etiket").load(window.location.href + " #etiket", function() {
+            multiSelectInstance = initializeMultiSelectTag() });
       }
     });
     return false; //<---- move it here
