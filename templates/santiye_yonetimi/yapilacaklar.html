@@ -125,7 +125,7 @@
                                     </td>
                                     <td>
                                         <div class="td-actions">
-                                            <a onclick="openModal('is-emri-duzenle')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="yapilacak_duzenle('{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                             <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                             <div class="biadago-tooltip">
@@ -194,7 +194,7 @@
                                      </td>
                                     <td>
                                         <div class="td-actions">
-                                            <a onclick="openModal('is-emri-duzenle')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="yapilacak_duzenle('{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                             <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                             <div class="biadago-tooltip">
@@ -267,7 +267,7 @@
                                     </td>
                                     <td>
                                         <div class="td-actions">
-                                            <a onclick="openModal('is-emri-duzenle')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="yapilacak_duzenle('{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                             <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                                     <a onclick="openModal('ilerleme{{i.id}}')" class="status-view"><i
@@ -478,20 +478,21 @@
             <div class="modal-body">
                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacalar_ekle' %}" method="post" enctype="multipart/form-data" >
                         {% csrf_token %}
+                        <input type="text" hidden name="id" id="veri_gonderme">
                     <div class="modal-form-rows">
                         <div class="modal-form-row">
                             <div class="form-element">
                                 <label for="baslik">{% trans 'Başlık Ekle' %}</label>
-                                <input type="text" required name="baslik"  name="baslik" id="baslik">
+                                <input type="text" required name="baslik"  name="baslik" id="baslikd">
                             </div>
                             <div class="form-element">
                                 <label for="aciklama">{% trans 'Açıklama' %}</label>
-                                <input type="text" required name="aciklama" id="aciklama">
+                                <input type="text" required name="aciklama" id="aciklamad">
                             </div>
                             <div class="form-row">
                                 <div class="form-element">
                                     <label for="durum">{% trans 'Durum' %}</label>
-                                   <select name="durum" required class="form-control" data-choices data-choices-search-false id="task-status-input">
+                                   <select name="durum" required class="form-control" data-choices data-choices-search-false id="task-status-inputd">
                                     <option value="">{% trans 'Status' %}</option>
                                     <option value="New" selected>{% trans 'Yeni' %}</option>
                                     <option value="Inprogress">{% trans 'Devam Ediyor' %}</option>
@@ -501,7 +502,7 @@
                                 </div>
                                 <div class="form-element">
                                     <label for="aciliyet">{% trans 'Öncelik' %}</label>
-                                    <select required name="aciliyet" class="form-control" data-choices data-choices-search-false id="priority-field">
+                                    <select required name="aciliyet" class="form-control" data-choices data-choices-search-false id="oncelik_d">
                                     
                                     <option value="High">{% trans 'Acil' %}</option>
                                     <option value="Medium">{% trans 'Orta' %}</option>
@@ -519,7 +520,7 @@
                             </div>
                             <div class="form-element">
                                 <label for="tarih">{% trans 'Due Date:' %}</label>
-                                <input required type="date" name="teslim_tarihi"  id="tarih">
+                                <input required type="date" name="teslim_tarihi"  id="tarihd">
                             </div>
                         </div>
                         <div class="modal-form-row">
@@ -547,10 +548,10 @@
                             </div>
                             <div class="form-element">
                                 <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
-                                    <canvas style="display: none; max-width: 400px !important; max-height: 400px !important;" id="alanpdf"  width="200" height="200" ></canvas>
-                                    <img src="#" style="display: none; max-width: 200px !important;" alt="Plan Konumu" id="alan" class="alan">
+                                    <canvas style="display: none; max-width: 400px !important; max-height: 400px !important;" id="alanpdfd"  width="200" height="200" ></canvas>
+                                    <img src="#" style="display: none; max-width: 200px !important;" alt="Plan Konumu" id="aland" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
-                                    <div id="gizle" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
+                                    <div id="gizled" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
                                 </div>
                             </div>
                             <div class="form-element">
@@ -808,10 +809,42 @@ document.addEventListener("DOMContentLoaded", function() {
         //loadPDF(file)
         
         
-        document.getElementById('gizle').style.display = "none";
+        document.getElementById('gizled').style.display = "none";
         //alanpdf
         // Tüm elementleri gizle
+        // Dosya uzantısını al
+        const fileExtension = this.options[this.selectedIndex].getAttribute('data-img').split('.').pop().toLowerCase();
 
+        // Dosya türüne göre işlem yap
+        if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
+            const imgElement = document.getElementById('aland');
+            imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+            imgElement.style.display = "block";
+            document.getElementById('alanpdfd').style.display = "none";
+            loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
+        } else if (fileExtension === "pdf") {
+            var url = this.options[this.selectedIndex].getAttribute('data-img');
+            const imgElement = document.getElementById('aland');
+            loadPDF(this.options[this.selectedIndex].getAttribute('data-img'));
+            //imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+            imgElement.style.display = "none";
+            pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+                var canvas = document.getElementById('alanpdfd');
+                document.getElementById('alanpdfd').style.display = "block";
+                var context = canvas.getContext('2d');
+                var viewport = page.getViewport({ scale: 1.5 });
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                page.render({
+                canvasContext: context,
+                viewport: viewport
+                });
+            });
+            }); // Yükleniyor mesajını gizle
+        }
 
         fetch(`/get_yapi/${santiyeId}/`)
             .then(response => response.json())
@@ -840,8 +873,69 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
+document.getElementById('yapiSelectd').addEventListener('change', function() {
+        const selectedYapi = this.options[this.selectedIndex];
+        const katSayisi = selectedYapi.getAttribute('data-kat-sayisi');
+        const odaSelect = document.getElementById('odaSelectd');
+        odaSelect.innerHTML = '';
+
+        // Kat numaralarını ekliyoruz
+        for (let i = 1; i <= katSayisi; i++) {
+            const odaOption = document.createElement('option');
+            odaOption.value = i;
+            odaOption.textContent = `Kat ${i}`;
+            odaSelect.appendChild(odaOption);
+        }
+    });
 
 </script>
+<script>
+    
+        function yapilacak_duzenle(santiyeId) {
+        
+    
+    fetch(`/yapilacak/${santiyeId}/`)
+            .then(response => response.json())
+            .then(data => {
+                
+                document.getElementById("baslikd").value = data.title;
+                document.getElementById("aciklamad").value = data.aciklama;
+                document.getElementById("tarihd").value = data.teslim_tarihi;
+                document.getElementById("veri_gonderme").value = data.id;
+                a = document.getElementById("task-status-inputd");
+                const option = document.createElement('option');
+                option.value = data.status;
+                option.selected = true;
+                option.textContent = data.status;
+                a.appendChild(option);
+
+                b = document.getElementById("oncelik_d");
+                const d = document.createElement('option');
+                d.value = data.oncelik_durumu;
+                d.selected = true;
+                d.textContent = data.oncelik_durumu;
+                b.appendChild(d);  // Burada d eklenmeli, option değil!
+                c = document.getElementById("katmanSelectd");
+                const z = document.createElement('option');
+                z.value = data.katman_id;
+                z.selected = true;
+                z.textContent = data.katman;
+                c.appendChild(z);  // Burada d eklenmeli, option değil!
+            
+                //yapi
+                yapi_select = document.getElementById("katmanSelectd");
+                const yapi_veri = document.createElement('option');
+                yapi_veri.value = data.blok_id;
+                yapi_veri.selected = true;
+                yapi_veri.textContent = data.blok;
+                yapi_select.appendChild(yapi_veri);  // Burada d eklenmeli, option değil!
+                openModal("is-emri-duzenle");
+            })
+            .catch(error => console.error("Fetch hatası:", error));
+        }   
+      
+</script>
+
 
 
    <script>

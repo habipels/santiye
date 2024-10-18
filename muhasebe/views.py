@@ -2196,14 +2196,14 @@ def gelirler_sayfasi(request):
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
                 if a.izinler.gelir_faturasi_gorme_izni:
-                    profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
+                    profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db,silinme_bilgisi = False).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
-            profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+            profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False).order_by("-fatura_tarihi")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
 
     content["santiyeler_i"] = profile
@@ -2758,14 +2758,14 @@ def giderler_sayfasi(request):
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
                 if a.izinler.gider_faturasi_gorme_izni:
-                    profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
+                    profile = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
-            profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+            profile = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
@@ -2782,13 +2782,13 @@ def giderler_sayfasi_borc(request):
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
                 if a.izinler.gider_faturasi_gorme_izni:
-                    bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
+                    bilgi_ver = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
-            bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+            bilgi_ver = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
         sonuc = []
         for i in bilgi_ver:
             y =  gider_urun_bilgisi.objects.filter(gider_bilgis = i)
@@ -3250,9 +3250,8 @@ def gider_odemesi_ekle(request):
 def fatura_sil(request):
     if request.POST:
         print("Fatura sil Çalıştı")
-        gelir_gider = request.POST.get("gelir_gider")
+        gelir_gider = request.POST.get("gelir_gelir")
         id_bilgisi  = request.POST.get("idbilgisicek")
-        print(gelir_gider,"geldi",id_bilgisi)
         if gelir_gider == "0":
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)

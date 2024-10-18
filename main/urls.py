@@ -163,5 +163,6 @@ urlpatterns = [#
     path("dellayer", views.katman_sil, name="katman_sil"),
     path("setlayer", views.katman_duzenle, name="katman_duzenle"),
     path('get_yapi/<int:santiye_id>/', views.get_yapi, name='get_yapi'),
+    path('yapilacak/<int:id>/', views.yapilacak_gonder_json, name='yapilacak_gonder_json'),
 ]
 #

@@ -394,12 +394,12 @@ $(document).ready(function () {
                         {% if request.user.kullanicilar_db %}
                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                         {% if yetki.gider_faturasi_silme_izni %}
-                              <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>                                                  
+                              <div class="icon-item cancel-icon"><span type="button" onclick="openModal('faturasil')" title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>                                                  
                         {% else %}
                                                                                         
                         {% endif %}
                         {% else %}
-                             <div class="icon-item cancel-icon"><span type="button"  data-bs-toggle="modal" data-bs-target="#faturasil" title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>                                                   
+                             <div class="icon-item cancel-icon"><span type="button" onclick="openModal('faturasil')" title='{% trans "İptal et" %}' class="mdi mdi-alert-circle-outline"></span></div>                                                   
                         {% endif %}
                         {% if request.user.kullanicilar_db %}
                         {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
@@ -557,10 +557,7 @@ $(document).ready(function () {
                         <h2>Tahsilat Makbuzu</h2>
                     </div>
                     <div class="invoice-icons">
-                        <div class="icon-item print-icon"><span title="{% trans 'Yazdır' %}" class="mdi mdi-printer-outline"></span></div>
-                        <div class="icon-item cancel-icon"><span title="{% trans 'İptal et' %}" class="mdi mdi-alert-circle-outline"></span></div>
-                        <div class="icon-item edit-icon"><span title="{% trans 'Düzenle' %}" class="mdi mdi-pencil-circle-outline"></span></div>
-                        <div class="icon-item close-icon"><span id="{{i.id}}" type="button" onclick="makbuzlari_kapat()" title="{% trans 'Kapat' %}" class="mdi mdi-close-circle-outline"></span></div>
+                       <div class="icon-item close-icon"><span id="{{i.id}}" type="button" onclick="makbuzlari_kapat()" title="{% trans 'Kapat' %}" class="mdi mdi-close-circle-outline"></span></div>
                     </div>
                 </div>
                 <style>
@@ -679,33 +676,27 @@ $(document).ready(function () {
             `;
             
              modal_fatura.innerHTML = `
-            <div class="modal" id="faturasil">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-  
-      <div class="modal-header">
-        <h4 class="modal-title">{% trans 'Faturayı İptal Et' %}</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-        <form autocomplete="off"action="/{{dil}}{% url 'accounting:fatura_sil' %}" method="post">
+            <div  style=" z-index: 6000;" class="modal" id="faturasil">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'accounting:fatura_sil' %}" method="post">
         {% csrf_token %}
-     
-      <div class="modal-body">
-        {% trans 'Faturayı iptal etmek istediğinizden emin misiniz ?' %}
-        <input type="text" name="gelir_gider" value="1" hidden>
+                   <input type="text" name="gelir_gelir" value="1" hidden>
         <input type="text" name="idbilgisicek" value="${faturaId}" hidden>
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-bs-dismiss="modal">{% trans 'İptal' %}</button>
-        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">{% trans 'Sil' %}</button>
-      </div>
-    </form>
+                 
+                    <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('faturasil')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
-</div>    
             ${data.makbuzlar.map(makbuz => `
             <div class="modal" id="makbuzsil${makbuz.id}">
             <div class="modal-dialog">
@@ -952,7 +943,39 @@ $(document).ready(function () {
 });
     
     </script>
-    
+<script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>   
 {% endblock footer %}
 
 

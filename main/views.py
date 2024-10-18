@@ -3848,7 +3848,55 @@ def yapilacaklar(request):
     
     return render(request,"santiye_yonetimi/yapilacaklar.html",content)
 #yapilacakalr
+def yapilacak_gonder_json(request,id):
+    
+    
+    a = get_object_or_404(IsplaniPlanlari, id = id)
+    sonuc = {}
 
+    # title varsa ekle
+    
+    sonuc["id"] = id
+    if hasattr(a, 'title'):
+        sonuc["title"] = a.title
+
+    # aciklama varsa ekle
+    if hasattr(a, 'aciklama'):
+        sonuc["aciklama"] = a.aciklama
+
+    # teslim_tarihi varsa ekle
+    if hasattr(a, 'teslim_tarihi'):
+        sonuc["teslim_tarihi"] = a.teslim_tarihi
+
+    # status varsa ekle
+    if hasattr(a, 'status'):
+        sonuc["status"] = a.status
+
+    # oncelik_durumu varsa ekle
+    if hasattr(a, 'oncelik_durumu'):
+        sonuc["oncelik_durumu"] = a.oncelik_durumu
+
+    # katman_id varsa ekle
+    if hasattr(a, 'katman') and hasattr(a.katman, 'id'):
+        sonuc["katman_id"] = a.katman.id
+
+    # blok_id varsa ekle
+    if hasattr(a, 'blok') and hasattr(a.blok, 'id'):
+        sonuc["blok_id"] = a.blok.id
+
+    # katman varsa ekle
+    if hasattr(a, 'katman') and hasattr(a.katman, 'katman_adi'):
+        sonuc["katman"] = a.katman.katman_adi
+
+    # blok varsa ekle
+    if hasattr(a, 'blok') and hasattr(a.blok, 'blog_adi'):
+        sonuc["blok"] = a.blok.blog_adi
+
+    # kat varsa ekle
+    if hasattr(a, 'kat'):
+        sonuc["kat"] = a.kat
+
+    return JsonResponse(sonuc)
 def yapilacalar_ekle(request):
     if request.POST:
         if request.user.is_superuser:
