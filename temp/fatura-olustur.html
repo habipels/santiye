@@ -396,13 +396,7 @@
                             <label for="daterange">Düzenleme ve Vade Tarihi</label>
                             <input type="text" name="daterange" id="daterange">
                         </div>
-                        <script>
-                            $('input[name="daterange"]').daterangepicker({
-                                opens: 'left'
-                            }, function (start, end, label) {
-                                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-                            });
-                        </script>
+
                         <div class="form-element">
                             <label for="aciklama">Açıklama</label>
                             <input type="text" name="aciklama" id="aciklama">
@@ -435,25 +429,7 @@
                                 <option value="etiket3">Etiket 3</option>
                             </select>
                         </div>
-                        <script>
-                            // Function to initialize MultiSelectTag
-                            function initializeMultiSelectTag() {
-                                return new MultiSelectTag('etiketler', {
-                                    rounded: true,
-                                    shadow: true,
-                                    placeholder: 'Arama',
-                                    tagColor: {
-                                        textColor: '#327b2c',
-                                        borderColor: '#92e681',
-                                        bgColor: '#eaffe6',
-                                    },
-                                    onChange: function (values) {
-                                        console.log(values);
-                                    }
-                                });
-                            }
-                            var multiSelectInstance = initializeMultiSelectTag();
-                        </script>
+                      
                     </div>
 
 
@@ -468,49 +444,7 @@
                     </div>
                 </div>
 
-                <script>
-                    $("#kalem-ekle").on("click", function () {
-                        let lastID = $(".fatura-kalemleri tbody tr:last-child").attr("data-id");
-                        $(".fatura-kalemleri tbody").append(`<tr data-id="${++lastID}">
-                            <td>
-                                <div class="form-element">
-                                    <input type="text" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="Ürün/Hizmet Adı Giriniz">
-                                </div>
-                                <div class="form-element">
-                                    <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="Açıklama">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element">
-                                    <input type="number" name="kalem-indirim" id="kalem-indirim">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element">
-                                    <input type="number" name="kalem-miktar" id="kalem-miktar">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element">
-                                    <input type="number" name="kalem-birim-fiyati" id="kalem-birim-fiyati">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element">
-                                    <input type="number" name="kalem-toplam" id="kalem-toplam">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-element iqd-input">
-                                    <input type="number" name="kalem-toplam-iqd" id="kalem-toplam-iqd">
-                                </div>
-                                <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i
-                                        class="icon icon-action-delete"></i> Sil</a>
-                            </td>
-                        </tr>`)
-                    })
-                </script>
-
+         
                 <div class="fatura-kalemleri-wrapper">
                     <table class="dataTable fatura-kalemleri">
                         <thead>
@@ -606,59 +540,7 @@
                     </table>
                 </div>
 
-                <script>
-                    let indirim_input = $("input[name='kalem-indirim']");
-                    let miktar_input = $("input[name='kalem-miktar']");
-                    let birim_fiyati_input = $("input[name='kalem-birim-fiyati']");
-                    let toplam_input = $("input[name='kalem-toplam']");
-                    let toplam_iqd_input = $("input[name='kalem-toplam-iqd']");
-
-                    $(".fatura-kalemleri tbody tr input[type='number']").on("change", faturaFiyatHesapla)
-                    $("input[name='doviz-kuru']").on("change", faturaFiyatHesapla)
-
-                    function faturaFiyatHesapla() {
-                        let doviz_kuru = parseFloat($("input[name='doviz-kuru']").val()) > 0 ? parseFloat($("input[name='doviz-kuru']").val()) : 0;
-
-                        let ara_toplam = 0;
-                        let toplam_indirim = 0;
-                        let toplam_iqd = 0;
-                        let toplam_fiyat = 0;
-
-                        for (let i = 0; i < miktar_input.length; i++) {
-                            let miktar = parseFloat(miktar_input[i].value) > 0 ? parseFloat(miktar_input[i].value) : 1;
-                            let birim_fiyati = parseFloat(birim_fiyati_input[i].value) > 0 ? parseFloat(birim_fiyati_input[i].value) : 1;
-                            let indirim = parseFloat(indirim_input[i].value) > 0 ? parseFloat(indirim_input[i].value) : 0;
-
-                            let urun_toplam_fiyat = 0;
-
-                            if (indirim > 0) {
-                                urun_toplam_fiyat = (miktar * birim_fiyati) - ((miktar * birim_fiyati) * indirim / 100)
-                                toplam_indirim += ((miktar * birim_fiyati) * indirim / 100);
-                            } else {
-                                urun_toplam_fiyat = (miktar * birim_fiyati)
-                            }
-
-                            ara_toplam += (miktar * birim_fiyati);
-
-                            toplam_input[i].value = urun_toplam_fiyat;
-
-                            toplam_iqd_input[i].value = urun_toplam_fiyat * doviz_kuru;
-
-                            toplam_iqd += urun_toplam_fiyat * doviz_kuru;
-                            toplam_fiyat += urun_toplam_fiyat;
-
-
-                        }
-
-                        $("#info-ara-toplam").text("$" + ara_toplam);
-                        $("#info-toplam-indirim").text("$" + toplam_indirim);
-                        $("#info-toplam-iqd").text("$" + toplam_iqd);
-                        $("#head-toplam-iqd").val(toplam_iqd);
-                        $("#info-toplam").text("$" + toplam_fiyat);
-
-                    }
-                </script>
-
+               
 
 
                 <div class="fatura-detaylar">
@@ -856,6 +738,127 @@
                                     };
                                 });
                             </script>
+                        <script>
+                            $('input[name="daterange"]').daterangepicker({
+                                opens: 'left'
+                            }, function (start, end, label) {
+                                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                            });
+                        </script>
+
+  <script>
+                            // Function to initialize MultiSelectTag
+                            function initializeMultiSelectTag() {
+                                return new MultiSelectTag('etiketler', {
+                                    rounded: true,
+                                    shadow: true,
+                                    placeholder: 'Arama',
+                                    tagColor: {
+                                        textColor: '#327b2c',
+                                        borderColor: '#92e681',
+                                        bgColor: '#eaffe6',
+                                    },
+                                    onChange: function (values) {
+                                        console.log(values);
+                                    }
+                                });
+                            }
+                            var multiSelectInstance = initializeMultiSelectTag();
+                        </script>       <script>
+                    $("#kalem-ekle").on("click", function () {
+                        let lastID = $(".fatura-kalemleri tbody tr:last-child").attr("data-id");
+                        $(".fatura-kalemleri tbody").append(`<tr data-id="${++lastID}">
+                            <td>
+                                <div class="form-element">
+                                    <input type="text" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="Ürün/Hizmet Adı Giriniz">
+                                </div>
+                                <div class="form-element">
+                                    <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="Açıklama">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element">
+                                    <input type="number" name="kalem-indirim" id="kalem-indirim">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element">
+                                    <input type="number" name="kalem-miktar" id="kalem-miktar">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element">
+                                    <input type="number" name="kalem-birim-fiyati" id="kalem-birim-fiyati">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element">
+                                    <input type="number" name="kalem-toplam" id="kalem-toplam">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element iqd-input">
+                                    <input type="number" name="kalem-toplam-iqd" id="kalem-toplam-iqd">
+                                </div>
+                                <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i
+                                        class="icon icon-action-delete"></i> Sil</a>
+                            </td>
+                        </tr>`)
+                    })
+                </script>
+ <script>
+                    let indirim_input = $("input[name='kalem-indirim']");
+                    let miktar_input = $("input[name='kalem-miktar']");
+                    let birim_fiyati_input = $("input[name='kalem-birim-fiyati']");
+                    let toplam_input = $("input[name='kalem-toplam']");
+                    let toplam_iqd_input = $("input[name='kalem-toplam-iqd']");
+
+                    $(".fatura-kalemleri tbody tr input[type='number']").on("change", faturaFiyatHesapla)
+                    $("input[name='doviz-kuru']").on("change", faturaFiyatHesapla)
+
+                    function faturaFiyatHesapla() {
+                        let doviz_kuru = parseFloat($("input[name='doviz-kuru']").val()) > 0 ? parseFloat($("input[name='doviz-kuru']").val()) : 0;
+
+                        let ara_toplam = 0;
+                        let toplam_indirim = 0;
+                        let toplam_iqd = 0;
+                        let toplam_fiyat = 0;
+
+                        for (let i = 0; i < miktar_input.length; i++) {
+                            let miktar = parseFloat(miktar_input[i].value) > 0 ? parseFloat(miktar_input[i].value) : 1;
+                            let birim_fiyati = parseFloat(birim_fiyati_input[i].value) > 0 ? parseFloat(birim_fiyati_input[i].value) : 1;
+                            let indirim = parseFloat(indirim_input[i].value) > 0 ? parseFloat(indirim_input[i].value) : 0;
+
+                            let urun_toplam_fiyat = 0;
+
+                            if (indirim > 0) {
+                                urun_toplam_fiyat = (miktar * birim_fiyati) - ((miktar * birim_fiyati) * indirim / 100)
+                                toplam_indirim += ((miktar * birim_fiyati) * indirim / 100);
+                            } else {
+                                urun_toplam_fiyat = (miktar * birim_fiyati)
+                            }
+
+                            ara_toplam += (miktar * birim_fiyati);
+
+                            toplam_input[i].value = urun_toplam_fiyat;
+
+                            toplam_iqd_input[i].value = urun_toplam_fiyat * doviz_kuru;
+
+                            toplam_iqd += urun_toplam_fiyat * doviz_kuru;
+                            toplam_fiyat += urun_toplam_fiyat;
+
+
+                        }
+
+                        $("#info-ara-toplam").text("$" + ara_toplam);
+                        $("#info-toplam-indirim").text("$" + toplam_indirim);
+                        $("#info-toplam-iqd").text("$" + toplam_iqd);
+                        $("#head-toplam-iqd").val(toplam_iqd);
+                        $("#info-toplam").text("$" + toplam_fiyat);
+
+                    }
+                </script>
+
 </body>
 
 </html>
