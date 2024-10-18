@@ -73,7 +73,7 @@
                                                     <td class="email">
                                                     {% trans 'Ödeme tarihini geçen bir Gelir faturanız bulunmaktadır.'%}</td>
                                                     <td class="email">{{i.vade_tarihi | date:'d m Y' }}</td>
-                                                    <td class="email"><a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="status-success stats-lg"><i class="icon icon-confirm"></i>İncele</button></a> </td>
+                                                    <td class="email"><a href="/{{dil}}{% url 'accounting:gelirler_sayfasi'  %}"><button class="status-success stats-lg"><i class="icon icon-confirm"></i>İncele</button></a> </td>
 
                                                 </tr>
                                             {% elif i.type == "Gider" %}
@@ -81,7 +81,7 @@
                                                     <td class="email">
                                                     {% trans 'Ödeme tarihini geçen bir Gider faturanız bulunmaktadır.'%}</td>
                                                     <td class="email">{{i.vade_tarihi | date:'d m Y' }}</td>
-                                                    <td class="email"><a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="status-success stats-lg"><i class="icon icon-confirm"></i>İncele</button></a> </td>
+                                                    <td class="email"><a href="/{{dil}}{% url 'accounting:gelirler_sayfasi'  %}"><button class="status-success stats-lg"><i class="icon icon-confirm"></i>İncele</button></a> </td>
 
                                                 </tr>
                                                 {% elif i.type == "UrunTalebi" %}
@@ -91,7 +91,7 @@
                                                         <td class="email">{% blocktrans %}İstenen Ürün{% endblocktrans %}: {{ i.urun.urun_adi }}<br>
                                         {% blocktrans %}Miktar{% endblocktrans %}: {{ i.miktar }}<br>
                                         {% blocktrans %}Tarih{% endblocktrans %}: {{ i.kayit_tarihi }}</td>
-                                                        <td class="email"><a href="/{{dil}}{{ satin_alma_talabi_onaylama_url }}"><button class="status-success stats-lg"><i class="icon icon-confirm"></i>İncele</button></a> </td>
+                                                        <td class="email"><a href="/{{dil}}{% url 'accounting:satin_alma_talabi_onaylama' %}"><button class="status-success stats-lg"><i class="icon icon-confirm"></i>İncele</button></a> </td>
 
                                                     </tr>
                                                 {% elif i.type == "IsplaniPlan" %}
@@ -101,7 +101,7 @@
                                                     <td class="email">{% blocktrans %}Görev : {% endblocktrans %} {{ i.title }}<br>
                                     {% blocktrans %}Açıklama : {% endblocktrans %} {{ i.aciklama }}<br>
                                     {% blocktrans %}Teslim Tarihi : {% endblocktrans %} {{ i.teslim_tarihi }}</td>
-                                                    <td class="email"><a href="/{{dil}}{{ yapilacaklar_url }}"><button class="status-success stats-lg"><i class="icon icon-confirm"></i>İncele</button></a> </td>
+                                                    <td class="email"><a href="/{{dil}}{% url 'main:yapilacaklar'  %}"><button class="status-success stats-lg"><i class="icon icon-confirm"></i>İncele</button></a> </td>
 
                                                 </tr>
                                                 {% endif %}
