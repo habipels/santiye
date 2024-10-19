@@ -103,8 +103,30 @@
                                                     
                                                     <td>
                                                         <div class="td-actions">
-                                                        <a onclick="openModal('cari-ekle_duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
-                                                        <a onclick="openModal('departman-sil{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.gelir_kategorisi_guncelleme %}
+                                                              <a onclick="openModal('cari-ekle_duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                              <a onclick="openModal('cari-ekle_duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                  
+                                                        {% endif %}
+                                                            
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.gelir_kategorisi_silme %}
+                                                           
+                                                        <a onclick="openModal('departman-sil{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>                                               
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                               
+                                                        <a onclick="openModal('departman-sil{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>                                              
+                                                        {% endif %} 
+                                                       
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -302,7 +324,7 @@
                             </div>
                             {% endif %}
                             <div class="form-actions">
-                                <button class="form-action-secondary" type="button" onclick="closeModal('cari-ekle')">{% trans 'Vazgeç' %} </button>
+                                <button class="form-action-secondary" type="button" onclick="closeModal('cari-ekle_duzenle{{i.id}}')">{% trans 'Vazgeç' %} </button>
                                 <button class="form-action-primary" type="submit">{% trans 'Gelir Etiketini Düzenle' %} </button>
                             </div>
                 </form>
