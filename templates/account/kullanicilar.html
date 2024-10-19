@@ -1,76 +1,84 @@
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load custom_tags %}
+{% load static %}
+{% block head %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'content/style/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+{% endblock head %}
+
 {% block sidebar %}
-<div class="main-content">
-        <div class="page-content">
-            <div class="container-fluid">
-                <!-- start page title -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0">{% trans "Kullanıcılarım" %}</h4>
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans "Dashboard" %}</a></li>
-                                    <li class="breadcrumb-item active">{% trans "Kullanıcılarım" %}</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- end page title -->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title mb-0">{% trans "Kullanıcılarım" %}</h4>
-                            </div><!-- end card header -->
-                            <div class="card-body">
-                                <div class="listjs-table" id="customerList">
-                                    <div class="row g-4 mb-3">
-                                        <div class="col-sm-auto">
-                                            <div>
-                                                <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i> {% trans "Kullanıcı Ekle" %}</button>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm">
-                                            <div class="d-flex justify-content-sm-end">
-                                                <div class="search-box ms-2">
-                                                    <form autocomplete="off"method="get">
-                                                    <input type="text" name="search" class="form-control search" placeholder='{% trans "Search..." %}'>
-                                                    <i class="ri-search-line search-icon"></i>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive table-card mt-3 mb-1">
-                                        <table class="table align-middle table-nowrap" id="customerTable">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th scope="col" style="width: 50px;">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="checkAll" value="option">
-                                                        </div>
-                                                    </th>
-                                                    <th class="sort" data-sort="customer_name">{% trans "Kullanıcı Adı Soyadı" %}</th>
+
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans 'Kullanıcılarım' %}
+            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                <li><a href="#">{% trans 'Ayarlar' %}</a></li>
+                <li><a href="#">{% trans 'Kullanıcılarım' %}</a></li>
+            </ul>
+        </div>
+        <div class="page-actions">
+         
+        <button class="page-primary-btn" onclick="openModal('cari-ekle')"><i class="icon icon-new"></i>{% trans "Kullanıcı Ekle" %}</button>
+                                           
+                                        
+                                               
+                                            
+            
+        </div>
+    </div>
+
+    <div class="large-stats-card table-card table-detail-card">
+        <div class="stats-header">
+            <div class="stats-title">{% trans 'Kullanicilarim' %}</div>
+            <div class="stats-search">
+                <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                <button><i class="icon icon-search"></i></button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="datatable">
+                <thead>
+                    <tr>
+                        <th class="sort" data-sort="customer_name">{% trans "Kullanıcı Adı Soyadı" %}</th>
                                                     <th class="sort" data-sort="email">{% trans "Email" %}</th>
                                                     <th class="sort" data-sort="email">{% trans "Giriş Tarihi" %}</th>
                                                     <th class="sort" data-sort="phone">{% trans "Görevi" %}</th>
                                                     <th class="sort" data-sort="date">{% trans "Durum" %}</th>
                                                     <th class="sort" data-sort="date">{% trans "Yetkileri" %}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="list form-check-all">
-                                            {% for i in santiyeler %}
+                                                    <th class="sort" data-sort="date">{% trans "Aksiyonlar" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in santiyeler %}
                                                 <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
-                                                    <th scope="row">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
-                                                        </div>
-                                                    </th>
-                                                    <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
+                                                   
+                                                    
                                                     <td class="customer_name">{{i.first_name}} : {{i.last_name}}
                                                     </td>
                                                     <td class="customer_name">{{i.email}} 
@@ -96,101 +104,192 @@
                                                        
                                                         {{a.isim}}
                                                     </td>
-                                                    <td class="date">
-                                                        
                                                     
-                                                    </td>
                                                     <td>
-                                                        <div class="d-flex justify-content-start">
-                                                            <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans "Kullanıcıyı Düzenle" %}</button>
-                                                            </div>
-                                                            
-                                                            <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans "Kullanıcıyı Sil" %}</button>
-                                                            </div>
-                                                           
+                                                        <div class="td-actions">
+                                                        <a onclick="openModal('cari-ekle_duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        <a onclick="openModal('departman-sil{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        <div class="noresult" style="display: none">
-                                            <div class="text-center">
-                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
-                                                </lord-icon>
-                                                <h5 class="mt-2">Sorry! No Result Found</h5>
-                                                <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any
-                                                    orders for you search.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-end">
-                                        <div class="pagination-wrap hstack gap-2">
-                                            <ul class="pagination pagination-m justify-content-center">
+                   
+                </tbody>
+            </table>
+        </div>
 
-                                                {% if medya.has_previous %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans "« Previous page" %}</a></li>
-                                                
-                                                  {% if medya.number > 3 %}
-                                                
-                                                    <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
-                                                    {% if medya.number > 4 %}
-                                                      <li class="page-item"><span class="page-link">...</span></li>
-                                                    {% endif %}
-                                                  {% endif %}
-                                                {% endif %}
-                                                
-                                                {% for num in medya.paginator.page_range %}
-                                                  {% if medya.number == num %}
-                                                    <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
-                                                  {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
-                                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
-                                                  {% endif %}
-                                                {% endfor %}
-                                                
-                                                {% if medya.has_next %}
-                                                  {% if medya.number < medya.paginator.num_pages|add:'-3' %}
-                                                    <li class="page-item"><span class="page-link">...</span></li>
-                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
-                                                  {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
-                                                    <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
-                                                  {% endif %}
-                                                
-                                                  <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{% trans "Next Page »" %}</a></li>
-                                                {% endif %}
-                                                </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!-- end card -->
-                        </div>
-                        <!-- end col -->
-                    </div>
-                    <!-- end col -->
-                </div>
-                <!-- end row -->
-                {% for i in santiyeler %}
-                <div class="modal fade" id="showModal{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'users:kullanici_bilgileri_duzenle' %}" method="post" enctype="multipart/form-data" >
+        <div class="large-stats-card-footer-actions">
+            <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+            <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+            <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let datatable = $('#datatable').DataTable({
+                paging: false,
+                searching: true,
+                info: false,
+                
+            });
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            });
+        });
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+</main>
+    <script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+
+    </script>
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+<div class="modal" id="cari-ekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Kullanıcı Ekle' %}
+                
+            </div>
+            <div class="modal-body">
+
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'users:kullanici_ekleme' %}"  method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
-                                <div class="modal-body">
-                                    <div class="mb-3" id="modal-id" style="display: none;">
+                              
+                                    {% if request.user.is_superuser %}
+                                        <div class="form-element">
+                                        <label for="date-field"  >{% trans "Hesap Seç" %}</label>
+                                        <select   name="kullanici" >
+                                            {% for i in kullanicilar %}
+                                                <option value="{{i.id}}">{{i.first_name}}</option>
+                                            {% endfor %}
+                                            
+                                            
+                                        </select>
+                                    </div>
+                                    {% else %}
+                                    {% endif %}
+
+                                    <div class="form-element">
+                                        <label for="date-field"  >{% trans "Adı Soyadı" %}</label>
+                                        <input type="text"  name="yetkili_adi"    placeholder='{% trans "Adı Soyadı" %}' />
+                                    </div>
+                                    <div class="form-element">
+                                        <label for="date-field"  >{% trans "Email" %}</label>
+                                        <input type="email"  name="email"    placeholder='{% trans "Email" %}' />
+                                    </div>
+                                     <div class="form-element">
+                                        <label for="date-field"  >{% trans "Parola" %}</label>
+                                        <input type="text"  name="parola"    placeholder='{% trans "Parola" %}' />
+                                    </div>
+                                    <div class="form-element">
+                                        <label for="date-field"  >{% trans "Görevi" %}</label>
+                                        <input type="text"  name="gorevi"    placeholder='{% trans "Görevi" %}' />
+                                    </div>
+
+                                    <div>
+                                        <label for="status-field"  >{% trans "Durum" %}</label>
+                                        <select name="durumu"   data-trigger name="status-field" id="status-field" required>
+                                            <option value="">{% trans "Durum" %}</option>
+                                            <option value="1">{% trans "Aktif" %}</option>
+                                            <option value="0">{% trans "Pasif" %}</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="status-field"  >{% trans "Kullanıcı İzinleri" %}</label>
+                                        <select name="izinler"   data-trigger name="status-field" id="status-field" required>
+                                            {% for i in  kullanici_izinlerim %}
+                                                <option value="{{i.id}}">{{i.isim}}</option>
+                                            {% endfor %}
+                                            
+                                        </select>
+                                    </div>
+                                      <div class="form-group">
+                                            <label>{% trans "Dosya Yükle" %}</label>
+                                            <input name="file" type="file" multiple="multiple"   />
+                                        </div>
+                                <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('cari-ekle')">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kullanıcıyı Ekle' %} </button>
+                    </div>
+                            </form>
+            </div>
+        </div>
+</div>
+{% for i in santiyeler %}
+<div class="modal" id="cari-ekle_duzenle{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Cari Ekle' %}
+                
+            </div>
+            <div class="modal-body">
+
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'users:kullanici_bilgileri_duzenle' %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                               
+                                    <div class="form-element" id="modal-id" style="display: none;">
                                         
                                         <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
                                     </div>
 
                                     {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">{% trans "Hesap Seç" %}</label>
-                                            <select class="form-control" name="kullanici" id="date-field">
+                                            <div class="form-element">
+                                            <label for="date-field" >{% trans "Hesap Seç" %}</label>
+                                            <select  name="kullanici" >
                                                 <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.first_name}}</option>
                                                 {% for j in kullanicilar %}
                                                     <option value="{{j.id}}">{{j.first_name}}</option>
@@ -202,9 +301,9 @@
                                         {% else %}
                                         {% endif %}                                   
                                         {% if request.user.is_superuser %}
-                                            <div class="mb-3">
-                                            <label for="date-field" class="form-label">{% trans "Kullanıcı Silinme Durumu" %}</label>
-                                            <select name="silinmedurumu"  class="form-control" id="">
+                                            <div class="form-element">
+                                            <label for="date-field" >{% trans "Kullanıcı Silinme Durumu" %}</label>
+                                            <select name="silinmedurumu"   id="">
                                                 <option value="3">{% trans "Karışma" %}</option>
                                                 <option value="2">{% trans "Sil" %}</option>
                                                 {% if i.silinme_bilgisi %}
@@ -216,23 +315,23 @@
                                         </div>
                                         
                                         {% endif %}
-                                        <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans "Adı Soyadı" %}</label>
-                                        <input type="text" value="{{i.last_name}}"  name="yetkili_adi" id="date-field" class="form-control" placeholder='{% trans "Adı Soyadı" %}' />
+                                        <div class="form-element">
+                                        <label for="date-field" >{% trans "Adı Soyadı" %}</label>
+                                        <input type="text" value="{{i.last_name}}"  name="yetkili_adi"   placeholder='{% trans "Adı Soyadı" %}' />
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans "Email" %}</label>
-                                        <input type="email" value="{{i.email}}"  name="email" id="date-field" class="form-control" placeholder='{% trans "Email" %}' />
+                                    <div class="form-element">
+                                        <label for="date-field" >{% trans "Email" %}</label>
+                                        <input type="email" value="{{i.email}}"  name="email"   placeholder='{% trans "Email" %}' />
                                     </div>
                                      
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans "Görevi" %}</label>
-                                        <input type="text" value="{{i.gorevi}}"  name="gorevi" id="date-field" class="form-control" placeholder='{% trans "Görevi" %}' />
+                                    <div class="form-element">
+                                        <label for="date-field" >{% trans "Görevi" %}</label>
+                                        <input type="text" value="{{i.gorevi}}"  name="gorevi"   placeholder='{% trans "Görevi" %}' />
                                     </div>
 
                                     <div>
-                                        <label for="status-field" class="form-label">{% trans "Durum" %}</label>
-                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                        <label for="status-field" >{% trans "Durum" %}</label>
+                                        <select name="durumu"  data-trigger name="status-field" id="status-field" required>
                                             {% if i.gorevi  %}
                                                 <option value="1">{% trans "Aktif" %}</option>
                                             {% else %}
@@ -244,8 +343,8 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="status-field" class="form-label">{% trans "Kullanıcı İzinleri" %}</label>
-                                        <select name="izinler" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                        <label for="status-field" >{% trans "Kullanıcı İzinleri" %}</label>
+                                        <select name="izinler"  data-trigger name="status-field" id="status-field" required>
                                             {% kulanici_yetkileri_goster i as a%}
                                             {% if a %}
                                                 <option value="{{a.id}}">{{a.isim}}</option>
@@ -259,130 +358,36 @@
                                     </div>
                                     <div class="form-group">
                                         <label>{% trans "Dosya Yükle" %}</label>
-                                        <input name="file" type="file" multiple="multiple" class="form-control" />
+                                        <input name="file" type="file" multiple="multiple"  />
                                     </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans "Kapat" %}</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans "Kullanıcıyı Düzenle" %}</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                                <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('cari-ekle')">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kullanıcıyı Düzenle' %} </button>
                     </div>
-                </div>
-                {% endfor %}
-                {% for i in santiyeler %}
-                <!-- Modal -->
-                <div class="modal fade zoomIn" id="deleteRecordModal{{i.id}}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"></button>
-                            </div>
-                            <div class="modal-body">
-                                
-                                <div class="mt-2 text-center">
-                                    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                                    <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                        <h4>{% trans "Emin misin ?" %}</h4>
-                                        <p class="text-muted mx-4 mb-0">{% trans "Bu Kaydı Kaldırmak İstediğinizden Emin misiniz?" %}</p>
-                                    </div>
-                                </div>
-                                <form autocomplete="off"action="/{{dil}}{% url 'users:kullanici_silme' %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                                
-                                <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                    <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans "Kapat" %}</button>
-                                    <button type="submit" class="btn w-sm btn-danger " id="delete-record">{% trans "Evet , Sil" %}</button>
-                                </div>
                             </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <!--end modal -->
             </div>
         </div>
-        
-
 </div>
-<div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-                            </div>
-                            <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'users:kullanici_ekleme' %}"  method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                    {% if request.user.is_superuser %}
-                                        <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans "Hesap Seç" %}</label>
-                                        <select class="form-control" name="kullanici" id="date-field">
-                                            {% for i in kullanicilar %}
-                                                <option value="{{i.id}}">{{i.first_name}}</option>
-                                            {% endfor %}
-                                            
-                                            
-                                        </select>
-                                    </div>
-                                    {% else %}
-                                    {% endif %}
-
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans "Adı Soyadı" %}</label>
-                                        <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder='{% trans "Adı Soyadı" %}' />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans "Email" %}</label>
-                                        <input type="email"  name="email" id="date-field" class="form-control" placeholder='{% trans "Email" %}' />
-                                    </div>
-                                     <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans "Parola" %}</label>
-                                        <input type="text"  name="parola" id="date-field" class="form-control" placeholder='{% trans "Parola" %}' />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans "Görevi" %}</label>
-                                        <input type="text"  name="gorevi" id="date-field" class="form-control" placeholder='{% trans "Görevi" %}' />
-                                    </div>
-
-                                    <div>
-                                        <label for="status-field" class="form-label">{% trans "Durum" %}</label>
-                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
-                                            <option value="">{% trans "Durum" %}</option>
-                                            <option value="1">{% trans "Aktif" %}</option>
-                                            <option value="0">{% trans "Pasif" %}</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label for="status-field" class="form-label">{% trans "Kullanıcı İzinleri" %}</label>
-                                        <select name="izinler" class="form-control" data-trigger name="status-field" id="status-field" required>
-                                            {% for i in  kullanici_izinlerim %}
-                                                <option value="{{i.id}}">{{i.isim}}</option>
-                                            {% endfor %}
-                                            
-                                        </select>
-                                    </div>
-                                      <div class="form-group">
-                                            <label>{% trans "Dosya Yükle" %}</label>
-                                            <input name="file" type="file" multiple="multiple" class="form-control" />
-                                        </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="hstack gap-2 justify-content-end">
-                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans "Kapat" %}</button>
-                                        <button type="submit" class="btn btn-success" id="add-btn">{% trans "Kullanıcıyı Ekle" %}</button>
-                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+    <div class="modal" id="departman-sil{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'users:kullanici_silme' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                                <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('departman-sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
                     </div>
-                </div>
-{% endblock sidebar %}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 
+
+{% endblock sidebar %}
