@@ -440,30 +440,6 @@
 
     </script>
 
-
-    <script>
-        function toggleFullScreen() {
-            var doc = window.document;
-            var docEl = doc.documentElement;
-
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
-            }
-        }
-
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
-        }
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
  <script>
                                 $(document).ready(function () {
 
@@ -517,103 +493,121 @@
                             }
                             var multiSelectInstance = initializeMultiSelectTag();
                         </script>       
-                        <script>
-                    $("#kalem-ekle").on("click", function () {
-    let lastID = $(".fatura-kalemleri tbody tr:last-child").attr("data-id");
-    $(".fatura-kalemleri tbody").append(`<tr data-id="${++lastID}">
-        <td>
-            <div class="form-element">
-                <input type="text" class="den" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi-${lastID}" placeholder="Ürün/Hizmet Adı Giriniz">
-            </div>
-            <div class="form-element">
-                <input type="text" name="kalem-aciklama" id="kalem-aciklama-${lastID}" placeholder="Açıklama">
-            </div>
-        </td>
-        <td>
-            <div class="form-element">
-                <input type="number" name="kalem-indirim" id="kalem-indirim-${lastID}">
-            </div>
-        </td>
-        <td>
-            <div class="form-element">
-                <input type="number" name="kalem-miktar" id="kalem-miktar-${lastID}">
-            </div>
-        </td>
-        <td>
-            <div class="form-element">
-                <input type="number" name="kalem-birim-fiyati" id="kalem-birim-fiyati-${lastID}">
-            </div>
-        </td>
-        <td>
-            <div class="form-element">
-                <input type="number" name="kalem-toplam" id="kalem-toplam-${lastID}">
-            </div>
-        </td>
-        <td>
-            <div class="form-element iqd-input">
-                <input type="number" name="kalem-toplam-iqd" id="kalem-toplam-iqd-${lastID}">
-            </div>
-            <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> Sil</a>
-        </td>
-    </tr>`);
 
-    // Her yeni satır eklediğinizde otomatik tamamlama fonksiyonunu çağırın
+ <script>
+$(document).ready(function () {
+    let kalemContainer = $(".fatura-kalemleri tbody");
+    let dovizKuruInput = $("input[name='doviz_kuru']");
+    let araToplamElement = $("#info-ara-toplam");
+    let toplamIndirimElement = $("#info-toplam-indirim");
+    let toplamIqdElement = $("#info-toplam-iqd");
+    let headToplamIqdInput = $("#head-toplam-iqd");
+    let toplamFiyatElement = $("#info-toplam");
+
+    function faturaFiyatHesapla() {
+        let dovizKuru = parseFloat(dovizKuruInput.val()) > 0 ? parseFloat(dovizKuruInput.val()) : 0;
+
+        let araToplam = 0;
+        let toplamIndirim = 0;
+        let toplamIqd = 0;
+        let toplamFiyat = 0;
+
+        kalemContainer.find("tr").each(function () {
+            let miktarInput = $(this).find("input[name='miktari']");
+            let birimFiyatiInput = $(this).find("input[name='bfiyatInput']");
+            let indirimInput = $(this).find("input[name='indirim']");
+            let toplamInput = $(this).find("input[name='kalem-toplam']");
+            let toplamIqdInput = $(this).find("input[name='kalem-toplam-iqd']");
+
+            let miktar = parseFloat(miktarInput.val()) > 0 ? parseFloat(miktarInput.val()) : 1;
+            let birimFiyati = parseFloat(birimFiyatiInput.val()) > 0 ? parseFloat(birimFiyatiInput.val()) : 0;
+            let indirim = parseFloat(indirimInput.val()) > 0 ? parseFloat(indirimInput.val()) : 0;
+
+            let urunToplamFiyat = miktar * birimFiyati;
+            let urunIndirim = (indirim > 0) ? (urunToplamFiyat * indirim / 100) : 0;
+
+            urunToplamFiyat -= urunIndirim;
+            toplamInput.val(urunToplamFiyat.toFixed(2));
+
+            let urunToplamIqd = urunToplamFiyat * dovizKuru;
+            toplamIqdInput.val(urunToplamIqd.toFixed(2));
+
+            araToplam += miktar * birimFiyati;
+            toplamIndirim += urunIndirim;
+            toplamIqd += urunToplamIqd;
+            toplamFiyat += urunToplamFiyat;
+        });
+
+        araToplamElement.text("$" + araToplam.toFixed(2));
+        toplamIndirimElement.text("-$" + toplamIndirim.toFixed(2));
+        toplamFiyatElement.text("$" + toplamFiyat.toFixed(2));
+        toplamIqdElement.text("$" + toplamIqd.toFixed(2));
+        headToplamIqdInput.val(toplamIqd.toFixed(2));
+    }
+
+    function toplamIqdDegisikligi() {
+        let toplamIqd = parseFloat(headToplamIqdInput.val()) > 0 ? parseFloat(headToplamIqdInput.val()) : 0;
+        let toplamFiyat = parseFloat(toplamFiyatElement.text().replace("$", "")) > 0 ? parseFloat(toplamFiyatElement.text().replace("$", "")) : 0;
+
+        if (toplamFiyat > 0) {
+            let yeniDovizKuru = toplamIqd / toplamFiyat;
+            dovizKuruInput.val(yeniDovizKuru.toFixed(2));
+            faturaFiyatHesapla();
+        }
+    }
+
+    kalemContainer.on("change", "input[type='number']", faturaFiyatHesapla);
+    dovizKuruInput.on("change", faturaFiyatHesapla);
+    headToplamIqdInput.on("change", toplamIqdDegisikligi);
+
+    $("#kalem-ekle").on("click", function () {
+        let yeniKalem = `<tr data-id="new">
+                            <td>
+                                <div class="form-element">
+                                    <input type="text" name="urunadi" class="den" required placeholder="Ürün/Hizmet Adı Giriniz" title="{% trans 'Kayıtlı ürün için ürün adının ilk üç karakterini giriniz.' %}">
+                                </div>
+                                <div class="form-element">
+                                    <input type="text" name="aciklama" id="kalem-aciklama" placeholder="Açıklama">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element">
+                                    <input type="number" value="1" name="miktari" class="kalem-miktar">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element">
+                                    <input type="number" name="bfiyatInput" class="bfiyatInput" step="0.01" value="0" onfocus="if(this.value=='0'){this.value='';}" onblur="if(this.value==''){this.value='0';}">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element">
+                                    <input type="number" value="0" name="indirim" class="kalem-indirim">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element">
+                                    <input type="number" name="kalem-toplam" class="kalem-toplam" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-element iqd-input">
+                                    <input type="number" name="kalem-toplam-iqd" class="kalem-toplam-iqd" readonly>
+                                </div>
+                                <a onclick="$(this).closest('tr').remove(); faturaFiyatHesapla();" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> Sil</a>
+                            </td>
+                        </tr>`;
+        kalemContainer.append(yeniKalem);
+        kalemContainer.find("input[type='number']").off("change").on("change", faturaFiyatHesapla);
+        enableAutocompleteForNewItems();
+    });
+
+    kalemContainer.on("change", "input", faturaFiyatHesapla);
+
     enableAutocompleteForNewItems();
 });
 
-                </script>
- <script>
-                    let indirim_input = $("input[name='kalem-indirim']");
-                    let miktar_input = $("input[name='kalem-miktar']");
-                    let birim_fiyati_input = $("input[name='kalem-birim-fiyati']");
-                    let toplam_input = $("input[name='kalem-toplam']");
-                    let toplam_iqd_input = $("input[name='kalem-toplam-iqd']");
-
-                    $(".fatura-kalemleri tbody tr input[type='number']").on("change", faturaFiyatHesapla)
-                    $("input[name='doviz-kuru']").on("change", faturaFiyatHesapla)
-
-                    function faturaFiyatHesapla() {
-                        let doviz_kuru = parseFloat($("input[name='doviz-kuru']").val()) > 0 ? parseFloat($("input[name='doviz-kuru']").val()) : 0;
-
-                        let ara_toplam = 0;
-                        let toplam_indirim = 0;
-                        let toplam_iqd = 0;
-                        let toplam_fiyat = 0;
-
-                        for (let i = 0; i < miktar_input.length; i++) {
-                            let miktar = parseFloat(miktar_input[i].value) > 0 ? parseFloat(miktar_input[i].value) : 1;
-                            let birim_fiyati = parseFloat(birim_fiyati_input[i].value) > 0 ? parseFloat(birim_fiyati_input[i].value) : 1;
-                            let indirim = parseFloat(indirim_input[i].value) > 0 ? parseFloat(indirim_input[i].value) : 0;
-
-                            let urun_toplam_fiyat = 0;
-
-                            if (indirim > 0) {
-                                urun_toplam_fiyat = (miktar * birim_fiyati) - ((miktar * birim_fiyati) * indirim / 100)
-                                toplam_indirim += ((miktar * birim_fiyati) * indirim / 100);
-                            } else {
-                                urun_toplam_fiyat = (miktar * birim_fiyati)
-                            }
-
-                            ara_toplam += (miktar * birim_fiyati);
-
-                            toplam_input[i].value = urun_toplam_fiyat;
-
-                            toplam_iqd_input[i].value = urun_toplam_fiyat * doviz_kuru;
-
-                            toplam_iqd += urun_toplam_fiyat * doviz_kuru;
-                            toplam_fiyat += urun_toplam_fiyat;
-
-
-                        }
-
-                        $("#info-ara-toplam").text("$" + ara_toplam);
-                        $("#info-toplam-indirim").text("$" + toplam_indirim);
-                        $("#info-toplam-iqd").text("$" + toplam_iqd);
-                        $("#head-toplam-iqd").val(toplam_iqd);
-                        $("#info-toplam").text("$" + toplam_fiyat);
-
-                    }
-                </script>
+</script>
 {% endblock sidebar %}
 {% block javascriptcodeadd %}
 <style>
