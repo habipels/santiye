@@ -237,6 +237,7 @@ class IsplaniIlerlemeDosyalari(models.Model):
 class IsplaniDosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")
     proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")
+    pin = models.CharField(max_length=400, verbose_name="pinmi", blank=True, null=True)
     dosya = models.FileField(upload_to='isplani_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 

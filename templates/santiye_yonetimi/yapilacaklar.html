@@ -550,7 +550,7 @@
                             </div>
                             <div class="form-element">
                                 <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
-                                    <canvas style="display: block; width: 50vh !important; height: 50vh !important;" id="alanpdfd"></canvas>
+                                    <canvas style="display: none; width: 50vh !important; height: 50vh !important;" id="alanpdfd"></canvas>
                                     <img src="#" style="display: none; max-width: 50vh !important;" alt="Plan Konumu" id="aland" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
                                     <div id="gizled" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
@@ -925,12 +925,21 @@
                 c.appendChild(z);  // Burada d eklenmeli, option değil!
             
                 //yapi
-                yapi_select = document.getElementById("katmanSelectd");
+                yapi_select = document.getElementById("yapiSelectd");
                 const yapi_veri = document.createElement('option');
                 yapi_veri.value = data.blok_id;
                 yapi_veri.selected = true;
                 yapi_veri.textContent = data.blok;
                 yapi_select.appendChild(yapi_veri);  // Burada d eklenmeli, option değil!
+                //yapi
+                kat = document.getElementById("odaSelectd");
+                const kat_veri = document.createElement('option');
+                kat_veri.value = data.kat;
+                kat_veri.selected = true;
+                kat_veri.textContent = data.kat;
+                kat.appendChild(kat_veri);
+                document.getElementById("aland").src = data.isaretli;
+                document.getElementById("aland").style.display = "block";
                 openModal("is-emri-duzenle");
             })
             .catch(error => console.error("Fetch hatası:", error));
