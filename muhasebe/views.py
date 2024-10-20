@@ -4377,6 +4377,7 @@ def satin_alma_talebi_sil(request,id):
 
 
 def satin_alma_talabi_onaylama(request):
+    return redirect("accounting:satin_alma_talabi")
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         profile =urun_talepleri.objects.all()
