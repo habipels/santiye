@@ -1396,7 +1396,14 @@
             if (close) {
                 closeModal();
             }
-            $("#" + modalID).css("display", "flex").hide().fadeIn()
+            if (modalID === "plan-konumu") {
+                $("#" + modalID).css({
+                    "display": "flex",
+                    "z-index": 100000
+                }).hide().fadeIn();
+            } else {
+                $("#" + modalID).css("display", "flex").hide().fadeIn();
+            }
         }
 
         function closeModal(modalID = "") {
