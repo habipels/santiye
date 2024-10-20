@@ -4488,14 +4488,14 @@ def satin_alma_(request):
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
                 if a.izinler.satin_alma_talebi_onaylama_gorme:
-                    profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db,talep_durumu = "2" ,satin_alinma_durumu = False)
+                    profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db,talep_durumu = "2" )
                     urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2")
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
-            profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user,talep_durumu = "2",satin_alinma_durumu = False )
+            profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user,talep_durumu = "2")
             urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
     if request.GET.get("search"):
         search = request.GET.get("search")
