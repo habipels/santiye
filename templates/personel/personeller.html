@@ -30,7 +30,7 @@
             {% for i in personeller %}
             
             
-            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+            <div class="employeep" onclick="openPersonelDetails('{{i.id}}')">
                 <div class="employeep-image">
                 <img src="{% if i.profile %}{{i.profile.url}}{% else %}https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png{% endif %}" alt="{% trans 'employee' %}">
                     
@@ -56,20 +56,21 @@
 
         </div>
     </main>
-<div class="modal" id="personel-detay-karti">
+<div class="modal" id="openPersonelDetails">
         <div class="modal-inner" style="width: 724px;">
             <div class="modal-header">
-                Personel Detay Kartı
+                {% trans 'Personel Detay Kartı' %}
+                
             </div>
             <div class="modal-body">
                 <div class="employee-details-modal-header">
                     <div class="employee-details-modal-header-info">
-                        <img src="./content/images/avatar-2.png">
-                        <span>Jane Cooper</span>
+                        <img id="personelPhoto" >
+                        <span id="personelName">Jane Cooper</span>
                     </div>
                     <div class="employee-details-modal-header-tags">
-                        <div class="employeep-tag">Yönetim</div>
-                        <div class="employeep-tag-job">Mühendis</div>
+                        <div id="personelDepartment" class="employeep-tag">Yönetim</div>
+                        <div id="personelPosition" class="employeep-tag-job">Mühendis</div>
                         <div class="employeep-tag-salary">15.500 ₺</div>
                     </div>
                 </div>
@@ -81,20 +82,17 @@
                 </div>
 
                 <div class="employee-details-tabs">
-                    <div class="employee-details-tab" id="personel-bilgileri">
+                    <div class="employee-details-tab active" id="personel-bilgileri">
                         <div class="employee-modal-infos">
-                            <div class="employee-modal-info"><span>Pasaport No: </span> 123456789</div>
-                            <div class="employee-modal-info"><span>Uyruk: </span> Türkiye</div>
-                            <div class="employee-modal-info"><span>Doğum Tarihi: </span> 01/01/2000</div>
-                            <div class="employee-modal-info"><span>Telefon Numarası: </span> 0555 555 5555</div>
-                            <div class="employee-modal-info"><span>Ücret Tipi: </span> -</div>
-                            <div class="employee-modal-info"><span>Para Birimi: </span> TL</div>
-                            <div class="employee-modal-info"><span>Günlük Ücret: </span> 1.500 ₺</div>
-                            <div class="employee-modal-info"><span>Saatlik Ücret: </span> 300 ₺</div>
-                            <div class="employee-modal-info"><span>Not: </span> Lorem ipsum dolor sit amet consectetur
-                                adipisicing elit. Sed voluptatibus reiciendis eaque dolor officiis, commodi voluptates
-                                accusamus, sit libero aliquam minus! Neque alias quod illum ex porro, optio dolore
-                                repellat.</div>
+                            <div class="employee-modal-info"><span>{% trans 'Pasaport No : ' %}</span>  <span id="detailpasaportno"> 123456789</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Uyruk:' %} </span> <span id="detailuygugu"> Türkiye</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Doğum Tarihi:' %}</span>  <span id="detaildogumtarihi"> 01/01/2000</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Telefon Numarası:' %}</span>  <span id="detailtelefon"> 0555 555 5555</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Ücret Tipi:' %}</span>  <span id="detailucrettipi"> -</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Para Birimi:' %}</span>  <span id="detailparabirimi" > TL</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Günlük Ücret:' %}</span>  <span id="detailucret"> 1.500 ₺</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Saatlik Ücret:' %}</span>  <span id="detailsaatlikucret"> 300 ₺</span> </div>
+                            
                         </div>
                         <div class="employee-modal-documents">
                             <div class="employee-modal-document">
@@ -107,29 +105,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="employee-details-tab active" id="ucret-yonetimi">
+                    <div class="employee-details-tab" id="ucret-yonetimi">
                         <div class="form-actions">
                             <button class="form-action-highlight" type="button"
                                 onclick="openModal('maas-olustur', false)">Maaş
                                 Oluştur</button>
                             <button class="form-action-primary" type="button"
-                                onclick="openModal('maas-ode', false)">Maaş
+                                onclick="openModal('maasOdeModal', false)">Maaş
                                 Öde</button>
                             <button class="form-action-primary" type="button"
-                                onclick="openModal('avans-ode', false)">Avans
+                                onclick="openModal('avansOdeModal', false)">Avans
                                 Öde</button>
                         </div>
-                        <table id="employee-details-modal-table">
+                        <table class="salary-table" id="employee-details-modal-table">
                             <thead>
                                 <tr>
-                                    <th>Ay</th>
-                                    <th>Hakediş</th>
-                                    <th>Ödenen</th>
-                                    <th>Kalan</th>
-                                    <th>Bordro</th>
+                                    
+                                    <th>{% trans 'Ay' %}</th>
+                                    <th>{% trans 'Hakediş' %}</th>
+                                    <th>{% trans 'Ödenen' %}</th>
+                                    <th>{% trans 'Kalan' %}</th>
+                                    <th>{% trans 'Bordro' %}</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="salaryTableBody">
                                 <tr>
                                     <td>Eylül</td>
                                     <td>5000</td>
@@ -157,7 +156,7 @@
 
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button"
-                        onclick="closeModal('personel-detay-karti')">Vazgeç</button>
+                        onclick="closeModal('openPersonelDetails')">Vazgeç</button>
                     <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">İşten
                         Ayrıl</button>
                     <button class="form-action-primary" type="button"
@@ -248,16 +247,18 @@
         </div>
 </div>
 
-<div class="modal" id="maas-ode">
+<div class="modal" id="maasOdeModal">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
                 Maaş Öde
             </div>
             <div class="modal-body">
-                <form>
+                <form enctype="multipart/form-data" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
+                    {% csrf_token %} 
+                    <div id="odemeturuu" ></div>
                     <div class="form-element">
                         <label for="maas-ayi">Maaş Ayı</label>
-                        <select name="maas-ayi" id="maas-ayi">
+                        <select required id="maasAy" name="maas_ayi">
                             <option value="" selected disabled></option>
                             <option value="Ay">Ay</option>
                             <option value="Ay">Ay</option>
@@ -266,19 +267,19 @@
                     </div>
                     <div class="form-element">
                         <label for="kalan-bakiye">Kalan Bakiye</label>
-                        <input type="number" name="kalan-bakiye" id="kalan-bakiye">
+                        <input required type="number"  name="tutar" id="maasBakiye"  value="0">
                     </div>
                     <div class="form-element">
                         <label for="kur">Kur</label>
-                        <input type="number" name="kur" id="kur">
+                        <input required type="number" name="kur"  class="form-control" placeholder="Kur">
                     </div>
                     <div class="form-element">
                         <label for="odeme-tarihi">Ödeme Tarihi</label>
-                        <input type="date" name="odeme-tarihi" id="odeme-tarihi">
+                        <input required type="date" name="odeme_tarihi">
                     </div>
                     <div class="form-element">
                         <label for="aciklama">Açıklama</label>
-                        <textarea name="aciklama" id="aciklama"></textarea>
+                        <textarea id="avansAciklama" name="aciklama"></textarea>
                     </div>
                     <div class="form-element">
                         <label for="ekler">Dosya Yükle</label>
@@ -290,7 +291,7 @@
                                 <button><i class="icon icon-file"></i> Dosya Seç</button>
                             </label>
 
-                            <input type="file" name="ekler" id="ekler">
+                            <input type="file" name="file" id="avansDosya">
                         </div>
 
                         <ul class="fileList">
@@ -298,7 +299,7 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
-                            onclick="closeModal('maas-ode')">Vazgeç</button>
+                            onclick="closeModal('maasOdeModal')">Vazgeç</button>
                         <button class="form-action-primary" type="submit">Maaş Öde</button>
                     </div>
                 </form>
@@ -306,16 +307,21 @@
         </div>
 </div>
 
-<div class="modal" id="avans-ode">
+<div class="modal" id="avansOdeModal">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Avans Öde
+                {% trans 'Avans Öde' %}
+                
             </div>
             <div class="modal-body">
-                <form>
+                
+                <form id="avansOdeForm" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
+                    {% csrf_token %} 
+                    <input type="text" hidden value="1" name="odeme_turu">
+                    <div id="odemeturu" ></div>
                     <div class="form-element">
-                        <label for="ay-secimi">Ay Seçimi</label>
-                        <select name="ay-secimi" id="ay-secimi">
+                        <label for="ay-secimi">{% trans 'Ay Seçimi' %}</label>
+                        <select required name="maas_ayi" id="avansAy">
                             <option value="" selected disabled></option>
                             <option value="Ay">Ay</option>
                             <option value="Ay">Ay</option>
@@ -323,20 +329,21 @@
                         </select>
                     </div>
                     <div class="form-element">
+                        <label for="avansTutar">Ödeme Tarihi</label>
+                        <input required type="date" name="odeme_tarihi"  >
+                    </div>
+                    <div class="form-element">
                         <label for="tutar">Tutar</label>
-                        <input type="number" name="tutar" id="tutar">
+                        <input required type="number" name="tutar" id="avansTutar">
                     </div>
                     <div class="form-element">
                         <label for="kur">Kur</label>
-                        <input type="number" name="kur" id="kur">
+                        <input required type="number" name="kur" >
                     </div>
-                    <div class="form-element">
-                        <label for="odeme-tarihi">Ödeme Tarihi</label>
-                        <input type="date" name="odeme-tarihi" id="odeme-tarihi">
-                    </div>
+                    
                     <div class="form-element">
                         <label for="aciklama">Açıklama</label>
-                        <textarea name="aciklama" id="aciklama"></textarea>
+                        <textarea id="avansAciklama" name="aciklama"></textarea>
                     </div>
                     <div class="form-element">
                         <label for="ekler">Dosya Yükle</label>
@@ -348,7 +355,7 @@
                                 <button><i class="icon icon-file"></i> Dosya Seç</button>
                             </label>
 
-                            <input type="file" name="ekler" id="ekler">
+                            <input  type="file" name="file" id="avansDosya">
                         </div>
 
                         <ul class="fileList">
@@ -356,8 +363,8 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
-                            onclick="closeModal('avans-ode')">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Avans Öde</button>
+                            onclick="closeModal('avansOdeModal')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Avans Öde' %}</button>
                     </div>
                 </form>
             </div>
@@ -673,5 +680,190 @@
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
+
+<script>
+
+function safeFloat(value) {
+    return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+}
+
+// JSON verilerindeki ayları dropdown'a ekleme
+function populateMonths(calismalar) {
+    var monthSelect = document.getElementById('maasAy');
+    
+    // Tüm mevcut seçenekleri temizleyelim
+    monthSelect.innerHTML = '';
+
+    // JSON verilerinden gelen ayları options olarak ekleyelim
+    calismalar.forEach(function(calis) {
+        var option = document.createElement('option');
+        option.value = calis.tarih;  // Örneğin "Ocak 2024"
+        option.text = calis.tarih;   // Görünür metin de aynı olacak
+        monthSelect.appendChild(option);
+    });
+}
+
+// Seçilen ayın maksimum tutarını bakiye inputuna ekleme
+function updateMaxBakiye(calismalar) {
+    var monthSelect = document.getElementById('maasAy');
+    var bakiyeInput = document.getElementById('maasBakiye');
+
+    // Seçili ayı değiştirince işlem yapılacak
+    monthSelect.addEventListener('change', function() {
+        var selectedMonth = monthSelect.value;
+        var selectedCalisma = calismalar.find(calis => calis.tarih === selectedMonth);
+
+        if (selectedCalisma) {
+            bakiyeInput.max = selectedCalisma.kalan; // max değeri olarak kalan tutarı belirle
+            bakiyeInput.value = selectedCalisma.kalan; // Varsayılan olarak input'a kalan tutarı yaz
+        }
+    });
+}
+// JSON verilerindeki ayları avans dropdown'a ekleme
+function populateAvansMonths(calismalar) {
+    var avansMonthSelect = document.getElementById('avansAy');
+    
+    // Tüm mevcut seçenekleri temizleyelim
+    avansMonthSelect.innerHTML = '';
+
+    // JSON verilerinden gelen ayları options olarak ekleyelim
+    calismalar.forEach(function(calis) {
+        var option = document.createElement('option');
+        option.value = calis.tarih;  // Örneğin "Ocak 2024"
+        option.text = calis.tarih;   // Görünür metin de aynı olacak
+        avansMonthSelect.appendChild(option);
+    });
+}
+
+// Seçilen ayın maksimum avans tutarını ayarlama
+function updateMaxAvansTutar(calismalar) {
+    var avansMonthSelect = document.getElementById('avansAy');
+    var avansTutarInput = document.getElementById('avansTutar');
+
+    // Seçili ayı değiştirince işlem yapılacak
+    avansMonthSelect.addEventListener('change', function() {
+        var selectedMonth = avansMonthSelect.value;
+        var selectedCalisma = calismalar.find(calis => calis.tarih === selectedMonth);
+
+        if (selectedCalisma) {
+            avansTutarInput.max = selectedCalisma.kalan;  // Maksimum avans tutarı ayarlanır
+            avansTutarInput.placeholder = selectedCalisma.kalan;  // Placeholder'ı günceller
+        }
+    });
+}
+// Personel Detaylarını Gösterme Fonksiyonu
+// Avans öde formu
+document.getElementById('avansOdeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const ay = document.getElementById('avansAy').value;
+    const tutar = document.getElementById('avansTutar').value;
+    const aciklama = document.getElementById('avansAciklama').value;
+
+    if (ay && tutar) {
+        alert(`Avans ödendi! Ay: ${ay}, Tutar: ${tutar}`);
+        closeModal('avansOdeModal');
+        document.getElementById('avansOdeForm').reset();
+    } else {
+        alert("Lütfen tüm bilgileri doldurun.");
+    }
+});
+
+// Maaş öde formu
+document.getElementById('maasOdeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const maasAy = document.getElementById('maasAy').value;
+    const maasBakiye = document.getElementById('maasBakiye').value;
+    const aciklama = document.getElementById('maasAciklama').value;
+
+    if (maasAy && maasBakiye) {
+        alert(`Maaş ödendi! Ay: ${maasAy}, Kalan Bakiye: ${maasBakiye}`);
+        closeModal('maasOdeModal');
+        document.getElementById('maasOdeForm').reset();
+    } else {
+        alert("Lütfen tüm bilgileri doldurun.");
+    }
+});
+function openPersonelDetails(id) {
+    fetch(`/users/detailemployee/${id}/`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                document.getElementById('personelName').innerText = data.isim;
+                document.getElementById('personelDepartment').innerText = data.calisan_kategori;
+                document.getElementById('personelPosition').innerText = data.calisan_pozisyonu;
+                document.getElementById('personelPhoto').src = data.profile;
+                document.getElementById('detailpasaportno').innerText  = data.pasaport_numarasi;
+                document.getElementById('detailuygugu').innerText  = data.uyrugu;
+                document.getElementById('detaildogumtarihi').innerText  = data.dogum_tarihi;
+                if (data.durum == "1") {
+                    document.getElementById('detailucrettipi').innerText  = "Maaşlı";
+                }
+                else{
+                    document.getElementById('detailucrettipi').innerText  = "Yevmiye";
+                }
+                if (data.para_birimi == "1") {
+                    document.getElementById('detailparabirimi').innerText  = "Dolar";
+                    document.getElementById('detailucret').innerText  = data.maas+" Dolar";
+                    document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" Dolar";
+                } else {
+                    document.getElementById('detailparabirimi').innerText  = "IQD";
+                    document.getElementById('detailucret').innerText  = data.maas+" IQD";
+                    document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" IQD";
+                }
+                                // Belirli bir elementin innerHTML özelliğini güncelleme
+                //document.getElementById('puantajGirisi').innerHTML = `<a href="/users/tally/?monthFilter=&jobTypeFilter=&personelID=${id}">Puantaj Girişi</a>`;
+                document.getElementById('odemeturu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;
+                document.getElementById('odemeturuu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;
+                // Tabloya verileri yerleştirme
+            const salaryTableBody = document.getElementById('salaryTableBody');
+            salaryTableBody.innerHTML = ''; // Önce mevcut satırları temizliyoruz
+
+            data.calismalar.forEach(item => {
+                const row = document.createElement('tr');
+
+                const monthCell = document.createElement('td');
+                monthCell.textContent = item.tarih;
+
+                const hakedisCell = document.createElement('td');
+                hakedisCell.textContent =  safeFloat(item.hakedis_tutari)  + " ";
+
+                const odenenCell = document.createElement('td');
+                odenenCell.textContent = item.odenen ? safeFloat(item.odenen)  + " " : " 0 "; // Eğer ödeme yoksa " - " göster
+
+                const kalanCell = document.createElement('td');
+                kalanCell.textContent = item.kalan ? safeFloat(item.kalan)   + " " : " 0 "; // Eğer kalan yoksa " - " göster
+
+                const bordroCell = document.createElement('td');
+                const bordroLink = document.createElement('a');
+                bordroLink.href = item.bodro; // Bordro PDF linki
+                const pdfIcon = document.createElement('i');
+                pdfIcon.className = 'fas fa-file-pdf';
+                bordroLink.appendChild(pdfIcon);
+                bordroCell.appendChild(bordroLink);
+
+                // Satırı tabloya ekle
+                row.appendChild(monthCell);
+                row.appendChild(hakedisCell);
+                row.appendChild(odenenCell);
+                row.appendChild(kalanCell);
+                row.appendChild(bordroCell);
+
+                salaryTableBody.appendChild(row);
+            });
+            
+            populateAvansMonths(data.calismalar);  // Ayları dropdown'a ekle
+            updateMaxAvansTutar(data.calismalar);  // Avans tutarını ayarla
+            populateMonths(data.calismalar);
+            updateMaxBakiye(data.calismalar);
+            })
+    
+
+
+    openModal('openPersonelDetails');
+}
+
+</script>
 
 {% endblock sidebar %}

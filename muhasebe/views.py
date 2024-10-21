@@ -50,15 +50,19 @@ def get_fatura_gelir(request, fatura_id):
         try:
            sonuc =  float(fatura.doviz) * float(fatura.toplam_tutar)
         except:
-            sonuc = ""
+            sonuc = round(float(toplam_fiyat),2)
         toplam_genel = 0
         for j in kalemler:
             toplam_fiyat = toplam_fiyat + j.urun_fiyati
             toplam_genel = toplam_genel + (j.urun_adeti*j.urun_fiyati)
+        if fatura.doviz:
+            fatura_doviz = fatura.doviz
+        else:
+            fatura_doviz = ""
         fatura_data = {
             'cari':fatura.cari_bilgisi.cari_adi,
         'fatura_no': fatura.fatura_no,
-        'doviz': fatura.doviz,
+        'doviz': fatura_doviz,
         'genel_doviz_tutari': sonuc,
         'aciklama': fatura.aciklama,
         "kategori" : fatura.gelir_kategorisii.gelir_kategori_adi if fatura.gelir_kategorisii else "Kategori Belirtilmemiş",
