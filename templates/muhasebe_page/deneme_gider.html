@@ -619,7 +619,7 @@ $(document).ready(function () {
                             <td colspan="2"><a target="_blank" href="${makbuz.resim}"><i class="icon icon-action-file"></i></a></td>
                             ` : '<td colspan="2"></td>'}  
                                 {% if yetki.gider_faturasi_makbuz_silme_izni %}
-                                      <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">{% trans 'SİL' %}</button></td>                                              
+                                      <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick="openModal('makbuzsil${makbuz.id}')">{% trans 'SİL' %}</button></td>                                              
                                 {% else %}
                                       <td colspan="2"></td>                                                          
                                 {% endif %} 
@@ -645,7 +645,7 @@ $(document).ready(function () {
                             <td colspan="2"><a target="_blank" href="${makbuz.resim}"><i class="icon icon-action-file"></i></a></td>
                             ` : '<td colspan="2"></td>'}  
         
-                                <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#makbuzsil${makbuz.id} ">{% trans 'SİL' %}</button></td>
+                                <td colspan="2"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick="openModal('makbuzsil${makbuz.id}')">{% trans 'SİL' %}</button></td>
                                 <td>${makbuz.tutar} $</td>
                             </tr>                                                    
                             {% endif %}
@@ -702,7 +702,7 @@ $(document).ready(function () {
         </div>
     </div>
             ${data.makbuzlar.map(makbuz => `
-            <div class="modal" id="makbuzsil${makbuz.id}">
+            <div class="modal" style="z-index:7000;" id="makbuzsil${makbuz.id}">
             <div class="modal-dialog">
                 <div class="modal-content">
 
