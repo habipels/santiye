@@ -4,6 +4,7 @@ from site_info.models import *
 from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from site_settings.models import *
 import locale
+import os
 """
 # İşletim sistemi kontrolü ile locale ayarı
 def set_locale():
@@ -43,7 +44,11 @@ def fiyat_duzelt_html(deger):
 """
 
 def fiyat_duzelt(deger,i = 0):
-    locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+    if os.name == 'nt':  # Windows
+        locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+    else:  # MacOS ve Linux
+        
+        locale.setlocale(locale.LC_ALL, 'Turkish_Turkey.1254')
     if deger < 0:
         deger = deger * (-1)
         y =  locale.format_string("%.2f", deger, grouping=True)
@@ -59,7 +64,11 @@ def fiyat_duzelt_html(deger):
     deger = deger.replace('.', '')
     deger = deger.replace(',', '.')
     deger = float(deger)
-    locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+    if os.name == 'nt':  # Windows
+        locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+    else:  # MacOS ve Linux
+        
+        locale.setlocale(locale.LC_ALL, 'Turkish_Turkey.1254')
     return locale.format_string("%.2f", deger, grouping=True)
 @register.simple_tag
 def bina_3d(veri):
