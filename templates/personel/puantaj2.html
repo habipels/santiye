@@ -358,7 +358,7 @@ body {
        value="{% if request.GET.monthFilter %}{{ request.GET.monthFilter }}{% endif %}">
 
                 <select id="jobTypeFilter" name="jobTypeFilter" class="filter-input">
-    <option value="">Kategori Seçin</option>
+    <option value="">{% trans 'Kategori Seçin' %}</option>
     {% for i in departmanlar %}
         <option value="{{ i.id }}" {% if request.GET.jobTypeFilter == i.id|stringformat:"s" %}selected{% endif %}>
             {{ i.kategori_isimi }}
@@ -369,48 +369,48 @@ body {
 </select>
 
             </form>
-                <button id="applyFilters" class="btn apply-btn"><i class="fas fa-filter"></i> Filtreleri Uygula</button>
+                <button id="applyFilters" class="btn apply-btn"><i class="fas fa-filter"></i>{% trans 'Filtreleri Uygula' %} </button>
                <div class="total-box">
-                    <p>Toplam Hakediş:</p>
+                    <p>{% trans 'Toplam Hakediş' %}:</p>
                     <h3 id="totalSalaryDisplay">0 $</h3>
                 </div>
             </div>
         </div>
      <!-- Preloader -->
-    <div id="preloader" class="preloader">Yükleniyor...</div>
+    <div id="preloader" class="preloader">{% trans 'Yükleniyor...' %}</div>
 
     <div class="container-fluid">
         <div class="month-header">
-            <h2 id="selectedMonth">Eylül 2024 Puantajı</h2>
+            
         </div>
 
         <div class="bulk-entry custom-card">
-            <label>Toplu Giriş: </label>
-            <input type="date" id="bulkStartDate" class="filter-input" placeholder="Başlangıç Tarihi">
-            <input type="date" id="bulkEndDate" class="filter-input" placeholder="Bitiş Tarihi">
-            <input type="number" id="bulkHours" class="filter-input" placeholder="Normal Saat">
-            <input type="number" id="bulkOvertime" class="filter-input" placeholder="Mesai Saati">
-            <button id="applyBulk" class="btn bulk-btn"><i class="fas fa-edit"></i> Uygula</button>
+            <label>{% trans 'Toplu Giriş' %}: </label>
+            <input type="date" id="bulkStartDate" class="filter-input" placeholder="{% trans 'Başlangıç Tarihi' %}">
+            <input type="date" id="bulkEndDate" class="filter-input" placeholder="{% trans 'Bitiş Tarihi' %}">
+            <input type="number" id="bulkHours" class="filter-input" placeholder="{% trans 'Normal Saat' %}">
+            <input type="number" id="bulkOvertime" class="filter-input" placeholder="{% trans 'Mesai Saati' %}">
+            <button id="applyBulk" class="btn bulk-btn"><i class="fas fa-edit"></i> {% trans 'Uygula' %}</button>
         </div>
 
         <div class="table-container custom-card">
               <div id="noDataMessage" class="no-data-message" style="display: none;">
-        <p>Veri bulunamadı, görüntülemek için ay seçimi yapın.</p>
+        <p>{% trans 'Veri bulunamadı, görüntülemek için ay seçimi yapın.' %}</p>
     </div>
             <table class="attendance-table puantaj-table" id="hafta-1-table">
                 <thead>
                     <tr>
-                        <th>Ad Soyad</th>
-                        <th>Görevi</th>
+                        <th>{% trans 'Ad Soyad' %}</th>
+                        <th>{% trans 'Görevi' %}</th>
                         <!-- Günler için başlıklar -->
                         {% for day in gun %}
                         
                         
                         <th>{{day}}</th>
                         {% endfor %}
-                        <th>Toplam Çalışma</th>
-                        <th>Toplam Mesai</th>
-                        <th>Hakediş</th>
+                        <th>{% trans 'Toplam Çalışma' %}</th>
+                        <th>{% trans 'Toplam Mesai' %}</th>
+                        <th>{% trans 'Hakediş' %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -445,16 +445,16 @@ body {
     <div id="successModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <p><i class="fas fa-check-circle"></i> Puantaj başarıyla kaydedildi!</p>
+            <p><i class="fas fa-check-circle"></i>{% trans 'Puantaj başarıyla kaydediliyor Lütfen Bekleyiniz' %} </p>
         </div>
     </div>
 
     <!-- Uyarı Mesajı Modalı -->
     <div id="warningModal" class="modal">
         <div class="modal-content">
-            <p id="warningMessage">Şu şu tarih aralığında şukadar kişi için veri girişi yapıyorsunuz. Emin misiniz?</p>
-            <button id="confirmBulkEntry" class="btn bulk-btn">Evet</button>
-            <button id="cancelBulkEntry" class="btn bulk-btn">Hayır</button>
+            <p id="warningMessage">{% trans 'Şu şu tarih aralığında şukadar kişi için veri girişi yapıyorsunuz. Emin misiniz?' %}</p>
+            <button id="confirmBulkEntry" class="btn bulk-btn">{% trans 'Evet' %}</button>
+            <button id="cancelBulkEntry" class="btn bulk-btn">{% trans 'Hayır' %}</button>
         </div>
     </div>
 
