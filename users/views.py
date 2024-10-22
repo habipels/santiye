@@ -416,8 +416,8 @@ def personeller_ekle(request):
         hourlyWage = request.POST.get("hourlyWage")
         currency = request.POST.get("currency")
         belgeler = request.POST.getlist("belgeler")
-        documents = request.FILES.getlist("documents")
-        for i in range(50):
+        documents = request.FILES.getlist("ekler")
+        for i in range(1):
             print(belgeler,documents)
             if profilePicture:
                 pass
@@ -436,6 +436,8 @@ def personeller_ekle(request):
             isim = firstName+str(i),soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
             calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
+            for i in documents:
+                calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
     return redirect("user:personeller_sayfasi")
 def personeller_sil(request):
     pass

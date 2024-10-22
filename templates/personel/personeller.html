@@ -94,28 +94,15 @@
                             <div class="employee-modal-info"><span>{% trans 'Saatlik Ücret:' %}</span>  <span id="detailsaatlikucret"> 300 </span> </div>
                             
                         </div>
-                        <div class="employee-modal-documents">
-                            <div class="employee-modal-document">
-                                <span>Oturum Belgesi</span>
-                                <img src="./content/images/oturum-belgesi.png">
-                            </div>
-                            <div class="employee-modal-document">
-                                <span>Pasaport</span>
-                                <img src="./content/images/oturum-belgesi.png">
-                            </div>
-                        </div>
+                        
                     </div>
                     <div class="employee-details-tab" id="ucret-yonetimi">
                         <div class="form-actions">
-                            <button class="form-action-highlight" type="button"
-                                onclick="openModal('maas-olustur', false)">Maaş
-                                Oluştur</button>
+                            
                             <button class="form-action-primary" type="button"
-                                onclick="openModal('maasOdeModal', false)">Maaş
-                                Öde</button>
+                                onclick="openModal('maasOdeModal', false)">{% trans 'Maaş Öde' %} </button>
                             <button class="form-action-primary" type="button"
-                                onclick="openModal('avansOdeModal', false)">Avans
-                                Öde</button>
+                                onclick="openModal('avansOdeModal', false)">{% trans 'Avans Öde' %} </button>
                         </div>
                         <table class="salary-table" id="employee-details-modal-table">
                             <thead>
@@ -151,16 +138,18 @@
                             });
                         </script>
                     </div>
-                    <div class="employee-details-tab" id="puantaj-yonetimi">...</div>
+                    <div class="employee-details-tab" id="puantaj-yonetimi">
+                    <div id="puantajGirisi" ></div>
+                    </div>
                 </div>
 
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button"
-                        onclick="closeModal('openPersonelDetails')">Vazgeç</button>
-                    <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">İşten
-                        Ayrıl</button>
+                        onclick="closeModal('openPersonelDetails')">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">
+                    {% trans 'İşten Ayrıl' %}</button>
                     <button class="form-action-primary" type="button"
-                        onclick="openModal('personel-duzenle', false)">Düzenle</button>
+                        onclick="openModal('personel-duzenle', false)">{%  trans 'Düzenle' %} </button>
                 </div>
             </div>
         </div>
@@ -813,7 +802,7 @@ function openPersonelDetails(id) {
                     document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" IQD";
                 }
                                 // Belirli bir elementin innerHTML özelliğini güncelleme
-                //document.getElementById('puantajGirisi').innerHTML = `<a href="/users/tally/?monthFilter=&jobTypeFilter=&personelID=${id}">Puantaj Girişi</a>`;
+                document.getElementById('puantajGirisi').innerHTML = `<a href="/users/tally/?monthFilter=&jobTypeFilter=&personelID=${id}">Puantaj Girişi</a>`;
                 document.getElementById('odemeturu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;
                 document.getElementById('odemeturuu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;
                 // Tabloya verileri yerleştirme
