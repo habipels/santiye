@@ -842,10 +842,12 @@ function openPersonelDetails(id) {
 
                 const bordroCell = document.createElement('td');
                 const bordroLink = document.createElement('a');
-                bordroLink.href = item.bodro; // Bordro PDF linki
-                const pdfIcon = document.createElement('i');
-                pdfIcon.className = 'fas fa-file-pdf';
-                bordroLink.appendChild(pdfIcon);
+                link = "/{{dil}}/users/payroll/"+item.tarih+"/"+data.id+"/"
+                // Gerçek bağlantıyı buraya ekle
+                bordroLink.href = link;  // '#' yerine gerçek bordro linkini ekleyebilirsin
+                bordroLink.textContent = "{% trans 'Bodro' %}";  // Text içeriği sadece 'Bodro' olmalı
+
+                // Linki hücreye ekle
                 bordroCell.appendChild(bordroLink);
 
                 // Satırı tabloya ekle

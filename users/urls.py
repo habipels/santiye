@@ -26,6 +26,7 @@ urlpatterns = [
     path('setaddemployee/',views.personelleri_düzenle,name = "personelleri_düzenle"),
     path('detailemployee/<int:id>/',views.personel_bilgisi_axaj,name = "personel_bilgisi_axaj"),
     path('buyemployee/',views.personeller_odenmeye_maaslar,name = "personeller_odenmeye_maaslar"),
+    path('payroll/<str:tarih>/<int:id>/',views.bodro,name = "bodro"),
     #
     path('givesalaryoradvance/',views.calisan_odemeleri_kaydet,name = "calisan_odemeleri_kaydet"),
     # POzisyon Sayfası

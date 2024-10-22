@@ -101,7 +101,33 @@ def personel_maas_bilgisi(id):
         ]
         
         return maas_bilgisi
+@register.simple_tag
+def bodro_cek(id,tarih):
 
+    if True:
+        yil, ay = map(int, tarih.split('-'))
+        calismalar = calisanlar_calismalari.objects.filter(
+            calisan=get_object_or_none(calisanlar, id=id),
+            tarihi__year=yil,  # Yıl filtresi
+        tarihi__month=ay   # Ay filtresi
+        ).annotate(
+            year=ExtractYear('tarihi'),
+            month=ExtractMonth('tarihi')
+        ).values(
+            'year', 'month', 'maas__id'  # Maas ID ile gruplanıyor
+        ).annotate(
+            total_normal_calisma_saati=Sum('normal_calisma_saati'),
+            total_mesai_calisma_saati=Sum('mesai_calisma_saati')
+        ).order_by('year', 'month')
+        odemeler = calisanlar_calismalari_odemeleri.objects.filter(
+        calisan=get_object_or_none(calisanlar, id=id),
+        tarihi__year=yil,  # Yıl filtresi
+        tarihi__month=ay   # Ay filtresi
+    )
+        for calis in calismalar:
+            hakedis_tutari=fiyat_duzelt( (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + 
+                                  (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye))
+        return {"odemeler":odemeler,"odenecek_tutar":hakedis_tutari}
 @register.simple_tag
 def fiyat_duzelt_html(deger):
     deger = str(deger)
