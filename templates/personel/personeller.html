@@ -76,9 +76,9 @@
                 </div>
 
                 <div class="employee-details-tab-navs">
-                    <div class="employee-details-tab-nav active" data-tab="personel-bilgileri">Personel Bilgileri</div>
-                    <div class="employee-details-tab-nav" data-tab="ucret-yonetimi">Ücret Yönetimi</div>
-                    <div class="employee-details-tab-nav" data-tab="puantaj-yonetimi">Puantaj Yönetimi</div>
+                    <div class="employee-details-tab-nav active" data-tab="personel-bilgileri">{% trans 'Personel Bilgileri' %}</div>
+                    <div class="employee-details-tab-nav" data-tab="ucret-yonetimi">{% trans 'Ücret Yönetimi' %}</div>
+                    <div class="employee-details-tab-nav" data-tab="puantaj-yonetimi">{% trans 'Puantaj Yönetimi' %}</div>
                 </div>
 
                 <div class="employee-details-tabs">
@@ -170,13 +170,14 @@
 <div class="modal" id="isten-ayril">
         <div class="modal-inner" style="width: 724px;">
             <div class="modal-header">
-                Personel Detay Kartı
+                {% trans 'İşten Çıkan Personel'  %}
+                
             </div>
             <div class="modal-body">
                 <div class="employee-details-modal-header">
                     <div class="employee-details-modal-header-info">
-                        <img src="./content/images/avatar-2.png">
-                        <span>Jane Cooper</span>
+                        <img id ="resim" src="./content/images/avatar-2.png">
+                        <span id="adisoyadi" >Jane Cooper</span>
                     </div>
                     <div class="employee-details-modal-header-tags">
                         <div class="employeep-tag">Yönetim</div>
@@ -186,23 +187,17 @@
                 </div>
 
 
-                <form style="margin-top: 20px;">
-                    <div class="form-element">
-                        <label for="isten-ayrilma-sebebi">İşten Ayrılma Sebebi</label>
-                        <select name="isten-ayrilma-sebebi" id="isten-ayrilma-sebebi">
-                            <option value="Disiplin">Disiplin</option>
-                            <option value="Disiplin">Disiplin</option>
-                            <option value="Disiplin">Disiplin</option>
-                        </select>
-                    </div>
+                <form style="margin-top: 20px;" method="post" action="/{{dil}}{% url 'user:personeller_sil' %}"  enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="text" hidden name="idbilgisi" id="idbilgisi">
                     <div class="form-element">
                         <label for="aciklama">Açıklama</label>
                         <textarea name="aciklama" id="aciklama"></textarea>
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
-                            onclick="closeModal('isten-ayril')">Vazgeç</button>
-                        <button class="form-action-danger" type="submit">İşten Ayrıl</button>
+                            onclick="closeModal('isten-ayril')">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-danger" type="submit">{% trans 'İşten Ayrıl' %}</button>
                     </div>
                 </form>
             </div>
@@ -780,6 +775,9 @@ function openPersonelDetails(id) {
             .then(data => {
                 console.log(data)
                 document.getElementById('personelName').innerText = data.isim;
+                document.getElementById('adisoyadi').innerText = data.isim;
+                document.getElementById('idbilgisi').value = data.id;
+                document.getElementById('resim').src = data.profile;
                 document.getElementById('personelDepartment').innerText = data.calisan_kategori;
                 document.getElementById('personelPosition').innerText = data.calisan_pozisyonu;
                 document.getElementById('personelPhoto').src = data.profile;
