@@ -44,6 +44,7 @@ def fiyat_duzelt_html(deger):
 """
 
 def fiyat_duzelt(deger,i = 0):
+    
     if os.name == 'nt':  # Windows
         locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
     else:  # MacOS ve Linux
