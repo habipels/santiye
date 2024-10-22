@@ -1094,6 +1094,13 @@ def basit_cikarma(a,b):
     a = a.replace(',', '.')
     b = b.replace(',', '.')
     y = float(a)-float(b)
+    print(y)
+    return str(fiyat_duzelt(y,2))
+@register.simple_tag
+def basit_cikarma_duzenli(a,b):
+   
+    y = float(a)-float(b)
+    print(y)
     return str(fiyat_duzelt(y,2))
 @register.simple_tag
 def sorgu(a):
@@ -1334,6 +1341,9 @@ def mutlak_deger(a):
     elif float(a) > 0:
         return (fiyat_duzelt((float(a)),2))
     return 0.0
+def tsasa(a):
+   
+    return 100-a
 @register.simple_tag
 def get_object_or_none(model, *args, **kwargs):
     try:

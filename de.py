@@ -1,18 +1,36 @@
-import requests
+import os
+deneme = []
+def find_unicode_errors_in_files(directory):
+    # Desteklenmeyen karakterleri toplayacağımız liste
+    error_files = []
 
-# API URL
-url = "https://cloud.biadago.com/biadago/api/thingstodo/"  # API URL'nizi buraya yazın
+    # Verilen dizindeki tüm dosyaları gez
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    for i, line in enumerate(f, 1):
+                        try:
+                            line.encode('cp1254')
+                        except UnicodeEncodeError as e:
+                            print(f"Dosya: {file_path} - Satır: {i}")
+                            print(f"Detaylar: {e}")
+                            error_files.append(file_path)
+                            break  # Dosya içindeki ilk hatayı bulduğumuzda çıkıyoruz
+            except Exception as e:
+                print(f"Başka bir hata tespit edildi: {file_path}")
+                print(f"Detaylar: {e}")
 
-# Kullanıcıya ait JWT veya diğer kimlik doğrulama bilgileri
-headers = {
-    'Authorization': 'Token 728799007d33d1be1ab3f4d03e9dc183d5f8f8d1',  # Token'ınızı buraya girin
-}
+    if error_files:
+        
+        #print(f"\n{len(error_files)} dosyada UnicodeEncodeError hatası bulundu:")
+        for ef in error_files:
+            print(ef)
+            deneme.append(error_files)
+    else:
+        print("Hiçbir dosyada UnicodeEncodeError hatası bulunamadı.")
 
-# API'ye istek gönderin
-response = requests.get(url, headers=headers)
-print(response.json())
-# Yanıtı kontrol et
-if response.status_code == 201 or response.status_code == 200:
-    print('Yanıt:')
-else:
-    print('Durum Kodu:', response.status_code)
+# Kontrol etmek istediğiniz klasörün yolunu buraya girin
+find_unicode_errors_in_files("C:/Users/habip/Documents/GitHub/santiye/templates")
+print(deneme)
