@@ -393,11 +393,11 @@ body {
             <button id="applyBulk" class="btn bulk-btn"><i class="fas fa-edit"></i> {% trans 'Uygula' %}</button>
         </div>
 
-        <div class="table-container custom-card">
+        <div class="table-container custom-card " id="aylik">
               <div id="noDataMessage" class="no-data-message" style="display: none;">
         <p>{% trans 'Veri bulunamadı, görüntülemek için ay seçimi yapın.' %}</p>
     </div>
-            <table class="attendance-table puantaj-table" id="hafta-1-table">
+            <table class="attendance-table puantaj-table" id="aylik-table">
                 <thead>
                     <tr>
                         <th>{% trans 'Ad Soyad' %}</th>
@@ -801,7 +801,16 @@ async function loadPersonnelData() {
         preloader.innerHTML = 'Veri yüklenirken hata oluştu.';
     }
 }
-
+let aylik = new DataTable('#aylik-table', {
+                paging: false,
+                searching: true,
+                info: false,
+                layout: {
+                    topStart: {
+                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    }
+                }
+            });
 </script>
         </div>
     </main>

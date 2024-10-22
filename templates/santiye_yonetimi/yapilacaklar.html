@@ -946,30 +946,74 @@
                 d.selected = true;
                 d.textContent = data.oncelik_durumu;
                 b.appendChild(d);  // Burada d eklenmeli, option değil!
-                c = document.getElementById("katmanSelectd");
-                const z = document.createElement('option');
-                z.value = data.katman_id;
-                z.selected = true;
-                z.textContent = data.katman;
-                c.appendChild(z);  // Burada d eklenmeli, option değil!
-            
-                //yapi
-                yapi_select = document.getElementById("yapiSelectd");
-                const yapi_veri = document.createElement('option');
-                yapi_veri.value = data.blok_id;
-                yapi_veri.selected = true;
-                yapi_veri.textContent = data.blok;
-                yapi_select.appendChild(yapi_veri);  // Burada d eklenmeli, option değil!
-                //yapi
-                kat = document.getElementById("odaSelectd");
-                const kat_veri = document.createElement('option');
-                kat_veri.value = data.kat;
-                kat_veri.selected = true;
-                kat_veri.textContent = data.kat;
-                kat.appendChild(kat_veri);
-                document.getElementById("aland").src = data.isaretli;
-                document.getElementById("aland").style.display = "block";
-                openModal("is-emri-duzenle");
+                const c = document.getElementById("katmanSelectd");
+const z = document.createElement('option');
+
+if (data.katman_id) {
+    z.setAttribute('data-id', data.katman_id);  // data-id özelliğini doğru şekilde ayarlıyoruz
+} else {
+    console.warn("katman_id bulunamadı!");
+}
+
+if (data.katman_dosyasi) {
+    z.setAttribute('data-img', data.katman_dosyasi);  // data-img özelliğini doğru şekilde ayarlıyoruz
+    const fileExtension = data.katman_dosyasi.split('.').pop().toLowerCase();
+    
+    // Dosya türüne göre işlem yap
+    if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
+        loadImage(data.katman_dosyasi);
+    } else if (fileExtension === "pdf") {
+        loadPDF(data.katman_dosyasi);
+    } else {
+        console.warn("Desteklenmeyen dosya türü: " + fileExtension);
+    }
+} else {
+    console.warn("katman_dosyasi bulunamadı!");
+}
+
+if (data.katman) {
+    z.textContent = data.katman;  // Görüntülenecek metin
+    z.selected = true;  // Seçili yapmak için doğru kullanım
+    c.appendChild(z);  // Seçenek ekleniyor
+} else {
+    console.warn("katman bulunamadı!");
+}
+
+// Yapi seçimi
+const yapi_select = document.getElementById("yapiSelectd");
+if (data.blok_id && data.blok) {
+    const yapi_veri = document.createElement('option');
+    yapi_veri.value = data.blok_id;
+    yapi_veri.selected = true;
+    yapi_veri.textContent = data.blok;
+    yapi_select.appendChild(yapi_veri);  // Burada d eklenmeli, option değil!
+} else {
+    console.warn("blok_id veya blok bulunamadı!");
+}
+
+// Oda seçimi
+const kat = document.getElementById("odaSelectd");
+if (data.kat) {
+    const kat_veri = document.createElement('option');
+    kat_veri.value = data.kat;
+    kat_veri.selected = true;
+    kat_veri.textContent = data.kat;
+    kat.appendChild(kat_veri);
+} else {
+    console.warn("kat bulunamadı!");
+}
+
+// Görüntüyü ayarlama
+if (data.isaretli) {
+    document.getElementById("aland").src = data.isaretli;
+    document.getElementById("aland").style.display = "block";
+} else {
+    console.warn("isaretli bulunamadı!");
+}
+
+// Modal açma
+openModal("is-emri-duzenle");
+
             })
             .catch(error => console.error("Fetch hatası:", error));
         }   

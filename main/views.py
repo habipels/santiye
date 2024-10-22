@@ -3879,7 +3879,9 @@ def yapilacak_gonder_json(request,id):
     # katman_id varsa ekle
     if hasattr(a, 'katman') and hasattr(a.katman, 'id'):
         sonuc["katman_id"] = a.katman.id
-
+    
+        
+    
     # blok_id varsa ekle
     if hasattr(a, 'blok') and hasattr(a.blok, 'id'):
         sonuc["blok_id"] = a.blok.id
@@ -3887,6 +3889,8 @@ def yapilacak_gonder_json(request,id):
     # katman varsa ekle
     if hasattr(a, 'katman') and hasattr(a.katman, 'katman_adi'):
         sonuc["katman"] = a.katman.katman_adi
+    if hasattr(a, 'katman') and hasattr(a.katman, 'katman_dosyasi'):
+        sonuc["katman_dosyasi"] = a.katman.katman_dosyasi.url
 
     # blok varsa ekle
     if hasattr(a, 'blok') and hasattr(a.blok, 'blog_adi'):

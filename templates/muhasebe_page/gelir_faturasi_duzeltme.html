@@ -47,7 +47,7 @@
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans 'Dashboard' %}</a></li>
                     <li><a href="#">{% trans 'Satın Alma ve Stok' %}</a></li>
-                    <li><a href="#">{% trans 'Fatura Düzenle' %}</a></li>
+                    <li><a href="#">{% trans 'Fatura Düzenle' %} </a></li>
                 </ul>
             </div>
 
@@ -131,11 +131,16 @@
                             <input type="text" name="cari_aciklma" value="{{bilgi.aciklama}}"  id="aciklama">
                         </div>
                     </div>
-
+                    
                     <div class="fatura-doviz-form-row">
                         <div class="form-element iqd-input">
                             <label for="doviz-kuru">{% trans 'Döviz Kuru' %}</label>
-                            <input type="number" value="{{ bilgi.doviz|stringformat:'.2f' }}"  name="doviz_kuru" id="doviz-kuru">
+                            {% if bilgi.doviz %}
+                                <input type="number" step="1" value="{{ bilgi.doviz|floatformat:0 }}" name="doviz_kuru" id="doviz-kuru">
+                            {% else %}
+                            <input type="number" step="1" value="0" name="doviz_kuru" id="doviz-kuru">
+                            {% endif %}
+                           
                         </div>
                         <div class="form-element iqd-input">
                             <label for="head-toplam-iqd">{% trans 'Toplam IQD' %}</label>

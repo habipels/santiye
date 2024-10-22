@@ -121,7 +121,7 @@
                                     <td>5000</td>
                                     <td>3000</td>
                                     <td>2000</td>
-                                    <td><i class="icon icon-download"></i></td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -130,11 +130,7 @@
                                 paging: false,
                                 searching: false,
                                 info: false,
-                                layout: {
-                                    topStart: {
-                                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                                    }
-                                }
+                               
                             });
                         </script>
                     </div>
@@ -149,6 +145,7 @@
                     <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">
                     {% trans 'İşten Ayrıl' %}</button>
                     
+                </div>
             </div>
         </div>
 </div>
@@ -498,110 +495,153 @@
     </div>
 </div>
 
-
 <div class="modal" id="personel-duzenle">
-        <div class="modal-inner" style="width: 724px;">
-            <div class="modal-header">
-                Personel Düzenle
-            </div>
-            <div class="modal-body">
-                <div class="employee-details-modal-header">
-                    <div class="employee-details-modal-header-info">
-                        <img src="./content/images/avatar-2.png">
-                        <span>Jane Cooper</span>
-                    </div>
-                    <div class="employee-details-modal-header-tags">
-                        <div class="employeep-tag">Yönetim</div>
-                        <div class="employeep-tag-job">Mühendis</div>
-                        <div class="employeep-tag-salary">15.500 </div>
-                    </div>
-                </div>
-
-
-                <form style="margin-top: 20px;">
-
-                    <div class="form-row">
-                        <div class="form-element">
-                            <label for="pasaport-no">Pasaport No</label>
-                            <input type="text" name="pasaport-no" id="pasaport-no">
-                        </div>
-                        <div class="form-element">
-                            <label for="uyruk">Uyruk</label>
-                            <input type="text" name="uyruk" id="uyruk">
-                        </div>
-                        <div class="form-element">
-                            <label for="date">Doğum Tarihi</label>
-                            <input type="text" name="date" id="date">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-element">
-                            <label for="date">İşe Giriş Tarihi</label>
-                            <input type="text" name="date" id="date">
-                        </div>
-                        <div class="form-element">
-                            <label for="telefon-no">Telefon No</label>
-                            <input type="text" name="telefon-no" id="telefon-no">
-                        </div>
-                        <div class="form-element">
-                            <label for="ucret-tipi">Ücret Tipi</label>
-                            <select name="ucret-tipi" id="ucret-tipi">
-                                <option value="" selected disabled></option>
-                                <option value="Tip">Tip</option>
-                                <option value="Tip">Tip</option>
-                                <option value="Tip">Tip</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-element">
-                            <label for="para-birimi">Para Birimi</label>
-                            <select name="para-birimi" id="para-birimi">
-                                <option value="" selected disabled></option>
-                                <option value="Birim">Birim</option>
-                                <option value="Birim">Birim</option>
-                                <option value="Birim">Birim</option>
-                            </select>
-                        </div>
-                        <div class="form-element">
-                            <label for="gunluk-ucret">Günlük Ücret</label>
-                            <input type="number" name="gunluk-ucret" id="gunluk-ucret">
-                        </div>
-                        <div class="form-element">
-                            <label for="saatlik-ucret">Saatlik Ücret</label>
-                            <input type="number" name="saatlik-ucret" id="saatlik-ucret">
-                        </div>
-                    </div>
-
-
-                    <div class="form-element">
-                        <label for="not">Not</label>
-                        <input type="text" name="not" id="not">
-                    </div>
-
-                    <div class="employee-modal-documents">
-                        <div class="employee-modal-document">
-                            <span>Oturum Belgesi <i class="icon icon-trash"></i></span>
-                            <img src="./content/images/oturum-belgesi.png">
-                        </div>
-                        <div class="employee-modal-document">
-                            <span>Pasaport <i class="icon icon-trash"></i></span>
-                            <img src="./content/images/oturum-belgesi.png">
-                        </div>
-                    </div>
-                </form>
-
-
-                <div class="form-actions">
-                    <button class="form-action-secondary" type="button"
-                        onclick="closeModal('personel-duzenle')">Vazgeç</button>
-                    <button class="form-action-primary" type="submit">Değişiklikleri Kaydet</button>
-                </div>
-            </div>
+    <div class="modal-inner" style="width: 724px;">
+        <div class="modal-header">
+            {% trans "Personel Düzenleme" %}
         </div>
+        <div class="modal-body">
+
+           <form id="addPersonForm" method="post" action="/{{dil}}{% url 'user:personelleri_düzenle' %}"  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-element add-employee-image">
+                        <img src="{% static 'go/content/images/default-profile.png' %}" id="personel-olustur-img">
+                        <input type="text" hidden name="idbilgisi" id="idbilgisi">
+                        <div class="file-input">
+                            <label for="personel-profile">
+                                <button type="button"><i class="icon icon-file"></i> {% trans "Choose File" %}</button>
+                            </label>
+                            <input type="file" name="profilePicture"id="personel-profile">
+                        </div>
+                        <script>
+                            $('#personel-profile').change(function (event) {
+                                const file = event.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function (e) {
+                                        $('#personel-olustur-img').attr('src', e.target.result);
+                                    }
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        </script>
+                    </div>
+                    <div class="form-element">
+                        <label for="adsoyad">{% trans "Full Name" %}</label>
+                        <input type="text" name="firstName" id="adsoyad">
+                        <input type="text" name="lastName" id="soyad">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-element">
+                        <label for="pasaport-no">{% trans "Passport No" %}</label>
+                        <input type="text" name="passportNo" id="pasaport-no">
+                    </div>
+                    <div class="form-element">
+                        <label for="uyruk">{% trans "Nationality" %}</label>
+                        <select id="nationality" name="nationality" class="form-control" required>
+                            <option value="">Seçiniz</option>
+                            <option value="Türkiye">Türkiye</option>
+                            <option value="Irak">Irak</option>
+                            <option value="Suriye">Suriye</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="date">{% trans "Date of Birth" %}</label>
+                        <input type="date" name="dob"  id="date">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    
+                    <div class="form-element">
+                        <label for="telefon-no">{% trans "Phone Number" %}</label>
+                        <input type="text" name="phoneNumber" id="telefon-no">
+                    </div>
+                    <div class="form-element">
+                        <label for="ucret-tipi">{% trans "Payment Type" %}</label>
+                        <select name="salaryType" id="ucret-tipi">
+                            <option value="" selected disabled></option>
+                            <option value="Yevmiye">{% trans "Yevmiye" %}</option>
+                            <option value="maas">{% trans "maas" %}</option>
+                            
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="ucret-tipi">{% trans "Para Birimi" %}</label>
+                        <select name="salaryType" id="ucret-tipi">
+                            <option value="" selected disabled></option>
+                            <option value="USD">{% trans "USD" %}</option>
+                            <option value="IQD">{% trans "IQD" %}</option>
+                            
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                <div class="form-element">
+                        <label for="date">{% trans "Pozisyonu" %}</label>
+                        <select id="position" name="position" class="form-control" required>
+                            <option value="">Seçiniz</option>
+                            {% for i in pozisyonlari %}
+                            <option value="{{i.id}}">{{i.kategori_isimi}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="para-birimi">{% trans "Depertman" %}</label>
+                        <select id="department" name="department" required>
+                            <option value="">Seçiniz</option>
+                            {% for i in departmanlar %}
+                            <option value="{{i.id}}">{{i.kategori_isimi}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="gunluk-ucret">{% trans "Daily Wage" %}</label>
+                        <input type="number" name="dailyWage" id="gunluk-ucret">
+                    </div>
+                    <div class="form-element">
+                        <label for="saatlik-ucret">{% trans "Hourly Wage" %}</label>
+                        <input type="number" name="hourlyWage" id="saatlik-ucret">
+                    </div>
+                </div>
+
+                <div class="form-element">
+                    <label for="not">{% trans "Note" %}</label>
+                    <input type="text" name="not" id="not">
+                </div>
+
+                <div class="form-element">
+                    <label for="ekler">{% trans "Upload Document" %}</label>
+
+                    <div class="file-input">
+                        <label for="ekler">
+                            <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                            <button><i class="icon icon-file"></i> {% trans "Choose File" %}</button>
+                        </label>
+
+                        <input type="file" name="ekler" id="ekler">
+                    </div>
+
+                    <ul class="fileList">
+                    </ul>
+                </div>
+            
+
+            <div class="form-actions">
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
+            </div>
+        </form>
+        </div>
+    </div>
 </div>
+
+
 <script>
         function openModal(modalID, close = true) {
             if (close) {
