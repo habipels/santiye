@@ -45,11 +45,7 @@ def fiyat_duzelt_html(deger):
 
 def fiyat_duzelt(deger,i = 0):
     
-    if os.name == 'nt':  # Windows
-        locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
-    else:  # MacOS ve Linux
-        
-        locale.setlocale(locale.LC_ALL, 'Turkish_Turkey.1254')
+    locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
     if deger < 0:
         deger = deger * (-1)
         y =  locale.format_string("%.2f", deger, grouping=True)
@@ -134,11 +130,7 @@ def fiyat_duzelt_html(deger):
     deger = deger.replace('.', '')
     deger = deger.replace(',', '.')
     deger = float(deger)
-    if os.name == 'nt':  # Windows
-        locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
-    else:  # MacOS ve Linux
-        
-        locale.setlocale(locale.LC_ALL, 'Turkish_Turkey.1254')
+    locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
     return locale.format_string("%.2f", deger, grouping=True)
 @register.simple_tag
 def bina_3d(veri):
