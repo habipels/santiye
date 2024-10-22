@@ -493,10 +493,10 @@ def dosya_ekleme_yetenegi(id):
     sonuc = None
     if boyut > 5:
         k = """<button class="btn btn-danger w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target=""><i class="ri-add-line align-bottom me-1"></i> Depolama Dolu</button>"""
-        return mark_safe(k)
+        return False
     elif 5 > boyut:
         k = """<button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#dosyaekle"><i class="ri-add-line align-bottom me-1"></i> Dosya Ekle</button>"""
-        return mark_safe(k)
+        return True
 @register.simple_tag
 def mb_donusturme(id):
     try:

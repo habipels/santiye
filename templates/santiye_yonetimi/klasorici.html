@@ -4,6 +4,46 @@
 {% load static %}
 
 {% block sidebar %}
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ <style>
+        /* Dropdown Menüsü için Temel Stiller */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-menu {
+            display: none; /* Başlangıçta görünmez */
+            position: absolute;
+            right: 0; /* Menü sağa yaslı */
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-menu a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block; /* Menü görünür hale gelir */
+        }
+
+        .btn {
+            background: transparent; /* Buton arka planı şeffaf */
+            border: none; /* Kenar çizgisi yok */
+            cursor: pointer; /* İmleç işaretçisi */
+        }
+    </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
     <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
 <!--Multi Select Date Picker Calender-->
@@ -50,49 +90,41 @@
                                     <i class="ri-search-2-line search-icon"></i>
                                 </div>
                                 <div class="mt-3 mx-n4 px-4 file-menu-sidebar-scroll" data-simplebar>
-                                    <ul class="list-unstyled file-manager-menu">
+                                     <ul class="list-unstyled file-manager-menu">
                                         <li>
                                             <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true" aria-controls="collapseExample">
-                                                <i class="ri-folder-2-line align-bottom me-2"></i> <span class="file-list-link">Şantiye Klasörlerim</span>
+                                                <i class="ri-folder-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Şantiye Klasörlerim' %}</span>
                                             </a>
                                             <div class="collapse show" id="collapseExample">
                                                 <ul class="sub-menu list-unstyled">
                                                     <li>
-                                                        <a href="#!">Sözleşme Dosyaları</a>
+                                                        <a href="/{{dil}}{% url 'main:sozlesmler_depolamam' %}">{% trans 'Sözleşme Dosyaları' %}</a>
                                                     </li>
                                                     <li>
-                                                        <a href="#!">Hakediş Dosyaları</a>
+                                                        <a href="/{{dil}}{% url 'main:hakedis_depolamam' %}">{% trans 'Hakediş Dosyaları' %}</a>
                                                     </li>
-                                                    <li>
-                                                        <a href="#!">Personel Dosyaları</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#!">Proje Dosyaları</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#!">İş Planı Dosyaları</a>
-                                                    </li>
+                                                    
                                                 </ul>
                                             </div>
                                         </li>
                                         <li>
-                                            <a href="/{{dil}}{% url 'main:dokumanlar' %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">Dökümanlarım</span></a>
+                                            <a href="/{{dil}}{% url 'main:dokumanlar' %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Dökümanlarım' %}</span></a>
                                         </li>
                                         <li>
-                                            <a href="/{{dil}}{% url 'main:media_dosyalari' %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">Media Dosyalarım</span></a>
+                                            <a href="/{{dil}}{% url 'main:media_dosyalari' %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Media Dosyalarım' %}</span></a>
                                         <li>
-                                            <a href="/{{dil}}{% url 'main:zamana_dosyalari' %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">Geçmiş</span></a>
+                                            <a href="/{{dil}}{% url 'main:zamana_dosyalari' %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Geçmiş' %}</span></a>
                                         </li>
                                         </li>
                                         <li>
-                                            <a href="/{{dil}}{% url 'main:silinen_dosyalari' %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">Silinen Dosyalar</span></a>
+                                            <a href="/{{dil}}{% url 'main:silinen_dosyalari' %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Silinen Dosyalar' %}</span></a>
                                         </li>
                                     </ul>
                                 </div>
 
 
                                 <div class="mt-auto">
-                                    <h6 class="fs-11 text-muted text-uppercase mb-3">Storage Status</h6>
+                                    <h6 class="fs-11 text-muted text-uppercase mb-3">{% trans 'Depolama Durumum' %}</h6>
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
                                             <i class="ri-database-2-line fs-17"></i>
@@ -126,9 +158,28 @@
                                         <div class="col-auto">
                                             <div class="d-flex gap-2 align-items-start">
                                                
-    
-                                                <button class="btn btn-success w-sm create-folder-modal flex-shrink-0" data-bs-toggle="modal" data-bs-target="#createFolderModal"><i class="ri-add-line align-bottom me-1"></i> Klasör Oluştur</button>
-                                                {% dosya_ekleme_yetenegi request.user.id %}
+    {% dosya_ekleme_yetenegi request.user.id as bilgisi_al %}
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.dosya_yoneticisi_olusturma %}
+                                                          <button class="status-primary status-btn" onclick="openModal('yeni-kategori')"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Klasör Oluştur' %} </button>
+                                                           {% if bilgisi_al %}
+                                                           <button class="status-primary status-btn"  onclick="openModal('dosyaekle')" ><i class="ri-add-line align-bottom me-1"></i>{% trans 'Dosya Ekle' %} </button>                               
+                                                           {% else %}
+                                                           {% endif %}
+                                                           
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                         <button class="status-primary status-btn"  onclick="openModal('yeni-kategori')"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Klasör Oluştur' %}</button>
+                                                         {% if bilgisi_al %}
+                                                           <button class="status-primary status-btn"  onclick="openModal('dosyaekle')" ><i class="ri-add-line align-bottom me-1"></i>{% trans 'Dosya Ekle' %} </button>                               
+                                                           {% else %}
+                                                           {% endif %}
+                                                {% endif %}
+
+                                                
                                             </div>
                                         </div>
                                         <!--end col-->
@@ -145,21 +196,40 @@
                                                             <label class="form-check-label" for="folderlistCheckbox_1"></label>
                                                         </div>
                                                         <div class="dropdown">
-                                                            <button class="btn btn-ghost-primary btn-icon btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                <i class="ri-more-2-fill fs-16 align-bottom"></i>
-                                                            </button>
-                                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                            {% if  i.klasor_adi %}
-                                                                <li><a class="dropdown-item view-item-btn" href="/{{dil}}{% url 'main:klasore_gir' i.id i.klasor_adi %}">Klasörü Aç</a></li>
-                                                            {% else %}
-                                                            <li><a class="dropdown-item view-item-btn" href="/{{dil}}{% url 'main:klasore_gir' i.id 'untitle' %}">Klasörü Aç</a></li>
-                                                            {% endif %}
-                                                                
-                                                                <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#createFolderModal{{i.id}}" role="button">Yeniden Adlandır</a></li>
-                                                                <li><a class="dropdown-item edit-folder-list" data-bs-toggle="modal" data-bs-target="#removeFileItemModal{{i.id}}" role="button">Sil</a></li>
+            <button data-bs-toggle="dropdown" class="btn btn-ghost-primary btn-icon btn-sm dropdown-toggle" type="button" aria-expanded="false">
+               
+            </button>
+           
+    <ul class="dropdown-menu">
+      {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.dosya_yoneticisi_duzenleme %}
+                            <li>
+                                <a class="dropdown-item edit-folder-list" onclick="openModal('yeni-kategori{{i.id}}')" role="button">{% trans 'Yeniden Adlandır' %}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li>
+                            <a class="dropdown-item edit-folder-list" onclick="openModal('yeni-kategori{{i.id}}')" role="button">{% trans 'Yeniden Adlandır' %}</a>
+                        </li>
+                    {% endif %}
 
-                                                            </ul>
-                                                        </div>
+                    {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.dosya_yoneticisi_silme %}
+                            <li>
+                                <a class="dropdown-item edit-folder-list" onclick="openModal('deleteRecordModal{{i.id}}')" role="button">{% trans 'Sil' %}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li>
+                            <a class="dropdown-item edit-folder-list" onclick="openModal('deleteRecordModal{{i.id}}')" role="button">{% trans 'Sil' %}</a>
+                        </li>
+                    {% endif %}
+    </ul>
+  
+            
+        </div>
                                                     </div>
 
                                                     <div class="text-center">
@@ -267,7 +337,7 @@
                                                     <div class="d-flex justify-content-start">
                                                         
                                                         <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">{% trans 'Dosyayı Sil' %}</button>
+                                                            <button class="btn btn-sm btn-danger remove-item-btn" onclick="openModal('dosya_sil{{i.id}}')" >{% trans 'Dosyayı Sil' %}</button>
                                                         </div>
                                                        
                                                     </div>
@@ -441,17 +511,15 @@
             
             <!-- End Page-content -->
             <!-- START CREATE FOLDER MODAL -->
-        <div class="modal fade zoomIn" id="dosyaekle" tabindex="-1"  aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0">
-                    <div class="modal-header p-3 bg-success-subtle">
-                        <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Dosya Ekle' %}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:dosya_ekle' %}" method="post" enctype="multipart/form-data" >
+            <div class="modal" id="dosyaekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Dosya Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:dosya_ekle' %}" method="post" enctype="multipart/form-data" >
                             {% csrf_token %}
-                            <div class="modal-body">
+                            
                                 <div class="mb-3" id="modal-id" style="display: none;">
                                     <label for="id-field" class="form-label">{% trans 'ID' %}</label>
                                     <input type="text" id="id-field" class="form-control" placeholder="{% trans 'ID' %}" readonly />
@@ -472,154 +540,200 @@
                                 <div class="mb-3">
                                     <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
                                     <textarea name="aciklama" required class="form-control" placeholder="{% trans 'Enter Description' %}" ></textarea>
-                                    <div class="invalid-feedback">{% trans 'Please enter an Description.' %}</div>
+                                    
                                 </div>
-                                
-                                
-                           <div class="md-4">
-                    <div class="form-group">
+                        <div class="form-group">
                         <label>{% trans 'Dosya Yükle' %}</label>
                         <input required name="file" type="file" class="form-control" />
                     </div>
-                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                    <button type="submit" class="btn btn-success" id="add-btn">{% trans 'Dosya Ekle' %}</button>
-                                    <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
-                                </div>
-                            </div>
-                        </form>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Dosyayı Oluştur' %}</button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
+    </div>
+      
         <!-- END CREATE FOLDER MODAL -->
-            <!-- START CREATE FOLDER MODAL -->
-            <div class="modal fade zoomIn" id="createFolderModal" tabindex="-1" aria-labelledby="createFolderModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-0">
-                        <div class="modal-header p-3 bg-success-subtle">
-                            <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Klasör Oluştur' %}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
-                                 {% csrf_token %}
-                                <div class="mb-4">
-                                    <label for="foldername-input"  class="form-label">{% trans 'Klasör Adı' %}</label>
-                                    <input type="text" name="klasor" required class="form-control" id="foldername-input" required placeholder="{% trans 'Klasör Adı Giriniz' %}">
-                                    <div class="invalid-feedback">{% trans 'Please enter a folder name.' %}</div>
-                                    <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
-                                </div>
-                                <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i> {% trans 'İptal' %}</button>
-                                    <button type="submit" class="btn btn-primary" id="addNewFolder">{% trans 'Klasör Oluştur' %}</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- END CREATE FOLDER MODAL -->
-            {% for i in santiyeler %}
-                <!-- START CREATE FOLDER MODAL -->
-            <div class="modal fade zoomIn" id="createFolderModal{{i.id}}" tabindex="-1" aria-labelledby="createFolderModalLabel{{i.id}}" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-0">
-                        <div class="modal-header p-3 bg-success-subtle">
-                            <h5 class="modal-title" id="createFolderModalLabel">{% trans 'Klasör Düzenle' %}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" id="addFolderBtn-close" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
-                                 {% csrf_token %}
-                                <div class="mb-4">
-                                    <label for="foldername-input" class="form-label">{% trans 'Klasör Adı' %}</label>
-                                    <input type="text" value="{{i.klasor_adi}}" required name="klasor" class="form-control" id="foldername-input" required placeholder="{% trans 'Klasör Adı Giriniz' %}">
-                                    <div class="invalid-feedback">{% trans 'Please enter a folder name.' %}</div>
-                                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
-                                </div>
-                                <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-ghost-success" data-bs-dismiss="modal"><i class="ri-close-line align-bottom"></i>{% trans 'İptal' %}</button>
-                                    <button type="submit" class="btn btn-primary" id="addNewFolder">{% trans 'Klasör Düzenle' %}</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- END CREATE FOLDER MODAL -->
-            {% endfor %}
-            <!-- START CREATE FILE MODAL -->
           
-            <!-- END CREATE FILE MODAL -->
-
-            <!-- removeFileItemModal -->
             {% for i in santiyeler  %}
-            <div id="removeFileItemModal{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
-                        </div>
-                        <div class="modal-body">
-                        <form autocomplete="off"action="/{{dil}}{% url 'main:klasor_sil' %}" method="post">
+            
+        <div class="modal" id="yeni-kategori{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Klasör Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                               
+                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                    
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Klasör Adı' %}</label>
+                        <input type="text" value="{{i.klasor_adi}}" name="klasor"  required id="kategori-adi">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Klasör Düzenle' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+                <div class="modal" id="deleteRecordModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'main:klasor_sil' %}" method="post">
                             {% csrf_token %}
                                 <div class="mb-4">
                                     
                                     <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
                                 </div>
-                            <div class="mt-2 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>{% trans 'Emin Misiniz ?' %}</h4>
-                                    <p class="text-muted mx-4 mb-0">{% trans 'Klasörü Silmek İstediğinizden Emin Misiniz ?' %}</p>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
-                            </div>
-                        </form>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
+                    <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('deleteRecordModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
             {% endfor %}
+<div class="modal" id="yeni-kategori">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Klasör Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                                 <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
+               
+                    
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Klasör Adı' %}</label>
+                        <input type="text" name="klasor" required id="kategori-adi">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Klasör Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
        
             {% for i in dosyalarim  %}
-            <div id="dosya_sil{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
-                        </div>
-                        <div class="modal-body">
-                        <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_sil' %}" method="post">
+            <div class="modal" id="dosya_sil{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_sil' %}" method="post">
                             {% csrf_token %}
                                 <div class="mb-4">
                                     <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">
                                     <input type="hidden" name="klasor" class="form-control" id="folderid-input" value="{{i.id}}">
                                 </div>
-                            <div class="mt-2 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>{% trans 'Emin Misiniz ?' %}</h4>
-                                    <p class="text-muted mx-4 mb-0">{% trans 'Dosyayı Silmek İStediğinizden Emin Misiniz ? ' %}</p>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
-                            </div>
-                        </form>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
+                    <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('dosya_sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+            
             {% endfor %}
    
+  <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+  <script>
+        // Dropdown menüsünü açma/kapama işlevi
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Menü dışında bir yere tıklanırsa menüyü kapatma
+        window.onclick = function(event) {
+            if (!event.target.matches('.btn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        // Modal açma işlevi (örnek)
         
+    </script>      
 {% endblock sidebar %}

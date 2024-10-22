@@ -51,7 +51,7 @@
                                     <i class="ri-search-2-line search-icon"></i>
                                 </div>
                                 <div class="mt-3 mx-n4 px-4 file-menu-sidebar-scroll" data-simplebar>
-                                    <ul class="list-unstyled file-manager-menu">
+                                     <ul class="list-unstyled file-manager-menu">
                                         <li>
                                             <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true" aria-controls="collapseExample">
                                                 <i class="ri-folder-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Şantiye Klasörlerim' %}</span>
@@ -63,12 +63,6 @@
                                                     </li>
                                                     <li>
                                                         <a href="/{{dil}}{% url 'main:hakedis_depolamam' %}">{% trans 'Hakediş Dosyaları' %}</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#!">{% trans 'Personel Dosyaları' %}</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#!">{% trans 'Proje Dosyaları' %}</a>
                                                     </li>
                                                     
                                                 </ul>
@@ -84,7 +78,7 @@
                                         </li>
                                         </li>
                                         <li>
-                                            <a href="/{{dil}}{% url 'main:silinen_dosyalari' %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">Silinen Dosyalar</span></a>
+                                            <a href="/{{dil}}{% url 'main:silinen_dosyalari' %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Silinen Dosyalar' %}</span></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -190,14 +184,14 @@
                                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                             {% if yetki.dosya_yoneticisi_duzenleme %}
                                                                    <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#geri_getir{{i.id}}">{% trans 'Geri Getir' %}</button>
+                                                            <button class="btn btn-sm btn-success remove-item-btn" onclick="openModal('geri_getir{{i.id}}')">{% trans 'Geri Getir' %}</button>
                                                         </div>                                                 
                                                             {% else %}
                                                                                                                             
                                                             {% endif %}
                                                             {% else %}
                                                                      <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#geri_getir{{i.id}}">{% trans 'Geri Getir' %}</button>
+                                                            <button class="btn btn-sm btn-success remove-item-btn"  onclick="openModal('geri_getir{{i.id}}')">{% trans 'Geri Getir' %}</button>
                                                         </div>                                               
                                                             {% endif %}
                                                         
@@ -206,14 +200,14 @@
                                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                                             {% if yetki.dosya_yoneticisi_silme %}
                                                                        <div class="remove" style="margin-left:10px;">
-                                                                    <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">{% trans 'Dosyayı Sil' %}</button>
+                                                                    <button class="btn btn-sm btn-danger remove-item-btn" onclick="openModal('dosya_sil{{i.id}}')" >{% trans 'Dosyayı Sil' %}</button>
                                                                 </div>                                             
                                                             {% else %}
                                                                                                                             
                                                             {% endif %}
                                                             {% else %}
                                                                    <div class="remove" style="margin-left:10px;">
-                                                            <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#dosya_sil{{i.id}}">{% trans 'Dosyayı Sil' %}</button>
+                                                            <button class="btn btn-sm btn-danger remove-item-btn" onclick="openModal('dosya_sil{{i.id}}')" >{% trans 'Dosyayı Sil' %}</button>
                                                         </div>                                                 
                                                             {% endif %}
                                                           
@@ -628,67 +622,132 @@
             {% endfor %}
        
             {% for i in santiyeler  %}
-            <div id="dosya_sil{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
-                        </div>
-                        <div class="modal-body">
-                        <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_sil' %}" method="post">
+            <div class="modal" id="dosya_sil{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+               <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_sil' %}" method="post">
                             {% csrf_token %}
                                 <div class="mb-4">
                                     <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">
                                     <input type="hidden" name="klasor" class="form-control" id="folderid-input" value="{{i.id}}">
                                 </div>
-                            <div class="mt-2 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>{% trans 'Emin Misiniz?' %}</h4>
-                                    <p class="text-muted mx-4 mb-0">{% trans 'Dosyayı Silmek İstediğinizden Emin Misiniz ?' %}</p>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                <button type="submit" class="btn w-sm btn-danger" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
-                            </div>
-                        </form>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
-            {% endfor %}
-            {% for i in santiyeler  %}
-            <div id="geri_getir{{i.id}}" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-removefilemodal"></button>
-                        </div>
-                        <div class="modal-body">
-                        <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_geri_getir' %}" method="post">
+                    <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('dosya_sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+      <div class="modal" id="geri_getir{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Kurtarmak istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+               <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_geri_getir' %}" method="post">
                             {% csrf_token %}
                                 <div class="mb-4">
                                     <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">
                                     <input type="hidden" name="klasor" class="form-control" id="folderid-input" value="{{i.id}}">
                                 </div>
-                            <div class="mt-2 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>{% trans 'Dosyayı Geri Getirmek İstediğinizden Emin Misiniz?' %}</h4>
-                                    <p class="text-muted mx-4 mb-0">{% trans 'Dosyamı Geri Yükle ?' %}</p>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">{% trans 'Kapat' %}</button>
-                                <button type="submit" class="btn w-sm btn-success" id="remove-fileitem">{% trans 'Evet, Sil' %}</button>
-                            </div>
-                        </form>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
+                    <p> {% trans 'Kurtarmak istediğinize emin misiniz?' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('geri_getir{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+         
             {% endfor %}
+           
     
+  <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+  <script>
+        // Dropdown menüsünü açma/kapama işlevi
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Menü dışında bir yere tıklanırsa menüyü kapatma
+        window.onclick = function(event) {
+            if (!event.target.matches('.btn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        // Modal açma işlevi (örnek)
         
+    </script>          
 {% endblock sidebar %}

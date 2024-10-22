@@ -68,7 +68,7 @@
                 <button class="tab-navs-btn " data-tab="New">{% trans 'Yeniler' %}</button>
                 <button class="tab-navs-btn " data-tab="Tamamlandı">{% trans 'Tamamlanan' %}</button>
                 <button class="tab-navs-btn " data-tab="Beklemede">{% trans 'Devam Eden' %}</button>
-                <button class="tab-navs-btn " data-tab="İptal Edildi">{% trans 'İptal Edilen' %}</button>
+                <!--<button class="tab-navs-btn " data-tab="İptal Edildi">{% trans 'İptal Edilen' %}</button>-->
             </div>
 
             <div class="tab-contents">
@@ -266,13 +266,13 @@
                                                 
                                                 {% if i.status == "Inprogress" %}
                                                     <span
-                                                    class="status-inprogress stats-lg">Devam Ediyor</span>
+                                                    class="status-inprogress stats-lg">{% trans 'Devam Eden' %}</span>
                                                 {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">Yeni</span></div>
+                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeniler' %}</span></div>
                                                 {% elif i.status == "Pending" %}
-                                                <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Devam Eden' %}</span></div>
                                                  {% elif i.status == "Completed" %}
-                                                <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlanan' %}</span></div>
                                                     {% endif %}
                                                 
                                         
@@ -330,12 +330,18 @@
                 $(".tab-navs-btn").removeClass("active");
                 $(this).addClass("active");
 
-                if ($(this).attr("data-tab") == "Tümü") {
-                    table.search('').columns().search('').draw();
-                } else {
-                    table.column(4).search($(this).attr("data-tab")).draw();
+                // Eğer "Tümü" sekmesi seçiliyse filtreleme yapmadan tüm verileri göster
+                if ($(this).attr("data-tab") == "New") {
+                    table.search('').columns().search('').draw(); }
+                else if ($(this).attr("data-tab") == "Tümü") {
+                    table.search('').columns().search('').draw(); // Tüm verileri gösterir
+                } else if ($(this).attr("data-tab") == "New") {
+                    table.column(5).search("{% trans 'Yeniler' %}").draw();  // Durumu "Beklemede" olanları gösterir
+                } else if ($(this).attr("data-tab") == "Tamamlandı") {
+                    table.column(5).search("{% trans 'Tamamlanan' %}").draw();  // Durumu "Onaylandı" olanları gösterir
+                } else if ($(this).attr("data-tab") == "Beklemede") {
+                    table.column(5).search("{% trans 'Devam Eden' %}").draw();  // Durumu "Reddedildi" olanları gösterir
                 }
-
             });
 
 
@@ -500,7 +506,7 @@
                
             </div>
             <div class="modal-body">
-               <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacalar_ekle' %}" method="post" enctype="multipart/form-data" >
+               <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:yapilacalar_ekle_duzenleme' %}" method="post" enctype="multipart/form-data" >
                         {% csrf_token %}
                         <input type="text" hidden name="id" id="veri_gonderme">
                     <div class="modal-form-rows">
@@ -576,6 +582,7 @@
                                     <img src="#" style="display: none; max-width: 50vh !important;" alt="Plan Konumu" id="aland" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
                                     <div id="gizled" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
+                                    <textarea name="base_64_format" hidden  id="base_64_formatd"></textarea>
                                 </div>
                             </div>
                             <div class="form-element">
@@ -1293,6 +1300,10 @@
                     document.getElementById('alan').style.display = "block";
                     document.getElementById('alanpdf').style.display = "none";
                     document.getElementById('base_64_format').textContent = dataURL;
+                    document.getElementById('aland').src = dataURL;
+                    document.getElementById('aland').style.display = "block";
+                    document.getElementById('alanpdfd').style.display = "none";
+                    document.getElementById('base_64_formatd').textContent = dataURL;
                     closeModal("plan-konumu");
                     }
                     else if(isPDF){
