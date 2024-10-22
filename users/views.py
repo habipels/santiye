@@ -689,7 +689,7 @@ def personeller_puantaj_sayfasi(request):
                 return redirect("main:yetkisiz")
         else:
             kullanici = request.user
-        person = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici)
+        person = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
         if request.GET:
             month_filter = request.GET.get("monthFilter")
             jobTypeFilter = request.GET.get("jobTypeFilter")
