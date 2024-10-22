@@ -57,8 +57,51 @@ def fiyat_duzelt(deger,i = 0):
         return y
     else:
         return locale.format_string("%.2f", deger, grouping=True)
-
 register = template.Library()
+@register.simple_tag
+def personel_maas_bilgisi(id):
+
+    if True:
+        calismalar = calisanlar_calismalari.objects.filter(
+            calisan=get_object_or_none(calisanlar, id=id)
+        ).annotate(
+            year=ExtractYear('tarihi'),
+            month=ExtractMonth('tarihi')
+        ).values(
+            'year', 'month', 'maas__id'  # Maas ID ile gruplanıyor
+        ).annotate(
+            total_normal_calisma_saati=Sum('normal_calisma_saati'),
+            total_mesai_calisma_saati=Sum('mesai_calisma_saati')
+        ).order_by('year', 'month')
+
+        odemeler = calisanlar_calismalari_odemeleri.objects.filter(
+            calisan=get_object_or_none(calisanlar, id=id)
+        ).annotate(
+            year=ExtractYear('tarihi'),
+            month=ExtractMonth('tarihi')
+        ).values(
+            'year', 'month'  # Maas ID ile gruplanıyor
+        ).annotate(
+            total_tutar=Sum('tutar')
+        ).order_by('year', 'month')
+
+        odemeler_dict = {(odeme['year'], odeme['month']): odeme['total_tutar'] for odeme in odemeler}
+
+        maas_bilgisi = [
+            {
+                'tarih': str(calis['year']) + "-" + str(calis['month']),
+                'parabirimi': get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).para_birimi,
+                'hakedis_tutari':fiyat_duzelt( (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + 
+                                  (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)),
+                'odenen':fiyat_duzelt(odemeler_dict.get((calis['year'], calis['month']), 0)),
+                'kalan': fiyat_duzelt(((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + 
+                          (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)) - 
+                          odemeler_dict.get((calis['year'], calis['month']), 0)),
+            } for calis in calismalar
+        ]
+        
+        return maas_bilgisi
+
 @register.simple_tag
 def fiyat_duzelt_html(deger):
     deger = str(deger)

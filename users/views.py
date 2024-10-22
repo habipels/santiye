@@ -439,6 +439,28 @@ def personeller_ekle(request):
             for i in documents:
                 calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
     return redirect("user:personeller_sayfasi")
+def personeller_odenmeye_maaslar(request):
+    content = sozluk_yapisi()
+
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_gorme:
+                    kullanici = request.user.kullanicilar_db
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
+        content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
+        content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
+    return render(request,"personel/odenmeyen_maaslar.html",content)
 def personeller_sil(request):
     if request.POST:
         id = request.POST.get("idbilgisi")
