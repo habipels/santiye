@@ -29,8 +29,47 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 {% endblock head %}
 {% block sidebar %}
-<main>
+<style>
+#preloader {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
 
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-top-color: #3498db;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+</style>
+<main>
+                                    <!-- Preloader Bölümü -->
+                                    <div id="preloader">
+                                        <div class="spinner"></div>
+                                        <p>Personel bilgileri yükleniyor...</p>
+                                    </div>
 
         <div class="page-header">
             <div class="page-info">
@@ -124,7 +163,9 @@
                     <div class="tab-contents" style="margin: 0;">
 
                         <div class="tab-content active" id="hafta-1">
+                        
                             <div class="table-wrapper">
+
                                 <table class="puantaj-table" id="hafta-1-table">
                                     <thead>
                                         <tr>
@@ -526,6 +567,21 @@
         }
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
+    </script>
+
+    <script>
+var $j = jQuery.noConflict();
+
+$j(document).ready(function() {
+    // Sayfa yüklendiğinde preloader'ı göster
+    $j("#preloader").show();
+
+    // Sayfa tamamen yüklendiğinde preloader'ı gizleyin (ek güvenlik)
+    $j(window).on('load', function() {
+        $j("#preloader").hide();
+    });
+});
+
     </script>
     <div class="modal" id="toplu-puantaj-gir">
         <div class="modal-inner" style="width: 500px">
