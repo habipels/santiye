@@ -141,7 +141,7 @@ def bina_3d(veri):
         for i in gor_olan_katlar:
             a = "Kat " + str(i.kat)
             katlar.append(a)
-        print(katlar)
+    
         return {"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar}
     except:
         return {"kat_sayisi" : int(20)}
@@ -186,7 +186,7 @@ def ilk_giris_verileri(kat_sayis,blok):
     for i in range(0,kat_sayis):
         santiye_kalemleri_bilgisi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ).count()
         santiye_kalemleri_bilgisi_tamamlanan = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True).count()
-        print(santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ),santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True))
+      
         if santiye_kalemleri_bilgisi == santiye_kalemleri_bilgisi_tamamlanan:
             veri_gonder.append(100)
         else:
@@ -199,7 +199,7 @@ def ilk_giris_verileri_kalem(kat_sayis,blok,kalem):
         for i in range(0,kat_sayis):
             santiye_kalemleri_bilgisi = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ).count()
             santiye_kalemleri_bilgisi_tamamlanan = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True).count()
-            print(santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ),santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi = blok,kalem_bilgisi__silinme_bilgisi = False,silinme_bilgisi = False,kat =i ,tamamlanma_bilgisi = True))
+          
             if santiye_kalemleri_bilgisi == santiye_kalemleri_bilgisi_tamamlanan:
                 veri_gonder.append(100)
             else:
@@ -236,7 +236,7 @@ def bloglari_rapora_yansitma(veri):
         unique_values = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi =i.id,tamamlanma_bilgisi = True)
         bloglar_getirme.append(i.blog_adi+str(i.blog_numarasi))
         degerler.append(unique_values.count())
-    print(bloglar_getirme,degerler)
+
     return {"blog" : bloglar_getirme,"degerler" : degerler,"k":kalemeler_,"kalemler":kalemleri_gonder,"kalem_dagilisi" : kalemler_dagilisi_gonder}
 @register.simple_tag
 def bloglar_daireleri_kalemleri(id):
@@ -876,7 +876,6 @@ def dosya_varsa_indirme_isplani(id):
 
     z = ""
     veri = IsplaniDosyalari.objects.filter(proje_ait_bilgisi__id = id.id)
-    print("dosya Getir",id)
     for i in veri:
         k = str(i.dosya.url).split("/")
         k = k[ -1]
@@ -903,7 +902,6 @@ def dosya_varsa_indirme_isplani_ilerleme(id):
     z = ""
     veri = IsplaniIlerlemeDosyalari.objects.filter(proje_ait_bilgisi__id = id)
     for i in veri:
-        print(str(i.dosya.url), "veriler")
         a = str(i.dosya.url).split("/")
         if "pdf" in i.dosya.url :
             z = z+ """<div class="ilerleme-durumu-dosya">
@@ -1165,13 +1163,13 @@ def basit_cikarma(a,b):
     a = a.replace(',', '.')
     b = b.replace(',', '.')
     y = float(a)-float(b)
-    print(y)
+
     return str(fiyat_duzelt(y,2))
 @register.simple_tag
 def basit_cikarma_duzenli(a,b):
    
     y = float(a)-float(b)
-    print(y)
+
     return str(fiyat_duzelt(y,2))
 @register.simple_tag
 def sorgu(a):
@@ -1197,7 +1195,7 @@ def kategori_bilgi_ver(b):
         renk.append(str(i.gider_kategorisi_renk))
         a.append(round(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('toplam_tutar'))['total'] or 0 ,2))
         genel_tutar = genel_tutar + round( float(Gider_Bilgisi.objects.filter(gelir_kategorisii_id = i.id,silinme_bilgisi = False).aggregate(total=Sum('toplam_tutar'))['total'] or 0),2)
-    print({"isimleri":isimleri,"a":a,"renk":renk,"tutar":fiyat_duzelt(genel_tutar)})
+    
     return {"isimleri":isimleri,"a":a,"renk":renk,"tutar":fiyat_duzelt(genel_tutar)}
 @register.simple_tag
 def ekstra(id,k):
@@ -1281,7 +1279,7 @@ def tarih_cek():
     bugun_formatli = bugun.strftime("%m/%d/%Y")
     bir_hafta_sonra_formatli = bir_hafta_sonra.strftime("%m/%d/%Y")
     a =  bugun_formatli + " - " + bir_hafta_sonra_formatli
-    print(a)
+
     return a
 import base64
 import hashlib
@@ -1354,8 +1352,7 @@ def ozellikler(bilgi):
                 silinme_bilgisi=False
             ).aggregate(total_gider=Sum('tutar'))['total_gider'] or 0
             aylik_gider.append(round(total_g,2))
-        print(aylik_gelir)
-        print(aylik_gider)
+
         kategoriler = ["Oct","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
     else:
         this_year = now().year
@@ -1374,8 +1371,7 @@ def ozellikler(bilgi):
                 silinme_bilgisi=False
             ).aggregate(total_gider=Sum('tutar'))['total_gider'] or 0
             aylik_gider.append(round(total_g,2))
-        print(aylik_gelir)
-        print(aylik_gider)
+
         kategoriler = ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]
     return {"gelir":aylik_gelir,"gider":aylik_gider,"kategoriler":kategoriler}
 
@@ -1838,7 +1834,7 @@ def odeme_para_birimi_hesabi(bilgi2,kur,tutar):
 @register.simple_tag
 def odeme_para_birimi_hesabi_deger(bilgi2,kur,tutar):
     para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
-    print(para_birimi)
+
     if para_birimi.para_birimi:
         veri = tutar*kur
     else:

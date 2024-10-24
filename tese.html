@@ -411,7 +411,7 @@
                             <div class="form-element">
                                 <label for="katman">{% trans 'Katman' %}</label>
                                  <select name="katman" id="katmanSelect"  data-trigger >
-                                 <option value="" >Lütfen katman seçiniz.</option>
+                                 <option>Lütfen katman seçiniz.</option>
                                 {% for blog in katmanlar %}
                                 <option data-id="{{blog.proje_santiye_Ait.id}}" data-img="{{blog.katman_dosyasi.url}}" value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
                                 {% endfor %}
@@ -434,8 +434,8 @@
                             <div class="form-element">
                                 <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
                                     <canvas style="display: none; width: 50vh !important; max-height: 50vh !important;" id="alanpdf"  ></canvas>
-                                    <input type="text" hidden name="pin_lokasyunux" id="pin_lokasyunux" >
-                                    <input type="text" hidden name="pin_lokasyunuy" id="pin_lokasyunuy" >
+                                    <input type="text" hidden name="pin_lokasyınux" id="pin_lokasyınux" >
+                                    <input type="text" hidden name="pin_lokasyınuy" id="pin_lokasyınuy" >
                                     <img src="#" style="display: none; max-width: 50vh !important;" alt="Plan Konumu" id="alan" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
                                     <div id="gizle" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
@@ -581,8 +581,8 @@
                             <div class="form-element">
                                 <div class="plan-konumu-preview" onclick="openModal('plan-konumu', false)">
                                     <canvas style="display: none; width: 50vh !important; height: 50vh !important;" id="alanpdfd"></canvas>
-                                    <input type="text" hidden name="pin_lokasyunuxd" id="pin_lokasyunuxd" >
-                                    <input type="text" hidden name="pin_lokasyunuyd" id="pin_lokasyunuyd" >
+                                    <input type="text" hidden name="pin_lokasyınuxd" id="pin_lokasyınuxd" >
+                                    <input type="text" hidden name="pin_lokasyınuyd" id="pin_lokasyınuyd" >
                                     <img src="#" style="display: none; max-width: 50vh !important;" alt="Plan Konumu" id="aland" class="alan">
                                     <!-- <img src="{% static 'go/content/images/plan-konumu-preview.png' %}" alt="Plan Konumu">-->
                                     <div id="gizled" class="report-title">{% trans 'Henüz bu projede işaretleme yapmadınız. Proje konumu işaretlemek için tıklayınız.' %} </div>
@@ -837,7 +837,7 @@
                 odaSelect.appendChild(odaOption);
             }
         });
-        
+
         document.getElementById('katmanSelectd').addEventListener('change', function() {
             const katmanId = this.value;
             const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
@@ -951,7 +951,6 @@
                 d.textContent = data.oncelik_durumu;
                 b.appendChild(d);  // Burada d eklenmeli, option değil!
                 const c = document.getElementById("katmanSelectd");
-                addPin(data.locasyonx, data.locasyony)
 const z = document.createElement('option');
 
 if (data.katman_id) {
@@ -1297,10 +1296,10 @@ openModal("is-emri-duzenle");
                     x: currentPin.x(),
                     y: currentPin.y(),
                 };
-                document.getElementById("pin_lokasyunux").value = currentPin.x();
-                document.getElementById("pin_lokasyunuy").value = currentPin.y();
-                document.getElementById("pin_lokasyunuxd").value = currentPin.x();
-                document.getElementById("pin_lokasyunuyd").value = currentPin.y();
+                document.getElementById("pin_lokasyınux").value = currentPin.x();
+                document.getElementById("pin_lokasyınuy").value = currentPin.y();
+                document.getElementById("pin_lokasyınuxd").value = currentPin.x();
+                document.getElementById("pin_lokasyınuyd").value = currentPin.y();
                 closeModal('plan-konumu', false)
                 if (!currentPin) {
                 alert("Lütfen bir pin ekleyin.");

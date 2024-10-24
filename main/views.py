@@ -3885,7 +3885,10 @@ def yapilacak_gonder_json(request,id):
     # blok_id varsa ekle
     if hasattr(a, 'blok') and hasattr(a.blok, 'id'):
         sonuc["blok_id"] = a.blok.id
-
+    if hasattr(a, 'locasyonx') :
+        sonuc["locasyonx"] = a.locasyonx
+    if hasattr(a, 'locasyony') :
+        sonuc["locasyony"] = a.locasyony
     # katman varsa ekle
     if hasattr(a, 'katman') and hasattr(a.katman, 'katman_adi'):
         sonuc["katman"] = a.katman.katman_adi
@@ -3926,14 +3929,16 @@ def yapilacalar_ekle(request):
                         yapi_gonder = request.POST.get("yapi_gonder")
                         kat = request.POST.get("kat")
                         base64_image = request.POST.get('base_64_format', '')
-                        if base64_image.startswith('data:image/png;base64,'):
+                        pin_lokasyunuxd = request.POST.get("pin_lokasyunux") 
+                        pin_lokasyunuyd = request.POST.get("pin_lokasyunuy") 
+                        if base64_image !="" .startswith('data:image/png;base64,'):
                             base64_image = base64_image.replace('data:image/png;base64,', '')
                             file_extension = 'png'
-                        elif base64_image.startswith('data:image/jpeg;base64,'):
+                        elif base64_image !="" .startswith('data:image/jpeg;base64,'):
                             base64_image = base64_image.replace('data:image/jpeg;base64,', '')
                             file_extension = 'jpeg'
                         
-                        if base64_image :
+                        if base64_image !=""  :
                             image_data = base64.b64decode(base64_image)
                             image_file = ContentFile(image_data, name=f'image.{file_extension}')
                         if kat== None or kat  == ""  :
@@ -3948,7 +3953,7 @@ def yapilacalar_ekle(request):
                             teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
                             blok = get_object_or_none(bloglar,id = yapi_gonder),
                             katman = get_object_or_none(katman,id = katman_bilgisi),
-                            kat = kat,locasyon = ""
+                            kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
                         )
                         new_project.save()
                         bloglar_bilgisi = []
@@ -3961,7 +3966,7 @@ def yapilacalar_ekle(request):
                         for images in images:
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
-                        if image_file:
+                        if base64_image !="" :
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect("main:yetkisiz")
@@ -3978,14 +3983,14 @@ def yapilacalar_ekle(request):
                 yapi_gonder = request.POST.get("yapi_gonder")
                 kat = request.POST.get("kat")
                 base64_image = request.POST.get('base_64_format', '')
-                if base64_image.startswith('data:image/png;base64,'):
+                pin_lokasyunuxd = request.POST.get("pin_lokasyunux") 
+                pin_lokasyunuyd = request.POST.get("pin_lokasyunuy")
+                if base64_image !="" .startswith('data:image/png;base64,'):
                     base64_image = base64_image.replace('data:image/png;base64,', '')
                     file_extension = 'png'
-                elif base64_image.startswith('data:image/jpeg;base64,'):
+                elif base64_image !="" .startswith('data:image/jpeg;base64,'):
                     base64_image = base64_image.replace('data:image/jpeg;base64,', '')
                     file_extension = 'jpeg'
-                
-                
                 if kat == None or kat  == ""  :
                     kat = 0
                 print(kat)
@@ -3998,7 +4003,7 @@ def yapilacalar_ekle(request):
                     teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
                     blok = get_object_or_none(bloglar,id = yapi_gonder),
                     katman = get_object_or_none(katman,id = katman_bilgisi),
-                    kat = kat,locasyon = ""
+                    kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
                 )
                 new_project.save()
                 bloglar_bilgisi = []
@@ -4011,13 +4016,13 @@ def yapilacalar_ekle(request):
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
-                if base64_image :
+                if base64_image !=""  :
                     image_data = base64.b64decode(base64_image)
                     image_file = ContentFile(image_data, name=f'image.{file_extension}')
-                if image_file:
-
+                if base64_image !="" :
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect("main:yapilacaklar")
+
 def yapilacalar_ekle_duzenleme(request):
     if request.POST:
         if request.user.is_superuser:
@@ -4038,10 +4043,12 @@ def yapilacalar_ekle_duzenleme(request):
                         yapi_gonder = request.POST.get("yapi_gonder")
                         kat = request.POST.get("kat")
                         base64_image = request.POST.get('base_64_format', '')
-                        if base64_image.startswith('data:image/png;base64,'):
+                        pin_lokasyunuxd = request.POST.get("pin_lokasyunuxd") 
+                        pin_lokasyunuyd = request.POST.get("pin_lokasyunuyd")
+                        if base64_image !="" .startswith('data:image/png;base64,'):
                             base64_image = base64_image.replace('data:image/png;base64,', '')
                             file_extension = 'png'
-                        elif base64_image.startswith('data:image/jpeg;base64,'):
+                        elif base64_image !="" .startswith('data:image/jpeg;base64,'):
                             base64_image = base64_image.replace('data:image/jpeg;base64,', '')
                             file_extension = 'jpeg'
                         
@@ -4056,7 +4063,7 @@ def yapilacalar_ekle_duzenleme(request):
                             teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
                             blok = get_object_or_none(bloglar,id = yapi_gonder),
                             katman = get_object_or_none(katman,id = katman_bilgisi),
-                            kat = kat,locasyon = ""
+                            kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
                         )
                         new_project = get_object_or_none(IsplaniPlanlari,id = id)
                         new_project.save()
@@ -4070,7 +4077,7 @@ def yapilacalar_ekle_duzenleme(request):
                         for images in images:
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
-                        if image_file:
+                        if base64_image !="" :
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect("main:yetkisiz")
@@ -4088,10 +4095,12 @@ def yapilacalar_ekle_duzenleme(request):
                 yapi_gonder = request.POST.get("yapi_gonder")
                 kat = request.POST.get("kat")
                 base64_image = request.POST.get('base_64_format', '')
-                if base64_image.startswith('data:image/png;base64,'):
+                pin_lokasyunuxd = request.POST.get("pin_lokasyunuxd") 
+                pin_lokasyunuyd = request.POST.get("pin_lokasyunuyd") 
+                if base64_image !="" .startswith('data:image/png;base64,'):
                     base64_image = base64_image.replace('data:image/png;base64,', '')
                     file_extension = 'png'
-                elif base64_image.startswith('data:image/jpeg;base64,'):
+                elif base64_image !="" .startswith('data:image/jpeg;base64,'):
                     base64_image = base64_image.replace('data:image/jpeg;base64,', '')
                     file_extension = 'jpeg'
                         
@@ -4106,7 +4115,7 @@ def yapilacalar_ekle_duzenleme(request):
                     teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
                     blok = get_object_or_none(bloglar,id = yapi_gonder),
                     katman = get_object_or_none(katman,id = katman_bilgisi),
-                    kat = kat,locasyon = ""
+                    kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
                 )
                 new_project = get_object_or_none(IsplaniPlanlari,id = id)
                 new_project.save()
@@ -4120,7 +4129,7 @@ def yapilacalar_ekle_duzenleme(request):
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
-                if image_file:
+                if base64_image !="" :
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect("main:yapilacaklar")
 

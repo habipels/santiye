@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 DEPLOY__ = 0
 if DEPLOY__:
     from pathlib import Path
