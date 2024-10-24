@@ -741,10 +741,31 @@ def personeller_puantaj_sayfasi(request):
             personelID = request.GET.get("personelID")
             days_in_month = 0
             days_list =[]
+            hafta_bazinda = {}
+            hafta1 = []
+            hafta2 = []
+            hafta3 = []
+            hafta4 = []
             if month_filter:
                 year, month = map(int, month_filter.split('-'))  # Yıl ve ayı alıyoruz
                 _, num_days = calendar.monthrange(year, month)   # O ayın gün sayısını buluyoruz
                 days_list = [day for day in range(1, num_days + 1)] 
+            for i in days_list:
+                if 7 >= i >= 1:
+                    hafta1.append(i)
+                    
+                if 14 >= i > 7:
+                    hafta2.append(i)
+                if 21 >= i > 14:
+                    hafta3.append(i)
+                if i > 21:
+                    hafta4.append(i)
+
+            hafta_bazinda["hafta1"] = hafta1
+            hafta_bazinda["hafta2"] = hafta2
+            hafta_bazinda["hafta3"] = hafta3
+            hafta_bazinda["hafta4"] = hafta4
+            content["haftalik"] = hafta_bazinda
             content["gun"] =days_list
             if jobTypeFilter :
                 person = person.filter(calisan_kategori = get_object_or_none(calisanlar_kategorisi , id = jobTypeFilter))
