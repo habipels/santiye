@@ -112,7 +112,7 @@ urlpatterns = [#deneme
  path('thingstodo/', views.yapilacaklar_api, name='yapilacaklar_api'),
  #######
  path('create/thingstodo/', views.yapilacalar_ekle_api, name='yapilacalar_ekle_api'),
- path('manycreate/thingstodo/', views.yapilacalar_ekle_toplu_api, name='yapilacalar_ekle_toplu_api'),
+
  path('del/thingstodo/', views.yapilacalar_sil, name='yapilacalar_sil'),
  path('statusset/thingstodo/', views.yapilacak_durumu_yenileme, name='yapilacak_durumu_yenileme'),
  path('update/thingstodo/', views.yapilacalar_duzenle_api, name='yapilacalar_duzenle_api'),

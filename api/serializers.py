@@ -79,6 +79,19 @@ class IsplaniPlanlariSerializer(serializers.ModelSerializer):
     class Meta:
         model = IsplaniPlanlari
         fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
+class IsplaniDosyalariSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IsplaniDosyalari
+        fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
+class IsplaniIlerlemeDosyalariSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IsplaniIlerlemeDosyalari
+        fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
+
+class IsplaniPlanlariIlerlemeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IsplaniPlanlariIlerleme
+        fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
 
 class YapilacakPlanlariSerializer(serializers.ModelSerializer):
     class Meta:

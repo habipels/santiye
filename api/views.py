@@ -92,45 +92,6 @@ def homepage_api(request):
 
     return Response(content)
 
-@api_view(['GET'])
-def homepage_api(request):
-    if not request.user.is_authenticated:
-        return Response({'detail': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
-
-    content = {}
-
-    # Gelir bilgileri
-    if super_admin_kontrolu(request):
-        profile = Gelir_Bilgisi.objects.all()
-        kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
-        content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
-    else:
-        profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")
-        content["kasa"] = KasaSerializer(Kasa.objects.filter(silinme_bilgisi=False, kasa_kart_ait_bilgisi=request.user), many=True).data
-
-    content["santiyeler"] = GelirBilgisiSerializer(profile, many=True).data
-
-    # Gider bilgileri
-    if super_admin_kontrolu(request):
-        gider_profile = Gider_Bilgisi.objects.all()
-        kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
-        content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
-    else:
-        gider_profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")
-
-    bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-fatura_tarihi")
-    sonuc = []
-    for i in bilgi_ver:
-        urun_tutari = sum(float(j.urun_adeti) * float(j.urun_fiyati) for j in gider_urun_bilgisi.objects.filter(gider_bilgis=i))
-        odeme_tutari = sum(float(j.tutar) for j in Gider_odemesi.objects.filter(gelir_kime_ait_oldugu=i))
-        if urun_tutari > odeme_tutari:
-            sonuc.append(i)
-        if len(sonuc) >= 5:
-            break
-    content["gider"] = GiderBilgisiSerializer(sonuc, many=True).data
-    content["bilgi"] = GiderBilgisiSerializer(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")[:5], many=True).data
-
-    return Response(content)
 
 @api_view(['GET'])
 def proje_tipi_api(request):
@@ -1550,6 +1511,7 @@ def yapilacaklar_api(request):
     else:
         profile = IsplaniPlanlari.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user)
     content["santiyeler"] = IsplaniPlanlariSerializer(profile, many=True).data
+    content["isplani_dosyalari"] = IsplaniDosyalariSerializer(IsplaniDosyalari.objects.filter(proje_ait_bilgisi = request.user ), many=True).data
     content["kullanicilari"] =CustomUserSerializer( CustomUser.objects.filter(
         kullanicilar_db=request.user,
         kullanici_silme_bilgisi=False,
@@ -1577,7 +1539,8 @@ def yapilacalar_ekle_api(request):
         katman_bilgisi = request.data.get("katman_bilgisi")
         yapi_gonder = request.data.get("yapi_gonder")
         kat = request.data.get("kat")
-        locasyon = request.data.get("locasyon")
+        locasyonx = request.data.get("locasyonx")
+        locasyony = request.data.get("locasyony")
         
         new_project = IsplaniPlanlari(
             proje_ait_bilgisi=request.user,
@@ -1589,7 +1552,7 @@ def yapilacalar_ekle_api(request):
             silinme_bilgisi=False,
             blok = get_object_or_404(bloglar,id = yapi_gonder),
             katman = get_object_or_404(katman,id = katman_bilgisi),
-            kat = kat,locasyon = ""
+            kat = kat,locasyonx = locasyonx,locasyony = locasyony
         )
         new_project.save()
         
@@ -1609,44 +1572,6 @@ def yapilacalar_ekle_api(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def yapilacalar_ekle_toplu_api(request):
-    if request.user.is_superuser:
-        return Response({"detail": "Superuser cannot create tasks."}, status=status.HTTP_403_FORBIDDEN)
-    
-    baslik = request.data.get("baslik")
-    durum = request.data.get("durum")
-    aciliyet = request.data.get("aciliyet")
-    teslim_tarihi = request.data.get("teslim_tarihi")
-    blogbilgisi = request.data.getlist("kullanicilari")
-    aciklama = request.data.getlist("aciklama")
-    
-    for i in range(len(aciklama)):
-        if aciklama[i]:
-            new_project = IsplaniPlanlari(
-                proje_ait_bilgisi=request.user,
-                title=baslik,
-                status=durum,
-                aciklama=aciklama[i],
-                oncelik_durumu=aciliyet,
-                teslim_tarihi=teslim_tarihi,
-                silinme_bilgisi=False
-            )
-            new_project.save()
-            
-            bloglar_bilgisi = [get_object_or_404(CustomUser, id=int(user_id)) for user_id in blogbilgisi]
-            new_project.yapacaklar.add(*bloglar_bilgisi)
-            
-            files = request.FILES.getlist('file')
-            for file in files:
-                IsplaniDosyalari.objects.create(
-                    proje_ait_bilgisi=new_project,
-                    dosya_sahibi=request.user,
-                    dosya=file
-                )
-    
-    return Response({"detail": "Tasks successfully created."}, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -1703,6 +1628,30 @@ def yapilacak_durumu_yenileme(request):
 
     return Response({"message": "Durum başarıyla güncellendi"}, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def yapilacaklar_durum_bilgisi(request):
+    content = {}
+    id = request.data.get("id")
+    # Süper admin kontrolü
+    if super_admin_kontrolu(request):
+        profile = IsplaniPlanlariIlerleme.objects.filter(id = id)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
+        content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
+    else:
+        profile = IsplaniPlanlariIlerleme.objects.filter(id = id)
+    content["santiyeler"] = IsplaniPlanlariIlerlemeSerializer(profile, many=True).data
+    content["isplani_dosyalari"] = IsplaniIlerlemeDosyalariSerializer(IsplaniIlerlemeDosyalari.objects.filter(dosya_sahibi__id = id), many=True).data
+    content["kullanicilari"] =CustomUserSerializer( CustomUser.objects.filter(
+        kullanicilar_db=request.user,
+        kullanici_silme_bilgisi=False,
+        is_active=True
+    ),many = True).data
+    
+    return Response(content, status=status.HTTP_200_OK)
+
+
+
 @api_view(['Get'])
 @permission_classes([IsAuthenticated])
 def yapilacalar_duzenle_api(request):
@@ -1716,7 +1665,12 @@ def yapilacalar_duzenle_api(request):
     teslim_tarihi = request.data.get("teslim_tarihi")
     blogbilgisi = request.data.getlist("kullanicilari")
     aciklama = request.data.get("aciklama")
-
+    katman_bilgisi = request.data.get("katman_bilgisi")
+    yapi_gonder = request.data.get("yapi_gonder")
+    kat = request.data.get("kat")
+    locasyonx = request.data.get("locasyonx")
+    locasyony = request.data.get("locasyony")
+        
     # Get the task and update
     project = get_object_or_404(IsplaniPlanlari, id=id)
     project.proje_ait_bilgisi = request.user
@@ -1726,6 +1680,11 @@ def yapilacalar_duzenle_api(request):
     project.oncelik_durumu = aciliyet
     project.teslim_tarihi = teslim_tarihi
     project.silinme_bilgisi = False
+    project.blok = get_object_or_404(bloglar,id = yapi_gonder)
+    project.katman = get_object_or_404(katman,id = katman_bilgisi)
+    project.kat = kat
+    project.locasyonx = locasyonx
+    project.locasyony = locasyony
     project.save()
 
     # Update the users assigned to the task
@@ -1915,24 +1874,7 @@ def api_katman_sil(request):
             katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
     
     return Response({"detail": "Katman başarıyla silindi."}, status=status.HTTP_200_OK)
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def api_katman_sil(request):
-    buttonIdInput = request.data.get("buttonId")
-    
-    if request.user.is_superuser:
-        katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
-    else:
-        if request.user.kullanicilar_db:
-            a = get_object_or_404(bagli_kullanicilar, kullanicilar=request.user)
-            if a and a.izinler.katman_silme:
-                katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
-            else:
-                return Response({"detail": "Yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
-        else:
-            katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
-    
-    return Response({"detail": "Katman başarıyla silindi."}, status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def api_katman_duzenle(request):
@@ -1993,3 +1935,4 @@ def api_katman_sayfasi(request):
     content["medya"] = content.get("profile", [])
 
     return Response(content, status=status.HTTP_200_OK)
+
