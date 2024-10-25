@@ -4045,6 +4045,8 @@ def yapilacalar_ekle_duzenleme(request):
                         base64_image = request.POST.get('base_64_format', '')
                         pin_lokasyunuxd = request.POST.get("pin_lokasyunuxd") 
                         pin_lokasyunuyd = request.POST.get("pin_lokasyunuyd")
+                        if kat == None or kat  == ""  :
+                            kat = 0
                         if base64_image !="" .startswith('data:image/png;base64,'):
                             base64_image = base64_image.replace('data:image/png;base64,', '')
                             file_extension = 'png'
@@ -4097,6 +4099,8 @@ def yapilacalar_ekle_duzenleme(request):
                 base64_image = request.POST.get('base_64_format', '')
                 pin_lokasyunuxd = request.POST.get("pin_lokasyunuxd") 
                 pin_lokasyunuyd = request.POST.get("pin_lokasyunuyd") 
+                if kat == None or kat  == ""  :
+                    kat = 0
                 if base64_image !="" .startswith('data:image/png;base64,'):
                     base64_image = base64_image.replace('data:image/png;base64,', '')
                     file_extension = 'png'

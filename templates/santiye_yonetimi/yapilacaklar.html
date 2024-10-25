@@ -332,12 +332,10 @@
 
                 // Eğer "Tümü" sekmesi seçiliyse filtreleme yapmadan tüm verileri göster
                 if ($(this).attr("data-tab") == "New") {
-                    table.search('').columns().search('').draw(); }
+                    table.column(5).search("{% trans 'Yeniler' %}").draw();  }
                 else if ($(this).attr("data-tab") == "Tümü") {
                     table.search('').columns().search('').draw(); // Tüm verileri gösterir
-                } else if ($(this).attr("data-tab") == "New") {
-                    table.column(5).search("{% trans 'Yeniler' %}").draw();  // Durumu "Beklemede" olanları gösterir
-                } else if ($(this).attr("data-tab") == "Tamamlandı") {
+                }  else if ($(this).attr("data-tab") == "Tamamlandı") {
                     table.column(5).search("{% trans 'Tamamlanan' %}").draw();  // Durumu "Onaylandı" olanları gösterir
                 } else if ($(this).attr("data-tab") == "Beklemede") {
                     table.column(5).search("{% trans 'Devam Eden' %}").draw();  // Durumu "Reddedildi" olanları gösterir
