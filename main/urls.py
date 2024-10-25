@@ -95,7 +95,7 @@ urlpatterns = [#
     #
     path("topcontracts", views.ana_yuklenici_sozlesmler_sayfasi, name="ana_yuklenici_sozlesmler_sayfasi"),
     path("topaddcontract", views.ust_yuklenici_sozlesme_ekle, name="ust_yuklenici_sozlesme_ekle"),
-    path("topdelcontract", views.ust_yuklenici_silme, name="ust_yuklenici_silme"),
+    path("topdelcontract", views.ust_yuklenici_silme_sozlesme, name="ust_yuklenici_silme_sozlesme"),
     path("topadminaddcontracts/<int:id>", views.sozlesme_ekle_admin, name="sozlesme_ekle_admin"),
     path("topsetcontracts", views.ust_yuklenici_sozlesme_duzenle, name="ust_yuklenici_sozlesme_duzenle"),
 

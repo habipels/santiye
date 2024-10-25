@@ -259,7 +259,7 @@
                         <select onchange="optionSelected()" name="imalat-kalemi-select" id="imalat-kalemi-select">
                             <option value="{% ilk_giris_verileri_kalem kat_bilgisi santiye 0 %}" >Tümü</option>
                             {% for i in tablo %}
-                            <option value="imalat-kalemi-check-{{i.id}}" data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" >{{i.isim}}</option>
+                            <option  data-fiziksel="{{i.ilerleme1}}" data-finansal="{{i.ilerleme2}}" value="imalat-kalemi-check-{{i.id}}" data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" >{{i.isim}}</option>
                         {% endfor %}
                            
                         </select>
@@ -271,11 +271,11 @@
                     <div class="report-bb-stats">
                         <div class="report-bb-stat">
                             <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i>{% trans 'Tamamlanan' %} </div>
-                            <div class="report-bb-stat-value">%{{fiziksel_ilerleme |safe }}</div>
+                            <div class="report-bb-stat-value" id="fiziksel" >%{{fiziksel_ilerleme |safe }}</div>
                         </div>
                         <div class="report-bb-stat">
                             <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i>{% trans 'Devam Eden' %} </div>
-                            <div class="report-bb-stat-value">%{% basit_cikarma_duzenli 100 fiziksel_ilerleme  %} </div>
+                            <div class="report-bb-stat-value" id="finansal" >%{% basit_cikarma_duzenli 100 fiziksel_ilerleme  %} </div>
                         </div>
                         
                         <!-- <div class="report-bb-stat">
@@ -286,7 +286,7 @@
 
                     <script>
                         var options = {
-                            series:  [{{fiziksel_ilerleme |safe }}, {% basit_cikarma 100 fiziksel_ilerleme  %}],
+                            series:  [{{fiziksel_ilerleme |safe }}, {% basit_cikarma_duzenli 100 fiziksel_ilerleme  %} ],
                             chart: {
                                 height: 500,
                                 type: 'radialBar',
@@ -333,7 +333,7 @@
                 
                     <div class="imalat-kalemi">
                         <div class="imalat-kalemi-check">
-                            <input data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" onclick="optionSelectedd(this)" type="checkbox" id="imalat-kalemi-check-{{i.id}}" checked>
+                            <input data-fiziksel="{{i.ilerleme1}}" data-finansal="{{i.ilerleme2}}" data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" onclick="optionSelectedd(this)" type="checkbox" id="imalat-kalemi-check-{{i.id}}" checked>
                         </div>
                         <div class="imalat-kalemi-progress">
                             <div class="imalat-kalemi-progress-details">
@@ -408,7 +408,11 @@
     const selectElement = document.getElementById('imalat-kalemi-select');
     const selectedOption = selectElement.options[selectElement.selectedIndex]; // Seçilen option'u al
     const selectedData = selectedOption.getAttribute('data-completion'); // `data-completion` özniteliğini al
-
+    const fiziksel = selectedOption.getAttribute('data-fiziksel');
+    const finansal = selectedOption.getAttribute('data-finansal');
+    document.getElementById("fiziksel").textContent = `%${fiziksel}`;
+    document.getElementById("finansal").textContent = `%${(100 - parseFloat(fiziksel))}`;
+    
     // JSON dizisini ayrıştır
     const completionPercentages = JSON.parse(selectedData);
     const array = []; // Yeni bir dizi oluştur
@@ -428,7 +432,7 @@
             array[index] = 0; // Koşul sağlanmıyorsa 0 ata
         }
     }
-
+    chart.updateSeries([parseFloat(fiziksel), 100-parseFloat(fiziksel)]);
     console.log(array); // Boş array kontrolü için
     createBuilding(array); // Oluşturulan array'i createBuilding'e gönder
 }
@@ -442,7 +446,11 @@
 function optionSelectedd(checkbox) {
     const selectedValue = checkbox.value;  // Tıklanan checkbox'ın `value` değerini alır
     const completionPercentages = JSON.parse(selectedValue);  // `value` JSON formatında olduğu varsayılarak ayrıştırılır
-
+    const fiziksel = checkbox.getAttribute('data-fiziksel');
+    const finansal = checkbox.getAttribute('data-finansal');
+    document.getElementById("fiziksel").textContent = `%${fiziksel}`;
+    document.getElementById("finansal").textContent = `%${(100 - parseFloat(fiziksel))}`;
+    
     const array = [];  // Yeni bir dizi oluştur
     const kat_bilgisi = {{ kat_bilgisi|safe }};  // `kat_bilgisi` verisini al
 
@@ -460,7 +468,7 @@ function optionSelectedd(checkbox) {
             array[index] = 0;  // Koşul sağlanmıyorsa 0 ata
         }
     }
-
+    chart.updateSeries([parseFloat(fiziksel), 100-parseFloat(fiziksel)]);
     console.log(array);  // İşlenmiş `array` çıktısını konsola yazdır
     createBuilding(array);  // İşlenmiş `array` ile `createBuilding` fonksiyonunu çağır
 }

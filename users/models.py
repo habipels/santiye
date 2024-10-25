@@ -157,6 +157,7 @@ class personel_izinleri(models.Model):
     ust_yuklenici_silme = models.BooleanField(default = False)
     ust_yuklenici_gorme = models.BooleanField(default = False)
     ust_yuklenici_duzenleme = models.BooleanField(default = False)
+    #
     #İlerleme Takibi Kategorileri
     ilerleme_takibi_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     ilerleme_takibi_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
