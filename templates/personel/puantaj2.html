@@ -189,8 +189,18 @@
     {% calismalari_cek i.id day request.GET.monthFilter as bilgi %}
     <td>
         <div class="td-puantaj">
-            <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
-            <input type="number" class="overtime-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% if  bilgi.normal_saat > 0 %}
+            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        {% else %}
+        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        {% endif %}
+           {% if  bilgi.mesai_saati > 0 %}
+            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% else %}
+        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% endif %}
+            
+            
         </div>
     </td>
 {% endfor %}
@@ -230,8 +240,17 @@
                                         {% calismalari_cek i.id day request.GET.monthFilter as bilgi %}
                                         <td>
                                             <div class="td-puantaj">
+                                                 {% if  bilgi.normal_saat > 0 %}
+                                                    <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+                                                {% else %}
                                                 <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
-                                                <input type="number" class="overtime-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+                                                {% endif %}
+                                                {% if  bilgi.mesai_saati > 0 %}
+                                                    <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+                                                {% else %}
+                                                <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+                                                {% endif %}
+                                                    
                                             </div>
                                         </td>
                                     {% endfor %}
@@ -270,8 +289,17 @@
     {% calismalari_cek i.id day request.GET.monthFilter as bilgi %}
     <td>
         <div class="td-puantaj">
-            <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
-            <input type="number" class="overtime-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+             {% if  bilgi.normal_saat > 0 %}
+            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        {% else %}
+        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        {% endif %}
+           {% if  bilgi.mesai_saati > 0 %}
+            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% else %}
+        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% endif %}
+            
         </div>
     </td>
 {% endfor %}
@@ -312,8 +340,17 @@
     {% calismalari_cek i.id day request.GET.monthFilter as bilgi %}
     <td>
         <div class="td-puantaj">
-            <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
-            <input type="number" class="overtime-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+            {% if  bilgi.normal_saat > 0 %}
+            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        {% else %}
+        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        {% endif %}
+           {% if  bilgi.mesai_saati > 0 %}
+            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% else %}
+        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% endif %}
+            
         </div>
     </td>
 {% endfor %}
@@ -358,8 +395,17 @@
     {% calismalari_cek i.id day request.GET.monthFilter as bilgi %}
     <td>
         <div class="td-puantaj">
-            <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
-            <input type="number" class="overtime-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+             {% if  bilgi.normal_saat > 0 %}
+            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        {% else %}
+        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        {% endif %}
+           {% if  bilgi.mesai_saati > 0 %}
+            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% else %}
+        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        {% endif %}
+            
         </div>
     </td>
 {% endfor %}
@@ -620,4 +666,76 @@ $j(document).ready(function() {
             </div>
         </div>
     </div>
+    <script>
+    
+        document.querySelector('#saveBtn').addEventListener('click', function() {
+            $j("#preloader").show();
+            const dayInputs = document.querySelectorAll('.day-hours');
+            const overtimeInputs = document.querySelectorAll('.overtime-hours');
+            const filter_input = document.querySelector(".filter-input");
+            const dis_katman = [filter_input.value];
+            const dataToSend = [];
+        
+            // Preloader'ı göster
+            //document.getElementById('preloader').style.display = 'block';
+        
+            // Normal saatler için verileri topla
+            dayInputs.forEach(input => {
+                const person = input.getAttribute('data-person');
+                const day = input.getAttribute('data-day');
+                const type = input.getAttribute('data-type');
+                const value = input.value;
+        
+                // Veriyi toplu olarak diziye ekle
+                dataToSend.push({
+                    person: person,
+                    day: day,
+                    type: type,
+                    value: value
+                });
+            });
+        
+            // Fazla mesai saatleri için verileri topla
+            overtimeInputs.forEach(input => {
+                const person = input.getAttribute('data-person');
+                const day = input.getAttribute('data-day');
+                const type = input.getAttribute('data-type');
+                const value = input.value;
+        
+                // Fazla mesai verisini diziye ekle
+                dataToSend.push({
+                    person: person,
+                    day: day,
+                    type: type,
+                    value: value
+                });
+            });
+        
+            dis_katman.push(dataToSend);
+            
+            // AJAX isteği ile Django'ya veri gönder
+            fetch('/users/savetally/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(dis_katman)  // Tüm verileri gönderiyoruz
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Preloader'ı gizle ve sayfayı yenile
+                document.getElementById('preloader').style.display = 'none';
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                // Hata durumunda preloader'ı gizle
+                document.getElementById('preloader').style.display = 'none';
+            });
+        });
+        
+        
+        </script>
 {% endblock sidebar %}
