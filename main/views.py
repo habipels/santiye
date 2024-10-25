@@ -2408,6 +2408,7 @@ def ust_yuklenici_ekle(request):
                         )
                         new_project.save()
                         images = request.FILES.getlist('file')
+                        print(images)
                         isim = 1
                         for images in images:
                             ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
@@ -2432,6 +2433,7 @@ def ust_yuklenici_ekle(request):
                 new_project.save()
                 
                 images = request.FILES.getlist('file')
+                print(images)
                 isim = 1
                 for images in images:
                     ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
@@ -2440,18 +2442,20 @@ def ust_yuklenici_ekle(request):
     return redirect("main:ust_yuklenici_sayfasi")
 #proje silme
 def ust_yuklenici_silme(request):
-    if request.user.kullanicilar_db:
-        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
-        if a:
-            if a.izinler.ust_yuklenici_silme:
-                pass
+    
+    if request.POST:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.ust_yuklenici_silme:
+                    pass
+                else:
+                    return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
-    else:
-        pass
-    if request.POST:
+            pass
+        print("Üst Yüklenici Sil")
         buttonId = request.POST.get("buttonId")
         ust_yuklenici.objects.filter(id = buttonId).update(silinme_bilgisi = True)
     return redirect("main:ust_yuklenici_sayfasi")
@@ -2753,7 +2757,7 @@ def ust_yuklenici_sozlesme_duzenle(request):
                 )
     return redirect("main:ust_yuklenici_sayfasi")
 #sözleşmeler sil
-def ust_yuklenici_silme(request):
+def ust_yuklenici_silme_sozlesme(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
