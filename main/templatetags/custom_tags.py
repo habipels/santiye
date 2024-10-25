@@ -43,16 +43,13 @@ def fiyat_duzelt_html(deger):
 
 """
 
-def fiyat_duzelt(deger,i = 0):
-    
-    locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+def fiyat_duzelt(deger, i=0):
     if deger < 0:
-        deger = deger * (-1)
-        y =  locale.format_string("%.2f", deger, grouping=True)
-        y = "-"+y
+        deger = abs(deger)
+        y = f"-{deger:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         return y
     else:
-        return locale.format_string("%.2f", deger, grouping=True)
+        return f"{deger:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 register = template.Library()
 @register.simple_tag
 def personel_maas_bilgisi(id):
@@ -126,12 +123,14 @@ def bodro_cek(id,tarih):
         return {"odemeler":odemeler,"odenecek_tutar":hakedis_tutari}
 @register.simple_tag
 def fiyat_duzelt_html(deger):
-    deger = str(deger)
-    deger = deger.replace('.', '')
-    deger = deger.replace(',', '.')
+    # String dönüşümleri ve noktaları kaldırma işlemi
+    deger = str(deger).replace('.', '').replace(',', '.')
     deger = float(deger)
-    locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
-    return locale.format_string("%.2f", deger, grouping=True)
+    
+    # Formatlama işlemi
+    formatted_value = f"{deger:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return formatted_value
+
 @register.simple_tag
 def bina_3d(veri):
     try:
