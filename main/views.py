@@ -4627,8 +4627,62 @@ def kullanici_yetki_alma(request):
         izinler.gider_faturasi_makbuz_kesme_izni = False
         izinler.gider_faturasi_makbuz_duzenleme_izni = False
         izinler.gider_faturasi_makbuz_silme_izni = False
+        #Puantaj
+        izinler.personeller_puantaj_olusturma = False
+        izinler.personeller_puantaj_silme = False
+        izinler.personeller_puantaj_gorme = False
+        izinler.personeller_puantaj_duzenleme = False
         #
+        # 
+        izinler.personeller_odeme_olusturma = False
+        izinler.personeller_odeme_silme = False
+        izinler.personeller_odeme_gorme = False
+        izinler.personeller_odeme_duzenleme = False
+        #
+        izinler.katman_olusturma = False
+        izinler.katman_silme = False
+        izinler.katman_gorme = False
+        izinler.katman_duzenleme = False
         izinler.save()
+        ##
+        personeller_puantaj_olusturma = request.POST.get("personeller_puantaj_olusturma")
+        if personeller_puantaj_olusturma:
+            izinler.personeller_puantaj_olusturma = True
+        personeller_puantaj_silme = request.POST.get("personeller_puantaj_silme")
+        if personeller_puantaj_silme:
+            izinler.personeller_puantaj_silme = True
+        personeller_puantaj_gorme = request.POST.get("personeller_puantaj_gorme")
+        if personeller_puantaj_gorme:
+            izinler.personeller_puantaj_gorme = True
+        personeller_puantaj_duzenleme = request.POST.get("personeller_puantaj_duzenleme")
+        if personeller_puantaj_duzenleme:
+            izinler.personeller_puantaj_duzenleme = True
+        #
+        personeller_odeme_olusturma = request.POST.get("personeller_odeme_olusturma")
+        if personeller_odeme_olusturma:
+            izinler.personeller_odeme_olusturma = True
+        personeller_odeme_silme = request.POST.get("personeller_odeme_silme")
+        if personeller_odeme_silme:
+            izinler.personeller_odeme_silme = True
+        personeller_odeme_gorme = request.POST.get("personeller_odeme_gorme")
+        if personeller_odeme_gorme:
+            izinler.personeller_odeme_gorme = True
+        personeller_odeme_duzenleme = request.POST.get("personeller_odeme_duzenleme")
+        if personeller_odeme_duzenleme:
+            izinler.personeller_odeme_duzenleme = True
+        #
+        katman_olusturma = request.POST.get("katman_olusturma")
+        if katman_olusturma:
+            izinler.katman_olusturma = True
+        katman_silme = request.POST.get("katman_silme")
+        if katman_silme:
+            izinler.katman_silme = True
+        katman_gorme = request.POST.get("katman_gorme")
+        if katman_gorme:
+            izinler.katman_gorme = True
+        katman_duzenleme = request.POST.get("katman_duzenleme")
+        if katman_duzenleme:
+            izinler.katman_duzenleme = True
         ##
         dashboard_gorme = request.POST.get("dashboard_gorme")
         if dashboard_gorme:
