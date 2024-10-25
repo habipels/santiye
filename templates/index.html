@@ -2660,6 +2660,296 @@
 
 {% endif %}
 {% bina_3d son_gorevler_bina as bina_3d_bilgiler %}
+{% for i in bina_3d_bilgiler.gorevler %}
+
+
+ <div class="modal" id="ilerleme{{i.id}}">
+        <div class="modal-inner" style="width: 500px;">
+            <div class="modal-header">
+                {% trans 'İlerleme Takibi' %}
+            </div>
+            <div class="modal-body">
+                <div class="ilerleme-durumlari">
+                    <div class="ilerleme-durumu">
+                        <span>{{i.kayit_tarihi}}</span>
+                        <div class="ilerleme-durumu-content">
+                            {% trans 'Başlık ' %}  {{i.title}} <br>
+                            {% trans 'Açıklama ' %} {{i.aciklama}}<br>
+                            {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
+                            {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
+                            {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
+                            {{yazar.last_name}},
+                     {% endfor %}
+
+                        </div>
+                    </div>
+                    {% ilerleme_goster i.id as veriler %}
+                        {% for k in  veriler %}
+                        <div class="ilerleme-durumu">
+                        <span>{{k.kayit_tarihi}}</span>
+                        <div class="ilerleme-durumu-content">
+                           {% trans 'İşlemi Yapan ' %} {{k.yapan_kisi.last_name}} <br>
+                           {% trans 'Açıklama ' %}{{k.aciklama}}<br>
+                            {% trans 'Durum ' %}{{k.status}} <br>
+                            {% trans 'Teslim Tarihi ' %}{{k.teslim_tarihi}}<br>
+                            
+                        </div>
+                            <div class="ilerleme-durumu-dosyalar">
+                                {% dosya_varsa_indirme_isplani_ilerleme k.id %}
+                                
+                               
+                            </div>
+                        </div>
+                    </div>
+                    
+                        
+                    
+                        {% endfor %}
+                    
+                
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% for kat in bina_3d_bilgiler.kat_gonder %}
+
+        <div class="modal" id="gorevleri_goster{{kat}}">
+    <div class="modal-inner" style="width: %90;">
+        <div class="modal-header">
+            {% blocktrans %}{{ kat }} Bu kattaki İş Emirleri{% endblocktrans %}
+            
+        </div>
+        <div class="modal-body">
+            <table id="tumu-table-{{kat}}" class="table">
+                <thead>
+                    <tr>
+                              <th scope="col">{% trans 'İş Emri Adı' %}</th>
+                                <th scope="col">{% trans 'Açıklama' %}</th>
+                                <th scope="col">{% trans 'İlgililer' %}</th>
+                                <th scope="col">{% trans 'Oluşturma Tarihi' %}</th>
+                                <th scope="col">{% trans 'Tamamlanma Tarihi' %}</th>
+                                <th scope="col">{% trans 'Durum' %}</th>
+                                <th scope="col">{% trans 'Öncelik' %}</th>
+                                <th scope="col">{% trans 'Aksiyon' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in  bina_3d_bilgiler.gorevler %}
+                    {% if i.kat == kat %}
+                    
+                    
+                            {% if request.user.kullanicilar_db %}
+                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                    {% if yetki.yapilacaklar_olusturma %}
+                    <tr>
+                        <td>
+                            <div class="task-check">
+                                
+                                {{i.title}}
+                            </div>
+                        </td>
+                        <td> {{i.aciklama}}</td>
+                        <td>
+                            <div class="td-assigned-people">
+                                <div class="td-assigned-people-profiles">
+                                     {% for yazar in i.yapacaklar.all %}
+                                           <a href="javascript: void(0);"
+                                            class="avatar-group-item"
+                                            data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            data-bs-title="{{yazar.last_name}}"> <img
+                                                src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                class="rounded-circle avatar-xxs"> </a>
+                                    {% endfor %}
+                                    <span>+{{i.yapacaklar.all | length}}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{i.kayit_tarihi}}</td>
+                        <td>{{i.teslim_tarihi}}</td>
+                        <td>
+                        {% isplani_durumu_kontrol i.id as b %}
+                                    
+                                    {% if i.status == "Inprogress" %}
+                                        <span
+                                        class="status-inprogress stats-lg">{{i.status}}</span>
+                                    {% elif i.status == "New" %}
+                                    <div class="td-info"><span class="status-highlight stats-lg">Yeni</span></div>
+                                    {% elif i.status == "Pending" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                     {% elif i.status == "Completed" %}
+                                    <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                        {% endif %}
+                                    
+                            
+                        </td>
+                        <td>
+                             {% if i.oncelik_durumu == "High" %}
+                        <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+            
+                                {% elif i.oncelik_durumu == "Medium" %}
+                                <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                {% elif i.oncelik_durumu == "Low" %}
+                                <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                {% endif %}
+                        </td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                     {% else %}
+                        {% if request.user in i.yapacaklar.all %}
+                          <tr>
+                        <td>
+                            <div class="task-check">
+                                
+                                {{i.title}}
+                            </div>
+                        </td>
+                        <td> {{i.aciklama}}</td>
+                        <td>
+                            <div class="td-assigned-people">
+                                <div class="td-assigned-people-profiles">
+                                     {% for yazar in i.yapacaklar.all %}
+                                           <a href="javascript: void(0);"
+                                            class="avatar-group-item"
+                                            data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            data-bs-title="{{yazar.last_name}}"> <img
+                                                src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                class="rounded-circle avatar-xxs"> </a>
+                                    {% endfor %}
+                                    <span>+{{i.yapacaklar.all | length}}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{i.kayit_tarihi}}</td>
+                        <td>{{i.teslim_tarihi}}</td>
+                        <td>
+                        {% isplani_durumu_kontrol i.id as b %}
+                                    
+                                    {% if i.status == "Inprogress" %}
+                                        <span
+                                        class="status-inprogress stats-lg">{{i.status}}</span>
+                                    {% elif i.status == "New" %}
+                                    <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                    {% elif i.status == "Pending" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                     {% elif i.status == "Completed" %}
+                                    <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                        {% endif %}
+                                    
+                            
+                        </td>
+                        <td>
+                          {% if i.oncelik_durumu == "High" %}
+                        <div class="td-info"><span class="status-cancel stats-lg">{% trans 'Acil' %}</span></div>
+            
+                                {% elif i.oncelik_durumu == "Medium" %}
+                                <div class="td-info"><span class="status-orange stats-lg">{% trans 'Orta' %}</span></div>
+                                {% elif i.oncelik_durumu == "Low" %}
+                                <div class="td-info"><span class="status-dark stats-lg">{% trans 'Düşük' %}</span></div>
+                                {% endif %}
+                         </td>
+                        <td>
+                            <div class="td-actions">
+                                
+                                        <a onclick="openModal('ilerleme{{i.id}}')" class="status-view"><i
+                                            class="icon icon-view"></i></a>
+                               
+
+                            </div>
+                        </td>
+                    </tr>
+                       {% endif %}                                                        
+                                    
+                    {% endif %}
+                            
+                    {% else %}
+                      <tr>
+                        <td>
+                            <div class="task-check">
+                               
+                                {{i.title}}
+                            </div>
+                        </td>
+                        <td> {{i.aciklama}}</td>
+                        <td>
+                            <div class="td-assigned-people">
+                                <div class="td-assigned-people-profiles">
+                                     {% for yazar in i.yapacaklar.all %}
+                                           <a href="javascript: void(0);"
+                                            class="avatar-group-item"
+                                            data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            data-bs-title="{{yazar.last_name}}"> <img
+                                                src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                class="rounded-circle avatar-xxs"> </a>
+                                    {% endfor %}
+                                    <span>+{{i.yapacaklar.all | length}}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{i.kayit_tarihi}}</td>
+                        <td>{{i.teslim_tarihi}}</td>
+                        <td>
+                        {% isplani_durumu_kontrol i.id as b %}
+                                    
+                                    {% if i.status == "Inprogress" %}
+                                        <span
+                                        class="status-inprogress stats-lg">{% trans 'Devam Eden' %}</span>
+                                    {% elif i.status == "New" %}
+                                    <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeniler' %}</span></div>
+                                    {% elif i.status == "Pending" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans 'Devam Eden' %}</span></div>
+                                     {% elif i.status == "Completed" %}
+                                    <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlanan' %}</span></div>
+                                        {% endif %}
+                                    
+                            
+                        </td>
+                        <td>
+                        {% if i.oncelik_durumu == "High" %}
+                        <div class="td-info"><span class="status-cancel stats-lg">{% trans 'Acil' %}</span></div>
+            
+                                {% elif i.oncelik_durumu == "Medium" %}
+                                <div class="td-info"><span class="status-orange stats-lg">{% trans 'Orta' %}</span></div>
+                                {% elif i.oncelik_durumu == "Low" %}
+                                <div class="td-info"><span class="status-dark stats-lg">{% trans 'Düşük' %}</span></div>
+                                {% endif %}
+                            
+                        </td>
+                        <td>
+                            <div class="td-actions">
+                                
+                                        <a onclick="openModal('ilerleme{{i.id}}')" class="status-view"><i
+                                            class="icon icon-view"></i></a>
+                               
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% endif %}
+                    {% else %}
+                    {% endif %}
+                    {% endfor %}
+                    
+                    </tbody>
+            </table>
+             
+                
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal('gorevleri_goster{{kat}}')">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                </div>
+            
+        </div>
+    </div>
+</div>
+       
+    {% endfor %}
 <script>
     function updateWeatherClock() {
       // Dinamik long ve lat değerleri
@@ -2719,6 +3009,17 @@
 </style>
 
 <script>
+
+function modals_actirma(event, title) {
+    openModal(`gorevleri_goster${title}`);
+    
+}
+
+function closeModal() {
+    const modal = document.getElementById("infoModal");
+    modal.style.display = "none";
+}
+
 let currentRotation = 0;
 let isDragging = false; // Fare sürükleme durumu
 let startX = 0;
@@ -2726,10 +3027,22 @@ const infoModal = document.getElementById('infoModal');
 
 // Bina oluşturma fonksiyonu
 function createBuilding() {
-    const floors = {{bina_3d_bilgiler.kat_sayisi}} ; // Kat sayısı
+    const floors = {{ bina_3d_bilgiler.kat_sayisi }}; // Kat sayısı
+
+    // Hedef katlar listesini oluştur
+    const targetFloors = [
+        {% for kat in bina_3d_bilgiler.kat_bilgileri %}
+            "Kat {{ kat }}"{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    ];
 
     for (let i = 1; i <= 4; i++) {
         const face = document.getElementById(`face${i}`);
+        if (!face) {
+            console.error(`face${i} elementi bulunamadı!`);
+            continue; // Eğer yüzey yoksa, bu döngüyü atla
+        }
+
         face.innerHTML = ''; // Yüzeyi temizle
 
         for (let j = floors; j >= 1; j--) { // Katları oluştur
@@ -2738,22 +3051,18 @@ function createBuilding() {
             floor.style.backgroundImage = `url(${imageUrl})`;  // Resim URL'si
             floor.setAttribute('data-floor', `Kat ${j}`);
             floor.innerHTML = `Kat ${j}`;
-             const targetFloors = [
-        {% for kat in bina_3d_bilgiler.kat_bilgileri %}
-            "Kat {{ kat }}"{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-    ];
-            // Yanıp sönen katlara tıklanabilir link ekleyin
-           if (targetFloors.includes(`Kat ${j}`)) {
-        floor.addEventListener('click', function(event) {
-            showInfoModal(event, `R5 - Kat ${j} görevi`);
-        });
-    }
+            floor.onclick = function(event) {
+    console.log(`Tıklandı: Kat ${j}`); // Tıklama olayını kontrol et
+    modals_actirma(event, j);}
+
+           
 
             face.appendChild(floor);
         }
     }
 }
+
+
 
 // Mini modal gösterimi (mouse yanında çıkar)
 function showInfoModal(event, message) {
@@ -2811,5 +3120,119 @@ createBuilding();
 
 </script>
 
-    
+<script>
+    function openModal(modalID, close = true) {
+        if (close) {
+            closeModal();
+        }
+        if (modalID === "plan-konumu") {
+            $("#" + modalID).css({
+                "display": "flex",
+                "z-index": 100000
+            }).hide().fadeIn();
+        } else {
+            $("#" + modalID).css("display", "flex").hide().fadeIn();
+        }
+    }
+
+    function closeModal(modalID = "") {
+        console.log(modalID.length);
+        if (modalID.length === 0) {
+            $(".modal").fadeOut();
+        } else {
+            $("#" + modalID).fadeOut();
+        }
+    }
+
+    $(".modal").on("click", function (e) {
+        if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+            closeModal();
+        }
+    });
+
+    $(document).ready(function () {
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.find('li:not(label)').remove();
+
+            var selectedFiles = Array.from(files);
+
+            for (var i = 0; i < selectedFiles.length; i++) {
+                (function (file) {
+                    var listItem = $('<li></li>');
+
+                    if (file.type.startsWith('image/') && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            listItem.append(`
+                                <div class="file-input-uploaded">
+                                    <div class="file-input-uploaded-head">
+                                        <div class="file-input-uploaded-title" title="${file.name}">${file.name}</div>
+                                        <button type="button" class="file-input-uploaded-remove"><i class="icon icon-trash"></i></button>
+                                    </div>
+                                    <div class="file-input-uploaded-preview">
+                                        <img src="${e.target.result}">
+                                    </div>
+                                </div>
+                            `);
+                            fileList.append(listItem);
+
+                            listItem.find('.file-input-uploaded-remove').on('click', function () {
+                                $(this).closest('li').remove();
+                                selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+                                updateInput(selectedFiles);
+                            });
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        listItem.append(`
+                            <div class="file-input-uploaded">
+                                <div class="file-input-uploaded-head">
+                                    <div class="file-input-uploaded-title" title="${file.name}">${file.name}</div>
+                                    <button type="button" class="file-input-uploaded-remove"><i class="icon icon-trash"></i></button>
+                                </div>
+                                <div class="file-input-uploaded-no-preview">
+                                    <img src="{% static 'go/content/images/illustration-upload.png' %}">
+                                </div>
+                            </div>
+                        `);
+                        fileList.append(listItem);
+
+                        listItem.find('.file-input-uploaded-remove').on('click', function () {
+                            $(this).closest('li').remove();
+                            selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+                            updateInput(selectedFiles);
+                        });
+                    }
+                })(selectedFiles[i]);
+            }
+        });
+    });
+
+    function updateInput(selectedFiles) {
+        var dataTransfer = new DataTransfer();
+        selectedFiles.forEach(function (file) {
+            dataTransfer.items.add(file);
+        });
+        $('input[type="file"]').prop('files', dataTransfer.files);
+    }
+
+
+</script>
+<script>
+    document.querySelectorAll('.table').forEach(function(table) {
+        let dataTable = new DataTable(table, {
+            paging: false,
+            searching: true,
+            info: false
+        });
+    });
+
+
+    $('#stats-search').keyup(function () {
+        table.search($(this).val()).draw();
+    })
+</script>
 {% endblock sidebar %}

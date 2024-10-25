@@ -135,13 +135,15 @@ def fiyat_duzelt_html(deger):
 def bina_3d(veri):
     try:
         katlar = []
+        katlar_modasl = []
         bina_kat_sayisi = veri.blok.kat_sayisi
         gor_olan_katlar = IsplaniPlanlari.objects.filter(blok = veri.blok).exclude(status = "Completed")
         for i in gor_olan_katlar:
             a = "Kat " + str(i.kat)
             katlar.append(a)
+            katlar_modasl.append(i.kat)
     
-        return {"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar}
+        return {"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar}
     except:
         return {"kat_sayisi" : int(20)}
 #@register.filter
