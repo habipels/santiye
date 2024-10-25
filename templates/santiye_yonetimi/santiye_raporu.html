@@ -333,7 +333,7 @@
                 
                     <div class="imalat-kalemi">
                         <div class="imalat-kalemi-check">
-                            <input type="checkbox" id="imalat-kalemi-check-{{i.id}}" checked>
+                            <input data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" onclick="optionSelectedd(this)" type="checkbox" id="imalat-kalemi-check-{{i.id}}" checked>
                         </div>
                         <div class="imalat-kalemi-progress">
                             <div class="imalat-kalemi-progress-details">
@@ -438,6 +438,32 @@
 
     
     </script>
-    
+    <script>
+function optionSelectedd(checkbox) {
+    const selectedValue = checkbox.value;  // Tıklanan checkbox'ın `value` değerini alır
+    const completionPercentages = JSON.parse(selectedValue);  // `value` JSON formatında olduğu varsayılarak ayrıştırılır
+
+    const array = [];  // Yeni bir dizi oluştur
+    const kat_bilgisi = {{ kat_bilgisi|safe }};  // `kat_bilgisi` verisini al
+
+    // Face report elemanlarını temizle
+    const faceReports = document.getElementsByClassName('face-report');
+    for (let i = 0; i < faceReports.length; i++) {
+        faceReports[i].innerHTML = '';  // Her bir `face-report` elemanının içeriğini temizle
+    }
+
+    // `kat_bilgisi` değerine göre döngü başlatılır
+    for (let index = 0; index < kat_bilgisi; index++) {
+        if (index < completionPercentages.length && completionPercentages[index] === 100) {
+            array[index] = 100;  // `completionPercentages` değerinin 100 olduğu durumda 100 ata
+        } else {
+            array[index] = 0;  // Koşul sağlanmıyorsa 0 ata
+        }
+    }
+
+    console.log(array);  // İşlenmiş `array` çıktısını konsola yazdır
+    createBuilding(array);  // İşlenmiş `array` ile `createBuilding` fonksiyonunu çağır
+}
+</script>
 {% endblock sidebar %}
 
