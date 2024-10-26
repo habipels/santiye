@@ -74,7 +74,7 @@
                                     <!-- Preloader Bölümü -->
                                     <div id="preloader">
                                         <div class="spinner"></div>
-                                        <p>Personel bilgileri yükleniyor...</p>
+                                        <p>Veriler işleniyor... <br> Lütfen bekleyiniz.</p>
                                     </div>
 
         <div class="page-header">
@@ -893,4 +893,34 @@ $j(document).ready(function() {
         
         
         </script>
+        ,<script>
+var $j = jQuery.noConflict();
+
+function hidePreloader() {
+    $j("#preloader").fadeOut("slow"); // Animasyonla gizlemek için
+}
+
+$j(document).ready(function() {
+    // Sayfa yüklendiğinde preloader'ı göster
+    $j("#preloader").show();
+
+    // Preloader'ı sayfa tamamen yüklendiğinde gizle
+    if (document.readyState === 'complete') {
+        hidePreloader();
+    }
+
+    $j(window).on('load', function() {
+        hidePreloader();
+    });
+
+    // Ayrıca AJAX çağrılarının tamamlanması durumunda preloader'ı gizle
+    $j(document).ajaxComplete(function() {
+        hidePreloader();
+    });
+});
+
+// Ek hata durumları için preloader gizleme
+window.addEventListener('DOMContentLoaded', hidePreloader);
+</script>
+
 {% endblock sidebar %}
