@@ -124,14 +124,12 @@ if DEPLOY__:
 
     REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # Eğer tüm API'ler için kimlik doğrulama gerekiyorsa bu ayarları bırakabilirsiniz.
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',  # Token tabanlı kimlik doğrulama
+        'rest_framework.authentication.SessionAuthentication',  # Oturum kimlik doğrulama
+        'rest_framework.authentication.BasicAuthentication',  # Temel kimlik doğrulama
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        # API endpoint'leri için genel izin ayarları. 
-        # Sadece Swagger için 'AllowAny' kullanıyoruz.
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',  # Tüm API'ler için kimlik doğrulama zorunlu
     ],
 }
 

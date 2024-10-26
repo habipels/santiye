@@ -1,7 +1,7 @@
 import requests
 
 # API URL'sini tanımlayın
-url = "http://localhost:8000/biadago/api/siteprojectlist/"  # Güncel URL'inizi buraya yazın
+url = "https://cloud.biadago.com/biadago/api/dashboard/"  # Güncel URL'inizi buraya yazın
 token = "728799007d33d1be1ab3f4d03e9dc183d5f8f8d1"  # Geçerli token'inizi buraya yazın
 
 # Header bilgisi
