@@ -13,13 +13,15 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from muhasebe.models import *
 from site_info.models import *
 from .serializers import *
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404, redirect
 from main.views import super_admin_kontrolu  # varsa, util fonksiyonu
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -43,7 +45,7 @@ class CustomAuthToken(ObtainAuthToken):
                 'email': user.email,
                 "user_name":user.username,
                 "name_sorname":user.last_name,
-                "image":0
+                "image":False
             })
 def super_admin_kontrolu(request):
     if request.user.is_superuser:
@@ -51,7 +53,8 @@ def super_admin_kontrolu(request):
     else:
         return 0
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def homepage_api(request):
     if not request.user.is_authenticated:
@@ -92,7 +95,8 @@ def homepage_api(request):
 
     return Response(content)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def proje_tipi_api(request):
     content = {}
@@ -127,7 +131,8 @@ def proje_tipi_api(request):
 
     return Response(content, status=status.HTTP_200_OK)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def proje_ekleme_api(request):
     if request.method == 'GET':
@@ -148,7 +153,8 @@ def proje_ekleme_api(request):
             proje_tipi.objects.create(proje_ait_bilgisi=request.user, Proje_tipi_adi=proje_tip_adi)
     
     return Response({'success': 'Proje tipi başarıyla oluşturuldu'}, status=status.HTTP_201_CREATED)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def proje_adi_sil(request):
     if not request.user.is_authenticated:
@@ -175,6 +181,8 @@ def proje_adi_sil(request):
         proje.silinme_bilgisi = True
         proje.save()
         return Response({'status': 'Project type marked as deleted.'}, status=status.HTTP_200_OK)
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def proje_duzenle(request):
     if not request.user.is_authenticated:
@@ -217,7 +225,8 @@ def proje_duzenle(request):
         
         return Response({'status': 'Project type updated successfully.'}, status=status.HTTP_200_OK)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def santiye_projesi_liste(request):
     content = {}
@@ -237,7 +246,8 @@ def santiye_projesi_liste(request):
 
 from rest_framework.decorators import api_view, permission_classes
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def santiye_ekleme_api(request):
@@ -254,7 +264,8 @@ def santiye_ekleme_api(request):
 
     return Response({"error": "Geçersiz istek."}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def santiye_projesi_sil_api(request):
@@ -271,7 +282,8 @@ def santiye_projesi_sil_api(request):
     return Response({"error": "Geçersiz istek."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def santiye_projesi_duzenle_api(request):
@@ -295,7 +307,8 @@ def santiye_projesi_duzenle_api(request):
         return Response({"message": "Şantiye başarıyla güncellendi."}, status=status.HTTP_200_OK)
 
     return Response({"error": "Geçersiz istek."}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def santiye_projesi_bloklar_ekle_api(request, id):
@@ -313,7 +326,8 @@ def santiye_projesi_bloklar_ekle_api(request, id):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def blog_ekle_api(request):
@@ -343,7 +357,8 @@ def blog_ekle_api(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def blog_duzenle_api(request):
@@ -371,7 +386,8 @@ def blog_duzenle_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def blog_sil_api(request):
@@ -384,7 +400,8 @@ def blog_sil_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def santiye_kalemleri_api(request, id):
@@ -413,7 +430,8 @@ def santiye_kalemleri_api(request, id):
     content["profile"] = SantiyeKalemleriSerializer(profile, many=True).data
     
     return Response(content, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def santiyeye_kalem_ekle_api(request):
@@ -478,7 +496,8 @@ def santiyeye_kalem_ekle_api(request):
         return Response({"message": "Kalem başarıyla eklendi."}, status=status.HTTP_201_CREATED)
 
     return Response({"error": "Yetkisiz erişim."}, status=status.HTTP_403_FORBIDDEN)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def kalem_sil_api(request, id):
@@ -492,7 +511,8 @@ def kalem_sil_api(request, id):
     kalem.save()
 
     return Response({"message": "Kalem başarıyla silindi."}, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def santiye_kalemleri_duzenle_api(request,id):
@@ -555,7 +575,8 @@ def santiye_kalemleri_duzenle_api(request,id):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def kalem_blog_dagilis_sil_api(request, id, ik):
@@ -571,7 +592,8 @@ def kalem_blog_dagilis_sil_api(request, id, ik):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def santiye_kalem_ve_blog_api(request):
@@ -596,7 +618,8 @@ def santiye_kalem_ve_blog_api(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def blogtan_kaleme_ilerleme_takibi_api(request, id):
@@ -627,7 +650,8 @@ def blogtan_kaleme_ilerleme_takibi_api(request, id):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def ilerleme_kaydet_api(request):
@@ -667,7 +691,8 @@ def ilerleme_kaydet_api(request):
 
     # Eğer bir yönlendirme gerekiyorsa (API olmadığı durumlarda)
     # return redirect("main:blogtan_kaleme_ilerleme_takibi", geri_don, veri_cek)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def projeler_sayfasi_api(request):
@@ -689,7 +714,8 @@ def projeler_sayfasi_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def proje_ekle_api(request):
@@ -729,7 +755,8 @@ def proje_ekle_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def proje_silme_api(request):
@@ -748,7 +775,8 @@ def proje_silme_api(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def proje_duzenle_bilgi_api(request):
@@ -813,7 +841,8 @@ def proje_duzenle_bilgi_api(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def taseron_sayfasi_api(request):
@@ -835,7 +864,8 @@ def taseron_sayfasi_api(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def taseron_ekle_api(request):
@@ -889,7 +919,8 @@ def taseron_ekle_api(request):
     else:
         return Response({"error": "Kullanıcı giriş yapmamış."}, status=status.HTTP_401_UNAUTHORIZED)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def taseron_silme_api(request):
@@ -907,7 +938,8 @@ def taseron_silme_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def taseron_duzelt_api(request):
@@ -967,7 +999,8 @@ def taseron_duzelt_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])    
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def sozlesmeler_sayfasi_api(request):
@@ -989,7 +1022,8 @@ def sozlesmeler_sayfasi_api(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def sozlesme_ekle_api(request):
@@ -1017,7 +1051,8 @@ def sozlesme_ekle_api(request):
                 return Response({"message": "Sözleşme başarıyla eklendi."}, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def sozlesme_duzenle_api(request):
@@ -1076,7 +1111,8 @@ def sozlesme_duzenle_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def sozlesme_silme_api(request):
@@ -1094,7 +1130,8 @@ def sozlesme_silme_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def hakedis_sayfasi_api(request):
@@ -1115,7 +1152,8 @@ def hakedis_sayfasi_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def hakedis_ekle_api(request):
@@ -1155,7 +1193,8 @@ def hakedis_ekle_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def hakedis_silme_api(request):
@@ -1178,7 +1217,8 @@ def hakedis_silme_api(request):
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def hakedis_duzenle_api(request):
@@ -1243,7 +1283,8 @@ def hakedis_duzenle_api(request):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def depolama_sistemim(request):
@@ -1261,7 +1302,8 @@ def depolama_sistemim(request):
     })
 
     return Response(content, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def klasor_olustur(request):
@@ -1287,7 +1329,8 @@ def klasor_olustur(request):
     serializer = KlasorlerSerializer(new_klasor)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def klasor_yeniden_adlandir_api(request):
@@ -1311,7 +1354,8 @@ def klasor_yeniden_adlandir_api(request):
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def klasor_sil_api(request):
@@ -1334,7 +1378,8 @@ def klasor_sil_api(request):
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def klasore_gir_api(request, id):
@@ -1352,7 +1397,8 @@ def klasore_gir_api(request, id):
 
     # Verileri JSON formatında döndür
     return Response(content, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def dosya_ekle_api(request):
@@ -1382,7 +1428,8 @@ def dosya_ekle_api(request):
 
 
     return Response("Dosya Başarıyla Eklendi", status=status.HTTP_201_CREATED)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
 def dosya_sil_api(request):
@@ -1406,7 +1453,8 @@ def dosya_sil_api(request):
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
 def dosya_geri_getir_api(request):
@@ -1430,6 +1478,8 @@ def dosya_geri_getir_api(request):
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 from functools import reduce
 import operator
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def dokumanlar_api(request):
@@ -1446,7 +1496,8 @@ def dokumanlar_api(request):
     
 
     return Response(content, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def media_dosyalari_api(request):
@@ -1463,7 +1514,8 @@ def media_dosyalari_api(request):
     
 
     return Response(content, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def zamana_dosyalari_api(request):
@@ -1480,7 +1532,8 @@ def zamana_dosyalari_api(request):
     
 
     return Response(content, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def silinen_dosyalari_api(request):
@@ -1498,7 +1551,8 @@ def silinen_dosyalari_api(request):
 
     return Response(content, status=status.HTTP_200_OK)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def yapilacaklar_api(request):
@@ -1520,7 +1574,8 @@ def yapilacaklar_api(request):
     
     return Response(content, status=status.HTTP_200_OK)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def yapilacalar_ekle_api(request):
@@ -1572,7 +1627,8 @@ def yapilacalar_ekle_api(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def yapilacalar_sil(request):
@@ -1588,7 +1644,8 @@ def yapilacalar_sil(request):
         return Response({'message': 'Görev başarıyla silindi'}, status=status.HTTP_200_OK)
     except IsplaniPlanlari.DoesNotExist:
         return Response({'error': 'Görev bulunamadı'}, status=status.HTTP_404_NOT_FOUND)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def yapilacak_durumu_yenileme(request):
@@ -1627,7 +1684,8 @@ def yapilacak_durumu_yenileme(request):
         )
 
     return Response({"message": "Durum başarıyla güncellendi"}, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def yapilacaklar_durum_bilgisi(request):
@@ -1651,7 +1709,8 @@ def yapilacaklar_durum_bilgisi(request):
     return Response(content, status=status.HTTP_200_OK)
 
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['Get'])
 @permission_classes([IsAuthenticated])
 def yapilacalar_duzenle_api(request):
@@ -1717,6 +1776,8 @@ def yapilacaklar_timeline_api(request):
     }
 
     return Response(content, status=status.HTTP_200_OK)
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def yapilacalar_time_line_ekle_api(request):
@@ -1758,7 +1819,8 @@ def yapilacalar_time_line_ekle_api(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def yapilacalar_time_line_sil_api(request):
@@ -1774,7 +1836,8 @@ def yapilacalar_time_line_sil_api(request):
     except YapilacakPlanlari.DoesNotExist:
         return Response({'error': 'Yapılacak bulunamadı'}, status=status.HTTP_404_NOT_FOUND)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def yapilacaklar_time_line_duzenle_api(request):
@@ -1816,7 +1879,8 @@ def yapilacaklar_time_line_duzenle_api(request):
     
     return Response({"detail": "Yapılacak plan başarıyla güncellendi."}, status=status.HTTP_200_OK)
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def santiye_raporu_api(request, id):
@@ -1828,7 +1892,8 @@ def santiye_raporu_api(request, id):
         return Response(content, status=status.HTTP_200_OK)
     except bloglar.DoesNotExist:
         return Response({"detail": "Santiye raporu bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def api_katman_ekle(request):
@@ -1856,6 +1921,8 @@ def api_katman_ekle(request):
     )
     
     return Response({"detail": "Katman başarıyla eklendi.", "katman_id": katman_instance.id}, status=status.HTTP_201_CREATED)
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def api_katman_sil(request):
@@ -1874,7 +1941,8 @@ def api_katman_sil(request):
             katman.objects.filter(id=buttonIdInput).update(silinme_bilgisi=True)
     
     return Response({"detail": "Katman başarıyla silindi."}, status=status.HTTP_200_OK)
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def api_katman_duzenle(request):
@@ -1908,6 +1976,8 @@ def api_katman_duzenle(request):
     katman.objects.filter(id=buttonId).update(**update_fields)
     
     return Response({"detail": "Katman başarıyla güncellendi."}, status=status.HTTP_200_OK)
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def api_katman_sayfasi(request):
