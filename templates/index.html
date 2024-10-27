@@ -6,8 +6,9 @@
 {% if hash_bilgi %}
 
     <main>
-
+        
         <div class="quick-actions">
+            
             <div class="quick-actions-header">
                 <div class="quick-actions-title">{% trans 'Hızlı Menü' %}</div>
                 <div class="quick-actions-right">
@@ -60,7 +61,7 @@
             </div>
         </div>
 
-
+        
         <div class="quick-action-modal " id="hiddenLinksModal">
             <div class="quick-action-modal-content">
                 <div class="quick-action-modal-header">
@@ -71,7 +72,18 @@
                 </div>
             </div>
         </div>
-
+        <div style="margin-top: 100px;">
+            {% if request.user.is_superuser %}
+                                                                <select name="" onchange="document.location.href = this.value" id="">
+                                                                    {% for i in kullanicilar %}
+                                                                    {% encode_id i.id as hash %}
+                                                                        <option value="/{{dil}}{% url 'main:homepage_2' hash  %}">{{i.first_name}}</option>
+                                                                    {% endfor %}
+                                                                    
+                                                                </select>
+                                                                {% else %}
+                                                                {% endif %}
+        </div>
         <script>
 
             const hiddenLinksModalBody = document.querySelector('#hiddenLinksModal .modal-body');
