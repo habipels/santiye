@@ -13,11 +13,12 @@
             </div>
         </a>
     </div>
-
-        <div class="sidebar-navs">
-         <div id="selected-account-info" class="account-info-box" style="display: none;">
+             <div id="selected-account-info" class="account-info-box" style="display: none;">
         {% trans 'Aktif Hesap:' %} <strong id="account-name">xxx</strong>
     </div>
+
+        <div class="sidebar-navs">
+
 <ul class="sidebar-nav">
     <li class="{% if request.path == '/' %}active{% endif %}">
         <a href="/{{dil}}/"><i class="icon icon-dashboard"></i> <span>{% trans 'Dashboard' %}</span></a>
@@ -297,25 +298,79 @@
     let accountSelect = document.getElementById("super-admin-account-select");
     let accountInfoBox = document.getElementById("selected-account-info");
 
+    // Sayfa yüklendiğinde aktif menü durumunu geri yükler
+    document.addEventListener("DOMContentLoaded", function() {
+        let activeMenu = localStorage.getItem("activeMenu");
+
+        if (activeMenu) {
+            // Sadece aktif olan ana menü ve alt menüler açık gösterilir
+            $(`.sidebar-sub-toggle[data-menu-id="${activeMenu}"]`).next('.sidebar-sub-menu').show().addClass("open");
+            $(`.sidebar-sub-toggle[data-menu-id="${activeMenu}"]`).find('.icon-caret').addClass('rotate');
+            $(`.sidebar-sub-toggle[data-menu-id="${activeMenu}"]`).addClass('active');
+        }
+
+        // Sidebar'ın durumunu geri yükle
+        let isSidebarCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+        if (isSidebarCollapsed) {
+            sidebar.classList.add("sidebar-collapsed");
+            toggleAccountVisibility();
+        }
+    });
+
     // Sidebar açma/kapatma işlevi
     sidebarToggle.addEventListener("click", function () {
         sidebar.classList.toggle("sidebar-collapsed");
+        localStorage.setItem("sidebar-collapsed", sidebar.classList.contains("sidebar-collapsed"));
         toggleAccountVisibility();
     });
 
     sidebarMobileToggle.addEventListener("click", function () {
         sidebar.classList.toggle("sidebar-collapsed");
+        localStorage.setItem("sidebar-collapsed", sidebar.classList.contains("sidebar-collapsed"));
         toggleAccountVisibility();
+    });
+
+    // Alt menü açma/kapatma işlevi ve durum kaydetme
+    $('.sidebar-sub-toggle').each(function(index) {
+        $(this).attr('data-menu-id', index); // Her alt menüye benzersiz bir ID ekliyoruz
+    });
+
+    $('.sidebar-sub-toggle').click(function (event) {
+        event.preventDefault();
+
+        let $submenu = $(this).next('.sidebar-sub-menu');
+        let menuId = $(this).attr('data-menu-id');
+
+        if ($submenu.hasClass("open")) {
+            // Menü zaten açıksa sadece kapat
+            $submenu.slideUp().removeClass("open");
+            $(this).removeClass("active");
+            $(this).find('.icon-caret').removeClass('rotate');
+            localStorage.removeItem("activeMenu"); // Aktif menüyü kaydetmeyi kaldır
+        } else {
+            // Menü kapalıysa, diğer tüm ana düzey alt menüleri kapat ve sadece tıklananı aç
+            $('.sidebar-sub-menu').not($submenu.parents('.sidebar-sub-menu')).slideUp().removeClass("open");
+            $('.sidebar-sub-toggle').not($(this).parents('.sidebar-sub-toggle')).removeClass("active");
+            $('.icon-caret').not($(this).find('.icon-caret')).removeClass('rotate');
+
+            // Tıklanan menüyü aç ve durumunu kaydet
+            $submenu.slideDown().addClass("open");
+            $(this).addClass("active");
+            $(this).find('.icon-caret').addClass('rotate');
+
+            // localStorage'a sadece ana menü seviyesindeki menüler kaydedilir
+            if ($(this).parents('.sidebar-sub-menu').length === 0) {
+                localStorage.setItem("activeMenu", menuId); // Sadece aktif ana menüyü kaydet
+            }
+        }
     });
 
     // Select ve seçili hesap bilgisini menü kapanınca gizlemek için fonksiyon
     function toggleAccountVisibility() {
         if (sidebar.classList.contains("sidebar-collapsed")) {
-            // Menü kapalıysa sadece select ve hesap bilgisini gizle
             if (accountSelect) accountSelect.style.display = "none";
             if (accountInfoBox) accountInfoBox.style.display = "none";
         } else {
-            // Menü açıksa select görünür; eğer hesap seçiliyse hesap bilgisi de görünür
             if (accountSelect) accountSelect.style.display = "block";
             if (accountInfoBox && accountSelect.value) {
                 accountInfoBox.style.display = "block";
@@ -326,10 +381,11 @@
     // Hesap seçildiğinde seçili hesap bilgisini göster
     accountSelect.addEventListener("change", function() {
         let selectedAccount = accountSelect.options[accountSelect.selectedIndex].text;
-        document.getElementById("account-name").textContent = selectedAccount; // Seçili hesap ismini güncelle
-        if (accountInfoBox) accountInfoBox.style.display = "block"; // Bilgi kutusunu göster
+        document.getElementById("account-name").textContent = selectedAccount;
+        if (accountInfoBox) accountInfoBox.style.display = "block";
     });
 </script>
+
 
 <script>
     let accountSelect = document.getElementById("super-admin-account-select");
