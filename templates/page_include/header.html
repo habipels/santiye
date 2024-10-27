@@ -15,6 +15,9 @@
     </div>
 
         <div class="sidebar-navs">
+         <div id="selected-account-info" class="account-info-box" style="display: none;">
+        Seçili Hesap: <strong id="account-name">xxx</strong>
+    </div>
 <ul class="sidebar-nav">
     <li class="{% if request.path == '/' %}active{% endif %}">
         <a href="/{{dil}}/"><i class="icon icon-dashboard"></i> <span>{% trans 'Dashboard' %}</span></a>
@@ -266,6 +269,16 @@
             </ul>
         </li>
         <li><a href="https://help.biadago.com/support"><i class="icon icon-help"></i> <span>{% trans 'Destek ve Yardım' %}</span></a></li>
+        <div class="form-container">
+    <select id="super-admin-account-select" name="super-admin-account" class="styled-select">
+        <option value="" disabled selected>{% trans 'Hesap seç' %}</option>
+        <option value="Hesap 1">{% trans 'Hesap 1' %}</option>
+        <option value="Hesap 2">{% trans 'Hesap 2' %}</option>
+        <option value="Hesap 3">{% trans 'Hesap 3' %}</option>
+    </select>
+    
+
+</div>
     </ul>
 </ul>
 
@@ -277,23 +290,60 @@
         <i class="icon icon-chevron-right"></i>
     </div>
 
-    <script>
-        let sidebar = document.querySelector(".sidebar");
-        let sidebarToggle = document.querySelector(".sidebar-toggle");
-        let sidebarMobileToggle = document.querySelector(".sidebar-mobile-toggle");
-        sidebarToggle.addEventListener("click", function () {
-            sidebar.classList.toggle("sidebar-collapsed");
-        })
-        sidebarMobileToggle.addEventListener("click", function () {
-            sidebar.classList.toggle("sidebar-collapsed");
-        })
+<script>
+    let sidebar = document.querySelector(".sidebar");
+    let sidebarToggle = document.querySelector(".sidebar-toggle");
+    let sidebarMobileToggle = document.querySelector(".sidebar-mobile-toggle");
+    let accountSelect = document.getElementById("super-admin-account-select");
+    let accountInfoBox = document.getElementById("selected-account-info");
 
-        $('.sidebar-sub-toggle').click(function () {
-            $(this).next('.sidebar-sub-menu').slideToggle();
-            $(this).next('.sidebar-sub-menu').toggleClass("open");
-            $(this).find('.icon-caret').toggleClass('rotate');
-        });
-    </script>
+    // Sidebar açma/kapatma işlevi
+    sidebarToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("sidebar-collapsed");
+        toggleAccountVisibility();
+    });
+
+    sidebarMobileToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("sidebar-collapsed");
+        toggleAccountVisibility();
+    });
+
+    // Select ve seçili hesap bilgisini menü kapanınca gizlemek için fonksiyon
+    function toggleAccountVisibility() {
+        if (sidebar.classList.contains("sidebar-collapsed")) {
+            // Menü kapalıysa sadece select ve hesap bilgisini gizle
+            if (accountSelect) accountSelect.style.display = "none";
+            if (accountInfoBox) accountInfoBox.style.display = "none";
+        } else {
+            // Menü açıksa select görünür; eğer hesap seçiliyse hesap bilgisi de görünür
+            if (accountSelect) accountSelect.style.display = "block";
+            if (accountInfoBox && accountSelect.value) {
+                accountInfoBox.style.display = "block";
+            }
+        }
+    }
+
+    // Hesap seçildiğinde seçili hesap bilgisini göster
+    accountSelect.addEventListener("change", function() {
+        let selectedAccount = accountSelect.options[accountSelect.selectedIndex].text;
+        document.getElementById("account-name").textContent = selectedAccount; // Seçili hesap ismini güncelle
+        if (accountInfoBox) accountInfoBox.style.display = "block"; // Bilgi kutusunu göster
+    });
+</script>
+
+<script>
+    let accountSelect = document.getElementById("super-admin-account-select");
+    let accountInfoBox = document.getElementById("selected-account-info");
+    let accountName = document.getElementById("account-name");
+
+    accountSelect.addEventListener("change", function() {
+        let selectedAccount = accountSelect.options[accountSelect.selectedIndex].text;
+        accountName.textContent = selectedAccount; // Seçili hesap ismini güncelle
+        accountInfoBox.style.display = "block"; // Bilgi kutusunu göster
+    });
+</script>
+
+
 
     <header>
         <div class="header-search">
