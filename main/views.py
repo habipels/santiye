@@ -457,6 +457,7 @@ def homepage_2(request,hash):
             users = get_object_or_404(CustomUser,id = d)
             content["hash_bilgi"] = users
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
             profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-id")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = users)
             bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users).order_by("-fatura_tarihi")
