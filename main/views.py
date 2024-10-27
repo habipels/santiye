@@ -1632,35 +1632,21 @@ def santiye_kalem_ve_blog(request):
 
 def santiye_kalem_ve_blog_2(request,hash):
     content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    
     content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  request.user)
     if super_admin_kontrolu(request):
-        profile =bloglar.objects.all()
+        profile = bloglar.objects.filter(proje_ait_bilgisi = users)
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
     else:
         profile = bloglar.objects.filter(proje_ait_bilgisi = request.user)
-    if request.GET.get("search"):
-        search = request.GET.get("search")
-        if super_admin_kontrolu(request):
-            profile =bloglar.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search)|Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
-            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
-            content["kullanicilar"] =kullanicilar
-        else:
-            profile = bloglar.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(proje_santiye_Ait__Proje_tipi_adi__icontains = search))
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 10) # 6 employees per page
+    
+    content["santiyeler"] = profile
 
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_blog_kalem.html",content)
 
 def blogtan_kaleme_ilerleme_takibi(request,id,slug):
