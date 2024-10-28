@@ -4890,6 +4890,27 @@ def takvim_olaylari(request):
     return render(request,"santiye_yonetimi/takvim.html",content)
 #takvim
 
+def santiye_raporu_2(request,id,hash):
+    content = sozluk_yapisi()
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.santiye_raporu_gorme:
+                profile =  get_object_or_404(bloglar,proje_ait_bilgisi = request.user.kullanicilar_db,id = id )
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        profile =  get_object_or_404(bloglar,proje_ait_bilgisi = users,id = id )
+    content["santiye"] = profile
+    return render(request,"santiye_yonetimi/santiye_raporu.html",content)
 
 def santiye_raporu(request,id):
     content = sozluk_yapisi()

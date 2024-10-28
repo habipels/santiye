@@ -71,8 +71,9 @@ urlpatterns = [#
     path("saveprogresstracking", views.ilerleme_kaydet, name="ilerleme_kaydet"),
     path("control/saveprogresstracking/<str:hash>", views.ilerleme_kaydet_2, name="ilerleme_kaydet_2"),
     #
-    #ilerleme takibi
+    #ilerleme takibi#
     path("santiyeraporu/<int:id>", views.santiye_raporu, name="santiye_raporu"),
+    path("control/santiyeraporu/<int:id>/<str:hash>", views.santiye_raporu_2, name="santiye_raporu_2"),
 #    #taşeron olayları
     path("subcontractor", views.taseron_sayfasi, name="taseron_sayfasi"),
     path("addsubcontractor", views.taseron_ekle, name="taseron_ekle"),
