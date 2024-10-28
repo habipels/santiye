@@ -92,7 +92,7 @@ urlpatterns = [
     path("viewexpenses/<int:id>", views.fatura_goster2, name="fatura_goster2"),
     path("personnelinvoice/<int:id>", views.personel_gider_faturasi_kesme, name="personel_gider_faturasi_kesme"),
     path("savepersonnelinvoice/", views.gider_faturasi_kaydet_personel, name="gider_faturasi_kaydet_personel"),
-    #giderler Sayfası #
+    #giderler Sayfası #hesap_ekstra_durumu_2
     path('control/search/<str:hash>', views.search_2, name='search_2'),
     path('control/cari/<str:hash>', views.cariler_bilgisi_2, name='cariler_bilgisi_2'),
     path('gelirgiderduzelt', views.gelir_gider_duzelt, name='gelir_gider_duzelt'),
@@ -107,6 +107,7 @@ urlpatterns = [
     path('kategoriekleme', views.gider_gelir_ekleme, name='gider_gelir_ekleme'),
     path('etiketekleme', views.gider_gelir_etiketekleme, name='gider_gelir_etiketekleme'),
     path("accountextra", views.hesap_ekstra_durumu, name="hesap_ekstra_durumu"),
+    path("control/accountextra/<str:hash>", views.hesap_ekstra_durumu_2, name="hesap_ekstra_durumu_2"),
     path('download-excel/', views.download_excel, name='download_excel'),
     path('download-pdf/', views.download_pdf, name='download_pdf'),
     #qrfaturasıgöster

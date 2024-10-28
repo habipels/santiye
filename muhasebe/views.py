@@ -3683,6 +3683,37 @@ def hesap_ekstra_durumu(request):
 
     content["santiyeler_i"] = profile
     return render(request,"muhasebe_page/hesap_eksta.html",content)
+def hesap_ekstra_durumu_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if super_admin_kontrolu(request):
+        profile =Gider_Bilgisi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = users))
+        profile.sort(key=lambda x: x.kayit_tarihi)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.hesap_ekstra_gorme:
+                    profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db))
+                    profile.sort(key=lambda x: x.kayit_tarihi)
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))
+            profile.sort(key=lambda x: x.kayit_tarihi)
+            
+
+    content["santiyeler_i"] = profile
+    return render(request,"muhasebe_page/hesap_eksta.html",content)
 def muhasebe_ayarlari(request):
     content = sozluk_yapisi()
     if request.user.kullanicilar_db:
