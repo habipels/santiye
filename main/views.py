@@ -3909,7 +3909,44 @@ def hakedis_depolamam(request):
 
 #sözleşme olaylari
 #dokumanlari_gosterme
-
+def yapilacaklar_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if super_admin_kontrolu(request):
+        profile = IsplaniPlanlari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = users,kullanici_silme_bilgisi = False,is_active = True)
+        profile = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = users)
+        content["katmanlar"] = katman.objects.filter(proje_ait_bilgisi = users ,silinme_bilgisi = False)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.yapilacaklar_gorme:
+                    profile = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
+                    if a.izinler.yapilacaklar_olusturma:
+                        content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user.kullanicilar_db,kullanici_silme_bilgisi = False,is_active = True)
+                        content["katmanlar"] = katman.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,silinme_bilgisi = False)
+    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False,is_active = True)
+            profile = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+            content["katmanlar"] = katman.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+    
+    content["santiyeler"] = profile
+    content["top"]  = profile
+    content["medya"] = profile
+    
+    return render(request,"santiye_yonetimi/yapilacaklar.html",content)
+#yapilacakalr
 def yapilacaklar(request):
     content = sozluk_yapisi()
 
@@ -4116,7 +4153,173 @@ def yapilacalar_ekle(request):
                 if base64_image !="" :
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect("main:yapilacaklar")
+#
+def yapilacalar_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            if True:
+                baslik = request.POST.get("baslik")
+                durum = request.POST.get("durum")
+                aciliyet =request.POST.get("aciliyet")
+                teslim_tarihi = request.POST.get("teslim_tarihi")
+                blogbilgisi = request.POST.getlist("blogbilgisi")
+                aciklama = request.POST.get("aciklama")
+                katman_bilgisi = request.POST.get("katman")
+                yapi_gonder = request.POST.get("yapi_gonder")
+                kat = request.POST.get("kat")
+                base64_image = request.POST.get('base_64_format', '')
+                pin_lokasyunuxd = request.POST.get("pin_lokasyunux") 
+                pin_lokasyunuyd = request.POST.get("pin_lokasyunuy")
+                if base64_image !="" .startswith('data:image/png;base64,'):
+                    base64_image = base64_image.replace('data:image/png;base64,', '')
+                    file_extension = 'png'
+                elif base64_image !="" .startswith('data:image/jpeg;base64,'):
+                    base64_image = base64_image.replace('data:image/jpeg;base64,', '')
+                    file_extension = 'jpeg'
+                if kat == None or kat  == ""  :
+                    kat = 0
+                print(kat)
+                new_project = IsplaniPlanlari(
+                    proje_ait_bilgisi = users,
+                    title = baslik,
+                    status = durum,
+                    aciklama = aciklama,
+                    oncelik_durumu =aciliyet,
+                    teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                    blok = get_object_or_none(bloglar,id = yapi_gonder),
+                    katman = get_object_or_none(katman,id = katman_bilgisi),
+                    kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
+                )
+                new_project.save()
+                bloglar_bilgisi = []
+                for i in blogbilgisi:
+                    bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+                new_project.yapacaklar.add(*bloglar_bilgisi)
+                images = request.FILES.getlist('file')
+                print(images)
+                isim = 1
+                for images in images:
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    isim = isim+1
+                if base64_image !=""  :
+                    image_data = base64.b64decode(base64_image)
+                    image_file = ContentFile(image_data, name=f'image.{file_extension}')
+                if base64_image !="" :
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.yapilacaklar_olusturma:
+                        baslik = request.POST.get("baslik")
+                        durum = request.POST.get("durum")
+                        aciliyet =request.POST.get("aciliyet")
+                        teslim_tarihi = request.POST.get("teslim_tarihi")
+                        blogbilgisi = request.POST.getlist("blogbilgisi")
+                        aciklama = request.POST.get("aciklama")
+                        katman_bilgisi = request.POST.get("katman")
+                        yapi_gonder = request.POST.get("yapi_gonder")
+                        kat = request.POST.get("kat")
+                        base64_image = request.POST.get('base_64_format', '')
+                        pin_lokasyunuxd = request.POST.get("pin_lokasyunux") 
+                        pin_lokasyunuyd = request.POST.get("pin_lokasyunuy") 
+                        if base64_image !="" .startswith('data:image/png;base64,'):
+                            base64_image = base64_image.replace('data:image/png;base64,', '')
+                            file_extension = 'png'
+                        elif base64_image !="" .startswith('data:image/jpeg;base64,'):
+                            base64_image = base64_image.replace('data:image/jpeg;base64,', '')
+                            file_extension = 'jpeg'
+                        
+                        if base64_image !=""  :
+                            image_data = base64.b64decode(base64_image)
+                            image_file = ContentFile(image_data, name=f'image.{file_extension}')
+                        if kat== None or kat  == ""  :
+                            kat = 0
 
+                        new_project = IsplaniPlanlari(
+                            proje_ait_bilgisi = request.user.kullanicilar_db,
+                            title = baslik,
+                            status = durum,
+                            aciklama = aciklama,
+                            oncelik_durumu =aciliyet,
+                            teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                            blok = get_object_or_none(bloglar,id = yapi_gonder),
+                            katman = get_object_or_none(katman,id = katman_bilgisi),
+                            kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
+                        )
+                        new_project.save()
+                        bloglar_bilgisi = []
+                        for i in blogbilgisi:
+                            bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+                        new_project.yapacaklar.add(*bloglar_bilgisi)
+                        images = request.FILES.getlist('file')
+                        print(images)
+                        isim = 1
+                        for images in images:
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            isim = isim+1
+                        if base64_image !="" :
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                baslik = request.POST.get("baslik")
+                durum = request.POST.get("durum")
+                aciliyet =request.POST.get("aciliyet")
+                teslim_tarihi = request.POST.get("teslim_tarihi")
+                blogbilgisi = request.POST.getlist("blogbilgisi")
+                aciklama = request.POST.get("aciklama")
+                katman_bilgisi = request.POST.get("katman")
+                yapi_gonder = request.POST.get("yapi_gonder")
+                kat = request.POST.get("kat")
+                base64_image = request.POST.get('base_64_format', '')
+                pin_lokasyunuxd = request.POST.get("pin_lokasyunux") 
+                pin_lokasyunuyd = request.POST.get("pin_lokasyunuy")
+                if base64_image !="" .startswith('data:image/png;base64,'):
+                    base64_image = base64_image.replace('data:image/png;base64,', '')
+                    file_extension = 'png'
+                elif base64_image !="" .startswith('data:image/jpeg;base64,'):
+                    base64_image = base64_image.replace('data:image/jpeg;base64,', '')
+                    file_extension = 'jpeg'
+                if kat == None or kat  == ""  :
+                    kat = 0
+                print(kat)
+                new_project = IsplaniPlanlari(
+                    proje_ait_bilgisi = request.user,
+                    title = baslik,
+                    status = durum,
+                    aciklama = aciklama,
+                    oncelik_durumu =aciliyet,
+                    teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                    blok = get_object_or_none(bloglar,id = yapi_gonder),
+                    katman = get_object_or_none(katman,id = katman_bilgisi),
+                    kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
+                )
+                new_project.save()
+                bloglar_bilgisi = []
+                for i in blogbilgisi:
+                    bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+                new_project.yapacaklar.add(*bloglar_bilgisi)
+                images = request.FILES.getlist('file')
+                print(images)
+                isim = 1
+                for images in images:
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    isim = isim+1
+                if base64_image !=""  :
+                    image_data = base64.b64decode(base64_image)
+                    image_file = ContentFile(image_data, name=f'image.{file_extension}')
+                if base64_image !="" :
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+    return redirect("main:yapilacaklar_2",hash)
+#
 def yapilacalar_ekle_duzenleme(request):
     if request.POST:
         if request.user.is_superuser:
@@ -4230,7 +4433,175 @@ def yapilacalar_ekle_duzenleme(request):
                 if base64_image !="" :
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect("main:yapilacaklar")
-
+#
+def yapilacalar_ekle_duzenleme_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            if True:
+                id = request.POST.get("id")
+                baslik = request.POST.get("baslik")
+                durum = request.POST.get("durum")
+                aciliyet =request.POST.get("aciliyet")
+                teslim_tarihi = request.POST.get("teslim_tarihi")
+                blogbilgisi = request.POST.getlist("blogbilgisi")
+                aciklama = request.POST.get("aciklama")
+                katman_bilgisi = request.POST.get("katman")
+                yapi_gonder = request.POST.get("yapi_gonder")
+                kat = request.POST.get("kat")
+                base64_image = request.POST.get('base_64_format', '')
+                pin_lokasyunuxd = request.POST.get("pin_lokasyunuxd") 
+                pin_lokasyunuyd = request.POST.get("pin_lokasyunuyd") 
+                if kat == None or kat  == ""  :
+                    kat = 0
+                if base64_image !="" .startswith('data:image/png;base64,'):
+                    base64_image = base64_image.replace('data:image/png;base64,', '')
+                    file_extension = 'png'
+                elif base64_image !="" .startswith('data:image/jpeg;base64,'):
+                    base64_image = base64_image.replace('data:image/jpeg;base64,', '')
+                    file_extension = 'jpeg'
+                        
+                image_data = base64.b64decode(base64_image)
+                image_file = ContentFile(image_data, name=f'image.{file_extension}')
+                IsplaniPlanlari.objects.filter(id = id).update(
+                    proje_ait_bilgisi = users,
+                    title = baslik,
+                    status = durum,
+                    aciklama = aciklama,
+                    oncelik_durumu =aciliyet,
+                    teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                    blok = get_object_or_none(bloglar,id = yapi_gonder),
+                    katman = get_object_or_none(katman,id = katman_bilgisi),
+                    kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
+                )
+                new_project = get_object_or_none(IsplaniPlanlari,id = id)
+                new_project.save()
+                bloglar_bilgisi = []
+                for i in blogbilgisi:
+                    bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+                new_project.yapacaklar.add(*bloglar_bilgisi)
+                images = request.FILES.getlist('file')
+                print(images)
+                isim = 1
+                for images in images:
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    isim = isim+1
+                if base64_image !="" :
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.yapilacaklar_olusturma:
+                        id = request.POST.get("id")
+                        baslik = request.POST.get("baslik")
+                        durum = request.POST.get("durum")
+                        aciliyet =request.POST.get("aciliyet")
+                        teslim_tarihi = request.POST.get("teslim_tarihi")
+                        blogbilgisi = request.POST.getlist("blogbilgisi")
+                        aciklama = request.POST.get("aciklama")
+                        katman_bilgisi = request.POST.get("katman")
+                        yapi_gonder = request.POST.get("yapi_gonder")
+                        kat = request.POST.get("kat")
+                        base64_image = request.POST.get('base_64_format', '')
+                        pin_lokasyunuxd = request.POST.get("pin_lokasyunuxd") 
+                        pin_lokasyunuyd = request.POST.get("pin_lokasyunuyd")
+                        if kat == None or kat  == ""  :
+                            kat = 0
+                        if base64_image !="" .startswith('data:image/png;base64,'):
+                            base64_image = base64_image.replace('data:image/png;base64,', '')
+                            file_extension = 'png'
+                        elif base64_image !="" .startswith('data:image/jpeg;base64,'):
+                            base64_image = base64_image.replace('data:image/jpeg;base64,', '')
+                            file_extension = 'jpeg'
+                        
+                        image_data = base64.b64decode(base64_image)
+                        image_file = ContentFile(image_data, name=f'image.{file_extension}')
+                        IsplaniPlanlari.objects.filter(id = id).update(
+                            proje_ait_bilgisi = request.user.kullanicilar_db,
+                            title = baslik,
+                            status = durum,
+                            aciklama = aciklama,
+                            oncelik_durumu =aciliyet,
+                            teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                            blok = get_object_or_none(bloglar,id = yapi_gonder),
+                            katman = get_object_or_none(katman,id = katman_bilgisi),
+                            kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
+                        )
+                        new_project = get_object_or_none(IsplaniPlanlari,id = id)
+                        new_project.save()
+                        bloglar_bilgisi = []
+                        for i in blogbilgisi:
+                            bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+                        new_project.yapacaklar.add(*bloglar_bilgisi)
+                        images = request.FILES.getlist('file')
+                        print(images)
+                        isim = 1
+                        for images in images:
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            isim = isim+1
+                        if base64_image !="" :
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                id = request.POST.get("id")
+                baslik = request.POST.get("baslik")
+                durum = request.POST.get("durum")
+                aciliyet =request.POST.get("aciliyet")
+                teslim_tarihi = request.POST.get("teslim_tarihi")
+                blogbilgisi = request.POST.getlist("blogbilgisi")
+                aciklama = request.POST.get("aciklama")
+                katman_bilgisi = request.POST.get("katman")
+                yapi_gonder = request.POST.get("yapi_gonder")
+                kat = request.POST.get("kat")
+                base64_image = request.POST.get('base_64_format', '')
+                pin_lokasyunuxd = request.POST.get("pin_lokasyunuxd") 
+                pin_lokasyunuyd = request.POST.get("pin_lokasyunuyd") 
+                if kat == None or kat  == ""  :
+                    kat = 0
+                if base64_image !="" .startswith('data:image/png;base64,'):
+                    base64_image = base64_image.replace('data:image/png;base64,', '')
+                    file_extension = 'png'
+                elif base64_image !="" .startswith('data:image/jpeg;base64,'):
+                    base64_image = base64_image.replace('data:image/jpeg;base64,', '')
+                    file_extension = 'jpeg'
+                        
+                image_data = base64.b64decode(base64_image)
+                image_file = ContentFile(image_data, name=f'image.{file_extension}')
+                IsplaniPlanlari.objects.filter(id = id).update(
+                    proje_ait_bilgisi = request.user,
+                    title = baslik,
+                    status = durum,
+                    aciklama = aciklama,
+                    oncelik_durumu =aciliyet,
+                    teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
+                    blok = get_object_or_none(bloglar,id = yapi_gonder),
+                    katman = get_object_or_none(katman,id = katman_bilgisi),
+                    kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
+                )
+                new_project = get_object_or_none(IsplaniPlanlari,id = id)
+                new_project.save()
+                bloglar_bilgisi = []
+                for i in blogbilgisi:
+                    bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+                new_project.yapacaklar.add(*bloglar_bilgisi)
+                images = request.FILES.getlist('file')
+                print(images)
+                isim = 1
+                for images in images:
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    isim = isim+1
+                if base64_image !="" :
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+    return redirect("main:yapilacaklar_2",hash)
+#
 def yapilacalar_ekle_toplu(request):
     if request.POST:
         if request.user.is_superuser:
@@ -4300,6 +4671,30 @@ def yapilacalar_ekle_toplu(request):
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
     return redirect("main:yapilacaklar")
+
+def yapilacalar_sil_2(request,hash):
+    
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.yapilacaklar_silme:
+                    pass
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:
+        pass
+    if True:
+        content = sozluk_yapisi()
+        d = decode_id(hash)
+        content["hashler"] = hash
+        users = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = users
+        if request.POST:
+            id = request.POST.get("id_bilgisi")
+            IsplaniPlanlari.objects.filter(id = id).update(silinme_bilgisi = True)
+    return redirect("main:yapilacaklar_2",hash)
 
 def yapilacalar_sil(request):
     if request.user.kullanicilar_db:

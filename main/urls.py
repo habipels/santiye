@@ -129,9 +129,13 @@ urlpatterns = [#
     #depolama sistemim
     #iş planı #
     path("thingstodo", views.yapilacaklar, name="yapilacaklar"),
+    path("control/thingstodo/<str:hash>", views.yapilacaklar_2, name="yapilacaklar_2"),
     path("addthingstodo", views.yapilacalar_ekle, name="yapilacalar_ekle"),
+    path("control/addthingstodo/<str:hash>", views.yapilacalar_ekle_2, name="yapilacalar_ekle_2"),
     path("setthingstodo", views.yapilacalar_ekle_duzenleme, name="yapilacalar_ekle_duzenleme"),
+    path("control/setthingstodo/<str:hash>", views.yapilacalar_ekle_duzenleme_2, name="yapilacalar_ekle_duzenleme_2"),
     path("delthingstodo", views.yapilacalar_sil, name="yapilacalar_sil"),
+    path("control/delthingstodo/<str:hash>", views.yapilacalar_sil_2, name="yapilacalar_sil_2"),
     path("setthingstodo", views.yapilacalar_duzenle, name="yapilacalar_duzenle"),
     path("allthingstodo", views.yapilacalar_ekle_toplu, name="yapilacalar_ekle_toplu"),
     path("statusthingstodo", views.yapilacak_durumu_yenileme, name="yapilacak_durumu_yenileme"),
