@@ -72,8 +72,9 @@ urlpatterns = [
     path("receivingpayment", views.gelir_odemesi_ekle, name="gelir_odemesi_ekle"),
     path("settheycome/<int:id>", views.gelir_duzenle, name="gelir_duzenle"),
     path("incomesummary", views.gelirler_ozeti, name="gelirler_ozeti"),
+    path("control/incomesummary/<str:hash>", views.gelirler_ozeti_2, name="gelirler_ozeti_2"),
     path("viewcome/<int:id>", views.fatura_goster, name="fatura_goster"),
-    #gelirler Sayfası#
+    #gelirler Sayfası#giderler_ozeti_2
     #giderler Sayfası#
     path("control/expenses/<str:hash>", views.giderler_sayfasi_2, name="giderler_sayfasi_2"),
     path("expenses", views.giderler_sayfasi, name="giderler_sayfasi"),
@@ -87,6 +88,7 @@ urlpatterns = [
     path("savereceivingpayment", views.gider_odemesi_ekle, name="gider_odemesi_ekle"),
     path("setexpenses/<int:id>", views.gider_duzenle, name="gider_duzenle"),
     path("expensessummary", views.giderler_ozeti, name="giderler_ozeti"),
+    path("control/expensessummary/<str:hash>", views.giderler_ozeti_2, name="giderler_ozeti_2"),#
     path("viewexpenses/<int:id>", views.fatura_goster2, name="fatura_goster2"),
     path("personnelinvoice/<int:id>", views.personel_gider_faturasi_kesme, name="personel_gider_faturasi_kesme"),
     path("savepersonnelinvoice/", views.gider_faturasi_kaydet_personel, name="gider_faturasi_kaydet_personel"),

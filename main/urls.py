@@ -67,7 +67,9 @@ urlpatterns = [#
     path("progresstracking", views.santiye_kalem_ve_blog, name="santiye_kalem_ve_blog"),
     path("control/progresstracking/<str:hash>", views.santiye_kalem_ve_blog_2, name="santiye_kalem_ve_blog_2"),
     path("progresstracking/progress/<int:id>/<str:slug>", views.blogtan_kaleme_ilerleme_takibi, name="blogtan_kaleme_ilerleme_takibi"),
+    path("control/progresstracking/progress/<int:id>/<str:slug>/<str:hash>", views.blogtan_kaleme_ilerleme_takibi_hash, name="blogtan_kaleme_ilerleme_takibi_hash"),
     path("saveprogresstracking", views.ilerleme_kaydet, name="ilerleme_kaydet"),
+    path("control/saveprogresstracking/<str:hash>", views.ilerleme_kaydet_2, name="ilerleme_kaydet_2"),
     #
     #ilerleme takibi
     path("santiyeraporu/<int:id>", views.santiye_raporu, name="santiye_raporu"),
