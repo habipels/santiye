@@ -3310,7 +3310,206 @@ def depolama_sistemim(request):
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/depolama_sistemim.html",content)
+"""
+content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+"""
 
+def depolama_sistemim_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if super_admin_kontrolu(request):
+        #profile = klasorler.objects.all()
+        profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = users)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.dosya_yoneticisi_gorme:
+                    profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = klasorler.objects.filter(klasor_adi_db = None).filter(silinme_bilgisi = False,dosya_sahibi = request.user)
+
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi__last_name__icontains = search)|Q(klasor_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_gorme:
+                        profile = klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi = request.user.kullanicilar_db) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = klasorler.objects.filter(klasor_adi_db = None).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+
+            
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 25) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"santiye_yonetimi/depolama_sistemim.html",content)
+
+def klasor_olustur_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            if True:
+                ust_klasor = request.POST.get("ust_klasor")
+                if ust_klasor:
+                    klasor = request.POST.get("klasor")
+
+                    klasorler.objects.create(
+                        dosya_sahibi = users,
+                        klasor_adi = klasor,
+                        klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
+                    )
+                else:
+                    klasor = request.POST.get("klasor")
+
+                    klasorler.objects.create(
+                        dosya_sahibi = users,
+                        klasor_adi = klasor
+                    )
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_olusturma:
+                        ust_klasor = request.POST.get("ust_klasor")
+                        if ust_klasor:
+                            klasor = request.POST.get("klasor")
+
+                            klasorler.objects.create(
+                                dosya_sahibi = request.user.kullanicilar_db,
+                                klasor_adi = klasor,
+                                klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
+                            )
+                        else:
+                            klasor = request.POST.get("klasor")
+
+                            klasorler.objects.create(
+                                dosya_sahibi = request.user.kullanicilar_db,
+                                klasor_adi = klasor
+                            )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                ust_klasor = request.POST.get("ust_klasor")
+                if ust_klasor:
+                    klasor = request.POST.get("klasor")
+
+                    klasorler.objects.create(
+                        dosya_sahibi = request.user,
+                        klasor_adi = klasor,
+                        klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
+                    )
+                else:
+                    klasor = request.POST.get("klasor")
+
+                    klasorler.objects.create(
+                        dosya_sahibi = request.user,
+                        klasor_adi = klasor
+                    )
+    return redirect("main:depolama_sistemim_2",hash)
+
+def klasor__yeniden_adlandir_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            klasor = request.POST.get("klasor")
+            idbilgisi = request.POST.get("idbilgisi")
+            klasorler.objects.filter(id = idbilgisi).update(
+                    dosya_sahibi = users,
+                    klasor_adi = klasor
+                )
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_duzenleme:
+                        klasor = request.POST.get("klasor")
+                        idbilgisi = request.POST.get("idbilgisi")
+                        klasorler.objects.filter(id = idbilgisi).update(
+                            dosya_sahibi = request.user.kullanicilar_db,
+                            klasor_adi = klasor
+                        )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                klasor = request.POST.get("klasor")
+                idbilgisi = request.POST.get("idbilgisi")
+                klasorler.objects.filter(id = idbilgisi).update(
+                    dosya_sahibi = request.user,
+                    klasor_adi = klasor
+                )
+    return redirect("main:depolama_sistemim_2",hash)
+
+def klasor_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.dosya_yoneticisi_silme:
+                    pass
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:
+        pass
+    if request.POST:
+        if request.user.is_superuser:
+            idbilgisi = request.POST.get("idbilgisi")
+            klasorler.objects.filter(id = idbilgisi).update(
+                silinme_bilgisi = True
+            )
+        else:
+            pass
+            
+    return redirect("main:depolama_sistemim_2",hash)
 
 
 def klasor_olustur(request):

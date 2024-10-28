@@ -111,12 +111,16 @@ urlpatterns = [#
     path("setprogresspayment", views.hakedis_duzenle, name="hakedis_duzenle"),
     path("adminaddprogresspayment/<int:id>", views.hakedis_ekle_admin, name="hakedis_ekle_admin"),
     #
-    #hakedişler
+    #hakedişler#
     #depolama sistemim
     path("storage/mydir", views.depolama_sistemim, name="depolama_sistemim"),
+    path("control/storage/mydir/<str:hash>", views.depolama_sistemim_2, name="depolama_sistemim_2"),
     path("storage/addmydir", views.klasor_olustur, name="klasor_olustur"),
+    path("control/storage/addmydir/<str:hash>", views.klasor_olustur_2, name="klasor_olustur_2"),
     path("storage/setmydir", views.klasor__yeniden_adlandir, name="klasor__yeniden_adlandir"),
+    path("control/storage/setmydir/<str:hash>", views.klasor__yeniden_adlandir_2, name="klasor__yeniden_adlandir_2"),
     path("storage/delmydir", views.klasor_sil, name="klasor_sil"),
+    path("control/storage/delmydir/<str:hash>", views.klasor_sil_2, name="klasor_sil_2"),
     path("storage/savemydir", views.dosya_geri_getir, name="dosya_geri_getir"),
     path("storage/mydir/<int:id>/<str:slug>/", views.klasore_gir, name="klasore_gir"),
     path("storage/addfile", views.dosya_ekle, name="dosya_ekle"),
