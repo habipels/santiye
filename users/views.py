@@ -1010,3 +1010,47 @@ def group_list(request):
     context["groups"] = groups
     
     return render(request, 'chat/group_chat.html', context)
+
+#chat denemesi 
+import requests
+
+SENDBIRD_APP_ID = '9CAC1C16-4C39-4E56-BB2E-C37A9703C88C'
+API_TOKEN = 'b90e79fa06974b6b945e349e'
+
+def create_sendbird_user(user_id, nickname):
+    url = f"https://api-{SENDBIRD_APP_ID}.sendbird.com/v3/users"
+    headers = {
+        "Content-Type": "application/json, charset=utf8",
+        "Api-Token": API_TOKEN
+    }
+    data = {
+        "user_id": user_id,
+        "nickname": nickname
+    }
+    response = requests.post(url, json=data, headers=headers)
+    return response.json()
+def create_group_channel(user_ids, name):
+    url = f"https://api-{SENDBIRD_APP_ID}.sendbird.com/v3/group_channels"
+    headers = {
+        "Content-Type": "application/json, charset=utf8",
+        "Api-Token": API_TOKEN
+    }
+    data = {
+        "user_ids": user_ids,  # ["user1", "user2", ...]
+        "name": name,
+        "is_distinct": True
+    }
+    response = requests.post(url, json=data, headers=headers)
+    return response.json()
+def chat_view(request):
+    user_id = request.user.username
+    # Kullanıcıların ID’sini listeye ekleyin
+    user_ids = [user_id, "other_user_id"]
+    channel_url = create_group_channel(user_ids, "My Group Channel")
+
+    context = {
+        'app_id': SENDBIRD_APP_ID,
+        'user_id': user_id,
+        'channel_url': channel_url
+    }
+    return render(request, 'denme_chat.html', context)
