@@ -34,11 +34,16 @@ urlpatterns = [
     #gider kategorileri
     #cari işlemleri$
     path("control/current/<str:hash>", views.cari_viev_2, name="cari_viev_2"),
+    path("control/currentdetails/<int:id>/<str:hash>", views.cari_views_details_2, name="cari_views_details_2"),
+    path("control/addcurrent/<str:hash>", views.cari_ekle_2, name="cari_ekle_2"),
+    path("control/delcurrent/<str:hash>", views.cari_sil_2, name="cari_sil_2"),
+    path("control/setcurrent/<str:hash>", views.cari_duzenle_2, name="cari_duzenle_2"),
     path("current", views.cari_viev, name="cari"),
     path("currentdetails/<int:id>", views.cari_views_details, name="cari_views_details"),
     path("addcurrent", views.cari_ekle, name="cari_ekle"),
     path("delcurrent", views.cari_sil, name="cari_sil"),
     path("setcurrent", views.cari_duzenle, name="cari_duzenle"),
+
     #cari işlemleri
     #gelir etiket işlemleri
     path("control/incometag/<str:hash>", views.gelir_etiketi_tipleri_2, name="gelir_etiketi_tipleri_2"),
