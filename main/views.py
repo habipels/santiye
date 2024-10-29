@@ -3232,6 +3232,425 @@ def ust_yuklenici_duzelt(request):
                     isim = isim+1
     return redirect("main:ust_yuklenici_sayfasi")
 
+
+#sözleşmeler
+#sözleşme olaylari
+def sozlesmler_sayfasi_2(request,hash):
+    content = sozluk_yapisi()
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if super_admin_kontrolu(request):
+        profile = taseron_sozlesme_dosyalari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = users)
+        #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+        content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi=users,silinme_bilgisi = False)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.sozlesmeler_gorme:
+                    profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user.kullanicilar_db)
+                    #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,silinme_bilgisi = False)
+                    content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user.kullanicilar_db,silinme_bilgisi = False)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = taseron_sozlesme_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
+            #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+            content["taseronlar"] = taseronlar.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.sozlesmeler_gorme:
+                        profile = taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user.kullanicilar_db) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = taseron_sozlesme_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                
+           
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    
+    return render(request,"santiye_yonetimi/xxsozlesmler.html",content)
+#sözleşme olaylari
+#sözleşme olaylari
+def ana_yuklenici_sozlesmler_sayfasi_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+
+    if super_admin_kontrolu(request):
+        profile = taseron_sozlesme_dosyalari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = ust_yuklenici_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = users)
+        #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+        content["taseronlar"] = ust_yuklenici.objects.filter(taseron_ait_bilgisi= users,silinme_bilgisi = False)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.ust_yuklenici_gorme:
+                    profile = ust_yuklenici_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user.kullanicilar_db)
+                    #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,silinme_bilgisi = False)
+                    content["taseronlar"] = ust_yuklenici.objects.filter(taseron_ait_bilgisi= request.user.kullanicilar_db,silinme_bilgisi = False)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = ust_yuklenici_dosyalari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi__taseron_ait_bilgisi = request.user)
+            #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
+            content["taseronlar"] = ust_yuklenici.objects.filter(taseron_ait_bilgisi= request.user,silinme_bilgisi = False)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =ust_yuklenici_dosyalari.objects.filter(Q(taseron_ait_bilgisi__proje_ait_bilgisi__last_name__icontains = search)|Q(taseron_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.sozlesmeler_gorme:
+                        profile = ust_yuklenici_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user.kullanicilar_db) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = ust_yuklenici_dosyalari.objects.filter(Q(taseron_ait_bilgisi = request.user) & Q(taseron_adi__icontains = search)& Q(silinme_bilgisi = False))
+                
+           
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    
+    return render(request,"santiye_yonetimi/ana_yuklenici_sozlesme.html",content)
+#sözleşme olaylari
+def ust_yuklenici_sozlesme_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("dosyaadi")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.FILES.get("file")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            ust_yuklenici_dosyalari.objects.create(
+                proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                dosya = file,dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu
+            )
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.ust_yuklenici_olusturma:
+                        pass
+                    else:
+                        return redirect("main:yetkisiz")
+            else:
+                pass
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("dosyaadi")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.FILES.get("file")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            ust_yuklenici_dosyalari.objects.create(
+                proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                dosya = file,dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu
+            )
+    return redirect("main:ana_yuklenici_sozlesmler_sayfasi_2",hash)
+
+def ust_yuklenici_sozlesme_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.ust_yuklenici_duzenleme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
+    if request.POST:
+        id_bilgisi = request.POST.get("id_bilgisi")
+        taseron = request.POST.get("taseron")
+        dosyaadi = request.POST.get("dosyaadi")
+        tarih = request.POST.get("tarih")
+        aciklama = request.POST.get("aciklama")
+        durumu = request.POST.get("durumu")
+        file = request.FILES.get("file")
+        if durumu == "1":
+            durumu = True
+        else:
+            durumu = False
+        if request.user.is_superuser:
+            silinmedurumu = request.POST.get("silinmedurumu")
+            if silinmedurumu == "3":
+                ust_yuklenici_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu
+                )
+            elif silinmedurumu == "2":
+                ust_yuklenici_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,silinme_bilgisi = True
+                )
+            elif silinmedurumu == "1":
+                ust_yuklenici_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,silinme_bilgisi = False
+                )
+        else:
+
+            ust_yuklenici_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu
+                )
+    return redirect("main:ust_yuklenici_sayfasi_2",hash)
+#sözleşmeler sil
+def ust_yuklenici_silme_sozlesme_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.ust_yuklenici_silme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        ust_yuklenici_dosyalari.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+    return redirect("main:ust_yuklenici_sayfasi_2",hash)
+"""
+content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+"""
+#sözleşmeler sil
+#sözleşme olaylari
+def sozlesme_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("dosyaadi")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.FILES.get("file")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            taseron_sozlesme_dosyalari.objects.create(
+                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                dosya = file,dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu
+            )
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.sozlesmeler_olusturma:
+                        pass
+                    else:
+                        return redirect("main:yetkisiz")
+            else:
+                pass
+            taseron = request.POST.get("taseron")
+            dosyaadi = request.POST.get("dosyaadi")
+            tarih = request.POST.get("tarih")
+            aciklama = request.POST.get("aciklama")
+            durumu = request.POST.get("durumu")
+            file = request.FILES.get("file")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            taseron_sozlesme_dosyalari.objects.create(
+                proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                dosya = file,dosya_adi = dosyaadi,
+                tarih = tarih,aciklama = aciklama,
+                durum = durumu
+            )
+    return redirect("main:sozlesmler_sayfasi_2",hash)
+
+def sozlesme_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.sozlesmeler_duzenleme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
+    if request.POST:
+        id_bilgisi = request.POST.get("id_bilgisi")
+        taseron = request.POST.get("taseron")
+        dosyaadi = request.POST.get("dosyaadi")
+        tarih = request.POST.get("tarih")
+        aciklama = request.POST.get("aciklama")
+        durumu = request.POST.get("durumu")
+        file = request.FILES.get("file")
+        if durumu == "1":
+            durumu = True
+        else:
+            durumu = False
+        if request.user.is_superuser:
+            silinmedurumu = request.POST.get("silinmedurumu")
+            if silinmedurumu == "3":
+                taseron_sozlesme_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu
+                )
+            elif silinmedurumu == "2":
+                taseron_sozlesme_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,silinme_bilgisi = True
+                )
+            elif silinmedurumu == "1":
+                taseron_sozlesme_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu,silinme_bilgisi = False
+                )
+        else:
+
+            taseron_sozlesme_dosyalari.objects.filter(id = id_bilgisi).update(
+                    proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
+                    dosya = file,dosya_adi = dosyaadi,
+                    tarih = tarih,aciklama = aciklama,
+                    durum = durumu
+                )
+    return redirect("main:sozlesmler_sayfasi_2",hash)
+
+#sözleşmeler sil
+def sozlesme_silme_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.sozlesmeler_silme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        pass
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        taseron_sozlesme_dosyalari.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+    return redirect("main:sozlesmler_sayfasi_2",hash)
+
 #sözleşmeler
 #sözleşme olaylari
 def sozlesmler_sayfasi(request):
@@ -3600,13 +4019,6 @@ def sozlesme_silme(request):
 #sözleşmeler sil
 #sözleşmeler
 #hakedişler
-"""
-content = sozluk_yapisi()
-    d = decode_id(hash)
-    content["hashler"] = hash
-    users = get_object_or_404(CustomUser,id = d)
-    content["hash_bilgi"] = users
-"""
 
 def hakedis_sayfasi_2(request,hash):
     content = sozluk_yapisi()

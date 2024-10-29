@@ -98,6 +98,15 @@ urlpatterns = [#
     path("settopcontractor", views.ust_yuklenici_duzelt, name="ust_yuklenici_duzelt"),
     #
     #taşeron olayları
+    path("control/contracts/<str:hash>", views.sozlesmler_sayfasi_2, name="sozlesmler_sayfasi_2"),
+    path("control/addcontract/<str:hash>", views.sozlesme_ekle_2, name="sozlesme_ekle_2"),
+    path("control/delcontract/<str:hash>", views.sozlesme_silme_2, name="sozlesme_silme_2"),
+    path("control/setcontracts/<str:hash>", views.sozlesme_duzenle_2, name="sozlesme_duzenle_2"),
+
+    path("control/topcontractss/<str:hash>", views.ana_yuklenici_sozlesmler_sayfasi_2, name="ana_yuklenici_sozlesmler_sayfasi_2"),
+    path("control/topaddcontracts/<str:hash>", views.ust_yuklenici_sozlesme_ekle_2, name="ust_yuklenici_sozlesme_ekle_2"),
+    path("control/topdelcontracts/<str:hash>", views.ust_yuklenici_silme_sozlesme_2, name="ust_yuklenici_silme_sozlesme_2"),
+    path("control/topsetcontractss/<str:hash>", views.ust_yuklenici_sozlesme_duzenle_2, name="ust_yuklenici_sozlesme_duzenle_2"),
     #sözleşmeler olayları
     path("contracts", views.sozlesmler_sayfasi, name="sozlesmler_sayfasi"),
     path("addcontract", views.sozlesme_ekle, name="sozlesme_ekle"),
