@@ -86,6 +86,11 @@ urlpatterns = [#
     path("setsubcontractor", views.taseron_duzelt, name="taseron_duzelt"),
     #
     #Üst Yükleneci olayları
+    path("control/topcontractor/<str:hash>", views.ust_yuklenici_sayfasi_2, name="ust_yuklenici_sayfasi_2"),
+    path("control/addtopcontractor/<str:hash>", views.ust_yuklenici_ekle_2, name="ust_yuklenici_ekle_2"),
+    path("control/deltopcontractor/<str:hash>", views.ust_yuklenici_silme_2, name="ust_yuklenici_silme_2"),
+    path("control/settopcontractor/<str:hash>", views.ust_yuklenici_duzelt_2, name="ust_yuklenici_duzelt_2"),
+
     path("topcontractor", views.ust_yuklenici_sayfasi, name="ust_yuklenici_sayfasi"),
     path("addtopcontractor", views.ust_yuklenici_ekle, name="ust_yuklenici_ekle"),
     path("deltopcontractor", views.ust_yuklenici_silme, name="ust_yuklenici_silme"),
