@@ -461,6 +461,33 @@ def personeller_odenmeye_maaslar(request):
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
         content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
     return render(request,"personel/odenmeyen_maaslar.html",content)
+from main.views import decode_id
+def personeller_odenmeye_maaslar_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+
+    if super_admin_kontrolu(request):
+        kullanici = users
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_gorme:
+                    kullanici = request.user.kullanicilar_db
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+    content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
+    content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
+    content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
+    return render(request,"personel/odenmeyen_maaslar.html",content)
 def bodro(request,tarih,id):
     content = sozluk_yapisi()
 

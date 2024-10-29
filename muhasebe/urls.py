@@ -91,7 +91,9 @@ urlpatterns = [
     path("control/expensessummary/<str:hash>", views.giderler_ozeti_2, name="giderler_ozeti_2"),#
     path("viewexpenses/<int:id>", views.fatura_goster2, name="fatura_goster2"),
     path("personnelinvoice/<int:id>", views.personel_gider_faturasi_kesme, name="personel_gider_faturasi_kesme"),
+    path("control/personnelinvoice/<int:id>/<str:hash>", views.personel_gider_faturasi_kesme_2, name="personel_gider_faturasi_kesme_2"),
     path("savepersonnelinvoice/", views.gider_faturasi_kaydet_personel, name="gider_faturasi_kaydet_personel"),
+    path("control/savepersonnelinvoice/<str:hash>", views.gider_faturasi_kaydet_personel_2, name="gider_faturasi_kaydet_personel_2"),
     #giderler Sayfası #hesap_ekstra_durumu_2
     path('control/search/<str:hash>', views.search_2, name='search_2'),
     path('control/cari/<str:hash>', views.cariler_bilgisi_2, name='cariler_bilgisi_2'),
@@ -147,7 +149,8 @@ urlpatterns = [
     path('zimmet/<int:id>/', views.zimmet, name='zimmet'),
     path('teslim/<int:id>/<int:iz>/', views.zimmeti_teslim_Al, name='zimmeti_teslim_Al'),
     path('salaryandadvance/', views.avans_maas, name='avans_maas'),
+    path('control/salaryandadvance/<str:hash>', views.avans_maas_2, name='avans_maas_2'),
 ]
 #zimmeti_teslim_Al_1
 #accounting
-#maas:avans 
+#
