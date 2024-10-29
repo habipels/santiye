@@ -30,7 +30,12 @@
 
 {% endblock head %}
 {% block sidebar %}
+{% if hash_bilgi %}
+<form autocomplete="off"method="post" action="/{{dil}}{% url 'accounting:gider_faturasi_kaydet_personel_2' hashler %}" enctype="multipart/form-data">
+{% else %}
 <form autocomplete="off"method="post" action="/{{dil}}{% url 'accounting:gider_faturasi_kaydet_personel' %}" enctype="multipart/form-data">
+{% endif %}
+
     {% csrf_token %}
             <input type="text" hidden value="{{veri.id}}" name="faturaya_bagla">
   <main>
@@ -74,8 +79,14 @@
                                                                                 
                 {% endif %}
                 {% else %}
-                       <input type="text" required name="faturano" class="form-control" value="{% gider_faturasi_no request.user.id %}" disabled />
+                {% if hash_bilgi  %}
+                    <input type="text" required name="faturano" class="form-control" value="{% gider_faturasi_no hash_bilgi.id %}" disabled />
+                <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no hash_bilgi.id %}" />                                                 
+                {% else %}
+                <input type="text" required name="faturano" class="form-control" value="{% gider_faturasi_no request.user.id %}" disabled />
                 <input type="text" required name="faturano" hidden class="form-control" value="{% gider_faturasi_no request.user.id %}" />                                                 
+                {% endif %}
+                       
                 {% endif %}
                         </div>
                         <div class="form-element">
