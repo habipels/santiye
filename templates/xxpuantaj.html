@@ -10,6 +10,48 @@
 
 {% endblock head %}
 {% block sidebar %}
+<style>
+.mini-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 20000;
+    display: none;
+}
+
+.mini-modal-content {
+    padding: 20px;
+    width: 300px;
+}
+
+.form-element,
+.form-actions {
+    margin-top: 10px;
+}
+
+.form-action-primary,
+.form-action-secondary {
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.form-action-secondary {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.form-action-primary {
+    background-color: #24d6b5;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+</style>
     <main>
 
 
@@ -17,12 +59,12 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    {% trans 'Taşeronlar' %}
+                    {% trans 'Şantiye Günlüğü' %}
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
                     <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
-                    <li><a href="#">{% trans 'Taşeronlar' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Günlüğü' %}</a></li>
                 </ul>
             </div>
 
@@ -30,13 +72,13 @@
             {% if request.user.kullanicilar_db %}
                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                             {% if yetki.taseronlar_olusturma %}
-                                               <button class="page-primary-btn" onclick="openModal('yeni-taseron')"><i class="icon icon-new"></i>
+                                               <button class="page-primary-btn" onclick="openModal('yeni-gunluk')"><i class="icon icon-new"></i>
                     {% trans 'Yeni Taşeron Ekle' %}</button>                                      
                                             {% else %}
                                                                                                             
                                             {% endif %}
                                             {% else %}
-                                                <button class="page-primary-btn" onclick="openModal('yeni-taseron')"><i class="icon icon-new"></i>
+                                                <button class="page-primary-btn" onclick="openModal('yeni-gunluk')"><i class="icon icon-new"></i>
                     {% trans 'Yeni Taşeron Ekle' %}</button>                                               
                                             {% endif %}
                 
@@ -52,78 +94,47 @@
                 </div>
             </div>
 
-            <div class="table-wrapper">
-                <table id="datatable">
-                    <thead>
-                        <tr>
-                           <th class="sort" data-sort="customer_name">{% trans 'Taşeron' %}</th>
-                                                    <th class="sort" data-sort="phone">{% trans 'Telefon' %}</th>
-                                                    <th class="sort" data-sort="email">{% trans 'Email' %}</th>
-                                                    <th class="sort" data-sort="number">{% trans 'Aktif Sözleşme Sayısı' %}</th>
-                                                    <th class="sort" data-sort="number">{% trans 'Aktif Görevlendirme Sayısı' %}</th>
-                                                    <th class="sort" data-sort="text">{% trans 'Sözleşmesi Yapılan Projeler' %}</th>
-                                                    <th class="sort" data-sort="file">{% trans 'Sözleşmeler' %}</th>
-                                                    <th class="sort" data-sort="date">{% trans 'İşlemler' %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                     {% for i in santiyeler %}
-                        <tr>
-                            <td>{{i.taseron_adi}}</td>
-                            <td>{{i.telefon_numarasi}}</td>
-                            <td>{{i.email}}</td>
-                            <td>{% taseronsozlesme_saysisi i.id %}</td>
-                            <td>{% taseron_gorev_saysisi i.id %}</td>
-                            <td>{% for yazar in i.proje_bilgisi.all %}
-                                                        <span>{{ yazar.kalem_bilgisi.proje_santiye_Ait.proje_adi }}&#8594;{{ yazar.blog_bilgisi.blog_adi }}&#8594;{{ yazar.kalem_bilgisi.kalem_adi }}</span>,
-                                                     {% endfor %}</td>
-                            <td>
-                                <div class="td-actions">
-                                {% taseronsozlesme_dosyalari i.id as dosyalri %}
-                                    {% for k in dosyalri %}
-                                    {% if k.dosya %}
-                                    <a target="_blank" href="{{k.dosya.url}}" title ="{{k.dosya.name}}" class="status-info"><i class="icon icon-action-file"></i></a>
-                                    {% else %}
-                                    {% endif %}
-                                    
+          <div class="table-wrapper">
+    <table id="datatable">
+        <thead>
+            <tr>
+                <th class="sort" data-sort="report_date">{% trans 'Rapor Tarihi' %}</th>
+                <th class="sort" data-sort="site">{% trans 'Şantiye' %}</th>
+                <th class="sort" data-sort="project">{% trans 'Proje' %}</th>
+                <th class="sort" data-sort="creator">{% trans 'Oluşturan' %}</th>
+                <th class="sort" data-sort="temperature">{% trans 'Sıcaklık' %}</th>
+                <th class="sort" data-sort="wind">{% trans 'Rüzgar' %}</th>
+                <th class="sort" data-sort="pdf">{% trans 'PDF' %}</th>
+                <th class="sort" data-sort="actions">{% trans 'İşlemler' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in santiyeler %}
+            <tr>
+                <td>{{ i.rapor_tarihi }}</td>
+                <td>{{ i.santiye }}</td>
+                <td>{{ i.proje }}</td>
+                <td>{{ i.olusturan }}</td>
+                <td>{{ i.sicaklik }}</td>
+                <td>{{ i.ruzgar }}</td>
+                <td>
+                    <a target="_blank" href="{{ i.pdf_url }}" title="{{ i.pdf_name }}" class="status-info">
+                        <i class="icon icon-action-file"></i>
+                    </a>
+                </td>
+                <td>
+                    <div class="td-actions">
+                        <a onclick="openModal('editModal{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                        <a onclick="openModal('viewModal{{i.id}}')" class="status-info"><i class="icon icon-action-view"></i></a>
+                        <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-                                        
-                                    {% endfor %}
-                                    
-                                </div>
-                            </td>
-                            <td>
-                                <div class="td-actions">
-                                {% if request.user.kullanicilar_db %}
-                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                        {% if yetki.taseronlar_duzenleme %}
-                                                               <a  onclick="openModal('yeni-taseron{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                              
-                                                        {% else %}
-                                                                                                                        
-                                                        {% endif %}
-                                                        {% else %}
-                                                              <a  onclick="openModal('yeni-taseron{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                               
-                                                        {% endif %}
-                                                            
-                                                            {% if request.user.kullanicilar_db %}
-                                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                                            {% if yetki.taseronlar_silme %}
-                                                                  <a  onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>                                                                                          
-                                                            {% else %}
-                                                                                                                            
-                                                            {% endif %}
-                                                            {% else %}
-                                                            <a  onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>                                            
-                                                            {% endif %}
-                                   
-
-                                </div>
-                            </td>
-                        </tr>
-                      {% endfor %}
-                      </tbody>
-                </table>
-            </div>
 
         </div>
 
@@ -143,80 +154,160 @@
 
 
     </main>
-<div class="modal" id="yeni-taseron">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-            {% trans 'Yeni Taşeron Ekle' %}
-                
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:taseron_ekle' %}" method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                    {% if request.user.is_superuser %}
-                                        <div class="mb-3">
-                                        <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
-                                        <select class="form-control" name="kullanici" id="date-field">
-                                            {% for i in kullanicilar %}
-                                                <option value="{{i.id}}">{{i.first_name}}</option>
-                                            {% endfor %}
-                                            
-                                            
-                                        </select>
-                                    </div>
-                                    {% else %}
-                    <div class="form-element">
-                        <label for="taseron-adi">{% trans 'Taşeron Adı' %}</label>
-                        <input type="text" name="taseron_adi" required id="taseron-adi">
-                    </div>
-                    <div class="form-element">
-                        <label for="telefon-numarasi">{% trans 'Telefon Numarası' %}</label>
-                        <input type="tel" name="telefonnumarasi" id="telefon-numarasi">
-                    </div>
-                    <div class="form-element">
-                        <label for="email">{% trans 'Email' %}</label>
-                        <input type="email" name="email_adresi" id="email">
-                    </div>
-                    <div class="form-element">
-                        <label for="aciklama">{% trans 'Açıklama' %}</label>
-                        <textarea name="aciklama" id="aciklama"></textarea>
-                    </div>
-                    <div class="form-element">
-                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye : Kalem : Blok' %}</label>
-                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" >
-                                            {% for blog in blog_bilgisi %}
-                                            {% kalemler_sadece blog %}
-                                            {% endfor %}
-                                        </select>
-                    </div>
-                   
-                    <div class="form-element">
-                        <label for="sozlesme-yukle">{% trans 'Sözleşme Yükle' %}</label>
+<div class="modal" id="yeni-gunluk">
+    <div class="modal-inner" style="width: 720px">
+        <div class="modal-header">
+            {% trans 'Günlük Rapor Ekle' %}
+            <button class="modal-close-btn" onclick="closeModal()">✖</button>
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" class="tablelist-form">
+                <div class="form-element">
+                    <label for="rapor-tarihi">{% trans 'Rapor Tarihi' %}</label>
+                    <input type="date" id="rapor-tarihi" class="form-control">
+                </div>
+                <div class="form-element">
+                    <label for="santiye-secimi">{% trans 'Şantiye Seçimi' %}</label>
+                    <select id="santiye-secimi" class="styled-select">
+                        <!-- Şantiye seçenekleri buraya -->
+                    </select>
+                </div>
 
-                        <div class="file-input">
-                            <label for="sozlesme-yukle">
-                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+                <div class="form-element">
+                    <label for="personel">{% trans 'Personel' %}</label>
+                    <button type="button" class="form-action-primary" onclick="openMiniModal('personel-modal')">{% trans 'Personel Ekle' %}</button>
+                </div>
 
-                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
-                            </label>
+                <div class="form-element">
+                    <label>{% trans 'Hava Durumu' %}</label>
+                    <button type="button" class="form-action-primary" onclick="openMiniModal('hava-durumu-modal')">{% trans 'Hava Durumu Ekle' %}</button>
+                </div>
 
-                            <input type="file" name="file" multiple id="sozlesme-yukle">
-                        </div>
+                <div class="form-element">
+                    <label>{% trans 'Şantiyeye Gelen Malzemeler' %}</label>
+                    <button type="button" class="form-action-primary" onclick="openMiniModal('malzemeler-modal')">{% trans 'Malzeme Ekle' %}</button>
+                </div>
 
-                        <ul class="fileList">
-                        </ul>
-                    </div>
-                    {% endif %}
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
-                    </div>
-                </form>
-            </div>
+                <div class="form-element">
+                    <label>{% trans 'İmalat Durumu' %}</label>
+                    <button type="button" class="form-action-primary" onclick="openMiniModal('imalat-modal')">{% trans 'İmalat Ekle' %}</button>
+                </div>
+
+                <div class="form-element">
+                    <label>{% trans 'Genel Durum' %}</label>
+                    <button type="button" class="form-action-primary" onclick="openMiniModal('genel-durum-modal')">{% trans 'Genel Durum Ekle' %}</button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="form-action-secondary" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    <button type="submit" class="form-action-primary">{% trans 'Rapor Oluştur' %}</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
+<!-- Mini Modal - Personel -->
+<div class="mini-modal" id="personel-modal">
+    <div class="mini-modal-content">
+        <h4>{% trans 'Personel Ekle' %}</h4>
+        <div class="form-element">
+            <label for="departman-secimi">{% trans 'Departman Seçimi' %}</label>
+            <select class="styled-select" id="departman-secimi">
+                <!-- Departman seçenekleri -->
+            </select>
+        </div>
+        <div class="form-element">
+            <label for="calisan-sayisi">{% trans 'Çalışan Sayısı' %}</label>
+            <input type="number" id="calisan-sayisi" min="1" class="form-control">
+        </div>
+        <div class="form-actions">
+            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+            <button type="button" class="form-action-primary" onclick="eklePersonel()">Ekle</button>
+        </div>
+    </div>
+</div>
+
+<!-- Mini Modal - Hava Durumu -->
+<div class="mini-modal" id="hava-durumu-modal">
+    <div class="mini-modal-content">
+        <h4>{% trans 'Hava Durumu Ekle' %}</h4>
+        <div class="form-element">
+            <label>{% trans 'Sıcaklık' %}</label>
+            <input type="text" class="form-control" id="sicaklik">
+        </div>
+        <div class="form-element">
+            <label>{% trans 'Rüzgar Hızı' %}</label>
+            <input type="text" class="form-control" id="ruzgar-hizi">
+        </div>
+        <div class="form-actions">
+            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+            <button type="button" class="form-action-primary" onclick="ekleHavaDurumu()">Ekle</button>
+        </div>
+    </div>
+</div>
+
+<!-- Diğer mini modallar için benzer yapı -->
+<!-- Mini Modal - Şantiyeye Gelen Malzemeler -->
+<div class="mini-modal" id="malzemeler-modal">
+    <div class="mini-modal-content">
+        <h4>{% trans 'Malzeme Ekle' %}</h4>
+        <div class="form-element">
+            <label>{% trans 'Malzeme Seçimi' %}</label>
+            <select class="styled-select" id="malzeme-secimi">
+                <!-- Malzeme seçenekleri -->
+            </select>
+        </div>
+        <div class="form-element">
+            <label>{% trans 'Adet' %}</label>
+            <input type="number" class="form-control" id="malzeme-adet">
+        </div>
+        <div class="form-actions">
+            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+            <button type="button" class="form-action-primary" onclick="ekleMalzeme()">Ekle</button>
+        </div>
+    </div>
+</div>
+
+<!-- Mini Modal - İmalat Durumu -->
+<div class="mini-modal" id="imalat-modal">
+    <div class="mini-modal-content">
+        <h4>{% trans 'İmalat Durumu Ekle' %}</h4>
+        <div class="form-element">
+            <label>{% trans 'İmalat Seçimi' %}</label>
+            <select class="styled-select" id="imalat-secimi">
+                <!-- İmalat seçenekleri -->
+            </select>
+        </div>
+        <div class="form-element">
+            <label>{% trans 'Açıklama' %}</label>
+            <textarea class="form-control" id="imalat-aciklama"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+            <button type="button" class="form-action-primary" onclick="ekleImalat()">Ekle</button>
+        </div>
+    </div>
+</div>
+
+<!-- Mini Modal - Genel Durum -->
+<div class="mini-modal" id="genel-durum-modal">
+    <div class="mini-modal-content">
+        <h4>{% trans 'Genel Durum Ekle' %}</h4>
+        <div class="form-element">
+            <label>{% trans 'Açıklama' %}</label>
+            <textarea class="form-control" id="genel-aciklama"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+            <button type="button" class="form-action-primary" onclick="ekleGenelDurum()">Ekle</button>
+        </div>
+    </div>
+</div>
+
 
 {% for i in santiyeler %}
-<div class="modal" id="yeni-taseron{{i.id}}">
+<div class="modal" id="yeni-gunluk{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
             {% trans 'Taşeron Düzenle' %}
@@ -228,8 +319,8 @@
                                 <input type="text" hidden value ="{{i.id}}" id="id-field" name="id_bilgisi" class="form-control"  />
                    
                     <div class="form-element">
-                        <label for="taseron-adi">{% trans 'Taşeron Adı' %}</label>
-                        <input type="text" value ="{{i.taseron_adi}}" name="taseron_adi" required id="taseron-adi">
+                        <label for="gunluk-adi">{% trans 'Taşeron Adı' %}</label>
+                        <input type="text" value ="{{i.taseron_adi}}" name="taseron_adi" required id="gunluk-adi">
                     </div>
                     <div class="form-element">
                         <label for="telefon-numarasi">{% trans 'Telefon Numarası' %}</label>
@@ -338,9 +429,21 @@
             }
         });
 
+
     </script>
 
+<script>
+function openMiniModal(modalId) {
+    document.querySelectorAll('.mini-modal').forEach(modal => modal.style.display = 'none');
+    document.getElementById(modalId).style.display = 'block';
+}
 
+function closeMiniModal() {
+    document.querySelectorAll('.mini-modal').forEach(modal => modal.style.display = 'none');
+}
+
+
+</script>
     <script>
         function toggleFullScreen() {
             var doc = window.document;
