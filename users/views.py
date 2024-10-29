@@ -1051,7 +1051,10 @@ def create_group_channel(user_ids, name):
 def chat_view(request):
     user_id = request.user.username
     # Kullanıcıların ID’sini listeye ekleyin
-    user_ids = [user_id, "other_user_id"]  # Örnek diğer kullanıcı
+    user_ids = []  # Örnek diğer kullanıcı
+    uıs = CustomUser.objects.filter(kullanicilar_db = request.user)
+    for i in uıs:
+        user_ids.append(i.id)
     channel_url = create_group_channel(user_ids, "My Group Channel")
 
     context = {

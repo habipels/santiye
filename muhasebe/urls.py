@@ -105,6 +105,7 @@ urlpatterns = [
     path("accountingsettings", views.muhasebe_ayarlari, name="muhasebe_ayarlari"),
     path('denme/', views.denme, name='denme'),
     path('kategoriekleme', views.gider_gelir_ekleme, name='gider_gelir_ekleme'),
+    path('control/kategoriekleme/<str:hash>', views.gider_gelir_ekleme_2, name='gider_gelir_ekleme_2'),
     path('etiketekleme', views.gider_gelir_etiketekleme, name='gider_gelir_etiketekleme'),
     path("accountextra", views.hesap_ekstra_durumu, name="hesap_ekstra_durumu"),
     path("control/accountextra/<str:hash>", views.hesap_ekstra_durumu_2, name="hesap_ekstra_durumu_2"),
