@@ -437,7 +437,7 @@
                 </div>
             </div>
             <a href="#" onclick="toggleFullScreen()"><i class="icon icon-fullscreen"></i></a>
-            <a href="#"><i class="icon icon-moon"></i></a>
+            <a href="#" onclick="toggleDarkMode()"><i class="icon icon-moon"></i><i class="icon icon-sun"></i></a>
             <div class="header-actions-dropdown notifications-dropdown">
                 <a href="#"><i class="icon icon-notification"></i></a>
                 <div class="actions-dropdown-content">
@@ -1060,7 +1060,49 @@
         accountInfoBox.style.display = "block"; // Bilgi kutusunu göster
     });
 </script>
+ <script>
+        function toggleDarkMode() {
+            if ($("body").hasClass("dark-mode")) {
+                document.cookie = "dark-mode=false; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+            } else {
+                document.cookie = "dark-mode=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+            }
+            $("body").toggleClass("dark-mode");
+        }
 
+        window.onload = function () {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith("dark-mode=true")) {
+                    document.body.classList.add('dark-mode');
+                    break;
+                }
+            }
+        };
+
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 
 
     <header>
@@ -1092,7 +1134,7 @@
                 </div>
             </div>
             <a href="#" onclick="toggleFullScreen()"><i class="icon icon-fullscreen"></i></a>
-            <a href="#"><i class="icon icon-moon"></i></a>
+            <a href="#" onclick="toggleDarkMode()"><i class="icon icon-moon"></i><i class="icon icon-sun"></i></a>
             <div class="header-actions-dropdown notifications-dropdown">
                 <a href="#"><i class="icon icon-notification"></i></a>
                 <div class="actions-dropdown-content">
@@ -1311,6 +1353,22 @@
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
+    <script>
+!function(w, d, s, ...args){
+  var div = d.createElement('div');
+  div.id = 'aichatbot';
+  d.body.appendChild(div);
+  w.chatbotConfig = args;
+  var f = d.getElementsByTagName(s)[0],
+  j = d.createElement(s);
+  j.defer = true;
+  j.type = 'module';
+  j.src = 'https://aichatbot.sendbird.com/index.js';
+  f.parentNode.insertBefore(j, f);
+}(window, document, 'script', '9CAC1C16-4C39-4E56-BB2E-C37A9703C88C', 'onboarding_bot', {
+  apiHost: 'https://api-cf-eu-1.sendbird.com',
+});
+</script>
     </header>
 
 {% endif %}
