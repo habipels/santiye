@@ -3,91 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sendbird Chat</title>
-    <!-- Sendbird SDK CDN -->
-    <script src="https://unpkg.com/sendbird@latest/dist/sendbird.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        #chat-container { max-width: 500px; margin: auto; padding: 20px; }
-        #message-container { height: 300px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; margin-bottom: 10px; }
-        #message-input { width: 80%; padding: 10px; }
-        #send-btn { width: 15%; padding: 10px; }
-    </style>
+    <title>Sendbird Chat Integration</title>
+    <script src="https://unpkg.com/sendbird@3.0.156/dist/sendbird.min.js"></script>
 </head>
 <body>
-    <div id="chat-container">
-        <h3>Sendbird Chat</h3>
-        <div id="message-container"></div>
-        <input type="text" id="message-input" placeholder="Mesajınızı yazın..." />
-        <button id="send-btn">Gönder</button>
-    </div>
-
+    <h1>Sendbird Chat</h1>
+    <div id="chatStatus">Bağlanıyor...</div>
     <script>
-        const APP_ID = "{{ app_id }}";        // Django'dan alınan App ID
-        const USER_ID = "{{ user_id }}";      // Django'dan alınan benzersiz kullanıcı kimliği
-        const CHANNEL_URL = "{{ channel_url }}";  // Django'dan alınan grup kanal URL'si
+        // Sendbird App ID'nizi burada belirtin
+        const appId = '9CAC1C16-4C39-4E56-BB2E-C37A9703C88C'; // Sendbird Dashboard'dan aldığınız App ID
+        const sb = new SendBird({ appId: appId });
 
-        const sb = new SendBird({ appId: APP_ID });
-        let channel;
-
-        function connectSendbird() {
-            sb.connect(USER_ID, function(user, error) {
-                if (error) { console.error(error); return; }
-
-                sb.GroupChannel.getChannel(CHANNEL_URL, function(groupChannel, error) {
-                    if (error) { console.error(error); return; }
-                    channel = groupChannel;
-                    loadMessages();
-                });
-            });
-        }
-
-        function loadMessages() {
-            const messageListQuery = channel.createPreviousMessageListQuery();
-            messageListQuery.limit = 20;
-            messageListQuery.reverse = false;
-            
-            messageListQuery.load(function(messages, error) {
-                if (error) { console.error(error); return; }
-                const messageContainer = document.getElementById('message-container');
-                messageContainer.innerHTML = '';
-                
-                messages.forEach(msg => {
-                    const messageElement = document.createElement('p');
-                    messageElement.textContent = `${msg.sender.nickname}: ${msg.message}`;
-                    messageContainer.appendChild(messageElement);
-                });
-            });
-        }
-
-        function sendMessage() {
-            const messageInput = document.getElementById('message-input');
-            const message = messageInput.value.trim();
-
-            if (message && channel) {
-                channel.sendUserMessage(message, function(message, error) {
-                    if (error) { console.error(error); return; }
-                    displayMessage(message);
-                });
-                messageInput.value = '';
+        // Kullanıcı bağlantısı
+        sb.connect('USER_ID', function(user, error) {
+            if (error) {
+                console.error(error);
+                document.getElementById("chatStatus").innerText = "Bağlantı hatası!";
+                return;
             }
-        }
 
-        function displayMessage(message) {
-            const messageContainer = document.getElementById('message-container');
-            const messageElement = document.createElement('p');
-            messageElement.textContent = `${message.sender.nickname}: ${message.message}`;
-            messageContainer.appendChild(messageElement);
-            messageContainer.scrollTop = messageContainer.scrollHeight;
-        }
+            document.getElementById("chatStatus").innerText = "Bağlantı başarılı!";
+            console.log('Kullanıcı bağlandı:', user);
 
-        document.getElementById('send-btn').addEventListener('click', sendMessage);
+            // Grup kanalı oluştur veya mevcut bir kanala katıl
+            sb.GroupChannel.createChannel({ userIds: ['user1', 'user2'], name: 'My Group Channel' }, function(channel, error) {
+                if (error) {
+                    console.error(error);
+                    return;
+                }
 
-        document.getElementById('message-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') { sendMessage(); }
+                console.log('Kanal oluşturuldu:', channel);
+                document.getElementById("chatStatus").innerText = "Kanal oluşturuldu: " + channel.name;
+            });
         });
-
-        connectSendbird();
     </script>
 </body>
 </html>

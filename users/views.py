@@ -1036,16 +1036,22 @@ def create_group_channel(user_ids, name):
         "Api-Token": API_TOKEN
     }
     data = {
-        "user_ids": user_ids,  # ["user1", "user2", ...]
+        "user_ids": user_ids,  # ['user1', 'user2', ...]
         "name": name,
-        "is_distinct": True
+        "is_distinct": True  # Aynı kullanıcılarla yeni bir kanal oluşturmaktan kaçınmak için
     }
     response = requests.post(url, json=data, headers=headers)
-    return response.json()
+    if response.status_code == 200:
+        return response.json().get('channel_url')  # Kanal URL'sini döndürür
+    else:
+        print("Kanal oluşturulamadı:", response.json())
+        return None
+
+
 def chat_view(request):
     user_id = request.user.username
     # Kullanıcıların ID’sini listeye ekleyin
-    user_ids = [user_id, "other_user_id"]
+    user_ids = [user_id, "other_user_id"]  # Örnek diğer kullanıcı
     channel_url = create_group_channel(user_ids, "My Group Channel")
 
     context = {
