@@ -113,6 +113,10 @@ urlpatterns = [#
 
     #
     #sözleşmeler olayları
+    path("control/progresspayment/<str:hash>", views.hakedis_sayfasi_2, name="hakedis_sayfasi_2"),
+    path("control/addprogresspayment/<str:hash>", views.hakedis_ekle_2, name="hakedis_ekle_2"),
+    path("control/delprogresspayment/<str:hash>", views.hakedis_silme_2, name="hakedis_silme_2"),
+    path("control/setprogresspayment/<str:hash>", views.hakedis_duzenle_2, name="hakedis_duzenle_2"),
     #hakedişler
     path("progresspayment", views.hakedis_sayfasi, name="hakedis_sayfasi"),
     path("addprogresspayment", views.hakedis_ekle, name="hakedis_ekle"),
