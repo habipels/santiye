@@ -1011,11 +1011,13 @@ def group_list(request):
     
     return render(request, 'chat/group_chat.html', context)
 
-#chat denemesi 
+#chat denemesi
 import requests
+from django.shortcuts import render
 
+# Sendbird API bilgilerini global olarak tanımlıyoruz
 SENDBIRD_APP_ID = '9CAC1C16-4C39-4E56-BB2E-C37A9703C88C'
-API_TOKEN = 'b90e79fa06974b6b945e349e'
+API_TOKEN = '89623599d0dfd35f5dcba32810a2fb2759876a7c'
 
 def create_sendbird_user(user_id, nickname):
     url = f"https://api-{SENDBIRD_APP_ID}.sendbird.com/v3/users"
@@ -1029,29 +1031,32 @@ def create_sendbird_user(user_id, nickname):
     }
     response = requests.post(url, json=data, headers=headers)
     return response.json()
+
 def create_group_channel(user_ids, name):
+    global SENDBIRD_APP_ID, API_TOKEN  # Global değişkenleri erişilebilir hale getirin
+
     url = f"https://api-{SENDBIRD_APP_ID}.sendbird.com/v3/group_channels"
     headers = {
         "Content-Type": "application/json, charset=utf8",
         "Api-Token": API_TOKEN
     }
     data = {
-        "user_ids": user_ids,  # ['user1', 'user2', ...]
+        "user_ids": user_ids,
         "name": name,
-        "is_distinct": True  # Aynı kullanıcılarla yeni bir kanal oluşturmaktan kaçınmak için
+        "is_distinct": True
     }
     response = requests.post(url, json=data, headers=headers)
-    if response.status_code == 200:
-        return response.json().get('channel_url')  # Kanal URL'sini döndürür
+    if response.status_code == 201:
+        return response.json().get('channel_url')
     else:
         print("Kanal oluşturulamadı:", response.json())
         return None
 
-
 def chat_view(request):
     user_id = request.user.username
-    # Kullanıcıların ID’sini listeye ekleyin
-    user_ids = [user_id, "other_user_id"]  # Örnek diğer kullanıcı
+    other_user_id = "other_user_id"  # Gerçek kullanıcı ID'sini buraya ekleyin
+    user_ids = [user_id, other_user_id]  # user_ids listesinin dolu ve geçerli olduğundan emin olun
+
     channel_url = create_group_channel(user_ids, "My Group Channel")
 
     context = {
