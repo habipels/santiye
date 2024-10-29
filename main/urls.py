@@ -74,8 +74,12 @@ urlpatterns = [#
     #ilerleme takibi#
     path("santiyeraporu/<int:id>", views.santiye_raporu, name="santiye_raporu"),
     path("control/santiyeraporu/<int:id>/<str:hash>", views.santiye_raporu_2, name="santiye_raporu_2"),
-#    #taşeron olayları
+#    #taşeron olayları#
     path("subcontractor", views.taseron_sayfasi, name="taseron_sayfasi"),
+    path("control/subcontractor/<str:hash>", views.taseron_sayfasi_2, name="taseron_sayfasi_2"),
+    path("control/addsubcontractor/<str:hash>", views.taseron_ekle_2, name="taseron_ekle_2"),
+    path("control/delsubcontractor/<str:hash>", views.taseron_silme_2, name="taseron_silme_2"),
+    path("control/setsubcontractor/<str:hash>", views.taseron_duzelt_2, name="taseron_duzelt_2"),
     path("addsubcontractor", views.taseron_ekle, name="taseron_ekle"),
     path("delsubcontractor", views.taseron_silme, name="taseron_silme"),
     path("addsubcontractoradmin/<int:id>", views.taseron_ekle_admin, name="taseron_ekle_admin"),
