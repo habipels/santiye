@@ -8,6 +8,11 @@ urlpatterns = [
     path('get_fatura/<int:fatura_id>/', views.get_fatura_gider, name='get_fatura_gider'),
     path("till", views.kasa_viev, name="kasa"),
     path("control/till/<str:hash>", views.a_kasa_viev, name="a_kasa_viev"),
+    path("control/viewstill/<int:id>/<str:hash>", views.kasa_tekli_2, name="kasa_tekli_2"),
+    path("control/addtill/<str:hash>", views.kasa_ekle_2, name="kasa_ekle_2"),
+    path("control/deltill/<str:hash>", views.kasa_sil_2, name="kasa_sil_2"),
+    path("control/settill/<str:hash>", views.kasa_duzenle_2, name="kasa_duzenle_2"),
+
     path("viewstill/<int:id>", views.kasa_tekli, name="kasa_tekli"),
     path("addtill", views.kasa_ekle, name="kasa_ekle"),
     path("deltill", views.kasa_sil, name="kasa_sil"),
@@ -51,6 +56,7 @@ urlpatterns = [
     #gider etiketleri
     #virman olayı #
     path("maketransfer", views.virman_yapma, name="virman_yapma"),
+    path("control/maketransfer/<str:hash>", views.virman_yapma_2, name="virman_yapma_2"),
     path("superadmintransfer/<int:id>", views.super_admin_virman, name="super_admin_virman"),
     path("transfer", views.virman_gondermeler, name="virman_gondermeler"),
     path("control/transfer/<str:hash>", views.virman_gondermeler_2, name="virman_gondermeler_2"),

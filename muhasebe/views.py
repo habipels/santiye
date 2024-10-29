@@ -624,6 +624,247 @@ def kasa_duzenle(request):
                                 maas_icin_kullan = maaslarda_kullan)
     return redirect("accounting:kasa")
 
+def kasa_tekli_2(request,id,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if super_admin_kontrolu(request):
+        profile =Kasa.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = users)
+        k_gonder = get_object_or_404(Kasa,id = id)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.kasa_detay_izni:
+                    profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                    k_gonder = get_object_or_404(Kasa,id = id)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+            k_gonder = get_object_or_404(Kasa,id = id)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =Kasa.objects.filter(Q(kasa_kart_ait_bilgisi__first_name__icontains = search)|Q(kasa_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kasa_detay_izni:
+                        profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["kasabilgiis_getirme"] = k_gonder
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    return render(request,"muhasebe_page/kasa_hareketleri.html",content)
+
+#kasa ekleme
+def kasa_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            kasa_Adi   = request.POST.get("kasaadi")
+            bakiye = request.POST.get("bakiye")
+            konumu = request.POST.get("konumu")
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
+            Kasa.objects.create(kasa_kart_ait_bilgisi = users
+                                ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan
+                                )
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kasa_olusturma_izni:
+                        kasa_Adi   = request.POST.get("kasaadi")
+                        bakiye = request.POST.get("bakiye")
+                        konumu = request.POST.get("konumu")
+                        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                        if maaslarda_kullan == "1":
+                            maaslarda_kullan = False
+                        else:
+                            maaslarda_kullan = True
+                        if avanslarda_kullan == "1":
+                            avanslarda_kullan = False
+                        else:
+                            avanslarda_kullan = True
+                        Kasa.objects.create(kasa_kart_ait_bilgisi = request.user.kullanicilar_db
+                            ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kasa_Adi   = request.POST.get("kasaadi")
+                bakiye = request.POST.get("bakiye")
+                konumu = request.POST.get("konumu")
+                maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                if maaslarda_kullan == "1":
+                    maaslarda_kullan = False
+                else:
+                    maaslarda_kullan = True
+                if avanslarda_kullan == "1":
+                    avanslarda_kullan = False
+                else:
+                    avanslarda_kullan = True
+                Kasa.objects.create(kasa_kart_ait_bilgisi = request.user
+                    ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+
+    return redirect("accounting:a_kasa_viev",hash)
+
+#kasa silme
+def kasa_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        Kasa.objects.filter(id = id).update(silinme_bilgisi = True)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.Kasa_silme_izni:
+                    Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
+    return redirect("accounting:a_kasa_viev",hash)
+
+
+#kasa düzenle
+def kasa_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        silinmedurumu = request.POST.get("silinmedurumu")
+        konumu = request.POST.get("konumu")
+        maaslarda_kullan = request.POST.get("maaslarda_kullan")
+        avanslarda_kullan = request.POST.get("avanslarda_kullan")
+        if maaslarda_kullan == "1":
+            maaslarda_kullan = False
+        else:
+            maaslarda_kullan = True
+        if avanslarda_kullan == "1":
+            avanslarda_kullan = False
+        else:
+            avanslarda_kullan = True
+        if silinmedurumu == "1":
+            silinmedurumu = False
+            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+        elif silinmedurumu == "2":
+            silinmedurumu = True
+            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+        else:
+            Kasa.objects.filter(id = id).update(kasa_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,kasa_adi = proje_tip_adi,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.kasa_guncelleme_izni:
+                    proje_tip_adi   = request.POST.get("yetkili_adi")
+                    konumu = request.POST.get("konumu")
+                    maaslarda_kullan = request.POST.get("maaslarda_kullan")
+                    avanslarda_kullan = request.POST.get("avanslarda_kullan")
+                    if maaslarda_kullan == "1":
+                        maaslarda_kullan = False
+                    else:
+                        maaslarda_kullan = True
+                    if avanslarda_kullan == "1":
+                        avanslarda_kullan = False
+                    else:
+                        avanslarda_kullan = True
+                    Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(kasa_adi = proje_tip_adi
+                            ,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            konumu = request.POST.get("konumu")
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
+            Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(kasa_adi = proje_tip_adi
+                    ,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+    return redirect("accounting:a_kasa_viev",hash)
+
+
+
 #Gelir Kategorisi
 def gelir_kategorisi_tipleri(request):
     content = sozluk_yapisi()
@@ -1762,6 +2003,80 @@ def virman_yapma(request):
                 Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
 
     return redirect("accounting:kasa")
+#virman olayları
+def virman_yapma_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            if True:
+                if True:
+                    if True:
+                        gonderen = request.POST.get("gonderen")
+                        alici = request.POST.get("alici")
+                        islemtarihi = request.POST.get("islemtarihi")
+                        tutar = float(str(request.POST.get("tutar")).replace(",","."))
+                        aciklama = request.POST.get("aciklama")
+                        virman.objects.create(virman_ait_oldugu = users,
+                            virman_tarihi = islemtarihi,gonderen_kasa = get_object_or_404(Kasa,id = gonderen)
+                            ,alici_kasa = get_object_or_404(Kasa,id = alici),tutar = tutar,
+                            aciklama = aciklama
+                            )
+                        bakiye_dusme = get_object_or_404(Kasa,id = gonderen).bakiye
+                        bakiye_yukseltme = get_object_or_404(Kasa,id = alici).bakiye
+                        bakiye_dusme = bakiye_dusme - float(tutar)
+                        bakiye_yukseltme = bakiye_yukseltme + float(tutar)
+                        Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
+                        Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.kasa_virman_olusturma_izni:
+                        gonderen = request.POST.get("gonderen")
+                        alici = request.POST.get("alici")
+                        islemtarihi = request.POST.get("islemtarihi")
+                        tutar = float(str(request.POST.get("tutar")).replace(",","."))
+                        aciklama = request.POST.get("aciklama")
+                        virman.objects.create(virman_ait_oldugu = request.user.kullanicilar_db,
+                            virman_tarihi = islemtarihi,gonderen_kasa = get_object_or_404(Kasa,id = gonderen)
+                            ,alici_kasa = get_object_or_404(Kasa,id = alici),tutar = tutar,
+                            aciklama = aciklama
+                            )
+                        bakiye_dusme = get_object_or_404(Kasa,id = gonderen).bakiye
+                        bakiye_yukseltme = get_object_or_404(Kasa,id = alici).bakiye
+                        bakiye_dusme = bakiye_dusme - float(tutar)
+                        bakiye_yukseltme = bakiye_yukseltme + float(tutar)
+                        Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
+                        Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                gonderen = request.POST.get("gonderen")
+                alici = request.POST.get("alici")
+                islemtarihi = request.POST.get("islemtarihi")
+                tutar = float(str(request.POST.get("tutar")).replace(",","."))
+                aciklama = request.POST.get("aciklama")
+                virman.objects.create(virman_ait_oldugu = request.user,
+                    virman_tarihi = islemtarihi,gonderen_kasa = get_object_or_404(Kasa,id = gonderen)
+                    ,alici_kasa = get_object_or_404(Kasa,id = alici),tutar = tutar,
+                    aciklama = aciklama
+                    )
+                bakiye_dusme = get_object_or_404(Kasa,id = gonderen).bakiye
+                bakiye_yukseltme = get_object_or_404(Kasa,id = alici).bakiye
+                bakiye_dusme = bakiye_dusme - float(tutar)
+                bakiye_yukseltme = bakiye_yukseltme + float(tutar)
+                Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
+                Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
+
+    return redirect("accounting:a_kasa_viev",hash)
+
 
 
 def super_admin_virman(request,id):
