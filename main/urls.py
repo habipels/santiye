@@ -122,7 +122,9 @@ urlpatterns = [#
     path("storage/delmydir", views.klasor_sil, name="klasor_sil"),
     path("control/storage/delmydir/<str:hash>", views.klasor_sil_2, name="klasor_sil_2"),
     path("storage/savemydir", views.dosya_geri_getir, name="dosya_geri_getir"),
+    #
     path("storage/mydir/<int:id>/<str:slug>/", views.klasore_gir, name="klasore_gir"),
+    path("control/storage/mydir/<int:id>/<str:slug>/<str:hash>", views.klasore_gir_2, name="klasore_gir_2"),
     path("storage/addfile", views.dosya_ekle, name="dosya_ekle"),
     path("storage/delfile", views.dosya_sil, name="dosya_sil"),
     path("storage/mydir/document", views.dokumanlar, name="dokumanlar"),

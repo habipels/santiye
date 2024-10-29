@@ -3670,7 +3670,72 @@ def klasore_gir(request,id,slug):
     content["dosyalarim"] = dosyalarim
     return render(request,"santiye_yonetimi/klasorici.html",content)
 #klasöre Gir
+#klasöre Gir
+def klasore_gir_2(request,id,slug,hash):
+    content = sozluk_yapisi()
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    content["id_bilgisi"] = id
+    if super_admin_kontrolu(request):
+        profile = klasorler.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = klasorler.objects.filter(klasor_adi_db__id =id,silinme_bilgisi = False,dosya_sahibi = users)
+        dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = users,proje_ait_bilgisi__id =id)
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.dosya_yoneticisi_gorme:
+                    profile = klasorler.objects.filter(klasor_adi_db__id =id,silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db)
+                    dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db,proje_ait_bilgisi__id =id)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = klasorler.objects.filter(klasor_adi_db__id =id,silinme_bilgisi = False,dosya_sahibi = request.user)
+            dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =klasorler.objects.filter(Q(dosya_sahibi__last_name__icontains = search)|Q(klasor_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.dosya_yoneticisi_gorme:
+                        profile = klasorler.objects.filter(klasor_adi_db__id =id).filter(Q(dosya_sahibi = request.user.kullanicilar_db) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+                        dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user.kullanicilar_db,proje_ait_bilgisi__id =id).filter(__icontains = search)
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = klasorler.objects.filter(klasor_adi_db__id =id).filter(Q(dosya_sahibi = request.user) & Q(klasor_adi__icontains = search)& Q(silinme_bilgisi = False))
+                dosyalarim = klasor_dosyalari.objects.filter(silinme_bilgisi = False,dosya_sahibi = request.user,proje_ait_bilgisi__id =id).filter(__icontains = search)
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 25) # 6 employees per page
 
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = page_obj
+    content["top"]  = profile
+    content["medya"] = page_obj
+    content["dosyalarim"] = dosyalarim
+    return render(request,"santiye_yonetimi/klasorici.html",content)
+#klasöre Gir
 
 #klasore Dosya Ekle
 def dosya_ekle(request):
