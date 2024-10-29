@@ -1018,7 +1018,7 @@ SENDBIRD_APP_ID = '9CAC1C16-4C39-4E56-BB2E-C37A9703C88C'
 API_TOKEN = 'b90e79fa06974b6b945e349e'
 
 def create_sendbird_user(user_id, nickname):
-    url = f"https://api-{SENDBIRD_APP_ID}.sendbird.com/v3/users"
+    url = f"https://api-9CAC1C16-4C39-4E56-BB2E-C37A9703C88C.sendbird.com/v3/users"
     headers = {
         "Content-Type": "application/json, charset=utf8",
         "Api-Token": API_TOKEN
@@ -1030,7 +1030,7 @@ def create_sendbird_user(user_id, nickname):
     response = requests.post(url, json=data, headers=headers)
     return response.json()
 def create_group_channel(user_ids, name):
-    url = f"https://api-{SENDBIRD_APP_ID}.sendbird.com/v3/group_channels"
+    url = f"https://api-9CAC1C16-4C39-4E56-BB2E-C37A9703C88C.sendbird.com/v3/group_channels"
     headers = {
         "Content-Type": "application/json, charset=utf8",
         "Api-Token": API_TOKEN
@@ -1051,10 +1051,7 @@ def create_group_channel(user_ids, name):
 def chat_view(request):
     user_id = request.user.username
     # Kullanıcıların ID’sini listeye ekleyin
-    user_ids = []  # Örnek diğer kullanıcı
-    uıs = CustomUser.objects.filter(kullanicilar_db = request.user)
-    for i in uıs:
-        user_ids.append(i.id)
+    user_ids = [user_id, "other_user_id"]  # Örnek diğer kullanıcı
     channel_url = create_group_channel(user_ids, "My Group Channel")
 
     context = {
