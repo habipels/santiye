@@ -107,6 +107,7 @@ urlpatterns = [
     path('kategoriekleme', views.gider_gelir_ekleme, name='gider_gelir_ekleme'),
     path('control/kategoriekleme/<str:hash>', views.gider_gelir_ekleme_2, name='gider_gelir_ekleme_2'),
     path('etiketekleme', views.gider_gelir_etiketekleme, name='gider_gelir_etiketekleme'),
+    path('control/etiketeklemee/<str:hash>', views.gider_gelir_etiketekleme_2, name='gider_gelir_etiketekleme_2'),
     path("accountextra", views.hesap_ekstra_durumu, name="hesap_ekstra_durumu"),
     path("control/accountextra/<str:hash>", views.hesap_ekstra_durumu_2, name="hesap_ekstra_durumu_2"),
     path('download-excel/', views.download_excel, name='download_excel'),
