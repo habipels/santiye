@@ -86,6 +86,11 @@ urlpatterns = [#
     path("setsubcontractor", views.taseron_duzelt, name="taseron_duzelt"),
     #
     #Üst Yükleneci olayları
+    path("control/topcontractor/<str:hash>", views.ust_yuklenici_sayfasi_2, name="ust_yuklenici_sayfasi_2"),
+    path("control/addtopcontractor/<str:hash>", views.ust_yuklenici_ekle_2, name="ust_yuklenici_ekle_2"),
+    path("control/deltopcontractor/<str:hash>", views.ust_yuklenici_silme_2, name="ust_yuklenici_silme_2"),
+    path("control/settopcontractor/<str:hash>", views.ust_yuklenici_duzelt_2, name="ust_yuklenici_duzelt_2"),
+
     path("topcontractor", views.ust_yuklenici_sayfasi, name="ust_yuklenici_sayfasi"),
     path("addtopcontractor", views.ust_yuklenici_ekle, name="ust_yuklenici_ekle"),
     path("deltopcontractor", views.ust_yuklenici_silme, name="ust_yuklenici_silme"),
@@ -93,6 +98,15 @@ urlpatterns = [#
     path("settopcontractor", views.ust_yuklenici_duzelt, name="ust_yuklenici_duzelt"),
     #
     #taşeron olayları
+    path("control/contracts/<str:hash>", views.sozlesmler_sayfasi_2, name="sozlesmler_sayfasi_2"),
+    path("control/addcontract/<str:hash>", views.sozlesme_ekle_2, name="sozlesme_ekle_2"),
+    path("control/delcontract/<str:hash>", views.sozlesme_silme_2, name="sozlesme_silme_2"),
+    path("control/setcontracts/<str:hash>", views.sozlesme_duzenle_2, name="sozlesme_duzenle_2"),
+
+    path("control/topcontractss/<str:hash>", views.ana_yuklenici_sozlesmler_sayfasi_2, name="ana_yuklenici_sozlesmler_sayfasi_2"),
+    path("control/topaddcontracts/<str:hash>", views.ust_yuklenici_sozlesme_ekle_2, name="ust_yuklenici_sozlesme_ekle_2"),
+    path("control/topdelcontracts/<str:hash>", views.ust_yuklenici_silme_sozlesme_2, name="ust_yuklenici_silme_sozlesme_2"),
+    path("control/topsetcontractss/<str:hash>", views.ust_yuklenici_sozlesme_duzenle_2, name="ust_yuklenici_sozlesme_duzenle_2"),
     #sözleşmeler olayları
     path("contracts", views.sozlesmler_sayfasi, name="sozlesmler_sayfasi"),
     path("addcontract", views.sozlesme_ekle, name="sozlesme_ekle"),
@@ -108,6 +122,10 @@ urlpatterns = [#
 
     #
     #sözleşmeler olayları
+    path("control/progresspayment/<str:hash>", views.hakedis_sayfasi_2, name="hakedis_sayfasi_2"),
+    path("control/addprogresspayment/<str:hash>", views.hakedis_ekle_2, name="hakedis_ekle_2"),
+    path("control/delprogresspayment/<str:hash>", views.hakedis_silme_2, name="hakedis_silme_2"),
+    path("control/setprogresspayment/<str:hash>", views.hakedis_duzenle_2, name="hakedis_duzenle_2"),
     #hakedişler
     path("progresspayment", views.hakedis_sayfasi, name="hakedis_sayfasi"),
     path("addprogresspayment", views.hakedis_ekle, name="hakedis_ekle"),

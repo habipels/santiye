@@ -5,7 +5,461 @@
 {% load static %}
 
 {% block sidebar %}
-    <main>
+{% if hash_bilgi %}
+ <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Sözleşmeler' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Sözleşmeler' %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+            {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.ust_yuklenici_olusturma %}
+                                                   <button class="page-primary-btn" onclick="openModal('yeni-sozlesme')"><i
+                        class="icon icon-new"></i>
+                    {% trans 'Yeni Sözleşme Ekle' %}</button>                                   
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                                 <button class="page-primary-btn" onclick="openModal('yeni-sozlesme')"><i
+                        class="icon icon-new"></i>
+                    {% trans 'Yeni Sözleşme Ekle' %}</button>                                     
+                                            {% endif %}
+                
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Sözleşmeler' %}</div>
+                <div class="stats-right">
+                    <div class="stats-search">
+                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                        <button><i class="icon icon-search"></i></button>
+                    </div>
+                    <div class="stats-info">{% trans 'Aktif Taşeron:' %} {{top.count}}</div>
+                    <div class="stats-info">{% trans 'Aktif Sözleşme:' %} {{top.count}}</div>
+                </div>
+            </div>
+
+
+            <div class="tab-navs">
+                <button class="tab-navs-btn active" ><a  href="/{{dil}}{% url 'main:ana_yuklenici_sozlesmler_sayfasi_2' hashler %}">{% trans 'Ana Firma Sözleşmeleri' %}</a></button>
+                <button class="tab-navs-btn " data-tab="alt-yuklenizi-sozlesmeleri"><a href="/{{dil}}{% url 'main:sozlesmler_sayfasi_2' hashler %}">{% trans 'Alt Yüklenizi Sözleşmeleri' %}</a></button>
+            </div>
+
+            <div class="tab-contents">
+
+                <div class="tab-content active" id="ana-firma-sozlesmeleri">
+                    <div class="table-wrapper">
+                        <table id="ana-firma-sozlesmeleri-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Üst Yüklenici' %}</th>
+                                <th>{% trans 'Telefon' %}</th>
+                                <th>{% trans 'Email' %}</th>
+                                <th>{% trans 'Eklenme Tarihi' %}</th>
+                                <th>{% trans 'Açıklama' %}</th>
+                                
+                                <th>{% trans 'Durum' %}</th>
+                                <th>{% trans 'Sözleşme' %}</th>
+                                <th>{% trans 'İşlemler' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            
+                            {% for i in santiyeler %}
+                                <tr>
+                                <td>{{i.proje_ait_bilgisi.taseron_adi}}</td>
+                                 <td>{{i.proje_ait_bilgisi.telefon_numarasi}}</td>
+                                  <td>{{i.proje_ait_bilgisi.email}}</td>
+                                    <td>{% if i.tarih %}
+                                                        {{ i.tarih | date:'d.m.Y'}}
+                                                    {% else %}
+                                                    {{ i.kayit_tarihi | date:'d.m.Y'}}
+                                                    {% endif %}</td>
+                                     <td>{{i.aciklama}}</td>
+                                <td>{% if i.durum %}Aktif{% else %}Pasif{% endif %}</td>
+                                    
+                                    <td>
+                                        <div class="td-actions">
+                                        
+                                            <a title="{{i.dosya.name}}" onclick="openModal('sozlesme-indir{{i.id}}')" class="status-info"><i class="icon icon-action-file"></i></a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="td-actions">
+                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.ust_yuklenici_duzenleme %}
+                                                               <a onclick="openModal('yeni-sozlesme{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                               
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                         <a onclick="openModal('yeni-sozlesme{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                               
+                                                                                                           
+                                                        {% endif %}
+                                                            
+                                                            {% if request.user.kullanicilar_db %}
+                                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                            {% if yetki.ust_yuklenici_silme %}
+                                                                    <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>                                     
+                                                            {% else %}
+                                                                                                                            
+                                                            {% endif %}
+                                                            {% else %}
+                                                                       <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>                                     
+                                                            {% endif %}
+                                            
+                                            
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="alt-yuklenizi-sozlesmeleri">
+                    <div class="table-wrapper">
+                        <table id="alt-yuklenizi-sozlesmeleri-table">
+                            <thead>
+                                <tr>
+                                    <th>Taşeron</th>
+                                    <th>Proje</th>
+                                    <th>Açıklama</th>
+                                    <th>Eklenme Tarihi</th>
+                                    <th>Fatura Numarası</th>
+                                    <th>Tutar</th>
+                                    <th>Kalan</th>
+                                    <th>İndir</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Jane Cooper</td>
+                                    <td>Group 1 - Proje Adı</td>
+                                    <td>ZONE C1 TUNEL HAK 1</td>
+                                    <td>01.01.2000</td>
+                                    <td>INV123128736</td>
+                                    <td>$ 34.099,99</td>
+                                    <td>$ 34.099,99</td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <a onclick="openModal('sozlesme-indir')" class="status-info"><i class="icon icon-action-file"></i></a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <a class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a href="#" class="status-cancel"><i
+                                                    class="icon icon-action-delete"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <script>
+                $(".tab-navs-btn").on("click", function () {
+                    $(".tab-navs-btn").removeClass("active");
+                    $(".tab-content").removeClass("active");
+
+                    $(this).addClass("active");
+                    $("#" + $(this).attr("data-tab")).addClass("active");
+                })
+            </script>
+
+        </div>
+
+        <script>
+            let ana_firma_sozlesmeleri = new DataTable('#ana-firma-sozlesmeleri-table', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+            let alt_yuklenizi_sozlesmeleri_table = new DataTable('#alt-yuklenizi-sozlesmeleri-table', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                ana_firma_sozlesmeleri.search($(this).val()).draw();
+                alt_yuklenizi_sozlesmeleri_table.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+{% for i in santiyeler %}
+    <div class="modal" id="sozlesme-indir{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Sözleşme İndir' %}
+            </div>
+            <div class="modal-body">
+
+                <ul class="sozlesme-indir">
+                {% if i.dosya %}
+                    
+                    
+                        <li><a href="{{i.dosya.url}}" class="btn btn-sm btn-secondary">{% isim i.dosya.name %}</a></li>
+                        <li><a href="{{i.dosya.url}}" download="{{i.dosya.url}}" class="btn btn-sm btn-secondary">{% trans 'İndir' %}</a></li>
+                    {% else %}
+                    {% endif %}
+                   
+                </ul>
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-primary" type="button">İndir (3)</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+<div class="modal" id="yeni-sozlesme{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+               {% trans 'Yeni Sözleşme Ekle' %} 
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:ust_yuklenici_sozlesme_duzenle_2' hashler %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                 <input type="text" id="id-field" name="id_bilgisi" hidden value="{{i.id}}" class="form-control" />
+                    <div class="form-element">
+                        <label for="taseron">{% trans 'Üst Yükleniciler' %} </label>
+                        <select class="form-control" name="taseron" id="taseron">
+                             <option value="{{i.proje_ait_bilgisi.id}}">{{i.proje_ait_bilgisi.taseron_adi}}</option>
+                                                {% for j in taseronlar %}
+                                                    <option value="{{j.id}}">{{j.taseron_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                    </div>
+                    <div class="form-element">
+
+                        <label for="dosya-adi">{% trans 'Dosya Adı' %}</label>
+                        <input type="tel" value="{{i.dosya_adi}}" name="dosyaadi" id="dosya-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="tarih">{% trans 'Tarih' %}</label>
+                        <input type="date"  value="{{i.tarih | date:'Y-m-d' }}" required name="tarih" id="tarih">
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea name="aciklama" id="aciklama">{{i.aciklama }}</textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="durum">{% trans 'Durum' %}</label>
+                        <select name="durumu" id="durum" required>
+                        {% if i.durum %}
+                                                <option value="1">{% trans 'Active' %}</option>
+                                            {% else %}  
+                                            <option value="0">{% trans 'Block' %}</option>
+                                            {% endif %}
+                                            <option value="">{% trans 'Durum' %}</option>
+                                            <option value="1">{% trans 'Active' %}</option>
+                                            <option value="0">{% trans 'Block' %}</option>
+                                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Sözleşme Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Düzenle' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<div class="modal" id="deleteConfirmationModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silmek istediğinize emin misiniz?' %}
+                
+            </div>
+            <div class="modal-body">
+                 <form autocomplete="off"action="/{{dil}}{% url 'main:ust_yuklenici_silme_sozlesme_2' hashler %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    
+                    <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('deleteConfirmationModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+    <div class="modal" id="yeni-sozlesme">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+               {% trans 'Yeni Sözleşme Ekle' %} 
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:ust_yuklenici_sozlesme_ekle_2' hashler %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                    <div class="form-element">
+                        <label for="taseron">{% trans 'Üst Yükleniciler' %} </label>
+                        <select class="form-control" name="taseron" id="taseron">
+                                                {% for j in taseronlar %}
+                                                    <option value="{{j.id}}">{{j.taseron_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                    </div>
+                    <div class="form-element">
+
+                        <label for="dosya-adi">{% trans 'Dosya Adı' %}</label>
+                        <input type="tel" name="dosyaadi" id="dosya-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="tarih">{% trans 'Tarih' %}</label>
+                        <input type="date"  required name="tarih" id="tarih">
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea name="aciklama" id="aciklama"></textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="durum">{% trans 'Durum' %}</label>
+                        <select name="durumu" id="durum" required>
+                                            <option value="">{% trans 'Durum' %}</option>
+                                            <option value="1">{% trans 'Active' %}</option>
+                                            <option value="0">{% trans 'Block' %}</option>
+                                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Sözleşme Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+{% else %}
+<main>
 
 
         <div class="page-header">
@@ -457,4 +911,6 @@
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
+{% endif %}
+    
 {% endblock sidebar %}
