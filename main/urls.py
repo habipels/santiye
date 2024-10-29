@@ -135,9 +135,13 @@ urlpatterns = [#
     path("storage/mydir/media", views.media_dosyalari, name="media_dosyalari"),
     path("control/storage/mydir/media/<str:hash>", views.media_dosyalari_2, name="media_dosyalari_2"),
     path("storage/mydir/history", views.zamana_dosyalari, name="zamana_dosyalari"),
+    path("control/storage/mydir/history/<str:hash>", views.zamana_dosyalari_2, name="zamana_dosyalari_2"),
     path("storage/mydir/contracts", views.sozlesmler_depolamam, name="sozlesmler_depolamam"),
+    path("control/storage/mydir/progresspayment/<str:hash>", views.hakedis_depolamam_2, name="hakedis_depolamam_2"),
+    path("control/storage/mydir/contracts/<str:hash>", views.sozlesmler_depolamam_2, name="sozlesmler_depolamam_2"),
     path("storage/mydir/progresspayment", views.hakedis_depolamam, name="hakedis_depolamam"),
     path("storage/mydir/deletedfile", views.silinen_dosyalari, name="silinen_dosyalari"),
+    path("control/storage/mydir/deletedfile/<str:hash>", views.silinen_dosyalari_2, name="silinen_dosyalari_2"),
     #depolama sistemim
     #iş planı #
     path("thingstodo", views.yapilacaklar, name="yapilacaklar"),
