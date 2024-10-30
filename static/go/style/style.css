@@ -30,6 +30,7 @@
     --dropdown-box-shadow-color: rgba(33, 35, 38, 0.24);
     --dashed-border-color: #2c2c2c;
     --input-bg-color: #2c2c2c;
+    --icon-bg-color: #303030;
 }
 
 * {
@@ -37,6 +38,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    text-decoration: none;
 }
 
 body {
@@ -407,6 +409,7 @@ body.rtl:has(.sidebar-collapsed) {
     left: 0;
     box-shadow: 0 4px 14px 0 var(--card-box-shadow-color);
     border-top-right-radius: 16px;
+    background-color: #fff;
     z-index: 250;
     display: none;
     flex-direction: column;
@@ -558,8 +561,8 @@ body.rtl:has(.sidebar-collapsed) {
     background-image: url("../icons/pdf.svg");
 }
 
-.icon-zip {
-    background-image: url("../icons/zip.svg");
+.icon-xlsx {
+    background-image: url("../icons/xlsx.svg");
 }
 
 .icon-print {
@@ -1745,6 +1748,14 @@ body.dark-mode .quick-actions-grid .quick-action:hover {
 .profile-avatar,
 .profile-avatar img {
     border-radius: 50%;
+    height: 40px;
+    width: auto;
+}
+.profile-avatar-dash,
+.profile-avatar-dash img {
+    border-radius: 50%;
+    height: 80px;
+    width: auto;
 }
 
 .stats-card {
@@ -1763,6 +1774,13 @@ body.dark-mode .quick-actions-grid .quick-action:hover {
     font-size: 14px;
     color: var(--text-primary-color);
     font-weight: 500;
+}
+.isemri-title {
+    text-transform: capitalize;
+    font-size: 18px;
+    color: #052941;
+    font-weight: bold;
+    margin-bottom: 10%;
 }
 
 .stats-card .stats-value {
@@ -2220,6 +2238,7 @@ table.dataTable tbody tr td span.time {
     text-decoration: none;
 }
 
+
 .status-orange {
     padding: 2px 6px;
     color: #FF9000;
@@ -2259,6 +2278,14 @@ main:has(.page-header) .status-cancel {
     justify-content: center;
     width: fit-content;
     aspect-ratio: 1;
+}
+
+.dark-mode main:has(.page-header) .status-success,
+.dark-mode main:has(.page-header) .status-pending,
+.dark-mode main:has(.page-header) .status-highlight,
+.dark-mode main:has(.page-header) .status-info,
+.dark-mode main:has(.page-header) .status-cancel {
+    background-color: var(--icon-bg-color);
 }
 
 .stats-lg {
@@ -2311,6 +2338,31 @@ main:has(.page-header) .status-cancel {
 
 .dark-mode .table-footer .icon {
     filter: brightness(0) invert(1);
+}
+.faturano-link {
+    display: flex;
+    color: #052941; /* Normal durumdaki renk */
+    text-decoration: none; 
+    margin-left: 10px;
+    font-size: small;
+}
+
+.dark-mode .faturano-link {
+    display: flex;
+    color: #22d6b6; /* Normal durumdaki renk */
+    text-decoration: none; 
+    margin-left: 10px;
+    font-size: small;
+}
+
+
+.faturano-link:hover {
+    color: #22d6b6;
+    text-decoration: none; 
+}
+.dark-mode .faturano-link:hover {
+    color: #d0f3ed;
+    text-decoration: none; 
 }
 
 @media screen and (max-width: 600px) {
@@ -3532,9 +3584,12 @@ main:has(.page-header) .status-cancel {
 .task-check {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     gap: 10px;
     height: 100%;
+    padding-left: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
 .task-check input {
@@ -4057,8 +4112,6 @@ main:has(.page-header) .status-cancel {
     border: none;
     outline: none;
     background-color: transparent;
-    width: 32px;
-    height: 32px;
     border-radius: 50%;
     cursor: pointer;
     font-weight: 600;
@@ -4420,13 +4473,13 @@ main:has(.page-header) .status-cancel {
     color: #24D6B6;
 }
 
-.dt-buttons {
+/*.dt-buttons {
     opacity: 0;
     height: 0;
     position: fixed;
     top: 10000px;
     left: 10000px;
-}
+} data tables export butonları yeni tasarımda görünmesin diye eklenmişti kontrol et*/
 
 .dt-print-view {
     padding: 12px;
