@@ -3,6 +3,880 @@
 {% load static %}
 {% load custom_tags %}
 {% block sidebar %}
+{% if hash_bilgi %}
+
+   <main>
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans "Personnel" %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Employee Management" %}</a></li>
+                    <li><a href="#">{% trans "Personnel" %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+                <button class="page-primary-btn" onclick="openModal('personel-olustur', false)"><i
+                        class="icon icon-new"></i>
+                    {% trans "Create Personnel" %}</button>
+            </div>
+        </div>
+
+        <div class="employees-page">
+            <!-- First employee card -->
+            {% for i in personeller %}
+            
+            
+            <div class="employeep" onclick="openPersonelDetails('{{i.id}}')">
+                <div class="employeep-image">
+                <img src="{% if i.profile %}{{i.profile.url}}{% else %}https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png{% endif %}" alt="{% trans 'employee' %}">
+                    
+                </div>
+                <div class="employeep-name">{{i.isim}} {{i.soyisim}}</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">{{i.calisan_pozisyonu.kategori_isimi}}</div>
+                    <div class="employeep-tag-salary">15.500 </div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans "Department" %}</span>
+                        {{i.calisan_kategori.kategori_isimi}}
+                    </div>
+                    <div class="employeep-detail">
+                        <span>{% trans "Start Date" %}</span>
+                       {{i.kayit_tarihi | date:'d.m.Y'}}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+           
+
+        </div>
+    </main>
+<div class="modal" id="openPersonelDetails">
+        <div class="modal-inner" style="width: 724px;">
+            <div class="modal-header">
+                {% trans 'Personel Detay Kartı' %}
+                
+            </div>
+            <div class="modal-body">
+                <div class="employee-details-modal-header">
+                    <div class="employee-details-modal-header-info">
+                        <img id="personelPhoto" >
+                        <span id="personelName">Jane Cooper</span>
+                    </div>
+                    <div class="employee-details-modal-header-tags">
+                        <div id="personelDepartment" class="employeep-tag">Yönetim</div>
+                        <div id="personelPosition" class="employeep-tag-job">Mühendis</div>
+                        <div class="employeep-tag-salary">15.500 </div>
+                    </div>
+                </div>
+
+                <div class="employee-details-tab-navs">
+                    <div class="employee-details-tab-nav active" data-tab="personel-bilgileri">{% trans 'Personel Bilgileri' %}</div>
+                    <div class="employee-details-tab-nav" data-tab="ucret-yonetimi">{% trans 'Ücret Yönetimi' %}</div>
+                    <div class="employee-details-tab-nav" data-tab="puantaj-yonetimi">{% trans 'Puantaj Yönetimi' %}</div>
+                </div>
+
+                <div class="employee-details-tabs">
+                    <div class="employee-details-tab active" id="personel-bilgileri">
+                        <div class="employee-modal-infos">
+                            <div class="employee-modal-info"><span>{% trans 'Pasaport No : ' %}</span>  <span id="detailpasaportno"> 123456789</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Uyruk:' %} </span> <span id="detailuygugu"> Türkiye</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Doğum Tarihi:' %}</span>  <span id="detaildogumtarihi"> 01/01/2000</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Telefon Numarası:' %}</span>  <span id="detailtelefon"> 0555 555 5555</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Ücret Tipi:' %}</span>  <span id="detailucrettipi"> -</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Para Birimi:' %}</span>  <span id="detailparabirimi" > TL</span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Günlük Ücret:' %}</span>  <span id="detailucret"> 1.500 </span> </div>
+                            <div class="employee-modal-info"><span>{% trans 'Saatlik Ücret:' %}</span>  <span id="detailsaatlikucret"> 300 </span> </div>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="employee-details-tab" id="ucret-yonetimi">
+                        <div class="form-actions">
+                            
+                            <button class="form-action-primary" type="button"
+                                onclick="openModal('maasOdeModal', false)">{% trans 'Maaş Öde' %} </button>
+                            <button class="form-action-primary" type="button"
+                                onclick="openModal('avansOdeModal', false)">{% trans 'Avans Öde' %} </button>
+                        </div>
+                        <table class="salary-table" id="employee-details-modal-table">
+                            <thead>
+                                <tr>
+                                    
+                                    <th>{% trans 'Ay' %}</th>
+                                    <th>{% trans 'Hakediş' %}</th>
+                                    <th>{% trans 'Ödenen' %}</th>
+                                    <th>{% trans 'Kalan' %}</th>
+                                    <th>{% trans 'Bordro' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salaryTableBody">
+                                <tr>
+                                    <td>Eylül</td>
+                                    <td>5000</td>
+                                    <td>3000</td>
+                                    <td>2000</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <script>
+                            let datatable = new DataTable('#employee-details-modal-table', {
+                                paging: false,
+                                searching: false,
+                                info: false,
+                               
+                            });
+                        </script>
+                    </div>
+                    <div class="employee-details-tab" id="puantaj-yonetimi">
+                    <div id="puantajGirisi" ></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button"
+                        onclick="closeModal('openPersonelDetails')">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">
+                    {% trans 'İşten Ayrıl' %}</button>
+                    
+                </div>
+            </div>
+        </div>
+</div>
+
+    <script>
+        $(".employee-details-tab-nav").on("click", function () {
+            $(".employee-details-tab-nav").removeClass("active");
+            $(this).addClass("active");
+
+            $(".employee-details-tab").removeClass("active");
+            $("#" + $(this).attr("data-tab")).addClass("active");
+        })
+    </script>
+
+
+
+<div class="modal" id="isten-ayril">
+        <div class="modal-inner" style="width: 724px;">
+            <div class="modal-header">
+                {% trans 'İşten Çıkan Personel'  %}
+                
+            </div>
+            <div class="modal-body">
+                <div class="employee-details-modal-header">
+                    <div class="employee-details-modal-header-info">
+                        <img id ="resim" src="./content/images/avatar-2.png">
+                        <span id="adisoyadi" >Jane Cooper</span>
+                    </div>
+                    <div class="employee-details-modal-header-tags">
+                        <div class="employeep-tag">Yönetim</div>
+                        <div class="employeep-tag-job">Mühendis</div>
+                        <div class="employeep-tag-salary">15.500 </div>
+                    </div>
+                </div>
+
+
+                <form style="margin-top: 20px;" method="post" action="/{{dil}}{% url 'user:personeller_sil_2' hashler %}"  enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="text" hidden name="idbilgisi" id="idbilgisi">
+                    <div class="form-element">
+                        <label for="aciklama">Açıklama</label>
+                        <textarea name="aciklama" id="aciklama"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('isten-ayril')">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-danger" type="submit">{% trans 'İşten Ayrıl' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+
+<div class="modal" id="maas-olustur">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Maaş Oluştur
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="ay-secimi">Ay Seçimi</label>
+                        <select name="ay-secimi" id="ay-secimi">
+                            <option value="" selected disabled></option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('maas-olustur')">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Devam Et</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+<div class="modal" id="maasOdeModal">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Maaş Öde
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet_2' hashler %}">
+                    {% csrf_token %} 
+                    <div id="odemeturuu" ></div>
+                    <div class="form-element">
+                        <label for="maas-ayi">Maaş Ayı</label>
+                        <select required id="maasAy" name="maas_ayi">
+                            <option value="" selected disabled></option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="kalan-bakiye">Kalan Bakiye</label>
+                        <input required type="number"  name="tutar" id="maasBakiye"  value="0">
+                    </div>
+                    <div class="form-element">
+                        <label for="kur">Kur</label>
+                        <input required type="number" name="kur"  class="form-control" placeholder="Kur">
+                    </div>
+                    <div class="form-element">
+                        <label for="odeme-tarihi">Ödeme Tarihi</label>
+                        <input required type="date" name="odeme_tarihi">
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">Açıklama</label>
+                        <textarea id="avansAciklama" name="aciklama"></textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="ekler">Dosya Yükle</label>
+
+                        <div class="file-input">
+                            <label for="ekler">
+                                <img src="./content/images/illustration-upload.png">
+
+                                <button><i class="icon icon-file"></i> Dosya Seç</button>
+                            </label>
+
+                            <input type="file" name="file" id="avansDosya">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('maasOdeModal')">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Maaş Öde</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+<div class="modal" id="avansOdeModal">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Avans Öde' %}
+                
+            </div>
+            <div class="modal-body">
+                
+                <form id="avansOdeForm" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet_2' hashler %}">
+                    {% csrf_token %} 
+                    <input type="text" hidden value="1" name="odeme_turu">
+                    <div id="odemeturu" ></div>
+                    <div class="form-element">
+                        <label for="ay-secimi">{% trans 'Ay Seçimi' %}</label>
+                        <select required name="maas_ayi" id="avansAy">
+                            <option value="" selected disabled></option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="avansTutar">Ödeme Tarihi</label>
+                        <input required type="date" name="odeme_tarihi"  >
+                    </div>
+                    <div class="form-element">
+                        <label for="tutar">Tutar</label>
+                        <input required type="number" name="tutar" id="avansTutar">
+                    </div>
+                    <div class="form-element">
+                        <label for="kur">Kur</label>
+                        <input required type="number" name="kur" >
+                    </div>
+                    
+                    <div class="form-element">
+                        <label for="aciklama">Açıklama</label>
+                        <textarea id="avansAciklama" name="aciklama"></textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="ekler">Dosya Yükle</label>
+
+                        <div class="file-input">
+                            <label for="ekler">
+                                <img src="./content/images/illustration-upload.png">
+
+                                <button><i class="icon icon-file"></i> Dosya Seç</button>
+                            </label>
+
+                            <input  type="file" name="file" id="avansDosya">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('avansOdeModal')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Avans Öde' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+<div class="modal" id="personel-olustur">
+    <div class="modal-inner" style="width: 724px;">
+        <div class="modal-header">
+            {% trans "Add Personnel" %}
+        </div>
+        <div class="modal-body">
+
+           <form id="addPersonForm" method="post" action="/{{dil}}{% url 'user:personeller_ekle_2' hashler %}"  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-element add-employee-image">
+                        <img src="{% static 'go/content/images/default-profile.png' %}" id="personel-olustur-img">
+                        <div class="file-input">
+                            <label for="personel-profile">
+                                <button type="button"><i class="icon icon-file"></i> {% trans "Choose File" %}</button>
+                            </label>
+                            <input type="file" name="profilePicture"id="personel-profile">
+                        </div>
+                        <script>
+                            $('#personel-profile').change(function (event) {
+                                const file = event.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function (e) {
+                                        $('#personel-olustur-img').attr('src', e.target.result);
+                                    }
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        </script>
+                    </div>
+                    <div class="form-element">
+                        <label for="adsoyad">{% trans "Full Name" %}</label>
+                        <input type="text" name="firstName" id="adsoyad">
+                        <input type="text" name="lastName" id="adsoyad">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-element">
+                        <label for="pasaport-no">{% trans "Passport No" %}</label>
+                        <input type="text" name="passportNo" id="pasaport-no">
+                    </div>
+                    <div class="form-element">
+                        <label for="uyruk">{% trans "Nationality" %}</label>
+                        <select id="nationality" name="nationality" class="form-control" required>
+                            <option value="">Seçiniz</option>
+                            <option value="Türkiye">Türkiye</option>
+                            <option value="Irak">Irak</option>
+                            <option value="Suriye">Suriye</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="date">{% trans "Date of Birth" %}</label>
+                        <input type="date" name="dob"  id="date">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    
+                    <div class="form-element">
+                        <label for="telefon-no">{% trans "Phone Number" %}</label>
+                        <input type="text" name="phoneNumber" id="telefon-no">
+                    </div>
+                    <div class="form-element">
+                        <label for="ucret-tipi">{% trans "Payment Type" %}</label>
+                        <select name="salaryType" id="ucret-tipi">
+                            <option value="" selected disabled></option>
+                            <option value="Yevmiye">{% trans "Yevmiye" %}</option>
+                            <option value="maas">{% trans "maas" %}</option>
+                            
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="ucret-tipi">{% trans "Para Birimi" %}</label>
+                        <select name="salaryType" id="ucret-tipi">
+                            <option value="" selected disabled></option>
+                            <option value="USD">{% trans "USD" %}</option>
+                            <option value="IQD">{% trans "IQD" %}</option>
+                            
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                <div class="form-element">
+                        <label for="date">{% trans "Pozisyonu" %}</label>
+                        <select id="position" name="position" class="form-control" required>
+                            <option value="">Seçiniz</option>
+                            {% for i in pozisyonlari %}
+                            <option value="{{i.id}}">{{i.kategori_isimi}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="para-birimi">{% trans "Depertman" %}</label>
+                        <select id="department" name="department" required>
+                            <option value="">Seçiniz</option>
+                            {% for i in departmanlar %}
+                            <option value="{{i.id}}">{{i.kategori_isimi}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="gunluk-ucret">{% trans "Daily Wage" %}</label>
+                        <input type="number" name="dailyWage" id="gunluk-ucret">
+                    </div>
+                    <div class="form-element">
+                        <label for="saatlik-ucret">{% trans "Hourly Wage" %}</label>
+                        <input type="number" name="hourlyWage" id="saatlik-ucret">
+                    </div>
+                </div>
+
+                <div class="form-element">
+                    <label for="not">{% trans "Note" %}</label>
+                    <input type="text" name="not" id="not">
+                </div>
+
+                <div class="form-element">
+                    <label for="ekler">{% trans "Upload Document" %}</label>
+
+                    <div class="file-input">
+                        <label for="ekler">
+                            <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                            <button><i class="icon icon-file"></i> {% trans "Choose File" %}</button>
+                        </label>
+
+                        <input type="file" name="ekler" id="ekler">
+                    </div>
+
+                    <ul class="fileList">
+                    </ul>
+                </div>
+            
+
+            <div class="form-actions">
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="personel-duzenle">
+    <div class="modal-inner" style="width: 724px;">
+        <div class="modal-header">
+            {% trans "Personel Düzenleme" %}
+        </div>
+        <div class="modal-body">
+
+           <form id="addPersonForm" method="post" action="/{{dil}}{% url 'user:personelleri_düzenle' %}"  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-element add-employee-image">
+                        <img src="{% static 'go/content/images/default-profile.png' %}" id="personel-olustur-img">
+                        <input type="text" hidden name="idbilgisi" id="idbilgisi">
+                        <div class="file-input">
+                            <label for="personel-profile">
+                                <button type="button"><i class="icon icon-file"></i> {% trans "Choose File" %}</button>
+                            </label>
+                            <input type="file" name="profilePicture"id="personel-profile">
+                        </div>
+                        <script>
+                            $('#personel-profile').change(function (event) {
+                                const file = event.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function (e) {
+                                        $('#personel-olustur-img').attr('src', e.target.result);
+                                    }
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        </script>
+                    </div>
+                    <div class="form-element">
+                        <label for="adsoyad">{% trans "Full Name" %}</label>
+                        <input type="text" name="firstName" id="adsoyad">
+                        <input type="text" name="lastName" id="soyad">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-element">
+                        <label for="pasaport-no">{% trans "Passport No" %}</label>
+                        <input type="text" name="passportNo" id="pasaport-no">
+                    </div>
+                    <div class="form-element">
+                        <label for="uyruk">{% trans "Nationality" %}</label>
+                        <select id="nationality" name="nationality" class="form-control" required>
+                            <option value="">Seçiniz</option>
+                            <option value="Türkiye">Türkiye</option>
+                            <option value="Irak">Irak</option>
+                            <option value="Suriye">Suriye</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="date">{% trans "Date of Birth" %}</label>
+                        <input type="date" name="dob"  id="date">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    
+                    <div class="form-element">
+                        <label for="telefon-no">{% trans "Phone Number" %}</label>
+                        <input type="text" name="phoneNumber" id="telefon-no">
+                    </div>
+                    <div class="form-element">
+                        <label for="ucret-tipi">{% trans "Payment Type" %}</label>
+                        <select name="salaryType" id="ucret-tipi">
+                            <option value="" selected disabled></option>
+                            <option value="Yevmiye">{% trans "Yevmiye" %}</option>
+                            <option value="maas">{% trans "maas" %}</option>
+                            
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="ucret-tipi">{% trans "Para Birimi" %}</label>
+                        <select name="salaryType" id="ucret-tipi">
+                            <option value="" selected disabled></option>
+                            <option value="USD">{% trans "USD" %}</option>
+                            <option value="IQD">{% trans "IQD" %}</option>
+                            
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                <div class="form-element">
+                        <label for="date">{% trans "Pozisyonu" %}</label>
+                        <select id="position" name="position" class="form-control" required>
+                            <option value="">Seçiniz</option>
+                            {% for i in pozisyonlari %}
+                            <option value="{{i.id}}">{{i.kategori_isimi}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="para-birimi">{% trans "Depertman" %}</label>
+                        <select id="department" name="department" required>
+                            <option value="">Seçiniz</option>
+                            {% for i in departmanlar %}
+                            <option value="{{i.id}}">{{i.kategori_isimi}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="gunluk-ucret">{% trans "Daily Wage" %}</label>
+                        <input type="number" name="dailyWage" id="gunluk-ucret">
+                    </div>
+                    <div class="form-element">
+                        <label for="saatlik-ucret">{% trans "Hourly Wage" %}</label>
+                        <input type="number" name="hourlyWage" id="saatlik-ucret">
+                    </div>
+                </div>
+
+                <div class="form-element">
+                    <label for="not">{% trans "Note" %}</label>
+                    <input type="text" name="not" id="not">
+                </div>
+
+                <div class="form-element">
+                    <label for="ekler">{% trans "Upload Document" %}</label>
+
+                    <div class="file-input">
+                        <label for="ekler">
+                            <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                            <button><i class="icon icon-file"></i> {% trans "Choose File" %}</button>
+                        </label>
+
+                        <input type="file" name="ekler" id="ekler">
+                    </div>
+
+                    <ul class="fileList">
+                    </ul>
+                </div>
+            
+
+            <div class="form-actions">
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal($(e.target).attr("id"));
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+<script>
+
+function safeFloat(value) {
+    return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+}
+
+// JSON verilerindeki ayları dropdown'a ekleme
+function populateMonths(calismalar) {
+    var monthSelect = document.getElementById('maasAy');
+    
+    // Tüm mevcut seçenekleri temizleyelim
+    monthSelect.innerHTML = '';
+
+    // JSON verilerinden gelen ayları options olarak ekleyelim
+    calismalar.forEach(function(calis) {
+        var option = document.createElement('option');
+        option.value = calis.tarih;  // Örneğin "Ocak 2024"
+        option.text = calis.tarih;   // Görünür metin de aynı olacak
+        monthSelect.appendChild(option);
+    });
+}
+
+// Seçilen ayın maksimum tutarını bakiye inputuna ekleme
+function updateMaxBakiye(calismalar) {
+    var monthSelect = document.getElementById('maasAy');
+    var bakiyeInput = document.getElementById('maasBakiye');
+
+    // Seçili ayı değiştirince işlem yapılacak
+    monthSelect.addEventListener('change', function() {
+        var selectedMonth = monthSelect.value;
+        var selectedCalisma = calismalar.find(calis => calis.tarih === selectedMonth);
+
+        if (selectedCalisma) {
+            bakiyeInput.max = selectedCalisma.kalan; // max değeri olarak kalan tutarı belirle
+            bakiyeInput.value = selectedCalisma.kalan; // Varsayılan olarak input'a kalan tutarı yaz
+        }
+    });
+}
+// JSON verilerindeki ayları avans dropdown'a ekleme
+function populateAvansMonths(calismalar) {
+    var avansMonthSelect = document.getElementById('avansAy');
+    
+    // Tüm mevcut seçenekleri temizleyelim
+    avansMonthSelect.innerHTML = '';
+
+    // JSON verilerinden gelen ayları options olarak ekleyelim
+    calismalar.forEach(function(calis) {
+        var option = document.createElement('option');
+        option.value = calis.tarih;  // Örneğin "Ocak 2024"
+        option.text = calis.tarih;   // Görünür metin de aynı olacak
+        avansMonthSelect.appendChild(option);
+    });
+}
+
+// Seçilen ayın maksimum avans tutarını ayarlama
+function updateMaxAvansTutar(calismalar) {
+    var avansMonthSelect = document.getElementById('avansAy');
+    var avansTutarInput = document.getElementById('avansTutar');
+
+    // Seçili ayı değiştirince işlem yapılacak
+    avansMonthSelect.addEventListener('change', function() {
+        var selectedMonth = avansMonthSelect.value;
+        var selectedCalisma = calismalar.find(calis => calis.tarih === selectedMonth);
+
+        if (selectedCalisma) {
+            avansTutarInput.max = selectedCalisma.kalan;  // Maksimum avans tutarı ayarlanır
+            avansTutarInput.placeholder = selectedCalisma.kalan;  // Placeholder'ı günceller
+        }
+    });
+}
+// Personel Detaylarını Gösterme Fonksiyonu
+// Avans öde formu
+document.getElementById('avansOdeForm').addEventListener('submit', function(e) {
+    
+
+    
+});
+
+// Maaş öde formu
+document.getElementById('maasOdeForm').addEventListener('submit', function(e) {
+   
+
+    
+});
+function openPersonelDetails(id) {
+    fetch(`/users/detailemployee/${id}/`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                document.getElementById('personelName').innerText = data.isim;
+                document.getElementById('adisoyadi').innerText = data.isim;
+                document.getElementById('idbilgisi').value = data.id;
+                document.getElementById('resim').src = data.profile;
+                document.getElementById('personelDepartment').innerText = data.calisan_kategori;
+                document.getElementById('personelPosition').innerText = data.calisan_pozisyonu;
+                document.getElementById('personelPhoto').src = data.profile;
+                document.getElementById('detailpasaportno').innerText  = data.pasaport_numarasi;
+                document.getElementById('detailuygugu').innerText  = data.uyrugu;
+                document.getElementById('detaildogumtarihi').innerText  = data.dogum_tarihi;
+                if (data.durum == "1") {
+                    document.getElementById('detailucrettipi').innerText  = "Maaşlı";
+                }
+                else{
+                    document.getElementById('detailucrettipi').innerText  = "Yevmiye";
+                }
+                if (data.para_birimi == "1") {
+                    document.getElementById('detailparabirimi').innerText  = "Dolar";
+                    document.getElementById('detailucret').innerText  = data.maas+" Dolar";
+                    document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" Dolar";
+                } else {
+                    document.getElementById('detailparabirimi').innerText  = "IQD";
+                    document.getElementById('detailucret').innerText  = data.maas+" IQD";
+                    document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" IQD";
+                }
+                                // Belirli bir elementin innerHTML özelliğini güncelleme
+                document.getElementById('puantajGirisi').innerHTML = `<a href="/users/tally/?monthFilter=&jobTypeFilter=&personelID=${id}">Puantaj Girişi</a>`;
+                document.getElementById('odemeturu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;
+                document.getElementById('odemeturuu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;
+                // Tabloya verileri yerleştirme
+            const salaryTableBody = document.getElementById('salaryTableBody');
+            salaryTableBody.innerHTML = ''; // Önce mevcut satırları temizliyoruz
+
+            data.calismalar.forEach(item => {
+                const row = document.createElement('tr');
+
+                const monthCell = document.createElement('td');
+                monthCell.textContent = item.tarih;
+
+                const hakedisCell = document.createElement('td');
+                hakedisCell.textContent =  safeFloat(item.hakedis_tutari)  + " ";
+
+                const odenenCell = document.createElement('td');
+                odenenCell.textContent = item.odenen ? safeFloat(item.odenen)  + " " : " 0 "; // Eğer ödeme yoksa " - " göster
+
+                const kalanCell = document.createElement('td');
+                kalanCell.textContent = item.kalan ? safeFloat(item.kalan)   + " " : " 0 "; // Eğer kalan yoksa " - " göster
+
+                const bordroCell = document.createElement('td');
+                const bordroLink = document.createElement('a');
+                link = "/{{dil}}/users/payroll/"+item.tarih+"/"+data.id+"/"
+                // Gerçek bağlantıyı buraya ekle
+                bordroLink.href = link;  // '#' yerine gerçek bordro linkini ekleyebilirsin
+                bordroLink.textContent = "{% trans 'Bodro' %}";  // Text içeriği sadece 'Bodro' olmalı
+
+                // Linki hücreye ekle
+                bordroCell.appendChild(bordroLink);
+
+                // Satırı tabloya ekle
+                row.appendChild(monthCell);
+                row.appendChild(hakedisCell);
+                row.appendChild(odenenCell);
+                row.appendChild(kalanCell);
+                row.appendChild(bordroCell);
+
+                salaryTableBody.appendChild(row);
+            });
+            
+            populateAvansMonths(data.calismalar);  // Ayları dropdown'a ekle
+            updateMaxAvansTutar(data.calismalar);  // Avans tutarını ayarla
+            populateMonths(data.calismalar);
+            updateMaxBakiye(data.calismalar);
+            })
+    
+
+
+    openModal('openPersonelDetails');
+}
+
+</script>
+
+{% else %}
+
    <main>
 
         <div class="page-header">
@@ -873,4 +1747,5 @@ function openPersonelDetails(id) {
 
 </script>
 
+{% endif %}
 {% endblock sidebar %}

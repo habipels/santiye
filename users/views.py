@@ -16,7 +16,7 @@ from django.http import JsonResponse
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.core.files.storage import FileSystemStorage
-
+from main.views import decode_id
 def personel_bilgisi_axaj(request, id):
     
     if True:
@@ -389,6 +389,35 @@ def personeller_sayfasi(request):
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
         content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
     return render(request,"personel/personeller.html",content)
+#
+
+def personeller_sayfasi_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+
+    if super_admin_kontrolu(request):
+        kullanici = users
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_gorme:
+                    kullanici = request.user.kullanicilar_db
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+    content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
+    content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
+    content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
+    return render(request,"personel/personeller.html",content)
+#
 def personeller_ekle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -439,6 +468,74 @@ def personeller_ekle(request):
             for i in documents:
                 calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
     return redirect("user:personeller_sayfasi")
+def personeller_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.user.is_superuser:
+        kullanici = users
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_olusturma:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+    if request.POST:
+        profilePicture = request.FILES.get("profilePicture")
+        passportNo = request.POST.get("passportNo")
+        firstName = request.POST.get("firstName")
+        lastName = request.POST.get("lastName")
+        dogum_tarihi = request.POST.get("dob")
+        nationality = request.POST.get("nationality")
+        phoneNumber = request.POST.get("phoneNumber")
+        department = request.POST.get("department")
+        position = request.POST.get("position")
+        salaryType = request.POST.get("salaryType")
+        dailyWage = request.POST.get("dailyWage")
+        hourlyWage = request.POST.get("hourlyWage")
+        currency = request.POST.get("currency")
+        belgeler = request.POST.getlist("belgeler")
+        documents = request.FILES.getlist("ekler")
+        for i in range(1):
+            print(belgeler,documents)
+            if profilePicture:
+                pass
+            else:
+                profilePicture =None
+            if salaryType == "maas":
+                salaryType = True
+            else:
+                salaryType = False
+            if currency == "USD":
+                currency = True
+            else:
+                currency = False
+            bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
+            calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
+            isim = firstName+str(i),soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
+            calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
+            yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
+            for i in documents:
+                calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
+    return redirect("user:personeller_sayfasi_2",hash)
+def personeller_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("idbilgisi")
+        calisanlar.objects.filter(id =id).update(silinme_bilgisi = True)
+    return redirect("user:personeller_sayfasi_2",hash)
 def personeller_odenmeye_maaslar(request):
     content = sozluk_yapisi()
 
@@ -461,7 +558,7 @@ def personeller_odenmeye_maaslar(request):
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
         content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
     return render(request,"personel/odenmeyen_maaslar.html",content)
-from main.views import decode_id
+
 def personeller_odenmeye_maaslar_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -895,6 +992,40 @@ def calisan_odemeleri_kaydet(request):
                 odeme_turu = False,aciklama = aciklama,dosya = file
             )
     return redirect("users:personeller_sayfasi")
+def calisan_odemeleri_kaydet_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        odeme_turu = request.POST.get("odeme_turu")
+        users_id = request.POST.get("users_id")
+        maas_ayi = request.POST.get("maas_ayi")
+        odeme_tarihi = request.POST.get("odeme_tarihi")
+        tutar = request.POST.get("tutar")
+        aciklama = request.POST.get("aciklama")
+        file = request.FILES.get("file")
+        kur = request.POST.get("kur")
+        if request.user.is_superuser:
+            kullanici = users
+        year, month = map(int, maas_ayi.split('-'))
+    
+        # Ayın ilk günü ile Date nesnesini oluştur
+        date_obj = datetime(year, month, 1)
+        if odeme_turu:
+            calisanlar_calismalari_odemeleri.objects.create(
+                calisan = get_object_or_none(calisanlar,id =users_id,calisan_kime_ait =  kullanici),
+                tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
+                odeme_turu = True,aciklama = aciklama,dosya = file
+            )
+        else:
+            calisanlar_calismalari_odemeleri.objects.create(
+                calisan = get_object_or_none(calisanlar,id =users_id,calisan_kime_ait =  kullanici),
+                tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
+                odeme_turu = False,aciklama = aciklama,dosya = file
+            )
+    return redirect("users:personeller_sayfasi_2",hash)
 
 import requests
 from django.shortcuts import render

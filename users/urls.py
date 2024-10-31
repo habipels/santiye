@@ -19,10 +19,13 @@ urlpatterns = [
     path('delmyusers/',views.kullanici_silme,name = "kullanici_silme"),
     path('setmyusers/',views.kullanici_bilgileri_duzenle,name = "kullanici_bilgileri_duzenle"),
     #kullanici işlemleri
-    #personel
+    #personel #
     path('employee/',views.personeller_sayfasi,name = "personeller_sayfasi"),
+    path('control/employee/<str:hash>',views.personeller_sayfasi_2,name = "personeller_sayfasi_2"),
     path('addemployee/',views.personeller_ekle,name = "personeller_ekle"),
+    path('control/addemployee/<str:hash>',views.personeller_ekle_2,name = "personeller_ekle_2"),
     path('deladdemployee/',views.personeller_sil,name = "personeller_sil"),
+    path('control/deladdemployee/<str:hash>',views.personeller_sil_2,name = "personeller_sil_2"),
     path('setaddemployee/',views.personelleri_düzenle,name = "personelleri_düzenle"),
     path('detailemployee/<int:id>/',views.personel_bilgisi_axaj,name = "personel_bilgisi_axaj"),
     path('buyemployee/',views.personeller_odenmeye_maaslar,name = "personeller_odenmeye_maaslar"),
@@ -30,6 +33,7 @@ urlpatterns = [
     path('payroll/<str:tarih>/<int:id>/',views.bodro,name = "bodro"),
     #
     path('givesalaryoradvance/',views.calisan_odemeleri_kaydet,name = "calisan_odemeleri_kaydet"),
+    path('control/givesalaryoradvance/<str:hash>',views.calisan_odemeleri_kaydet_2,name = "calisan_odemeleri_kaydet_2"),
     # POzisyon Sayfası
     path('position/',views.personeller_kategori_sayfalari,name = "personeller_kategori_sayfalari"),
     path('addposition/',views.personeller_kategori_ekle,name = "personeller_kategori_ekle"),
