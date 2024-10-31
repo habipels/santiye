@@ -4918,6 +4918,38 @@ def satin_alma_talabi(request):
     content["urunlerimiz"] = urunler_gonder
     return render(request,"stok/satin_alama_talebi.html",content)
 
+def satin_alma_talabi_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if super_admin_kontrolu(request):
+        profile =urun_talepleri.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = users)
+        urunler_gonder = urunler.objects.filter(urun_ait_oldugu =users,silinme_bilgisi = False,urun_turu_secim = "2")
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.satin_alma_talebi_gorme:
+                    profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db)
+                    urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2" )
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user)
+            urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
+  
+    content["santiyeler"] = profile
+
+    content["urunlerimiz"] = urunler_gonder
+    return render(request,"stok/satin_alama_talebi.html",content)
+
 def satin_alma_talebi_ekle(request):
     if request.POST:
         #yetkili_adi

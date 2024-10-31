@@ -136,6 +136,7 @@ urlpatterns = [
     #ürünler KAtegorisi
     #ürünler satin_alma_talabi
     path('purchaserequest/', views.satin_alma_talabi, name='satin_alma_talabi'),
+    path('control/purchaserequest/<str:hash>', views.satin_alma_talabi_2, name='satin_alma_talabi_2'),
     path('addpurchaserequest/', views.satin_alma_talebi_ekle, name='satin_alma_talebi_ekle'),
     path('delpurchaserequest/<int:id>/', views.satin_alma_talebi_sil, name='satin_alma_talebi_sil'),
     #ürünler satin_alma_talabi
