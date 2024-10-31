@@ -46,6 +46,7 @@ urlpatterns = [
     path('setdepartment/',views.personelleri_departman_düzenle,name = "personelleri_departman_düzenle"),
     #personel
     path('tally/',views.personeller_puantaj_sayfasi,name = "personeller_puantaj_sayfasi"),
+    path('control/tally/<str:hash>',views.personeller_puantaj_sayfasi_2,name = "personeller_puantaj_sayfasi_2"),
     path('savetally/',views.save_attendance,name = "save_attendance"),
     path('taketally/',views.calismalari_cek,name = "calismalari_cek"),
 

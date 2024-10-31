@@ -899,6 +899,70 @@ def personeller_puantaj_sayfasi(request):
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
         content["personeller"] = person
     return render(request,"personel/puantaj2.html",content)
+def personeller_puantaj_sayfasi_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    
+    if super_admin_kontrolu(request):
+        kullanici = users
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.personeller_gorme:
+                    kullanici = request.user.kullanicilar_db
+                    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+    if kullanici:
+        person = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
+        if request.GET:
+            month_filter = request.GET.get("monthFilter")
+            jobTypeFilter = request.GET.get("jobTypeFilter")
+            personelID = request.GET.get("personelID")
+            days_in_month = 0
+            days_list =[]
+            hafta_bazinda = {}
+            hafta1 = []
+            hafta2 = []
+            hafta3 = []
+            hafta4 = []
+            if month_filter:
+                year, month = map(int, month_filter.split('-'))  # Yıl ve ayı alıyoruz
+                _, num_days = calendar.monthrange(year, month)   # O ayın gün sayısını buluyoruz
+                days_list = [day for day in range(1, num_days + 1)] 
+            for i in days_list:
+                if 7 >= i >= 1:
+                    hafta1.append(i)
+                    
+                if 14 >= i > 7:
+                    hafta2.append(i)
+                if 21 >= i > 14:
+                    hafta3.append(i)
+                if i > 21:
+                    hafta4.append(i)
+
+            hafta_bazinda["hafta1"] = hafta1
+            hafta_bazinda["hafta2"] = hafta2
+            hafta_bazinda["hafta3"] = hafta3
+            hafta_bazinda["hafta4"] = hafta4
+            content["haftalik"] = hafta_bazinda
+            content["gun"] =days_list
+            if jobTypeFilter :
+                person = person.filter(calisan_kategori = get_object_or_none(calisanlar_kategorisi , id = jobTypeFilter))
+            if personelID:
+                person = person.filter(id = personelID)
+        content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
+        content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
+        content["personeller"] = person
+    return render(request,"personel/puantaj2.html",content)
 
 from django.http import JsonResponse
 import json
