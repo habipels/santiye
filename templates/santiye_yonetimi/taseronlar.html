@@ -46,7 +46,7 @@
 
         <div class="large-stats-card table-card table-detail-card">
             <div class="stats-header">
-                <div class="stats-title">{% trans 'Taşeronlar Toplam : ' %} {{top.count}}</div>
+                <div class="stats-title">{% trans 'Toplam Taşeron : ' %} {{top.count}}</div>
                 <div class="stats-search">
                     <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
                     <button><i class="icon icon-search"></i></button>
@@ -60,8 +60,8 @@
                            <th class="sort" data-sort="customer_name">{% trans 'Taşeron' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Telefon' %}</th>
                                                     <th class="sort" data-sort="email">{% trans 'Email' %}</th>
-                                                    <th class="sort" data-sort="number">{% trans 'Aktif Sözleşme Sayısı' %}</th>
-                                                    <th class="sort" data-sort="number">{% trans 'Aktif Görevlendirme Sayısı' %}</th>
+                                                    <th class="sort" data-sort="number">{% trans 'Aktif Sözleşme' %}</th>
+                                                    <th class="sort" data-sort="number">{% trans 'Aktif İmalat' %}</th>
                                                     <th class="sort" data-sort="text">{% trans 'Sözleşmesi Yapılan Projeler' %}</th>
                                                     <th class="sort" data-sort="file">{% trans 'Sözleşmeler' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'İşlemler' %}</th>
@@ -171,8 +171,9 @@
                         <textarea name="aciklama" id="aciklama"></textarea>
                     </div>
                     <div class="form-element">
-                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye : Kalem : Blok' %}</label>
-                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" >
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye > Kalem > Blok' %}</label>
+                        <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
+                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" style="height: 27vh;">
                                             {% for blog in blog_bilgisi %}
                                             {% kalemler_sadece blog %}
                                             {% endfor %}
@@ -234,8 +235,9 @@
                         <textarea name="aciklama" id="aciklama">{{i.aciklama}}</textarea>
                     </div>
                     <div class="form-element">
-                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye : Kalem : Blok' %}</label>
-                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" >
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye > Kalem > Blok' %}</label>
+                        <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
+                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" style="height: 27vh;">
                                     {% if request.user.is_superuser %}
                                                 {% for blog in i.proje_bilgisi.all %}
                                                         <option selected value="{{ blog.id }}">{{ blog.proje_Adi }}</option>
@@ -278,7 +280,7 @@
  <div class="modal" id="deleteConfirmationModal{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-            {% trans 'Silmek istediğinize emin misiniz?' %}
+            {% trans 'Silme Uyarısı' %}
                 
             </div>
             <div class="modal-body">
@@ -286,10 +288,10 @@
                                 {% csrf_token %}
                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                  
-                    <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('deleteConfirmationModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
                     </div>
                 </form>
             </div>
@@ -426,7 +428,7 @@
 
         <div class="large-stats-card table-card table-detail-card">
             <div class="stats-header">
-                <div class="stats-title">{% trans 'Taşeronlar Toplam : ' %} {{top.count}}</div>
+                <div class="stats-title">{% trans 'Toplam Taşeron : ' %} {{top.count}}</div>
                 <div class="stats-search">
                     <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
                     <button><i class="icon icon-search"></i></button>
@@ -440,8 +442,8 @@
                            <th class="sort" data-sort="customer_name">{% trans 'Taşeron' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Telefon' %}</th>
                                                     <th class="sort" data-sort="email">{% trans 'Email' %}</th>
-                                                    <th class="sort" data-sort="number">{% trans 'Aktif Sözleşme Sayısı' %}</th>
-                                                    <th class="sort" data-sort="number">{% trans 'Aktif Görevlendirme Sayısı' %}</th>
+                                                    <th class="sort" data-sort="number">{% trans 'Aktif Sözleşme' %}</th>
+                                                    <th class="sort" data-sort="number">{% trans 'Aktif İmalat' %}</th>
                                                     <th class="sort" data-sort="text">{% trans 'Sözleşmesi Yapılan Projeler' %}</th>
                                                     <th class="sort" data-sort="file">{% trans 'Sözleşmeler' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'İşlemler' %}</th>
@@ -562,8 +564,9 @@
                         <textarea name="aciklama" id="aciklama"></textarea>
                     </div>
                     <div class="form-element">
-                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye : Kalem : Blok' %}</label>
-                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" >
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye > Kalem > Blok' %}</label>
+                        <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
+                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" style="height: 27vh;">
                                             {% for blog in blog_bilgisi %}
                                             {% kalemler_sadece blog %}
                                             {% endfor %}
@@ -625,8 +628,9 @@
                         <textarea name="aciklama" id="aciklama">{{i.aciklama}}</textarea>
                     </div>
                     <div class="form-element">
-                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye : Kalem : Blok' %}</label>
-                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" >
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye > Kalem > Blok' %}</label>
+                        <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
+                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" style="height: 27vh;">
                                     {% if request.user.is_superuser %}
                                                 {% for blog in i.proje_bilgisi.all %}
                                                         <option selected value="{{ blog.id }}">{{ blog.proje_Adi }}</option>
@@ -669,7 +673,7 @@
  <div class="modal" id="deleteConfirmationModal{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-            {% trans 'Silmek istediğinize emin misiniz?' %}
+            {% trans 'Silme Uyarısı' %}
                 
             </div>
             <div class="modal-body">
@@ -677,10 +681,10 @@
                                 {% csrf_token %}
                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                  
-                    <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('deleteConfirmationModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
                     </div>
                 </form>
             </div>

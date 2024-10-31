@@ -176,7 +176,7 @@ class urun_talepleri(models.Model):
     fiyati = models.FloatField(default=0,verbose_name="Fiyati")
     tedarikci = models.CharField(max_length=200 , verbose_name="Tedarikçi",blank=True,null=True)
     aciklama = models.CharField(max_length=500,verbose_name="Açıklama",blank=True,null=True)
-    talep_Olusturma_tarihi =models.DateTimeField(null=True,verbose_name="Talep Oluşturma Tarihi",blank = True)
+    talep_Olusturma_tarihi =models.DateTimeField(null=True,verbose_name="Talep Başlangıç",blank = True)
     talep_durumu = models.CharField(max_length=3,verbose_name="Talep Durumu",choices=talebi_onaylama,default="1")
     talep_durum_tarihi = models.DateTimeField(null=True,verbose_name="Talep Durum Değiştirme Tarihi",blank = True)
     satin_alinma_durumu = models.BooleanField(default=False)#satın_almayı Onaylı İse Satın Alındı

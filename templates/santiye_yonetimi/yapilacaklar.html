@@ -81,8 +81,8 @@
                                           <th scope="col">{% trans 'İş Emri Adı' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
                                             <th scope="col">{% trans 'İlgililer' %}</th>
-                                            <th scope="col">{% trans 'Oluşturma Tarihi' %}</th>
-                                            <th scope="col">{% trans 'Tamamlanma Tarihi' %}</th>
+                                            <th scope="col">{% trans 'Başlangıç' %}</th>
+                                            <th scope="col">{% trans 'Hedef Tarih' %}</th>
                                             <th scope="col">{% trans 'Durum' %}</th>
                                             <th scope="col">{% trans 'Öncelik' %}</th>
                                             <th scope="col">{% trans 'Aksiyon' %}</th>
@@ -154,8 +154,8 @@
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
-                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durum Güncelle' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'Süreç İzleme' %}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -223,8 +223,8 @@
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
-                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durum Güncelle' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'Süreç İzleme' %}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -298,8 +298,8 @@
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
-                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durum Güncelle' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'Süreç İzleme' %}</a>
                                                 </div>
                                             </div>
 
@@ -393,7 +393,7 @@
                                 </div>
                             </div>
                             <div class="form-element">
-                                <label for="kisiler">{% trans 'Kişi & Kişiler Ata' %}</label>
+                                <label for="kisiler">{% trans 'Atama (Birden fazla atama için ctrl ile birlikte seçim yapınız)' %}</label>
                                 <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -407,7 +407,7 @@
                         </div>
                         <div class="modal-form-row">
                             <div class="form-element">
-                                <label for="katman">{% trans 'Katman' %}</label>
+                                <label for="katman">{% trans 'Plan Katmanı' %}</label>
                                  <select name="katman" id="katmanSelect"  data-trigger >
                                  <option value="" >Lütfen katman seçiniz.</option>
                                 {% for blog in katmanlar %}
@@ -462,7 +462,7 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
-                        <button class="form-action-primary" type="submit">{% trans 'Görevi Ata' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'İş Emri Oluştur' %}</button>
                     </div>
                 </form>
             </div>
@@ -502,7 +502,7 @@
     <div class="modal" id="is-emri-duzenle">
         <div class="modal-inner" style="width: 1000px">
             <div class="modal-header">
-            {% trans 'İş Emri Oluştur' %}
+            {% trans 'İş Emri Güncelle' %}
                
             </div>
             <div class="modal-body">
@@ -541,7 +541,7 @@
                                 </div>
                             </div>
                             <div class="form-element">
-                                <label for="kisiler">{% trans 'Kişi & Kişiler Ata' %}</label>
+                                <label for="kisiler">{% trans 'Atama (Birden fazla atama için ctrl ile birlikte seçim yapınız)' %}</label>
                                 <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -555,7 +555,7 @@
                         </div>
                         <div class="modal-form-row">
                             <div class="form-element">
-                                <label for="katman">{% trans 'Katman' %}</label>
+                                <label for="katman">{% trans 'Plan Katmanı' %}</label>
                                  <select name="katman" id="katmanSelectd"  data-trigger >
                                 {% for blog in katmanlar %}
                                 <option data-id="{{blog.proje_santiye_Ait.id}}" data-img="{{blog.katman_dosyasi.url}}" value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
@@ -609,7 +609,7 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('is-emri-duzenle')">{% trans 'Vazgeç' %} </button>
-                        <button class="form-action-primary" type="submit">{% trans 'Görevi Ata' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
                     </div>
                 </form>
             </div>
@@ -625,7 +625,7 @@
 <div class="modal" id="deleteConfirmationModal{{i.id}}">
     <div class="modal-inner" style="width: 500px">
         <div class="modal-header">
-        {% trans 'Silmek istediğinize emin misiniz?' %}
+        {% trans 'Silme Uyarısı' %}
             
         </div>
         <div class="modal-body">
@@ -633,10 +633,10 @@
                 {% csrf_token %}
 <input type="hidden" id="buttonIdInput" name="id_bilgisi" value="{{i.id}}">
              
-                <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button" onclick="closeModal('deleteConfirmationModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
-                    <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                    <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
                 </div>
             </form>
         </div>
@@ -646,7 +646,7 @@
     <div class="modal" id="ilerleme{{i.id}}">
         <div class="modal-inner" style="width: 500px;">
             <div class="modal-header">
-                {% trans 'İlerleme Takibi' %}
+                {% trans 'Süreç İzleme' %}
             </div>
             <div class="modal-body">
                 <div class="ilerleme-durumlari">
@@ -668,10 +668,10 @@
                         <div class="ilerleme-durumu">
                         <span>{{k.kayit_tarihi}}</span>
                         <div class="ilerleme-durumu-content">
-                           {% trans 'İşlemi Yapan ' %} {{k.yapan_kisi.last_name}} <br>
+                           {% trans 'Personel ' %} {{k.yapan_kisi.last_name}} <br>
                            {% trans 'Açıklama ' %}{{k.aciklama}}<br>
                             {% trans 'Durum ' %}{{k.status}} <br>
-                            {% trans 'Teslim Tarihi ' %}{{k.teslim_tarihi}}<br>
+                            {% trans 'Hedef Tarih ' %}{{k.teslim_tarihi}}<br>
                             
                         </div>
                             <div class="ilerleme-durumu-dosyalar">
@@ -738,7 +738,7 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Devam Et</button>
+                        <button class="form-action-primary" type="submit">Güncelle</button>
                     </div>
                 </form>
             </div>
@@ -1594,7 +1594,7 @@ openModal("is-emri-duzenle");
 
             <div class="tab-navs">
                 <button class="tab-navs-btn active" data-tab="Tümü">{% trans 'Tümü' %}</button>
-                <button class="tab-navs-btn " data-tab="New">{% trans 'Yeniler' %}</button>
+                <button class="tab-navs-btn " data-tab="New">{% trans 'Yeni' %}</button>
                 <button class="tab-navs-btn " data-tab="Tamamlandı">{% trans 'Tamamlanan' %}</button>
                 <button class="tab-navs-btn " data-tab="Beklemede">{% trans 'Devam Eden' %}</button>
                 <!--<button class="tab-navs-btn " data-tab="İptal Edildi">{% trans 'İptal Edilen' %}</button>-->
@@ -1610,8 +1610,8 @@ openModal("is-emri-duzenle");
                                           <th scope="col">{% trans 'İş Emri Adı' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
                                             <th scope="col">{% trans 'İlgililer' %}</th>
-                                            <th scope="col">{% trans 'Oluşturma Tarihi' %}</th>
-                                            <th scope="col">{% trans 'Tamamlanma Tarihi' %}</th>
+                                            <th scope="col">{% trans 'Başlangıç' %}</th>
+                                            <th scope="col">{% trans 'Hedef Tarih' %}</th>
                                             <th scope="col">{% trans 'Durum' %}</th>
                                             <th scope="col">{% trans 'Öncelik' %}</th>
                                             <th scope="col">{% trans 'Aksiyon' %}</th>
@@ -1683,8 +1683,8 @@ openModal("is-emri-duzenle");
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
-                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durum Güncelle' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'Süreç İzleme' %}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1752,8 +1752,8 @@ openModal("is-emri-duzenle");
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
-                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durum Güncelle' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'Süreç İzleme' %}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1827,8 +1827,8 @@ openModal("is-emri-duzenle");
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
-                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durumu Yenile' %}</a>
-                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'İlerleme Durumunu İncele' %}</a>
+                                                    <a onclick="openModal('durumyenile{{i.id}}')">{% trans 'Durum Güncelle' %}</a>
+                                                    <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'Süreç İzleme' %}</a>
                                                 </div>
                                             </div>
 
@@ -1922,7 +1922,7 @@ openModal("is-emri-duzenle");
                                 </div>
                             </div>
                             <div class="form-element">
-                                <label for="kisiler">{% trans 'Kişi & Kişiler Ata' %}</label>
+                                <label for="kisiler">{% trans 'Atama (Birden fazla atama için ctrl ile birlikte seçim yapınız)' %}</label>
                                 <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -1936,7 +1936,7 @@ openModal("is-emri-duzenle");
                         </div>
                         <div class="modal-form-row">
                             <div class="form-element">
-                                <label for="katman">{% trans 'Katman' %}</label>
+                                <label for="katman">{% trans 'Plan Katmanı' %}</label>
                                  <select name="katman" id="katmanSelect"  data-trigger >
                                  <option value="" >Lütfen katman seçiniz.</option>
                                 {% for blog in katmanlar %}
@@ -1953,7 +1953,7 @@ openModal("is-emri-duzenle");
                             </select>
                         </div>
                               <div class="form-element">
-                                <label for="kat">{% trans 'kat' %}</label>
+                                <label for="kat">{% trans 'Kat' %}</label>
                                  <select name="kat" id="odaSelect"  data-trigger >
                                
                             </select>  
@@ -1991,7 +1991,7 @@ openModal("is-emri-duzenle");
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
-                        <button class="form-action-primary" type="submit">{% trans 'Görevi Ata' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'İş Emri Oluştur' %}</button>
                     </div>
                 </form>
             </div>
@@ -2031,7 +2031,7 @@ openModal("is-emri-duzenle");
     <div class="modal" id="is-emri-duzenle">
         <div class="modal-inner" style="width: 1000px">
             <div class="modal-header">
-            {% trans 'İş Emri Oluştur' %}
+            {% trans 'İş Emri Düzenle' %}
                
             </div>
             <div class="modal-body">
@@ -2070,7 +2070,7 @@ openModal("is-emri-duzenle");
                                 </div>
                             </div>
                             <div class="form-element">
-                                <label for="kisiler">{% trans 'Kişi & Kişiler Ata' %}</label>
+                                <label for="kisiler">{% trans 'Atama (Birden fazla atama için ctrl ile birlikte seçim yapınız)' %}</label>
                                 <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -2084,7 +2084,7 @@ openModal("is-emri-duzenle");
                         </div>
                         <div class="modal-form-row">
                             <div class="form-element">
-                                <label for="katman">{% trans 'Katman' %}</label>
+                                <label for="katman">{% trans 'Plan Katmanı' %}</label>
                                  <select name="katman" id="katmanSelectd"  data-trigger >
                                 {% for blog in katmanlar %}
                                 <option data-id="{{blog.proje_santiye_Ait.id}}" data-img="{{blog.katman_dosyasi.url}}" value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
@@ -2138,7 +2138,7 @@ openModal("is-emri-duzenle");
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('is-emri-duzenle')">{% trans 'Vazgeç' %} </button>
-                        <button class="form-action-primary" type="submit">{% trans 'Görevi Ata' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
                     </div>
                 </form>
             </div>
@@ -2154,7 +2154,7 @@ openModal("is-emri-duzenle");
 <div class="modal" id="deleteConfirmationModal{{i.id}}">
     <div class="modal-inner" style="width: 500px">
         <div class="modal-header">
-        {% trans 'Silmek istediğinize emin misiniz?' %}
+        {% trans 'Silme Uyarısı' %}
             
         </div>
         <div class="modal-body">
@@ -2162,10 +2162,10 @@ openModal("is-emri-duzenle");
                 {% csrf_token %}
 <input type="hidden" id="buttonIdInput" name="id_bilgisi" value="{{i.id}}">
              
-                <p> {% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button" onclick="closeModal('deleteConfirmationModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
-                    <button class="form-action-danger" type="submit"> {% trans 'Evet, silinsin' %}</button>
+                    <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
                 </div>
             </form>
         </div>
@@ -2175,7 +2175,7 @@ openModal("is-emri-duzenle");
     <div class="modal" id="ilerleme{{i.id}}">
         <div class="modal-inner" style="width: 500px;">
             <div class="modal-header">
-                {% trans 'İlerleme Takibi' %}
+                {% trans 'Süreç Takibi' %}
             </div>
             <div class="modal-body">
                 <div class="ilerleme-durumlari">
