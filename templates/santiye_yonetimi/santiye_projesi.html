@@ -68,7 +68,7 @@
                     <table id="santiyeler-table">
                         <thead>
                             <tr>
-                                <th>{% trans 'Proje Kime Ait' %}</th>
+                                <th>{% trans 'Proje Sahibi' %}</th>
                                 <th>{% trans 'Şantiye' %}</th>
                                 <th>{% trans 'Proje Tipi' %}</th>
                                 <th>{% trans 'Yapılar' %}</th>
@@ -156,7 +156,7 @@
                                                     <th class="sort" data-sort="email">{% trans 'Şantiye Adı' %} </th>
                                                     <th class="sort" data-sort="email">{% trans 'Kalem Adı'  %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Şantiye Ağırlığı' %}</th>
-                                                    <th class="sort" data-sort="phone">{% trans 'Finansal Ağırlığı' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Finansal Ağırlık' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Birim' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Metraj' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Tutar' %}</th>
@@ -238,7 +238,7 @@
                         <table id="yapilar-table">
                             <thead>
                                 <tr>
-                                <th class="sort" data-sort="customer_name">{% trans 'Proje Kime Ait' %}</th>
+                                <th class="sort" data-sort="customer_name">{% trans 'Proje Sahibi' %}</th>
                                 <th class="sort" data-sort="email">{% trans 'Proje Tipi' %} </th>
                                 <th class="sort" data-sort="phone">{% trans 'Proje Adı' %}</th>
                                 <th class="sort" data-sort="date">{% trans 'Yapı Adı' %} </th>
@@ -487,17 +487,17 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
     <div class="modal" id="delete-modal{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-            {% trans 'Silmek istediğinize emin misiniz?' %}
+            {% trans 'Silme Uyarısı' %}
                 
             </div>
             <div class="modal-body">
                 <form autocomplete="off"action="/delsiteproject" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                    <p>{% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-danger" type="submit">{% trans 'Evet, silinsin' %}</button>
+                        <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
                     </div>
                 </form>
             </div>
@@ -557,7 +557,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                             <input type="number" step="0.001" value="0"  name="katsayisi" id="date-field"  placeholder="{% trans 'Şantiye Ağırlığı' %}" />
                                         </div>
                                         <div class="form-element">
-                                            <label for="date-field" >{% trans 'Finansal Ağırlığı' %}</label>
+                                            <label for="date-field" >{% trans 'Finansal Ağırlık' %}</label>
                                             <input type="number" step="0.001" value="0"  name="blogsayisi" id="date-field"  placeholder="{% trans 'Fİnansal Ağırlığı' %}" />
                                         </div>
                                         <div class="form-element">
@@ -666,7 +666,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                             <input type="number" step="0.001" value="{{i.santiye_agirligi | stringformat:'.2F'  }}"  name="katsayisi" id="date-field"  placeholder="{% trans 'Şantiye Ağırlığı' %}" />
                                         </div>
                                         <div class="form-element">
-                                            <label for="date-field" >{% trans 'Finansal Ağırlığı' %}</label>
+                                            <label for="date-field" >{% trans 'Finansal Ağırlık' %}</label>
                                             <input type="number" step="0.001" value="{{i.santiye_finansal_agirligi | stringformat:'.2F'  }}"  name="blogsayisi" id="date-field"  placeholder="{% trans 'Fİnansal Ağırlığı' %}" />
                                         </div>
                                         <div class="form-element">
@@ -703,7 +703,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
     <div class="modal" id="delete-kalem{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-            {% trans 'Silmek istediğinize emin misiniz?' %}
+            {% trans 'Silme Uyarısı' %}
                 
             </div>
             <div class="modal-body">
@@ -711,10 +711,10 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                    <p>{% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-danger" type="submit">{% trans 'Evet, silinsin' %}</button>
+                        <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
                     </div>
                 </form>
             </div>
@@ -767,7 +767,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
     <div class="modal" id="delete-yapi{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-            {% trans 'Silmek istediğinize emin misiniz?' %}
+            {% trans 'Silme Uyarısı' %}
                 
             </div>
             <div class="modal-body">
@@ -775,10 +775,10 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                     {% csrf_token %}
                                     <input type="hidden" id="buttonIdInput" name="geri" value="{{i.proje_santiye_Ait.id}}">
                                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                    <p>{% trans 'Bu işlemin geri dönüşü olmayacaktır.' %}</p>
+                    <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-danger" type="submit">{% trans 'Evet, silinsin' %}</button>
+                        <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
                     </div>
                 </form>
             </div>

@@ -31,6 +31,9 @@
     --dashed-border-color: #2c2c2c;
     --input-bg-color: #2c2c2c;
     --icon-bg-color: #303030;
+    --general-text-color: #9c9c9c;
+
+
 }
 
 * {
@@ -39,6 +42,10 @@
     padding: 0;
     box-sizing: border-box;
     text-decoration: none;
+}
+.dark-mode * {
+    color: var(--general-text-color);
+
 }
 
 body {
@@ -1459,6 +1466,9 @@ header .header-language i {
 main {
     padding: 30px 24px;
 }
+.dark-mode main {
+    background-color: var(--body-bg-color);
+}
 
 .quick-actions {
     background-color: var(--card-bg-color);
@@ -1782,7 +1792,13 @@ body.dark-mode .quick-actions-grid .quick-action:hover {
     font-weight: bold;
     margin-bottom: 10%;
 }
-
+.dark-mode .isemri-title {
+    text-transform: capitalize;
+    font-size: 18px;
+    color: var(--text-primary-color);
+    font-weight: bold;
+    margin-bottom: 10%;
+}
 .stats-card .stats-value {
     font-weight: bold;
     font-size: 32px;
@@ -2226,6 +2242,8 @@ table.dataTable tbody tr td span.time {
 
 .dark-mode .status-primary {
     color: #052941;
+    background-color: #24d6b6;
+    ;
 }
 
 .status-highlight {
@@ -2261,7 +2279,7 @@ table.dataTable tbody tr td span.time {
 
 .status-yit {
     padding: 2px 12px;
-    color: #fff;
+    color: #052941;
     background-color: #24D6B6;
     border-radius: 6px;
     font-weight: bold;
@@ -2937,9 +2955,12 @@ main:has(.page-header) .status-cancel {
     color: var(--text-color);
     border: 1px solid var(--general-border-color);
     outline: none;
-    height: 44px;
+    height: 45px;
     border-radius: 8px;
     padding-inline: 14px;
+}
+.input-helper-text{
+    font-size: small;
 }
 
 .stats-right .form-element select {
@@ -4472,14 +4493,14 @@ main:has(.page-header) .status-cancel {
     cursor: pointer;
     color: #24D6B6;
 }
-
-/*.dt-buttons {
+/* datatables üstündeki export butonları aktif oluyor kontrol et 
+.dt-buttons {
     opacity: 0;
     height: 0;
     position: fixed;
     top: 10000px;
     left: 10000px;
-} data tables export butonları yeni tasarımda görünmesin diye eklenmişti kontrol et*/
+} */
 
 .dt-print-view {
     padding: 12px;
@@ -4572,14 +4593,6 @@ a.status-cancel.stats-lg {
 }
 
 
-
-
-
-
-
-
-
-
 .ilerleme-durumlari {
     position: relative;
     width: 100%;
@@ -4598,6 +4611,17 @@ a.status-cancel.stats-lg {
     margin-left: -3px;
 }
 
+.dark-mode .ilerleme-durumlari::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    background-color: var(--icon-bg-color);
+    border-radius: 8px;
+    top: 0;
+    bottom: 0;
+    left: 2%;
+    margin-left: -3px;
+}
 .ilerleme-durumlari .ilerleme-durumu {
     position: relative;
     left: 10%;
@@ -4613,7 +4637,6 @@ a.status-cancel.stats-lg {
 
 .ilerleme-durumlari .ilerleme-durumu span {
     font-size: 13px;
-    color: rgba(0, 0, 0, 0.6);
 }
 
 .ilerleme-durumlari .ilerleme-durumu::before {
@@ -4629,6 +4652,19 @@ a.status-cancel.stats-lg {
     border-color: transparent rgb(233, 233, 233) transparent transparent;
 }
 
+.dark-mode .ilerleme-durumlari .ilerleme-durumu::before {
+    content: " ";
+    height: 0;
+    position: absolute;
+    top: 30px;
+    width: 0;
+    z-index: 1;
+    left: -9px;
+    border: medium solid var(--icon-bg-color);
+    border-width: 10px 10px 10px 0;
+    border-color: transparent var(--icon-bg-color) transparent transparent;
+}
+
 .ilerleme-durumlari .ilerleme-durumu::after {
     content: '';
     position: absolute;
@@ -4641,12 +4677,26 @@ a.status-cancel.stats-lg {
     border-radius: 50%;
     z-index: 1;
 }
-
+.dark-mode .ilerleme-durumlari .ilerleme-durumu::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    left: -54px;
+    background-color: #202020;
+    border: 6px solid var(--icon-bg-color);
+    top: 20px;
+    border-radius: 50%;
+    z-index: 1;
+}
 .ilerleme-durumlari .ilerleme-durumu .ilerleme-durumu-content {
     background-color: rgb(233, 233, 233);
     padding: 12px;
 }
 
+.dark-mode .ilerleme-durumlari .ilerleme-durumu .ilerleme-durumu-content {
+    background-color: var(--icon-bg-color);
+}
 
 .ilerleme-durumu-dosyalar {
     display: flex;
@@ -4663,10 +4713,14 @@ a.status-cancel.stats-lg {
     gap: 14px;
     border: 1px solid #E0E0E0;
     font-weight: 700;
+    margin-top: 10px;
     font-size: 14px;
     padding: 8px;
     border-radius: 8px;
     background-color: rgb(239, 239, 239);
+}
+.dark-mode .ilerleme-durumu-dosya {
+    background-color: var(--card-bg-color);
 }
 
 .ilerleme-durumu-dosya img {
@@ -4709,13 +4763,14 @@ a.status-cancel.stats-lg {
 
 .building-container {
     width: 300px; /* Container'ın genişliğine uyum sağlamak için genişlik ayarlandı */
-    height: 50vh; /* Yükseklik biraz azaltıldı */
+    height: 67vh; /* Yükseklik biraz azaltıldı */
     display: block;
     justify-content: center;
     align-items: center;
     perspective: 1000px; /* Perspektif değeri daha iyi görünüm için artırıldı */
     position: relative;
     margin: auto; /* Sağa sola ortalanması için */
+    margin-bottom: 25px;
     padding-top: 20px;
     box-sizing: border-box;
 }
