@@ -44,6 +44,16 @@ urlpatterns = [
     path('adddepartment/',views.personeller_departman_ekle,name = "personeller_departman_ekle"),
     path('deldepartment/',views.personeller_departman_sil,name = "personeller_departman_sil"),
     path('setdepartment/',views.personelleri_departman_düzenle,name = "personelleri_departman_düzenle"),
+
+    path('control/position/<str:hash>',views.personeller_kategori_sayfalari_2,name = "personeller_kategori_sayfalari_2"),
+    path('control/addposition/<str:hash>',views.personeller_kategori_ekle_2,name = "personeller_kategori_ekle_2"),
+    path('control/delposition/<str:hash>',views.personeller_kategori_sil_2,name = "personeller_kategori_sil_2"),
+    path('control/setposition/<str:hash>',views.personelleri_kategori_düzenle_2,name = "personelleri_kategori_düzenle_2"),
+    # DEpartman Sayfası
+    path('control/department/<str:hash>',views.personeller_depertman_sayfalari_2,name = "personeller_depertman_sayfalari_2"),
+    path('control/adddepartment/<str:hash>',views.personeller_departman_ekle_2,name = "personeller_departman_ekle_2"),
+    path('control/deldepartment/<str:hash>',views.personeller_departman_sil_2,name = "personeller_departman_sil_2"),
+    path('control/setdepartment/<str:hash>',views.personelleri_departman_düzenle_2,name = "personelleri_departman_düzenle_2"),
     #personel
     path('tally/',views.personeller_puantaj_sayfasi,name = "personeller_puantaj_sayfasi"),
     path('control/tally/<str:hash>',views.personeller_puantaj_sayfasi_2,name = "personeller_puantaj_sayfasi_2"),
