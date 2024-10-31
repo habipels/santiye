@@ -19,10 +19,13 @@ urlpatterns = [
     path('delmyusers/',views.kullanici_silme,name = "kullanici_silme"),
     path('setmyusers/',views.kullanici_bilgileri_duzenle,name = "kullanici_bilgileri_duzenle"),
     #kullanici işlemleri
-    #personel
+    #personel #
     path('employee/',views.personeller_sayfasi,name = "personeller_sayfasi"),
+    path('control/employee/<str:hash>',views.personeller_sayfasi_2,name = "personeller_sayfasi_2"),
     path('addemployee/',views.personeller_ekle,name = "personeller_ekle"),
+    path('control/addemployee/<str:hash>',views.personeller_ekle_2,name = "personeller_ekle_2"),
     path('deladdemployee/',views.personeller_sil,name = "personeller_sil"),
+    path('control/deladdemployee/<str:hash>',views.personeller_sil_2,name = "personeller_sil_2"),
     path('setaddemployee/',views.personelleri_düzenle,name = "personelleri_düzenle"),
     path('detailemployee/<int:id>/',views.personel_bilgisi_axaj,name = "personel_bilgisi_axaj"),
     path('buyemployee/',views.personeller_odenmeye_maaslar,name = "personeller_odenmeye_maaslar"),
@@ -30,6 +33,7 @@ urlpatterns = [
     path('payroll/<str:tarih>/<int:id>/',views.bodro,name = "bodro"),
     #
     path('givesalaryoradvance/',views.calisan_odemeleri_kaydet,name = "calisan_odemeleri_kaydet"),
+    path('control/givesalaryoradvance/<str:hash>',views.calisan_odemeleri_kaydet_2,name = "calisan_odemeleri_kaydet_2"),
     # POzisyon Sayfası
     path('position/',views.personeller_kategori_sayfalari,name = "personeller_kategori_sayfalari"),
     path('addposition/',views.personeller_kategori_ekle,name = "personeller_kategori_ekle"),
@@ -40,8 +44,19 @@ urlpatterns = [
     path('adddepartment/',views.personeller_departman_ekle,name = "personeller_departman_ekle"),
     path('deldepartment/',views.personeller_departman_sil,name = "personeller_departman_sil"),
     path('setdepartment/',views.personelleri_departman_düzenle,name = "personelleri_departman_düzenle"),
+
+    path('control/position/<str:hash>',views.personeller_kategori_sayfalari_2,name = "personeller_kategori_sayfalari_2"),
+    path('control/addposition/<str:hash>',views.personeller_kategori_ekle_2,name = "personeller_kategori_ekle_2"),
+    path('control/delposition/<str:hash>',views.personeller_kategori_sil_2,name = "personeller_kategori_sil_2"),
+    path('control/setposition/<str:hash>',views.personelleri_kategori_düzenle_2,name = "personelleri_kategori_düzenle_2"),
+    # DEpartman Sayfası
+    path('control/department/<str:hash>',views.personeller_depertman_sayfalari_2,name = "personeller_depertman_sayfalari_2"),
+    path('control/adddepartment/<str:hash>',views.personeller_departman_ekle_2,name = "personeller_departman_ekle_2"),
+    path('control/deldepartment/<str:hash>',views.personeller_departman_sil_2,name = "personeller_departman_sil_2"),
+    path('control/setdepartment/<str:hash>',views.personelleri_departman_düzenle_2,name = "personelleri_departman_düzenle_2"),
     #personel
     path('tally/',views.personeller_puantaj_sayfasi,name = "personeller_puantaj_sayfasi"),
+    path('control/tally/<str:hash>',views.personeller_puantaj_sayfasi_2,name = "personeller_puantaj_sayfasi_2"),
     path('savetally/',views.save_attendance,name = "save_attendance"),
     path('taketally/',views.calismalari_cek,name = "calismalari_cek"),
 
