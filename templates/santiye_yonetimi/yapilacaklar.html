@@ -80,7 +80,7 @@
                                 <tr>
                                           <th scope="col">{% trans 'İş Emri Adı' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
-                                            <th scope="col">{% trans 'İlgililer' %}</th>
+                                            <th scope="col">{% trans 'Kullanıcılar' %}</th>
                                             <th scope="col">{% trans 'Başlangıç' %}</th>
                                             <th scope="col">{% trans 'Hedef Tarih' %}</th>
                                             <th scope="col">{% trans 'Durum' %}</th>
@@ -101,7 +101,7 @@
                                             {{i.title}}
                                         </div>
                                     </td>
-                                    <td> {{i.aciklama}}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -111,7 +111,7 @@
                                                         data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                                         data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt="" title="{{yazar.last_name}}" title="{{yazar.last_name}}"
                                                             class="rounded-circle avatar-xxs"> </a>
                                                 {% endfor %}
                                                 <span>+{{i.yapacaklar.all | length}}</span>
@@ -170,7 +170,7 @@
                                             {{i.title}}
                                         </div>
                                     </td>
-                                    <td> {{i.aciklama}}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -180,7 +180,7 @@
                                                         data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                                         data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt="" title="{{yazar.last_name}}"
                                                             class="rounded-circle avatar-xxs"> </a>
                                                 {% endfor %}
                                                 <span>+{{i.yapacaklar.all | length}}</span>
@@ -196,11 +196,11 @@
                                                     <span
                                                     class="status-inprogress stats-lg">{{i.status}}</span>
                                                 {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
                                                 {% elif i.status == "Pending" %}
-                                                <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
                                                  {% elif i.status == "Completed" %}
-                                                <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
                                                     {% endif %}
                                                 
                                         
@@ -242,7 +242,7 @@
                                             {{i.title}}
                                         </div>
                                     </td>
-                                    <td> {{i.aciklama}}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -252,7 +252,7 @@
                                                         data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                                         data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt="" title="{{yazar.last_name}}"
                                                             class="rounded-circle avatar-xxs"> </a>
                                                 {% endfor %}
                                                 <span>+{{i.yapacaklar.all | length}}</span>
@@ -393,7 +393,8 @@
                                 </div>
                             </div>
                             <div class="form-element">
-                                <label for="kisiler">{% trans 'Atama (Birden fazla atama için ctrl ile birlikte seçim yapınız)' %}</label>
+                                <label for="kisiler">{% trans 'Atama' %}</label>
+                                <p class="input-helper-text">{% trans 'Birden fazla kullanıcı ataması için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
                                 <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -401,7 +402,7 @@
                             </select>
                             </div>
                             <div class="form-element">
-                                <label for="tarih">{% trans 'Due Date:' %}</label>
+                                <label for="tarih">{% trans 'Hedef Tarih:' %}</label>
                                 <input required type="date" name="teslim_tarihi"  id="tarih">
                             </div>
                         </div>
@@ -409,7 +410,7 @@
                             <div class="form-element">
                                 <label for="katman">{% trans 'Plan Katmanı' %}</label>
                                  <select name="katman" id="katmanSelect"  data-trigger >
-                                 <option value="" >Lütfen katman seçiniz.</option>
+                                 <option value="" >{% trans 'Lütfen plan katmanını seçiniz.' %}</option>
                                 {% for blog in katmanlar %}
                                 <option data-id="{{blog.proje_santiye_Ait.id}}" data-img="{{blog.katman_dosyasi.url}}" value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
                                 {% endfor %}
@@ -541,7 +542,8 @@
                                 </div>
                             </div>
                             <div class="form-element">
-                                <label for="kisiler">{% trans 'Atama (Birden fazla atama için ctrl ile birlikte seçim yapınız)' %}</label>
+                                <label for="kisiler">{% trans 'Atama' %}</label>
+                                <p class="input-helper-text">{% trans 'Birden fazla kullanıcı ataması için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
                                 <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -549,7 +551,7 @@
                             </select>
                             </div>
                             <div class="form-element">
-                                <label for="tarih">{% trans 'Due Date:' %}</label>
+                                <label for="tarih">{% trans 'Hedef Tarih:' %}</label>
                                 <input required type="date" name="teslim_tarihi"  id="tarihd">
                             </div>
                         </div>
@@ -654,7 +656,7 @@
                         <span>{{i.kayit_tarihi}}</span>
                         <div class="ilerleme-durumu-content">
                             {% trans 'Başlık ' %}  {{i.title}} <br>
-                            {% trans 'Açıklama ' %} {{i.aciklama}}<br>
+                            {% trans 'Açıklama ' %} <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td><br>
                             {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
                             {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
                             {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
@@ -717,7 +719,7 @@
                         <input type="text"  name="aciklama" id="aciklama">
                     </div>
                     <div class="form-element">
-                        <label for="tarih">{% trans 'Due Date:' %}</label>
+                        <label for="tarih">{% trans 'Hedef Tarih:' %}</label>
                         <input type="date" value="{{i.teslim_tarihi | date:'Y-m-d'}}" name="teslim_tarihi"  id="tarih">
                     </div>
                     <div class="form-element">
@@ -1609,7 +1611,7 @@ openModal("is-emri-duzenle");
                                 <tr>
                                           <th scope="col">{% trans 'İş Emri Adı' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
-                                            <th scope="col">{% trans 'İlgililer' %}</th>
+                                            <th scope="col">{% trans 'Kullanıcılar' %}</th>
                                             <th scope="col">{% trans 'Başlangıç' %}</th>
                                             <th scope="col">{% trans 'Hedef Tarih' %}</th>
                                             <th scope="col">{% trans 'Durum' %}</th>
@@ -1630,7 +1632,7 @@ openModal("is-emri-duzenle");
                                             {{i.title}}
                                         </div>
                                     </td>
-                                    <td> {{i.aciklama}}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1640,7 +1642,7 @@ openModal("is-emri-duzenle");
                                                         data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                                         data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt="" title="{{yazar.last_name}}"
                                                             class="rounded-circle avatar-xxs"> </a>
                                                 {% endfor %}
                                                 <span>+{{i.yapacaklar.all | length}}</span>
@@ -1656,11 +1658,11 @@ openModal("is-emri-duzenle");
                                                     <span
                                                     class="status-inprogress stats-lg">{{i.status}}</span>
                                                 {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">Yeni</span></div>
+                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
                                                 {% elif i.status == "Pending" %}
-                                                <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
                                                  {% elif i.status == "Completed" %}
-                                                <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
                                                     {% endif %}
                                                 
                                         
@@ -1699,7 +1701,7 @@ openModal("is-emri-duzenle");
                                             {{i.title}}
                                         </div>
                                     </td>
-                                    <td> {{i.aciklama}}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1709,7 +1711,7 @@ openModal("is-emri-duzenle");
                                                         data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                                         data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt="" title="{{yazar.last_name}}"
                                                             class="rounded-circle avatar-xxs"> </a>
                                                 {% endfor %}
                                                 <span>+{{i.yapacaklar.all | length}}</span>
@@ -1725,11 +1727,11 @@ openModal("is-emri-duzenle");
                                                     <span
                                                     class="status-inprogress stats-lg">{{i.status}}</span>
                                                 {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
                                                 {% elif i.status == "Pending" %}
-                                                <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
                                                  {% elif i.status == "Completed" %}
-                                                <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
                                                     {% endif %}
                                                 
                                         
@@ -1771,7 +1773,7 @@ openModal("is-emri-duzenle");
                                             {{i.title}}
                                         </div>
                                     </td>
-                                    <td> {{i.aciklama}}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1781,7 +1783,7 @@ openModal("is-emri-duzenle");
                                                         data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                                         data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt=""
+                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'assets/images/users/avatar-1.jpg' %}{% endif %}" alt="" title="{{yazar.last_name}}"
                                                             class="rounded-circle avatar-xxs"> </a>
                                                 {% endfor %}
                                                 <span>+{{i.yapacaklar.all | length}}</span>
@@ -1904,7 +1906,6 @@ openModal("is-emri-duzenle");
                                 <div class="form-element">
                                     <label for="durum">{% trans 'Durum' %}</label>
                                    <select name="durum" required class="form-control" data-choices data-choices-search-false id="task-status-input">
-                                    <option value="">{% trans 'Status' %}</option>
                                     <option value="New" selected>{% trans 'Yeni' %}</option>
                                     <option value="Inprogress">{% trans 'Devam Ediyor' %}</option>
                                     <option value="Pending">{% trans 'Beklemede' %}</option>
@@ -1922,7 +1923,8 @@ openModal("is-emri-duzenle");
                                 </div>
                             </div>
                             <div class="form-element">
-                                <label for="kisiler">{% trans 'Atama (Birden fazla atama için ctrl ile birlikte seçim yapınız)' %}</label>
+                                <label for="kisiler">{% trans 'Atama' %}</label>
+                                <p class="input-helper-text">{% trans 'Birden fazla kullanıcı ataması için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
                                 <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -1930,7 +1932,7 @@ openModal("is-emri-duzenle");
                             </select>
                             </div>
                             <div class="form-element">
-                                <label for="tarih">{% trans 'Due Date:' %}</label>
+                                <label for="tarih">{% trans 'Hedef Tarih:' %}</label>
                                 <input required type="date" name="teslim_tarihi"  id="tarih">
                             </div>
                         </div>
@@ -1938,7 +1940,7 @@ openModal("is-emri-duzenle");
                             <div class="form-element">
                                 <label for="katman">{% trans 'Plan Katmanı' %}</label>
                                  <select name="katman" id="katmanSelect"  data-trigger >
-                                 <option value="" >Lütfen katman seçiniz.</option>
+                                 <option value="" >{% trans 'Lütfen plan katmanını seçiniz.' %}</option>
                                 {% for blog in katmanlar %}
                                 <option data-id="{{blog.proje_santiye_Ait.id}}" data-img="{{blog.katman_dosyasi.url}}" value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.katman_adi}}</option>
                                 {% endfor %}
@@ -2070,7 +2072,8 @@ openModal("is-emri-duzenle");
                                 </div>
                             </div>
                             <div class="form-element">
-                                <label for="kisiler">{% trans 'Atama (Birden fazla atama için ctrl ile birlikte seçim yapınız)' %}</label>
+                                <label for="kisiler">{% trans 'Atama' %}</label>
+                                <p class="input-helper-text">{% trans 'Birden fazla kullanıcı ataması için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
                                 <select required name="blogbilgisi" class="form-control cokluetiketb" data-trigger multiple  id="cokluetiketb" >
                                 {% for blog in blog_bilgisi %}
                                 <option value="{{ blog.id }}">{{ blog.last_name }}: {{blog.email}}</option>
@@ -2078,7 +2081,7 @@ openModal("is-emri-duzenle");
                             </select>
                             </div>
                             <div class="form-element">
-                                <label for="tarih">{% trans 'Due Date:' %}</label>
+                                <label for="tarih">{% trans 'Hedef Tarih:' %}</label>
                                 <input required type="date" name="teslim_tarihi"  id="tarihd">
                             </div>
                         </div>
@@ -2183,7 +2186,7 @@ openModal("is-emri-duzenle");
                         <span>{{i.kayit_tarihi}}</span>
                         <div class="ilerleme-durumu-content">
                             {% trans 'Başlık ' %}  {{i.title}} <br>
-                            {% trans 'Açıklama ' %} {{i.aciklama}}<br>
+                            {% trans 'Açıklama ' %} <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td><br>
                             {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
                             {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
                             {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
@@ -2246,7 +2249,7 @@ openModal("is-emri-duzenle");
                         <input type="text"  name="aciklama" id="aciklama">
                     </div>
                     <div class="form-element">
-                        <label for="tarih">{% trans 'Due Date:' %}</label>
+                        <label for="tarih">{% trans 'Hedef Tarih:' %}</label>
                         <input type="date" value="{{i.teslim_tarihi | date:'Y-m-d'}}" name="teslim_tarihi"  id="tarih">
                     </div>
                     <div class="form-element">

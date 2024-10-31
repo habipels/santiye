@@ -736,7 +736,7 @@ var card = new Card({
     },
     placeholders: {
         number: '•••• •••• •••• ••••',
-        name: 'Full Name',
+        name: 'Adı Soyadı',
         expiry: '••/••',
         cvc: '•••'
     },

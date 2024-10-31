@@ -279,7 +279,7 @@ var options,
             form: document.querySelector("#card-form-elem"),
             container: ".card-wrapper",
             formSelectors: { numberInput: "input#card-number-input", expiryInput: "input#card-expiry-input", cvcInput: "input#card-cvc-input", nameInput: "input#card-name-input" },
-            placeholders: { number: "•••• •••• •••• ••••", name: "Full Name", expiry: "••/••", cvc: "•••" },
+            placeholders: { number: "•••• •••• •••• ••••", name: "Adı Soyadı", expiry: "••/••", cvc: "•••" },
             masks: { cardNumber: "•" },
         }));
 Array.from(document.querySelectorAll("#candidate-list li")).forEach(function (a) {

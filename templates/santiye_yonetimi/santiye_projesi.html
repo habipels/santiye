@@ -95,7 +95,7 @@
                                             {% endif %}
                                             {% else %}
                                             <div class="td-actions">
-                                                <a onclick="openModal('yeni-yapi{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'Kalem Ekle' %}</a>
+                                                <a onclick="openModal('yeni-yapi{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'Yapı Ekle' %}</a>
                                             </div>
                                             {% endif %}
                                 </td>
@@ -105,14 +105,14 @@
                                             {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                                             {% if yetki.kalemleri_olusturma %}
                                             <div class="td-actions">
-                                                <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'Kalem Ekle' %}</a>
+                                                <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'İmalat Kalemi Ekle' %}</a>
                                             </div>    
                                             {% else %}
                                                                                                             
                                             {% endif %}
                                             {% else %}
                                             <div class="td-actions">
-                                                <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'Kalem Ekle' %}</a>
+                                                <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'İmalat Kalemi Ekle' %}</a>
                                             </div>
                                             {% endif %}
                                     
@@ -154,7 +154,7 @@
                                 <tr>
                                     
                                                     <th class="sort" data-sort="email">{% trans 'Şantiye Adı' %} </th>
-                                                    <th class="sort" data-sort="email">{% trans 'Kalem Adı'  %}</th>
+                                                    <th class="sort" data-sort="email">{% trans 'İmalat Kalemi'  %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Şantiye Ağırlığı' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Finansal Ağırlık' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Birim' %}</th>
@@ -476,7 +476,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                   
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit" >{% trans 'Kaydet' %}
+                        <button class="form-action-primary" type="submit" >{% trans 'Güncelle' %}
                             </button>
                     </div>
                 </form>
@@ -507,7 +507,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
     <div class="modal" id="yeni-kalem{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                {% trans 'Yeni Kalem Ekle' %}
+                {% trans 'Yeni İmalat Kalemi Ekle' %}
                
             </div>
             <div class="modal-body">
@@ -527,30 +527,29 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                         </div>
                                         {% else %}
                                             
-                                            <div class="col-md-3">
+                                            <div class="form-element">
 
                                             <label for="date-field" >{% trans 'Yapılar' %}</label>
-                                           
-                                       
-                                    <select name="projetipi" required id="cokluetiket"  class="etkett me-2" multiple>
+                                            <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
+                                    <select name="projetipi" required id="cokluetiket" class="etkett me-2" multiple style="height: 45px;">
                                         {% bloglar_form_gonder i %}
                                     </select>
                                     
                                 </div>
                                 <div class="form-element">
-                                    <label for="date-field" >{% trans 'Kalemin Tercihi' %}</label>
+                                    <label for="date-field" >{% trans 'İmalat Alanı' %}</label>
                                     <select  required name="kata_veya_binaya_daihil" id="date-field">
                                         <option >Lütfen Seçiniz</option>
-                                        <option value="0">{% trans 'Kata Dahil' %}</option>
-                                        <option value="1">{% trans 'Binaya Dahil' %}</option>
-                                        <option value="2">{% trans 'Cephe' %}</option>
+                                        <option value="0">{% trans 'Kat Bazında' %}</option>
+                                        <option value="1">{% trans 'Bina Genelinde' %}</option>
+                                        <option value="2">{% trans 'Cephe Bazında' %}</option>
                                     </select>
                                 </div> 
                                         
 
                                         <div class="form-element">
-                                            <label for="date-field" >{% trans 'Kalem Adı' %}</label>
-                                            <input type="text"   name="yetkili_adi" id="date-field"  placeholder="{% trans 'Kalem Adı' %}" />
+                                            <label for="date-field" >{% trans 'İmalat Adı' %}</label>
+                                            <input type="text"   name="yetkili_adi" id="date-field"  placeholder="{% trans 'İmalat adı giriniz' %}" />
                                         </div>
                                         <div class="form-element">
                                             <label for="date-field" >{% trans 'Şantiye Ağırlığı' %}</label>
@@ -584,7 +583,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                     
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Devam</button>
+                        <button class="form-action-primary" type="submit">Ekle</button>
                     </div>
                 </form>
             </div>
@@ -602,11 +601,11 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                 <input type="text" value="{{i.id}}" hidden name="santiye_bilgisi">
                     <div class="form-element">
                                             <label for="date-field"  >{% trans 'Yapı Adı' %}</label>
-                                            <input type="text"  required  name="blok_adi" id="date-field"   placeholder="{% trans 'Yapı Adı' %}" />
+                                            <input type="text"  required  name="blok_adi" id="date-field"   placeholder="{% trans 'Yapı adını giriniz' %}" />
                                         </div>
                                         <div class="form-element">
                                             <label for="date-field"  >{% trans 'Kat Sayısı' %}</label>
-                                            <input type="number" required  name="kat_sayisi" required id="date-field"    />
+                                            <input type="number" required  name="kat_sayisi" required id="date-field" placeholder="{% trans 'Kat sayısı giriniz' %}"   />
                                         </div>
                                         <div class="form-element">
                                             <label for="date-field"  >{% trans 'Başlangıç Tarihi' %}</label>
@@ -621,7 +620,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                     
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Devam</button>
+                        <button class="form-action-primary" type="submit">Yapı Ekle</button>
                     </div>
                 </form>
             </div>
@@ -634,7 +633,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 <div class="modal" id="kalem-duzenle{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                {% trans 'Kalem Düzenle' %}
+                {% trans 'İmalat Kalemi Düzenle' %}
                
             </div>
             <div class="modal-body">
@@ -658,8 +657,8 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                             
                                             
                                         <div class="form-element">
-                                            <label for="date-field" >{% trans 'Kalem Adı' %}</label>
-                                            <input type="text" value="{{i.kalem_adi}}"  name="yetkili_adi" id="date-field"  placeholder="{% trans 'Kalem Adı' %}" />
+                                            <label for="date-field" >{% trans 'İmalat Kalemi' %}</label>
+                                            <input type="text" value="{{i.kalem_adi}}"  name="yetkili_adi" id="date-field"  placeholder="{% trans 'İmalat Kalemi' %}" />
                                         </div>
                                         <div class="form-element">
                                             <label for="date-field" >{% trans 'Şantiye Ağırlığı' %}</label>
@@ -693,7 +692,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                     
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-primary" type="submit">{% trans 'Onayla' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
                     </div>
                 </form>
             </div>
@@ -729,7 +728,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 <div class="modal" id="yapi_duzenle{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                {% trans 'Yeni Yapı Ekle' %}
+                {% trans 'Yapıyı Düzenle' %}
                
             </div>
             <div class="modal-body">
@@ -758,7 +757,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                     
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Devam</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
                     </div>
                 </form>
             </div>
