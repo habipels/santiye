@@ -175,6 +175,11 @@ def bloglar_form_gonder(veri):
     for i in deger:
         veri_esiti = veri_esiti + """<option value="{}">{}</option>""".format(i.id,i.blog_adi)
     return mark_safe(veri_esiti)
+@register.simple_tag
+def bloglar_form_gonder_kaleme(veri):
+    deger = bloglar.objects.filter(proje_santiye_Ait = veri)
+
+    return deger
 
 @register.simple_tag
 def kalemler_getir(veri):
@@ -637,6 +642,17 @@ def kalem_blog(id):
         #/delbuldingsites/{}/{}
         bilgiler = bilgiler+ '<a href="#" >{}</a>'.format(str(i.blog_adi))+" , "
     return mark_safe(bilgiler)
+@register.simple_tag
+def secililer_yapi_kalem(id):
+
+    unique_values = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =id)
+    a = []
+    for i in unique_values:
+        if i.blog_bilgisi in a:
+            pass
+        else:
+            a.append(i.blog_bilgisi)
+    return a
 @register.simple_tag
 def kalemler_sadece(id):
     kalemelr = santiye_kalemleri.objects.filter(proje_santiye_Ait = id,silinme_bilgisi = False)

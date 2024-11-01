@@ -423,8 +423,8 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
         </div>
 
         <div>
-            <input type="hidden" name="latitude" id="latitude">
-            <input type="hidden" name="longitude" id="longitude">
+            <input type="text" name="latitude" id="latitude">
+            <input type="text" name="longitude" id="longitude">
         </div>
 
         <div class="form-element">
@@ -654,7 +654,32 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                             </select>
                                         </div>
                                         {% else %}
-                                            
+                                         <div class="form-element">
+                                         {% secililer_yapi_kalem i.id as secili %}
+                                            {% bloglar_form_gonder_kaleme j as yapilari_al %}
+                                            <label for="date-field" >{% trans 'Yapılar' %}</label>
+                                            <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
+                                    <select name="projetipi" required id="cokluetiket" class="etkett me-2" multiple style="height: 45px;">
+                                        {% for k in yapilari_al  %}
+                                            {% if k in secili %}
+                                                <option selected value="{{k.id}}">{{k.blog_adi}}</option>
+                                            {% else %}
+                                            <option value="{{k.id}}">{{k.blog_adi}}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                    </select>
+                                    
+                                </div>
+                                <div class="form-element">
+                                    <label for="date-field" >{% trans 'İmalat Alanı' %}</label>
+                                    <select  required name="kata_veya_binaya_daihil" id="date-field">
+                                        <option >Lütfen Seçiniz</option>
+                                        <option value="0">{% trans 'Kat Bazında' %}</option>
+                                        <option value="1">{% trans 'Bina Genelinde' %}</option>
+                                        <option value="2">{% trans 'Cephe Bazında' %}</option>
+                                    </select>
+                                </div>    
                                             
                                         <div class="form-element">
                                             <label for="date-field" >{% trans 'İmalat Kalemi' %}</label>
