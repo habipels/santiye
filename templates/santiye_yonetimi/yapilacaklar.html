@@ -2188,7 +2188,17 @@ openModal("is-emri-duzenle");
                             {% trans 'Başlık ' %}  {{i.title}} <br>
                             {% trans 'Açıklama ' %} <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td><br>
                             {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
+                            {% if i.katman %}
+                            {% trans 'Yapı Bilgisi ' %} {{i.blok.blog_adi}} <br>
+                            {% trans 'Kat Bilgisi ' %} {{i.kat}} <br>
+                            
+                                <button onclick="katman_goster('{{i.katman.katman_dosyasi.url}}','{{i.locasyonx}}','{{i.locasyony}}')" > {% trans "Katmanı Göster" %}</button>
+
+                            {% else %}
+                            {% endif %}
                             {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
+                            
+                            
                             {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
                             {{yazar.last_name}},
                      {% endfor %}
@@ -2204,6 +2214,7 @@ openModal("is-emri-duzenle");
                            {% trans 'Açıklama ' %}{{k.aciklama}}<br>
                             {% trans 'Durum ' %}{{k.status}} <br>
                             {% trans 'Teslim Tarihi ' %}{{k.teslim_tarihi}}<br>
+                            
                             
                         </div>
                             <div class="ilerleme-durumu-dosyalar">
@@ -2283,6 +2294,7 @@ openModal("is-emri-duzenle");
 {% endfor %}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        
         document.getElementById('katmanSelect').addEventListener('change', function() {
             const katmanId = this.value;
             const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
@@ -2435,8 +2447,41 @@ openModal("is-emri-duzenle");
                 })
                 .catch(error => console.error("Fetch hatası:", error));
         });
+       
 
     });
+    function katman_goster(veri,locasyonx, locasyony) {
+        const fileExtension = veri.split('.').pop().toLowerCase();
+            if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
+               
+                loadImage(veri);
+            }else if (fileExtension === "pdf") {
+                var url =veri;
+              
+                loadPDF(veri);
+                pdfjsLib.getDocument(url).promise.then(function(pdf) {
+                    pdf.getPage(1).then(function(page) {
+                    var canvas = document.getElementById('alanpdfd');
+                    document.getElementById('alanpdfd').style.display = "block";
+                    var context = canvas.getContext('2d');
+                    var viewport = page.getViewport({ scale: 1.5 });
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                    });
+                });
+                });
+               
+           
+            }
+            addPin(locasyonx, locasyony)
+            openModal('plan-konumu', false)
+        }
+        
 </script>
 <script>
     document.getElementById('yapiSelectd').addEventListener('change', function() {
