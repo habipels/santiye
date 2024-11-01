@@ -643,6 +643,10 @@ def kalem_blog(id):
         bilgiler = bilgiler+ '<a href="#" >{}</a>'.format(str(i.blog_adi))+" , "
     return mark_safe(bilgiler)
 @register.simple_tag
+def calisan_maasi(id):
+    maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
+    return maasli
+@register.simple_tag
 def secililer_yapi_kalem(id):
 
     unique_values = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =id)
