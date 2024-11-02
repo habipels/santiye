@@ -312,12 +312,15 @@ else:
     }
 
     REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-    
-    }   
-
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # Token tabanlı kimlik doğrulama
+        'rest_framework.authentication.SessionAuthentication',  # Oturum kimlik doğrulama
+        'rest_framework.authentication.BasicAuthentication',  # Temel kimlik doğrulama
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Tüm API'ler için kimlik doğrulama zorunlu
+    ],
+}
     
 
 

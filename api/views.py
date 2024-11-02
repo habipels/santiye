@@ -1565,7 +1565,7 @@ def yapilacaklar_api(request):
     else:
         profile = IsplaniPlanlari.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user)
     content["santiyeler"] = IsplaniPlanlariSerializer(profile, many=True).data
-    content["isplani_dosyalari"] = IsplaniDosyalariSerializer(IsplaniDosyalari.objects.filter(proje_ait_bilgisi = request.user ), many=True).data
+    content["isplani_dosyalari"] = IsplaniDosyalariSerializer(IsplaniDosyalari.objects.filter(proje_ait_bilgisi__proje_ait_bilgisi = request.user ), many=True).data
     content["kullanicilari"] =CustomUserSerializer( CustomUser.objects.filter(
         kullanicilar_db=request.user,
         kullanici_silme_bilgisi=False,
