@@ -1260,19 +1260,22 @@
         </div>
          <div class="header-language-wrapper">
             <div class="header-language">
+            {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+            {% for lang in languages %}
             {% for i in diller  %}
-                            {% if i.dil_kisaltması == dil %}
+                            {% if lang.code == dil %}
                 <img id="" src="{{i.dil_bayragi_icon.url}}" alt="Header Language" height="20" class="header-language-flag">
                 <span>{{ lang.name_local }}</span>
                 <i class="icon icon-chevron-bottom"></i>
                   {% else %}
                             {% endif %}
                         {% endfor %}
+                        {% endfor %}
             </div>
             <div class="header-language-dropdown">
-            {% get_current_language as LANGUAGE_CODE %}
-                    {% get_available_languages as LANGUAGES %}
-                    {% get_language_info_list for LANGUAGES as languages %}
+            
 
                     {% for lang in languages %}
                         {% for i in diller  %}
