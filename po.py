@@ -11,7 +11,7 @@ translator = GoogleTranslator(source='auto', target='tr')
 for entry in po:
     if entry.msgid:  # Only translate if there's a msgstr (i.e., a Turkish translation exists)
         translated_text = translator.translate(entry.msgid)
-        entry.msgstr = translated_text
+        entry.msgstr = entry.msgid
 # Save the translated file
 translated_po_file_path = r'C:\Users\habip\Documents\GitHub\santiye\dsjango_translated.po'
 po.save(translated_po_file_path)

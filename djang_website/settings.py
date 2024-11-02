@@ -180,9 +180,10 @@ if DEPLOY__:
 
     from django.utils.translation import gettext_lazy as _
     LANGUAGES = (
+        ('tr', _('Turkish')),
     ('en', _('English')),
         ('de', _('Deutsche')),
-        ('tr', _('Turkish')),
+        
         ('es', _('Spanish')),
         ('it', _('Italian')),
         ('ru', _('Russian')),
@@ -361,9 +362,9 @@ else:
 
     from django.utils.translation import gettext_lazy as _
     LANGUAGES = (
+        ('tr', _('Turkish')),
     ('en', _('English')),
         ('de', _('Deutsche')),
-        ('tr', _('Turkish')),
         ('es', _('Spanish')),
         ('it', _('Italian')),
         ('ru', _('Russian')),
