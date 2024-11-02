@@ -143,10 +143,6 @@ urlpatterns = [
     path('apleyrequest/', views.satin_alma_talabi_onaylama, name='satin_alma_talabi_onaylama'),
     path('onayapleyrequest/<int:id>/', views.satin_alma_talebi_onayla, name='satin_alma_talebi_onayla'),
     path('redapleyrequest/<int:id>/', views.satin_alma_talebi_red, name='satin_alma_talebi_red'),
-    #ürünler satin_alma_
-    path('apleyrequest/', views.satin_alma_talabi_onaylama, name='satin_alma_talabi_onaylama'),
-    path('onayapleyrequest/<int:id>/', views.satin_alma_talebi_onayla, name='satin_alma_talebi_onayla'),
-    path('redapleyrequest/<int:id>/', views.satin_alma_talebi_red, name='satin_alma_talebi_red'),
     #satın alınma
     path('buyrequest/', views.satin_alma_, name='satin_alma_'),
     path('apleybuyrequest/<int:id>/', views.satin_alma_onayla, name='satin_alma_onayla'),
@@ -162,6 +158,25 @@ urlpatterns = [
     path('teslim/<int:id>/<int:iz>/', views.zimmeti_teslim_Al, name='zimmeti_teslim_Al'),
     path('salaryandadvance/', views.avans_maas, name='avans_maas'),
     path('control/salaryandadvance/<str:hash>', views.avans_maas_2, name='avans_maas_2'),
+    #########3
+    path('control/purchaserequest/<str:hash>', views.satin_alma_talabi_2, name='satin_alma_talabi_2'),
+    path('control/addpurchaserequest/<str:hash>', views.satin_alma_talebi_ekle_2, name='satin_alma_talebi_ekle_2'),
+    path('control/delpurchaserequest/<int:id>/<str:hash>', views.satin_alma_talebi_sil_2, name='satin_alma_talebi_sil_2'),
+    #ürünler satin_alma_talabi
+    path('control/apleyrequest/<str:hash>', views.satin_alma_talabi_onaylama_2, name='satin_alma_talabi_onaylama_2'),
+    path('control/onayapleyrequest/<int:id>/<str:hash>', views.satin_alma_talebi_onayla_2, name='satin_alma_talebi_onayla_2'),
+    path('control/redapleyrequest/<int:id>/<str:hash>', views.satin_alma_talebi_red_2, name='satin_alma_talebi_red_2'),
+    #satın alınma
+    path('control/buyrequest/<str:hash>', views.satin_alma_2, name='satin_alma_2'),
+    path('control/apleybuyrequest/<int:id>/<str:hash>', views.satin_alma_onayla_2, name='satin_alma_onayla_2'),
+    path('control/buyelement/<str:hash>', views.satin_alma_kabuller_2, name='satin_alma_kabuller_2'),
+    #stoklar
+    path('control/stock/<str:hash>', views.stok_2, name='stok_2'),
+    path('control/addstock/<str:hash>', views.stok_girisi_yap_2, name='stok_girisi_yap_2'),
+    #zimmet
+    path('control/debit/<str:hash>', views.zimmetler_2, name='zimmetler'),
+    path('control/adddebit/<str:hash>', views.zimmet_ekle_2, name='zimmet_ekle'),
+    path('control/teslim/<int:id>/<int:iz>/<str:hash>', views.zimmeti_teslim_Al_2, name='zimmeti_teslim_Al_2'),
 ]
 #zimmeti_teslim_Al_1
 #accounting
