@@ -1191,7 +1191,7 @@ def basit_cikarma_duzenli(a,b):
    
     y = float(a)-float(b)
 
-    return str(fiyat_duzelt(y,2))
+    return str(round(y,2))
 @register.simple_tag
 def sorgu(a):
     y = float(a)
