@@ -38,6 +38,7 @@ urlpatterns = [#
     path("siteprojects", views.santiye_projesi_ekle_, name="santiye_projesi_ekle_"),
     path("control/siteprojects/<str:hash>", views.santiye_projesi_ekle_2, name="santiye_projesi_ekle_2"),
     path("addsite", views.santiye_ekleme_sahibi, name="santiye_ekleme_sahibi"),
+    path("control/addsite/<str:hash>", views.santiye_ekleme_sahibi_2, name="santiye_ekleme_sahibi_2"),
     path("addsitesuperadmin/<int:id>", views.santiye_ekleme_super_admin, name="santiye_ekleme_super_admin"),
     path("delsiteproject", views.santiye_projesi_sil, name="santiye_projesi_sil"),
     path("setsiteprojetc", views.santiye_projesi_duzenle, name="santiye_projesi_duzenle"),
@@ -45,17 +46,23 @@ urlpatterns = [#
     path("addblog", views.blog_ekle, name="blog_ekle"),
     path("delblog", views.blog_sil, name="blog_sil"),
     path("setblog", views.blog_duzenle, name="blog_duzenle"),
+    path("control/addblog/<str:hash>", views.blog_ekle_2, name="blog_ekle_2"),
+    path("control/delblog/<str:hash>", views.blog_sil_2, name="blog_sil_2"),
+    path("control/setblog/<str:hash>", views.blog_duzenle_2, name="blog_duzenle_2"),
     #şantiye proje işlemleri
     #
     path("yetkisiz", views.yetkisiz, name="yetkisiz"),
     #şantiye Kalemleri
     path("buldingsite/<int:id>", views.santtiye_kalemleri, name="santtiye_kalemleri"),
     path("addbuldingsite", views.santiyeye_kalem_ekle, name="santiyeye_kalem_ekle"),
+    path("control/addbuldingsite/<str:hash>", views.santiyeye_kalem_ekle_2, name="santiyeye_kalem_ekle_2"),
     path("adminaddbuldingsite/<int:id>", views.santiye_kalem_ekle_admin, name="santiye_kalem_ekle_admin"),
     path("addbuldingsiteadmin/<int:id>", views.santiye_kalem_ekle_admin, name="santiye_kalem_ekle_admin"),
     path("editsite", views.santiye_duzelt, name="santiye_duzelt"),
     path("delbuldingsite", views.kalem_sil, name="kalem_sil"),
+     path("control/delbuldingsite/<str:hash>", views.kalem_sil_2, name="kalem_sil_2"),
     path("setbuldingsite", views.santiye_kalemleri_duzenle, name="santiye_kalemleri_duzenle"),
+    path("control/setbuldingsite/<str:hash>", views.santiye_kalemleri_duzenle_2, name="santiye_kalemleri_duzenle_2"),
     path("delbuldingsites/<int:id>/<int:ik>", views.kalem_blog_dagilis_sil, name="kalem_blog_dagilis_sil"),
     #
     #şantiye Kalemleri

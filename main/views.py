@@ -111,7 +111,7 @@ def loglar(request):
         except EmptyPage:
             # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
-        content["santiyeler"] = page_obj
+        content["santiyeler"] = profile
         content["top"]  = profile
         content["medya"] = page_obj
 
@@ -169,7 +169,7 @@ def homepage(request):
                 # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
 
-        content["santiyeler"] = page_obj
+        content["santiyeler"] = profile
         if super_admin_kontrolu(request):
             profile =Gider_Bilgisi.objects.all()
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
@@ -337,7 +337,7 @@ def ana_sayfa(request):
                 # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
 
-        content["santiyeler"] = page_obj
+        content["santiyeler"] = profile
         if super_admin_kontrolu(request):
             profile =Gider_Bilgisi.objects.all()
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
@@ -666,7 +666,7 @@ def santiye_listele(request):
         except EmptyPage:
             # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
-        content["santiyeler"] = page_obj
+        content["santiyeler"] = profile
         content["top"]  = profile
         content["medya"] = page_obj
 
@@ -741,7 +741,7 @@ def dil_ayari_listele(request):
         except EmptyPage:
             # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
-        content["santiyeler"] = page_obj
+        content["santiyeler"] = profile
         content["top"]  = profile
         content["medya"] = page_obj
 
@@ -875,7 +875,7 @@ def proje_tipi_(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/proje_tipi.html",content)
@@ -915,7 +915,7 @@ def proje_tipi_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/proje_tipi.html",content)
@@ -1052,14 +1052,15 @@ def santiye_projesi_ekle_(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_projesi.html",content)
 def santiye_projesi_ekle_2(request,hash):
     content = sozluk_yapisi()
-    content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user)
+   
     if super_admin_kontrolu(request):
+        content["birim_bilgisi"] = birimler.objects.filter(silinme_bilgisi = False)
         d = decode_id(hash)
         users = get_object_or_404(CustomUser,id = d)
         content["hashler"] = hash
@@ -1067,6 +1068,7 @@ def santiye_projesi_ekle_2(request,hash):
         profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = users)
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
         content["kullanicilar"] =kullanicilar
+        content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  users)
     else:
         profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
     if request.GET.get("search"):
@@ -1092,7 +1094,7 @@ def santiye_projesi_ekle_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_projesi.html",content)
@@ -1136,7 +1138,7 @@ def santiye_projesi_bloklar_ekle_(request,id):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/santiye_projesi_blok_ekle.html",content)
@@ -1238,7 +1240,43 @@ def santiye_ekleme_sahibi(request):
                                     proje_adi = proje_adi
                                     )
     return redirect("main:santiye_projesi_ekle_")
+def santiye_ekleme_sahibi_2(request,hash):
+    if request.POST:
+        content = sozluk_yapisi()
+        d = decode_id(hash)
+        content["hashler"] = hash
+        users = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = users
+        if super_admin_kontrolu(request):
+            projetipi = request.POST.get("projetipi")
+            proje_adi = request.POST.get("yetkili_adi")
 
+            a = santiye.objects.create(proje_ait_bilgisi = users,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                                    proje_adi = proje_adi
+                                    )
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.santiye_olusturma:
+                            projetipi = request.POST.get("projetipi")
+                            proje_adi = request.POST.get("yetkili_adi")
+
+                            a = santiye.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                                                proje_adi = proje_adi
+                                                )
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                projetipi = request.POST.get("projetipi")
+                proje_adi = request.POST.get("yetkili_adi")
+
+                a = santiye.objects.create(proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                                    proje_adi = proje_adi
+                                    )
+    return redirect("main:santiye_projesi_ekle_2",hash)
 def santiye_ekleme_super_admin(request,id):
     content = sozluk_yapisi()
     content["proje_tipleri"] = proje_tipi.objects.filter(proje_ait_bilgisi =  get_object_or_404(CustomUser,id = id))
@@ -1374,7 +1412,7 @@ def santtiye_kalemleri(request,id):
         except EmptyPage:
                 # if the page is out of range, deliver the last page
             page_obj = paginator.page(paginator.num_pages)
-        content["santiyeler"] = page_obj
+        content["santiyeler"] = profile
         content["top"]  = profile
         content["medya"] = page_obj
     else:
@@ -1712,7 +1750,7 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
             except EmptyPage:
                 # if the page is out of range, deliver the last page
                 page_obj = paginator.page(paginator.num_pages)
-            content["santiyeler"] = page_obj
+            content["santiyeler"] = profile
             content["top"]  = profile
             content["medya"] = page_obj
 
@@ -1754,7 +1792,7 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
             except EmptyPage:
                 # if the page is out of range, deliver the last page
                 page_obj = paginator.page(paginator.num_pages)
-            content["santiyeler"] = page_obj
+            content["santiyeler"] = profile
             content["top"]  = profile
             content["medya"] = page_obj
     else:
@@ -1790,7 +1828,7 @@ def blogtan_kaleme_ilerleme_takibi_hash(request,id,slug,hash):
             except EmptyPage:
                 # if the page is out of range, deliver the last page
                 page_obj = paginator.page(paginator.num_pages)
-            content["santiyeler"] = page_obj
+            content["santiyeler"] = profile
             content["top"]  = profile
             content["medya"] = page_obj
 
@@ -1832,7 +1870,7 @@ def blogtan_kaleme_ilerleme_takibi_hash(request,id,slug,hash):
             except EmptyPage:
                 # if the page is out of range, deliver the last page
                 page_obj = paginator.page(paginator.num_pages)
-            content["santiyeler"] = page_obj
+            content["santiyeler"] = profile
             content["top"]  = profile
             content["medya"] = page_obj
     else:
@@ -1976,7 +2014,7 @@ def projeler_sayfasi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["blog_bilgisi"]  =bloglar.objects.filter(proje_ait_bilgisi = request.user,proje_santiye_Ait__silinme_bilgisi = False)
@@ -2170,7 +2208,7 @@ def taseron_sayfasi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     
@@ -2236,7 +2274,7 @@ def taseron_sayfasi_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     
@@ -2853,7 +2891,7 @@ def ust_yuklenici_sayfasi_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     
@@ -3104,7 +3142,7 @@ def ust_yuklenici_sayfasi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     
@@ -3333,7 +3371,7 @@ def sozlesmler_sayfasi_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     
@@ -3401,7 +3439,7 @@ def ana_yuklenici_sozlesmler_sayfasi_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     
@@ -3738,7 +3776,7 @@ def sozlesmler_sayfasi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     
@@ -3799,7 +3837,7 @@ def ana_yuklenici_sozlesmler_sayfasi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     
@@ -4107,7 +4145,7 @@ def hakedis_sayfasi_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
@@ -4355,7 +4393,7 @@ def hakedis_sayfasi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
@@ -4609,7 +4647,7 @@ def depolama_sistemim(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/depolama_sistemim.html",content)
@@ -4668,7 +4706,7 @@ def depolama_sistemim_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/depolama_sistemim.html",content)
@@ -4961,7 +4999,7 @@ def klasore_gir(request,id,slug):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["dosyalarim"] = dosyalarim
@@ -5026,7 +5064,7 @@ def klasore_gir_2(request,id,slug,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["dosyalarim"] = dosyalarim
@@ -5315,7 +5353,7 @@ def dokumanlar(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
@@ -5373,7 +5411,7 @@ def dokumanlar_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
@@ -5430,7 +5468,7 @@ def media_dosyalari(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
@@ -5490,7 +5528,7 @@ def media_dosyalari_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
@@ -5547,7 +5585,7 @@ def zamana_dosyalari(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
@@ -5604,7 +5642,7 @@ def zamana_dosyalari_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
@@ -5659,7 +5697,7 @@ def silinen_dosyalari(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
@@ -5718,7 +5756,7 @@ def silinen_dosyalari_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"santiye_yonetimi/dokuman.html",content)
@@ -5777,7 +5815,7 @@ def sozlesmler_depolamam_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
@@ -5838,7 +5876,7 @@ def hakedis_depolamam_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
@@ -5896,7 +5934,7 @@ def sozlesmler_depolamam(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
@@ -5953,7 +5991,7 @@ def hakedis_depolamam(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     #content["blog_bilgisi"]  =projeler.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
@@ -6860,7 +6898,7 @@ def yapilacaklar_timeline(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["blog_bilgisi"]  =CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False,is_active = True)
@@ -8633,13 +8671,7 @@ def kullanici_yetki_alma_2(request,hash):
             izinler.gider_faturasi_makbuz_silme_izni = True
         izinler.save()
     return redirect("main:kullanici_yetkileri_2",hash)
-"""
-content = sozluk_yapisi()
-    d = decode_id(hash)
-    content["hashler"] = hash
-    users = get_object_or_404(CustomUser,id = d)
-    content["hash_bilgi"] = users
-"""
+
 def proje_ekleme_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -8689,3 +8721,230 @@ def proje_duzenle_2(request,hash):
     
     return redirect("main:proje_tipi_2",hash)
 #Şantiye Projesi Ekleme
+############################
+"""
+content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+"""
+
+def santiyeye_kalem_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            kullanici = request.POST.get("kullanici")
+            if True:
+                projetipi = request.POST.getlist("projetipi")
+                yetkili_adi = request.POST.get("yetkili_adi")
+                santiye_agirligi = request.POST.get("katsayisi")
+                finansal_agirlik = request.POST.get("blogsayisi")
+                metraj = request.POST.get("metraj")
+                tutar = request.POST.get("tutar")
+                birim_bilgisi = request.POST.get("birim_bilgisi")
+                kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
+                id = bloglar.objects.filter(id__in = projetipi).first()
+                kalem = santiye_kalemleri.objects.create(
+                    proje_ait_bilgisi = users,
+                    proje_santiye_Ait =id.proje_santiye_Ait,
+                    kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                    santiye_finansal_agirligi = finansal_agirlik,
+                    birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                    tutari = tutar
+                )
+                if kata_veya_binaya_daihil == "0":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,int(i.kat_sayisi)):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = users,
+                                proje_santiye_Ait = id.proje_santiye_Ait,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
+                elif kata_veya_binaya_daihil == "1":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,int(i.kat_sayisi)):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = users,
+                                proje_santiye_Ait = id.proje_santiye_Ait,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
+                            break
+                elif kata_veya_binaya_daihil == "2":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,4):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = users,
+                                proje_santiye_Ait = id.proje_santiye_Ait,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
+                        
+    return redirect("main:santiye_projesi_ekle_2",hash)
+
+def blog_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        santiye_bilgisi = request.POST.get("santiye_bilgisi")
+        blok_adi = request.POST.get("blok_adi")
+        kat_sayisi = request.POST.get("kat_sayisi")
+        baslangictarihi = request.POST.get("baslangictarihi")
+        bitistarihi =request.POST.get("bitistarihi")
+        bloglar.objects.create(
+            proje_ait_bilgisi = get_object_or_404(santiye,id = santiye_bilgisi).proje_ait_bilgisi,
+            proje_santiye_Ait = get_object_or_404(santiye,id = santiye_bilgisi),
+            blog_adi = blok_adi,kat_sayisi = kat_sayisi,
+            baslangic_tarihi = baslangictarihi,bitis_tarihi = bitistarihi
+        )
+    return redirect("main:santiye_projesi_ekle_2",hash)
+def santiye_kalemleri_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =buttonId).delete()
+        yetkili_adi = request.POST.get("yetkili_adi")
+        santiye_agirligi = request.POST.get("katsayisi")
+        finansal_agirlik = request.POST.get("blogsayisi")
+        geri_don = request.POST.get("geri_don")
+        metraj = request.POST.get("metraj")
+        tutar = request.POST.get("tutar")
+        birim_bilgisi = request.POST.get("birim_bilgisi")
+        kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
+        projetipi = request.POST.getlist("projetipi")
+        if request.user.is_superuser:
+            
+            santiye_kalemleri.objects.filter(id  = buttonId).update(
+                            proje_ait_bilgisi = users,
+                            kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
+                            santiye_finansal_agirligi = finansal_agirlik,birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
+                        tutari = tutar
+                        )
+            if True:
+                if kata_veya_binaya_daihil == "0":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,int(i.kat_sayisi)):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = users,
+                                proje_santiye_Ait_id = geri_don,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
+                elif kata_veya_binaya_daihil == "1":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,int(i.kat_sayisi)):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = users,
+                                proje_santiye_Ait_id = geri_don,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
+                            break
+                elif kata_veya_binaya_daihil == "2":
+                    blog_lar = bloglar.objects.filter(id__in = projetipi)
+                    for i in blog_lar:
+                        for j in range(0,4):
+                            santiye_kalemlerin_dagilisi.objects.create(
+                                proje_ait_bilgisi = users,
+                                proje_santiye_Ait_id = geri_don,
+                                kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
+                                kat = j,blog_bilgisi = get_object_or_404(bloglar,id =i.id ),
+                            )
+    return redirect("main:santiye_projesi_ekle_2",hash)
+def kalem_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.kalemleri_silme:
+                    buttonId = request.POST.get("buttonId")
+                    geri_don = request.POST.get("geri_don")
+                    santiye_kalemleri.objects.filter(id = buttonId).update(
+                        silinme_bilgisi = True
+                    )
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            buttonId = request.POST.get("buttonId")
+            geri_don = request.POST.get("geri_don")
+            santiye_kalemleri.objects.filter(id = buttonId).update(
+                silinme_bilgisi = True
+            )
+    return redirect("main:santiye_projesi_ekle_2",hash)
+
+def blog_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.blog_duzenleme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    if request.POST:
+        santiye_bilgisi = request.POST.get("santiye_bilgisi")
+        blog = request.POST.get("blog")
+        blok_adi = request.POST.get("blok_adi")
+        kat_sayisi = request.POST.get("kat_sayisi")
+        baslangictarihi = request.POST.get("baslangictarihi")
+        bitistarihi =request.POST.get("bitistarihi")
+        bloglar.objects.filter(id = blog).update(
+            proje_ait_bilgisi = get_object_or_404(santiye,id = santiye_bilgisi).proje_ait_bilgisi,
+            proje_santiye_Ait = get_object_or_404(santiye,id = santiye_bilgisi),
+            blog_adi = blok_adi,kat_sayisi = kat_sayisi,
+            baslangic_tarihi = baslangictarihi,bitis_tarihi = bitistarihi
+        )
+       
+    return redirect("main:santiye_projesi_ekle_2",hash)
+def blog_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.blog_silme:
+                pass
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        geri = request.POST.get("geri")
+        blog_bilgisi = get_object_or_404(bloglar,id = buttonId)
+        bloglar.objects.filter(id = buttonId).delete()
+    return redirect("main:santiye_projesi_ekle_2",hash)
