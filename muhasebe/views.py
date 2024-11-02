@@ -364,7 +364,7 @@ def kasa_viev(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/muhasebe_index.html",content)
@@ -399,7 +399,7 @@ def a_kasa_viev(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/muhasebe_index.html",content)
@@ -454,7 +454,7 @@ def kasa_tekli(request,id):
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
     content["kasabilgiis_getirme"] = k_gonder
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/kasa_hareketleri.html",content)
@@ -680,7 +680,7 @@ def kasa_tekli_2(request,id,hash):
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
     content["kasabilgiis_getirme"] = k_gonder
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/kasa_hareketleri.html",content)
@@ -913,7 +913,7 @@ def gelir_kategorisi_tipleri(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gelir_kategorisi.html",content)
@@ -949,7 +949,7 @@ def gelir_kategorisi_tipleri_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gelir_kategorisi.html",content)
@@ -1100,7 +1100,7 @@ def gider_kategorisi_tipleri(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gider_kategorisi.html",content)
@@ -1136,7 +1136,7 @@ def gider_kategorisi_tipleri_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gider_kategorisi.html",content)
@@ -1439,7 +1439,7 @@ def cari_views_details_2(request,id,hash):
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
     content["cari"] = k_gonder
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/cari_detay.html",content)
@@ -1608,7 +1608,7 @@ def cari_views_details(request,id):
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
     content["cari"] = k_gonder
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/cari_detay.html",content)
@@ -1760,7 +1760,7 @@ def gelir_etiketi_tipleri(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gelir_etiketi.html",content)
@@ -1796,7 +1796,7 @@ def gelir_etiketi_tipleri_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gelir_etiketi.html",content)
@@ -1934,7 +1934,7 @@ def gider_etiketi_tipleri(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gider_etiketi.html",content)
@@ -1970,7 +1970,7 @@ def gider_etiketi_tipleri_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/gider_etiketi.html",content)
@@ -2317,7 +2317,7 @@ def virman_gondermeler(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/virman_raporu.html",content)
@@ -2367,7 +2367,7 @@ def virman_gondermeler_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/virman_raporu.html",content)
@@ -2423,7 +2423,7 @@ def urun_viev(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["urun_kategorisi"] = kategori
@@ -2459,7 +2459,7 @@ def urun_viev_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"muhasebe_page/urunler.html",content)
@@ -4778,7 +4778,7 @@ def urunler_kategorisi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     return render(request,"stok/urun_kategorileri.html",content)
@@ -4912,7 +4912,7 @@ def satin_alma_talabi(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["urunlerimiz"] = urunler_gonder
@@ -5056,7 +5056,7 @@ def satin_alma_talabi_onaylama(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["urunlerimiz"] = urunler_gonder
@@ -5156,7 +5156,7 @@ def satin_alma_(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["urunlerimiz"] = urunler_gonder
@@ -5234,7 +5234,7 @@ def satin_alma_kabuller(request):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["urunlerimiz"] = urunler_gonder
@@ -5935,7 +5935,7 @@ def satin_alma_talebi_ekle_2(request,hash):
     if request.POST:
         #yetkili_adi
         if super_admin_kontrolu(request):
-            kullanici_bilgisi  = content
+            kullanici_bilgisi  = users
             urun_bilgisi = request.POST.get("urun")
             miktar = request.POST.get("miktar")
             fiyat = request.POST.get("fiyat")
@@ -6034,7 +6034,7 @@ def satin_alma_talabi_onaylama_2(request,hash):
     except EmptyPage:
             # if the page is out of range, deliver the last page
         page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
+    content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
     content["urunlerimiz"] = urunler_gonder
@@ -6236,32 +6236,3 @@ def zimmeti_teslim_Al_2(request,id,iz,hash):
         elif iz == 2:
             zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.now())
     return redirect("accounting:zimmetler")
-
-def zimmet(request,id):
-    if True:
-        kalem = get_object_or_none(zimmet_olayi , id = id)
-        if kalem.zimmet_alan_personel.profile:
-            fatura_data = {
-                "id" : id,
-                "resim" : kalem.zimmet_alan_personel.profile.url,
-                    "urun":kalem.zimmet_verilen_urun.urun_adi,
-                    "personel": str(kalem.zimmet_alan_personel.isim) +" "+str(kalem.zimmet_alan_personel.soyisim),
-                    "adet": str(kalem.zimmet_miktari),
-                    "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
-                    "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y") if kalem.zimmet_teslim_edilme_tarihi else "" ,
-                    "durum":kalem.zimmet_durumu,
-                    
-            }
-        else:
-            fatura_data = {
-                "id" : id,
-                "resim" : "0",
-                    "urun":kalem.zimmet_verilen_urun.urun_adi,
-                    "personel": str(kalem.zimmet_alan_personel.isim) +" "+str(kalem.zimmet_alan_personel.soyisim),
-                    "adet": str(kalem.zimmet_miktari),
-                    "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
-                    "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y") if kalem.zimmet_teslim_edilme_tarihi else "" ,
-                    "durum":kalem.zimmet_durumu,
-                    
-            }
-        return JsonResponse(fatura_data)

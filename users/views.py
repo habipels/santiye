@@ -290,6 +290,176 @@ def kullanici_bilgileri_duzenle(request):
                 bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
         return redirect("users:kullanicilarim")
 
+######################3
+#kullanıcılar
+def kullanicilarim_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+
+    if super_admin_kontrolu(request):
+        profile = taseron_sozlesme_dosyalari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = CustomUser.objects.filter(kullanicilar_db = users,kullanici_silme_bilgisi = False).order_by("-id")
+        kullanic_izinlerim = personel_izinleri.objects.filter(izinlerin_sahibi_kullanici = users)
+        content["kullanici_izinlerim"] = kullanic_izinlerim
+    else:
+        profile = CustomUser.objects.filter(kullanicilar_db = request.user,kullanici_silme_bilgisi = False).order_by("-id")
+        kullanic_izinlerim = personel_izinleri.objects.filter(izinlerin_sahibi_kullanici = request.user)
+        content["kullanici_izinlerim"] = kullanic_izinlerim
+
+    content["santiyeler"] = profile
+    return render(request,"account/kullanicilar.html",content)
+#kullanıcılar
+
+def kullanici_ekleme_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            yetkili_adi = request.POST.get("yetkili_adi")
+            email = request.POST.get("email")
+            gorevi = request.POST.get("gorevi")
+            durumu = request.POST.get("durumu")
+            parola = request.POST.get("parola")
+            file = request.POST.getlist("file")
+            izinler = request.POST.get("izinler")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            a = CustomUser(
+                first_name = users.first_name,
+                last_name = yetkili_adi,
+                username = email,
+                email = email,
+                gorevi =gorevi,
+                kullanicilar_db = users,
+                is_active = durumu
+            )
+            a.set_password(parola)
+
+            a.save()
+            for images in file:
+                personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
+            if izinler:
+                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
+        else:
+            yetkili_adi = request.POST.get("yetkili_adi")
+            email = request.POST.get("email")
+            gorevi = request.POST.get("gorevi")
+            durumu = request.POST.get("durumu")
+            parola = request.POST.get("parola")
+            file = request.POST.getlist("file")
+            izinler = request.POST.get("izinler")
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            a = CustomUser(
+                first_name = request.user.first_name,
+                last_name = yetkili_adi,
+                username = email,
+                email = email,
+                gorevi =gorevi,
+                kullanicilar_db = request.user,
+                is_active = durumu
+            )
+            a.set_password(parola)
+
+            a.save()
+            for images in file:
+                personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
+            if izinler:
+                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
+        return redirect("users:kullanicilarim_2",hash)
+
+
+def kullanici_silme_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        buttonIdInput = request.POST.get("buttonId")
+        CustomUser.objects.filter(id = buttonIdInput).update(is_active = False,kullanici_silme_bilgisi  = True)
+    return redirect("users:kullanicilarim_2",hash)
+
+def kullanici_bilgileri_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            buttonId = request.POST.get("buttonId")
+            yetkili_adi = request.POST.get("yetkili_adi")
+            email = request.POST.get("email")
+            gorevi = request.POST.get("gorevi")
+            durumu = request.POST.get("durumu")
+            file = request.POST.getlist("file")
+            izinler = request.POST.get("izinler")
+            bagli_kullanicilar.objects.filter(kullanicilar =get_object_or_404(CustomUser, id = buttonId)).delete()
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            CustomUser.objects.filter(id=buttonId).update(
+                first_name = users.first_name,
+                last_name = yetkili_adi,
+                username = email,
+                email = email,
+                gorevi =gorevi,
+                kullanicilar_db = users,
+                is_active = durumu
+            )
+            if len(file)> 1:
+                for images in file:
+                    personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
+            if izinler:
+                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
+        else:
+            
+            buttonId = request.POST.get("buttonId")
+            yetkili_adi = request.POST.get("yetkili_adi")
+            email = request.POST.get("email")
+            gorevi = request.POST.get("gorevi")
+            durumu = request.POST.get("durumu")
+            file = request.POST.getlist("file")
+            izinler = request.POST.get("izinler")
+            bagli_kullanicilar.objects.filter(kullanicilar =get_object_or_404(CustomUser, id = buttonId)).delete()
+            if durumu == "1":
+                durumu = True
+            else:
+                durumu = False
+            CustomUser.objects.filter(id=buttonId).update(
+                first_name = request.user.first_name,
+                last_name = yetkili_adi,
+                username = email,
+                email = email,
+                gorevi =gorevi,
+                kullanicilar_db = request.user,
+                is_active = durumu
+            )
+            if len(file)> 1:
+                for images in file:
+                    personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
+            if izinler:
+                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
+        return redirect("users:kullanicilarim_2",hash)
+
+######################
+
+
+
 @login_required
 @lock_screen_required
 def lock_screen(request):

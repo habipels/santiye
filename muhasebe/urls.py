@@ -174,8 +174,8 @@ urlpatterns = [
     path('control/stock/<str:hash>', views.stok_2, name='stok_2'),
     path('control/addstock/<str:hash>', views.stok_girisi_yap_2, name='stok_girisi_yap_2'),
     #zimmet
-    path('control/debit/<str:hash>', views.zimmetler_2, name='zimmetler'),
-    path('control/adddebit/<str:hash>', views.zimmet_ekle_2, name='zimmet_ekle'),
+    path('control/debit/<str:hash>', views.zimmetler_2, name='zimmetler_2'),
+    path('control/adddebit/<str:hash>', views.zimmet_ekle_2, name='zimmet_ekle_2'),
     path('control/teslim/<int:id>/<int:iz>/<str:hash>', views.zimmeti_teslim_Al_2, name='zimmeti_teslim_Al_2'),
 ]
 #zimmeti_teslim_Al_1

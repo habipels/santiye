@@ -18,6 +18,12 @@ urlpatterns = [
     path('addmyusers/',views.kullanici_ekleme,name = "kullanici_ekleme"),
     path('delmyusers/',views.kullanici_silme,name = "kullanici_silme"),
     path('setmyusers/',views.kullanici_bilgileri_duzenle,name = "kullanici_bilgileri_duzenle"),
+
+
+    path('control/myusers/<str:hash>',views.kullanicilarim_2,name = "kullanicilarim_2"),
+    path('control/addmyusers/<str:hash>',views.kullanici_ekleme_2,name = "kullanici_ekleme_2"),
+    path('control/delmyusers/<str:hash>',views.kullanici_silme_2,name = "kullanici_silme_2"),
+    path('control/setmyusers/<str:hash>',views.kullanici_bilgileri_duzenle_2,name = "kullanici_bilgileri_duzenle_2"),
     #kullanici işlemleri
     #personel #
     path('employee/',views.personeller_sayfasi,name = "personeller_sayfasi"),
