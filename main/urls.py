@@ -208,5 +208,11 @@ urlpatterns = [#
     path("setlayer", views.katman_duzenle, name="katman_duzenle"),
     path('get_yapi/<int:santiye_id>/', views.get_yapi, name='get_yapi'),
     path('yapilacak/<int:id>/', views.yapilacak_gonder_json, name='yapilacak_gonder_json'),
+    path("control/userauthorizations/<str:hash>", views.kullanici_yetkileri_2, name="kullanici_yetkileri_2"),
+    path("control/kullaniciyetkiolustur/<str:hash>", views.kullanici_yetki_olustur_2, name="kullanici_yetki_olustur_2"),
+    path("control/kullaniciyetkiadiduzenle/<str:hash>", views.kullanici_yetki_adi_duzenle_2, name="kullanici_yetki_adi_duzenle_2"),
+    path("control/kullaniciyetkisil/<str:hash>", views.kullanici_yetki_sil_2, name="kullanici_yetki_sil_2"),
+    path("control/userauthorizationsset/<int:id>/<str:hash>", views.kullanici_yetkileri_duzenle_2, name="kullanici_yetkileri_duzenle_2"),
+    path("control/kullaniciyetkialma/<str:hash>", views.kullanici_yetki_alma_2, name="kullanici_yetki_alma_2"),
 ]
 #
