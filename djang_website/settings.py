@@ -370,6 +370,7 @@ else:
         # 'zh' dil kodu Çince için standart olarak kullanılır
         ('fr', _('French')),
         ('ar', _('Arabic')),
+        ('ckb', _('Sorani')),
         #('ku', _('Kurdish')),
         #('fr', _('Kurdish')),
 
