@@ -65,6 +65,18 @@
     background-color: white; /* Sabit sütun arka plan rengi */
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sabit sütun ile diğer sütunlar arasında gölge */
 }
+.warning-message {
+    background-color: #fff3cd; /* Hafif sarı arka plan */
+    color: #856404; /* Koyu sarı yazı rengi */
+    border-left: 4px solid #ffecb5; /* Sadece sol tarafta ince bir çizgi */
+    padding: 10px 15px; /* İç boşluk */
+    font-size: 1em; /* Standart yazı boyutu */
+    text-align: center;
+    border-radius: 4px; /* Hafif yuvarlatılmış köşeler */
+    max-width: 70%; /* Genişlik sınırlaması */
+    margin: 20px auto; /* Ortalanmış konumlandırma */
+}
+
 
 .dataTables_wrapper .DTFC_LeftWrapper table {
     background-color: white; /* İçerikteki tablo hücrelerinin arka planını düzeltir */
@@ -84,7 +96,7 @@
                     Puantaj
                 </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
                     <li><a href="#">Çalışan Yönetimi</a></li>
                     <li><a href="#">Puantaj</a></li>
                 </ul>
@@ -99,9 +111,9 @@
 
         <div class="large-stats-card table-card table-detail-card">
             <div class="stats-header">
-                <div class="stats-title">Aylık Puantaj Girişi</div>
+                <div class="stats-title">{% trans 'Aylık Puantaj Girişi' %}</div>
                 <div class="stats-right">
-                    <div class="stats-info">Toplam Hakediş: 0₺</div>
+                    <div class="stats-info">{% trans 'Toplam Hakediş:' %} 0₺</div>
                 </div>
             </div>
             <form id="filterForm" method="GET" >
@@ -109,7 +121,7 @@
             
                 <div class="puantaj-action">
                     <div class="stats-search">
-                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                        <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
                         <button><i class="icon icon-search"></i></button>
                     </div>
                 </div>
@@ -135,12 +147,12 @@
                     </div>
                 </div>
                 <div class="puantaj-action">
-                    <button type="submit" class="puantaj-action-btn">Filtreleri Uygula</button>
+                    <button type="submit" class="puantaj-action-btn">{% trans 'Filtreleri Uygula' %}</button>
                 </div>
                
                 <div class="puantaj-action puantaj-tabs">
-                    <div class="puantaj-tab" data-tab="haftalik">Haftalık</div>
-                    <div class="puantaj-tab active" data-tab="aylik">Aylık</div>
+                    <div class="puantaj-tab" data-tab="haftalik">{% trans 'Haftalık' %}</div>
+                    <div class="puantaj-tab active" data-tab="aylik">{% trans 'Aylık' %}</div>
                 </div>
 
             </div>
@@ -810,7 +822,7 @@ $j(document).ready(function() {
                         </div>
                     </div>
                     <div class="form-element">
-                        <label for="aciklama">Açıklama</label>
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
                         <textarea name="aciklama" id="aciklama"></textarea>
                     </div>
                     <div class="form-actions">
@@ -921,6 +933,98 @@ $j(document).ready(function() {
 
 // Ek hata durumları için preloader gizleme
 window.addEventListener('DOMContentLoaded', hidePreloader);
+
+// Ay kontrolune göre toplu puantaja izin verir
+
+</script>
+<script>
+    function openModal(modalID, close = true) {
+        // Ay ve filtre kontrolü
+        const monthFilter = document.getElementById('monthFilter').value;
+        const isFilterApplied = document.getElementById('jobTypeFilter').value || document.getElementById('stats-search').value;
+
+        if (!monthFilter || !isFilterApplied) {
+            alert("Lütfen önce ay seçimini yapıp filtreleri uygulayın.");
+            return;
+        }
+
+        // Seçili ay bilgilerini al
+        const selectedYear = parseInt(monthFilter.split('-')[0]);
+        const selectedMonth = parseInt(monthFilter.split('-')[1]);
+
+        // Seçilen ayın ilk ve son günlerini belirle
+        const firstDayOfMonth = `${monthFilter}-01`;
+        const lastDayOfMonth = new Date(selectedYear, selectedMonth, 0).toISOString().split('T')[0]; // Seçili ayın son gününü bul
+
+        // Modal içindeki tarih seçim alanlarına ay sınırlarını uygula
+        document.getElementById('baslangic-tarihi').setAttribute('min', firstDayOfMonth);
+        document.getElementById('baslangic-tarihi').setAttribute('max', lastDayOfMonth);
+        document.getElementById('bitis-tarihi').setAttribute('min', firstDayOfMonth);
+        document.getElementById('bitis-tarihi').setAttribute('max', lastDayOfMonth);
+
+        if (close) {
+            closeModal();
+        }
+        $("#" + modalID).css("display", "flex").hide().fadeIn();
+    }
+
+    function closeModal(modalID = "") {
+        if (modalID.length === 0) {
+            $(".modal").fadeOut();
+        } else {
+            $("#" + modalID).fadeOut();
+        }
+    }
+
+    $(".modal").on("click", function (e) {
+        if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+            closeModal();
+        }
+    });
 </script>
 
+<script>
+    // Filtreleri uygularken modalı kontrol et
+    document.getElementById('applyFilterBtn').addEventListener('click', function () {
+        // Ay seçildiyse ve filtre uygulandıysa modal açılabilir
+        const monthFilter = document.getElementById('monthFilter').value;
+        const isFilterApplied = document.getElementById('jobTypeFilter').value || document.getElementById('stats-search').value;
+        if (monthFilter && isFilterApplied) {
+            // Verilerinizi yükleyin veya gerekli işlemleri yapın
+            console.log("{% trans 'Filtre uygulandı, veriler yüklenebilir.' %}");
+        } else {
+            alert("{% trans 'Lütfen önce ay ve kategori seçimini yapıp filtreleri uygulayın.' %}");
+        }
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const statsSearch = urlParams.get('stats-search');
+    const monthFilter = urlParams.get('monthFilter');
+    const jobTypeFilter = urlParams.get('jobTypeFilter');
+    const personelID = urlParams.get('personelID');
+
+    // Filtreleme yapılmadıysa tabloyu gizle ve uyarı mesajı göster
+    if (!statsSearch && !monthFilter && !jobTypeFilter && !personelID) {
+        const tableWrapper = document.querySelectorAll('.table-wrapper');
+        tableWrapper.forEach(wrapper => {
+            wrapper.style.display = 'none';
+        });
+
+        // Uyarı mesajını ekle
+        const warningMessage = document.createElement('div');
+        warningMessage.className = 'warning-message';
+        warningMessage.innerText = 'Lütfen filtre girişinizi yapın.';
+        
+        // Uyarıyı tablonun üst kısmına ekle
+        const largeStatsCard = document.querySelector('.large-stats-card');
+        if (largeStatsCard) {
+            largeStatsCard.insertBefore(warningMessage, largeStatsCard.firstChild);
+        }
+    }
+});
+
+
+</script>
 {% endblock sidebar %}

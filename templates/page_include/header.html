@@ -53,7 +53,7 @@
     {% url 'main:santiye_kalem_ve_blog_2' hashler as santiye_kalem_ve_blog_url %}
     
     <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
-        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>Raporlar</span> <i class="icon icon-caret"></i></a>
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>{% trans 'Raporlar' %}</span> <i class="icon icon-caret"></i></a>
         <ul class="sidebar-sub-menu">
             <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
                 <a href="/{{dil}}{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Şantiye Raporları' %}</a>
@@ -73,7 +73,7 @@
                         <a href="/{{dil}}{{ giderler_ozeti_url }}" class="sidebar-sub-item">{% trans 'Gider Raporu ' %}</a>
                     </li>
                     <li class="{% if request.path == hesap_ekstra_durumu_url %}active{% endif %}">
-                        <a href="/{{dil}}{{ hesap_ekstra_durumu_url }}" class="sidebar-sub-item">{% trans 'Hesap Ekstresisi ' %}</a>
+                        <a href="/{{dil}}{{ hesap_ekstra_durumu_url }}" class="sidebar-sub-item">{% trans 'Hesap Ekstresi ' %}</a>
                     </li>
                     <li class="{% if request.path == virman_gondermeler_url %}active{% endif %}">
                         <a href="/{{dil}}{{ virman_gondermeler_url }}" class="sidebar-sub-item">{% trans 'Virman Raporu ' %}</a>
@@ -409,7 +409,7 @@
 
     <header>
         <div class="header-search">
-            <input type="search" name="search" id="search" placeholder="Uygulama içerisinde ara">
+            <input type="search" name="search" id="search" placeholder="{% trans 'Uygulama içerisinde ara' %}">
             <button><i class="icon icon-search"></i></button>
         </div>
         <div class="header-actions">
@@ -447,11 +447,11 @@
                         {% bildirimler request.user as bildirim %}
                         {% endif %}
                         Bildirimler
-                        <span>{{bildirim | length }} adet yeni bildiriminiz var.</span>
+                        <span>{{bildirim | length }} {% trans 'adet yeni bildiriminiz var.' %}</span>
                     </div>
                     <div class="notifications-tabs">
                         <button onclick="notificationTab(event, 'notification-all')"
-                            class="notification-tab-btn active">Hepsi
+                            class="notification-tab-btn active">{% trans 'adet yeni bildiriminiz var.' %}
                             <span>{{bildirim | length }}</span></button>
                         <!--<button onclick="notificationTab(event, 'notification-unread')"
                             class="notification-tab-btn">Okunmamış <span>3</span></button>-->
@@ -467,7 +467,7 @@
                                 <div class="notification-title notification-title-danger">{% trans 'Ödeme tarihini geçen bir Gelir faturanız bulunmaktadır.'%} </div>
                                 <div class="notification-date">{{i.vade_tarihi | date:'d m Y' }}</div>
                                 <div class="notification-actions">
-                                    <a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                    <a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="notification-inspect-button">{% trans 'İncele' %}</button></a> 
                                 </div>
                             </div>
                         </div>
@@ -480,7 +480,7 @@
                                 <div class="notification-title notification-title-danger">{% trans 'Ödeme tarihini geçen bir Gider faturanız bulunmaktadır.'%} </div>
                                 <div class="notification-date">{{i.vade_tarihi | date:'d m Y' }}</div>
                                 <div class="notification-actions">
-                                    <a href="/{{dil}}{{ giderler_sayfasi_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                    <a href="/{{dil}}{{ giderler_sayfasi_url }}"><button class="notification-inspect-button">{% trans 'İncele' %}</button></a> 
                                 </div>
                             </div>
                         </div>
@@ -495,7 +495,7 @@
                                     {% blocktrans %}Miktar{% endblocktrans %}: {{ i.miktar }}<br>
                                     {% blocktrans %}Tarih{% endblocktrans %}: {{ i.kayit_tarihi }}</div>
                                 <div class="notification-actions">
-                                    <a href="/{{dil}}{{ satin_alma_talabi_onaylama_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                    <a href="/{{dil}}{{ satin_alma_talabi_onaylama_url }}"><button class="notification-inspect-button">{% trans 'İncele' %}</button></a> 
                                 </div>
                             </div>
                         </div>
@@ -510,7 +510,7 @@
                                     {% blocktrans %}Açıklama : {% endblocktrans %} {{ i.aciklama }}<br>
                                     {% blocktrans %}Teslim Tarihi : {% endblocktrans %} {{ i.teslim_tarihi }}</div>
                                 <div class="notification-actions">
-                                    <a href="/{{dil}}{{ yapilacaklar_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                    <a href="/{{dil}}{{ yapilacaklar_url }}"><button class="notification-inspect-button">{% trans 'İncele' %}</button></a> 
                                 </div>
                             </div>
                         </div>
@@ -532,7 +532,7 @@
                                 <div class="notification-subtitle">site_info - klasörler</div>
                                 <div class="notification-date">07 Ağustos 2024 • 09:36</div>
                                 <div class="notification-actions">
-                                    <button class="notification-inspect-button">İncele</button>
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
                                     <button class="notification-confirm-button">Onayla</button>
                                 </div>
                             </div>
@@ -707,7 +707,7 @@
 
     {% url 'main:santiye_kalem_ve_blog' as santiye_kalem_ve_blog_url %}
     <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
-        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>Raporlar</span> <i class="icon icon-caret"></i></a>
+        <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>{% trans 'Raporlar' %}</span> <i class="icon icon-caret"></i></a>
         <ul class="sidebar-sub-menu">
             <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
                 <a href="/{{dil}}{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Şantiye Raporları' %}</a>
@@ -727,7 +727,7 @@
                         <a href="/{{dil}}{{ giderler_ozeti_url }}" class="sidebar-sub-item">{% trans 'Gider Raporu ' %}</a>
                     </li>
                     <li class="{% if request.path == hesap_ekstra_durumu_url %}active{% endif %}">
-                        <a href="/{{dil}}{{ hesap_ekstra_durumu_url }}" class="sidebar-sub-item">{% trans 'Hesap Ekstresisi ' %}</a>
+                        <a href="/{{dil}}{{ hesap_ekstra_durumu_url }}" class="sidebar-sub-item">{% trans 'Hesap Ekstresi ' %}</a>
                     </li>
                     <li class="{% if request.path == virman_gondermeler_url %}active{% endif %}">
                         <a href="/{{dil}}{{ virman_gondermeler_url }}" class="sidebar-sub-item">{% trans 'Virman Raporu ' %}</a>
@@ -1105,7 +1105,7 @@
 
     <header>
         <div class="header-search">
-            <input type="search" name="search" id="search" placeholder="Uygulama içerisinde ara">
+            <input type="search" name="search" id="search" placeholder="{% trans 'Uygulama içerisinde ara' %}">
             <button><i class="icon icon-search"></i></button>
         </div>
         <div class="header-actions">
@@ -1143,11 +1143,11 @@
                         {% bildirimler request.user as bildirim %}
                         {% endif %}
                         Bildirimler
-                        <span>{{bildirim | length }} adet yeni bildiriminiz var.</span>
+                        <span>{{bildirim | length }} {% trans 'adet yeni bildiriminiz var.' %}</span>
                     </div>
                     <div class="notifications-tabs">
                         <button onclick="notificationTab(event, 'notification-all')"
-                            class="notification-tab-btn active">Hepsi
+                            class="notification-tab-btn active">{% trans 'adet yeni bildiriminiz var.' %}
                             <span>{{bildirim | length }}</span></button>
                         <!--<button onclick="notificationTab(event, 'notification-unread')"
                             class="notification-tab-btn">Okunmamış <span>3</span></button>-->
@@ -1163,7 +1163,7 @@
                                 <div class="notification-title notification-title-danger">{% trans 'Ödeme tarihini geçen bir Gelir faturanız bulunmaktadır.'%} </div>
                                 <div class="notification-date">{{i.vade_tarihi | date:'d m Y' }}</div>
                                 <div class="notification-actions">
-                                    <a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                    <a href="/{{dil}}{{ gelirler_sayfasi_url }}"><button class="notification-inspect-button">{% trans 'İncele' %}</button></a> 
                                 </div>
                             </div>
                         </div>
@@ -1176,7 +1176,7 @@
                                 <div class="notification-title notification-title-danger">{% trans 'Ödeme tarihini geçen bir Gider faturanız bulunmaktadır.'%} </div>
                                 <div class="notification-date">{{i.vade_tarihi | date:'d m Y' }}</div>
                                 <div class="notification-actions">
-                                    <a href="/{{dil}}{{ giderler_sayfasi_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                    <a href="/{{dil}}{{ giderler_sayfasi_url }}"><button class="notification-inspect-button">{% trans 'İncele' %}</button></a> 
                                 </div>
                             </div>
                         </div>
@@ -1191,7 +1191,7 @@
                                     {% blocktrans %}Miktar{% endblocktrans %}: {{ i.miktar }}<br>
                                     {% blocktrans %}Tarih{% endblocktrans %}: {{ i.kayit_tarihi }}</div>
                                 <div class="notification-actions">
-                                    <a href="/{{dil}}{{ satin_alma_talabi_onaylama_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                    <a href="/{{dil}}{{ satin_alma_talabi_onaylama_url }}"><button class="notification-inspect-button">{% trans 'İncele' %}</button></a> 
                                 </div>
                             </div>
                         </div>
@@ -1206,7 +1206,7 @@
                                     {% blocktrans %}Açıklama : {% endblocktrans %} {{ i.aciklama }}<br>
                                     {% blocktrans %}Teslim Tarihi : {% endblocktrans %} {{ i.teslim_tarihi }}</div>
                                 <div class="notification-actions">
-                                    <a href="/{{dil}}{{ yapilacaklar_url }}"><button class="notification-inspect-button">İncele</button></a> 
+                                    <a href="/{{dil}}{{ yapilacaklar_url }}"><button class="notification-inspect-button">{% trans 'İncele' %}</button></a> 
                                 </div>
                             </div>
                         </div>
@@ -1228,7 +1228,7 @@
                                 <div class="notification-subtitle">site_info - klasörler</div>
                                 <div class="notification-date">07 Ağustos 2024 • 09:36</div>
                                 <div class="notification-actions">
-                                    <button class="notification-inspect-button">İncele</button>
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
                                     <button class="notification-confirm-button">Onayla</button>
                                 </div>
                             </div>

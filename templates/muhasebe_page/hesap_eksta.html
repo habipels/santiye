@@ -55,7 +55,7 @@
                                     <div class="stats-title">{% trans 'Hakedişler' %}</div>
                                     
                                     <div class="stats-search">
-                                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                                        <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
                                         <button><i class="icon icon-search"></i></button>
                                     
                                     </div>-->
@@ -160,7 +160,7 @@ $(document).ready(function () {
             'vade_tarihi': '{{ i.vade_tarihi|date:"d.m.Y"|escapejs }}',
             'fatura_bedeli': "${{ i.toplam_tutar|stringformat:'.2f'|escapejs }}",
             'kalan_tutar': "${{ i.kalan_tutar|stringformat:'.2f'|escapejs }}",
-            'durum': '{% if i.toplam_tutar == i.kalan_tutar %}Ödenmedi{% elif i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}',
+            'durum': '{% if i.toplam_tutar == i.kalan_tutar %}{% trans 'Ödenmedi' %}{% elif i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}',
         }
         {% if not forloop.last %},{% endif %}
         
@@ -579,7 +579,7 @@ $(document).ready(function () {
                         <thead>
                             <tr>
                                 <th>{% trans 'ÖDEME TARİHİ' %}</th>
-                                <th>{% trans 'KASA HESABI' %}</th>
+                                <th>{% trans 'KASA' %}</th>
                                 <th>{% trans 'İŞLEM TARİHİ' %}</th>
                                 <th>{% trans 'KULLANICI' %}</th>
                                 <th>{% trans 'TUTAR' %}</th>
@@ -802,7 +802,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                     <div class="fature-desc">
-                        <div class="title"><h5>Açıklama</h5></div>
+                        <div class="title"><h5>{% trans 'Açıklama' %}</h5></div>
                         <div class="value"><span>${data.aciklama}</span></div>
                     </div>
                     <div class="title">
@@ -835,7 +835,7 @@ $(document).ready(function () {
                             </div>
                             <div title="Makbuzu Görüntüle" class="makbuz">
                                 <span id="${data.id}" class="mdi mdi-text-box-search-outline"></span>
-                                <span>Kasa Hesabı</span>
+                                <span>{% trans 'Kasa' %} Hesabı</span>
                             </div>
                             <div class="fiyat"><span>${data.genel_toplam}<span>$</span></div>
                         </div>

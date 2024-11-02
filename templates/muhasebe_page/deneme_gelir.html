@@ -33,7 +33,7 @@
                             <h4 class="mb-sm-0">Giderler</h4>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
                                     <li class="breadcrumb-item active">Giderler</li>
                                 </ol>
                             </div>
@@ -55,9 +55,9 @@
                                             <thead>
                                                 <tr>
                                                     <th>İncele</th>
-                                                    <th>Fatura No</th>
+                                                    <th>{% trans 'Fatura No' %}</th>
                                                     <th>Cari</th>
-                                                    <th>Açıklama</th>
+                                                    <th>{% trans 'Açıklama' %}</th>
                                                     <th>Etiket 1</th>
                                                     <th>Etiket 2</th>
                                                     <th>Etiket 3</th>
@@ -71,9 +71,9 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>İncele</th>
-                                                    <th>Fatura No</th>
+                                                    <th>{% trans 'Fatura No' %}</th>
                                                     <th>Cari</th>
-                                                    <th>Açıklama</th>
+                                                    <th>{% trans 'Açıklama' %}</th>
                                                     <th>Etiket 1</th>
                                                     <th>Etiket 2</th>
                                                     <th>Etiket 3</th>
@@ -332,7 +332,7 @@ $(document).ready(function () {
         data: [
         {% for i in santiyeler_i %}
         
-        {'incele': '<button class="faturabilgisi bg-sucsses" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">İncele</button>', 'fatura_no': '{{i.fatura_no}}', 'cari': '{{i.cari_bilgisi.cari_adi}}', 'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gider_etiketi_adi|escapejs }}{% endif %}', 'duzenleme_tarihi': '{{i.fatura_tarihi | date:'d.m.Y' }}', 'vade_tarihi': '{{i.vade_tarihi | date:'d.m.Y' }}', 'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}Ödenmedi{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
+        {'incele': '<button class="faturabilgisi bg-sucsses" id="{{i.id}}" onclick="loadFaturaDetails({{i.id}})">İncele</button>', 'fatura_no': '{{i.fatura_no}}', 'cari': '{{i.cari_bilgisi.cari_adi}}', 'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gider_etiketi_adi|escapejs }}{% endif %}', 'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gider_etiketi_adi|escapejs }}{% endif %}', 'duzenleme_tarihi': '{{i.fatura_tarihi | date:'d.m.Y' }}', 'vade_tarihi': '{{i.vade_tarihi | date:'d.m.Y' }}', 'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}{% trans 'Ödenmedi' %}{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
         {% if not forloop.last %},{% endif %}
         
         
@@ -490,7 +490,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                     <div class="fature-desc">
-                        <div class="title"><h5>Açıklama</h5></div>
+                        <div class="title"><h5>{% trans 'Açıklama' %}</h5></div>
                         <div class="value"><span>${data.aciklama}</span></div>
                     </div>
                     <div class="title">
@@ -523,7 +523,7 @@ $(document).ready(function () {
                             </div>
                             <div title="Makbuzu Görüntüle" class="makbuz">
                                 <span type="button" onclick="makbuzlari_goruntule()" id="${data.id}" class="mdi mdi-text-box-search-outline"></span>
-                                <span>Kasa Hesabı</span>
+                                <span>{% trans 'Kasa' %} Hesabı</span>
                             </div>
                             <div class="fiyat"><span>${data.genel_toplam}<span>$</span></div>
                         </div>
@@ -632,7 +632,7 @@ $(document).ready(function () {
                         <thead>
                             <tr>
                                 <th>ÖDEME TARİHİ</th>
-                                <th>KASA HESABI</th>
+                                <th>{% trans 'Kasa' %}</th>
                                 <th>İŞLEM TARİHİ</th>
                                 <th>KULLANICI</th>
                                 <th>TUTAR</th>

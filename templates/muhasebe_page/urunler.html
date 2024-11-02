@@ -65,8 +65,8 @@
                                                     <th class="sort" data-sort="customer_name">{% trans 'Ürün Stoğa Dahil Mi ?' %}</th>
                                                     <th class="sort" data-sort="customer_name">{% trans 'Ürün Adı' %}</th>
                                                     <th class="sort" data-sort="phone">{% trans 'Ürün Fiyatı' %}</th>
-                                                    <th class="sort" data-sort="phone">{% trans 'Maaş Faturalarında Otomatik Kullan' %}</th>
-                                                    <th class="sort" data-sort="phone">{% trans 'Avans Faturalarında Otomatik Kullan' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Maaş Faturası İçin Kullan' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Avans Faturası İçin Kullan' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
                                                     <th class="sort" data-sort="date">{% trans 'Aksiyonlar' %}</th>
                                                
@@ -103,16 +103,16 @@
                                                     <td class="bakiye">{{i.urun_fiyati}} <span>$</span></td>
                                                     <td class="kasa">
                                                      {% if i.maas_icin_kullan  %}
-                                                        {% trans 'Otomatik Faturalarda Kullan' %}
+                                                        Aktif
                                                      {% else %}
-                                                     {% trans 'Faturalarda Otomatik Kullanma' %}
+                                                     {% trans 'Aktif Değil' %}
                                                      {% endif %}
                                                      </td>
                                                      <td class="kasa">
                                                      {% if i.avans_icin_kullan %}
-                                                         {% trans 'Otomatik Faturalarda Kullan' %}
+                                                         Aktif
                                                      {% else %}
-                                                     {% trans 'Faturalarda Otomatik Kullanma' %}
+                                                     {% trans 'Aktif Değil' %}
                                                      {% endif %}
                                                      </td>
                                                     <td class="konum">{{i.kayit_tarihi}}</td>
@@ -283,7 +283,7 @@
                                             </select>
                                         </div>
                                     <div class="form-element">
-                                            <label for="date-field" class="form-label">{% trans 'Otomatik Maaşlarda Kullan' %}</label>
+                                            <label for="date-field" class="form-label">{% trans 'Maaş ödemelerinde kullan' %}</label>
                                             <select class="form-control" name="maaslarda_kullan" id="date-field">
                                             
                                                 <option value="1">{% trans 'Kullanma' %}</option>
@@ -291,7 +291,7 @@
                                             </select>
                                         </div>
                                     <div class="form-element">
-                                            <label for="date-field" class="form-label">{% trans 'Otomatik avanslarda Kullan' %}</label>
+                                            <label for="date-field" class="form-label">{% trans 'Avans ödemelerinde kullan' %}</label>
                                             <select class="form-control" name="avanslarda_kullan" id="date-field">
                                             
                                                 <option value="1">{% trans 'Kullanma' %}</option>
@@ -388,7 +388,7 @@
                                             </select>
                                         </div>
                                         <div class="form-element">
-                                            <label for="date-field" class="form-label">{% trans 'Otomatik Maaşlarda Kullan' %}</label>
+                                            <label for="date-field" class="form-label">{% trans 'Maaş ödemelerinde kullan' %}</label>
                                             <select class="form-control" name="maaslarda_kullan" id="date-field">
                                                 {% if i.maas_icin_kullan %}
                                                
@@ -402,7 +402,7 @@
                                             </select>
                                         </div>
                                         <div class="form-element">
-                                            <label for="date-field" class="form-label">{% trans 'Otomatik avanslarda Kullan' %}</label>
+                                            <label for="date-field" class="form-label">{% trans 'Avans ödemelerinde kullan' %}</label>
                                             <select class="form-control" name="avanslarda_kullan" id="date-field">
                                             {% if i.avans_icin_kullan %}
                                                
