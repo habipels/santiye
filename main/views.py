@@ -8722,13 +8722,7 @@ def proje_duzenle_2(request,hash):
     return redirect("main:proje_tipi_2",hash)
 #Şantiye Projesi Ekleme
 ############################
-"""
-content = sozluk_yapisi()
-    d = decode_id(hash)
-    content["hashler"] = hash
-    users = get_object_or_404(CustomUser,id = d)
-    content["hash_bilgi"] = users
-"""
+
 
 def santiyeye_kalem_ekle_2(request,hash):
     content = sozluk_yapisi()
@@ -8948,3 +8942,113 @@ def blog_sil_2(request,hash):
         blog_bilgisi = get_object_or_404(bloglar,id = buttonId)
         bloglar.objects.filter(id = buttonId).delete()
     return redirect("main:santiye_projesi_ekle_2",hash)
+
+"""
+content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+"""
+def katman_sayfasi_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if super_admin_kontrolu(request):
+        profile =katman.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = katman.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = users)
+        content["insaatlar"] = santiye.objects.filter(proje_ait_bilgisi =  users,silinme_bilgisi = False)
+    content["santiyeler"] = profile
+    content["top"]  = profile
+    content["medya"] = profile
+    return render(request,"santiye_yonetimi/katman.html",content)
+
+def katman_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            kullanici = users
+            
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a.izinler.katman_olusturma:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici = request.user
+        katman_adi = request.POST.get("taseron_adi")
+        santiye_al = request.POST.get("blogbilgisi")
+        dosya = request.FILES.get("file")
+        katman.objects.create(
+            proje_ait_bilgisi = kullanici,
+            proje_santiye_Ait = get_object_or_none(santiye,id = santiye_al),
+            katman_adi  = katman_adi,
+            katman_dosyasi = dosya
+        )
+    return redirect("main:katman_sayfasi_2",hash)
+
+def katman_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            kullanici = request.POST.get("kullanici")
+            buttonIdInput = request.POST.get("buttonId")
+            katman.objects.filter(id = buttonIdInput).update(
+                    silinme_bilgisi = True
+                )
+            return redirect("main:katman_sayfasi_2",hash)
+
+    
+
+def katman_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        if request.user.is_superuser:
+            
+            kullanici = users
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a.izinler.katman_olusturma:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici = request.user
+        katman_adi = request.POST.get("taseron_adi")
+        santiye_al = request.POST.get("blogbilgisi")
+        dosya = request.FILES.get("file")
+        buttonId = request.POST.get("buttonId")
+        if dosya:
+            katman.objects.filter(id = buttonId).update(
+                proje_ait_bilgisi = kullanici,
+                proje_santiye_Ait = get_object_or_none(santiye,id = santiye_al),
+                katman_adi  = katman_adi,
+                katman_dosyasi = dosya
+            )
+        else:
+            katman.objects.filter(id = buttonId).update(
+            proje_ait_bilgisi = kullanici,
+            proje_santiye_Ait = get_object_or_none(santiye,id = santiye_al),
+            katman_adi  = katman_adi
+        )
+    return redirect("main:katman_sayfasi_2",hash)
+
