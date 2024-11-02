@@ -30,6 +30,9 @@ urlpatterns = [#
     path("delprojectstype", views.proje_Adi_sil, name="proje_Adi_sil"),
     path("setprojecttype", views.proje_duzenle, name="proje_duzenle"),
     path("control/projectstypes/<str:hash>", views.proje_tipi_2, name="proje_tipi_2"),
+    path("control/addprojectstype/<str:hash>", views.proje_ekleme_2, name="proje_ekleme_2"),
+    path("control/delprojectstype/<str:hash>", views.proje_Adi_sil_2, name="proje_Adi_sil_2"),
+    path("control/setprojecttype/<str:hash>", views.proje_duzenle_2, name="proje_duzenle_2"),
     #proje tip işlemelri
     #şantiye proje işlemleri
     path("siteprojects", views.santiye_projesi_ekle_, name="santiye_projesi_ekle_"),

@@ -825,6 +825,8 @@ def dil_sil(request):
     else:
         return redirect("main:dil_ayari_listele")
 #Proje Tipi
+
+
 def proje_tipi_(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -7941,13 +7943,6 @@ def get_yapi(request, santiye_id):
     yapilar_list = list(yapilar)
     return JsonResponse({'yapilar': yapilar_list})
 ######################################3
-"""
-content = sozluk_yapisi()
-    d = decode_id(hash)
-    content["hashler"] = hash
-    users = get_object_or_404(CustomUser,id = d)
-    content["hash_bilgi"] = users
-"""
 
 
 def kullanici_yetkileri_2(request,hash):
@@ -8638,3 +8633,59 @@ def kullanici_yetki_alma_2(request,hash):
             izinler.gider_faturasi_makbuz_silme_izni = True
         izinler.save()
     return redirect("main:kullanici_yetkileri_2",hash)
+"""
+content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+"""
+def proje_ekleme_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            proje_tipi.objects.create(proje_ait_bilgisi = users ,Proje_tipi_adi = proje_tip_adi)
+        
+    return redirect("main:proje_tipi_2",hash)
+#Proje Adı Silme
+def proje_Adi_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        proje_tipi.objects.filter(id = id).update(silinme_bilgisi = True)
+    
+    return redirect("main:proje_tipi_2",hash)
+#Proje Düzenlme
+import folium
+def proje_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        silinmedurumu = request.POST.get("silinmedurumu")
+        
+        proje_tipi.objects.filter(id = id).update(proje_ait_bilgisi = users ,Proje_tipi_adi = proje_tip_adi )
+
+    
+    return redirect("main:proje_tipi_2",hash)
+#Şantiye Projesi Ekleme
