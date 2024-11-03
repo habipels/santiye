@@ -2963,31 +2963,50 @@
 
             <div class="large-cards-second-row">
 
-             <div class="card">
-                    <div class="stats-header">
-                    <div class="isemri-title">{% trans 'Aktif İş Emirleri' %}</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="building-container">
-                                                    <div class="building" id="building">
-                                                        <div class="face" id="face1"><div class="roof">Kuzey</div></div>
-                                                        <div class="face" id="face2"><div class="roof">Doğu</div></div>
-                                                        <div class="face" id="face3"><div class="roof">Güney</div></div>
-                                                        <div class="face" id="face4"><div class="roof">Batı</div></div>
-                                                    </div>
-                        
-                                                    <!-- Mouse yanında çıkan mini modal -->
-                                                    <div id="infoModal" class="info-modal">
-                                                        <span class="close-btn" onclick="closeInfoModal()">×</span>
-                                                        <p id="modalText"></p>
-                                                        <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
-                                                    </div>
-                        </div>
-                    </div>
-                        <div class="card-footer">
-                           <a href="/{{dil}}{% url 'main:yapilacaklar' %}" class="card-show-all"> {% trans 'Tümünü Gör <i class="icon icon-forward"></i>' %}</a>
-                        </div>
-                </div>
+             <div class="card" id="buildingCard">
+    <div class="stats-header">
+        <div class="isemri-title">{% trans 'Aktif İş Emirleri' %}</div>
+    </div>
+    <div class="card-body" id="cardBody">
+        <!-- butonlar -->
+        <div class="block-selector">
+            <button onclick="showBlock('R4', 30)" class="block-btn">R4</button>
+            <button onclick="showBlock('R5', 20)" class="block-btn">R5</button>
+            <button onclick="showBlock('R8', 55)" class="block-btn">R8</button>
+        </div>
+
+        <!-- bloklar -->
+        <div class="building-container" id="buildingContainer">
+            <div class="building" id="building-R4" style="display: none;">
+                <div class="face" id="face1"><div class="roof">Kuzey</div></div>
+                <div class="face" id="face2"><div class="roof">Doğu</div></div>
+                <div class="face" id="face3"><div class="roof">Güney</div></div>
+                <div class="face" id="face4"><div class="roof">Batı</div></div>
+            </div>
+            <div class="building" id="building-R5" style="display: none;">
+                <div class="face" id="face1"><div class="roof">Kuzey</div></div>
+                <div class="face" id="face2"><div class="roof">Doğu</div></div>
+                <div class="face" id="face3"><div class="roof">Güney</div></div>
+                <div class="face" id="face4"><div class="roof">Batı</div></div>
+            </div>
+            <div class="building" id="building-R8" style="display: none;">
+                <div class="face" id="face1"><div class="roof">Kuzey</div></div>
+                <div class="face" id="face2"><div class="roof">Doğu</div></div>
+                <div class="face" id="face3"><div class="roof">Güney</div></div>
+                <div class="face" id="face4"><div class="roof">Batı</div></div>
+            </div>
+        </div>
+
+        <!-- Mouse yanında çıkan mini modal -->
+        <div id="infoModal" class="info-modal">
+            <span class="close-btn" onclick="closeInfoModal()">×</span>
+            <p id="modalText"></p>
+            <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+        </div>
+    </div>
+</div>
+
+
 <!-- Eski 3d bina bloğu
                 <div class="card">
                     <div class="cardbuild">
@@ -3781,4 +3800,58 @@ createBuilding();
         table.search($(this).val()).draw();
     })
 </script>
+<script>
+    function showBlock(blockId, floors) {
+        // Tüm blokları gizle
+        document.querySelectorAll('.building').forEach((element) => {
+            element.style.display = 'none';
+        });
+
+        // Seçili bloğu göster ve kat sayısına göre yüksekliğini ayarla
+        const building = document.getElementById('building-' + blockId);
+        const buildingContainer = document.getElementById('buildingContainer');
+        const cardBody = document.getElementById('cardBody');
+        const buildingHeight = floors * 20;
+
+        building.style.display = 'block';
+        building.style.height = buildingHeight + 'px'; // Bina yüksekliği
+        buildingContainer.style.height = buildingHeight + 'px'; // Container yüksekliği
+        cardBody.style.height = buildingHeight + 100 + 'px'; // Card-body yüksekliği ek boşluk ile
+    }
+
+    // Varsayılan olarak ilk bloğu gösterelim
+    showBlock('R4', 30);
+    
+</script>
+<style>
+    .block-selector {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+        z-index: 10; /* Butonların üstte kalmasını sağlar */
+        position: relative; /* Butonların bina tarafından kaplanmasını önler */
+    }
+
+    .block-btn {
+        padding: 0.5rem 1rem;
+        margin: 0 0.5rem;
+        cursor: pointer;
+        border: 1px solid #24d6b5;
+        background-color: #042940;
+        color: #fff;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .block-btn:hover {
+        background-color: #24d6b5;
+    }
+
+    .building-container {
+        transition: height 0.3s ease;
+        position: relative;
+    }
+</style>
+
+
 {% endblock sidebar %}
