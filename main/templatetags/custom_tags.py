@@ -1946,3 +1946,11 @@ def sonmesaj(grup_id):
         return mes.content
     else:
         return "" 
+
+@register.simple_tag
+def blok_bilgileri(users):
+    bilgi = []
+    bilgiler=bloglar.objects.filter(proje_ait_bilgisi = users,proje_santiye_Ait__silinme_bilgisi = False)
+    for  i in bilgiler:
+        bilgi.append({"id":i.id,"yapi":i.blog_adi,"kat":int(i.kat_sayisi)})
+    return bilgi

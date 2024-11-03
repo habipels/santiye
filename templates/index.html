@@ -2970,31 +2970,35 @@
     <div class="card-body" id="cardBody">
         <!-- butonlar -->
         <div class="block-selector">
-            <button onclick="showBlock('R4', 30)" class="block-btn">R4</button>
-            <button onclick="showBlock('R5', 20)" class="block-btn">R5</button>
-            <button onclick="showBlock('R8', 55)" class="block-btn">R8</button>
+        {% if request.user.kullanicilar_db %}
+        {% blok_bilgileri request.user.kullanicilar_db as blok_olusturma %}
+        {% else %}
+            {% blok_bilgileri request.user as blok_olusturma %}
+            {% endif %}
+            {% for i in blok_olusturma %}
+                <button onclick="showBlock('{{i.id}}', {{i.kat|safe}})" class="block-btn">{{i.yapi}}</button>
+                
+            {% endfor %}
+           
         </div>
 
         <!-- bloklar -->
         <div class="building-container" id="buildingContainer">
-            <div class="building" id="building-R4" style="display: none;">
+        {% if request.user.kullanicilar_db %}
+        {% blok_bilgileri request.user.kullanicilar_db as blok_olusturma %}
+        {% else %}
+            {% blok_bilgileri request.user as blok_olusturma %}
+            {% endif %}
+            {% for i in blok_olusturma %}
+            
+            
+            <div class="building" id="building-{{i.id}}" style="display: none;">
                 <div class="face" id="face1"><div class="roof">Kuzey</div></div>
                 <div class="face" id="face2"><div class="roof">Doğu</div></div>
                 <div class="face" id="face3"><div class="roof">Güney</div></div>
                 <div class="face" id="face4"><div class="roof">Batı</div></div>
             </div>
-            <div class="building" id="building-R5" style="display: none;">
-                <div class="face" id="face1"><div class="roof">Kuzey</div></div>
-                <div class="face" id="face2"><div class="roof">Doğu</div></div>
-                <div class="face" id="face3"><div class="roof">Güney</div></div>
-                <div class="face" id="face4"><div class="roof">Batı</div></div>
-            </div>
-            <div class="building" id="building-R8" style="display: none;">
-                <div class="face" id="face1"><div class="roof">Kuzey</div></div>
-                <div class="face" id="face2"><div class="roof">Doğu</div></div>
-                <div class="face" id="face3"><div class="roof">Güney</div></div>
-                <div class="face" id="face4"><div class="roof">Batı</div></div>
-            </div>
+            {% endfor %}
         </div>
 
         <!-- Mouse yanında çıkan mini modal -->
@@ -3802,25 +3806,30 @@ createBuilding();
 </script>
 <script>
     function showBlock(blockId, floors) {
-        // Tüm blokları gizle
-        document.querySelectorAll('.building').forEach((element) => {
-            element.style.display = 'none';
-        });
+    // Tüm blokları gizle
+    document.querySelectorAll('.building').forEach((element) => {
+        element.style.display = 'none';
+    });
 
-        // Seçili bloğu göster ve kat sayısına göre yüksekliğini ayarla
-        const building = document.getElementById('building-' + blockId);
-        const buildingContainer = document.getElementById('buildingContainer');
-        const cardBody = document.getElementById('cardBody');
-        const buildingHeight = floors * 20;
+    // Seçili bloğu göster ve kat sayısına göre yüksekliğini ayarla
+    const building = document.getElementById('building-' + blockId);
+    const buildingContainer = document.getElementById('buildingContainer');
+    const cardBody = document.getElementById('cardBody');
+    const buildingHeight = floors * 20;
 
+    // Null kontrolü
+    if (building && buildingContainer && cardBody) {
         building.style.display = 'block';
         building.style.height = buildingHeight + 'px'; // Bina yüksekliği
         buildingContainer.style.height = buildingHeight + 'px'; // Container yüksekliği
         cardBody.style.height = buildingHeight + 100 + 'px'; // Card-body yüksekliği ek boşluk ile
+    } else {
+        console.error('Elementlerden biri bulunamadı. Lütfen ID veya sınıf adlarını kontrol edin.');
     }
+}
 
     // Varsayılan olarak ilk bloğu gösterelim
-    showBlock('R4', 30);
+    showBlock('R4', 10);
     
 </script>
 <style>
