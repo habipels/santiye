@@ -86,14 +86,14 @@
                                     <!-- Preloader Bölümü -->
                                     <div id="preloader">
                                         <div class="spinner"></div>
-                                        <p>Veriler işleniyor... <br> Lütfen bekleyiniz.</p>
+                                        <p>{% trans 'Veriler işleniyor...' %} <br>{% trans ' Lütfen bekleyiniz.' %}</p>
                                     </div>
 
         <div class="page-header">
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    Puantaj
+                    {% trans 'Puantaj' %}
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans 'Dashboard' %}</a></li>
@@ -127,15 +127,15 @@
                 </div>
                 <div class="puantaj-action">
                     <div class="stats-search-date">
-                        <button type="button" ><i class="icon icon-puantaj-calendar"></i></button>
                        <input type="month" id="monthFilter" name="monthFilter" class="filter-input"
        value="{% if request.GET.monthFilter %}{{ request.GET.monthFilter }}{% endif %}">
+       <button type="button" ><i class="icon icon-puantaj-calendar"></i></button>
                     </div>
                 </div>
                 <div class="puantaj-action">
                     <div class="form-element">
                        <select id="jobTypeFilter" name="jobTypeFilter" class="filter-input">
-                        <option value="">{% trans 'Kategori Seçin' %}</option>
+                        <option value="">{% trans 'Departman Seçin' %}</option>
                         {% for i in departmanlar %}
                             <option value="{{ i.id }}" {% if request.GET.jobTypeFilter == i.id|stringformat:"s" %}selected{% endif %}>
                                 {{ i.kategori_isimi }}
@@ -172,10 +172,10 @@
                 <div class="puantaj-tab-content" id="haftalik">
 
                     <div class="tab-navs">
-                        <button class="tab-navs-btn active" data-tab="hafta-1">1. Hafta</button>
-                        <button class="tab-navs-btn" data-tab="hafta-2">2. Hafta</button>
-                        <button class="tab-navs-btn" data-tab="hafta-3">3. Hafta</button>
-                        <button class="tab-navs-btn" data-tab="hafta-4">4. Hafta</button>
+                        <button class="tab-navs-btn active" data-tab="hafta-1">{% trans '1. Hafta' %}</button>
+                        <button class="tab-navs-btn" data-tab="hafta-2">{% trans '2. Hafta' %}</button>
+                        <button class="tab-navs-btn" data-tab="hafta-3">{% trans '3. Hafta' %}</button>
+                        <button class="tab-navs-btn" data-tab="hafta-4">{% trans '4. Hafta' %}</button>
                     </div>
 
                     <div class="tab-contents" style="margin: 0;">
@@ -208,14 +208,14 @@
     <td>
         <div class="td-puantaj">
         {% if  bilgi.normal_saat > 0 %}
-            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
         {% else %}
-        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
         {% endif %}
            {% if  bilgi.mesai_saati > 0 %}
-            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
         {% else %}
-        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
         {% endif %}
             
             
@@ -262,14 +262,14 @@
                                         <td>
                                             <div class="td-puantaj">
                                                  {% if  bilgi.normal_saat > 0 %}
-                                                    <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+                                                    <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
                                                 {% else %}
-                                                <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+                                                <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
                                                 {% endif %}
                                                 {% if  bilgi.mesai_saati > 0 %}
-                                                    <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+                                                    <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
                                                 {% else %}
-                                                <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+                                                <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
                                                 {% endif %}
                                                     
                                             </div>
@@ -314,14 +314,14 @@
     <td>
         <div class="td-puantaj">
              {% if  bilgi.normal_saat > 0 %}
-            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
         {% else %}
-        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
         {% endif %}
            {% if  bilgi.mesai_saati > 0 %}
-            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
         {% else %}
-        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
         {% endif %}
             
         </div>
@@ -368,14 +368,14 @@
     <td>
         <div class="td-puantaj">
             {% if  bilgi.normal_saat > 0 %}
-            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
         {% else %}
-        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
         {% endif %}
            {% if  bilgi.mesai_saati > 0 %}
-            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
         {% else %}
-        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
         {% endif %}
             
         </div>
@@ -426,14 +426,14 @@
     <td>
         <div class="td-puantaj">
              {% if  bilgi.normal_saat > 0 %}
-            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+            <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
         {% else %}
-        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="Normal">
+        <input type="number" class="day-hours td-puantaj-part" data-person="{{i.id}}" data-day="{{day}}" data-type="normal" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal' %}">
         {% endif %}
            {% if  bilgi.mesai_saati > 0 %}
-            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+            <input type="number" class="overtime-hours td-puantaj-part td-puantaj-danger" data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
         {% else %}
-        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="Fazla Mesai">
+        <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-day="{{day}}" data-type="overtime" step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai' %}">
         {% endif %}
             
         </div>
@@ -799,25 +799,25 @@ $j(document).ready(function() {
     <div class="modal" id="toplu-puantaj-gir">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Toplu Puantaj Ekle
+                {% trans 'Toplu Puantaj Ekle' %}
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-element">
-                        <label for="baslangic-tarihi">Başlangıç Tarihi</label>
+                        <label for="baslangic-tarihi">{% trans 'Başlangıç Tarihi' %}</label>
                         <input type="date" name="baslangic-tarihi" id="baslangic-tarihi">
                     </div>
                     <div class="form-element">
-                        <label for="bitis-tarihi">Bitiş Tarihi</label>
+                        <label for="bitis-tarihi">{% trans 'Bitiş Tarihi' %}</label>
                         <input type="date" name="bitis-tarihi" id="bitis-tarihi">
                     </div>
                     <div class="form-row">
                         <div class="form-element">
-                            <label for="normal-saat">Normal Saat</label>
+                            <label for="normal-saat">{% trans 'Normal Saat' %}</label>
                             <input type="text" name="normal-saat" id="normal-saat">
                         </div>
                         <div class="form-element">
-                            <label for="mesai-saati">Mesai Saati</label>
+                            <label for="mesai-saati">{% trans 'Mesai Saati' %}</label>
                             <input type="text" name="mesai-saati" id="mesai-saati">
                         </div>
                     </div>
@@ -826,8 +826,8 @@ $j(document).ready(function() {
                         <textarea name="aciklama" id="aciklama"></textarea>
                     </div>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="button" onclick="topluPuantaj()">Toplu Puantaj Oluştur</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="button" onclick="topluPuantaj()">{% trans 'Toplu Puantaj Oluştur' %}</button>
                     </div>
                 </form>
             </div>
@@ -944,7 +944,7 @@ window.addEventListener('DOMContentLoaded', hidePreloader);
         const isFilterApplied = document.getElementById('jobTypeFilter').value || document.getElementById('stats-search').value;
 
         if (!monthFilter || !isFilterApplied) {
-            alert("Lütfen önce ay seçimini yapıp filtreleri uygulayın.");
+            alert("{% trans 'Lütfen önce ay ve departman seçimini yapıp filtreleri uygulayın.' %}");
             return;
         }
 
@@ -993,7 +993,7 @@ window.addEventListener('DOMContentLoaded', hidePreloader);
             // Verilerinizi yükleyin veya gerekli işlemleri yapın
             console.log("{% trans 'Filtre uygulandı, veriler yüklenebilir.' %}");
         } else {
-            alert("{% trans 'Lütfen önce ay ve kategori seçimini yapıp filtreleri uygulayın.' %}");
+            alert("{% trans 'Lütfen önce ay ve departman seçimini yapıp filtreleri uygulayın.' %}");
         }
     });
 </script>
@@ -1015,7 +1015,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Uyarı mesajını ekle
         const warningMessage = document.createElement('div');
         warningMessage.className = 'warning-message';
-        warningMessage.innerText = '{% trans 'Lütfen filtre girişinizi yapın.' %}';
+        warningMessage.innerText = '{% trans 'Personel puantajlarını görüntülemek için ay ve departman seçimi yaparak Filtre Uygula butonuna basınız.' %}';
         
         // Uyarıyı tablonun üst kısmına ekle
         const largeStatsCard = document.querySelector('.large-stats-card');
