@@ -3229,62 +3229,68 @@
     </main>
 
 {% endif %}
-{% bina_3d son_gorevler_bina as bina_3d_bilgiler %}
-{% for i in bina_3d_bilgiler.gorevler %}
 
 
- <div class="modal" id="ilerleme{{i.id}}">
-        <div class="modal-inner" style="width: 500px;">
-            <div class="modal-header">
-                {% trans 'İlerleme Takibi' %}
-            </div>
-            <div class="modal-body">
-                <div class="ilerleme-durumlari">
+    {% if request.user.kullanicilar_db %}
+    {% blok_bilgileri request.user.kullanicilar_db as blok_olusturmaaa %}
+    {% else %}
+        {% blok_bilgileri request.user as blok_olusturmaaa %}
+        {% endif %}
+
+{% for j in blok_olusturmaaa %}
+    {% bina_3d2 j.id  as sonuc_veriyor_yanma_sonme %}
+{% for i in sonuc_veriyor_yanma_sonme.gorevler %}
+<div class="modal" id="ilerleme{{i.id}}">
+    <div class="modal-inner" style="width: 500px;">
+        <div class="modal-header">
+            {% trans 'İlerleme Takibi' %}
+        </div>
+        <div class="modal-body">
+            <div class="ilerleme-durumlari">
+                <div class="ilerleme-durumu">
+                    <span>{{i.kayit_tarihi}}</span>
+                    <div class="ilerleme-durumu-content">
+                        {% trans 'Başlık ' %}  {{i.title}} <br>
+                        {% trans 'Açıklama ' %} {{i.aciklama}}<br>
+                        {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
+                        {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
+                        {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
+                        {{yazar.last_name}},
+                 {% endfor %}
+
+                    </div>
+                </div>
+                {% ilerleme_goster i.id as veriler %}
+                    {% for k in  veriler %}
                     <div class="ilerleme-durumu">
-                        <span>{{i.kayit_tarihi}}</span>
-                        <div class="ilerleme-durumu-content">
-                            {% trans 'Başlık ' %}  {{i.title}} <br>
-                            {% trans 'Açıklama ' %} {{i.aciklama}}<br>
-                            {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
-                            {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
-                            {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
-                            {{yazar.last_name}},
-                     {% endfor %}
-
-                        </div>
-                    </div>
-                    {% ilerleme_goster i.id as veriler %}
-                        {% for k in  veriler %}
-                        <div class="ilerleme-durumu">
-                        <span>{{k.kayit_tarihi}}</span>
-                        <div class="ilerleme-durumu-content">
-                           {% trans 'İşlemi Yapan ' %} {{k.yapan_kisi.last_name}} <br>
-                           {% trans 'Açıklama ' %}{{k.aciklama}}<br>
-                            {% trans 'Durum ' %}{{k.status}} <br>
-                            {% trans 'Teslim Tarihi ' %}{{k.teslim_tarihi}}<br>
-                            
-                        </div>
-                            <div class="ilerleme-durumu-dosyalar">
-                                {% dosya_varsa_indirme_isplani_ilerleme k.id %}
-                                
-                               
-                            </div>
-                        </div>
-                    </div>
-                    
+                    <span>{{k.kayit_tarihi}}</span>
+                    <div class="ilerleme-durumu-content">
+                       {% trans 'İşlemi Yapan ' %} {{k.yapan_kisi.last_name}} <br>
+                       {% trans 'Açıklama ' %}{{k.aciklama}}<br>
+                        {% trans 'Durum ' %}{{k.status}} <br>
+                        {% trans 'Teslim Tarihi ' %}{{k.teslim_tarihi}}<br>
                         
-                    
-                        {% endfor %}
+                    </div>
+                        <div class="ilerleme-durumu-dosyalar">
+                            {% dosya_varsa_indirme_isplani_ilerleme k.id %}
+                            
+                           
+                        </div>
+                    </div>
+                </div>
+                
                     
                 
-                </div>
+                    {% endfor %}
+                
+            
             </div>
         </div>
     </div>
+</div>
 {% endfor %}
-{% for kat in bina_3d_bilgiler.kat_gonder %}
-
-        <div class="modal" id="gorevleri_goster{{kat}}">
+{% for kat in sonuc_veriyor_yanma_sonme.kat_gonder %}
+<div class="modal" id="gorevleri_goster{{kat}}-{{j.id}}">
     <div class="modal-inner" style="width: %90;">
         <div class="modal-header">
             {% blocktrans %}{{ kat }} Bu kattaki İş Emirleri{% endblocktrans %}
@@ -3305,7 +3311,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for i in  bina_3d_bilgiler.gorevler %}
+                {% for i in  sonuc_veriyor_yanma_sonme.gorevler %}
                     {% if i.kat == kat %}
                     
                     
@@ -3511,15 +3517,15 @@
              
                 
                 <div class="form-actions">
-                    <button class="form-action-secondary" type="button" onclick="closeModal('gorevleri_goster{{kat}}')">{% trans 'Kapat' %}</button>
+                    <button class="form-action-secondary" type="button" onclick="closeModal('gorevleri_goster{{kat}}-{{j.id}}')">{% trans 'Kapat' %}</button>
                   
                 </div>
             
         </div>
     </div>
 </div>
-       
-    {% endfor %}
+{% endfor %}
+{% endfor %}
 <script>
     function updateWeatherClock() {
       // Dinamik long ve lat değerleri
@@ -3578,7 +3584,6 @@
     
     {% for j in blok_olusturmaaa %}
         {% bina_3d2 j.id  as sonuc_veriyor_yanma_sonme %}
-        {{sonuc_veriyor_yanma_sonme}}
     {% for i in sonuc_veriyor_yanma_sonme.kat_bilgileri %}
         .floor[data-floor="{{ i }}"]{% if not forloop.last %},{% endif %}
     {% endfor %}
@@ -3590,8 +3595,9 @@
 
 <script>
 
-function modals_actirma(event, title) {
-    openModal(`gorevleri_goster${title}`);
+function modals_actirma(event, title,id) {
+    alert("modal açıldı")
+    openModal(`gorevleri_goster${title}-${id}`);
     
 }
 
@@ -3636,7 +3642,7 @@ function createBuilding() {
                 floor.innerHTML = `Kat ${k}`;
                 floor.onclick = function(event) {
                     console.log(`Tıklandı: Kat ${k}-${currentBlok.id}`); // Tıklama olayını kontrol et
-                    modals_actirma(event, k);
+                    modals_actirma(event, k,currentBlok.id);
                 };
                 face.appendChild(floor);
             }

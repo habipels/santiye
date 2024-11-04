@@ -1967,18 +1967,19 @@ def bina_3d(veri):
         return {"kat_sayisi" : int(20)}
 @register.simple_tag
 def bina_3d2(veri):
-    blok = get_object_or_404(bloglar,id = veri)
+    
     try:
+        blok = get_object_or_404(bloglar,id = veri)
+        print(blok)
         katlar = []
         katlar_modasl = []
         bina_kat_sayisi = blok.kat_sayisi
-        gor_olan_katlar = IsplaniPlanlari.objects.filter(blok = blok ).exclude(status = "Completed" )
+        gor_olan_katlar = IsplaniPlanlari.objects.filter(blok= get_object_or_404(bloglar,id = veri) ).exclude(status = "Completed",blok = None )
         for i in gor_olan_katlar:
             a = "Kat " + str(i.kat)+"-"+str(blok.id)
             katlar.append(a)
             katlar_modasl.append(i.kat)
-            print(katlar_modasl,bina_kat_sayisi,katlar,gor_olan_katlar)
-        print({"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar})
+            #print({"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar})
         return {"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar}
     except:
         return {"kat_sayisi" : int(20)}

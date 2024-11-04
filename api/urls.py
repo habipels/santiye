@@ -110,6 +110,7 @@ urlpatterns = [#deneme
  #/thingstodo
   #######
  path('thingstodo/', views.yapilacaklar_api, name='yapilacaklar_api'),
+ path('statusthingstodo/', views.yapilacaklar_durum_bilgisi, name='yapilacaklar_durum_bilgisi'),
  #######
  path('create/thingstodo/', views.yapilacalar_ekle_api, name='yapilacalar_ekle_api'),
 
