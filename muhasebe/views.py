@@ -2019,6 +2019,51 @@ def gelir_etiketi_duzenle(request):
     return redirect("accounting:gelir_etiketi_tipleri")
 #gelir Etiketleri
 
+def gelir_etiketi_ekleme_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+
+            gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = users ,gelir_etiketi_adi = proje_tip_adi)
+        
+    return redirect("accounting:gelir_etiketi_tipleri_2",hash)
+
+def gelir_etiketi_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gelir_etiketi.objects.filter(id = id).update(silinme_bilgisi = True)
+    
+    return redirect("accounting:gelir_etiketi_tipleri_2",hash)
+def gelir_etiketi_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = users,id = id).update(gelir_etiketi_adi = proje_tip_adi)
+    return redirect("accounting:gelir_etiketi_tipleri_2",hash)
+#gelir Etiketleri
 #gider etiketi
 
 

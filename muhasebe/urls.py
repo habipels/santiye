@@ -59,6 +59,10 @@ urlpatterns = [
     path("addincometag", views.gelir_etiketi_ekleme, name="gelir_etiketi_ekleme"),
     path("delincometag", views.gelir_etiketi_sil, name="gelir_etiketi_sil"),
     path("setincometag", views.gelir_etiketi_duzenle, name="gelir_etiketi_duzenle"),
+
+    path("control/addincometag/<str:hash>", views.gelir_etiketi_ekleme_2, name="gelir_etiketi_ekleme_2"),
+    path("control/delincometag/<str:hash>", views.gelir_etiketi_sil_2, name="gelir_etiketi_sil_2"),
+    path("control/setincometag/<str:hash>", views.gelir_etiketi_duzenle_2, name="gelir_etiketi_duzenle_2"),
     #gelir etiket işlemleri
     #gider etiketleri #
     path("control/expensetag/<str:hash>", views.gider_etiketi_tipleri_2, name="gider_etiketi_tipleri_2"),
