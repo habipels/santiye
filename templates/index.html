@@ -2975,6 +2975,7 @@
         {% else %}
             {% blok_bilgileri request.user as blok_olusturma %}
             {% endif %}
+            
             {% for i in blok_olusturma %}
                 <button onclick="showBlock('{{i.id}}', {{i.kat|safe}})" class="block-btn">{{i.yapi}}</button>
                 
@@ -2993,10 +2994,10 @@
             
             
             <div class="building" id="building-{{i.id}}" style="display: none;">
-                <div class="face" id="face1"><div class="roof">Kuzey</div></div>
-                <div class="face" id="face2"><div class="roof">Doğu</div></div>
-                <div class="face" id="face3"><div class="roof">Güney</div></div>
-                <div class="face" id="face4"><div class="roof">Batı</div></div>
+                <div class="face" id="{{i.id}}-face1"><div class="roof">Kuzey</div></div>
+                <div class="face" id="{{i.id}}-face2"><div class="roof">Doğu</div></div>
+                <div class="face" id="{{i.id}}-face3"><div class="roof">Güney</div></div>
+                <div class="face" id="{{i.id}}-face4"><div class="roof">Batı</div></div>
             </div>
             {% endfor %}
         </div>
@@ -3569,8 +3570,18 @@
     const imageUrl = "{% static 'go/images/3dbuild.png' %}";
 </script>
 <style>
-    {% for i in bina_3d_bilgiler.kat_bilgileri %}
+    {% if request.user.kullanicilar_db %}
+        {% blok_bilgileri request.user.kullanicilar_db as blok_olusturmaaa %}
+        {% else %}
+            {% blok_bilgileri request.user as blok_olusturmaaa %}
+            {% endif %}
+    
+    {% for j in blok_olusturmaaa %}
+        {% bina_3d2 j.id  as sonuc_veriyor_yanma_sonme %}
+        {{sonuc_veriyor_yanma_sonme}}
+    {% for i in sonuc_veriyor_yanma_sonme.kat_bilgileri %}
         .floor[data-floor="{{ i }}"]{% if not forloop.last %},{% endif %}
+    {% endfor %}
     {% endfor %}
     {
         animation: red-flash 1s infinite;
@@ -3593,65 +3604,44 @@ let currentRotation = 0;
 let isDragging = false; // Fare sürükleme durumu
 let startX = 0;
 const infoModal = document.getElementById('infoModal');
-
-// Bina oluşturma fonksiyonu
+{% if request.user.kullanicilar_db %}
+        {% blok_bilgilerii request.user.kullanicilar_db as blok_olusturmaa %}
+        {% else %}
+            {% blok_bilgilerii request.user as blok_olusturmaa %}
+            {% endif %}
+            
+            
 function createBuilding() {
-    const floors = {{ bina_3d_bilgiler.kat_sayisi }}; // Kat sayısı
+    // Django şablon değişkenlerini bu şekilde kullanabilirsiniz
+    const bloklar = JSON.parse('{{ blok_olusturmaa }}');
 
-    // Hedef katlar listesini oluştur
-    const targetFloors = [
-        {% for kat in bina_3d_bilgiler.kat_bilgileri %}
-            "Kat {{ kat }}"{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-    ];
+    for (let i = 0; i < bloklar.length; i++) {
+        const currentBlok = bloklar[i];
+        const floors = currentBlok.kat; // Kat sayısını alın
 
-    for (let i = 1; i <= 4; i++) {
-        const face = document.getElementById(`face${i}`);
-        if (!face) {
-            console.error(`face${i} elementi bulunamadı!`);
-            continue; // Eğer yüzey yoksa, bu döngüyü atla
+        for (let j = 1; j <= 4; j++) {
+            const face = document.getElementById(`${currentBlok.id}-face${j}`);
+            if (!face) {
+                console.error(`${currentBlok.id}-face${j} elementi bulunamadı!`);
+                continue; // Eğer yüzey yoksa, bu döngüyü atla
+            }
+
+            face.innerHTML = ''; // Yüzeyi temizle
+
+            for (let k = floors; k >= 1; k--) { // Katları oluştur
+                const floor = document.createElement('div');
+                floor.className = 'floor';
+                floor.style.backgroundImage = `url(${imageUrl})`;  // Resim URL'si
+                floor.setAttribute('data-floor', `Kat ${k}-${currentBlok.id}`);
+                floor.innerHTML = `Kat ${k}`;
+                floor.onclick = function(event) {
+                    console.log(`Tıklandı: Kat ${k}-${currentBlok.id}`); // Tıklama olayını kontrol et
+                    modals_actirma(event, k);
+                };
+                face.appendChild(floor);
+            }
         }
-
-        face.innerHTML = ''; // Yüzeyi temizle
-
-        for (let j = floors; j >= 1; j--) { // Katları oluştur
-            const floor = document.createElement('div');
-            floor.className = 'floor';
-            floor.style.backgroundImage = `url(${imageUrl})`;  // Resim URL'si
-            floor.setAttribute('data-floor', `Kat ${j}`);
-            floor.innerHTML = `Kat ${j}`;
-            floor.onclick = function(event) {
-    console.log(`Tıklandı: Kat ${j}`); // Tıklama olayını kontrol et
-    modals_actirma(event, j);}
-
-           
-
-            face.appendChild(floor);
-        }
-    }
-}
-
-
-
-// Mini modal gösterimi (mouse yanında çıkar)
-function showInfoModal(event, message) {
-    const modalText = document.getElementById('modalText');
-    modalText.innerHTML = message;
-    infoModal.classList.add('visible'); // Görünür hale getir
-}
-
-// Mini modal kapatma
-function closeInfoModal() {
-    infoModal.classList.remove('visible'); // Gizle
-}
-
-// İş Emrine Git fonksiyonu
-function goToTask() {
-    alert("İş Emrine gidiliyor...");
-    closeInfoModal(); // Modal kapatılıyor
-}
-
-// Bina döndürme işlevi (Fare ve Touch Eventleri ile)
+        // Bina döndürme işlevi (Fare ve Touch Eventleri ile)
 document.body.addEventListener('pointerdown', function(e) {
     isDragging = true;
     startX = e.clientX; // Başlangıç noktası kaydediliyor
@@ -3661,7 +3651,7 @@ document.body.addEventListener('pointermove', function(e) {
     if (!isDragging) return;
     const deltaX = e.clientX - startX;
     currentRotation += deltaX * 0.1; // Döndürme hassasiyeti ayarlandı
-    document.querySelector('.building').style.transform = `rotateY(${currentRotation}deg)`;
+    document.querySelector(`#building-${currentBlok.id}`).style.transform = `rotateY(${currentRotation}deg)`;
     startX = e.clientX; // Yeni başlangıç pozisyonu
 });
 
@@ -3680,10 +3670,17 @@ document.body.addEventListener('touchmove', function(e) {
     if (e.touches.length === 1) {
         const deltaX = e.touches[0].clientX - startX;
         currentRotation += deltaX * 0.1; // Dokunmatik döndürme hassasiyeti
-        document.querySelector('.building').style.transform = `rotateY(${currentRotation}deg)`;
+        document.querySelector(`#building-${currentBlok.id}`).style.transform = `rotateY(${currentRotation}deg)`;
         startX = e.touches[0].clientX; // Yeni başlangıç pozisyonu
     }
 });
+    }
+}
+
+
+
+
+
 
 createBuilding();
 
@@ -3829,7 +3826,7 @@ createBuilding();
 }
 
     // Varsayılan olarak ilk bloğu gösterelim
-    showBlock('R4', 10);
+    document.querySelector('.building').style.display = 'block';
     
 </script>
 <style>

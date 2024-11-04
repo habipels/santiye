@@ -131,21 +131,7 @@ def fiyat_duzelt_html(deger):
     formatted_value = f"{deger:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return formatted_value
 
-@register.simple_tag
-def bina_3d(veri):
-    try:
-        katlar = []
-        katlar_modasl = []
-        bina_kat_sayisi = veri.blok.kat_sayisi
-        gor_olan_katlar = IsplaniPlanlari.objects.filter(blok = veri.blok).exclude(status = "Completed")
-        for i in gor_olan_katlar:
-            a = "Kat " + str(i.kat)
-            katlar.append(a)
-            katlar_modasl.append(i.kat)
-    
-        return {"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar}
-    except:
-        return {"kat_sayisi" : int(20)}
+
 #@register.filter
 @register.simple_tag
 def to_int(veri):
@@ -1954,3 +1940,45 @@ def blok_bilgileri(users):
     for  i in bilgiler:
         bilgi.append({"id":i.id,"yapi":i.blog_adi,"kat":int(i.kat_sayisi)})
     return bilgi
+@register.simple_tag
+def blok_bilgilerii(users):
+    bilgi = []
+    bilgiler = bloglar.objects.filter(proje_ait_bilgisi=users, proje_santiye_Ait__silinme_bilgisi=False)
+    for i in bilgiler:
+        bilgi.append({"id": i.id, "yapi": i.blog_adi, "kat": int(i.kat_sayisi)})
+    
+    # Python nesnesini JSON'a dönüştür ve güvenli hale getir
+    json_data = json.dumps(bilgi)
+    return mark_safe(json_data)  # Güvenli JSON verisini döndür
+@register.simple_tag
+def bina_3d(veri):
+    try:
+        katlar = []
+        katlar_modasl = []
+        bina_kat_sayisi = veri.blok.kat_sayisi
+        gor_olan_katlar = IsplaniPlanlari.objects.filter(blok = veri.blok).exclude(status = "Completed")
+        for i in gor_olan_katlar:
+            a = "Kat " + str(i.kat)
+            katlar.append(a)
+            katlar_modasl.append(i.kat)
+    
+        return {"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar}
+    except:
+        return {"kat_sayisi" : int(20)}
+@register.simple_tag
+def bina_3d2(veri):
+    blok = get_object_or_404(bloglar,id = veri)
+    try:
+        katlar = []
+        katlar_modasl = []
+        bina_kat_sayisi = blok.kat_sayisi
+        gor_olan_katlar = IsplaniPlanlari.objects.filter(blok = blok ).exclude(status = "Completed" )
+        for i in gor_olan_katlar:
+            a = "Kat " + str(i.kat)+"-"+str(blok.id)
+            katlar.append(a)
+            katlar_modasl.append(i.kat)
+            print(katlar_modasl,bina_kat_sayisi,katlar,gor_olan_katlar)
+        print({"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar})
+        return {"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar}
+    except:
+        return {"kat_sayisi" : int(20)}
