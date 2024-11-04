@@ -133,6 +133,11 @@ urlpatterns = [
     path('addproductscategory/', views.urunler_kategorisi_ekle, name='urunler_kategorisi_ekle'),
     path('delproductscategory/', views.urunler_kategorisi_sil, name='urunler_kategorisi_sil'),
     path('setproductscategory/', views.urunler_kategorisi_duzenle, name='urunler_kategorisi_duzenle'),
+
+    path('control/productscategory/<str:hash>', views.urunler_kategorisi_2, name='urunler_kategorisi_2'),
+    path('control/addproductscategory/<str:hash>', views.urunler_kategorisi_ekle_2, name='urunler_kategorisi_ekle_2'),
+    path('control/delproductscategory/<str:hash>', views.urunler_kategorisi_sil_2, name='urunler_kategorisi_sil_2'),
+    path('control/setproductscategory/<str:hash>', views.urunler_kategorisi_duzenle_2, name='urunler_kategorisi_duzenle_2'),
     #ürünler KAtegorisi
     #ürünler satin_alma_talabi
     path('purchaserequest/', views.satin_alma_talabi, name='satin_alma_talabi'),

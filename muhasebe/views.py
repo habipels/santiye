@@ -6236,3 +6236,63 @@ def zimmeti_teslim_Al_2(request,id,iz,hash):
         elif iz == 2:
             zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.now())
     return redirect("accounting:zimmetler")
+
+################################################
+
+def urunler_kategorisi_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if super_admin_kontrolu(request):
+        profile =urun_kategorileri.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        profile = urun_kategorileri.objects.filter(silinme_bilgisi = False,kategrori_ait_oldugu = users)
+    
+    content["santiyeler"] = profile
+
+    return render(request,"stok/urun_kategorileri.html",content)
+
+def urunler_kategorisi_ekle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kasa_Adi   = request.POST.get("kasaadi")
+            urun_kategorileri.objects.create(kategrori_ait_oldugu = users
+                    ,kategori_adi = kasa_Adi)
+
+    return redirect("accounting:urunler_kategorisi_2",hash)
+def urunler_kategorisi_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        urun_kategorileri.objects.filter(kategrori_ait_oldugu = users,id = id).delete()
+    return redirect("accounting:urunler_kategorisi_2",hash)
+
+def urunler_kategorisi_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        proje_tip_adi   = request.POST.get("kasaadi")
+        urun_kategorileri.objects.filter(kategrori_ait_oldugu = users,id = id).update(kategori_adi = proje_tip_adi
+                            )
+    return redirect("accounting:urunler_kategorisi_2",hash)
