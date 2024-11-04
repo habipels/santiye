@@ -2304,7 +2304,76 @@ def gider_etiketi_duzenle(request):
     return redirect("accounting:gider_etiketi_tipleri")
 #gider Etiketleri
 #gider etiketi
+#
+def gider_etiketi_ekleme_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        #yetkili_adi
+        if super_admin_kontrolu(request):
+            kullanici_bilgisi  = request.POST.get("kullanici")
+            proje_tip_adi   = request.POST.get("yetkili_adi")
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
+            gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = users ,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+        
+    return redirect("accounting:gider_etiketi_tipleri_2",hash)
 
+def gider_etiketi_sil_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        gider_etiketi.objects.filter(id = id).update(silinme_bilgisi = True)
+
+    return redirect("accounting:gider_etiketi_tipleri_2",hash)
+def gider_etiketi_duzenle_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    users = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = users
+    if request.POST:
+        id = request.POST.get("buttonId")
+    if super_admin_kontrolu(request):
+        kullanici_bilgisi  = request.POST.get("kullanici")
+        proje_tip_adi   = request.POST.get("yetkili_adi")
+        if True:
+            maaslarda_kullan = request.POST.get("maaslarda_kullan")
+            avanslarda_kullan = request.POST.get("avanslarda_kullan")
+            if maaslarda_kullan == "1":
+                maaslarda_kullan = False
+            else:
+                maaslarda_kullan = True
+            if avanslarda_kullan == "1":
+                avanslarda_kullan = False
+            else:
+                avanslarda_kullan = True
+        
+            gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = users,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
+                                maas_icin_kullan = maaslarda_kullan)
+    
+    return redirect("accounting:gider_etiketi_tipleri_2",hash)
+#gider Etiketleri
+#gider etiketi
 #virman olayları
 def virman_yapma(request):
     if request.POST:

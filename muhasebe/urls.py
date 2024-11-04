@@ -70,6 +70,10 @@ urlpatterns = [
     path("addexpensetag", views.gider_etiketi_ekleme, name="gider_etiketi_ekleme"),
     path("delexpensetag", views.gider_etiketi_sil, name="gider_etiketi_sil"),
     path("setexpensetag", views.gider_etiketi_duzenle, name="gider_etiketi_duzenle"),
+
+    path("control/addexpensetag/<str:hash>", views.gider_etiketi_ekleme_2, name="gider_etiketi_ekleme_2"),
+    path("control/delexpensetag/<str:hash>", views.gider_etiketi_sil_2, name="gider_etiketi_sil_2"),
+    path("control/setexpensetag/<str:hash>", views.gider_etiketi_duzenle_2, name="gider_etiketi_duzenle_2"),
     #gider etiketleri
     #virman olayı #
     path("maketransfer", views.virman_yapma, name="virman_yapma"),
