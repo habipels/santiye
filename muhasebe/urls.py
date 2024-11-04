@@ -88,6 +88,9 @@ urlpatterns = [
     path("addproduct", views.urun_ekle, name="urun_ekle"),
     path("delproduct", views.urun_sil, name="urun_sil"),
     path("setproduct", views.urun_duzenle, name="urun_duzenle"),
+    path("control/addproduct/<str:hash>", views.urun_ekle_2, name="urun_ekle_2"),
+    path("control/delproduct/<str:hash>", views.urun_sil_2, name="urun_sil_2"),
+    path("control/setproduct/<str:hash>", views.urun_duzenle_2, name="urun_duzenle_2"),
     #ürünler olayları
     #gelirler Sayfası#
     path("control/theycome/<str:hash>", views.gelirler_sayfasi_2, name="gelirler_sayfasi_2"),
