@@ -24,6 +24,10 @@ urlpatterns = [
     path("addcomecategory", views.gelir_kategorisi_ekleme, name="gelir_kategorisi_ekleme"),
     path("delcomecategory", views.gelir_kategoisi_sil, name="gelir_kategoisi_sil"),
     path("setcomecategory", views.gelir_kategorisi_duzenle, name="gelir_kategorisi_duzenle"),
+
+    path("control/addcomecategory/<str:hash>", views.gelir_kategorisi_ekleme_2, name="gelir_kategorisi_ekleme_2"),
+    path("control/delcomecategory/<str:hash>", views.gelir_kategoisi_sil_2, name="gelir_kategoisi_sil_2"),
+    path("control/setcomecategory/<str:hash>", views.gelir_kategorisi_duzenle_2, name="gelir_kategorisi_duzenle_2"),
     #gelir kategorileri
     #gider kategorileri}
     path("control/inwcategory/<str:hash>", views.gider_kategorisi_tipleri_2, name="gider_kategorisi_tipleri_2"),
@@ -31,6 +35,10 @@ urlpatterns = [
     path("addwcategory", views.gider_kategorisi_ekleme, name="gider_kategorisi_ekleme"),
     path("delwcategory", views.gider_kategoisi_sil, name="gider_kategoisi_sil"),
     path("setwcategory", views.gider_kategorisi_duzenle, name="gider_kategorisi_duzenle"),
+
+    path("control/addwcategory/<str:hash>", views.gider_kategorisi_ekleme_2, name="gider_kategorisi_ekleme_2"),
+    path("control/delwcategory/<str:hash>", views.gider_kategoisi_sil_2, name="gider_kategoisi_sil_2"),
+    path("control/setwcategory/<str:hash>", views.gider_kategorisi_duzenle_2, name="gider_kategorisi_duzenle_2"),
     #gider kategorileri
     #cari işlemleri$
     path("control/current/<str:hash>", views.cari_viev_2, name="cari_viev_2"),
@@ -114,7 +122,7 @@ urlpatterns = [
     path('delivon', views.fatura_sil, name='fatura_sil'),
 
     #
-    path("accountingsettings/<str:hash>", views.muhasebe_ayarlari_2, name="muhasebe_ayarlari_2"),
+    path("control/accountingsettings/<str:hash>", views.muhasebe_ayarlari_2, name="muhasebe_ayarlari_2"),
     path("accountingsettings", views.muhasebe_ayarlari, name="muhasebe_ayarlari"),
     path('denme/', views.denme, name='denme'),
     path('kategoriekleme', views.gider_gelir_ekleme, name='gider_gelir_ekleme'),
