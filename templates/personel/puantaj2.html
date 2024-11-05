@@ -1027,4 +1027,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 </script>
+<script>
+    // Tüm 'input' elemanlarına dinleyici eklemek için
+    document.querySelectorAll('.overtime-hours').forEach(input => {
+        input.addEventListener('change', function () {
+            // Güncel değeri ve ilgili personel ID ile günü al
+            const newValue = this.value;
+            const personId = this.getAttribute('data-person');
+            const day = this.getAttribute('data-day');
+
+            // Aynı gün ve aynı person ID'ye sahip tüm diğer inputları seç
+            document.querySelectorAll(`.overtime-hours[data-person="${personId}"][data-day="${day}"]`).forEach(otherInput => {
+                // Kendi dışında kalanların değerini güncelle
+                if (otherInput !== this) {
+                    otherInput.value = newValue;
+                }
+            });
+        });
+    });
+</script>
+<script>
+    // Tüm 'input' elemanlarına dinleyici eklemek için
+    document.querySelectorAll('.day-hours').forEach(input => {
+        input.addEventListener('change', function () {
+            // Güncel değeri ve ilgili personel ID ile günü al
+            const newValue = this.value;
+            const personId = this.getAttribute('data-person');
+            const day = this.getAttribute('data-day');
+
+            // Aynı gün ve aynı person ID'ye sahip tüm diğer inputları seç
+            document.querySelectorAll(`.day-hours[data-person="${personId}"][data-day="${day}"]`).forEach(otherInput => {
+                // Kendi dışında kalanların değerini güncelle
+                if (otherInput !== this) {
+                    otherInput.value = newValue;
+                }
+            });
+        });
+    });
+</script>
 {% endblock sidebar %}
