@@ -1983,3 +1983,8 @@ def bina_3d2(veri):
         return {"kat_gonder":katlar_modasl,"kat_sayisi" : int(bina_kat_sayisi),"kat_bilgileri":katlar,"gorevler":gor_olan_katlar}
     except:
         return {"kat_sayisi" : int(20)}
+    
+@register.simple_tag
+def saatlik_ucret_hesabi(users):
+    bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = users).last()
+    return bilgi.gunluk_calisma_saati
