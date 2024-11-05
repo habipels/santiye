@@ -17,5 +17,3 @@ translated_po_file_path = r'C:\Users\habip\Documents\GitHub\santiye\dsjango_tran
 po.save(translated_po_file_path)
 
 translated_po_file_path  # Return the path to the translated .po file
-translated = GoogleTranslator(source='auto', target='ckb', ).translate("Eline")
-print(translated)
