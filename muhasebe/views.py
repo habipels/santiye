@@ -4596,9 +4596,10 @@ def muhasebe_ayarlari(request):
         adres_bilgisi = request.POST.get("adres")
         emailadresi = request.POST.get("emailadresi")
         telefonadresi = request.POST.get("telefonadresi")
+        gunluk_calisma_saati = request.POST.get("gunluk_calisma_saati")
         faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = kullanici).delete()
         faturalar_icin_bilgiler.objects.create(gelir_kime_ait_oldugu  = kullanici,
-        adress = adres_bilgisi,email =emailadresi,telefon = telefonadresi )
+        adress = adres_bilgisi,email =emailadresi,telefon = telefonadresi,gunluk_calisma_saati = gunluk_calisma_saati  )
         if dark_logo:
             faturalar_icin_logo.objects.create(gelir_makbuzu = dark_logo
             ,gelir_kime_ait_oldugu  = kullanici
@@ -4707,9 +4708,10 @@ def muhasebe_ayarlari_2(request,hash):
         adres_bilgisi = request.POST.get("adres")
         emailadresi = request.POST.get("emailadresi")
         telefonadresi = request.POST.get("telefonadresi")
+        gunluk_calisma_saati = request.POST.get("gunluk_calisma_saati")
         faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = users).delete()
         faturalar_icin_bilgiler.objects.create(gelir_kime_ait_oldugu  = users,
-        adress = adres_bilgisi,email =emailadresi,telefon = telefonadresi )
+        adress = adres_bilgisi,email =emailadresi,telefon = telefonadresi ,gunluk_calisma_saati = gunluk_calisma_saati )
         if dark_logo:
             faturalar_icin_logo.objects.create(gelir_makbuzu = dark_logo
             ,gelir_kime_ait_oldugu  = users

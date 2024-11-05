@@ -250,6 +250,7 @@ class faturalar_icin_bilgiler(models.Model):
     adress = models.CharField(max_length=200,verbose_name="Faturadaki Adress",blank=True , null= True)
     email = models.EmailField(max_length=200,verbose_name="Email",blank=True,null=True)
     telefon = models.CharField(max_length=20 ,verbose_name="Telefon" , blank=True,null=True)
+    gunluk_calisma_saati = models.FloatField(default=9,verbose_name="Günlük Çalışma Saati")
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

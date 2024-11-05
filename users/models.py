@@ -292,6 +292,7 @@ class calisan_maas_durumlari(models.Model):
     calisan = models.ForeignKey(calisanlar,verbose_name="işlem Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     maas = models.FloatField(verbose_name="Maaş",default=0,blank=True,null=True)
     yevmiye = models.FloatField(verbose_name="Puantaj",default=0,blank=True,null=True)
+    fazla_mesai_orani = models.FloatField(verbose_name="Fazla_mesai Orani",default=0.20,blank=True,null=True)
     durum = models.BooleanField(default=False) #True Maaşlı , False Yevmiye
     para_birimi =models.BooleanField(default=False) #True dolor , False dinar
     silinme_bilgisi = models.BooleanField(default=False)
