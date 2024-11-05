@@ -18,7 +18,7 @@ from django.db.models.functions import ExtractMonth, ExtractYear
 from django.core.files.storage import FileSystemStorage
 from main.views import decode_id
 def personel_bilgisi_axaj(request, id):
-    
+    bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()
     if True:
         calisan = get_object_or_none(calisanlar, id = id)
         maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
@@ -77,9 +77,9 @@ def personel_bilgisi_axaj(request, id):
             'calismalar': [
                 {
                     'tarih': str(calis['year']) + "-" + str(calis['month']),
-                    'hakedis_tutari': (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye),
+                    'hakedis_tutari': (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye),
                     'odenen': odemeler_dict.get((calis['year'], calis['month']), 0),
-                    'kalan': ((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)) - odemeler_dict.get((calis['year'], calis['month']), 0),
+                    'kalan': ((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)) - odemeler_dict.get((calis['year'], calis['month']), 0),
                     'bodro': "",  # Bodro ile ilgili ek bir işlem yapılacaksa buraya eklenir.
                 } for calis in calismalar
             ]

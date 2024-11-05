@@ -167,12 +167,12 @@
                 <div class="stats-title">{% trans 'Aylık Puantaj Girişi' %}</div>
                     <div class="stats-right">
                         <div class="stats-info">
-                            {% trans 'Hakediş (USD):' %} <span class="tutar">3,780.00 $</span>
+                            {% trans 'Hakediş (USD):' %} <span class="tutar" id="tutardolar">3,780.00 $</span>
                             <i class="fas fa-info-circle info-icon"></i>
                             <span class="tooltip-text">{% trans 'Bu tutar, USD ile maaş alan çalışanların hakediş toplamını gösterir.' %}</span>
                         </div>
                         <div class="stats-info">
-                            {% trans 'Hakediş (IQD):' %} <span class="tutar">1,250.000 IQD</span>
+                            {% trans 'Hakediş (IQD):' %} <span class="tutar" id="tutardinar">1,250.000 IQD</span>
                             <i class="fas fa-info-circle info-icon"></i>
                             <span class="tooltip-text">{% trans 'Bu tutar, IQD ile maaş alan çalışanların hakediş toplamını gösterir.' %}</span>
                         </div>
@@ -505,8 +505,16 @@
     </td>
 {% endfor %}
             <td>
-                        <input type="number" class="day-hours td-puantaj-part td-puantaj-highlight" data-parabirimi = "" data-person="{{i.id}}" data-day="Normal_mesai_tutari" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal Mesai Tutarı' %}">
-            <input type="number" class="overtime-hours td-puantaj-part " data-person="{{i.id}}" data-parabirimi = "" data-day="Fazla_mesai_tutari"  step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai Tutarı' %}"></td>
+            {% odeme_para_birimii i  as para_birimi_bilgi %}
+            {% maaslari_getirme i as tutari_ver %}
+            
+            {% if para_birimi_bilgi == "1"  %}
+                {% trans "$" %}
+            {% else %}
+            {% trans "IQD" %}
+            {% endif %}
+                        <input type="number" class="saatlik"  data-tutar="{{tutari_ver.saatlik}}" data-parabirimi = "{{para_birimi_bilgi}}" data-person="{{i.id}}" data-day="Normal_mesai_tutari" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal Mesai Tutarı' %}">
+            <input type="number" class="fazlamesai" data-person="{{i.id}}" data-tutar="{{tutari_ver.fazla_mesai}}" data-parabirimi = "{{para_birimi_bilgi}}"  data-day="Fazla_mesai_tutari"  step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai Tutarı' %}"></td>
 
                     </tr>
                     <!-- Dinamik personel satırları buraya gelecek -->
@@ -785,6 +793,7 @@
                 $("#hafta-4-table tbody tr td:nth-child("+(i -19)+") .td-puantaj .td-puantaj-part:first-child").addClass("td-puantaj-highlight");
                 $("#hafta-4-table tbody tr td:nth-child("+(i -19)+") .td-puantaj .td-puantaj-part:last-child").addClass("td-puantaj-danger");
             }}
+            bagimsiz();
             closeModal("toplu-puantaj-gir");
         }
     </script>
@@ -1097,40 +1106,148 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script>
     // Tüm 'input' elemanlarına dinleyici eklemek için
-    document.querySelectorAll('.overtime-hours').forEach(input => {
-        input.addEventListener('change', function () {
-            // Güncel değeri ve ilgili personel ID ile günü al
-            const newValue = this.value;
-            const personId = this.getAttribute('data-person');
-            const day = this.getAttribute('data-day');
+    function setupInputListeners(className) {
+        document.querySelectorAll(`.${className}`).forEach(input => {
+            input.addEventListener('change', function () {
+                // Güncel değeri ve ilgili personel ID ile günü al
+                const newValue = this.value;
+                const personId = this.getAttribute('data-person');
+                const day = this.getAttribute('data-day');
 
-            // Aynı gün ve aynı person ID'ye sahip tüm diğer inputları seç
-            document.querySelectorAll(`.overtime-hours[data-person="${personId}"][data-day="${day}"]`).forEach(otherInput => {
-                // Kendi dışında kalanların değerini güncelle
-                if (otherInput !== this) {
-                    otherInput.value = newValue;
-                }
+                // Aynı gün ve aynı person ID'ye sahip tüm diğer inputları seç
+                document.querySelectorAll(`.${className}[data-person="${personId}"][data-day="${day}"]`).forEach(otherInput => {
+                    // Kendi dışında kalanların değerini güncelle
+                    if (otherInput !== this) {
+                        otherInput.value = newValue;
+                    }
+                });
+
+                // Toplam saatleri hesapla
+                calculateTotalHours(personId);
+                // Değerleri hesapla ve güncelle
+                // updateValues(personId);
             });
         });
+    }
+    function bagimsiz() {
+    // Tüm personel ID'lerini al
+    const personIds = new Set();
+    
+    // Tüm personel ID'lerini toplayalım
+    document.querySelectorAll('.day-hours, .overtime-hours').forEach(input => {
+        personIds.add(input.getAttribute('data-person'));
     });
-</script>
-<script>
-    // Tüm 'input' elemanlarına dinleyici eklemek için
-    document.querySelectorAll('.day-hours').forEach(input => {
-        input.addEventListener('change', function () {
-            // Güncel değeri ve ilgili personel ID ile günü al
-            const newValue = this.value;
-            const personId = this.getAttribute('data-person');
-            const day = this.getAttribute('data-day');
 
-            // Aynı gün ve aynı person ID'ye sahip tüm diğer inputları seç
-            document.querySelectorAll(`.day-hours[data-person="${personId}"][data-day="${day}"]`).forEach(otherInput => {
-                // Kendi dışında kalanların değerini güncelle
-                if (otherInput !== this) {
-                    otherInput.value = newValue;
-                }
-            });
+    // Her bir personel ID için toplam saatleri hesapla
+    personIds.forEach(personId => {
+        let totalNormalHours = 0;
+        let totalOvertimeHours = 0;
+
+        // Normal mesai saatlerini toplama
+        document.querySelectorAll(`.day-hours[data-person="${personId}"]`).forEach(input => {
+            totalNormalHours += parseFloat(input.value.replace(',', '.')) || 0; // Değeri topla
+        });
+
+        // Fazla mesai saatlerini toplama
+        document.querySelectorAll(`.overtime-hours[data-person="${personId}"]`).forEach(input => {
+            totalOvertimeHours += parseFloat(input.value.replace(',', '.')) || 0; // Değeri topla
+        });
+
+        const normalInputs = document.querySelectorAll(`.saatlik[data-person="${personId}"]`);
+        const overtimeInputs = document.querySelectorAll(`.fazlamesai[data-person="${personId}"]`);
+
+        normalInputs.forEach(input => {
+            const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
+            const total = tutar * totalNormalHours / 2;
+            input.value = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
+        });
+
+        overtimeInputs.forEach(input => {
+            const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
+            const total = tutar * totalOvertimeHours / 2;
+            input.value = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
         });
     });
+
+    // Toplamları hesapla (varsa)
+    hakedis_toplama();
+}
+
+    function calculateTotalHours(personId) {
+        let totalNormalHours = 0;
+        let totalOvertimeHours = 0;
+
+        // Normal mesai saatlerini toplama
+        document.querySelectorAll(`.day-hours[data-person="${personId}"]`).forEach(input => {
+            totalNormalHours += parseFloat(input.value) || 0; // Değeri topla
+        });
+
+        // Fazla mesai saatlerini toplama
+        document.querySelectorAll(`.overtime-hours[data-person="${personId}"]`).forEach(input => {
+            totalOvertimeHours += parseFloat(input.value) || 0; // Değeri topla
+        });
+
+        const normalInputs = document.querySelectorAll(`.saatlik[data-person="${personId}"]`);
+        const overtimeInputs = document.querySelectorAll(`.fazlamesai[data-person="${personId}"]`);
+        
+        normalInputs.forEach(input => {
+            const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
+            const total = tutar * totalNormalHours / 2;
+            input.value = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
+        });
+
+        overtimeInputs.forEach(input => {
+            const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
+            const total = tutar * totalOvertimeHours / 2;
+            input.value = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
+        });
+
+        hakedis_toplama() 
+    }
+    function hakedis_toplama() {
+        let total0 = 0;
+        let total1 = 0;
+        let totalNormalHours0 = 0;
+        let totalOvertimeHours0 = 0;
+        let totalNormalHours1 = 0;
+        let totalOvertimeHours1 = 0;
+
+        const normalInput0 = document.querySelectorAll(`.saatlik[data-parabirimi="0"]`);
+        const overtimeInput0 = document.querySelectorAll(`.fazlamesai[data-parabirimi="0"]`);
+        const normalInput1 = document.querySelectorAll(`.saatlik[data-parabirimi="1"]`);
+        const overtimeInput1 = document.querySelectorAll(`.fazlamesai[data-parabirimi="1"]`);
+        
+        normalInput0.forEach(input => {
+    const tutar = parseFloat(input.value.replace(',', '.')) || 0; // Virgülü noktaya çevir
+    totalNormalHours0 += tutar; // Toplamı iki ondalık basamakla güncelle
+});
+
+overtimeInput0.forEach(input => {
+    const tutar = parseFloat(input.value.replace(',', '.')) || 0; // Virgülü noktaya çevir
+    totalOvertimeHours0 += tutar; // Toplamı iki ondalık basamakla güncelle
+});
+
+normalInput1.forEach(input => {
+    const tutar = parseFloat(input.value.replace(',', '.')) || 0; // Virgülü noktaya çevir
+    totalNormalHours1 += tutar; // Toplamı iki ondalık basamakla güncelle
+});
+
+overtimeInput1.forEach(input => {
+    const tutar = parseFloat(input.value.replace(',', '.')) || 0; // Virgülü noktaya çevir
+    totalOvertimeHours1 += tutar; // Toplamı iki ondalık basamakla güncelle
+});
+        total0=totalNormalHours0 +totalOvertimeHours0;
+        total1=totalNormalHours1 +totalOvertimeHours1;
+        document.getElementById("tutardolar").textContent = total1+" $";
+        document.getElementById("tutardinar").textContent = total0 + " IQD";
+        console.log(`Toplam Normal Mesai (0): ${totalNormalHours0}, Normal Mesai (0): ${totalOvertimeHours0}`);
+        console.log(`Toplam Normal Mesai (1): ${totalNormalHours1}, Normal Mesai (1): ${totalOvertimeHours1}`);
+
+    }
+    // Dinleyicileri başlat
+    setupInputListeners('overtime-hours');
+    setupInputListeners('day-hours');
 </script>
+
+
 {% endblock sidebar %}

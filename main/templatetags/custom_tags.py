@@ -53,7 +53,7 @@ def fiyat_duzelt(deger, i=0):
 register = template.Library()
 @register.simple_tag
 def personel_maas_bilgisi(id):
-
+    bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()
     if True:
         calismalar = calisanlar_calismalari.objects.filter(
             calisan=get_object_or_none(calisanlar, id=id)
@@ -84,10 +84,10 @@ def personel_maas_bilgisi(id):
             {
                 'tarih': str(calis['year']) + "-" + str(calis['month']),
                 'parabirimi': get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).para_birimi,
-                'hakedis_tutari':fiyat_duzelt( (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + 
+                'hakedis_tutari':fiyat_duzelt( (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + 
                                   (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)),
                 'odenen':fiyat_duzelt(odemeler_dict.get((calis['year'], calis['month']), 0)),
-                'kalan': fiyat_duzelt(((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + 
+                'kalan': fiyat_duzelt(((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + 
                           (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)) - 
                           odemeler_dict.get((calis['year'], calis['month']), 0)),
             } for calis in calismalar
@@ -1827,8 +1827,18 @@ def borc_son_dort_ay_tutar(customuser):
 def odeme_para_birimi(bilgi2):
     para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
     return para_birimi.para_birimi
+@register.simple_tag
+def odeme_para_birimii(bilgi2):
+    para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
+    if para_birimi.para_birimi:
+        return  "1"
+    return "0"
 
-
+@register.simple_tag
+def maaslari_getirme(bilgi2):
+    para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
+    mesai_tutari  = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu = bilgi2.calisan_kime_ait).last()
+    return {"saatlik": para_birimi.maas/mesai_tutari.gunluk_calisma_saati ,"fazla_mesai":para_birimi.yevmiye}
 @register.simple_tag
 def odeme_para_birimi_hesabi(bilgi2,kur,tutar):
     para_birimi = calisan_maas_durumlari.objects.filter(calisan = bilgi2).last()
