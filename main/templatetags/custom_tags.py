@@ -96,7 +96,7 @@ def personel_maas_bilgisi(id):
         return maas_bilgisi
 @register.simple_tag
 def bodro_cek(id,tarih):
-
+    bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()
     if True:
         yil, ay = map(int, tarih.split('-'))
         calismalar = calisanlar_calismalari.objects.filter(
@@ -118,13 +118,15 @@ def bodro_cek(id,tarih):
         tarihi__month=ay   # Ay filtresi
     )
         for calis in calismalar:
-            hakedis_tutari=fiyat_duzelt( (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + 
+            hakedis_tutari=fiyat_duzelt( (calis["total_normal_calisma_saati"]/bilgi.gunluk_calisma_saati * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas) + 
                                   (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye))
         return {"odemeler":odemeler,"odenecek_tutar":hakedis_tutari}
 @register.simple_tag
 def fiyat_duzelt_html(deger):
     # String dönüşümleri ve noktaları kaldırma işlemi
-    deger = str(deger).replace('.', '').replace(',', '.')
+    print(type(deger))
+    if type(deger) == "<class 'str'>":
+        deger = str(deger).replace('.', '').replace(',', '.')
     deger = float(deger)
     
     # Formatlama işlemi

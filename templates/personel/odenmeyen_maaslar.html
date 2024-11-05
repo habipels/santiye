@@ -71,7 +71,9 @@
                         <th>{% trans 'Toplam Tutar' %}</th>
                         <th>{% trans 'Ödenen Tutar' %}</th>
                         <th>{% trans 'Kalan Tutar' %}</th>
-                        
+                        <th>{% trans 'Avans Öde' %}</th>
+                        <th>{% trans 'Maaş Öde' %}</th>
+                        <th>{% trans 'Bodro' %}</th>
                         
                     </tr>
                 </thead>
@@ -103,8 +105,12 @@
                             {% else %}
                             {% trans "IQD" %}
                             {% endif %}</td>
-                           
-                            
+                           <td><button class="form-action-primary" type="button"
+                                onclick="openModal('avansOdeModal{{i.id}}-{{j.id}}', false)">{% trans 'Avans Öde' %} </button></td>
+                            <td><button class="form-action-primary" type="button"
+                                onclick="openModal('maasOdeModal{{i.id}}-{{j.id}}', false)">{% trans 'Maaş Öde' %} </button></td>
+                            <td><a class="form-action-primary" type="button"
+                                href="/{{dil}}/users/payroll/{{j.tarih}}/{{i.id}}/">{% trans 'Maaş Öde' %} </a></td>
                             
                         </tr>
                         {% else %}
@@ -207,5 +213,172 @@
 
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
+    </script>
+ {% for i in personeller %}
+                        {% personel_maas_bilgisi i.id as maaslar %}
+                        
+                        {% for j in maaslar %}
+                        {% if  j.hakedis_tutari > j.odenen %}
+
+<div class="modal" id="maasOdeModal{{i.id}}-{{j.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Maaş Öde
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
+                    {% csrf_token %} 
+                    <div id="odemeturuu" ><input type="text" hidden value="{{i.id}}" name="users_id"></div>
+                    <div class="form-element">
+                        <label for="maas-ayi">Maaş Ayı</label>
+                        <select required id="maasAy" name="maas_ayi">
+                            <option value="{{j.tarih}}" selected >{{j.tarih}}</option>
+                           
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="kalan-bakiye">Kalan Bakiye</label>
+                        <input required type="number" step="0.01" placeholder="{{ j.kalan}}" name="tutar" id="maasBakiye"  >
+                    </div>
+                    <div class="form-element">
+                        <label for="kur">Kur</label>
+                        <input required type="number" step="0.01" name="kur"  class="form-control" placeholder="Kur">
+                    </div>
+                    <div class="form-element">
+                        <label for="odeme-tarihi">Ödeme Tarihi</label>
+                        <input required type="date" name="odeme_tarihi">
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea id="avansAciklama" name="aciklama"></textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="ekler">Dosya Yükle</label>
+
+                        <div class="file-input">
+                            <label for="ekler">
+                                <img src="./content/images/illustration-upload.png">
+
+                                <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="file" id="avansDosya">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('maasOdeModal')">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Maaş Öde</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+<div class="modal" id="avansOdeModal{{i.id}}-{{j.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Avans Öde' %}
+                
+            </div>
+            <div class="modal-body">
+                
+                <form id="avansOdeForm" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
+                    {% csrf_token %} 
+                    <input type="text" hidden value="1" name="odeme_turu">
+                    <div id="odemeturu" ><input type="text" hidden value="{{i.id}}" name="users_id"></div>
+                    <div class="form-element">
+                        <label for="ay-secimi">{% trans 'Ay Seçimi' %}</label>
+                        <select required name="maas_ayi" id="avansAy">
+                            <option value="{{j.tarih}}" selected >{{j.tarih}}</option>
+                           
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="avansTutar">Ödeme Tarihi</label>
+                        <input required type="date" name="odeme_tarihi"  >
+                    </div>
+                    <div class="form-element">
+                        <label for="tutar">Tutar</label>
+                        <input required type="number" step="0.01" placeholder="{{ j.kalan }}" name="tutar" id="avansTutar">
+                    </div>
+                    <div class="form-element">
+                        <label for="kur">Kur</label>
+                        <input required type="number" step="0.01" name="kur" >
+                    </div>
+                    
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea id="avansAciklama" name="aciklama"></textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="ekler">Dosya Yükle</label>
+
+                        <div class="file-input">
+                            <label for="ekler">
+                                <img src="./content/images/illustration-upload.png">
+
+                                <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input  type="file" name="file" id="avansDosya">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('avansOdeModal')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Avans Öde' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+                        
+                        {% else %}
+                        {% endif %}
+                        {% endfor %}
+                        
+                    {% endfor %}
+
+<script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal($(e.target).attr("id"));
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
     </script>
 {% endblock sidebar %}
