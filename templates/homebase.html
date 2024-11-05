@@ -27,13 +27,26 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="{% static 'go/icon/ms-icon-144x144.png' %}">
     <meta name="theme-color" content="#ffffff">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     {% if dil == "ar" or dil == "ckb" %}
+    <style>
+      @font-face {
+    font-family: 'MyCustomFont';
+    src: url("{% static 'go/fonts/ckb.ttf' %}") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'MyCustomFont', sans-serif;
+}
+    </style>
 <!-- soranice -->
 {% else %}
 <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
         rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 {% endif %}
     
     <link rel="stylesheet" href="{% static 'go/style/style.css' %}">
