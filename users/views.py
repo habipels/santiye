@@ -612,6 +612,7 @@ def personeller_ekle(request):
         position = request.POST.get("position")
         salaryType = request.POST.get("salaryType")
         dailyWage = request.POST.get("dailyWage")
+        fazla_mesai_orani = request.POST.get("fazla_mesai_orani")
         hourlyWage = request.POST.get("hourlyWage")
         currency = request.POST.get("currency")
         belgeler = request.POST.getlist("belgeler")
@@ -634,7 +635,7 @@ def personeller_ekle(request):
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
             isim = firstName+str(i),soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
             calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
-            yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
+            yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
             for i in documents:
                 calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
     return redirect("user:personeller_sayfasi")
@@ -671,6 +672,7 @@ def personeller_ekle_2(request,hash):
         salaryType = request.POST.get("salaryType")
         dailyWage = request.POST.get("dailyWage")
         hourlyWage = request.POST.get("hourlyWage")
+        fazla_mesai_orani = request.POST.get("fazla_mesai_orani")
         currency = request.POST.get("currency")
         belgeler = request.POST.getlist("belgeler")
         documents = request.FILES.getlist("ekler")
@@ -692,7 +694,7 @@ def personeller_ekle_2(request,hash):
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
             isim = firstName+str(i),soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
             calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
-            yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
+            yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
             for i in documents:
                 calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
     return redirect("user:personeller_sayfasi_2",hash)
