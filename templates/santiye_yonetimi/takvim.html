@@ -3,75 +3,164 @@
 {% load custom_tags %}
 {% load static %}
 {% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 
-  <link rel=stylesheet href="{% static 'go/gant/platform.css' %}" type="text/css">
-  <link rel=stylesheet href="{% static 'go/gant/libs/jquery/dateField/jquery.dateField.css' %}" type="text/css">
+<!-- CSS Dosyaları -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+<link rel="stylesheet" href="{% static 'content/style/style.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+<link rel="stylesheet" href="{% static 'go/gant/platform.css' %}" type="text/css">
+<link rel="stylesheet" href="{% static 'go/gant/libs/jquery/dateField/jquery.dateField.css' %}" type="text/css">
+<link rel="stylesheet" href="{% static 'go/gant/gantt.css' %}" type="text/css">
+<link rel="stylesheet" href="{% static 'go/gant/ganttPrint.css' %}" type="text/css" media="print">
+<link rel="stylesheet" href="{% static 'go/gant/libs/jquery/valueSlider/mb.slider.css' %}" type="text/css" media="print">
 
-  <link rel=stylesheet href="{% static 'go/gant/gantt.css' %}" type="text/css">
-  <link rel=stylesheet href="{% static 'go/gant/ganttPrint.css' %}" type="text/css" media="print">
-  <link rel=stylesheet href="{% static 'go/gant/libs/jquery/valueSlider/mb.slider.css' %}" type="text/css" media="print">
+<!-- JavaScript Dosyaları -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
-  <script src="{% static 'go/gant/libs/jquery/jquery.livequery.1.1.1.min.js' %}"></script>
-  <script src="{% static 'go/gant/libs/jquery/jquery.timers.js' %}"></script>
-
-  <script src="{% static 'go/gant/libs/utilities.js' %}"></script>
-  <script src="{% static 'go/gant/libs/forms.js' %}"></script>
-  <script src="{% static 'go/gant/libs/date.js' %}"></script>
-  <script src="{% static 'go/gant/libs/dialogs.js' %}"></script>
-  <script src="{% static 'go/gant/libs/layout.js' %}"></script>
-  <script src="{% static 'go/gant/libs/i18nJs.js' %}"></script>
-  <script src="{% static 'go/gant/libs/jquery/dateField/jquery.dateField.js' %}"></script>
-  <script src="{% static 'go/gant/libs/jquery/JST/jquery.JST.js' %}"></script>
-  <script src="{% static 'go/gant/libs/jquery/valueSlider/jquery.mb.slider.js' %}"></script>
-
-  <script type="text/javascript" src="{% static 'go/gant/libs/jquery/svg/jquery.svg.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'go/gant/libs/jquery/svg/jquery.svgdom.1.8.js' %}"></script>
-
-
-  <script src="{% static 'go/gant/ganttUtilities.js' %}"></script>
-  <script src="{% static 'go/gant/ganttTask.js' %}"></script>
-  <script src="{% static 'go/gant/ganttDrawerSVG.js' %}"></script>
-  <script src="{% static 'go/gant/ganttZoom.js' %}"></script>
-  <script src="{% static 'go/gant/ganttGridEditor.js' %}"></script>
-  <script src="{% static 'go/gant/ganttMaster.js' %}"></script>  
+<!-- Gantt ve jQuery Bağımlılıkları -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="{% static 'go/gant/libs/jquery/jquery.livequery.1.1.1.min.js' %}"></script>
+<script src="{% static 'go/gant/libs/jquery/jquery.timers.js' %}"></script>
+<script src="{% static 'go/gant/libs/utilities.js' %}"></script>
+<script src="{% static 'go/gant/libs/forms.js' %}"></script>
+<script src="{% static 'go/gant/libs/date.js' %}"></script>
+<script src="{% static 'go/gant/libs/dialogs.js' %}"></script>
+<script src="{% static 'go/gant/libs/layout.js' %}"></script>
+<script src="{% static 'go/gant/libs/i18nJs.js' %}"></script>
+<script src="{% static 'go/gant/libs/jquery/dateField/jquery.dateField.js' %}"></script>
+<script src="{% static 'go/gant/libs/jquery/JST/jquery.JST.js' %}"></script>
+<script src="{% static 'go/gant/libs/jquery/valueSlider/jquery.mb.slider.js' %}"></script>
+<script src="{% static 'go/gant/libs/jquery/svg/jquery.svg.min.js' %}"></script>
+<script src="{% static 'go/gant/libs/jquery/svg/jquery.svgdom.1.8.js' %}"></script>
+<script src="{% static 'go/gant/ganttUtilities.js' %}"></script>
+<script src="{% static 'go/gant/ganttTask.js' %}"></script>
+<script src="{% static 'go/gant/ganttDrawerSVG.js' %}"></script>
+<script src="{% static 'go/gant/ganttZoom.js' %}"></script>
+<script src="{% static 'go/gant/ganttGridEditor.js' %}"></script>
+<script src="{% static 'go/gant/ganttMaster.js' %}"></script>
+ 
 {% endblock head %}
+
 {% block sidebar %}
-<div class="main-content">
-        <div class="page-content">
-
-<div id="workSpace" style="padding:0px; overflow-y:auto; overflow-x:hidden;border:1px solid #e5e5e5;position:relative;"></div>
-</div>
-</div>
 <style>
-  .resEdit {
-    padding: 15px;
-  }
-
-  .resLine {
-    width: 95%;
-    padding: 3px;
-    margin: 5px;
-    border: 1px solid #d0d0d0;
-  }
-
-  body {
-    overflow: hidden;
-  }
-
-  .ganttButtonBar h1{
-    color: #000000;
-    font-weight: bold;
-    font-size: 28px;
-    margin-left: 10px;
-  }
+.hidden {
+    display: none !important;
+}
+.dark-mode .teamworkIcon {
+    color: #797979;
+     }
 </style>
 
-<form id="gimmeBack" style="display:none;" action="../gimmeBack.jsp" method="post" target="_blank"><input type="hidden" name="prj" id="gimBaPrj"></form>
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans 'Stratejik İş Planı' %}
+            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                <li><a href="#">{% trans 'Stratejik İş Planı' %}</a></li>
+            </ul>
+        </div>
+    </div>
 
-<script type="text/javascript">
+    <div class="large-stats-card table-card table-detail-card">
+        <div class="stats-header">
+            <div class="stats-title">{% trans 'Stratejik İş Planı (GANTT)' %}</div>
+        </div>
+
+<div id="workSpace"></div>
+                          <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                          </style>
+                          <div class="large-stats-card-footer-actions">
+                              <div class="lsc-footer-info">
+                                  <i class="icon icon-info"></i> <span>{% trans 'Stratejik İş Planı, projelerin görev ve süre yönetimini optimize ederek başarıya ulaşmanıza yardımcı olur.' %}</span>
+                              </div>
+                          </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const resizeButtons = document.querySelectorAll(".button.textual.icon");
+  
+  // Sayfa yüklendiğinde tüm butonların "aktif" sınıfını temizle
+  resizeButtons.forEach(button => button.classList.remove("active"));
+
+  // Her butona tıklama olayını ekle
+  resizeButtons.forEach(button => {
+    button.addEventListener("click", function () {
+      resizeButtons.forEach(btn => btn.classList.remove("active")); // Diğer butonların "aktif" durumunu kaldır
+      this.classList.add("active"); // Sadece tıklanan butonu aktif yap
+    });
+  });
+});
+
+
+</script>
+
+<script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal($(e.target).attr("id"));
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>
+    <script type="text/javascript">
+
 
 var ge;
 $(function() {
@@ -486,10 +575,6 @@ function showBaselineInfo (event,element){
 
 </script>
 
-
-
-
-
 <div id="gantEditorTemplates" style="display:none;">
 <div class="__template__" type="GANTBUTTONS">
   <!--
@@ -525,7 +610,7 @@ function showBaselineInfo (event,element){
       <button onclick="ge.splitter.resize(50);return false;" class="button textual icon" ><span class="teamworkIcon">O</span></button>
       <button onclick="ge.splitter.resize(100);return false;" class="button textual icon"><span class="teamworkIcon">R</span></button>
       <span class="ganttButtonSeparator"></span>
-      <button onclick="$('#workSpace').trigger('fullScreen.gantt');return false;" class="button textual icon" title="FULLSCREEN" id="fullscrbtn"><span class="teamworkIcon">@</span></button>
+    <button onclick="toggleFullScreen()" class="button textual icon" title="FULLSCREEN" id="fullscrbtn"><span class="teamworkIcon">@</span></button>
       <button onclick="ge.element.toggleClass('colorByStatus' );return false;" class="button textual icon"><span class="teamworkIcon">&sect;</span></button>
 
     <button onclick="editResources();" class="button textual requireWrite" title="edit resources"><span class="teamworkIcon">M</span></button>
@@ -815,6 +900,4 @@ $(document).on("change", "#load-file", function() {
 });
 
 </script>
-
-
 {% endblock sidebar %}

@@ -124,9 +124,8 @@ def bodro_cek(id,tarih):
 @register.simple_tag
 def fiyat_duzelt_html(deger):
     # String dönüşümleri ve noktaları kaldırma işlemi
-    print(type(deger))
-    if type(deger) == "<class 'str'>":
-        deger = str(deger).replace('.', '').replace(',', '.')
+    if isinstance(deger, str):
+        deger = deger.replace('.', '').replace(',', '.')
     deger = float(deger)
     
     # Formatlama işlemi

@@ -80,7 +80,7 @@ def personel_bilgisi_axaj(request, id):
                     'hakedis_tutari': (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye),
                     'odenen': odemeler_dict.get((calis['year'], calis['month']), 0),
                     'kalan': ((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)) - odemeler_dict.get((calis['year'], calis['month']), 0),
-                    'bodro': "",  # Bodro ile ilgili ek bir işlem yapılacaksa buraya eklenir.
+                    'bodro': "",  # Bordro ile ilgili ek bir işlem yapılacaksa buraya eklenir.
                 } for calis in calismalar
             ]
         }

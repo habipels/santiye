@@ -67,6 +67,10 @@
     background-color: white; /* Sabit sütun arka plan rengi */
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sabit sütun ile diğer sütunlar arasında gölge */
 }
+.dark-mode .dataTables_wrapper .DTFC_LeftWrapper {
+    background-color: #2c2c2c; /* Sabit sütun arka plan rengi */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sabit sütun ile diğer sütunlar arasında gölge */
+}
 .warning-message {
     background-color: #fff3cd; /* Hafif sarı arka plan */
     color: #856404; /* Koyu sarı yazı rengi */
@@ -80,9 +84,7 @@
 }
 
 
-.dataTables_wrapper .DTFC_LeftWrapper table {
-    background-color: white; /* İçerikteki tablo hücrelerinin arka planını düzeltir */
-}
+
 .stats-info {
     position: relative;
     display: inline-flex;
@@ -132,7 +134,9 @@
     font-size: 20px; /* İstediğiniz boyutta ayarlayabilirsiniz */
     font-weight: bold;
 }
-
+.dark-mode table.dataTable tbody tr {
+    background-color: #121212;
+}
 
 </style>
 <main>
@@ -145,7 +149,7 @@
         <div class="page-header">
             <div class="page-info">
                 <div class="page-title">
-                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
                     {% trans 'Puantaj' %}
                 </div>
                 <ul class="page-breadcrumb">
@@ -167,14 +171,14 @@
                 <div class="stats-title">{% trans 'Aylık Puantaj Girişi' %}</div>
                     <div class="stats-right">
                         <div class="stats-info">
-                            {% trans 'Hakediş (USD):' %} <span class="tutar" id="tutardolar">3,780.00 $</span>
+                            {% trans 'Hakediş (USD):' %} <span class="tutar" id="tutardolar">{% trans '-' %}</span>
                             <i class="fas fa-info-circle info-icon"></i>
-                            <span class="tooltip-text">{% trans 'Bu tutar, USD ile maaş alan çalışanların hakediş toplamını gösterir.' %}</span>
+                            <span class="tooltip-text">{% trans 'Bu tutar, USD ile maaş alan çalışanların hakediş toplamını gösterir. Hakediş filitreleme yapıldıktan sonra hesaplanır.' %}</span>
                         </div>
                         <div class="stats-info">
-                            {% trans 'Hakediş (IQD):' %} <span class="tutar" id="tutardinar">1,250.000 IQD</span>
+                            {% trans 'Hakediş (IQD):' %} <span class="tutar" id="tutardinar">{% trans '-' %}</span>
                             <i class="fas fa-info-circle info-icon"></i>
-                            <span class="tooltip-text">{% trans 'Bu tutar, IQD ile maaş alan çalışanların hakediş toplamını gösterir.' %}</span>
+                            <span class="tooltip-text">{% trans 'Bu tutar, IQD ile maaş alan çalışanların hakediş toplamını gösterir. Hakediş filitreleme yapıldıktan sonra hesaplanır.' %}</span>
                         </div>
                     </div>
 
@@ -982,7 +986,7 @@ $j(document).ready(function() {
         
         
         </script>
-        ,<script>
+        <script>
 var $j = jQuery.noConflict();
 
 function hidePreloader() {
