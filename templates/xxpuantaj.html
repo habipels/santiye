@@ -10,7 +10,7 @@
 
 {% block sidebar %}
 <style>/* Genel Modal Stili */
-.modal, .mini-modal {
+.mini-modal {
     display: none;
     position: fixed;
     top: 50%;
@@ -26,11 +26,16 @@
 
 /* Ana Modal İçin Ferah Düzenleme */
 .modal-inner {
-    width: 85%;
-    max-height: 85vh;
-    padding: 20px 30px;
-    box-sizing: border-box;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
     overflow-y: auto;
+    max-height: 90vh;
+    padding: 15px;    
 }
 
 /* Modal Başlık ve Kapatma Butonu */
@@ -61,6 +66,7 @@
     padding: 15px;
     width: 280px; /* Mini modal genişliği daha kompakt */
     box-sizing: border-box;
+    background: beige;
 }
 
 /* Form Elemanları ve Düzen */
@@ -226,7 +232,7 @@
     </div>
 
     <div class="modal" id="yeni-gunluk">
-        <div class="modal-inner" style="width: 100%">
+        <div class="modal-inner" style="width: 70%">
             <div class="modal-header">
                 {% trans 'Günlük Rapor Ekle' %}
                 <button class="modal-close-btn" onclick="closeModal()">✖</button>
