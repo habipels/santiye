@@ -26,7 +26,6 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'go/icon/favicon-16x16.png' %}">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="{% static 'go/icon/ms-icon-144x144.png' %}">
-    <meta name="theme-color" content="#ffffff">
     <link rel="manifest" href="{% static 'manifest.json' %}">
     <meta name="theme-color" content="#22d6b6">
     
@@ -155,6 +154,7 @@ window.addEventListener('load', function() {
     
 </script>
 <script>
+// PWA İÇİN EKLENDİ BAŞLANGIÇ - TOLGA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/static/serviceworker.js')
         .then(function(registration) {
@@ -165,6 +165,80 @@ if ('serviceWorker' in navigator) {
         });
 }
 </script>
+<script>
+document.getElementById('submitForm').addEventListener('click', function() {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready.then(function(registration) {
+            return registration.sync.register('sendFormData');
+        }).then(() => {
+            console.log('Form data will be sent when back online');
+        }).catch(error => {
+            console.error('Background sync registration failed:', error);
+        });
+    } else {
+        // Eğer desteklenmiyorsa doğrudan form gönderimi yapın
+        sendFormDataOnline();
+    }
+});
 
+// Çevrimiçiyken veriyi doğrudan gönder
+function sendFormDataOnline() {
+    const formData = {
+        name: 'John Doe',
+        email: 'johndoe@example.com'
+    };
+
+    fetch('/form-submit-endpoint', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        console.log('Form data sent successfully:', response);
+    })
+    .catch(error => {
+        console.error('Error sending form data:', error);
+    });
+}
+
+</script>
+<script>
+document.getElementById('submitForm').addEventListener('click', function() {
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value
+    };
+
+    if (navigator.onLine) {
+        // Eğer çevrimiçiyse doğrudan gönder
+        sendFormDataOnline(formData);
+    } else {
+        // Çevrimdışıyken kaydet ve sync eventini başlat
+        saveDataOffline(formData);
+
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+            navigator.serviceWorker.ready.then(function(registration) {
+                return registration.sync.register('sendOfflineData');
+            });
+        }
+    }
+});
+
+function sendFormDataOnline(data) {
+    fetch('/form-submit-endpoint', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => console.log('Data sent online:', response))
+    .catch(error => console.error('Failed to send data online:', error));
+}
+// PWA İÇİN EKLENDİ SON - TOLGA
+
+</script>
 </body>
 </html>
