@@ -243,7 +243,13 @@ class IsplaniDosyalari(models.Model):
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 
-
+class gantt_olayi(models.Model):
+    gantt_sahibii = models.ForeignKey(CustomUser, verbose_name="Gantt Sahibi", blank=True, null=True, on_delete=models.SET_NULL, related_name="gantt_sahibii")
+    ganti_degistiren_kisi = models.ForeignKey(CustomUser, verbose_name="Gantt değiştiren kişi", blank=True, null=True, on_delete=models.SET_NULL, related_name="ganti_degistiren_kisi")
+    gantt_verisi = models.TextField(verbose_name="json verisi")
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class gantt_verileri(models.Model):
     gantt_sahibi = models.ForeignKey(CustomUser, verbose_name="Gantt Sahibi", blank=True, null=True, on_delete=models.SET_NULL, related_name="gantt_sahibi")
     name = models.CharField(max_length=200,verbose_name="Gantt Adı",blank=True,null=True)

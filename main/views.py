@@ -6977,9 +6977,58 @@ from .utils import *
 from django.utils.safestring import mark_safe
 def takvim_olaylari(request):
     content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile = IsplaniPlanlari.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gant_gorme:
+                    content["gant"]  =gantt_olayi.objects.filter(gantt_sahibii = request.user.kullanicilar_db).last()
+    
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            content["gant"]  =gantt_olayi.objects.filter(gantt_sahibii = request.user).last()
+            
     
     return render(request,"santiye_yonetimi/takvim.html",content)
 #takvim
+from django.http import JsonResponse
+from django.shortcuts import redirect
+
+def gant_kaydet(request):
+    if request.method == 'POST':
+        gant_verisi = request.POST.get("gant_verisi")
+        if not gant_verisi:
+            return JsonResponse({'ok': False, 'message': 'Gantt verisi bulunamadı.'})
+
+        if super_admin_kontrolu(request):
+            # Super admin işlemleri
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+                if a and a.izinler.gant_duzenleme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return JsonResponse({'ok': False, 'message': 'Yetkisiz erişim'}, status=403)
+            else:
+                kullanici = request.user
+
+        gantt_olayi.objects.create(
+            gantt_sahibii=kullanici,
+            ganti_degistiren_kisi=request.user,
+            gantt_verisi=gant_verisi
+        )
+
+        return JsonResponse({'ok': True, 'message': 'Gantt kaydedildi'})
+    
+    return redirect("main:takvim_olaylari")
 
 def santiye_raporu_2(request,id,hash):
     content = sozluk_yapisi()

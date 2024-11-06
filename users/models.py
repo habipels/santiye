@@ -245,6 +245,11 @@ class personel_izinleri(models.Model):
     katman_silme = models.BooleanField(default = False)
     katman_gorme = models.BooleanField(default = False)
     katman_duzenleme = models.BooleanField(default = False)
+
+    #gant
+    gant_olusturma = models.BooleanField(default = False)
+    gant_gorme = models.BooleanField(default = False)
+    gant_duzenleme = models.BooleanField(default = False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):
