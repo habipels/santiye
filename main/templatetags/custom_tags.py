@@ -5,6 +5,11 @@ from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from site_settings.models import *
 import locale
 import os
+
+from django.contrib.gis.geoip2 import GeoIP2
+
+
+
 """
 # İşletim sistemi kontrolü ile locale ayarı
 def set_locale():
@@ -1999,3 +2004,30 @@ def bina_3d2(veri):
 def saatlik_ucret_hesabi(users):
     bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = users).last()
     return bilgi.gunluk_calisma_saati
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+@register.simple_tag(takes_context=True)
+def show_content_for_country(context, country_code):
+    """
+    Belirli bir ülke kodu için içeriği gösterir.
+    :param context: Django template context
+    :param country_code: İçeriğin gösterilmesi gereken ülke kodu (örneğin 'TR' için Türkiye)
+    :return: Eğer kullanıcının IP adresi belirli ülke koduyla eşleşiyorsa True döner
+    """
+    request = context['request']
+    ip = get_client_ip(request)
+    g = GeoIP2()
+    try:
+        location = g.city(ip)
+        user_country_code = location['country_code']
+        return user_country_code == country_code
+    except Exception:
+        return False
