@@ -165,24 +165,16 @@
         </div>
 
         <div class="page-actions">
-            {% if request.user.kullanicilar_db %}
-                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                {% if yetki.taseronlar_olusturma %}
-                    <button class="page-primary-btn" onclick="openModal('yeni-gunluk')"><i class="icon icon-new"></i>
-                        {% trans 'Yeni Taşeron Ekle' %}
-                    </button>
-                {% endif %}
-            {% else %}
+
                 <button class="page-primary-btn" onclick="openModal('yeni-gunluk')"><i class="icon icon-new"></i>
-                    {% trans 'Yeni Taşeron Ekle' %}
+                    {% trans 'Yeni Günlük Rapor oluştur' %}
                 </button>
-            {% endif %}
         </div>
     </div>
 
     <div class="large-stats-card table-card table-detail-card">
         <div class="stats-header">
-            <div class="stats-title">{% trans 'Toplam Rapor : ' %} {{top.count}}</div>
+            <div class="stats-title">{% trans 'Toplam Rapor : ' %} 0</div>
             <div class="stats-search">
                 <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
                 <button><i class="icon icon-search"></i></button>
@@ -193,30 +185,25 @@
             <table id="datatable">
                 <thead>
                     <tr>
-                        <th class="sort" data-sort="report_date">{% trans 'Rapor Tarihi' %}</th>
-                        <th class="sort" data-sort="site">{% trans 'Şantiye' %}</th>
-                        <th class="sort" data-sort="project">{% trans 'Proje' %}</th>
-                        <th class="sort" data-sort="creator">{% trans 'Oluşturan' %}</th>
-                        <th class="sort" data-sort="temperature">{% trans 'Sıcaklık' %}</th>
-                        <th class="sort" data-sort="wind">{% trans 'Rüzgar' %}</th>
-                        <th class="sort" data-sort="pdf">{% trans 'PDF' %}</th>
-                        <th class="sort" data-sort="actions">{% trans 'İşlemler' %}</th>
+                        <th>{% trans 'Rapor Tarihi' %}</th>
+                        <th>{% trans 'Şantiye' %}</th>
+                        <th>{% trans 'Proje' %}</th>
+                        <th>{% trans 'Oluşturan' %}</th>
+                        <th>{% trans 'Sıcaklık' %}</th>
+                        <th>{% trans 'Rüzgar' %}</th>
+                        <th>{% trans 'PDF' %}</th>
+                        <th>{% trans 'İşlemler' %}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for i in santiyeler %}
                     <tr>
-                        <td>{{ i.rapor_tarihi }}</td>
-                        <td>{{ i.santiye }}</td>
-                        <td>{{ i.proje }}</td>
-                        <td>{{ i.olusturan }}</td>
-                        <td>{{ i.sicaklik }}</td>
-                        <td>{{ i.ruzgar }}</td>
-                        <td>
-                            <a target="_blank" href="{{ i.pdf_url }}" title="{{ i.pdf_name }}" class="status-info">
-                                <i class="icon icon-action-file"></i>
-                            </a>
-                        </td>
+                        <td>06.11.2024</td>
+                        <td>Qaiwan Heights</td>
+                        <td>Zone C</td>
+                        <td>Tolga YILMAZ</td>
+                        <td>23</td>
+                        <td>8 km/h</td>
+                        <td>PDF</td>
                         <td>
                             <div class="td-actions">
                                 <a onclick="openModal('editModal{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
@@ -225,9 +212,23 @@
                             </div>
                         </td>
                     </tr>
-                    {% endfor %}
+                    
                 </tbody>
             </table>
+            <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+                            </div>
         </div>
     </div>
 
@@ -512,4 +513,78 @@ function ekleGenelDurum() {
 }
 
 </script>
+<script>
+        $(document).ready(function() {
+            let datatable = $('#datatable').DataTable({
+                paging: true,
+                searching: true,
+                info: false,
+                ordering: true,
+            dom: 'Btip', // Butonları etkinleştirir
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    className: 'hidden', // DataTables butonunu gizlemek için
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: { columns: ':visible' },
+                    customize: function (doc) {
+                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('18%'); 
+                        doc.pageMargins = [15, 20, 15, 20];
+                        doc.defaultStyle = { fontSize: 8 };
+                        doc.styles.tableHeader = {
+                            fillColor: '#f2f2f2',
+                            color: '#333',
+                            alignment: 'center'
+                        };
+                    }
+                },
+                {
+                        extend: 'excelHtml5',
+                        className: 'hidden',
+                        exportOptions: { columns: ':visible' },
+                        customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            
+                            // Para birimlerinin olduğu sütunları belirleyin (örneğin, 5 ve 6. sütunlar)
+                            $('row c[r^="E"], row c[r^="F"]', sheet).each(function () {
+                                $(this).attr('s', '2'); // 2 numaralı hücre stiline ayarlanarak sayısal veri olarak işlenecek
+                            });
+
+                            // Tarihlerin olduğu sütunları belirleyin (örneğin, 4. sütun)
+                            $('row c[r^="D"]', sheet).each(function () {
+                                $(this).attr('s', '3'); // 3 numaralı hücre stiline ayarlanarak tarih olarak işlenecek
+                            });
+                        }
+                    },
+                {
+                    extend: 'print',
+                    className: 'hidden',
+                    exportOptions: { columns: ':visible' },
+                    customize: function (win) {
+                        $(win.document.body).css('font-size', '10pt').css('width', '95%').css('margin', 'auto');
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit')
+                            .css('width', '100%')
+                            .css('margin', 'auto');
+                    }
+                }
+            ]
+                
+            });
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            });
+        });
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 {% endblock sidebar %}
