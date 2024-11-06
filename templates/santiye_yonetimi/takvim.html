@@ -249,33 +249,64 @@ $(function() {
 
 
 
-function getDemoProject(){
-  //console.debug("getDemoProject")
-ret=
-{% if gant %}
-{{gant.gantt_verisi|safe}}
-{% else %}
-
- {"tasks":    [
-      {"id": -1, "name": "Gantt editor", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 0, "status": "STATUS_ACTIVE", "depends": "", "canWrite": false, "start": 1396994400000, "duration": 20, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true}
-    ], "selectedRow": 2, "deletedTaskIds": [],
+function getDemoProject() {
+  // Proje verisini yükle
+  var ret = {% if gant %}
+    {{gant.gantt_verisi|safe}}
+  {% else %}
+    {
+      "tasks": [
+        {
+          "id": -1,
+          "name": "Gantt editor",
+          "progress": 0,
+          "progressByWorklog": false,
+          "relevance": 0,
+          "type": "",
+          "typeId": "",
+          "description": "",
+          "code": "",
+          "level": 0,
+          "status": "STATUS_ACTIVE",
+          "depends": "",
+          "start": 1396994400000,
+          "duration": 20,
+          "end": 1399586399999,
+          "startIsMilestone": false,
+          "endIsMilestone": false,
+          "collapsed": false,
+          "assigs": [],
+          "hasChild": true
+        }
+      ],
+      "selectedRow": 2,
+      "deletedTaskIds": [],
       "resources": [
-      {"id": "tmp_1", "name": "Resource 1"}
-    ],
-      "roles":       [
-      {"id": "tmp_1", "name": "Project Manager"}
-      
-    ], "canWrite":    true, "canDelete":true, "canWriteOnParent": true, canAdd:true}
-
-  {% endif %}
-    //actualize data
-    var offset=new Date().getTime()-ret.tasks[0].start;
-    for (var i=0;i<ret.tasks.length;i++) {
-      ret.tasks[i].start = ret.tasks[i].start + offset;
+        {"id": "tmp_1", "name": "Resource 1"}
+      ],
+      "roles": [
+        {"id": "tmp_1", "name": "Project Manager"}
+      ],
+      "canWrite": true,
+      "canDelete": true,
+      "canWriteOnParent": true,
+      "canAdd": true
     }
+  {% endif %};
+
+  // Tüm görevlere canWrite: true ekle
+  ret.tasks.forEach(function(task) {
+    task.canWrite = true;
+  });
+
+  // Tarih ayarlaması
+  var offset = new Date().getTime() - ret.tasks[0].start;
+  ret.tasks.forEach(function(task) {
+    task.start = task.start + offset;
+  });
+
   return ret;
 }
-
 
 
 function loadGanttFromServer(taskId, callback) {

@@ -27,6 +27,8 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="{% static 'go/icon/ms-icon-144x144.png' %}">
     <meta name="theme-color" content="#ffffff">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#22d6b6">
     
     {% if dil == "ar" or dil == "ckb" %}
     <style>
@@ -152,5 +154,17 @@ window.addEventListener('load', function() {
     });
     
 </script>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/serviceworker.js')
+        .then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+        });
+}
+</script>
+
 </body>
 </html>

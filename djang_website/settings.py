@@ -53,6 +53,7 @@ if DEPLOY__:
         'rest_framework.authtoken',
          'drf_yasg',
          'channels',
+         'pwa',
         #
         'main',
         'users',
@@ -250,6 +251,7 @@ else:
         'rest_framework.authtoken',
          'drf_yasg',
          'channels',
+         'pwa',
         #
         'main',
         'users',
@@ -388,4 +390,25 @@ else:
     MEDIA_URL = ''
     MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 #Sunucuda Güncelleme Atarken Dosyaların Kabolmasını Sağlar
+
+#PWA Ayarları - Tolga
+PWA_APP_NAME = 'BiadaGO'
+PWA_APP_DESCRIPTION = "BiadaGO ERP Software"
+PWA_APP_THEME_COLOR = '#22d6b6'
+PWA_APP_BACKGROUND_COLOR = '#FFFFFF'
+PWA_APP_SCOPE = '/'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_ORIENTATION = 'portrait'
+PWA_APP_START_URL = '/'
+PWA_APP_ICONS = [
+    {
+        "src": "/static/go/icon/icon-192x192.png",
+        "sizes": "192x192"
+    },
+    {
+        "src": "/static/go/icon/icon-512x512.png",
+        "sizes": "512x512"
+    }
+]
+PWA_APP_OFFLINE_PAGE = '/offline/'
 
