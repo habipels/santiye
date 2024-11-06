@@ -57,7 +57,9 @@
 <script src="{% static 'go/gant/ganttZoom.js' %}"></script>
 <script src="{% static 'go/gant/ganttGridEditor.js' %}"></script>
 <script src="{% static 'go/gant/ganttMaster.js' %}"></script>
- 
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
 {% endblock head %}
 
 {% block sidebar %}
@@ -68,7 +70,60 @@
 .dark-mode .teamworkIcon {
     color: #797979;
      }
+      @media print {
+     .ganttButtonBar .no-print {
+
+            display: none !important;
+}
+}
 </style>
+<script>
+function exportGanttToPDF() {
+    const { jsPDF } = window.jspdf;
+
+    // PDF export işlem uyarısını göster
+    document.getElementById("loadingMessage").style.display = "block";
+
+    const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "px",
+        format: "a4",
+    });
+
+    const margin = 10; // Sayfa kenarında bırakmak istediğimiz boşluk
+
+    // Export öncesi tüm "no-print" sınıfındaki elemanları gizle
+    document.querySelectorAll(".no-print").forEach((el) => el.style.display = "none");
+
+    // #workSpace içeriğini canvas'a dönüştür
+    html2canvas(document.querySelector("#workSpace")).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdfWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        // Görüntüyü PDF'e ekle
+        pdf.addImage(imgData, "PNG", margin, margin, pdfWidth, pdfHeight);
+
+        // Footer'ı sabitle
+        pdf.setFontSize(10);
+        const footerText = "{% trans 'BiadaGO Construction ERP Software - www.biadago.com' %}";
+        pdf.text(footerText, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, {
+            align: "center",
+        });
+
+        // PDF'i kaydet
+        pdf.save("Gantt-Chart.pdf");
+
+        // Yükleme mesajını gizle
+        document.getElementById("loadingMessage").style.display = "none";
+
+        // Export sonrası "no-print" elemanlarını geri göster
+        document.querySelectorAll(".no-print").forEach((el) => el.style.display = "");
+    });
+}
+
+</script>
+
 
 <main>
     <div class="page-header">
@@ -89,7 +144,9 @@
         <div class="stats-header">
             <div class="stats-title">{% trans 'Stratejik İş Planı (GANTT)' %}</div>
         </div>
-
+<div id="loadingMessage" style="display: none; z-index: 10000;position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.75); color: #fff; padding: 20px; border-radius: 8px;">
+  {% trans 'PDF oluşturuluyor, lütfen bekleyin...' %}
+</div>
 <div id="workSpace"></div>
                           <style>
                             .dt-buttons {
@@ -104,6 +161,7 @@
                               <div class="lsc-footer-info">
                                   <i class="icon icon-info"></i> <span>{% trans 'Stratejik İş Planı, projelerin görev ve süre yönetimini optimize ederek başarıya ulaşmanıza yardımcı olur.' %}</span>
                               </div>
+                          </div>
                           </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -578,7 +636,7 @@ function showBaselineInfo (event,element){
 <div id="gantEditorTemplates" style="display:none;">
 <div class="__template__" type="GANTBUTTONS">
   <!--
-  <div class="ganttButtonBar noprint">
+  <div class="ganttButtonBar no-print">
     <div class="buttons">
       <button onclick="saveGanttOnServer();" class="button first big requireWrite" title="Save">Kaydet</button>
       <button onclick="$('#workSpace').trigger('undo.gantt');return false;" class="button textual icon requireCanWrite" title="undo"><span class="teamworkIcon">&#39;</span></button>
@@ -602,7 +660,7 @@ function showBaselineInfo (event,element){
       <button onclick="$('#workSpace').trigger('zoomMinus.gantt'); return false;" class="button textual icon " title="zoom out"><span class="teamworkIcon">)</span></button>
       <button onclick="$('#workSpace').trigger('zoomPlus.gantt');return false;" class="button textual icon " title="zoom in"><span class="teamworkIcon">(</span></button>
     <span class="ganttButtonSeparator"></span>
-      <button onclick="$('#workSpace').trigger('print.gantt');return false;" class="button textual icon " title="Print"><span class="teamworkIcon">p</span></button>
+      <button onclick="exportGanttToPDF()" class="button textual icon" title="Export to PDF"><span class="teamworkIcon">p</span></button>
     <span class="ganttButtonSeparator"></span>
       <button onclick="ge.gantt.showCriticalPath=!ge.gantt.showCriticalPath; ge.redraw();return false;" class="button textual icon requireCanSeeCriticalPath" title="CRITICAL_PATH"><span class="teamworkIcon">&pound;</span></button>
     <span class="ganttButtonSeparator requireCanSeeCriticalPath"></span>
