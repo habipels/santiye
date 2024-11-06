@@ -2,910 +2,508 @@
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
+
 {% block head %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-
-<!-- CSS Dosyaları -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
-<link rel="stylesheet" href="{% static 'content/style/style.css' %}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-<link rel="stylesheet" href="{% static 'go/gant/platform.css' %}" type="text/css">
-<link rel="stylesheet" href="{% static 'go/gant/libs/jquery/dateField/jquery.dateField.css' %}" type="text/css">
-<link rel="stylesheet" href="{% static 'go/gant/gantt.css' %}" type="text/css">
-<link rel="stylesheet" href="{% static 'go/gant/ganttPrint.css' %}" type="text/css" media="print">
-<link rel="stylesheet" href="{% static 'go/gant/libs/jquery/valueSlider/mb.slider.css' %}" type="text/css" media="print">
-
-<!-- JavaScript Dosyaları -->
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="https://momentjs.com/downloads/moment.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-
-<!-- Gantt ve jQuery Bağımlılıkları -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script src="{% static 'go/gant/libs/jquery/jquery.livequery.1.1.1.min.js' %}"></script>
-<script src="{% static 'go/gant/libs/jquery/jquery.timers.js' %}"></script>
-<script src="{% static 'go/gant/libs/utilities.js' %}"></script>
-<script src="{% static 'go/gant/libs/forms.js' %}"></script>
-<script src="{% static 'go/gant/libs/date.js' %}"></script>
-<script src="{% static 'go/gant/libs/dialogs.js' %}"></script>
-<script src="{% static 'go/gant/libs/layout.js' %}"></script>
-<script src="{% static 'go/gant/libs/i18nJs.js' %}"></script>
-<script src="{% static 'go/gant/libs/jquery/dateField/jquery.dateField.js' %}"></script>
-<script src="{% static 'go/gant/libs/jquery/JST/jquery.JST.js' %}"></script>
-<script src="{% static 'go/gant/libs/jquery/valueSlider/jquery.mb.slider.js' %}"></script>
-<script src="{% static 'go/gant/libs/jquery/svg/jquery.svg.min.js' %}"></script>
-<script src="{% static 'go/gant/libs/jquery/svg/jquery.svgdom.1.8.js' %}"></script>
-<script src="{% static 'go/gant/ganttUtilities.js' %}"></script>
-<script src="{% static 'go/gant/ganttTask.js' %}"></script>
-<script src="{% static 'go/gant/ganttDrawerSVG.js' %}"></script>
-<script src="{% static 'go/gant/ganttZoom.js' %}"></script>
-<script src="{% static 'go/gant/ganttGridEditor.js' %}"></script>
-<script src="{% static 'go/gant/ganttMaster.js' %}"></script>
- 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
 {% endblock head %}
 
 {% block sidebar %}
-<style>
-.hidden {
-    display: none !important;
+<style>/* Genel Modal Stili */
+.modal, .mini-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+    overflow-y: auto;
+    max-height: 90vh;
+    padding: 15px;
 }
-.dark-mode .teamworkIcon {
-    color: #797979;
-     }
+
+/* Ana Modal İçin Ferah Düzenleme */
+.modal-inner {
+    width: 85%;
+    max-height: 85vh;
+    padding: 20px 30px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Modal Başlık ve Kapatma Butonu */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.modal-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    color: #333;
+}
+
+/* Mini Modal İçerik Stili */
+.mini-modal-content {
+    padding: 15px;
+    width: 280px; /* Mini modal genişliği daha kompakt */
+    box-sizing: border-box;
+}
+
+/* Form Elemanları ve Düzen */
+.form-element {
+    margin-bottom: 15px;
+}
+
+.form-element label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-element input, .form-element select, .form-element textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+}
+
+.form-element input:focus, .form-element select:focus, .form-element textarea:focus {
+    border-color: #24d6b5;
+    outline: none;
+}
+
+/* Minimalist ve Kompakt Butonlar */
+.form-action-primary, .form-action-secondary {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.form-action-primary {
+    background-color: #24d6b5;
+    color: #fff;
+    border: none;
+}
+
+.form-action-primary:hover {
+    background-color: #1fb098;
+}
+
+.form-action-secondary {
+    background-color: #f5f5f5;
+    color: #555;
+    border: none;
+}
+
+.form-action-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+/* Listeleme ve Silme Butonları */
+.listing {
+    margin-top: 10px;
+    padding: 8px;
+    background: #fafafa;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ddd;
+    font-size: 13px;
+}
+
+.remove-item {
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.remove-item:hover {
+    color: #c0392b;
+}
+
 </style>
 
 <main>
     <div class="page-header">
         <div class="page-info">
             <div class="page-title">
-                <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
-                {% trans 'Stratejik İş Planı' %}
+                <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans 'Şantiye Günlüğü' %}
             </div>
             <ul class="page-breadcrumb">
                 <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
                 <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
-                <li><a href="#">{% trans 'Stratejik İş Planı' %}</a></li>
+                <li><a href="#">{% trans 'Şantiye Günlüğü' %}</a></li>
             </ul>
+        </div>
+
+        <div class="page-actions">
+            {% if request.user.kullanicilar_db %}
+                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                {% if yetki.taseronlar_olusturma %}
+                    <button class="page-primary-btn" onclick="openModal('yeni-gunluk')"><i class="icon icon-new"></i>
+                        {% trans 'Yeni Taşeron Ekle' %}
+                    </button>
+                {% endif %}
+            {% else %}
+                <button class="page-primary-btn" onclick="openModal('yeni-gunluk')"><i class="icon icon-new"></i>
+                    {% trans 'Yeni Taşeron Ekle' %}
+                </button>
+            {% endif %}
         </div>
     </div>
 
     <div class="large-stats-card table-card table-detail-card">
         <div class="stats-header">
-            <div class="stats-title">{% trans 'Stratejik İş Planı (GANTT)' %}</div>
-
+            <div class="stats-title">{% trans 'Toplam Rapor : ' %} {{top.count}}</div>
+            <div class="stats-search">
+                <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                <button><i class="icon icon-search"></i></button>
+            </div>
         </div>
 
         <div class="table-wrapper">
-<div id="workSpace"></div>
-             <style>
-                            .dt-buttons {
-                                opacity: 0;
-                                height: 0;
-                                position: fixed;
-                                top: 10000px;
-                                left: 10000px;
-                            } 
-                            </style>
-                            <div class="large-stats-card-footer-actions">
-                           <div class="lsc-footer-info">
-    <i class="icon icon-info"></i> <span>{% trans 'Stratejik İş Planı, projelerin görev ve süre yönetimini optimize ederek başarıya ulaşmanıza yardımcı olur.' %}</span>
-</div>
-
-            
+            <table id="datatable">
+                <thead>
+                    <tr>
+                        <th class="sort" data-sort="report_date">{% trans 'Rapor Tarihi' %}</th>
+                        <th class="sort" data-sort="site">{% trans 'Şantiye' %}</th>
+                        <th class="sort" data-sort="project">{% trans 'Proje' %}</th>
+                        <th class="sort" data-sort="creator">{% trans 'Oluşturan' %}</th>
+                        <th class="sort" data-sort="temperature">{% trans 'Sıcaklık' %}</th>
+                        <th class="sort" data-sort="wind">{% trans 'Rüzgar' %}</th>
+                        <th class="sort" data-sort="pdf">{% trans 'PDF' %}</th>
+                        <th class="sort" data-sort="actions">{% trans 'İşlemler' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in santiyeler %}
+                    <tr>
+                        <td>{{ i.rapor_tarihi }}</td>
+                        <td>{{ i.santiye }}</td>
+                        <td>{{ i.proje }}</td>
+                        <td>{{ i.olusturan }}</td>
+                        <td>{{ i.sicaklik }}</td>
+                        <td>{{ i.ruzgar }}</td>
+                        <td>
+                            <a target="_blank" href="{{ i.pdf_url }}" title="{{ i.pdf_name }}" class="status-info">
+                                <i class="icon icon-action-file"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <div class="td-actions">
+                                <a onclick="openModal('editModal{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                <a onclick="openModal('viewModal{{i.id}}')" class="status-info"><i class="icon icon-action-view"></i></a>
+                                <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-
-        
     </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const resizeButtons = document.querySelectorAll(".button.textual.icon");
-  
-  // Sayfa yüklendiğinde tüm butonların "aktif" sınıfını temizle
-  resizeButtons.forEach(button => button.classList.remove("active"));
-
-  // Her butona tıklama olayını ekle
-  resizeButtons.forEach(button => {
-    button.addEventListener("click", function () {
-      resizeButtons.forEach(btn => btn.classList.remove("active")); // Diğer butonların "aktif" durumunu kaldır
-      this.classList.add("active"); // Sadece tıklanan butonu aktif yap
-    });
-  });
-});
-
-
-</script>
-
-<script>
-        function openModal(modalID, close = true) {
-            if (close) {
-                closeModal();
-            }
-            $("#" + modalID).css("display", "flex").hide().fadeIn()
-        }
-
-        function closeModal(modalID = "") {
-            console.log(modalID.length);
-            if (modalID.length === 0) {
-                $(".modal").fadeOut();
-            } else {
-                $("#" + modalID).fadeOut();
-            }
-        }
-
-        $(".modal").on("click", function (e) {
-            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
-                closeModal($(e.target).attr("id"));
-            }
-        });
-
-        $('input[type="file"]').on('change', function () {
-            var files = $(this).prop('files');
-            var formElement = $(this).closest('.form-element');
-            var fileList = formElement.find('.fileList');
-            fileList.empty();
-
-            for (var i = 0; i < files.length; i++) {
-                fileList.append('<li>' + files[i].name + '</li>');
-            }
-        });
-
-    </script>
-    <script type="text/javascript">
-
-
-var ge;
-$(function() {
-  var canWrite=true; //this is the default for test purposes
-
-  // here starts gantt initialization
-  ge = new GanttMaster();
-  ge.set100OnClose=true;
-
-  ge.shrinkParent=true;
-
-  ge.init($("#workSpace"));
-  loadI18n(); //overwrite with localized ones
-
-  //in order to force compute the best-fitting zoom level
-  delete ge.gantt.zoom;
-
-  var project=loadFromLocalStorage();
-
-  if (!project.canWrite)
-    $(".ganttButtonBar button.requireWrite").attr("disabled","true");
-
-  ge.loadProject(project);
-  ge.checkpoint(); //empty the undo stack
-
-  initializeHistoryManagement(ge.tasks[0].id);
-});
-
-
-
-function getDemoProject(){
-  //console.debug("getDemoProject")
-ret= {"tasks":    [
-      {"id": -1, "name": "Gantt editor", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 0, "status": "STATUS_ACTIVE", "depends": "", "canWrite": false, "start": 1396994400000, "duration": 20, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true},
-      {"id": -2, "name": "coding", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 10, "end": 1398203999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true},
-      {"id": -3, "name": "gantt part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 2, "end": 1397167199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
-      {"id": -4, "name": "editor part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "3", "canWrite": true, "start": 1397167200000, "duration": 4, "end": 1397685599999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
-      {"id": -5, "name": "testing", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_SUSPENDED", "depends": "2:5", "canWrite": true, "start": 1398981600000, "duration": 5, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true},
-      {"id": -6, "name": "test on safari", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "", "canWrite": true, "start": 1398981600000, "duration": 2, "end": 1399327199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
-      {"id": -7, "name": "test on ie", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 3, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
-      {"id": -8, "name": "test on chrome", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 2, "end": 1399499999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false}
-    ], "selectedRow": 2, "deletedTaskIds": [],
-      "resources": [
-      {"id": "tmp_1", "name": "Resource 1"},
-      {"id": "tmp_2", "name": "Resource 2"},
-      {"id": "tmp_3", "name": "Resource 3"},
-      {"id": "tmp_4", "name": "Resource 4"}
-    ],
-      "roles":       [
-      {"id": "tmp_1", "name": "Project Manager"},
-      {"id": "tmp_2", "name": "Worker"},
-      {"id": "tmp_3", "name": "Stakeholder"},
-      {"id": "tmp_4", "name": "Customer"}
-    ], "canWrite":    true, "canDelete":true, "canWriteOnParent": true, canAdd:true}
-
-
-    //actualize data
-    var offset=new Date().getTime()-ret.tasks[0].start;
-    for (var i=0;i<ret.tasks.length;i++) {
-      ret.tasks[i].start = ret.tasks[i].start + offset;
-    }
-  return ret;
-}
-
-
-
-function loadGanttFromServer(taskId, callback) {
-
-  //this is a simulation: load data from the local storage if you have already played with the demo or a textarea with starting demo data
-  var ret=loadFromLocalStorage();
-
-  //this is the real implementation
-  /*
-  //var taskId = $("#taskSelector").val();
-  var prof = new Profiler("loadServerSide");
-  prof.reset();
-
-  $.getJSON("ganttAjaxController.jsp", {CM:"LOADPROJECT",taskId:taskId}, function(response) {
-    //console.debug(response);
-    if (response.ok) {
-      prof.stop();
-
-      ge.loadProject(response.project);
-      ge.checkpoint(); //empty the undo stack
-
-      if (typeof(callback)=="function") {
-        callback(response);
-      }
-    } else {
-      jsonErrorHandling(response);
-    }
-  });
-  */
-
-  return ret;
-}
-
-function upload(uploadedFile) {
-  var fileread = new FileReader();
-  
-  fileread.onload = function(e) {
-    var content = e.target.result;
-    var intern = JSON.parse(content); // Array of Objects.
-    //console.log(intern); // You can index every object
-    
-    ge.loadProject(intern);
-    ge.checkpoint(); //empty the undo stack
-
-  };
-
-  fileread.readAsText(uploadedFile);
-}
-
-function saveGanttOnServer() {
-
-  //this is a simulation: save data to the local storage or to the textarea
-  //saveInLocalStorage();
-
-  var prj = ge.saveProject();
-
-  download(JSON.stringify(prj, null, '\t'), "MyProject.json", "application/json");
-
-  /*
-
-  delete prj.resources;
-  delete prj.roles;
-
-  var prof = new Profiler("saveServerSide");
-  prof.reset();
-
-  if (ge.deletedTaskIds.length>0) {
-    if (!confirm("TASK_THAT_WILL_BE_REMOVED\n"+ge.deletedTaskIds.length)) {
-      return;
-    }
-  }
-
-  $.ajax("ganttAjaxController.jsp", {
-    dataType:"json",
-    data: {CM:"SVPROJECT",prj:JSON.stringify(prj)},
-    type:"POST",
-
-    success: function(response) {
-      if (response.ok) {
-        prof.stop();
-        if (response.project) {
-          ge.loadProject(response.project); //must reload as "tmp_" ids are now the good ones
-        } else {
-          ge.reset();
-        }
-      } else {
-        var errMsg="Errors saving project\n";
-        if (response.message) {
-          errMsg=errMsg+response.message+"\n";
-        }
-
-        if (response.errorMessages.length) {
-          errMsg += response.errorMessages.join("\n");
-        }
-
-        alert(errMsg);
-      }
-    }
-
-  });
-  */
-}
-
-// Function to download data to a file
-function download(data, filename, type) {
-  var file = new Blob([data], {type: type});
-  if (window.navigator.msSaveOrOpenBlob) // IE10+
-    window.navigator.msSaveOrOpenBlob(file, filename);
-  else { // Others
-    var a = document.createElement("a"),
-      url = URL.createObjectURL(file);
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function() {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);  
-    }, 0); 
-  }
-}
-
-function newProject(){
-  clearGantt();
-}
-
-
-function clearGantt() {
-  ge.reset();
-}
-
-//-------------------------------------------  Get project file as JSON (used for migrate project from gantt to Teamwork) ------------------------------------------------------
-function getFile() {
-  $("#gimBaPrj").val(JSON.stringify(ge.saveProject()));
-  $("#gimmeBack").submit();
-  $("#gimBaPrj").val("");
-
-  /*  var uriContent = "data:text/html;charset=utf-8," + encodeURIComponent(JSON.stringify(prj));
-   neww=window.open(uriContent,"dl");*/
-}
-
-
-function loadFromLocalStorage() {
-  var ret;
-  if (localStorage) {
-    if (localStorage.getObject("teamworkGantDemo")) {
-      ret = localStorage.getObject("teamworkGantDemo");
-    }
-  }
-
-  //if not found create a new example task
-  if (!ret || !ret.tasks || ret.tasks.length == 0){
-    ret=getDemoProject();
-  }
-  return ret;
-}
-
-
-function saveInLocalStorage() {
-  var prj = ge.saveProject();
-
-  if (localStorage) {
-    localStorage.setObject("teamworkGantDemo", prj);
-  }
-}
-
-
-//-------------------------------------------  Open a black popup for managing resources. This is only an axample of implementation (usually resources come from server) ------------------------------------------------------
-function editResources(){
-
-  //make resource editor
-  var resourceEditor = $.JST.createFromTemplate({}, "RESOURCE_EDITOR");
-  var resTbl=resourceEditor.find("#resourcesTable");
-
-  for (var i=0;i<ge.resources.length;i++){
-    var res=ge.resources[i];
-    resTbl.append($.JST.createFromTemplate(res, "RESOURCE_ROW"))
-  }
-
-
-  //bind add resource
-  resourceEditor.find("#addResource").click(function(){
-    resTbl.append($.JST.createFromTemplate({id:"new",name:"resource"}, "RESOURCE_ROW"))
-  });
-
-  //bind save event
-  resourceEditor.find("#resSaveButton").click(function(){
-    var newRes=[];
-    //find for deleted res
-    for (var i=0;i<ge.resources.length;i++){
-      var res=ge.resources[i];
-      var row = resourceEditor.find("[resId="+res.id+"]");
-      if (row.length>0){
-        //if still there save it
-        var name = row.find("input[name]").val();
-        if (name && name!="")
-          res.name=name;
-        newRes.push(res);
-      } else {
-        //remove assignments
-        for (var j=0;j<ge.tasks.length;j++){
-          var task=ge.tasks[j];
-          var newAss=[];
-          for (var k=0;k<task.assigs.length;k++){
-            var ass=task.assigs[k];
-            if (ass.resourceId!=res.id)
-              newAss.push(ass);
-          }
-          task.assigs=newAss;
-        }
-      }
-    }
-
-    //loop on new rows
-    var cnt=0
-    resourceEditor.find("[resId=new]").each(function(){
-      cnt++;
-      var row = $(this);
-      var name = row.find("input[name]").val();
-      if (name && name!="")
-        newRes.push (new Resource("tmp_"+new Date().getTime()+"_"+cnt,name));
-    });
-
-    ge.resources=newRes;
-
-    closeBlackPopup();
-    ge.redraw();
-  });
-
-
-  var ndo = createModalPopup(400, 500).append(resourceEditor);
-}
-
-function initializeHistoryManagement(taskId){
-
-  //retrieve from server the list of history points in millisecond that represent the instant when the data has been recorded
-  //response: {ok:true, historyPoints: [1498168800000, 1498600800000, 1498687200000, 1501538400000, …]}
-  $.getJSON(contextPath+"/applications/teamwork/task/taskAjaxController.jsp", {CM: "GETGANTTHISTPOINTS", OBJID:taskId}, function (response) {
-
-    //if there are history points
-    if (response.ok == true && response.historyPoints && response.historyPoints.length>0) {
-
-      //add show slider button on button bar
-      var histBtn = $("<button>").addClass("button textual icon lreq30 lreqLabel").attr("title", "SHOW_HISTORY").append("<span class=\"teamworkIcon\">&#x60;</span>");
-
-      //clicking it
-      histBtn .click(function () {
-        var el = $(this);
-        var ganttButtons = $(".ganttButtonBar .buttons");
-
-        //is it already on?
-        if (!ge.element.is(".historyOn")) {
-          ge.element.addClass("historyOn");
-          ganttButtons.find(".requireCanWrite").hide();
-
-          //load the history points from server again
-          showSavingMessage();
-          $.getJSON(contextPath + "/applications/teamwork/task/taskAjaxController.jsp", {CM: "GETGANTTHISTPOINTS", OBJID: ge.tasks[0].id}, function (response) {
-            jsonResponseHandling(response);
-            hideSavingMessage();
-            if (response.ok == true) {
-              var dh = response.historyPoints;
-              if (dh && dh.length > 0) {
-                //si crea il div per lo slider
-                var sliderDiv = $("<div>").prop("id", "slider").addClass("lreq30 lreqHide").css({"display":"inline-block","width":"500px"});
-                ganttButtons.append(sliderDiv);
-
-                var minVal = 0;
-                var maxVal = dh.length-1 ;
-
-                $("#slider").show().mbSlider({
-                  rangeColor : '#2f97c6',
-                  minVal     : minVal,
-                  maxVal     : maxVal,
-                  startAt    : maxVal,
-                  showVal    : false,
-                  grid       :1,
-                  formatValue: function (val) {
-                    return new Date(dh[val]).format();
-                  },
-                  onSlideLoad: function (obj) {
-                    this.onStop(obj);
-
-                  },
-                  onStart    : function (obj) {},
-                  onStop     : function (obj) {
-                    var val = $(obj).mbgetVal();
-                    showSavingMessage();
-                    /**
-                     * load the data history for that milliseconf from server
-                     * response in this format {ok: true, baselines: {...}}
-                     *
-                     * baselines: {61707: {duration:1,endDate:1550271599998,id:61707,progress:40,startDate:1550185200000,status:"STATUS_WAITING",taskId:"3055"},
-                     *            {taskId:{duration:in days,endDate:in millis,id:history record id,progress:in percent,startDate:in millis,status:task status,taskId:"3055"}....}}                     */
-
-                    $.getJSON(contextPath + "/applications/teamwork/task/taskAjaxController.jsp", {CM: "GETGANTTHISTORYAT", OBJID: ge.tasks[0].id, millis:dh[val]}, function (response) {
-                      jsonResponseHandling(response);
-                      hideSavingMessage();
-                      if (response.ok ) {
-                        ge.baselines=response.baselines;
-                        ge.showBaselines=true;
-                        ge.baselineMillis=dh[val];
-                        ge.redraw();
-                      }
-                    })
-
-                  },
-                  onSlide    : function (obj) {
-                    clearTimeout(obj.renderHistory);
-                    var self = this;
-                    obj.renderHistory = setTimeout(function(){
-                      self.onStop(obj);
-                    }, 200)
-
-                  }
-                });
-              }
-            }
-          });
-
-
-          // closing the history
-        } else {
-          //remove the slider
-          $("#slider").remove();
-          ge.element.removeClass("historyOn");
-          if (ge.permissions.canWrite)
-            ganttButtons.find(".requireCanWrite").show();
-
-          ge.showBaselines=false;
-          ge.baselineMillis=undefined;
-          ge.redraw();
-        }
-
-      });
-      $("#saveGanttButton").before(histBtn);
-    }
-  })
-}
-
-function showBaselineInfo (event,element){
-  //alert(element.attr("data-label"));
-  $(element).showBalloon(event, $(element).attr("data-label"));
-  ge.splitter.secondBox.one("scroll",function(){
-    $(element).hideBalloon();
-  })
-}
-
-</script>
-
-<div id="gantEditorTemplates" style="display:none;">
-<div class="__template__" type="GANTBUTTONS">
-  <!--
-  <div class="ganttButtonBar noprint">
-    <div class="buttons">
-      <button onclick="saveGanttOnServer();" class="button first big requireWrite" title="Save">Kaydet</button>
-      <button onclick="$('#workSpace').trigger('undo.gantt');return false;" class="button textual icon requireCanWrite" title="undo"><span class="teamworkIcon">&#39;</span></button>
-      <button onclick="$('#workSpace').trigger('redo.gantt');return false;" class="button textual icon requireCanWrite" title="redo"><span class="teamworkIcon">&middot;</span></button>
-      <span class="ganttButtonSeparator requireCanWrite requireCanAdd"></span>
-      <button onclick="$('#workSpace').trigger('addAboveCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanAdd" title="insert above"><span class="teamworkIcon">l</span></button>
-      <button onclick="$('#workSpace').trigger('addBelowCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanAdd" title="insert below"><span class="teamworkIcon">X</span></button>
-      <span class="ganttButtonSeparator requireCanWrite requireCanInOutdent"></span>
-      <button onclick="$('#workSpace').trigger('outdentCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanInOutdent" title="un-indent task"><span class="teamworkIcon">.</span></button>
-      <button onclick="$('#workSpace').trigger('indentCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanInOutdent" title="indent task"><span class="teamworkIcon">:</span></button>
-      <span class="ganttButtonSeparator requireCanWrite requireCanMoveUpDown"></span>
-      <button onclick="$('#workSpace').trigger('moveUpCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanMoveUpDown" title="move up"><span class="teamworkIcon">k</span></button>
-      <button onclick="$('#workSpace').trigger('moveDownCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanMoveUpDown" title="move down"><span class="teamworkIcon">j</span></button>
-      <span class="ganttButtonSeparator requireCanWrite requireCanDelete"></span>
-      <button onclick="$('#workSpace').trigger('deleteFocused.gantt');return false;" class="button textual icon delete requireCanWrite" title="Elimina"><span class="teamworkIcon">&cent;</span></button>
-      <span class="ganttButtonSeparator"></span>
-      <button onclick="$('#workSpace').trigger('expandAll.gantt');return false;" class="button textual icon " title="EXPAND_ALL"><span class="teamworkIcon">6</span></button>
-      <button onclick="$('#workSpace').trigger('collapseAll.gantt'); return false;" class="button textual icon " title="COLLAPSE_ALL"><span class="teamworkIcon">5</span></button>
-
-    <span class="ganttButtonSeparator"></span>
-      <button onclick="$('#workSpace').trigger('zoomMinus.gantt'); return false;" class="button textual icon " title="zoom out"><span class="teamworkIcon">)</span></button>
-      <button onclick="$('#workSpace').trigger('zoomPlus.gantt');return false;" class="button textual icon " title="zoom in"><span class="teamworkIcon">(</span></button>
-    <span class="ganttButtonSeparator"></span>
-      <button onclick="$('#workSpace').trigger('print.gantt');return false;" class="button textual icon " title="Print"><span class="teamworkIcon">p</span></button>
-    <span class="ganttButtonSeparator"></span>
-      <button onclick="ge.gantt.showCriticalPath=!ge.gantt.showCriticalPath; ge.redraw();return false;" class="button textual icon requireCanSeeCriticalPath" title="CRITICAL_PATH"><span class="teamworkIcon">&pound;</span></button>
-    <span class="ganttButtonSeparator requireCanSeeCriticalPath"></span>
-      <button onclick="ge.splitter.resize(.1);return false;" class="button textual icon" ><span class="teamworkIcon">F</span></button>
-      <button onclick="ge.splitter.resize(50);return false;" class="button textual icon" ><span class="teamworkIcon">O</span></button>
-      <button onclick="ge.splitter.resize(100);return false;" class="button textual icon"><span class="teamworkIcon">R</span></button>
-      <span class="ganttButtonSeparator"></span>
-    <button onclick="toggleFullScreen()" class="button textual icon" title="FULLSCREEN" id="fullscrbtn"><span class="teamworkIcon">@</span></button>
-      <button onclick="ge.element.toggleClass('colorByStatus' );return false;" class="button textual icon"><span class="teamworkIcon">&sect;</span></button>
-
-    <button onclick="editResources();" class="button textual requireWrite" title="edit resources"><span class="teamworkIcon">M</span></button>
-      &nbsp; &nbsp; &nbsp; &nbsp;
+    <div class="modal" id="yeni-gunluk">
+        <div class="modal-inner" style="width: 100%">
+            <div class="modal-header">
+                {% trans 'Günlük Rapor Ekle' %}
+                <button class="modal-close-btn" onclick="closeModal()">✖</button>
+            </div>
+           <div class="modal-body">
+                <form autocomplete="off" class="tablelist-form">
+                    <div class="form-element">
+                        <label for="rapor-tarihi">{% trans 'Rapor Tarihi' %}</label>
+                        <input type="date" id="rapor-tarihi" class="form-control">
+                    </div>
+                    <div class="form-element">
+                        <label for="santiye-secimi">{% trans 'Şantiye Seçimi' %}</label>
+                        <select id="santiye-secimi" class="styled-select">
+                            <<option value="" disabled selected>{% trans 'Şantiye Seçiniz' %}</option>
+                            <option value="Beton">{% trans 'Test' %}</option>
+                            <option value="Demir">{% trans 'Test2' %}</option>
+   
+                        </select>
+                    </div>
+
+                    <div class="form-element">
+                        <label for="personel">{% trans 'Personel' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('personel-modal')">{% trans 'Personel Ekle' %}</button>
+                        <div id="personel-list" class="listing-container"></div>
+                    </div>
+
+                    <div class="form-element">
+                        <label>{% trans 'Hava Durumu' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('hava-durumu-modal')">{% trans 'Hava Durumu Ekle' %}</button>
+                        <div id="hava-list" class="listing-container"></div>
+                    </div>
+
+                    <!-- Eklediğiniz yeni alanlar -->
+                    <div class="form-element">
+                        <label for="malzemeler">{% trans 'Şantiyeye Gelen Malzemeler' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('malzemeler-modal')">{% trans 'Malzeme Ekle' %}</button>
+                        <div id="malzeme-list" class="listing-container"></div>
+                    </div>
+
+                    <div class="form-element">
+                        <label for="imalat">{% trans 'İmalat Durumu' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('imalat-modal')">{% trans 'İmalat Ekle' %}</button>
+                        <div id="imalat-list" class="listing-container"></div>
+                    </div>
+
+                    <div class="form-element">
+                        <label for="genel-durum">{% trans 'Genel Durum' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('genel-durum-modal')">{% trans 'Genel Durum Ekle' %}</button>
+                        <div id="genel-durum-list" class="listing-container"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="form-action-secondary" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button type="submit" class="form-action-primary">{% trans 'Rapor Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <div>
-      <button class="button login" title="login/enroll" onclick="loginEnroll($(this));" style="display:none;">login/enroll</button>
-      <button class="button opt collab" title="Start with Twproject" onclick="collaborate($(this));" style="display:none;"><em>collaborate</em></button>
+    <!-- Mini Modal - Personel -->
+    <div class="mini-modal" id="personel-modal">
+        <div class="mini-modal-content">
+            <h4>{% trans 'Personel Ekle' %}</h4>
+            <div class="form-element">
+                <label for="departman-secimi">{% trans 'Departman Seçimi' %}</label>
+                <select class="styled-select" id="departman-secimi">
+                    <option value="" disabled selected>{% trans 'Departman Seçiniz' %}</option>
+                    <option value="Kule">{% trans 'Kule Vinç' %}</option>
+                    <option value="Demir">{% trans 'Demir' %}</option>
+                    <option value="Kum">{% trans 'Tünel Kalıp' %}</option>
+                    <option value="Çimento">{% trans 'Yardımcı' %}</option>
+                    <option value="Tuğla">{% trans 'Tuğla' %}</option>
+                    <option value="Kereste">{% trans 'Seramik' %}</option>
+                </select>
+            </div>
+            <div class="form-element">
+                <label for="calisan-sayisi">{% trans 'Çalışan Sayısı' %}</label>
+                <input type="number" id="calisan-sayisi" min="1" class="form-control">
+            </div>
+            <div class="form-actions">
+                <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+                <button type="button" class="form-action-primary" onclick="eklePersonel()">Ekle</button>
+            </div>
+        </div>
     </div>
-  </div>
-  -->
+
+    <!-- Mini Modal - Hava Durumu -->
+    <div class="mini-modal" id="hava-durumu-modal">
+        <div class="mini-modal-content">
+            <h4>{% trans 'Hava Durumu Ekle' %}</h4>
+            <div class="form-element">
+                <label>{% trans 'Sıcaklık' %}</label>
+                <input type="text" class="form-control" id="sicaklik">
+            </div>
+            <div class="form-element">
+                <label>{% trans 'Rüzgar Hızı' %}</label>
+                <input type="text" class="form-control" id="ruzgar-hizi">
+            </div>
+            <div class="form-actions">
+                <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+                <button type="button" class="form-action-primary" onclick="ekleHavaDurumu()">Ekle</button>
+            </div>
+        </div>
+    </div>
+    <!-- Mini Modal - Malzeme -->
+
+    <div class="mini-modal" id="malzemeler-modal">
+    <div class="mini-modal-content">
+        <h4>{% trans 'Malzeme Ekle' %}</h4>
+        <div class="form-element">
+            <label for="malzeme-secimi">{% trans 'Malzeme Seçimi' %}</label>
+            <select id="malzeme-secimi" class="styled-select">
+                <option value="" disabled selected>{% trans 'Malzeme Seçiniz' %}</option>
+                <option value="Beton">{% trans 'Beton' %}</option>
+                <option value="Demir">{% trans 'Demir' %}</option>
+                <option value="Kum">{% trans 'Kum' %}</option>
+                <option value="Çimento">{% trans 'Çimento' %}</option>
+                <option value="Tuğla">{% trans 'Tuğla' %}</option>
+                <option value="Kereste">{% trans 'Kereste' %}</option>
+            </select>
+        </div>
+        <div class="form-element">
+            <label for="malzeme-adet">{% trans 'Adet' %}</label>
+            <input type="number" id="malzeme-adet" min="1" class="form-control">
+        </div>
+        <div class="form-actions">
+            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+            <button type="button" class="form-action-primary" onclick="ekleMalzeme()">Ekle</button>
+        </div>
+    </div>
+</div>
+    <!-- Mini Modal - İmalat -->
+
+<div class="mini-modal" id="imalat-modal">
+    <div class="mini-modal-content">
+        <h4>{% trans 'İmalat Durumu Ekle' %}</h4>
+        <div class="form-element">
+            <label for="imalat-secimi">{% trans 'İmalat Seçimi' %}</label>
+            <select id="imalat-secimi" class="styled-select">
+                <option value="" disabled selected>{% trans 'İmalat Kalemi Seçiniz' %}</option>
+                <option value="Beton">{% trans 'Alçı' %}</option>
+                <option value="Demir">{% trans 'Seramik' %}</option>
+                <option value="Kum">{% trans 'Elektrik' %}</option>
+                <option value="Çimento">{% trans 'Mekanik' %}</option>
+                <option value="Tuğla">{% trans 'Mantolama' %}</option>
+                <option value="Kereste">{% trans 'Boya' %}</option>
+            </select>
+        </div>
+        <div class="form-element">
+            <label for="imalat-aciklama">{% trans 'Açıklama' %}</label>
+            <textarea id="imalat-aciklama" class="form-control"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+            <button type="button" class="form-action-primary" onclick="ekleImalat()">Ekle</button>
+        </div>
+    </div>
+</div>
+    <!-- Mini Modal - Genel durum -->
+
+<div class="mini-modal" id="genel-durum-modal">
+    <div class="mini-modal-content">
+        <h4>{% trans 'Genel Durum Ekle' %}</h4>
+        <div class="form-element">
+            <label for="genel-aciklama">{% trans 'Açıklama' %}</label>
+            <textarea id="genel-aciklama" class="form-control"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
+            <button type="button" class="form-action-primary" onclick="ekleGenelDurum()">Ekle</button>
+        </div>
+    </div>
 </div>
 
-<div class="__template__" type="TASKSEDITHEAD"><!--
-  <table class="gdfTable" cellspacing="0" cellpadding="0">
-    <thead>
-    <tr style="height:40px">
-      <th class="gdfColHeader" style="width:35px; border-right: none"></th>
-      <th class="gdfColHeader" style="width:25px;"></th>
-      <th class="gdfColHeader gdfResizable" style="width:100px;">Kısa Ad</th>
-      <th class="gdfColHeader gdfResizable" style="width:300px;">İmalat</th>
-      <th class="gdfColHeader"  align="center" style="width:17px;" title="Başlangıç tarihi bir dönüm noktasıdır."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
-      <th class="gdfColHeader gdfResizable" style="width:80px;">start</th>
-      <th class="gdfColHeader"  align="center" style="width:17px;" title="Bitiş tarihi bir dönüm noktasıdır."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
-      <th class="gdfColHeader gdfResizable" style="width:80px;">Bitiş</th>
-      <th class="gdfColHeader gdfResizable" style="width:50px;">Süre</th>
-      <th class="gdfColHeader gdfResizable" style="width:20px;">%</th>
-      <th class="gdfColHeader gdfResizable requireCanSeeDep" style="width:50px;">Bağlı İml.</th>
-      <th class="gdfColHeader gdfResizable" style="width:1000px; display: none; text-align: left; padding-left: 10px;">assignees</th>
-    </tr>
-    </thead>
-  </table>
-  --></div>
+</main>
 
-<div class="__template__" type="TASKROW"><!--
-  <tr id="tid_(#=obj.id#)" taskId="(#=obj.id#)" class="taskEditRow (#=obj.isParent()?'isParent':''#) (#=obj.collapsed?'collapsed':''#)" level="(#=level#)">
-    <th class="gdfCell edit" align="right" style="cursor:pointer;"><span class="taskRowIndex">(#=obj.getRow()+1#)</span> <span class="teamworkIcon" style="font-size:12px;" >e</span></th>
-    <td class="gdfCell noClip" align="center"><div class="taskStatus cvcColorSquare" status="(#=obj.status#)"></div></td>
-    <td class="gdfCell"><input type="text" name="code" value="(#=obj.code?obj.code:''#)" placeholder="No/Kısa Ad"></td>
-    <td class="gdfCell indentCell" style="padding-left:(#=obj.level*10+18#)px;">
-      <div class="exp-controller" align="center"></div>
-      <input type="text" name="name" value="(#=obj.name#)" placeholder="name">
-    </td>
-    <td class="gdfCell" align="center"><input type="checkbox" name="startIsMilestone"></td>
-    <td class="gdfCell"><input type="text" name="start"  value="" class="date"></td>
-    <td class="gdfCell" align="center"><input type="checkbox" name="endIsMilestone"></td>
-    <td class="gdfCell"><input type="text" name="end" value="" class="date"></td>
-    <td class="gdfCell"><input type="text" name="duration" autocomplete="off" value="(#=obj.duration#)"></td>
-    <td class="gdfCell"><input type="text" name="progress" class="validated" entrytype="PERCENTILE" autocomplete="off" value="(#=obj.progress?obj.progress:''#)" (#=obj.progressByWorklog?"readOnly":""#)></td>
-    <td class="gdfCell requireCanSeeDep"><input type="text" name="depends" autocomplete="off" value="(#=obj.depends#)" (#=obj.hasExternalDep?"readonly":""#)></td>
-    <td class="gdfCell taskAssigs">(#=obj.getAssigsString()#)</td>
-  </tr>
-  --></div>
+<script>
+function openModal(modalID) {
+    closeModal();
+    document.getElementById(modalID).style.display = "block";
+}
 
-<div class="__template__" type="TASKEMPTYROW"><!--
-  <tr class="taskEditRow emptyRow" >
-    <th class="gdfCell" align="right"></th>
-    <td class="gdfCell noClip" align="center"></td>
-    <td class="gdfCell"></td>
-    <td class="gdfCell"></td>
-    <td class="gdfCell"></td>
-    <td class="gdfCell"></td>
-    <td class="gdfCell"></td>
-    <td class="gdfCell"></td>
-    <td class="gdfCell"></td>
-    <td class="gdfCell"></td>
-    <td class="gdfCell requireCanSeeDep"></td>
-    <td class="gdfCell"></td>
-  </tr>
-  --></div>
+function closeModal() {
+    document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+}
 
-<div class="__template__" type="TASKBAR"><!--
-  <div class="taskBox taskBoxDiv" taskId="(#=obj.id#)" >
-    <div class="layout (#=obj.hasExternalDep?'extDep':''#)">
-      <div class="taskStatus" status="(#=obj.status#)"></div>
-      <div class="taskProgress" style="width:(#=obj.progress>100?100:obj.progress#)%; background-color:(#=obj.progress>100?'red':'rgb(153,255,51);'#);"></div>
-      <div class="milestone (#=obj.startIsMilestone?'active':''#)" ></div>
+function openMiniModal(modalId) {
+    closeMiniModal();
+    document.getElementById(modalId).style.display = 'block';
+}
 
-      <div class="taskLabel"></div>
-      <div class="milestone end (#=obj.endIsMilestone?'active':''#)" ></div>
-    </div>
-  </div>
-  --></div>
+function closeMiniModal() {
+    document.querySelectorAll('.mini-modal').forEach(modal => modal.style.display = 'none');
+}
 
-
-<div class="__template__" type="CHANGE_STATUS"><!--
-    <div class="taskStatusBox">
-    <div class="taskStatus cvcColorSquare" status="STATUS_ACTIVE" title="Aktif"></div>
-    <div class="taskStatus cvcColorSquare" status="STATUS_DONE" title="Tammlandı"></div>
-    <div class="taskStatus cvcColorSquare" status="STATUS_FAILED" title="Hatalı"></div>
-    <div class="taskStatus cvcColorSquare" status="STATUS_SUSPENDED" title="Duraklatıldı"></div>
-    <div class="taskStatus cvcColorSquare" status="STATUS_WAITING" title="Beklemede" style="display: none;"></div>
-    <div class="taskStatus cvcColorSquare" status="STATUS_UNDEFINED" title="Bilinmiyor"></div>
-    </div>
-  --></div>
-
-
-
-
-<div class="__template__" type="TASK_EDITOR"><!--
-  <div class="ganttTaskEditor">
-    <h2 class="taskData">İmalat Editörü</h2>
-    <table  cellspacing="1" cellpadding="5" width="100%" class="taskData table" border="0">
-          <tr>
-        <td width="200" style="height: 80px"  valign="top">
-          <label for="code">No / Kısa ad</label><br>
-          <input type="text" name="code" id="code" value="" size=15 class="formElements" autocomplete='off' maxlength=255 style='width:100%' oldvalue="1">
-        </td>
-        <td colspan="3" valign="top"><label for="name" class="required">İmalat</label><br><input type="text" name="name" id="name"class="formElements" autocomplete='off' maxlength=255 style='width:100%' value="" required="true" oldvalue="1"></td>
-          </tr>
-
-
-      <tr class="dateRow">
-        <td nowrap="">
-          <div style="position:relative">
-            <label for="start">Başlangıç</label>&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="checkbox" id="startIsMilestone" name="startIsMilestone" value="yes"> &nbsp;<label for="startIsMilestone">dönüm noktası</label>&nbsp;
-            <br><input type="text" name="start" id="start" size="8" class="formElements dateField validated date" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DATE">
-            <span title="calendar" id="starts_inputDate" class="teamworkIcon openCalendar" onclick="$(this).dateField({inputField:$(this).prevAll(':input:first'),isSearchField:false});">m</span>          </div>
-        </td>
-        <td nowrap="">
-          <label for="end">Bitiş</label>&nbsp;&nbsp;&nbsp;&nbsp;
-          <input type="checkbox" id="endIsMilestone" name="endIsMilestone" value="yes"> &nbsp;<label for="endIsMilestone">dönüm noktası</label>&nbsp;
-          <br><input type="text" name="end" id="end" size="8" class="formElements dateField validated date" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DATE">
-          <span title="calendar" id="ends_inputDate" class="teamworkIcon openCalendar" onclick="$(this).dateField({inputField:$(this).prevAll(':input:first'),isSearchField:false});">m</span>
-        </td>
-        <td nowrap="" >
-          <label for="duration" class=" ">Gün</label><br>
-          <input type="text" name="duration" id="duration" size="4" class="formElements validated durationdays" title="Duration is in working days." autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DURATIONDAYS">&nbsp;
-        </td>
-      </tr>
-
-      <tr>
-        <td  colspan="2">
-          <label for="status" class=" ">Durum</label><br>
-          <select id="durum" name="Durum" class="taskStatus" status="(#=obj.status#)"  onchange="$(this).attr('STATUS',$(this).val());">
-            <option value="STATUS_ACTIVE" class="taskStatus" status="STATUS_ACTIVE" >Aktif</option>
-            <option value="STATUS_WAITING" class="taskStatus" status="STATUS_WAITING" >Beklemede</option>
-            <option value="STATUS_SUSPENDED" class="taskStatus" status="STATUS_SUSPENDED" >Duraklatıldı</option>
-            <option value="STATUS_DONE" class="taskStatus" status="STATUS_DONE" >Tamamlandı</option>
-            <option value="STATUS_FAILED" class="taskStatus" status="STATUS_FAILED" >Hatalı</option>
-            <option value="STATUS_UNDEFINED" class="taskStatus" status="STATUS_UNDEFINED" >Bilinmiyor</option>
-          </select>
-        </td>
-
-        <td valign="top" nowrap>
-          <label>İlerleme</label><br>
-          <input type="text" name="progress" id="progress" size="7" class="formElements validated percentile" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="PERCENTILE">
-        </td>
-      </tr>
-
-          </tr>
-          <tr>
-            <td colspan="4">
-              <label for="description">{% trans 'Açıklama' %}</label><br>
-              <textarea rows="3" cols="30" id="description" name="description" class="formElements" style="width:100%"></textarea>
-            </td>
-          </tr>
-        </table>
-
-
-  <div style="text-align: right; padding-top: 20px">
-    <span id="saveButton" class="button first" onClick="$(this).trigger('saveFullEditor.gantt');">Kaydet</span>
-  </div>
-
-  </div>
-  --></div>
-
-
-
-
-
-
-
-<div class="__template__" type="RESOURCE_EDITOR"><!--
-  <div class="resourceEditor" style="padding: 5px;">
-
-    <h2>Project team</h2>
-    <table  cellspacing="1" cellpadding="0" width="100%" id="resourcesTable">
-      <tr>
-        <th style="width:100px;">name</th>
-        <th style="width:30px;" id="addResource"><span class="teamworkIcon" style="cursor: pointer">+</span></th>
-      </tr>
-    </table>
-
-    <div style="text-align: right; padding-top: 20px"><button id="resSaveButton" class="button big">Save</button></div>
-  </div>
-  --></div>
-
-
-
-<div class="__template__" type="RESOURCE_ROW"><!--
-  <tr resId="(#=obj.id#)" class="resRow" >
-    <td ><input type="text" name="name" value="(#=obj.name#)" style="width:100%;" class="formElements"></td>
-    <td align="center"><span class="teamworkIcon delRes del" style="cursor: pointer">d</span></td>
-  </tr>
-  --></div>
-
-
-</div>
-<script type="text/javascript">
-  $.JST.loadDecorator("RESOURCE_ROW", function(resTr, res){
-    resTr.find(".delRes").click(function(){$(this).closest("tr").remove()});
-  });
-
-  $.JST.loadDecorator("ASSIGNMENT_ROW", function(assigTr, taskAssig){
-    var resEl = assigTr.find("[name=resourceId]");
-    var opt = $("<option>");
-    resEl.append(opt);
-    for(var i=0; i< taskAssig.task.master.resources.length;i++){
-      var res = taskAssig.task.master.resources[i];
-      opt = $("<option>");
-      opt.val(res.id).html(res.name);
-      if(taskAssig.assig.resourceId == res.id)
-        opt.attr("selected", "true");
-      resEl.append(opt);
+function eklePersonel() {
+    const departman = document.getElementById('departman-secimi').value;
+    const sayisi = document.getElementById('calisan-sayisi').value;
+    if (departman && sayisi) {
+        const list = document.getElementById('personel-list');
+        const listItem = document.createElement('div');
+        listItem.className = 'listing';
+        listItem.innerHTML = `
+            <span class="listing-item">${departman} - ${sayisi} kişi</span>
+            <span class="remove-item" onclick="removeItem(this)">Sil</span>
+        `;
+        list.appendChild(listItem);
+        closeMiniModal();
     }
-    var roleEl = assigTr.find("[name=roleId]");
-    for(var i=0; i< taskAssig.task.master.roles.length;i++){
-      var role = taskAssig.task.master.roles[i];
-      var optr = $("<option>");
-      optr.val(role.id).html(role.name);
-      if(taskAssig.assig.roleId == role.id)
-        optr.attr("selected", "true");
-      roleEl.append(optr);
+}
+
+function ekleHavaDurumu() {
+    const sicaklik = document.getElementById('sicaklik').value;
+    const ruzgar = document.getElementById('ruzgar-hizi').value;
+    if (sicaklik && ruzgar) {
+        const list = document.getElementById('hava-list');
+        const listItem = document.createElement('div');
+        listItem.className = 'listing';
+        listItem.innerHTML = `
+            <span class="listing-item">Sıcaklık: ${sicaklik}, Rüzgar Hızı: ${ruzgar}</span>
+            <span class="remove-item" onclick="removeItem(this)">Sil</span>
+        `;
+        list.appendChild(listItem);
+        closeMiniModal();
     }
+}
 
-    if(taskAssig.task.master.permissions.canWrite && taskAssig.task.canWrite){
-      assigTr.find(".delAssig").click(function(){
-        var tr = $(this).closest("[assId]").fadeOut(200, function(){$(this).remove()});
-      });
+function removeItem(element) {
+    element.parentElement.remove();
+}
+function ekleMalzeme() {
+    const malzeme = document.getElementById('malzeme-secimi').value;
+    const adet = document.getElementById('malzeme-adet').value;
+    if (malzeme && adet) {
+        const list = document.getElementById('malzeme-list');
+        const listItem = document.createElement('div');
+        listItem.className = 'listing';
+        listItem.innerHTML = `
+            <span class="listing-item">${malzeme} - ${adet} adet</span>
+            <span class="remove-item" onclick="removeItem(this)">Sil</span>
+        `;
+        list.appendChild(listItem);
+        closeMiniModal();
     }
+}
 
-  });
+function ekleImalat() {
+    const imalat = document.getElementById('imalat-secimi').value;
+    const aciklama = document.getElementById('imalat-aciklama').value;
+    if (imalat && aciklama) {
+        const list = document.getElementById('imalat-list');
+        const listItem = document.createElement('div');
+        listItem.className = 'listing';
+        listItem.innerHTML = `
+            <span class="listing-item">${imalat} - ${aciklama}</span>
+            <span class="remove-item" onclick="removeItem(this)">Sil</span>
+        `;
+        list.appendChild(listItem);
+        closeMiniModal();
+    }
+}
 
-
-  function loadI18n(){
-    GanttMaster.messages = {
-      "CANNOT_WRITE":"No permission to change the following task:",
-      "CHANGE_OUT_OF_SCOPE":"Project update not possible as you lack rights for updating a parent project.",
-      "START_IS_MILESTONE":"Start date is a milestone.",
-      "END_IS_MILESTONE":"End date is a milestone.",
-      "TASK_HAS_CONSTRAINTS":"Task has constraints.",
-      "GANTT_ERROR_DEPENDS_ON_OPEN_TASK":"Error: there is a dependency on an open task.",
-      "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK":"Error: due to a descendant of a closed task.",
-      "TASK_HAS_EXTERNAL_DEPS":"This task has external dependencies.",
-      "GANNT_ERROR_LOADING_DATA_TASK_REMOVED":"GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
-      "CIRCULAR_REFERENCE":"Circular reference.",
-      "CANNOT_DEPENDS_ON_ANCESTORS":"Cannot depend on ancestors.",
-      "INVALID_DATE_FORMAT":"The data inserted are invalid for the field format.",
-      "GANTT_ERROR_LOADING_DATA_TASK_REMOVED":"An error has occurred while loading the data. A task has been trashed.",
-      "CANNOT_CLOSE_TASK_IF_OPEN_ISSUE":"Cannot close a task with open issues",
-      "TASK_MOVE_INCONSISTENT_LEVEL":"You cannot exchange tasks of different depth.",
-      "CANNOT_MOVE_TASK":"CANNOT_MOVE_TASK",
-      "PLEASE_SAVE_PROJECT":"PLEASE_SAVE_PROJECT",
-      "GANTT_SEMESTER":"Semester",
-      "GANTT_SEMESTER_SHORT":"s.",
-      "GANTT_QUARTER":"Quarter",
-      "GANTT_QUARTER_SHORT":"q.",
-      "GANTT_WEEK":"Week",
-      "GANTT_WEEK_SHORT":"w."
-    };
-  }
-
-
-
-  function createNewResource(el) {
-    var row = el.closest("tr[taskid]");
-    var name = row.find("[name=resourceId_txt]").val();
-    var url = contextPath + "/applications/teamwork/resource/resourceNew.jsp?CM=ADD&name=" + encodeURI(name);
-
-    openBlackPopup(url, 700, 320, function (response) {
-      //fillare lo smart combo
-      if (response && response.resId && response.resName) {
-        //fillare lo smart combo e chiudere l'editor
-        row.find("[name=resourceId]").val(response.resId);
-        row.find("[name=resourceId_txt]").val(response.resName).focus().blur();
-      }
-
-    });
-  }
-
-$(document).on("change", "#load-file", function() {
-  var uploadedFile = $("#load-file").prop("files")[0];
-  upload(uploadedFile);
-});
+function ekleGenelDurum() {
+    const aciklama = document.getElementById('genel-aciklama').value;
+    if (aciklama) {
+        const list = document.getElementById('genel-durum-list');
+        const listItem = document.createElement('div');
+        listItem.className = 'listing';
+        listItem.innerHTML = `
+            <span class="listing-item">${aciklama}</span>
+            <span class="remove-item" onclick="removeItem(this)">Sil</span>
+        `;
+        list.appendChild(listItem);
+        closeMiniModal();
+    }
+}
 
 </script>
 {% endblock sidebar %}
