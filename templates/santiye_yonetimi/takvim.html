@@ -618,10 +618,20 @@ function showBaselineInfo (event,element){
 
 <div id="gantEditorTemplates" style="display:none;">
 <div class="__template__" type="GANTBUTTONS">
+
   <!--
   <div class="ganttButtonBar no-print">
     <div class="buttons">
-      <button onclick="saveGanttOnServer();" class="button first big requireWrite" title="Save">Kaydet</button>
+    {% if request.user.kullanicilar_db %}
+{% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+  {% if yetki.gant_duzenleme %}
+    <button onclick="saveGanttOnServer();" class="button first big requireWrite" title="Save">Kaydet</button>
+  {% else %}
+  {% endif %}
+{% else %}
+<button onclick="saveGanttOnServer();" class="button first big requireWrite" title="Save">Kaydet</button>
+{% endif %}
+      
       <button onclick="$('#workSpace').trigger('undo.gantt');return false;" class="button textual icon requireCanWrite" title="undo"><span class="teamworkIcon">&#39;</span></button>
       <button onclick="$('#workSpace').trigger('redo.gantt');return false;" class="button textual icon requireCanWrite" title="redo"><span class="teamworkIcon">&middot;</span></button>
       <span class="ganttButtonSeparator requireCanWrite requireCanAdd"></span>
