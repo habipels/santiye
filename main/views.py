@@ -9227,6 +9227,7 @@ def rapor_gonder(request, rapor_id):
     # Rapor verilerini toplama
     fatura_data = {
         'id': genel_rapor_bilgisi.id if genel_rapor_bilgisi else None,
+        'santiye_id': genel_rapor_bilgisi.proje_santiye_Ait.id if genel_rapor_bilgisi and genel_rapor_bilgisi.proje_santiye_Ait else None,
         'santiye_Adi': genel_rapor_bilgisi.proje_santiye_Ait.proje_adi if genel_rapor_bilgisi and genel_rapor_bilgisi.proje_santiye_Ait else None,
         'rapor_tarihi': genel_rapor_bilgisi.tarih.strftime("%d.%m.%Y") if genel_rapor_bilgisi and genel_rapor_bilgisi.tarih else None,
         'raporu_olusturan': genel_rapor_bilgisi.raporu_olusturan.last_name if genel_rapor_bilgisi and genel_rapor_bilgisi.raporu_olusturan else None,
@@ -9264,6 +9265,6 @@ def rapor_gonder(request, rapor_id):
             } for aciklama in genel_aciklama_bilgisi
         ],
     }
-
+    print(fatura_data)
     # Veriyi JSON olarak döndür
     return JsonResponse(fatura_data)

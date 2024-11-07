@@ -200,7 +200,7 @@
                     {% hava_durumu_gonder i as hava %}
                     
                     <tr>
-                        <td>{{i.tarih|date:"d.m.y"}}</td>
+                        <td>{{i.tarih|date:"d.m.Y"}}</td>
                         <td>{{i.proje_santiye_Ait.proje_adi}}</td>
                         <td>{{i.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
                         <td>{{i.raporu_olusturan.last_name}}</td>
@@ -300,7 +300,71 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="gunluk-duzenle">
+        <div class="modal-inner" style="width: 70%">
+            <div class="modal-header">
+                {% trans 'Günlük Rapor Düzenle' %}
+                <button class="modal-close-btn" onclick="closeModal()">✖</button>
+            </div>
+           <div class="modal-body">
+                <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:genel_rapor_olustur' %}" class="tablelist-form">
+                    {% csrf_token %}
+                    <div class="form-element">
+                        <label for="rapor-tarihi">{% trans 'Rapor Tarihi' %}</label>
+                        <input type="date" id="rapor-tarihid" name="rapor_tarihi" class="form-control">
+                    </div>
+                    <div class="form-element">
+                        <label for="santiye-secimi">{% trans 'Şantiye Seçimi' %}</label>
+                        <select id="santiye-secimid" name="santiye" class="styled-select">
+                            
+                            {% for i in projeler %}
+                             <option value="{{i.id}}">{{i.proje_adi}}</option>
+                            {% endfor %}
+                           
+                           
+   
+                        </select>
+                    </div>
+                    <div class="tum_bilgiler" id="tum_bilgiler"></div>
+                    <div class="form-element">
+                        <label for="personel">{% trans 'Personel' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('personel-modal')">{% trans 'Personel Ekle' %}</button>
+                        <div id="personel-listt" class="listing-container"></div>
+                    </div>
 
+                    <div class="form-element">
+                        <label>{% trans 'Hava Durumu' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('hava-durumu-modal')">{% trans 'Hava Durumu Ekle' %}</button>
+                        <div id="hava-listt" class="listing-container"></div>
+                    </div>
+
+                    <!-- Eklediğiniz yeni alanlar -->
+                    <div class="form-element">
+                        <label for="malzemeler">{% trans 'Şantiyeye Gelen Malzemeler' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('malzemeler-modal')">{% trans 'Malzeme Ekle' %}</button>
+                        <div id="malzeme-list" class="listing-container"></div>
+                    </div>
+
+                    <div class="form-element">
+                        <label for="imalat">{% trans 'İmalat Durumu' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('imalat-modal')">{% trans 'İmalat Ekle' %}</button>
+                        <div id="imalat-list" class="listing-container"></div>
+                    </div>
+
+                    <div class="form-element">
+                        <label for="genel-durum">{% trans 'Genel Durum' %}</label>
+                        <button type="button" class="form-action-primary" onclick="openMiniModal('genel-durum-modal')">{% trans 'Genel Durum Ekle' %}</button>
+                        <div id="genel-durum-list" class="listing-container"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="form-action-secondary" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button type="submit" class="form-action-primary">{% trans 'Rapor Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- Mini Modal - Personel -->
     <div class="mini-modal"    id="personel-modal">
         <div class="mini-modal-content">
@@ -634,9 +698,51 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data)
-            
+                const tarih = data.rapor_tarihi; // Örneğin "05.11.2024" gibi
+                const [day, month, year] = tarih.split('.'); // Gün, ay ve yılı ayır
+
+                // Formatı YYYY-MM-DD olarak birleştir
+                const formattedDate = `${year}-${month}-${day}`;
                 if (acilan_modals == 0) {
-            openModal("editModal")
+                    const  selectElement = document.getElementById("santiye-secimid");
+                    const option = document.createElement("option");
+                    option.value = `${data.santiye_id}`;      // Option'ın değerini ayarla
+                    option.text = `${data.santiye_Adi}`; 
+                    option.selected = true;
+                    // Yeni option'ı select elementine ekle
+                    selectElement.appendChild(option);
+                document.getElementById("rapor-tarihid").value = formattedDate;
+                const list = document.getElementById("personel-listt");
+                            data.genel_personel_bilgisi.forEach(kalem => {
+                const listItem = document.createElement('div');
+                listItem.className = 'listing';
+                listItem.innerHTML = `
+                    <span class="listing-item">${kalem.departman_adi}</span>
+                    <span class="remove-item" onclick="removeItem(this)">Sil</span>
+                `;
+                const int = document.createElement('input');
+                int.hidden = true;
+                int.value= kalem.id;
+                int.name ="depert"
+            
+            const sayisii = document.createElement('input');
+            sayisii.hidden= true;
+            sayisii.value=kalem.personel_adedi;
+            sayisii.name ="depertsayisi"
+            list.appendChild(sayisii);
+            list.appendChild(int);
+            list.appendChild(listItem);
+});
+        const hava_list = document.getElementById("hava-listt");
+        const listItem = document.createElement('div');
+                listItem.className = 'listing';
+                listItem.innerHTML = `
+                    <span class="listing-item">Sıcaklık: ${data.hava_durumu_sicaklik}, Rüzgar Hızı: ${data.hava_durumu_ruzgar}</span>
+                    <span class="remove-item" onclick="removeItem(this)">Sil</span>
+                `;
+
+                hava_list.appendChild(listItem);
+            openModal("gunluk-duzenle")
         } else if (acilan_modals == 1) {
             openModal("viewModal")
         }
