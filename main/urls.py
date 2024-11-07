@@ -195,8 +195,10 @@ urlpatterns = [#
     path("deltodo", views.yapilacalar_time_line_sil, name="yapilacalar_time_line_sil"),
     path("settodo", views.yapilacalar_time_line_duzenle, name="yapilacalar_time_line_duzenle"),
     #yapilacaklar
-
+    #
     #takvim
+    path("generalreport", views.genel_rapor_sayfasi, name="genel_rapor_sayfasi"),
+    path("creategeneralreport", views.genel_rapor_olustur, name="genel_rapor_olustur"),
     path("gantt", views.takvim_olaylari, name="takvim_olaylari"),
     path('gantt-kaydet/', views.gant_kaydet, name='gant_kaydet'),
     path("userauthorizations", views.kullanici_yetkileri, name="kullanici_yetkileri"),

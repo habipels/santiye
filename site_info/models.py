@@ -6,6 +6,7 @@ from simple_history.models import HistoricalRecords
 from django.conf import settings
 from django.db import models
 from simple_history.models import HistoricalRecords
+from users.models import calisanlar_kategorisi
 class proje_tipi(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Tipi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     Proje_tipi_adi = models.CharField(max_length=400,verbose_name="Proje Tipi Adı",blank=True,null=True)
@@ -273,4 +274,47 @@ class gantt_verileri(models.Model):
     hasChild = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+
+class genel_rapor(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    tarih = models.DateTimeField(default=datetime.now,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+class gelen_malzeme(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    urun = models.ForeignKey(urunler,verbose_name="Gelen Ürün",blank=True,null=True,on_delete=models.SET_NULL)
+    urun_adeti = models.FloatField(blank=True,null=True,verbose_name="Ürün Adeti")
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class genel_personel(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    personel_departmani = models.ForeignKey(calisanlar_kategorisi,verbose_name="Gelen Ürün",blank=True,null=True,on_delete=models.SET_NULL)
+    personel_sayisi = models.FloatField(blank=True,null=True,verbose_name="Personel Sayısı")
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class genel_imalat(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    imalet_kalemi =  models.ForeignKey(santiye_kalemleri,verbose_name="Kalem Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    imalat_aciklama = models.TextField()
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class genel_aciklamalar(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    genel_aciklama =  models.TextField()
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class genel_hava_durumu(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    hava_durumu_sicaklik = models.FloatField(blank=True,null=True,verbose_name="hava_durumu Sıcaklık")
+    hava_durumu_ruzgar = models.FloatField(blank=True,null=True,verbose_name="hava_durumu rüzgar") 
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

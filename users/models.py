@@ -250,6 +250,10 @@ class personel_izinleri(models.Model):
     gant_olusturma = models.BooleanField(default = False)
     gant_gorme = models.BooleanField(default = False)
     gant_duzenleme = models.BooleanField(default = False)
+    #genel Rapor
+    genel_rapor_olusturma = models.BooleanField(default = False)
+    genel_rapor_gorme = models.BooleanField(default = False)
+    genel_rapor_duzenleme = models.BooleanField(default = False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):

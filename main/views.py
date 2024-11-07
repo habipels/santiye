@@ -9101,3 +9101,92 @@ def katman_duzenle_2(request,hash):
         )
     return redirect("main:katman_sayfasi_2",hash)
 
+
+#taseron olaylari
+def genel_rapor_sayfasi(request):
+    content = sozluk_yapisi()
+
+    if super_admin_kontrolu(request):
+        
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.genel_rapor_gorme:
+                   kullanici =  request.user.kullanicilar_db
+                   
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici =  request.user
+    content["projeler"] = santiye.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
+    content["personel_depertmani"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici,silinme_bilgisi = False)
+    content["urunler"] =  urunler.objects.filter(urun_ait_oldugu = kullanici,silinme_bilgisi = False)
+    content["imalat_kalemleri"] =  santiye_kalemleri.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
+    content["santiyeler"] = genel_rapor.objects.filter(proje_ait_bilgisi = kullanici)
+
+    
+    return render(request,"santiye_yonetimi/genel_rapor.html",content)
+#taseron olaylari
+def genel_rapor_olustur(request):
+    content = sozluk_yapisi()
+    if request.POST:
+        rapor_tarihi = request.POST.get("rapor_tarihi")
+        secili_santiye = request.POST.get("santiye")
+        depertman = request.POST.getlist("depert")
+        personel = request.POST.getlist("depertsayisi")
+        hava_durumu_sicaklik = request.POST.getlist("hava_durumu_sicaklik")
+        hava_durumu_ruzgar = request.POST.getlist("hava_durumu_ruzgar")
+        malzeme = request.POST.getlist("malzeme")
+        malzemesayisi = request.POST.getlist("malzemesayisi")
+        imalat = request.POST.getlist("imalat")
+        aciklama = request.POST.getlist("aciklama")
+        aciklamalar = request.POST.getlist("aciklamalar")
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.genel_rapor_gorme:
+                        kullanici =  request.user.kullanicilar_db
+                    
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici =  request.user
+        veri = genel_rapor.objects.create(proje_ait_bilgisi = kullanici,
+                                   proje_santiye_Ait = get_object_or_none(santiye,id=secili_santiye),
+                                   tarih =rapor_tarihi)
+        for i in range(len(depertman)):
+            genel_personel.objects.create(hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          personel_departmani = get_object_or_none(calisanlar_kategorisi,id = depertman[i]),
+                                          personel_sayisi = float(personel[i]) )
+        for i in range(len(hava_durumu_sicaklik)):
+            genel_hava_durumu.objects.create(hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          hava_durumu_sicaklik =  hava_durumu_sicaklik[i],
+                                          hava_durumu_ruzgar = float(hava_durumu_ruzgar[i]) )
+        for i in range(len(malzeme)):
+            gelen_malzeme.objects.create(hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          urun = get_object_or_none(urunler,id = malzeme[i]),
+                                          urun_adeti = float(malzemesayisi[i]) )
+        for i in range(len(imalat)):
+            genel_imalat.objects.create(hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          imalet_kalemi = get_object_or_none(santiye_kalemleri,id = imalat[i]),
+                                          imalat_aciklama = aciklama[i] )
+        for i in range(len(aciklamalar)):
+            genel_aciklamalar.objects.create(hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          genel_aciklama = aciklamalar[i] )
+    return redirect("main:genel_rapor_sayfasi")
+
