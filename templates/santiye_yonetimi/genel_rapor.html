@@ -209,9 +209,9 @@
                         <td>PDF</td>
                         <td>
                             <div class="td-actions">
-                                <a onclick="openModal('editModal{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
-                                <a onclick="openModal('viewModal{{i.id}}')" class="status-info"><i class="icon icon-action-view"></i></a>
-                                <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                <a onclick="rapor_bilgileri(0,'{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                <a onclick="rapor_bilgileri(1,'{{i.id}}')" class="status-info"><i class="icon icon-action-view"></i></a>
+                                <a onclick="rapor_bilgileri(2,'{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
                             </div>
                         </td>
                     </tr>
@@ -409,7 +409,26 @@
         </div>
     </div>
 </div>
-
+<div class="modal" id="departman-sil">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+        {% trans 'Silme Uyarısı' %}
+            
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off"action="/{{dil}}{% url 'main:rapor_sil' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" id="buttonIdInput" name="buttonId" >
+             
+                <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal('departman-sil')">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </main>
 
 <script>
@@ -608,4 +627,27 @@
     $(document).ready(updateMaxWidth);
     $(window).resize(updateMaxWidth);
 </script>
+
+<script>
+    function rapor_bilgileri(acilan_modals,id) {
+        fetch(`/generalreporttake/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            
+                if (acilan_modals == 0) {
+            openModal("editModal")
+        } else if (acilan_modals == 1) {
+            openModal("viewModal")
+        }
+        else {
+            document.getElementById("buttonIdInput").value = data.id;
+            openModal("departman-sil")
+        }
+            })
+        
+    }
+
+</script>
+
 {% endblock sidebar %}
