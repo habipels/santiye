@@ -9192,3 +9192,52 @@ def genel_rapor_olustur(request):
                                           genel_aciklama = aciklamalar[i] )
     return redirect("main:genel_rapor_sayfasi")
 
+
+def rapor_gonder(request, rapor_id):
+    if True:
+        genel_rapor_bilgisi = get_object_or_none(genel_rapor , id = rapor_id)
+        gelen_malzemeler_bilgisi = gelen_malzeme.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi)
+        genel_personel_bilgisi = genel_personel.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi)
+        genel_imalat_bilgisi = genel_imalat.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi)
+        genel_aciklama_bilgisi = genel_aciklamalar.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi)
+        genel_hava_bilgisi = genel_hava_durumu.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi).last()
+        fatura_data = {
+            'id':genel_rapor_bilgisi.id,
+        'santiye_Adi': genel_rapor_bilgisi.proje_adi,
+        'rapor_tarihi': genel_rapor_bilgisi.tarih.strftime("%d.%m.%Y"),
+        'raporu_olusturan': genel_rapor_bilgisi.raporu_olusturan.last_name,
+        'rapor_sahibi': genel_rapor_bilgisi.raporu_olusturan.first_name,
+        'hava_durumu_sicaklik':genel_hava_bilgisi.hava_durumu_sicaklik,
+        'hava_durumu_ruzgar':genel_hava_bilgisi.hava_durumu_ruzgar,
+        "gelen_malzemeler_bilgisi": [
+            {   "id":malzeme.id,
+                "malzeme_id": malzeme.urun.id,
+                "malzeme_adi": malzeme.urun.urun_adi,
+                "malzeme_adedi": malzeme.urun_adeti
+            } for malzeme in gelen_malzemeler_bilgisi
+        ],
+        "genel_personel_bilgisi": [
+            {
+                "id":depertman.id,
+                "depertman_id": depertman.personel_departmani.id,
+                "depertman_adi": depertman.personel_departmani.kategori_isimi,
+                "personel_adedi": depertman.personel_sayisi
+            } for depertman in genel_personel_bilgisi
+        ],
+        "genel_imalat_bilgisi": [
+            {
+                "id":imalat.id,
+                "imalat_id": imalat.imalet_kalemi.id,
+                "imalat_adi": imalat.imalet_kalemi.kalem_adi,
+                "imalat_aciklama": imalat.imalat_aciklama
+            } for imalat in genel_imalat_bilgisi
+        ],
+        "genel_aciklama_bilgisi": [
+            {
+                "id":aciklama.id,
+                "aciklama": aciklama.genel_aciklama
+            } for aciklama in genel_aciklama_bilgisi
+        ],
+        }
+        print(fatura_data)
+        return JsonResponse(fatura_data)

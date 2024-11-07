@@ -197,6 +197,7 @@ urlpatterns = [#
     #yapilacaklar
     #
     #takvim
+    path("generalreporttake", views.rapor_gonder, name="rapor_gonder"),
     path("generalreport", views.genel_rapor_sayfasi, name="genel_rapor_sayfasi"),
     path("creategeneralreport", views.genel_rapor_olustur, name="genel_rapor_olustur"),
     path("gantt", views.takvim_olaylari, name="takvim_olaylari"),
