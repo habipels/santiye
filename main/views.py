@@ -9163,7 +9163,7 @@ def genel_rapor_olustur(request):
                     return redirect("main:yetkisiz")
             else:
                 kullanici =  request.user
-        veri = genel_rapor.objects.create(proje_ait_bilgisi = kullanici,
+        veri = genel_rapor.objects.create(proje_ait_bilgisi = kullanici,raporu_olusturan = request.user,
                                    proje_santiye_Ait = get_object_or_none(santiye,id=secili_santiye),
                                    tarih =rapor_tarihi)
         for i in range(len(depertman)):

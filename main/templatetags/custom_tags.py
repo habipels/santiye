@@ -2004,6 +2004,10 @@ def bina_3d2(veri):
 def saatlik_ucret_hesabi(users):
     bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = users).last()
     return bilgi.gunluk_calisma_saati
+@register.simple_tag
+def hava_durumu_gonder(users):
+    bilgi = genel_hava_durumu.objects.filter(proje_ait_bilgisi  = users).last()
+    return bilgi
 
 
 def get_client_ip(request):
