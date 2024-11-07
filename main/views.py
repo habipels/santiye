@@ -9129,7 +9129,7 @@ def genel_rapor_sayfasi(request):
     content["personel_depertmani"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici,silinme_bilgisi = False)
     content["urunler"] =  urunler.objects.filter(urun_ait_oldugu = kullanici,silinme_bilgisi = False)
     content["imalat_kalemleri"] =  santiye_kalemleri.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
-    content["santiyeler"] = genel_rapor.objects.filter(proje_ait_bilgisi = kullanici)
+    content["santiyeler"] = genel_rapor.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
 
     
     return render(request,"santiye_yonetimi/genel_rapor.html",content)
@@ -9163,7 +9163,7 @@ def genel_rapor_olustur(request):
                     return redirect("main:yetkisiz")
             else:
                 kullanici =  request.user
-        veri = genel_rapor.objects.create(proje_ait_bilgisi = kullanici,
+        veri = genel_rapor.objects.create(proje_ait_bilgisi = kullanici,raporu_olusturan = request.user,
                                    proje_santiye_Ait = get_object_or_none(santiye,id=secili_santiye),
                                    tarih =rapor_tarihi)
         for i in range(len(depertman)):
@@ -9193,24 +9193,50 @@ def genel_rapor_olustur(request):
     return redirect("main:genel_rapor_sayfasi")
 
 
+def rapor_sil(request):
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.genel_rapor_gorme:
+                        kullanici =  request.user.kullanicilar_db
+                    
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici =  request.user
+        genel_rapor.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+        return redirect("main:genel_rapor_sayfasi")
 def rapor_gonder(request, rapor_id):
-    if True:
-        genel_rapor_bilgisi = get_object_or_none(genel_rapor , id = rapor_id)
-        gelen_malzemeler_bilgisi = gelen_malzeme.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi)
-        genel_personel_bilgisi = genel_personel.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi)
-        genel_imalat_bilgisi = genel_imalat.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi)
-        genel_aciklama_bilgisi = genel_aciklamalar.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi)
-        genel_hava_bilgisi = genel_hava_durumu.objects.filter(proje_ait_bilgisi = genel_rapor_bilgisi).last()
-        fatura_data = {
-            'id':genel_rapor_bilgisi.id,
-        'santiye_Adi': genel_rapor_bilgisi.proje_adi,
-        'rapor_tarihi': genel_rapor_bilgisi.tarih.strftime("%d.%m.%Y"),
-        'raporu_olusturan': genel_rapor_bilgisi.raporu_olusturan.last_name,
-        'rapor_sahibi': genel_rapor_bilgisi.raporu_olusturan.first_name,
-        'hava_durumu_sicaklik':genel_hava_bilgisi.hava_durumu_sicaklik,
-        'hava_durumu_ruzgar':genel_hava_bilgisi.hava_durumu_ruzgar,
+    # Belirtilen ID'ye sahip genel rapor bilgisi yoksa hata döner
+    genel_rapor_bilgisi = get_object_or_404(genel_rapor, id=rapor_id)
+
+    # İlgili diğer bilgiler, genel rapora bağlı nesnelerden alınır
+    gelen_malzemeler_bilgisi = gelen_malzeme.objects.filter(proje_ait_bilgisi=genel_rapor_bilgisi)
+    genel_personel_bilgisi = genel_personel.objects.filter(proje_ait_bilgisi=genel_rapor_bilgisi)
+    genel_imalat_bilgisi = genel_imalat.objects.filter(proje_ait_bilgisi=genel_rapor_bilgisi)
+    genel_aciklama_bilgisi = genel_aciklamalar.objects.filter(proje_ait_bilgisi=genel_rapor_bilgisi)
+    genel_hava_bilgisi = genel_hava_durumu.objects.filter(proje_ait_bilgisi=genel_rapor_bilgisi).last()
+
+    # Rapor verilerini toplama
+    fatura_data = {
+        'id': genel_rapor_bilgisi.id if genel_rapor_bilgisi else None,
+        'santiye_id': genel_rapor_bilgisi.proje_santiye_Ait.id if genel_rapor_bilgisi and genel_rapor_bilgisi.proje_santiye_Ait else None,
+        'santiye_Adi': genel_rapor_bilgisi.proje_santiye_Ait.proje_adi if genel_rapor_bilgisi and genel_rapor_bilgisi.proje_santiye_Ait else None,
+        'rapor_tarihi': genel_rapor_bilgisi.tarih.strftime("%d.%m.%Y") if genel_rapor_bilgisi and genel_rapor_bilgisi.tarih else None,
+        'raporu_olusturan': genel_rapor_bilgisi.raporu_olusturan.last_name if genel_rapor_bilgisi and genel_rapor_bilgisi.raporu_olusturan else None,
+        'rapor_sahibi': genel_rapor_bilgisi.raporu_olusturan.first_name if genel_rapor_bilgisi and genel_rapor_bilgisi.raporu_olusturan else None,
+        'hava_durumu_sicaklik': genel_hava_bilgisi.hava_durumu_sicaklik if genel_hava_bilgisi else None,
+        'hava_durumu_ruzgar': genel_hava_bilgisi.hava_durumu_ruzgar if genel_hava_bilgisi else None,
         "gelen_malzemeler_bilgisi": [
-            {   "id":malzeme.id,
+            {
+                "id": malzeme.id,
                 "malzeme_id": malzeme.urun.id,
                 "malzeme_adi": malzeme.urun.urun_adi,
                 "malzeme_adedi": malzeme.urun_adeti
@@ -9218,15 +9244,15 @@ def rapor_gonder(request, rapor_id):
         ],
         "genel_personel_bilgisi": [
             {
-                "id":depertman.id,
-                "depertman_id": depertman.personel_departmani.id,
-                "depertman_adi": depertman.personel_departmani.kategori_isimi,
-                "personel_adedi": depertman.personel_sayisi
-            } for depertman in genel_personel_bilgisi
+                "id": departman.id,
+                "departman_id": departman.personel_departmani.id,
+                "departman_adi": departman.personel_departmani.kategori_isimi,
+                "personel_adedi": departman.personel_sayisi
+            } for departman in genel_personel_bilgisi
         ],
         "genel_imalat_bilgisi": [
             {
-                "id":imalat.id,
+                "id": imalat.id,
                 "imalat_id": imalat.imalet_kalemi.id,
                 "imalat_adi": imalat.imalet_kalemi.kalem_adi,
                 "imalat_aciklama": imalat.imalat_aciklama
@@ -9234,10 +9260,11 @@ def rapor_gonder(request, rapor_id):
         ],
         "genel_aciklama_bilgisi": [
             {
-                "id":aciklama.id,
+                "id": aciklama.id,
                 "aciklama": aciklama.genel_aciklama
             } for aciklama in genel_aciklama_bilgisi
         ],
-        }
-        print(fatura_data)
-        return JsonResponse(fatura_data)
+    }
+    print(fatura_data)
+    # Veriyi JSON olarak döndür
+    return JsonResponse(fatura_data)
