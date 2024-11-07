@@ -247,57 +247,59 @@ def homepage(request):
             content["son_gorevler_bina"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).exclude(blok = None).last()
             konum = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).exclude(blok = None).last()
             kul = request.user
+    try: 
+        weather_data = None
+        ip_info = None
         
-    weather_data = None
-    ip_info = None
-    
-    # Kullanıcının IP adresini alıyoruz
-    ip = get_client_ip(request) #
-    
-    # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
-    ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
-    ip_response = requests.get(ipinfo_api_url)
-    if ip_response.status_code == 200:
-        ip_info = ip_response.json()
-        loc = ip_info.get('loc')
+        # Kullanıcının IP adresini alıyoruz
+        ip = get_client_ip(request) #
         
-        if loc:  # Eğer 'loc' None değilse
-            print(loc)
-            location = loc.split(',')
-            lat, lon = location[0], location[1]
-            # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
-            api_key = 'dee0661903df4f2c76ccfd8afab8be69'
-            weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
+        # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
+        ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
+        ip_response = requests.get(ipinfo_api_url)
+        if ip_response.status_code == 200:
+            ip_info = ip_response.json()
+            loc = ip_info.get('loc')
             
-            weather_response = requests.get(weather_api_url)
-            print(weather_response)
-            if weather_response.status_code == 200:
-                weather_data = weather_response.json()
-            a = weather_data["weather"][0]
-            icon = a["icon"]
-            content['weather_data'] = weather_data
-            content['ip_info'] = ip_info
-            content['icon'] = icon
-            content['sehir'] = weather_data["name"]
-    try:
-        if konum.blok.proje_santiye_Ait.lat and konum.blok.proje_santiye_Ait.lon:
-            lat, lon = konum.blok.proje_santiye_Ait.lat, konum.blok.proje_santiye_Ait.lon
+            if loc:  # Eğer 'loc' None değilse
+                print(loc)
+                location = loc.split(',')
+                lat, lon = location[0], location[1]
                 # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
-            api_key = 'dee0661903df4f2c76ccfd8afab8be69'
-            weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
-            
-            weather_response = requests.get(weather_api_url)
-            print(weather_response)
-            if weather_response.status_code == 200:
-                weather_data = weather_response.json()
-            a = weather_data["weather"][0]
-            icon = a["icon"]
-            content['weather_data'] = weather_data
-            content['ip_info'] = ip_info
-            content['icon'] = icon
-            content['sehir'] = weather_data["name"]
+                api_key = 'dee0661903df4f2c76ccfd8afab8be69'
+                weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
+                
+                weather_response = requests.get(weather_api_url)
+                print(weather_response)
+                if weather_response.status_code == 200:
+                    weather_data = weather_response.json()
+                a = weather_data["weather"][0]
+                icon = a["icon"]
+                content['weather_data'] = weather_data
+                content['ip_info'] = ip_info
+                content['icon'] = icon
+                content['sehir'] = weather_data["name"]
+        try:
+            if konum.blok.proje_santiye_Ait.lat and konum.blok.proje_santiye_Ait.lon:
+                lat, lon = konum.blok.proje_santiye_Ait.lat, konum.blok.proje_santiye_Ait.lon
+                    # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
+                api_key = 'dee0661903df4f2c76ccfd8afab8be69'
+                weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
+                
+                weather_response = requests.get(weather_api_url)
+                print(weather_response)
+                if weather_response.status_code == 200:
+                    weather_data = weather_response.json()
+                a = weather_data["weather"][0]
+                icon = a["icon"]
+                content['weather_data'] = weather_data
+                content['ip_info'] = ip_info
+                content['icon'] = icon
+                content['sehir'] = weather_data["name"]
+        except:
+            pass     
     except:
-        pass     
+        pass
     return render(request,"index.html",content)
 def ana_sayfa(request):
     content = sozluk_yapisi()
