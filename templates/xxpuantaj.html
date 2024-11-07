@@ -9,582 +9,363 @@
 {% endblock head %}
 
 {% block sidebar %}
-<style>/* Genel Modal Stili */
-.mini-modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 8px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    z-index: 2000;
-    overflow-y: auto;
-    max-height: 90vh;
-    padding: 15px;
-}
+    <style>
 
-/* Ana Modal İçin Ferah Düzenleme */
-.modal-inner {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 8px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    z-index: 2000;
-    overflow-y: auto;
-    max-height: 90vh;
-    padding: 15px;    
-}
 
-/* Modal Başlık ve Kapatma Butonu */
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+        /* Rapor Konteyneri */
+        .report-container {
+            padding: 30px;
+            border-radius: 8px;
+        }
 
-.modal-close-btn {
+        
+
+        .report-info p {
+            font-size: 15px;
+            color: #555;
+            font-weight: 500;
+            margin: 5px 0;
+        }
+
+        /* Bölüm Başlıkları */
+        section h2 {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 6px;
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+
+        /* İçerik Listeleri */
+        #personelBilgisi, #malzemelerListesi {
+            font-size: 15px;
+            color: #444;
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 15px;
+        }
+
+        #imalatDurumu .imalat-item {
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+
+        .imalat-item strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Footer ve Onay Butonu */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .onayla-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #333;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .onayla-btn:hover {
+            background-color: #555;
+        }
+
+        /* Modal Stil */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            width: 400px;
+            padding: 20px;
+        }
+
+        .modal-inner {
+            padding: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .form-action-primary, .form-action-secondary {
+            padding: 8px 12px;
+            margin-left: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .form-action-secondary {
+            background-color: #f5f5f5;
+            color: #555;
+        }
+
+        .form-action-primary {
+            background-color: #24d6b5;
+            color: #fff;
+            border: none;
+        }
+
+        /* Onay Sonrası Bilgi Alanı */
+        .onay-bilgisi {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* Yazdır Butonu */
+        #yazdirButonu {
+            display: none; /* Başlangıçta gizli */
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        .modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     background: transparent;
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: #666;
-    transition: color 0.2s ease;
-}
-
-.modal-close-btn:hover {
     color: #333;
 }
-
-/* Mini Modal İçerik Stili */
-.mini-modal-content {
-    padding: 15px;
-    width: 280px; /* Mini modal genişliği daha kompakt */
-    box-sizing: border-box;
-    background: beige;
+/* Yazdırma sırasında yazdır butonunu gizle */
+@media print {
+    #yazdirButonu {
+        display: none;
+    }
 }
 
-/* Form Elemanları ve Düzen */
-.form-element {
-    margin-bottom: 15px;
-}
-
-.form-element label {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 5px;
-    display: block;
-}
-
-.form-element input, .form-element select, .form-element textarea {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.2s ease;
-}
-
-.form-element input:focus, .form-element select:focus, .form-element textarea:focus {
-    border-color: #24d6b5;
-    outline: none;
-}
-
-/* Minimalist ve Kompakt Butonlar */
-.form-action-primary, .form-action-secondary {
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.form-action-primary {
-    background-color: #24d6b5;
-    color: #fff;
-    border: none;
-}
-
-.form-action-primary:hover {
-    background-color: #1fb098;
-}
-
-.form-action-secondary {
-    background-color: #f5f5f5;
-    color: #555;
-    border: none;
-}
-
-.form-action-secondary:hover {
-    background-color: #e0e0e0;
-}
-
-/* Listeleme ve Silme Butonları */
-.listing {
-    margin-top: 10px;
-    padding: 8px;
-    background: #fafafa;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #ddd;
-    font-size: 13px;
-}
-
-.remove-item {
-    color: #e74c3c;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.remove-item:hover {
-    color: #c0392b;
-}
-
-</style>
+    </style>
 
 <main>
     <div class="page-header">
         <div class="page-info">
             <div class="page-title">
                 <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                {% trans 'Şantiye Günlüğü' %}
+                {% trans 'Günlük Rapor' %}
             </div>
             <ul class="page-breadcrumb">
-                <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
-                <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                <li><a href="/{{dil}}/">{% trans 'Şantiye Yönetimi' %}</a></li>
                 <li><a href="#">{% trans 'Şantiye Günlüğü' %}</a></li>
+                <li><a href="#">{% trans 'Günlük Rapor' %}</a></li>
             </ul>
         </div>
 
         <div class="page-actions">
 
-                <button class="page-primary-btn" onclick="openModal('yeni-gunluk')"><i class="icon icon-new"></i>
-                    {% trans 'Yeni Günlük Rapor oluştur' %}
-                </button>
         </div>
     </div>
 
     <div class="large-stats-card table-card table-detail-card">
-        <div class="stats-header">
-            <div class="stats-title">{% trans 'Toplam Rapor : ' %} 0</div>
-            <div class="stats-search">
-                <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
-                <button><i class="icon icon-search"></i></button>
-            </div>
+            <div class="stats-header">
+            <div class="stats-title">{% trans 'Şantiye Günlük Raporu' %}</div>
+        </div>
+        <div class="report-container">
+
+        <div class="report-info">
+            <p><strong>Rapor Tarihi:</strong> 2024-11-06</p>
+            <p><strong>Şantiye:</strong> Şantiye A</p>
         </div>
 
-        <div class="table-wrapper">
-            <table id="datatable">
-                <thead>
-                    <tr>
-                        <th>{% trans 'Rapor Tarihi' %}</th>
-                        <th>{% trans 'Şantiye' %}</th>
-                        <th>{% trans 'Proje' %}</th>
-                        <th>{% trans 'Oluşturan' %}</th>
-                        <th>{% trans 'Sıcaklık' %}</th>
-                        <th>{% trans 'Rüzgar' %}</th>
-                        <th>{% trans 'PDF' %}</th>
-                        <th>{% trans 'İşlemler' %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>06.11.2024</td>
-                        <td>Qaiwan Heights</td>
-                        <td>Zone C</td>
-                        <td>Tolga YILMAZ</td>
-                        <td>23</td>
-                        <td>8 km/h</td>
-                        <td>PDF</td>
-                        <td>
-                            <div class="td-actions">
-                                <a onclick="openModal('editModal{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
-                                <a onclick="openModal('viewModal{{i.id}}')" class="status-info"><i class="icon icon-action-view"></i></a>
-                                <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-            <style>
-                            .dt-buttons {
-                                opacity: 0;
-                                height: 0;
-                                position: fixed;
-                                top: 10000px;
-                                left: 10000px;
-                            } 
-                            </style>
-                            <div class="large-stats-card-footer-actions">
-                                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
-                                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
-                                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
-                            </div>
-        </div>
-    </div>
 
-    <div class="modal" id="yeni-gunluk">
-        <div class="modal-inner" style="width: 70%">
-            <div class="modal-header">
-                {% trans 'Günlük Rapor Ekle' %}
-                <button class="modal-close-btn" onclick="closeModal()">✖</button>
-            </div>
-           <div class="modal-body">
-                <form autocomplete="off" class="tablelist-form">
-                    <div class="form-element">
-                        <label for="rapor-tarihi">{% trans 'Rapor Tarihi' %}</label>
-                        <input type="date" id="rapor-tarihi" class="form-control">
-                    </div>
-                    <div class="form-element">
-                        <label for="santiye-secimi">{% trans 'Şantiye Seçimi' %}</label>
-                        <select id="santiye-secimi" class="styled-select">
-                            <<option value="" disabled selected>{% trans 'Şantiye Seçiniz' %}</option>
-                            <option value="Beton">{% trans 'Test' %}</option>
-                            <option value="Demir">{% trans 'Test2' %}</option>
-   
-                        </select>
-                    </div>
+    <section>
+        <h2>Çalışan Personel</h2>
+        <ul id="personelBilgisi">
+            <li>İnşaat Mühendisliği - 5 kişi</li>
+            <li>Elektrik - 3 kişi</li>
+        </ul>
+    </section>
 
-                    <div class="form-element">
-                        <label for="personel">{% trans 'Personel' %}</label>
-                        <button type="button" class="form-action-primary" onclick="openMiniModal('personel-modal')">{% trans 'Personel Ekle' %}</button>
-                        <div id="personel-list" class="listing-container"></div>
-                    </div>
+    <section>
+        <h2>Hava Durumu</h2>
+        <p id="havaDurumu">Güneşli, 25°C, Rüzgar: 5 km/h</p>
+    </section>
 
-                    <div class="form-element">
-                        <label>{% trans 'Hava Durumu' %}</label>
-                        <button type="button" class="form-action-primary" onclick="openMiniModal('hava-durumu-modal')">{% trans 'Hava Durumu Ekle' %}</button>
-                        <div id="hava-list" class="listing-container"></div>
-                    </div>
+    <section>
+        <h2>Şantiyeye Gelen Malzemeler</h2>
+        <ul id="malzemelerListesi">
+            <li>Beton - 50 m³</li>
+            <li>Demir - 100 kg</li>
+        </ul>
+    </section>
 
-                    <!-- Eklediğiniz yeni alanlar -->
-                    <div class="form-element">
-                        <label for="malzemeler">{% trans 'Şantiyeye Gelen Malzemeler' %}</label>
-                        <button type="button" class="form-action-primary" onclick="openMiniModal('malzemeler-modal')">{% trans 'Malzeme Ekle' %}</button>
-                        <div id="malzeme-list" class="listing-container"></div>
-                    </div>
-
-                    <div class="form-element">
-                        <label for="imalat">{% trans 'İmalat Durumu' %}</label>
-                        <button type="button" class="form-action-primary" onclick="openMiniModal('imalat-modal')">{% trans 'İmalat Ekle' %}</button>
-                        <div id="imalat-list" class="listing-container"></div>
-                    </div>
-
-                    <div class="form-element">
-                        <label for="genel-durum">{% trans 'Genel Durum' %}</label>
-                        <button type="button" class="form-action-primary" onclick="openMiniModal('genel-durum-modal')">{% trans 'Genel Durum Ekle' %}</button>
-                        <div id="genel-durum-list" class="listing-container"></div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="form-action-secondary" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button type="submit" class="form-action-primary">{% trans 'Rapor Oluştur' %}</button>
-                    </div>
-                </form>
+    <section>
+        <h2>İmalat Durumu</h2>
+        <div id="imalatDurumu">
+            <div class="imalat-item">
+                <p><strong>Alçı İmalatı:</strong> Duvar kaplamaları tamamlandı.</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Mini Modal - Personel -->
-    <div class="mini-modal" id="personel-modal">
-        <div class="mini-modal-content">
-            <h4>{% trans 'Personel Ekle' %}</h4>
-            <div class="form-element">
-                <label for="departman-secimi">{% trans 'Departman Seçimi' %}</label>
-                <select class="styled-select" id="departman-secimi">
-                    <option value="" disabled selected>{% trans 'Departman Seçiniz' %}</option>
-                    <option value="Kule">{% trans 'Kule Vinç' %}</option>
-                    <option value="Demir">{% trans 'Demir' %}</option>
-                    <option value="Kum">{% trans 'Tünel Kalıp' %}</option>
-                    <option value="Çimento">{% trans 'Yardımcı' %}</option>
-                    <option value="Tuğla">{% trans 'Tuğla' %}</option>
-                    <option value="Kereste">{% trans 'Seramik' %}</option>
-                </select>
-            </div>
-            <div class="form-element">
-                <label for="calisan-sayisi">{% trans 'Çalışan Sayısı' %}</label>
-                <input type="number" id="calisan-sayisi" min="1" class="form-control">
-            </div>
-            <div class="form-actions">
-                <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
-                <button type="button" class="form-action-primary" onclick="eklePersonel()">Ekle</button>
-            </div>
-        </div>
-    </div>
+    <section>
+        <h2>Genel Durum</h2>
+        <p id="genelDurum">Çalışmalar planlandığı gibi ilerliyor. Hiçbir sorun yok.</p>
+    </section>
 
-    <!-- Mini Modal - Hava Durumu -->
-    <div class="mini-modal" id="hava-durumu-modal">
-        <div class="mini-modal-content">
-            <h4>{% trans 'Hava Durumu Ekle' %}</h4>
-            <div class="form-element">
-                <label>{% trans 'Sıcaklık' %}</label>
-                <input type="text" class="form-control" id="sicaklik">
-            </div>
-            <div class="form-element">
-                <label>{% trans 'Rüzgar Hızı' %}</label>
-                <input type="text" class="form-control" id="ruzgar-hizi">
-            </div>
-            <div class="form-actions">
-                <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
-                <button type="button" class="form-action-primary" onclick="ekleHavaDurumu()">Ekle</button>
-            </div>
-        </div>
-    </div>
-    <!-- Mini Modal - Malzeme -->
-
-    <div class="mini-modal" id="malzemeler-modal">
-    <div class="mini-modal-content">
-        <h4>{% trans 'Malzeme Ekle' %}</h4>
-        <div class="form-element">
-            <label for="malzeme-secimi">{% trans 'Malzeme Seçimi' %}</label>
-            <select id="malzeme-secimi" class="styled-select">
-                <option value="" disabled selected>{% trans 'Malzeme Seçiniz' %}</option>
-                <option value="Beton">{% trans 'Beton' %}</option>
-                <option value="Demir">{% trans 'Demir' %}</option>
-                <option value="Kum">{% trans 'Kum' %}</option>
-                <option value="Çimento">{% trans 'Çimento' %}</option>
-                <option value="Tuğla">{% trans 'Tuğla' %}</option>
-                <option value="Kereste">{% trans 'Kereste' %}</option>
+    <footer>
+        <div id="onaySecimi">
+            <p><strong>Onay için sorumlu kişiyi seçin ve PIN kodunuzu girin:</strong></p>
+            <label for="sorumluSecimi">Sorumlu Kişi:</label>
+            <select id="sorumluSecimi" class="form-control">
+                <option value="" disabled selected>Seçiniz</option>
+                <option value="Ahmet Yılmaz">Ahmet Yılmaz - İnşaat Mühendisi</option>
+                <option value="Mehmet Özdemir">Mehmet Özdemir - Formen</option>
+                <option value="Ayşe Kara">Ayşe Kara - Proje Müdürü</option>
             </select>
+            <button class="onayla-btn" onclick="sorumluSecildi()">Onayla</button>
         </div>
-        <div class="form-element">
-            <label for="malzeme-adet">{% trans 'Adet' %}</label>
-            <input type="number" id="malzeme-adet" min="1" class="form-control">
+        <div class="onay-bilgisi" id="onayBilgisi">
+            <p><strong>Onaylayan:</strong> <span id="onaylayanKisi"></span></p>
+            <p><strong>Tarih ve Saat:</strong> <span id="onayTarihiSaati"></span></p>
         </div>
-        <div class="form-actions">
-            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
-            <button type="button" class="form-action-primary" onclick="ekleMalzeme()">Ekle</button>
+        <button id="yazdirButonu" onclick="yazdirBolge()">Yazdır</button>
+    </footer>
+
+<!-- PIN Onay Modali -->
+<div class="modal" id="pinOnayModal">
+    <div class="modal-inner">
+        <div class="modal-header">
+            <h2>Rapor Onayı</h2>
+            <button class="modal-close-btn" onclick="closeModal()">✖</button>
+        </div>
+        <div class="modal-body">
+            <p>Raporu onaylamak için PIN kodunuzu girin:</p>
+            <input type="password" id="pinKodu" placeholder="PIN Kodu" maxlength="4" class="form-control">
+            <div class="form-actions">
+                <button class="form-action-secondary" onclick="closeModal()">İptal</button>
+                <button class="form-action-primary" onclick="onaylaRapor()">Onayla</button>
+            </div>
         </div>
     </div>
 </div>
-    <!-- Mini Modal - İmalat -->
-
-<div class="mini-modal" id="imalat-modal">
-    <div class="mini-modal-content">
-        <h4>{% trans 'İmalat Durumu Ekle' %}</h4>
-        <div class="form-element">
-            <label for="imalat-secimi">{% trans 'İmalat Seçimi' %}</label>
-            <select id="imalat-secimi" class="styled-select">
-                <option value="" disabled selected>{% trans 'İmalat Kalemi Seçiniz' %}</option>
-                <option value="Beton">{% trans 'Alçı' %}</option>
-                <option value="Demir">{% trans 'Seramik' %}</option>
-                <option value="Kum">{% trans 'Elektrik' %}</option>
-                <option value="Çimento">{% trans 'Mekanik' %}</option>
-                <option value="Tuğla">{% trans 'Mantolama' %}</option>
-                <option value="Kereste">{% trans 'Boya' %}</option>
-            </select>
-        </div>
-        <div class="form-element">
-            <label for="imalat-aciklama">{% trans 'Açıklama' %}</label>
-            <textarea id="imalat-aciklama" class="form-control"></textarea>
-        </div>
-        <div class="form-actions">
-            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
-            <button type="button" class="form-action-primary" onclick="ekleImalat()">Ekle</button>
-        </div>
-    </div>
-</div>
-    <!-- Mini Modal - Genel durum -->
-
-<div class="mini-modal" id="genel-durum-modal">
-    <div class="mini-modal-content">
-        <h4>{% trans 'Genel Durum Ekle' %}</h4>
-        <div class="form-element">
-            <label for="genel-aciklama">{% trans 'Açıklama' %}</label>
-            <textarea id="genel-aciklama" class="form-control"></textarea>
-        </div>
-        <div class="form-actions">
-            <button type="button" class="form-action-secondary" onclick="closeMiniModal()">Vazgeç</button>
-            <button type="button" class="form-action-primary" onclick="ekleGenelDurum()">Ekle</button>
-        </div>
-    </div>
 </div>
 
-</main>
 
 <script>
-function openModal(modalID) {
-    closeModal();
-    document.getElementById(modalID).style.display = "block";
-}
-
-function closeModal() {
-    document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
-}
-
-function openMiniModal(modalId) {
-    closeMiniModal();
-    document.getElementById(modalId).style.display = 'block';
-}
-
-function closeMiniModal() {
-    document.querySelectorAll('.mini-modal').forEach(modal => modal.style.display = 'none');
-}
-
-function eklePersonel() {
-    const departman = document.getElementById('departman-secimi').value;
-    const sayisi = document.getElementById('calisan-sayisi').value;
-    if (departman && sayisi) {
-        const list = document.getElementById('personel-list');
-        const listItem = document.createElement('div');
-        listItem.className = 'listing';
-        listItem.innerHTML = `
-            <span class="listing-item">${departman} - ${sayisi} kişi</span>
-            <span class="remove-item" onclick="removeItem(this)">Sil</span>
-        `;
-        list.appendChild(listItem);
-        closeMiniModal();
+    // Kullanıcı seçildiğinde PIN modalını aç
+    function sorumluSecildi() {
+        const seciliKullanici = document.getElementById('sorumluSecimi').value;
+        if (seciliKullanici) {
+            openModal();
+        } else {
+            alert('Lütfen bir sorumlu kişi seçin.');
+        }
     }
-}
 
-function ekleHavaDurumu() {
-    const sicaklik = document.getElementById('sicaklik').value;
-    const ruzgar = document.getElementById('ruzgar-hizi').value;
-    if (sicaklik && ruzgar) {
-        const list = document.getElementById('hava-list');
-        const listItem = document.createElement('div');
-        listItem.className = 'listing';
-        listItem.innerHTML = `
-            <span class="listing-item">Sıcaklık: ${sicaklik}, Rüzgar Hızı: ${ruzgar}</span>
-            <span class="remove-item" onclick="removeItem(this)">Sil</span>
-        `;
-        list.appendChild(listItem);
-        closeMiniModal();
+    function openModal() {
+        document.getElementById('pinOnayModal').style.display = 'block';
     }
-}
 
-function removeItem(element) {
-    element.parentElement.remove();
-}
-function ekleMalzeme() {
-    const malzeme = document.getElementById('malzeme-secimi').value;
-    const adet = document.getElementById('malzeme-adet').value;
-    if (malzeme && adet) {
-        const list = document.getElementById('malzeme-list');
-        const listItem = document.createElement('div');
-        listItem.className = 'listing';
-        listItem.innerHTML = `
-            <span class="listing-item">${malzeme} - ${adet} adet</span>
-            <span class="remove-item" onclick="removeItem(this)">Sil</span>
-        `;
-        list.appendChild(listItem);
-        closeMiniModal();
+    function closeModal() {
+        document.getElementById('pinOnayModal').style.display = 'none';
     }
-}
 
-function ekleImalat() {
-    const imalat = document.getElementById('imalat-secimi').value;
-    const aciklama = document.getElementById('imalat-aciklama').value;
-    if (imalat && aciklama) {
-        const list = document.getElementById('imalat-list');
-        const listItem = document.createElement('div');
-        listItem.className = 'listing';
-        listItem.innerHTML = `
-            <span class="listing-item">${imalat} - ${aciklama}</span>
-            <span class="remove-item" onclick="removeItem(this)">Sil</span>
-        `;
-        list.appendChild(listItem);
-        closeMiniModal();
+    function onaylaRapor() {
+        const pin = document.getElementById('pinKodu').value;
+        
+        // Örnek PIN kodu doğrulama
+        const dogruPin = "1234";  // Örnek PIN, sunucudan doğrulanmalı
+        
+        if (pin === dogruPin) {
+            const seciliKullanici = document.getElementById('sorumluSecimi').selectedOptions[0].text;
+            const tarihSaat = new Date().toLocaleString();
+            
+            // Onaylayan bilgilerini göster
+            document.getElementById('onaylayanKisi').textContent = seciliKullanici;
+            document.getElementById('onayTarihiSaati').textContent = tarihSaat;
+            
+            // Onay seçimi ve butonlarını gizle, onay bilgilerini göster
+            document.getElementById('onaySecimi').style.display = 'none';
+            document.getElementById('onayBilgisi').style.display = 'block';
+
+            // Yazdır butonunu görünür hale getir
+            document.getElementById('yazdirButonu').style.display = 'block';
+
+            closeModal();
+            alert('Rapor onaylandı.');
+        } else {
+            alert('Geçersiz PIN kodu. Lütfen tekrar deneyin.');
+        }
     }
-}
-
-function ekleGenelDurum() {
-    const aciklama = document.getElementById('genel-aciklama').value;
-    if (aciklama) {
-        const list = document.getElementById('genel-durum-list');
-        const listItem = document.createElement('div');
-        listItem.className = 'listing';
-        listItem.innerHTML = `
-            <span class="listing-item">${aciklama}</span>
-            <span class="remove-item" onclick="removeItem(this)">Sil</span>
-        `;
-        list.appendChild(listItem);
-        closeMiniModal();
-    }
-}
-
 </script>
 <script>
-        $(document).ready(function() {
-            let datatable = $('#datatable').DataTable({
-                paging: true,
-                searching: true,
-                info: false,
-                ordering: true,
-            dom: 'Btip', // Butonları etkinleştirir
-            buttons: [
-                {
-                    extend: 'pdfHtml5',
-                    className: 'hidden', // DataTables butonunu gizlemek için
-                    orientation: 'landscape',
-                    pageSize: 'A4',
-                    exportOptions: { columns: ':visible' },
-                    customize: function (doc) {
-                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('18%'); 
-                        doc.pageMargins = [15, 20, 15, 20];
-                        doc.defaultStyle = { fontSize: 8 };
-                        doc.styles.tableHeader = {
-                            fillColor: '#f2f2f2',
-                            color: '#333',
-                            alignment: 'center'
-                        };
+function yazdirBolge() {
+    const bolge = document.querySelector('.large-stats-card.table-card.table-detail-card');
+    const yeniPencere = window.open('', '', 'width=800, height=600');
+
+    yeniPencere.document.write(`
+        <html>
+            <head>
+                <title>Yazdır</title>
+                <style>
+                    /* A4 Dikey Format için CSS */
+                    @page {
+                        size: A4 portrait;
+                        margin: 20mm;
                     }
-                },
-                {
-                        extend: 'excelHtml5',
-                        className: 'hidden',
-                        exportOptions: { columns: ':visible' },
-                        customize: function (xlsx) {
-                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                            
-                            // Para birimlerinin olduğu sütunları belirleyin (örneğin, 5 ve 6. sütunlar)
-                            $('row c[r^="E"], row c[r^="F"]', sheet).each(function () {
-                                $(this).attr('s', '2'); // 2 numaralı hücre stiline ayarlanarak sayısal veri olarak işlenecek
-                            });
-
-                            // Tarihlerin olduğu sütunları belirleyin (örneğin, 4. sütun)
-                            $('row c[r^="D"]', sheet).each(function () {
-                                $(this).attr('s', '3'); // 3 numaralı hücre stiline ayarlanarak tarih olarak işlenecek
-                            });
-                        }
-                    },
-                {
-                    extend: 'print',
-                    className: 'hidden',
-                    exportOptions: { columns: ':visible' },
-                    customize: function (win) {
-                        $(win.document.body).css('font-size', '10pt').css('width', '95%').css('margin', 'auto');
-                        $(win.document.body).find('table')
-                            .addClass('compact')
-                            .css('font-size', 'inherit')
-                            .css('width', '100%')
-                            .css('margin', 'auto');
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 0;
                     }
-                }
-            ]
-                
-            });
+                    .large-stats-card.table-card.table-detail-card {
+                        width: 100%;
+                        margin: 0;
+                        padding: 20px;
+                        box-sizing: border-box;
+                    }
+                </style>
+            </head>
+            <body>${bolge.innerHTML}</body>
+        </html>
+    `);
 
-            $('#stats-search').keyup(function () {
-                datatable.search($(this).val()).draw();
-            });
-        });
-
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
-        }
-
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
+    yeniPencere.document.close();
+    yeniPencere.print();
+    yeniPencere.close();
+}
+</script>
+      
 {% endblock sidebar %}
