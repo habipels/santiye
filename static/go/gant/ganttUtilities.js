@@ -354,7 +354,7 @@ $.splittify = {
         newW = newW > totalW - splW - splitter.secondBoxMinWidth ? totalW - splW - splitter.secondBoxMinWidth : newW;
         this.firstBox.animate({width: newW}, animTime, function () {$(this).css("overflow-x", "auto")});
         this.splitterBar.animate({left: newW}, animTime);
-        this.secondBox.animate({left: newW + this.splitterBar.width(), width: totalW - newW - splW}, animTime, function () {$(this).css("overflow", "auto")});
+        this.secondBox.width(totalW - splW).css({left: this.firstBox.width() + splW});
 
         storePosition();
       };

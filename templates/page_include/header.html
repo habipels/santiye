@@ -317,6 +317,13 @@
             $(`.sidebar-sub-toggle[data-menu-id="${activeMenu}"]`).find('.icon-caret').addClass('rotate');
             $(`.sidebar-sub-toggle[data-menu-id="${activeMenu}"]`).addClass('active');
         }
+        if ($(window).width() < 768) {
+    $('.sidebar-sub-toggle').off('click').on('click', function(event) {
+        // mobilde toggle işlemi
+        $(this).next('.sidebar-sub-menu').slideToggle();
+    });
+}
+
 
         // Sidebar'ın durumunu geri yükle
         let isSidebarCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
@@ -1231,7 +1238,7 @@
                     </script>
 
                     <div class="notifications-footer">
-                        <a href="/{{dil}}{% url 'main:bildirimler' %}">Tümünü Gör <i class="icon icon-forward"></i></a>
+                        <a href="/{{dil}}{% url 'main:bildirimler' %}">{% trans 'Tümünü Gör' %} <i class="icon icon-forward"></i></a>
                     </div>
                 </div>
             </div>
@@ -1288,7 +1295,7 @@
                 </div>
                 <div class="profile-title">
                     {% if request.is_superuser %}
-                    <span class="superadmin">SUPER ADMIN</span>
+                    <span class="superadmin">{% trans 'SUPER ADMIN' %}</span>
                     {% else %}
                     <span>{% trans 'Hoşgeldin' %} </span>
                     {% endif %}
@@ -1334,8 +1341,11 @@
         }
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
+        
     </script>
+    <script>
     
+    </script>
     </header>
 
 {% endif %}
