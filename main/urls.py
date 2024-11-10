@@ -199,6 +199,7 @@ urlpatterns = [#
     #takvim
     path("generalreporttake/<int:rapor_id>", views.rapor_gonder, name="rapor_gonder"),
     path("generalreport", views.genel_rapor_sayfasi, name="genel_rapor_sayfasi"),
+    path("rapor_onaylama", views.rapor_onaylama, name="rapor_onaylama"),
     path("applygeneralreport/<int:id>", views.genel_rapor_onaylama, name="genel_rapor_onaylama"),
     path("delgeneralreport", views.rapor_sil, name="rapor_sil"),
     path("creategeneralreport", views.genel_rapor_olustur, name="genel_rapor_olustur"),

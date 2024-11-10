@@ -9233,15 +9233,19 @@ def rapor_onaylama(request):
                 if a:
                     if a.izinler.genel_rapor_gorme:
                         kullanici =  request.user.kullanicilar_db
-                    
+                        
                     else:
                         return redirect("main:yetkisiz")
                 else:
                     return redirect("main:yetkisiz")
             else:
                 kullanici =  request.user
-        genel_rapor.objects.filter(id = buttonId).update(silinme_bilgisi = True)
-        return redirect("main:genel_rapor_onaylama")
+        users = get_object_or_404(CustomUser,id = kullanici_bilgisi)
+        if users.imza_sifresi == sifre_bilgisi:
+            genel_rapor.objects.filter(id = buttonId).update(raporu_onaylayan = users,onaylama_tarihi =datetime.now())
+        else:
+            pass
+        return redirect("main:genel_rapor_onaylama",buttonId)
 def rapor_sil(request):
     if request.POST:
         

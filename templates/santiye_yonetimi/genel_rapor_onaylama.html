@@ -253,12 +253,14 @@
         {% endfor %}
         
     </section>
-
+<form action="/{{dil}}{% url 'main:rapor_onaylama' %}" method="post">
+    {% csrf_token %}
     <footer>
         <div id="onaySecimi">
             <p><strong>Onay için sorumlu kişiyi seçin ve PIN kodunuzu girin:</strong></p>
+            <input type="text" hidden name="buttonId" value="{{santiyeler.id}}/">
             <label for="sorumluSecimi">Sorumlu Kişi:</label>
-            <select id="sorumluSecimi" class="form-control">
+            <select id="sorumluSecimi" name="kullanici_bilgisi" class="form-control">
                 <option value="" disabled selected>Seçiniz</option>
                 {% for i in perseonel_iznleri_gonder %}               
                 <option value="{{i.kullanicilar.id}}">{{i.kullanicilar.last_name}} -  {% if i.kullanicilar.gorevi %}
@@ -285,14 +287,16 @@
         </div>
         <div class="modal-body">
             <p>Raporu onaylamak için PIN kodunuzu girin:</p>
-            <input type="password" id="pinKodu" placeholder="PIN Kodu" maxlength="4" class="form-control">
+            <input type="password" id="pinKodu" name="sifre_bilgisi" placeholder="PIN Kodu" maxlength="4" class="form-control">
             <div class="form-actions">
                 <button class="form-action-secondary" onclick="closeModal()">İptal</button>
-                <button class="form-action-primary" onclick="onaylaRapor()">Onayla</button>
+                <button class="form-action-primary" type="submit">Onayla</button>
             </div>
         </div>
     </div>
 </div>
+</form>
+
 </div>
 
 
