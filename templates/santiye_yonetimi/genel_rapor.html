@@ -308,19 +308,19 @@
                     <div class="form-element">
                         <label for="malzemeler">{% trans 'Şantiyeye Gelen Malzemeler' %}</label>
                         <button type="button" class="form-action-primary" onclick="openMiniModal('malzemeler-modal')">{% trans 'Malzeme Ekle' %}</button>
-                        <div id="malzeme-list" class="listing-container"></div>
+                        <div id="malzeme-listt" class="listing-container"></div>
                     </div>
 
                     <div class="form-element">
                         <label for="imalat">{% trans 'İmalat Durumu' %}</label>
                         <button type="button" class="form-action-primary" onclick="openMiniModal('imalat-modal')">{% trans 'İmalat Ekle' %}</button>
-                        <div id="imalat-list" class="listing-container"></div>
+                        <div id="imalat-listt" class="listing-container"></div>
                     </div>
 
                     <div class="form-element">
                         <label for="genel-durum">{% trans 'Genel Durum' %}</label>
                         <button type="button" class="form-action-primary" onclick="openMiniModal('genel-durum-modal')">{% trans 'Genel Durum Ekle' %}</button>
-                        <div id="genel-durum-list" class="listing-container"></div>
+                        <div id="genel-durum-listt" class="listing-container"></div>
                     </div>
 
                     <div class="form-actions">
@@ -710,6 +710,66 @@
                 `;
 
                 hava_list.appendChild(listItem);
+
+                const malzeme_list = document.getElementById("malzeme-listt");
+                            data.gelen_malzemeler_bilgisi.forEach(malzeme => {
+                const listItem = document.createElement('div');
+                listItem.className = 'listing';
+                listItem.innerHTML = `
+                    <span class="listing-item">${malzeme.malzeme_adi} - ${malzeme.malzeme_adedi} </span>
+                    <span class="remove-item" onclick="removeItem(this)">Sil</span>
+                `;
+                const int = document.createElement('input');
+                int.hidden = true;
+                int.value= malzeme.malzeme_id;
+                int.name ="malzeme"
+            
+            const sayisii = document.createElement('input');
+            sayisii.hidden= true;
+            sayisii.value=malzeme.malzeme_adedi;
+            sayisii.name ="malzemesayisi"
+            malzeme_list.appendChild(sayisii);
+            malzeme_list.appendChild(int);
+            malzeme_list.appendChild(listItem);
+});
+const imalat_listt = document.getElementById("imalat-listt");
+                            data.genel_imalat_bilgisi.forEach(imalat => {
+                const listItem = document.createElement('div');
+                listItem.className = 'listing';
+                listItem.innerHTML = `
+                    <span class="listing-item">${imalat.imalat_adi} - ${imalat.imalat_aciklama} </span>
+                    <span class="remove-item" onclick="removeItem(this)">Sil</span>
+                `;
+                const int = document.createElement('input');
+                int.hidden = true;
+                int.value= imalat.imalat_id;
+                int.name ="imalat"
+            
+            const sayisii = document.createElement('input');
+            sayisii.hidden= true;
+            sayisii.value=imalat.imalat_aciklama;
+            sayisii.name ="aciklama"
+            imalat_listt.appendChild(sayisii);
+            imalat_listt.appendChild(int);
+            imalat_listt.appendChild(listItem);
+});
+const genel_durum_listt = document.getElementById("genel-durum-listt");
+                            data.genel_aciklama_bilgisi.forEach(aciklama => {
+                const listItem = document.createElement('div');
+                listItem.className = 'listing';
+                listItem.innerHTML = `
+                    <span class="listing-item">${aciklama.aciklama} </span>
+                    <span class="remove-item" onclick="removeItem(this)">Sil</span>
+                `;
+                const int = document.createElement('input');
+                int.hidden = true;
+                int.value= aciklama.aciklama;
+                int.name ="aciklamalar"
+            
+            
+                genel_durum_listt.appendChild(int);
+                genel_durum_listt.appendChild(listItem);
+});
             openModal("gunluk-duzenle")
         } else if (acilan_modals == 1) {
             openModal("viewModal")
