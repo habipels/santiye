@@ -40,11 +40,7 @@
                 <div class="employeep-name">{{i.isim}} {{i.soyisim}}</div>
                 <div class="employeep-tags">
                     <div class="employeep-tag-job">{{i.calisan_pozisyonu.kategori_isimi}}</div>{% calisan_maasi i.id as maasi %}
-<<<<<<< HEAD
                     <div class="employeep-tag-salary">{{maasi.maas}} {% odeme_para_birimii  i as para_birimi %}  {% if para_birimi == "1" %}
-=======
-                    <div class="employeep-tag-salary"><span>{{maasi.maas}}</span><span>{% if maasli.para_birimi %}</span>
->>>>>>> c543a9e11f3c173c614f0aee8346d7b143322155
                         $
                     {% else %}
                     IQD
@@ -81,7 +77,7 @@
                     <div class="employee-details-modal-header-tags">
                         <div id="personelDepartment" class="employeep-tag">Yönetim</div>
                         <div id="personelPosition" class="employeep-tag-job">Mühendis</div>
-                        <div class="employeep-tag-salary">15.500 </div>
+                        <div class="employeep-tag-salary" > <span id="maaslar_sinifi"> 1.500 </span> </div>
                     </div>
                 </div>
 
@@ -187,7 +183,7 @@
                     <div class="employee-details-modal-header-tags">
                         <div class="employeep-tag">Yönetim</div>
                         <div class="employeep-tag-job">Mühendis</div>
-                        <div class="employeep-tag-salary">15.500 </div>
+                        <div class="employeep-tag-salary"> <span id="maaslar_sinifi"> 1.500 </span> </div>
                     </div>
                 </div>
 
@@ -505,8 +501,8 @@
             
 
             <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Vazgeç" %}</button>
-                <button class="form-action-primary" type="submit">{% trans "Kaydet" %}</button>
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
             </div>
         </form>
         </div>
@@ -651,8 +647,8 @@
             
 
             <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Vazgeç" %}</button>
-                <button class="form-action-primary" type="submit">{% trans "Kaydet" %}</button>
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
             </div>
         </form>
         </div>
@@ -827,9 +823,10 @@ function openPersonelDetails(id) {
                     document.getElementById('detailucrettipi').innerText  = "Yevmiye";
                 }
                 if (data.para_birimi == "1") {
-                    document.getElementById('detailparabirimi').innerText  = "Dolar";
-                    document.getElementById('detailucret').innerText  = data.maas+" Dolar";
-                    document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" Dolar";
+                    document.getElementById('detailparabirimi').innerText  = "$";
+                    document.getElementById('detailucret').innerText  = data.maas+" $";
+                    document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" $";
+                    document.getElementById("maaslar_sinifi").innerText =data.maas+" $";
                 } else {
                     document.getElementById('detailparabirimi').innerText  = "IQD";
                     document.getElementById('detailucret').innerText  = data.maas+" IQD";
@@ -965,7 +962,7 @@ function openPersonelDetails(id) {
                     <div class="employee-details-modal-header-tags">
                         <div id="personelDepartment" class="employeep-tag">Yönetim</div>
                         <div id="personelPosition" class="employeep-tag-job">Mühendis</div>
-                        <div class="employeep-tag-salary">15.500 </div>
+                        <div class="employeep-tag-salary"> <span id="maaslar_sinifi"> 1.500 </span>  </div>
                     </div>
                 </div>
 
@@ -1389,8 +1386,8 @@ function openPersonelDetails(id) {
             
 
             <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Vazgeç" %}</button>
-                <button class="form-action-primary" type="submit">{% trans "Kaydet" %}</button>
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
             </div>
         </form>
         </div>
@@ -1535,8 +1532,8 @@ function openPersonelDetails(id) {
             
 
             <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Vazgeç" %}</button>
-                <button class="form-action-primary" type="submit">{% trans "Kaydet" %}</button>
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
             </div>
         </form>
         </div>
@@ -1704,6 +1701,7 @@ function openPersonelDetails(id) {
                 document.getElementById('detailpasaportno').innerText  = data.pasaport_numarasi;
                 document.getElementById('detailuygugu').innerText  = data.uyrugu;
                 document.getElementById('detaildogumtarihi').innerText  = data.dogum_tarihi;
+                
                 if (data.durum == "1") {
                     document.getElementById('detailucrettipi').innerText  = "Maaşlı";
                 }
@@ -1711,9 +1709,10 @@ function openPersonelDetails(id) {
                     document.getElementById('detailucrettipi').innerText  = "Yevmiye";
                 }
                 if (data.para_birimi == "1") {
-                    document.getElementById('detailparabirimi').innerText  = "Dolar";
-                    document.getElementById('detailucret').innerText  = data.maas+" Dolar";
-                    document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" Dolar";
+                    document.getElementById('detailparabirimi').innerText  = "$";
+                    document.getElementById('detailucret').innerText  = data.maas+" $";
+                    document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" $";
+                    document.getElementById("maaslar_sinifi").innerText =data.maas+" $";
                 } else {
                     document.getElementById('detailparabirimi').innerText  = "IQD";
                     document.getElementById('detailucret').innerText  = data.maas+" IQD";
