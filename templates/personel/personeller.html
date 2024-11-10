@@ -145,7 +145,7 @@
                     <button class="form-action-secondary" type="button"
                         onclick="closeModal('openPersonelDetails')">{% trans 'Vazgeç' %}</button>
                     <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">
-                    {% trans 'İşten Ayrıl' %}</button>
+                    {% trans 'İlişik Kes' %}</button>
                     
                 </div>
             </div>
@@ -167,7 +167,7 @@
 <div class="modal" id="isten-ayril">
         <div class="modal-inner" style="width: 724px;">
             <div class="modal-header">
-                {% trans 'İşten Çıkan Personel'  %}
+                {% trans 'Personel İlişik Kesme'  %}
                 
             </div>
             <div class="modal-body">
@@ -194,7 +194,7 @@
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
                             onclick="closeModal('isten-ayril')">{% trans 'Vazgeç' %} </button>
-                        <button class="form-action-danger" type="submit">{% trans 'İşten Ayrıl' %}</button>
+                        <button class="form-action-danger" type="submit">{% trans 'İlişik Kes' %}</button>
                     </div>
                 </form>
             </div>
@@ -1025,7 +1025,7 @@ function openPersonelDetails(id) {
                     <button class="form-action-secondary" type="button"
                         onclick="closeModal('openPersonelDetails')">{% trans 'Vazgeç' %}</button>
                     <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">
-                    {% trans 'İşten Ayrıl' %}</button>
+                    {% trans 'İlişik Kes' %}</button>
                     
                 </div>
             </div>
@@ -1047,7 +1047,7 @@ function openPersonelDetails(id) {
 <div class="modal" id="isten-ayril">
         <div class="modal-inner" style="width: 724px;">
             <div class="modal-header">
-                {% trans 'İşten Çıkan Personel'  %}
+                {% trans 'Personel İlişik Kesme'  %}
                 
             </div>
             <div class="modal-body">
@@ -1074,7 +1074,7 @@ function openPersonelDetails(id) {
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
                             onclick="closeModal('isten-ayril')">{% trans 'Vazgeç' %} </button>
-                        <button class="form-action-danger" type="submit">{% trans 'İşten Ayrıl' %}</button>
+                        <button class="form-action-danger" type="submit">{% trans 'İlişik Kes' %}</button>
                     </div>
                 </form>
             </div>
@@ -1085,12 +1085,12 @@ function openPersonelDetails(id) {
 <div class="modal" id="maas-olustur">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Maaş Oluştur
+                {% trans 'Maaş Oluştur' %}
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-element">
-                        <label for="ay-secimi">Ay Seçimi</label>
+                        <label for="ay-secimi">{% trans 'Ay Seçimi' %}</label>
                         <select name="ay-secimi" id="ay-secimi">
                             <option value="" selected disabled></option>
                             <option value="Ay">Ay</option>
@@ -1100,8 +1100,8 @@ function openPersonelDetails(id) {
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
-                            onclick="closeModal('maas-olustur')">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Devam Et</button>
+                            onclick="closeModal('maas-olustur')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Devam Et' %}</button>
                     </div>
                 </form>
             </div>
@@ -1111,14 +1111,14 @@ function openPersonelDetails(id) {
 <div class="modal" id="maasOdeModal">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Maaş Öde
+                {% trans 'Maaş Öde' %}
             </div>
             <div class="modal-body">
                 <form enctype="multipart/form-data" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
                     {% csrf_token %} 
                     <div id="odemeturuu" ></div>
                     <div class="form-element">
-                        <label for="maas-ayi">Maaş Ayı</label>
+                        <label for="maas-ayi">{% trans 'Maaş Ayı' %}</label>
                         <select required id="maasAy" name="maas_ayi">
                             <option value="" selected disabled></option>
                             <option value="Ay">Ay</option>
@@ -1127,7 +1127,7 @@ function openPersonelDetails(id) {
                         </select>
                     </div>
                     <div class="form-element">
-                        <label for="kalan-bakiye">Kalan Bakiye</label>
+                        <label for="kalan-bakiye">{% trans 'Kalan Bakiye' %}</label>
                         <input required type="number"  name="tutar" id="maasBakiye"  value="0">
                     </div>
                     <div class="form-element">
@@ -1135,7 +1135,7 @@ function openPersonelDetails(id) {
                         <input required type="number" name="kur"  class="form-control" placeholder="Kur">
                     </div>
                     <div class="form-element">
-                        <label for="odeme-tarihi">Ödeme Tarihi</label>
+                        <label for="odeme-tarihi">{% trans 'Ödeme Tarihi' %}</label>
                         <input required type="date" name="odeme_tarihi">
                     </div>
                     <div class="form-element">
@@ -1143,7 +1143,7 @@ function openPersonelDetails(id) {
                         <textarea id="avansAciklama" name="aciklama"></textarea>
                     </div>
                     <div class="form-element">
-                        <label for="ekler">Dosya Yükle</label>
+                        <label for="ekler">{% trans 'Dosya Yükle' %}</label>
 
                         <div class="file-input">
                             <label for="ekler">
@@ -1160,8 +1160,8 @@ function openPersonelDetails(id) {
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
-                            onclick="closeModal('maasOdeModal')">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Maaş Öde</button>
+                            onclick="closeModal('maasOdeModal')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Maaş Öde' %}</button>
                     </div>
                 </form>
             </div>
@@ -1190,15 +1190,15 @@ function openPersonelDetails(id) {
                         </select>
                     </div>
                     <div class="form-element">
-                        <label for="avansTutar">Ödeme Tarihi</label>
+                        <label for="avansTutar">{% trans 'Ödeme Tarihi' %}</label>
                         <input required type="date" name="odeme_tarihi"  >
                     </div>
                     <div class="form-element">
-                        <label for="tutar">Tutar</label>
+                        <label for="tutar">{% trans 'Tutar' %}</label>
                         <input required type="number" name="tutar" id="avansTutar">
                     </div>
                     <div class="form-element">
-                        <label for="kur">Kur</label>
+                        <label for="kur">{% trans 'Kur' %}</label>
                         <input required type="number" name="kur" >
                     </div>
                     
@@ -1207,7 +1207,7 @@ function openPersonelDetails(id) {
                         <textarea id="avansAciklama" name="aciklama"></textarea>
                     </div>
                     <div class="form-element">
-                        <label for="ekler">Dosya Yükle</label>
+                        <label for="ekler">{% trans 'Dosya Yükle' %}</label>
 
                         <div class="file-input">
                             <label for="ekler">
