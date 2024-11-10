@@ -9192,11 +9192,39 @@ def genel_rapor_olustur(request):
                                           genel_aciklama = aciklamalar[i] )
     return redirect("main:genel_rapor_sayfasi")
 
-#def genel_rapor_onaylama(request,id):
+def genel_rapor_onaylama(request,id):
+    content = sozluk_yapisi()
 
-def rapor_sil(request):
+    if super_admin_kontrolu(request):
+        
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.genel_rapor_gorme:
+                   kullanici =  request.user.kullanicilar_db
+                   
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici =  request.user
+    content["santiyeler"] = get_object_or_404(genel_rapor,proje_ait_bilgisi = kullanici,silinme_bilgisi = False,id = id) 
+    content["gelen_malzeme"] = gelen_malzeme.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
+    content["genel_personel"] = genel_personel.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
+    content["genel_imalat"] = genel_imalat.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
+    content["genel_aciklamalar"] = genel_aciklamalar.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
+    content["genel_hava_durumu"] = genel_hava_durumu.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id ).last()
+    content["perseonel_iznleri_gonder"] =bagli_kullanicilar.objects.filter(izinler__izinlerin_sahibi_kullanici = kullanici,izinler__genel_rapor_onaylama = True)
+    return render(request,"santiye_yonetimi/genel_rapor_onaylama.html",content)
+def rapor_onaylama(request):
     if request.POST:
         buttonId = request.POST.get("buttonId")
+        kullanici_bilgisi = request.POST.get("genel_rapor_onaylama")
+        sifre_bilgisi = request.POST.get("sifre_bilgisi")
         if super_admin_kontrolu(request):
             pass
         else:
@@ -9213,6 +9241,26 @@ def rapor_sil(request):
             else:
                 kullanici =  request.user
         genel_rapor.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+        return redirect("main:genel_rapor_onaylama")
+def rapor_sil(request):
+    if request.POST:
+        
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.genel_rapor_onaylama:
+                        kullanici =  request.user.kullanicilar_db
+                    
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici =  request.user
+        #genel_rapor.objects.filter(id = buttonId)
         return redirect("main:genel_rapor_sayfasi")
 def rapor_gonder(request, rapor_id):
     # Belirtilen ID'ye sahip genel rapor bilgisi yoksa hata döner

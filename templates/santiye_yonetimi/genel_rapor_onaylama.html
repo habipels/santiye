@@ -1,0 +1,384 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+{% endblock head %}
+
+{% block sidebar %}
+    <style>
+
+
+        /* Rapor Konteyneri */
+        .report-container {
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        
+
+        .report-info p {
+            font-size: 15px;
+            color: #555;
+            font-weight: 500;
+            margin: 5px 0;
+        }
+
+        /* Bölüm Başlıkları */
+        section h2 {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 6px;
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+
+        /* İçerik Listeleri */
+        #personelBilgisi, #malzemelerListesi {
+            font-size: 15px;
+            color: #444;
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 15px;
+        }
+
+        #imalatDurumu .imalat-item {
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+
+        .imalat-item strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Footer ve Onay Butonu */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .onayla-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #333;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .onayla-btn:hover {
+            background-color: #555;
+        }
+
+        /* Modal Stil */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            width: 400px;
+            padding: 20px;
+        }
+
+        .modal-inner {
+            padding: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .form-action-primary, .form-action-secondary {
+            padding: 8px 12px;
+            margin-left: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .form-action-secondary {
+            background-color: #f5f5f5;
+            color: #555;
+        }
+
+        .form-action-primary {
+            background-color: #24d6b5;
+            color: #fff;
+            border: none;
+        }
+
+        /* Onay Sonrası Bilgi Alanı */
+        .onay-bilgisi {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* Yazdır Butonu */
+        #yazdirButonu {
+            display: none; /* Başlangıçta gizli */
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        .modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+/* Yazdırma sırasında yazdır butonunu gizle */
+@media print {
+    #yazdirButonu {
+        display: none;
+    }
+}
+
+    </style>
+
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans 'Günlük Rapor' %}
+            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="/{{dil}}/">{% trans 'Şantiye Yönetimi' %}</a></li>
+                <li><a href="#">{% trans 'Şantiye Günlüğü' %}</a></li>
+                <li><a href="#">{% trans 'Günlük Rapor' %}</a></li>
+            </ul>
+        </div>
+
+        <div class="page-actions">
+
+        </div>
+    </div>
+
+    <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+            <div class="stats-title">{% trans 'Şantiye Günlük Raporu' %}</div>
+        </div>
+        <div class="report-container">
+
+        <div class="report-info">
+            <p><strong>Rapor Tarihi:</strong> {{santiyeler.tarih |date:'d.mY'}}</p>
+            <p><strong>Şantiye:</strong> {{santiyeler.proje_santiye_Ait.proje_adi}}</p>
+        </div>
+
+
+    <section>
+        <h2>Çalışan Personel</h2>
+        <ul id="personelBilgisi">
+        {% for i in genel_personel %}
+            <li>{{i.personel_departmani.kategori_isimi}} - {{i.personel_sayisi | stringformat:'.F' }} kişi</li>
+        {% endfor %}
+       
+        </ul>
+    </section>
+
+    <section>
+        <h2>Hava Durumu</h2>
+        <p id="havaDurumu">Güneşli, {{genel_hava_durumu.hava_durumu_sicaklik}}°C, Rüzgar: {{genel_hava_durumu.hava_durumu_ruzgar}} km/h</p>
+    </section>
+
+    <section>
+        <h2>Şantiyeye Gelen Malzemeler</h2>
+        <ul id="malzemelerListesi">
+            {% for i in gelen_malzeme %}
+            <li>{{i.urun.urun_adi}} - {{i.urun_adeti  }} </li>
+        {% endfor %}
+       
+        </ul>
+    </section>
+
+    <section>
+        <h2>İmalat Durumu</h2>
+        <div id="imalatDurumu">
+            <div class="imalat-item">
+                {% for i in genel_imalat %}
+            <p><strong>{{i.imalet_kalemi.kalem_adi}}:</strong> {{i.imalat_aciklama}}</p>
+        {% endfor %}
+                
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Genel Durum</h2>
+        {% for i in genel_aciklamalar %}
+           <p id="genelDurum">{{i.genel_aciklama}}</p>
+        {% endfor %}
+        
+    </section>
+
+    <footer>
+        <div id="onaySecimi">
+            <p><strong>Onay için sorumlu kişiyi seçin ve PIN kodunuzu girin:</strong></p>
+            <label for="sorumluSecimi">Sorumlu Kişi:</label>
+            <select id="sorumluSecimi" class="form-control">
+                <option value="" disabled selected>Seçiniz</option>
+                {% for i in perseonel_iznleri_gonder %}               
+                <option value="{{i.kullanicilar.id}}">{{i.kullanicilar.last_name}} -  {% if i.kullanicilar.gorevi %}
+                {{i.kullanicilar.gorevi}}
+                {% else %}
+                {% endif %}</option>
+                {% endfor %}
+            </select>
+            <button class="onayla-btn" onclick="sorumluSecildi()">Onayla</button>
+        </div>
+        <div class="onay-bilgisi" id="onayBilgisi">
+            <p><strong>Onaylayan:</strong> <span id="onaylayanKisi"></span></p>
+            <p><strong>Tarih ve Saat:</strong> <span id="onayTarihiSaati"></span></p>
+        </div>
+        <button id="yazdirButonu" onclick="yazdirBolge()">Yazdır</button>
+    </footer>
+
+<!-- PIN Onay Modali -->
+<div class="modal" id="pinOnayModal">
+    <div class="modal-inner">
+        <div class="modal-header">
+            <h2>Rapor Onayı</h2>
+            <button class="modal-close-btn" onclick="closeModal()">✖</button>
+        </div>
+        <div class="modal-body">
+            <p>Raporu onaylamak için PIN kodunuzu girin:</p>
+            <input type="password" id="pinKodu" placeholder="PIN Kodu" maxlength="4" class="form-control">
+            <div class="form-actions">
+                <button class="form-action-secondary" onclick="closeModal()">İptal</button>
+                <button class="form-action-primary" onclick="onaylaRapor()">Onayla</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script>
+    // Kullanıcı seçildiğinde PIN modalını aç
+    function sorumluSecildi() {
+        const seciliKullanici = document.getElementById('sorumluSecimi').value;
+        if (seciliKullanici) {
+            openModal();
+        } else {
+            alert('Lütfen bir sorumlu kişi seçin.');
+        }
+    }
+
+    function openModal() {
+        document.getElementById('pinOnayModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('pinOnayModal').style.display = 'none';
+    }
+
+    function onaylaRapor() {
+        const pin = document.getElementById('pinKodu').value;
+        
+        // Örnek PIN kodu doğrulama
+        const dogruPin = "1234";  // Örnek PIN, sunucudan doğrulanmalı
+        
+        if (pin === dogruPin) {
+            const seciliKullanici = document.getElementById('sorumluSecimi').selectedOptions[0].text;
+            const tarihSaat = new Date().toLocaleString();
+            
+            // Onaylayan bilgilerini göster
+            document.getElementById('onaylayanKisi').textContent = seciliKullanici;
+            document.getElementById('onayTarihiSaati').textContent = tarihSaat;
+            
+            // Onay seçimi ve butonlarını gizle, onay bilgilerini göster
+            document.getElementById('onaySecimi').style.display = 'none';
+            document.getElementById('onayBilgisi').style.display = 'block';
+
+            // Yazdır butonunu görünür hale getir
+            document.getElementById('yazdirButonu').style.display = 'block';
+
+            closeModal();
+            alert('Rapor onaylandı.');
+        } else {
+            alert('Geçersiz PIN kodu. Lütfen tekrar deneyin.');
+        }
+    }
+</script>
+<script>
+function yazdirBolge() {
+    const bolge = document.querySelector('.large-stats-card.table-card.table-detail-card');
+    const yeniPencere = window.open('', '', 'width=800, height=600');
+
+    yeniPencere.document.write(`
+        <html>
+            <head>
+                <title>Yazdır</title>
+                <style>
+                    /* A4 Dikey Format için CSS */
+                    @page {
+                        size: A4 portrait;
+                        margin: 20mm;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .large-stats-card.table-card.table-detail-card {
+                        width: 100%;
+                        margin: 0;
+                        padding: 20px;
+                        box-sizing: border-box;
+                    }
+                </style>
+            </head>
+            <body>${bolge.innerHTML}</body>
+        </html>
+    `);
+
+    yeniPencere.document.close();
+    yeniPencere.print();
+    yeniPencere.close();
+}
+</script>
+      
+{% endblock sidebar %}
