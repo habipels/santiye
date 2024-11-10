@@ -139,7 +139,7 @@
 
         /* Onay Sonrası Bilgi Alanı */
         .onay-bilgisi {
-            display: none;
+            
             text-align: center;
             margin-top: 15px;
             font-size: 15px;
@@ -148,7 +148,7 @@
 
         /* Yazdır Butonu */
         #yazdirButonu {
-            display: none; /* Başlangıçta gizli */
+             /* Başlangıçta gizli */
             padding: 10px 20px;
             font-size: 16px;
             color: #fff;
@@ -172,7 +172,7 @@
 /* Yazdırma sırasında yazdır butonunu gizle */
 @media print {
     #yazdirButonu {
-        display: none;
+        
     }
 }
 
@@ -256,9 +256,17 @@
 <form action="/{{dil}}{% url 'main:rapor_onaylama' %}" method="post">
     {% csrf_token %}
     <footer>
+        {% if santiyeler.raporu_onaylayan %}
+        
+        <div class="onay-bilgisi" id="onayBilgisi">
+            <p><strong>Onaylayan:</strong> <span id="onaylayanKisi">{{santiyeler.raporu_onaylayan.last_name}}</span></p>
+            <p><strong>Tarih ve Saat:</strong> <span id="onayTarihiSaati">{{santiyeler.onaylama_tarihi}}</span></p>
+        </div>
+        <button id="yazdirButonu" onclick="yazdirBolge()">Yazdır</button>
+        {% else %}
         <div id="onaySecimi">
             <p><strong>Onay için sorumlu kişiyi seçin ve PIN kodunuzu girin:</strong></p>
-            <input type="text" hidden name="buttonId" value="{{santiyeler.id}}/">
+            <input type="text" hidden name="buttonId" value="{{santiyeler.id}}">
             <label for="sorumluSecimi">Sorumlu Kişi:</label>
             <select id="sorumluSecimi" name="kullanici_bilgisi" class="form-control">
                 <option value="" disabled selected>Seçiniz</option>
@@ -269,13 +277,11 @@
                 {% endif %}</option>
                 {% endfor %}
             </select>
-            <button class="onayla-btn" onclick="sorumluSecildi()">Onayla</button>
+            <button class="onayla-btn" type="button" onclick="sorumluSecildi()">Onayla</button>
         </div>
-        <div class="onay-bilgisi" id="onayBilgisi">
-            <p><strong>Onaylayan:</strong> <span id="onaylayanKisi"></span></p>
-            <p><strong>Tarih ve Saat:</strong> <span id="onayTarihiSaati"></span></p>
-        </div>
-        <button id="yazdirButonu" onclick="yazdirBolge()">Yazdır</button>
+        {% endif %}
+        
+        
     </footer>
 
 <!-- PIN Onay Modali -->
@@ -319,33 +325,7 @@
         document.getElementById('pinOnayModal').style.display = 'none';
     }
 
-    function onaylaRapor() {
-        const pin = document.getElementById('pinKodu').value;
-        
-        // Örnek PIN kodu doğrulama
-        const dogruPin = "1234";  // Örnek PIN, sunucudan doğrulanmalı
-        
-        if (pin === dogruPin) {
-            const seciliKullanici = document.getElementById('sorumluSecimi').selectedOptions[0].text;
-            const tarihSaat = new Date().toLocaleString();
-            
-            // Onaylayan bilgilerini göster
-            document.getElementById('onaylayanKisi').textContent = seciliKullanici;
-            document.getElementById('onayTarihiSaati').textContent = tarihSaat;
-            
-            // Onay seçimi ve butonlarını gizle, onay bilgilerini göster
-            document.getElementById('onaySecimi').style.display = 'none';
-            document.getElementById('onayBilgisi').style.display = 'block';
-
-            // Yazdır butonunu görünür hale getir
-            document.getElementById('yazdirButonu').style.display = 'block';
-
-            closeModal();
-            alert('Rapor onaylandı.');
-        } else {
-            alert('Geçersiz PIN kodu. Lütfen tekrar deneyin.');
-        }
-    }
+ 
 </script>
 <script>
 function yazdirBolge() {

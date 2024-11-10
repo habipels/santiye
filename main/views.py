@@ -9223,7 +9223,7 @@ def genel_rapor_onaylama(request,id):
 def rapor_onaylama(request):
     if request.POST:
         buttonId = request.POST.get("buttonId")
-        kullanici_bilgisi = request.POST.get("genel_rapor_onaylama")
+        kullanici_bilgisi = request.POST.get("kullanici_bilgisi")
         sifre_bilgisi = request.POST.get("sifre_bilgisi")
         if super_admin_kontrolu(request):
             pass
