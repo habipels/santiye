@@ -93,7 +93,7 @@
                 <td data-label="{% trans 'Aksiyonlar' %}">
                 <div class="td-actions">
                     <a onclick="urun_detayi('{{i.id}}')" class="status-view"><i class="icon icon-view"></i> </a>
-                    <a onclick="stok_ekle({{i.id}})" class="status-success stats-lg"><i class="icon icon-confirm"></i> Stok İşlemleri</a>
+                    <a onclick="stok_ekle({{i.id}})" class="status-success stats-lg"><i class="icon icon-confirm"></i> {% trans 'Stok İşlemleri' %}</a>
                 </div>
                     
                 </td>
@@ -350,7 +350,7 @@
                 <td data-label="{% trans 'Aksiyonlar' %}">
                 <div class="td-actions">
                     <a onclick="urun_detayi('{{i.id}}')" class="status-view"><i class="icon icon-view"></i> </a>
-                    <a onclick="stok_ekle({{i.id}})" class="status-success stats-lg"><i class="icon icon-confirm"></i> Stok İşlemleri</a>
+                    <a onclick="stok_ekle({{i.id}})" class="status-success stats-lg"><i class="icon icon-confirm"></i> {% trans 'Stok İşlemleri' %}</a>
                 </div>
                     
                 </td>
@@ -499,17 +499,22 @@
             {% trans 'Talep Satın Alındı' %}
         </div>
         <div class="modal-body">
+            
             <form id="stockTransactionForm" action="/{{dil}}{% url 'accounting:stok_girisi_yap' %}" method="POST">
                 {% csrf_token %}
-                <input type="text" name="urun" hidden id="urun_bilgisi_doldur">
+                <div class="form-element">
+                <input type="text" name="urun" hidden id="urun_bilgisi_doldur" >
                 <label for="transactionType">{% trans 'İşlem Türü' %}:</label>
-                <select id="transactionType" name="transactionType">
+                <select id="transactionType" name="transactionType" required>
+                    <option value="disabled">{% trans 'Seçim Yapınız' %}</option>
                     <option value="0">{% trans 'Stok Girişi' %}</option>
                     <option value="1">{% trans 'Stok Çıkışı' %}</option>
                 </select>
-
+                </div>
+                <div class="form-element">
                 <label for="transactionAmount">{% trans 'Miktar' %}:</label>
-                <input type="number" id="transactionAmount" name="transactionAmount" placeholder="{% trans 'Miktar girin' %}">
+                <input type="number" id="transactionAmount" name="transactionAmount" placeholder="{% trans 'Miktar girin' %}" required>
+                </div>
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
                     <button class="form-action-primary" type="submit">{% trans 'Evet, onaylansın' %}</button>
