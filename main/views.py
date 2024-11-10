@@ -9192,6 +9192,7 @@ def genel_rapor_olustur(request):
                                           genel_aciklama = aciklamalar[i] )
     return redirect("main:genel_rapor_sayfasi")
 
+#def genel_rapor_onaylama(request,id):
 
 def rapor_sil(request):
     if request.POST:
