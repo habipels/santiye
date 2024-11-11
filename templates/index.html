@@ -2980,7 +2980,15 @@
                 <button onclick="showBlock('{{i.id}}', {{i.kat|safe}})" class="block-btn">{{i.yapi}}</button>
                 
             {% endfor %}
-           
+            <script>
+                function setActiveButton(button) {
+                    // Tüm butonlardaki 'active' sınıfını kaldırır
+                    document.querySelectorAll('.block-selector .block-btn').forEach(btn => btn.classList.remove('active'));
+                    
+                    // Tıklanan butona 'active' sınıfı ekler
+                    button.classList.add('active');
+                }
+            </script>
         </div>
 
         <!-- bloklar -->
@@ -3591,6 +3599,7 @@
     {
         animation: red-flash 1s infinite;
     }
+    
 </style>
 
 <script>
@@ -3842,6 +3851,7 @@ createBuilding();
         z-index: 10; /* Butonların üstte kalmasını sağlar */
         position: relative; /* Butonların bina tarafından kaplanmasını önler */
     }
+  
 
     .block-btn {
         padding: 0.5rem 1rem;
@@ -3855,6 +3865,9 @@ createBuilding();
     }
 
     .block-btn:hover {
+        background-color: #24d6b5;
+    }
+    .block-btn:active {
         background-color: #24d6b5;
     }
 
