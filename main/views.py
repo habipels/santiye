@@ -7291,6 +7291,17 @@ def kullanici_yetki_alma(request):
         izinler.katman_silme = False
         izinler.katman_gorme = False
         izinler.katman_duzenleme = False
+        #
+        izinler.gant_olusturma = False
+        izinler.gant_gorme = False
+        izinler.gant_duzenleme = False
+        #
+        izinler.genel_rapor_olusturma = False
+        izinler.genel_rapor_gorme = False
+        izinler.genel_rapor_duzenleme = False
+        izinler.genel_rapor_silme = False
+        izinler.genel_rapor_onaylama = False
+
         izinler.save()
         ##
         personeller_puantaj_olusturma = request.POST.get("personeller_puantaj_olusturma")
@@ -7725,6 +7736,34 @@ def kullanici_yetki_alma(request):
         gider_faturasi_makbuz_silme_izni = request.POST.get("gider_faturasi_makbuz_silme_izni")
         if gider_faturasi_makbuz_silme_izni : 
             izinler.gider_faturasi_makbuz_silme_izni = True
+        
+        #
+        gant_olusturma = request.POST.get("gant_olusturma")
+        if gant_olusturma:  
+            izinler.gant_olusturma = True
+        gant_gorme = request.POST.get("gant_gorme")
+        if gant_gorme : 
+            izinler.gant_gorme = True
+        gant_duzenleme = request.POST.get("gant_duzenleme")
+        if gant_duzenleme : 
+            izinler.gant_duzenleme = True
+        #
+        genel_rapor_olusturma = request.POST.get("genel_rapor_olusturma")
+        if genel_rapor_olusturma:  
+            izinler.genel_rapor_olusturma = True
+        genel_rapor_gorme = request.POST.get("genel_rapor_gorme")
+        if genel_rapor_gorme : 
+            izinler.genel_rapor_gorme = True
+        genel_rapor_duzenleme = request.POST.get("genel_rapor_duzenleme")
+        if genel_rapor_duzenleme : 
+            izinler.genel_rapor_duzenleme = True
+        genel_rapor_silme = request.POST.get("genel_rapor_silme")
+        if genel_rapor_silme : 
+            izinler.genel_rapor_silme = True
+        genel_rapor_onaylama = request.POST.get("genel_rapor_onaylama")
+        if genel_rapor_onaylama : 
+            izinler.genel_rapor_onaylama = True
+        
         izinler.save()
     return redirect("main:kullanici_yetkileri")
 
