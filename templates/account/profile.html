@@ -20,11 +20,26 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<div class="main-content">
+<main>
+<div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans 'Profil' %}
+            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                <li><a href="#">{% trans 'Ayarlar' %}</a></li>
+                <li><a href="#">{% trans 'Profilim' %}</a></li>
+            </ul>
+        </div>
 
-            <div class="page-content">
+        <div class="page-actions">
+        </div>
+    </div>
+            
                 <div class="container-fluid">
-                    <div class="profile-foreground position-relative mx-n4 mt-n4">
+                    <div class="profile-foreground position-relative mx-n4 ">
                         <div class="profile-wid-bg">
                             {% if request.user.background_image %}
                             <img src="{{request.user.background_image.url}}" alt="" class="profile-wid-img">
@@ -115,7 +130,7 @@
                                 <div class="tab-content pt-4 text-muted">
                                     <div class="tab-pane active" id="overview-tab" role="tabpanel">
                                         <div class="row">
-                                            <div class="col-xxl-3">
+                                            <div class="col-xxl-4">
                                                 <div class="card">
                                                     <div class="card-body">
                                                         
@@ -131,6 +146,10 @@
                                                                     <tr>
                                                                         <th class="ps-0" scope="row">{% trans 'Adı Soyadı' %} :</th>
                                                                         <td class="text-muted">{{request.user.last_name}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="ps-0" scope="row">{% trans 'İmza Şifresi' %} :</th>
+                                                                        <td class="text-muted">{{request.user.imza_sifresi}}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th class="ps-0" scope="row">{% trans 'Telefon' %} :</th>
@@ -158,7 +177,7 @@
                                              
                                             </div>
                                             <!--end col-->
-                                            <div class="col-xxl-9">
+                                            <div class="col-xxl-8">
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <h5 class="card-title mb-3">{% trans 'Hakkımda' %}</h5>
@@ -1210,9 +1229,5 @@
                     </div>
                     <!--end row-->
 
-                </div><!-- container-fluid -->
-            </div><!-- End Page-content -->
-
-            
-        </div>
+</main>     
 {% endblock sidebar %}

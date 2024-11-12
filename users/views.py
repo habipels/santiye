@@ -500,10 +500,12 @@ def profile_edit_kismi(request):
         email_bilgisi = request.POST.get("email_bilgisi")
         aciklama = request.POST.get("aciklama")
         adres = request.POST.get("adres")
+        imza = request.POST.get("imza")
         CustomUser.objects.filter(id = request.user.id).update(
             username = email_bilgisi,email = email_bilgisi,
             description = aciklama, last_name = adi_soyadi,
-            telefon_numarasi = telefon_numarasi,adrrsi = adres
+            telefon_numarasi = telefon_numarasi,adrrsi = adres,
+            imza_sifresi = imza
         )
         if profile:
             u = CustomUser.objects.get(id = request.user.id)
