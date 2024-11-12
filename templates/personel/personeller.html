@@ -1033,6 +1033,8 @@ function openPersonelDetails(id) {
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button"
                         onclick="closeModal('openPersonelDetails')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-secondary" type="button"
+                        onclick="personel_duzenle(0) ">{% trans 'Personel Düzenle' %}</button>
                     <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">
                     {% trans 'İlişik Kes' %}</button>
                     
@@ -1405,7 +1407,7 @@ function openPersonelDetails(id) {
                 {% csrf_token %}
                 <div class="form-row">
                     <div class="form-element add-employee-image">
-                        <img src="{% static 'go/content/images/default-profile.png' %}" id="personel-olustur-img">
+                        <img src="{% static 'go/content/images/default-profile.png' %}" width="100px" id="personel-olustur-img-duzenle">
                         <input type="text" hidden name="idbilgisi" id="idbilgisi">
                         <div class="file-input">
                             <label for="personel-profile">
@@ -1428,15 +1430,15 @@ function openPersonelDetails(id) {
                     </div>
                     <div class="form-element">
                         <label for="adsoyad">{% trans "Adı Soyadı" %}</label>
-                        <input type="text" name="firstName" id="adsoyad">
-                        <input type="text" name="lastName" id="soyad">
+                        <input type="text" name="firstName" id="adsoyadduzenleme">
+                        <input type="text" name="lastName" id="soyadduzenleme">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-element">
                         <label for="pasaport-no">{% trans "Pasaport No" %}</label>
-                        <input type="text" name="passportNo" id="pasaport-no">
+                        <input type="text" name="passportNo" id="pasaport-noduzeltme">
                     </div>
                     <div class="form-element">
                         <label for="uyruk">{% trans "Uyruğu" %}</label>
@@ -1449,7 +1451,7 @@ function openPersonelDetails(id) {
                     </div>
                     <div class="form-element">
                         <label for="date">{% trans "Doğum Tarihi" %}</label>
-                        <input type="date" name="dob"  id="date">
+                        <input type="date" name="dob"  id="dateduzeltme">
                     </div>
                 </div>
 
@@ -1457,7 +1459,7 @@ function openPersonelDetails(id) {
                     
                     <div class="form-element">
                         <label for="telefon-no">{% trans "Telefon Numarası" %}</label>
-                        <input type="text" name="phoneNumber" id="telefon-no">
+                        <input type="text" name="phoneNumber" id="telefon-noduzeltme">
                     </div>
                     <div class="form-element">
                         <label for="ucret-tipi">{% trans "Ödeme Şekli" %}</label>
@@ -1500,7 +1502,7 @@ function openPersonelDetails(id) {
                     </div>
                     <div class="form-element">
                         <label for="gunluk-ucret">{% trans "Günlük Ücret" %}</label>
-                        <input type="number" name="dailyWage" id="gunluk-ucret">
+                        <input type="number" name="dailyWage" id="gunluk-ucretduzeltme">
                     </div>
                     <div class="form-element">
                         <label for="saatlik-ucret">{% trans "Saatlik Ücret" %}</label>
@@ -1694,13 +1696,19 @@ function openPersonelDetails(id) {
                 document.getElementById('personelName').innerText = data.isim;
                 document.getElementById('adisoyadi').innerText = data.isim;
                 document.getElementById('idbilgisi').value = data.id;
+                document.getElementById('adsoyadduzenleme').value = data.isim;
+                document.getElementById('soyadduzenleme').value = data.soyisim;
+                document.getElementById("personel-olustur-img-duzenle").src= data.profile;
                 document.getElementById('resim').src = data.profile;
                 document.getElementById('personelDepartment').innerText = data.calisan_kategori;
                 document.getElementById('personelPosition').innerText = data.calisan_pozisyonu;
                 document.getElementById('personelPhoto').src = data.profile;
                 document.getElementById('detailpasaportno').innerText  = data.pasaport_numarasi;
+                document.getElementById('pasaport-noduzeltme').value  = data.pasaport_numarasi;
+                document.getElementById('telefon-noduzeltme').value  = data.telefon_numarasi;
                 document.getElementById('detailuygugu').innerText  = data.uyrugu;
                 document.getElementById('detaildogumtarihi').innerText  = data.dogum_tarihi;
+                document.getElementById('dateduzeltme').value  = data.dogum_tarihi;
                 
                 if (data.durum == "1") {
                     document.getElementById('detailucrettipi').innerText  = "Maaşlı";
@@ -1772,6 +1780,9 @@ function openPersonelDetails(id) {
     openModal('openPersonelDetails');
 }
 
+function personel_duzenle(id) {
+    openModal("personel-duzenle");
+}
 </script>
 
 {% endif %}
