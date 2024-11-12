@@ -176,8 +176,14 @@
                             <div class="td-actions">
                                 <a href="#" class="icon icon-pdf" title="{% trans 'PDF İndir' %}"></a>
                                 <a onclick="rapor_bilgileri(0,'{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
-                                <a href="/{{dil}}{% url 'main:genel_rapor_onaylama' i.id %}" class="status-info"><i class="icon icon-action-view"></i></a>
+                                <a href="/{{dil}}{% url 'main:genel_rapor_onaylama' i.id %}" class="status-info"><i
+                                                        class="icon icon-view"></i></a>
+                                {% if i.raporu_onaylayan %}
+                                
+                                {% else %}
                                 <a onclick="rapor_bilgileri(2,'{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                {% endif %}
+                                
                             </div>
                         </td>
                     </tr>
