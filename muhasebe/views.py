@@ -2118,7 +2118,7 @@ def gider_etiketi_tipleri(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider_etiketi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_etiketleri/gider_etiketi.html",content)
 def gider_etiketi_tipleri_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -2154,7 +2154,7 @@ def gider_etiketi_tipleri_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider_etiketi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_etiketleri/gider_etiketi.html",content)
 #
 def gider_etiketi_ekleme(request):
     if request.POST:
