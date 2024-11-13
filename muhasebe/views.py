@@ -916,7 +916,7 @@ def gelir_kategorisi_tipleri(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gelir_kategorisi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_kategorileri/gelir_kategorisi.html",content)
 def gelir_kategorisi_tipleri_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -952,7 +952,7 @@ def gelir_kategorisi_tipleri_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gelir_kategorisi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_kategorileri/gelir_kategorisi.html",content)
 #gelir KAtegorisi Ekleme
 #gelir KAtegorisi Ekleme
 
@@ -1165,7 +1165,7 @@ def gider_kategorisi_tipleri(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider_kategorisi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_kategorileri/gider_kategorisi.html",content)
 #gider Kategorisi
 def gider_kategorisi_tipleri_2(request,hash):
     content = sozluk_yapisi()
@@ -1201,7 +1201,7 @@ def gider_kategorisi_tipleri_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider_kategorisi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_kategorileri/gider_kategorisi.html",content)
 #gider KAtegorisi Ekleme
 #gider KAtegorisi Ekleme
 def gider_kategorisi_ekleme(request):
