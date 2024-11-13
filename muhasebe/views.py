@@ -3051,7 +3051,7 @@ def gelirler_sayfasi(request):
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
+    return render(request,"muhasebe_page/gelir_sayfasi/gelir_sayfasi.html",content)
 def gelirler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -3084,7 +3084,7 @@ def gelirler_sayfasi_2(request,hash):
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
+    return render(request,"muhasebe_page/gelir_sayfasi/gelir_sayfasi.html",content)
 #
 def gelir_ekle(request):
     content = sozluk_yapisi()
