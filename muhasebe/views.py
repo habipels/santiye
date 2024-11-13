@@ -1480,7 +1480,7 @@ def cari_viev(request):
                 profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
 
     content["santiyeler"] = profile
-    return render(request,"muhasebe_page/cariler.html",content)
+    return render(request,"muhasebe_page/cari_sayfasi/cari.html",content)
 def cari_viev_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -1515,7 +1515,7 @@ def cari_viev_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/cariler.html",content)
+    return render(request,"muhasebe_page/cari_sayfasi/cari.html",content)
 #cari işlemler
 #cari işlemler
 def cari_views_details_2(request,id,hash):
