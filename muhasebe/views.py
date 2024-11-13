@@ -2677,7 +2677,7 @@ def urun_viev(request):
     content["top"]  = profile
     content["medya"] = page_obj
     content["urun_kategorisi"] = kategori
-    return render(request,"muhasebe_page/urunler.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/urunler/urunler_sayfasi.html",content)
 def urun_viev_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -2712,7 +2712,7 @@ def urun_viev_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/urunler.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/urunler/urunler_sayfasi.html",content)
 #Ürün ekleme
 
 def urun_ekle(request):
