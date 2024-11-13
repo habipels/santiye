@@ -4685,7 +4685,7 @@ def muhasebe_ayarlari(request):
                     # Güncelleme
                     Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kullanici, id=i.id).update(fatura_no=yeni_fatura_no)
         return redirect("accounting:muhasebe_ayarlari")
-    return render(request,"muhasebe_page/muhasebe_ayarlari.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/muhasebe_ayarlari.html",content)
 def muhasebe_ayarlari_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -4798,7 +4798,7 @@ def muhasebe_ayarlari_2(request,hash):
                     # Güncelleme
                     Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=users, id=i.id).update(fatura_no=yeni_fatura_no)
         return redirect("accounting:muhasebe_ayarlari_2",hash)
-    return render(request,"muhasebe_page/muhasebe_ayarlari.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/muhasebe_ayarlari.html",content)
 
 def fatura_goster(request,id):
     content = sozluk_yapisi()
