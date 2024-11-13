@@ -1,8 +1,6 @@
-{% extends "homebase.html" %}
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
-{% block sidebar %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
     <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
 <!--Multi Select Date Picker Calender-->
@@ -215,80 +213,3 @@
         </div>
 
 </div>
-<script>
-        $(document).ready(function() {
-            let datatable = $('#datatable').DataTable({
-                paging: true,
-                searching: true,
-                info: false,
-                ordering: true,
-            dom: 'Btip', // Butonları etkinleştirir
-            buttons: [
-                {
-                    extend: 'pdfHtml5',
-                    className: 'hidden', // DataTables butonunu gizlemek için
-                    orientation: 'landscape',
-                    pageSize: 'A4',
-                    exportOptions: { columns: ':visible' },
-                    customize: function (doc) {
-                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('18%'); 
-                        doc.pageMargins = [15, 20, 15, 20];
-                        doc.defaultStyle = { fontSize: 8 };
-                        doc.styles.tableHeader = {
-                            fillColor: '#f2f2f2',
-                            color: '#333',
-                            alignment: 'center'
-                        };
-                    }
-                },
-                {
-                        extend: 'excelHtml5',
-                        className: 'hidden',
-                        exportOptions: { columns: ':visible' },
-                        customize: function (xlsx) {
-                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                            
-                            // Para birimlerinin olduğu sütunları belirleyin (örneğin, 5 ve 6. sütunlar)
-                            $('row c[r^="E"], row c[r^="F"]', sheet).each(function () {
-                                $(this).attr('s', '2'); // 2 numaralı hücre stiline ayarlanarak sayısal veri olarak işlenecek
-                            });
-
-                            // Tarihlerin olduğu sütunları belirleyin (örneğin, 4. sütun)
-                            $('row c[r^="D"]', sheet).each(function () {
-                                $(this).attr('s', '3'); // 3 numaralı hücre stiline ayarlanarak tarih olarak işlenecek
-                            });
-                        }
-                    },
-                {
-                    extend: 'print',
-                    className: 'hidden',
-                    exportOptions: { columns: ':visible' },
-                    customize: function (win) {
-                        $(win.document.body).css('font-size', '10pt').css('width', '95%').css('margin', 'auto');
-                        $(win.document.body).find('table')
-                            .addClass('compact')
-                            .css('font-size', 'inherit')
-                            .css('width', '100%')
-                            .css('margin', 'auto');
-                    }
-                }
-            ]
-                
-            });
-
-            $('#stats-search').keyup(function () {
-                datatable.search($(this).val()).draw();
-            });
-        });
-
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
-        }
-
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
-<!-- end main content-->
-{% endblock sidebar %}
-

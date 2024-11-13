@@ -457,7 +457,7 @@ def kasa_tekli(request,id):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/kasa_hareketleri.html",content)
+    return render(request,"muhasebe_page/cari_kasa_hareketleri/kasa_hareketleri.html",content)
 
 #kasa ekleme
 def kasa_ekle(request):
@@ -683,7 +683,7 @@ def kasa_tekli_2(request,id,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/kasa_hareketleri.html",content)
+    return render(request,"muhasebe_page/cari_kasa_hareketleri/kasa_hareketleri.html",content)
 
 #kasa ekleme
 def kasa_ekle_2(request,hash):
@@ -1578,7 +1578,7 @@ def cari_views_details_2(request,id,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/cari_detay.html",content)
+    return render(request,"muhasebe_page/cari_kasa_hareketleri/cari_hareketleri.html",content)
 
 #cari ekleme
 def cari_ekle_2(request,hash):
@@ -1747,7 +1747,7 @@ def cari_views_details(request,id):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/cari_detay.html",content)
+    return render(request,"muhasebe_page/cari_kasa_hareketleri/cari_hareketleri.html",content)
 
 #cari ekleme
 def cari_ekle(request):
