@@ -367,7 +367,7 @@ def kasa_viev(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/muhasebe_index.html",content)
+    return render(request,"muhasebe_page/kasa/kasa_sayfasi.html",content)
 def a_kasa_viev(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -402,7 +402,7 @@ def a_kasa_viev(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/muhasebe_index.html",content)
+    return render(request,"muhasebe_page/kasa/kasa_sayfasi.html",content)
 def kasa_tekli(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
