@@ -3621,7 +3621,7 @@ def giderler_sayfasi(request):
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
+    return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 def giderler_sayfasi_borc(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -3672,7 +3672,7 @@ def giderler_sayfasi_borc(request):
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile
     content["top"]  = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
+    return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 #
 def giderler_sayfasi_borc_2(request,hash):
     content = sozluk_yapisi()
@@ -3731,7 +3731,7 @@ def giderler_sayfasi_borc_2(request,hash):
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile
     content["top"]  = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
+    return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 #
 def giderler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
@@ -3762,7 +3762,7 @@ def giderler_sayfasi_2(request,hash):
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
+    return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 
 def gider_ekle(request):
     content = sozluk_yapisi()
