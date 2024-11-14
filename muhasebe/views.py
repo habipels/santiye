@@ -5063,7 +5063,7 @@ def fatura_gosterqr(request,id):
     content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
-    return render(request,"muhasebe_page/faturalari_goster_gelir.html",content)
+    return render(request,"muhasebe_page/fatura_goster_qr/faturalari_goster_gelir.html",content)
 def fatura_goster2qr(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -5080,7 +5080,7 @@ def fatura_goster2qr(request,id):
     content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
-    return render(request,"muhasebe_page/faturalari_goster_gider.html",content)
+    return render(request,"muhasebe_page/fatura_goster_qr/faturalari_goster_gider.html",content)
 
 def urunler_kategorisi(request):
     content = sozluk_yapisi()
