@@ -2570,7 +2570,7 @@ def virman_gondermeler(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/virman_raporu.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/virman_raporu.html",content)
 
 def virman_gondermeler_2(request,hash):
     content = sozluk_yapisi()
@@ -2620,7 +2620,7 @@ def virman_gondermeler_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/virman_raporu.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/virman_raporu.html",content)
 #virman olayları
 #virman olayları
 #ürünler olayları
@@ -3121,7 +3121,7 @@ def gelir_ekle(request):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gelir_faturasi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gelir_faturasi.html",content)
 #
 def gelir_ekle_2(request,hash):
     content = sozluk_yapisi()
@@ -3148,7 +3148,7 @@ def gelir_ekle_2(request,hash):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gelir_faturasi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gelir_faturasi.html",content)
 
 def gelir_duzenle(request ,id):
     content = sozluk_yapisi()
@@ -3800,7 +3800,7 @@ def gider_ekle(request):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gider_faturasi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gider_faturasi.html",content)
 #
 
 def gider_ekle_2(request,hash):
@@ -3830,7 +3830,7 @@ def gider_ekle_2(request,hash):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gider_faturasi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gider_faturasi.html",content)
 #
 def gider_faturasi_kaydet(request):
     if request.user.kullanicilar_db:
@@ -4408,7 +4408,7 @@ def gelirler_ozeti(request):
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/gelir_ozeti.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/gelir_ozeti.html",content)
 #Gelirler  hash
 def gelirler_ozeti_2(request,hash):
     content = sozluk_yapisi()
@@ -4438,7 +4438,7 @@ def gelirler_ozeti_2(request,hash):
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/gelir_ozeti.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/gelir_ozeti.html",content)
 #Gider Sayfası
 #Gider Sayfası
 def giderler_ozeti(request):#gider_ozeti_gorme
@@ -4464,7 +4464,7 @@ def giderler_ozeti(request):#gider_ozeti_gorme
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/gider_ozeti.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/gider_ozeti.html",content)
 
 def giderler_ozeti_2(request,hash):#gider_ozeti_gorme
     content = sozluk_yapisi()
@@ -4495,7 +4495,7 @@ def giderler_ozeti_2(request,hash):#gider_ozeti_gorme
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/gider_ozeti.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/gider_ozeti.html",content)
 
 
 #Hesapğ eksta
@@ -4523,7 +4523,7 @@ def hesap_ekstra_durumu(request):
             
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/hesap_eksta.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/hesap_eksta.html",content)
 def hesap_ekstra_durumu_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -4554,7 +4554,7 @@ def hesap_ekstra_durumu_2(request,hash):
             
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/hesap_eksta.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/hesap_eksta.html",content)
 def muhasebe_ayarlari(request):
     content = sozluk_yapisi()
     if request.user.kullanicilar_db:
@@ -5822,7 +5822,7 @@ def avans_maas(request):
     content["silinen_faturali"] = maas_ve_avanslar_iptal_edilen_faturalar
     content["faturasi_olmayan"] = maas_ve_avanslar_faturasi_olmayan
     content["faturasi_olan"] = maas_ve_avanslar__faturalar
-    return render(request,"personel/maas_avans_sayfasi.html",content)
+    return render(request,"muhasebe_page/avans_maas/avans_maas.html",content)
 
 def avans_maas_2(request,hash):
     content = sozluk_yapisi()
@@ -5866,7 +5866,7 @@ def avans_maas_2(request,hash):
     content["silinen_faturali"] = maas_ve_avanslar_iptal_edilen_faturalar
     content["faturasi_olmayan"] = maas_ve_avanslar_faturasi_olmayan
     content["faturasi_olan"] = maas_ve_avanslar__faturalar
-    return render(request,"personel/maas_avans_sayfasi.html",content)
+    return render(request,"muhasebe_page/avans_maas/avans_maas.html",content)
 # Personel Gider Faturası Kesme
 def personel_gider_faturasi_kesme_2(request,id,hash):
     content = sozluk_yapisi()
