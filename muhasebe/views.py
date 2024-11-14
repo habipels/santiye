@@ -3121,7 +3121,7 @@ def gelir_ekle(request):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gelir_faturasi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gelir_faturasi.html",content)
 #
 def gelir_ekle_2(request,hash):
     content = sozluk_yapisi()
@@ -3148,7 +3148,7 @@ def gelir_ekle_2(request,hash):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gelir_faturasi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gelir_faturasi.html",content)
 
 def gelir_duzenle(request ,id):
     content = sozluk_yapisi()
