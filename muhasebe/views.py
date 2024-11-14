@@ -5923,7 +5923,7 @@ def personel_gider_faturasi_kesme_2(request,id,hash):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gider_faturasi_personel_kesimi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gider_faturasi_personel_kesimi.html",content)
 def personel_gider_faturasi_kesme(request,id):
     content = sozluk_yapisi()
     avans_mi_maas_mi = get_object_or_404(calisanlar_calismalari_odemeleri,id = id)
@@ -5966,7 +5966,7 @@ def personel_gider_faturasi_kesme(request,id):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gider_faturasi_personel_kesimi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gider_faturasi_personel_kesimi.html",content)
 # 
 def gider_faturasi_kaydet_personel(request):
     if request.user.kullanicilar_db:
