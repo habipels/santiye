@@ -4464,7 +4464,7 @@ def giderler_ozeti(request):#gider_ozeti_gorme
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/gider_ozeti.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/gider_ozeti.html",content)
 
 def giderler_ozeti_2(request,hash):#gider_ozeti_gorme
     content = sozluk_yapisi()
@@ -4495,7 +4495,7 @@ def giderler_ozeti_2(request,hash):#gider_ozeti_gorme
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/gider_ozeti.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/gider_ozeti.html",content)
 
 
 #Hesapğ eksta
@@ -4523,7 +4523,7 @@ def hesap_ekstra_durumu(request):
             
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/hesap_eksta.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/hesap_eksta.html",content)
 def hesap_ekstra_durumu_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -4554,7 +4554,7 @@ def hesap_ekstra_durumu_2(request,hash):
             
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/hesap_eksta.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/hesap_eksta.html",content)
 def muhasebe_ayarlari(request):
     content = sozluk_yapisi()
     if request.user.kullanicilar_db:

@@ -1,124 +1,7 @@
 
-{% extends "homebase.html" %}
 {% load i18n %}
 {% load custom_tags %}
 {% load static %}
-{% block slider %}
-    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
-      <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
-
-    <!-- Basit ve küçük kaydırma çubuğu -->
-<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
-
-<!-- Dalgalanma efekti -->
-<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
-
-<!-- Feather simgeleri -->
-<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
-
-<!-- Lord ikon -->
-<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-
-<!-- Genel eklentiler -->
-<script src="{% static 'assets/js/plugins.js' %}"></script>
-
-<!-- Özel script dosyanız -->
-<script src="{% static 'assets/js/custom.js' %}"></script>
-
-
-<main>
-        <div class="page-header">
-            <div class="page-info">
-                <div class="page-title">
-                        <a href="javascript:void(0);" onclick="window.history.back();">
-                            <i class="icon icon-arrow-circle-left"></i>
-                        </a>  {% trans 'Hesap Ekstresi' %}
-                </div>
-                <ul class="page-breadcrumb">
-                    <li><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
-                    <li><a href="#">{% trans 'Raporlar' %}</a></li>
-                    <li><a href="#">{% trans 'Hesap Ekstresi' %}</a></li>
-                </ul>
-            </div>
-
-            <div class="page-actions">
-                  
-            </div>
-        </div>
-
-                
-                        <div class="large-stats-card table-card table-detail-card">
-                                <!-- Tablo arama inputu <div class="stats-header">
-                                    <div class="stats-title">{% trans 'Hakedişler' %}</div>
-                                    
-                                    <div class="stats-search">
-                                        <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
-                                        <button><i class="icon icon-search"></i></button>
-                                    
-                                    </div>-->
-                                </div>
-                              
-                                    <div class="table-wrapper">
-                                        <table id="example" class="display nowrap" style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                   <th>{% trans "Fatura No" %}</th>
-                                                    <th>{% trans "Cari" %}</th>
-                                                    <th>{% trans "Açıklama" %}</th>
-                                                    <th>{% trans "Fatura Tarihi" %}</th>
-                                                    <th>{% trans "Vade Tarihi" %}</th>
-                                                    <th>{% trans "Fatura Bedeli" %}</th>
-                                                    <th>{% trans "Kalan Tutar" %}</th>
-                                                    <th>{% trans "DURUM" %}</th>
-                                                </tr>
-                                            </thead>
-                                            <tfoot>
-                                                <tr>
-                                                    
-                                                    <th>{% trans "Fatura No" %}</th>
-                                                    <th>{% trans "Cari" %}</th>
-                                                    <th>{% trans "Açıklama" %}</th>
-                                                    <th>{% trans "Fatura Tarihi" %}</th>
-                                                    <th>{% trans "Vade Tarihi" %}</th>
-                                                    <th>{% trans "Fatura Bedeli" %}</th>
-                                                    <th>{% trans "Kalan Tutar" %}</th>
-                                                    <th>{% trans "DURUM" %}</th>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-
-                                    </div>
-
-                        
-                            </div>
-                            
-                        </div>
-                    </div>
-                    <!--end col-->
-                </div>
-                <!--end row-->
-            </div>
-        </div>
-        <div class="invoice-detail-modal" id="invoice-detail-modal">
-           
-        </div>
-        <div id="tahsilat-makbuzu-modal" class="tahsilat-makbuzu-modal">
-          
-        </div>
-
- 
-    
-    <!-- end main content-->
-<div id="fatura_silme_divi">
-
-</main>
-{% endblock slider %}
-{% block footer %}
-
-
 <!--start back-to-top-->
 
 <link href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css" rel="stylesheet" type="text/css" />
@@ -150,18 +33,19 @@
 $(document).ready(function () {
     var table = $('#example').DataTable({
         data: [
-         {% for i in santiyeler_i %}
+        {% for i in santiyeler_i %}
         
-     {
-            'fatura_no': '{{ i.fatura_no|escapejs }}',
-            'cari': '{{ i.cari_bilgisi.cari_adi|escapejs }}',
-            'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{ i.aciklama|escapejs }}{% else %}{% endif %}">  {% if i.aciklama %}{{ i.aciklama|slice:":15"|escapejs }} {% endif %}</span>',
-            'duzenleme_tarihi': '{{ i.fatura_tarihi|date:"d.m.Y"|escapejs }}',
-            'vade_tarihi': '{{ i.vade_tarihi|date:"d.m.Y"|escapejs }}',
-            'fatura_bedeli': "${{ i.toplam_tutar|stringformat:'.2f'|escapejs }}",
-            'kalan_tutar': "${{ i.kalan_tutar|stringformat:'.2f'|escapejs }}",
-            'durum': '{% if i.toplam_tutar == i.kalan_tutar %}{% trans 'Ödenmedi' %}{% elif i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}',
-        }
+            {'fatura_no': '{{i.fatura_no}}', 
+            'cari': '{{i.cari_bilgisi.cari_adi}}', 
+            'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 
+            'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gider_etiketi_adi|escapejs }}{% endif %}', 
+            'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gider_etiketi_adi|escapejs }}{% endif %}', 
+            'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gider_etiketi_adi|escapejs }}{% endif %}', 
+            'duzenleme_tarihi': '{{i.fatura_tarihi | date:"d.m.Y" }}', 
+            'vade_tarihi': '{{i.vade_tarihi | date:"d.m.Y" }}', 
+            'fatura_bedeli': "${{i.toplam_tutar |stringformat:'.2f'}}", 
+            'kalan_tutar': "${{i.kalan_tutar | stringformat:'.2f'}}", 
+            'durum': '{% if i.toplam_tutar == i.kalan_tutar  %}{% trans 'Ödenmedi' %}{% elif  i.kalan_tutar == 0.00 %}Ödendi{% elif i.kalan_tutar < i.toplam_tutar %}Parçalı Ödendi{% endif %}'}
         {% if not forloop.last %},{% endif %}
         
         
@@ -172,7 +56,9 @@ $(document).ready(function () {
             { data: 'fatura_no' },
             { data: 'cari' },
             { data: 'aciklama' },
-           
+            { data: 'etiket1' },
+            { data: 'etiket2' },
+            { data: 'etiket3' },
             { data: 'duzenleme_tarihi' },
             { data: 'vade_tarihi' },
             { data: 'fatura_bedeli' },
@@ -941,6 +827,3 @@ $(document).ready(function () {
     
     </script>
     
-{% endblock footer %}
-
-
