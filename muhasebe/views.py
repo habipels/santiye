@@ -4408,7 +4408,7 @@ def gelirler_ozeti(request):
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/gelir_ozeti.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/gelir_ozeti.html",content)
 #Gelirler  hash
 def gelirler_ozeti_2(request,hash):
     content = sozluk_yapisi()
@@ -4438,7 +4438,7 @@ def gelirler_ozeti_2(request,hash):
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/gelir_ozeti.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/gelir_ozeti.html",content)
 #Gider Sayfası
 #Gider Sayfası
 def giderler_ozeti(request):#gider_ozeti_gorme
