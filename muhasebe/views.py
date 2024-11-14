@@ -4820,7 +4820,7 @@ def fatura_goster(request,id):
     content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
-    return render(request,"muhasebe_page/gelir_faturasi_goster.html",content)
+    return render(request,"muhasebe_page/faturalari_goster/gelir_faturasi_goster.html",content)
 def fatura_goster2(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -4841,7 +4841,7 @@ def fatura_goster2(request,id):
     content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
-    return render(request,"muhasebe_page/gider_faturasi_goster.html",content)
+    return render(request,"muhasebe_page/faturalari_goster/gider_faturasi_goster.html",content)
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Border, Side, GradientFill, Alignment
 from io import BytesIO
