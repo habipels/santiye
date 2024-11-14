@@ -3800,7 +3800,7 @@ def gider_ekle(request):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gider_faturasi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gider_faturasi.html",content)
 #
 
 def gider_ekle_2(request,hash):
@@ -3830,7 +3830,7 @@ def gider_ekle_2(request,hash):
     content["kasa"] = profile
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
-    return render(request,"muhasebe_page/gider_faturasi.html",content)
+    return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gider_faturasi.html",content)
 #
 def gider_faturasi_kaydet(request):
     if request.user.kullanicilar_db:
