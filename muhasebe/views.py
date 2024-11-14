@@ -2570,7 +2570,7 @@ def virman_gondermeler(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/virman_raporu.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/virman_raporu.html",content)
 
 def virman_gondermeler_2(request,hash):
     content = sozluk_yapisi()
@@ -2620,7 +2620,7 @@ def virman_gondermeler_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/virman_raporu.html",content)
+    return render(request,"muhasebe_page/faturalar_ozetleri/virman_raporu.html",content)
 #virman olayları
 #virman olayları
 #ürünler olayları
