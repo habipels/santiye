@@ -367,7 +367,7 @@ def kasa_viev(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/muhasebe_index.html",content)
+    return render(request,"muhasebe_page/kasa/kasa_sayfasi.html",content)
 def a_kasa_viev(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -402,7 +402,7 @@ def a_kasa_viev(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/muhasebe_index.html",content)
+    return render(request,"muhasebe_page/kasa/kasa_sayfasi.html",content)
 def kasa_tekli(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -457,7 +457,7 @@ def kasa_tekli(request,id):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/kasa_hareketleri.html",content)
+    return render(request,"muhasebe_page/cari_kasa_hareketleri/kasa_hareketleri.html",content)
 
 #kasa ekleme
 def kasa_ekle(request):
@@ -683,7 +683,7 @@ def kasa_tekli_2(request,id,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/kasa_hareketleri.html",content)
+    return render(request,"muhasebe_page/cari_kasa_hareketleri/kasa_hareketleri.html",content)
 
 #kasa ekleme
 def kasa_ekle_2(request,hash):
@@ -916,7 +916,7 @@ def gelir_kategorisi_tipleri(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gelir_kategorisi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_kategorileri/gelir_kategorisi.html",content)
 def gelir_kategorisi_tipleri_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -952,7 +952,7 @@ def gelir_kategorisi_tipleri_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gelir_kategorisi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_kategorileri/gelir_kategorisi.html",content)
 #gelir KAtegorisi Ekleme
 #gelir KAtegorisi Ekleme
 
@@ -1165,7 +1165,7 @@ def gider_kategorisi_tipleri(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider_kategorisi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_kategorileri/gider_kategorisi.html",content)
 #gider Kategorisi
 def gider_kategorisi_tipleri_2(request,hash):
     content = sozluk_yapisi()
@@ -1201,7 +1201,7 @@ def gider_kategorisi_tipleri_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider_kategorisi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_kategorileri/gider_kategorisi.html",content)
 #gider KAtegorisi Ekleme
 #gider KAtegorisi Ekleme
 def gider_kategorisi_ekleme(request):
@@ -1480,7 +1480,7 @@ def cari_viev(request):
                 profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
 
     content["santiyeler"] = profile
-    return render(request,"muhasebe_page/cariler.html",content)
+    return render(request,"muhasebe_page/cari_sayfasi/cari.html",content)
 def cari_viev_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -1515,7 +1515,7 @@ def cari_viev_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/cariler.html",content)
+    return render(request,"muhasebe_page/cari_sayfasi/cari.html",content)
 #cari işlemler
 #cari işlemler
 def cari_views_details_2(request,id,hash):
@@ -1578,7 +1578,7 @@ def cari_views_details_2(request,id,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/cari_detay.html",content)
+    return render(request,"muhasebe_page/cari_kasa_hareketleri/cari_hareketleri.html",content)
 
 #cari ekleme
 def cari_ekle_2(request,hash):
@@ -1747,7 +1747,7 @@ def cari_views_details(request,id):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/cari_detay.html",content)
+    return render(request,"muhasebe_page/cari_kasa_hareketleri/cari_hareketleri.html",content)
 
 #cari ekleme
 def cari_ekle(request):
@@ -1899,7 +1899,7 @@ def gelir_etiketi_tipleri(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gelir_etiketi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_etiketleri/gelir_etiketi.html",content)
 def gelir_etiketi_tipleri_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -1935,7 +1935,7 @@ def gelir_etiketi_tipleri_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gelir_etiketi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_etiketleri/gelir_etiketi.html",content)
 #
 
 def gelir_etiketi_ekleme(request):
@@ -2118,7 +2118,7 @@ def gider_etiketi_tipleri(request):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider_etiketi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_etiketleri/gider_etiketi.html",content)
 def gider_etiketi_tipleri_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -2154,7 +2154,7 @@ def gider_etiketi_tipleri_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/gider_etiketi.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/gelir_gider_etiketleri/gider_etiketi.html",content)
 #
 def gider_etiketi_ekleme(request):
     if request.POST:
@@ -2677,7 +2677,7 @@ def urun_viev(request):
     content["top"]  = profile
     content["medya"] = page_obj
     content["urun_kategorisi"] = kategori
-    return render(request,"muhasebe_page/urunler.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/urunler/urunler_sayfasi.html",content)
 def urun_viev_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -2712,7 +2712,7 @@ def urun_viev_2(request,hash):
     content["santiyeler"] = profile
     content["top"]  = profile
     content["medya"] = page_obj
-    return render(request,"muhasebe_page/urunler.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/urunler/urunler_sayfasi.html",content)
 #Ürün ekleme
 
 def urun_ekle(request):
@@ -3051,7 +3051,7 @@ def gelirler_sayfasi(request):
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
+    return render(request,"muhasebe_page/gelir_sayfasi/gelir_sayfasi.html",content)
 def gelirler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -3084,7 +3084,7 @@ def gelirler_sayfasi_2(request,hash):
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/deneme_gelir_duzeltme.html",content)
+    return render(request,"muhasebe_page/gelir_sayfasi/gelir_sayfasi.html",content)
 #
 def gelir_ekle(request):
     content = sozluk_yapisi()
@@ -3621,7 +3621,7 @@ def giderler_sayfasi(request):
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile[:1]
     content["giderler_bilgisi"] = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
+    return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 def giderler_sayfasi_borc(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -3672,7 +3672,7 @@ def giderler_sayfasi_borc(request):
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile
     content["top"]  = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
+    return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 #
 def giderler_sayfasi_borc_2(request,hash):
     content = sozluk_yapisi()
@@ -3731,7 +3731,7 @@ def giderler_sayfasi_borc_2(request,hash):
     content["santiyeler_i"] = profile
     content["santiyeler"] = profile
     content["top"]  = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
+    return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 #
 def giderler_sayfasi_2(request,hash):
     content = sozluk_yapisi()
@@ -3762,7 +3762,7 @@ def giderler_sayfasi_2(request,hash):
             profile = profile.filter(Q(fatura_tarihi__lte  = tarih) & Q(vade_tarihi__gte  = tarih) )
 
     content["santiyeler_i"] = profile
-    return render(request,"muhasebe_page/deneme_gider.html",content)
+    return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 
 def gider_ekle(request):
     content = sozluk_yapisi()
@@ -4685,7 +4685,7 @@ def muhasebe_ayarlari(request):
                     # Güncelleme
                     Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kullanici, id=i.id).update(fatura_no=yeni_fatura_no)
         return redirect("accounting:muhasebe_ayarlari")
-    return render(request,"muhasebe_page/muhasebe_ayarlari.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/muhasebe_ayarlari.html",content)
 def muhasebe_ayarlari_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -4798,7 +4798,7 @@ def muhasebe_ayarlari_2(request,hash):
                     # Güncelleme
                     Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=users, id=i.id).update(fatura_no=yeni_fatura_no)
         return redirect("accounting:muhasebe_ayarlari_2",hash)
-    return render(request,"muhasebe_page/muhasebe_ayarlari.html",content)
+    return render(request,"muhasebe_page/muhasebe_ayarlari/muhasebe_ayarlari.html",content)
 
 def fatura_goster(request,id):
     content = sozluk_yapisi()

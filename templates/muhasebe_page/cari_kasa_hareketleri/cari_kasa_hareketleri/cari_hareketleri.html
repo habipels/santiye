@@ -1,0 +1,120 @@
+{% load static %}
+{% load i18n %}
+{% load custom_tags %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">{% trans "Cari Detayı" %}</h4>
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">{% trans "Dashboard" %}</a></li>
+                                <li class="breadcrumb-item active">{% trans "Cari Detay" %}</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="card ribbon-box border shadow-none mb-lg-0" style="background-color: #013744;">
+                        <div class="card-body">
+                            <div class="ribbon ribbon-success ribbon-shape">{{cari.cari_adi}}</div>
+                            <h5 class="fs-14 text-end" style="color: #ffffff;">{% trans "Cari Bakiyesi:" %} {% sorgu cari.bakiye %}$</h5>
+                            <div class="ribbon-content text-muted mt-4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- Mobil uyumlu tablo -->
+                    <div class="table-responsive">
+                        <table id="cariTable" class="display nowrap table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "İŞLEM TARİHİ" %}</th>
+                                    <th>{% trans "BİLGİ" %}</th>
+                                    <th>{% trans "TUTAR" %}</th>
+                                    <th>{% trans "BAKİYE" %}</th>
+                                    <th>{% trans "İncele" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% cari_islemleri_bilgi cari as bilgi_veriyor %}
+                                {% sorgu cari.bakiye as bakiye %}
+                                {% for i in bilgi_veriyor %}
+                                <tr>
+                                    <td>{{i.tarihi| date:'d.m.Y'}}</td>
+                                    <td>{{i.aciklama}}</td>
+                                    {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                    <td style="color: {% if bilgisicek == 0 %}blue{% else %}orange{% endif %};">
+                                        {% if bilgisicek == 0 %}
+                                        + ${{i.tutar}}
+                                        {% else %}
+                                        - ${{i.tutar}}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if bilgisicek == 0 %}
+                                        $ {% basit_toplama bakiye i.tutar %}
+                                        {% basit_toplama bakiye i.tutar as bakiye%}
+                                        {% else %}
+                                        $ {% basit_cikarma bakiye i.tutar %}
+                                        {% basit_cikarma bakiye i.tutar as bakiye %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if bilgisicek == 0 %}
+                                        <div class="td-actions">
+                                        <a href="/{{dil}}{% url 'accounting:fatura_goster' i.gelir_kime_ait_oldugu.id %}" class="status-view" target="_blank">
+                                            <i class="icon icon-view"></i>
+                                        </a></div>
+                                        {% else %}
+                                        <div class="td-actions">
+                                        <a href="/{{dil}}{% url 'accounting:fatura_goster2' i.gelir_kime_ait_oldugu.id %}" class="status-view" target="_blank">
+                                            <i class="icon icon-view"></i>
+                                        </a></div>
+
+
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive -->
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
+                        </div>
+                    </div>
+                </div>
+     
+        </footer>
