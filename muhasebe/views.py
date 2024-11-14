@@ -5822,7 +5822,7 @@ def avans_maas(request):
     content["silinen_faturali"] = maas_ve_avanslar_iptal_edilen_faturalar
     content["faturasi_olmayan"] = maas_ve_avanslar_faturasi_olmayan
     content["faturasi_olan"] = maas_ve_avanslar__faturalar
-    return render(request,"personel/maas_avans_sayfasi.html",content)
+    return render(request,"muhasebe_page/avans_maas/avans_maas.html",content)
 
 def avans_maas_2(request,hash):
     content = sozluk_yapisi()
@@ -5866,7 +5866,7 @@ def avans_maas_2(request,hash):
     content["silinen_faturali"] = maas_ve_avanslar_iptal_edilen_faturalar
     content["faturasi_olmayan"] = maas_ve_avanslar_faturasi_olmayan
     content["faturasi_olan"] = maas_ve_avanslar__faturalar
-    return render(request,"personel/maas_avans_sayfasi.html",content)
+    return render(request,"muhasebe_page/avans_maas/avans_maas.html",content)
 # Personel Gider Faturası Kesme
 def personel_gider_faturasi_kesme_2(request,id,hash):
     content = sozluk_yapisi()
