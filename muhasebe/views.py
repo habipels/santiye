@@ -3193,7 +3193,7 @@ def gelir_duzenle(request ,id):
     content["cari_bilgileri"] = cari_bilgileri
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
-    return render(request,"muhasebe_page/gelir_faturasi_duzeltme.html",content)
+    return render(request,"muhasebe_page/faturalari_duzenleme/gelir_faturasi_duzeltme.html",content)
 def denme(request):
     return render(request,"a.html")
 from django.http import JsonResponse
@@ -3551,7 +3551,7 @@ def gider_duzenle(request ,id):
         content["cari_bilgileri"] = cari_bilgileri
         content["bilgi"] = gelir_bilgisi_ver
         content["urunler"] = urunleri
-    return render(request,"muhasebe_page/gider_faturasi_duzeltme.html",content)
+    return render(request,"muhasebe_page/faturalari_duzenleme/gider_faturasi_duzeltme.html",content)
 #Gelirler Sayfası
 def makbuz_sil(request):
     if request.POST:

@@ -1,0 +1,334 @@
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+<form autocomplete="off" method="post" action="/{{dil}}{% url 'accounting:gelir_gider_duzelt' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="text" hidden name="bilgi" value="0">
+    <input type="text" hidden name="degisen" value="{{bilgi.id}}">
+  <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Fatura Düzenle' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Satın Alma ve Stok' %}</a></li>
+                    <li><a href="#">{% trans 'Fatura Düzenle' %} </a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Genel Bilgiler' %}</div>
+            </div>
+
+
+            <div class="fatura-olustur">
+
+                <div class="fatura-doviz">
+
+                    <div class="fatura-doviz-form-row">
+                        <div class="form-element">
+                            <label for="kategori-adi">{% trans 'Fatura No' %}</label>
+                            {% if request.user.kullanicilar_db %}
+                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                {% if yetki.gelir_faturasi_kesme_izni %}
+                     <input type="text" required name="faturano" class="form-control"  value="{{bilgi.fatura_no}}" disabled />
+                <input type="text" required name="faturano" hidden class="form-control"  value="{{bilgi.fatura_no}}" />                                                   
+                {% else %}
+                                                                                
+                {% endif %}
+                {% else %}
+                       <input type="text" required name="faturano" class="form-control"  value="{{bilgi.fatura_no}}" disabled />
+                <input type="text" required name="faturano" hidden class="form-control"  value="{{bilgi.fatura_no}}" />                                                 
+                {% endif %}
+                        </div>
+                        <div class="form-element">
+                            <label for="kategori-adi">{% trans 'Cari' %}</label>
+                            <input type="search" value="{{bilgi.cari_bilgisi.cari_adi}}" required name="musteri_bilgisi"
+                                class="form-control cari ui-autocomplete-input"
+                                title="Enter the first three characters of the current name for the registered current account."
+                                placeholder="Current Account" autocomplete="off">
+
+
+                            <script>
+                                $(document).ready(function () {
+
+                                    var testVerileri = [
+                                        "test1",
+                                        "test2",
+                                        "test3",
+                                        "test4",
+                                        "deneme",
+                                        "merhaba",
+                                    ];
+
+                                    $('.cari').autocomplete({
+                                        source: testVerileri,
+                                        minLength: 2,
+                                        select: function (event, ui) {
+                                            $('.cari').val(ui.item.label);
+                                            return false;
+                                        }
+                                    }).data('ui-autocomplete')._renderItem = function (ul, item) {
+                                        return $('<li>')
+                                            .append('<div>' + item.label + '<br>' + item.value + '</div>')
+                                            .appendTo(ul);
+                                    };
+                                });
+                            </script>
+
+                        </div>
+                        <div class="form-element">
+                            <label for="daterange">{% trans 'Düzenleme ve Vade Tarihi' %}</label>
+                            <input type="text" name="daterange" id="daterange" value="{{bilgi.fatura_tarihi|date:'m-d-Y'}} - {{bilgi.vade_tarihi|date:'m-d-Y'}}">
+                        </div>
+                        <script>
+                            $('input[name="daterange"]').daterangepicker({
+                                opens: 'left'
+                            }, function (start, end, label) {
+                                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                            });
+                        </script>
+                        <div class="form-element">
+                            <label for="aciklama">{% trans 'Açıklama' %}</label>
+                            <input type="text" name="cari_aciklma" value="{{bilgi.aciklama}}"  id="aciklama">
+                        </div>
+                    </div>
+                    
+                    <div class="fatura-doviz-form-row">
+                        <div class="form-element iqd-input">
+                            <label for="doviz-kuru">{% trans 'Döviz Kuru' %}</label>
+                            {% if bilgi.doviz %}
+                                <input type="number" step="1" value="{{ bilgi.doviz|floatformat:0 }}" name="doviz_kuru" id="doviz-kuru">
+                            {% else %}
+                            <input type="number" step="1" value="0" name="doviz_kuru" id="doviz-kuru">
+                            {% endif %}
+                           
+                        </div>
+                        <div class="form-element iqd-input">
+                            <label for="head-toplam-iqd">{% trans 'Toplam IQD' %}</label>
+                            <input type="text" name="head-toplam-iqd" id="head-toplam-iqd">
+                        </div>
+                        <div class="form-element" id="kategori">
+                            <label for="kategori">{% trans 'Kategori' %} <a onclick="openModal('kategori-ekle')">{% trans '+Ekle' %}</a></label>
+                            <select   name="gelir_kategorisi_gonder" >
+                                <option value="" selected disabled></option>
+                                <option selected value="{{bilgi.gelir_kategorisii.id}}">{{bilgi.gelir_kategorisii.gelir_kategori_adi}}</option>
+                                        {% for i in gelir_kategoerisi %}
+                                            <option value="{{i.id}}">{{i.gelir_kategori_adi}}</option>
+                                        {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-element" id="etiket">
+                            <label for="etiketler">{% trans 'Etiketler' %} <a onclick="openModal('etiket-ekle')">{% trans '+Ekle' %}</a></label>
+                            <select name="etiketler"  id="etiketler" multiple>
+                                {% for i in gelir_etiketi %}
+                                        {% if i in bilgi.gelir_etiketi_sec.all %}
+                                            <option selected value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
+                                        {% else %}
+                                        <option value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                            </select>
+                        </div>
+                        <script>
+                           
+                        </script>
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="fatura-head">
+                    <h3>{% trans 'Fatura Kalemleri' %}</h3>
+                    <div class="fatura-head-action">
+                        <a id="kalem-ekle" ><i class="icon icon-add"></i> {% trans 'Kalem Ekle' %}</a>
+                    </div>
+                </div>
+
+             
+                <div class="fatura-kalemleri-wrapper">
+                    <table class="dataTable fatura-kalemleri">
+                        <thead>
+                            <tr>
+                                <th>{% trans 'Hizmet / ürün' %}</th>
+                                <th>{% trans 'Miktar' %}</th>
+                                <th>{% trans 'Birim Fiyatı' %}</th>
+                                <th>{% trans 'İndirim' %}</th>
+                                <th>{% trans 'Toplam' %}</th>
+                                <th>{% trans 'Toplam IQD' %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in urunler %}
+                            <tr data-id="1">
+                                <td>
+                                    <div class="form-element">
+                                        <input type="text" value="{{i.urun_bilgisi.urun_adi}}" name="urunadi" class="den" required 
+                                            placeholder="Ürün/Hizmet Adı Giriniz">
+                                    </div>
+                                    <div class="form-element">
+                                        <input type="text" name="aciklama" value="{{i.aciklama}}" id="kalem-aciklama"
+                                            placeholder="Açıklama">
+                                    </div>
+                                </td>
+                                
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" value="{{i.urun_adeti}}" name="miktari" id="kalem-miktar">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" id="bfiyatInput"  value="{{i.urun_fiyati|stringformat:'.2f'}}" name="bfiyatInput" class="bfiyatInput" step="0.01" type="number" value="0" >
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" value="{{i.urun_indirimi|stringformat:'.2f'}}" name="indirim" id="kalem-indirim">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" value="{%  carpma_islemi i.urun_adeti i.urun_fiyati %}" name="kalem-toplam" id="kalem-toplam">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element iqd-input">
+                                        <input type="number"  name="kalem-toplam-iqd" id="kalem-toplam-iqd">
+                                    </div>
+                                    <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))"
+                                        class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> Sil</a>
+                                </td>
+                            </tr>
+                           {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+
+
+                <div class="fatura-detaylar">
+
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>{% trans 'Ara Toplam' %}</td>
+                                <th id="info-ara-toplam">$0,00</th>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'İndirim' %}</td>
+                                <td id="info-toplam-indirim" style="color: #ff0000;">-$0,00</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Toplam IQD' %}</td>
+                                <td id="info-toplam-iqd">IQD 0,00</td>
+                            </tr>
+                            <tr>
+                                <th>{% trans 'Toplam' %}</th>
+                                <th id="info-toplam">$0,00</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+    </main>
+</form>
+<!--Translate gelecek yerler -->
+    <div class="modal" id="etiket-ekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Etiket Ekle' %}
+            </div>
+            <div class="modal-body">
+                
+                    <div class="form-element">
+                        <label for="etiket-adi">{% trans 'Etiket Adı' %}</label>
+                        <input type="text"  name="etiket_ismi_gonder" id="etiket_ismi_gonder"  placeholder="{% trans 'Etiket Adı' %}" />
+                        <input type="text" name="tur2" id="tur2" hidden value="0">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('etiket-ekle')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit"  id="ekle2" onclick="closeModal('etiket-ekle')">{% trans 'Etiket Ekle' %}</button>
+                    </div>
+              
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal" id="kategori-ekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Kategori Ekle' %}
+            </div>
+            <div class="modal-body">
+                
+                    <input type="text" name="tur" id="tur" hidden value="0">
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Kategori Adı' %}</label>
+                        <input type="text"  name="adi" id="adi"  placeholder="{% trans 'Kategori Adı' %}" />
+                    </div>
+                    <div class="form-element">
+                        <label for="kategori-aciklamasi">{% trans 'Kategori Açıklaması' %}</label>
+                        <input type="text"  name="aciklama" id="aciklama"  placeholder="{% trans 'Kategori Açıklaması' %}" />
+                    </div>
+                    <div class="form-element">
+                        <label for="kategori-rengi">{% trans 'Kategori Rengi' %}</label>
+                        <input type="color"  name="renk" id="renk"  placeholder="{% trans 'Gider Rengi' %}" />
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary"  id="ekle" onclick="closeModal('kategori-ekle')" type="submit">{% trans 'Kategori Oluştur' %}</button>
+                    </div>
+               
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="delete-modal">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Silme Uyarısı' %}
+            </div>
+            <div class="modal-body">
+                <form>
+                    <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger delete-modal-button" type="button">{% trans 'Evet, Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<!--Translate gelecek yerler -->
