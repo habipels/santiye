@@ -642,6 +642,7 @@ def blogtan_kaleme_ilerleme_takibi_api(request, id):
             kalem_id = list(set(i.kalem_bilgisi.id for i in kalemler))
             profile =santiye_kalemleri.objects.filter(id__in=kalem_id, silinme_bilgisi=False)  
             content["santiyeler"] = SantiyeKalemleriSerializer(profile, many=True).data
+            content["ilerlemeler"] = SantiyeKalemlerinDagilisiSerializer(kalemler, many=True).data
         
         else:
             return Response({"error": "Kullanıcı giriş yapmamış."}, status=status.HTTP_401_UNAUTHORIZED)
