@@ -131,5 +131,7 @@ urlpatterns = [#deneme
     path('del/layer/', views.api_katman_sil, name="api_katman_sil"),
     path('set/layer/', views.api_katman_duzenle, name="api_katman_duzenle"),
 
+    path('weather', views.hava_durumu_api, name='hava_durumu_api'),
+
 ]#
 #
