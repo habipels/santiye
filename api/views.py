@@ -53,6 +53,314 @@ def super_admin_kontrolu(request):
     else:
         return 0
 
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import (
+    CustomUserSerializer, GelirBilgisiSerializer, KasaSerializer, GiderBilgisiSerializer
+)
+from django.utils.timezone import now, timedelta
+from django import template
+from django.utils.translation import gettext as _
+from django.db.models import Sum
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+def gelir_yuzde_farki(customuser):
+    # Bu haftanın başlangıcını ve geçen haftanın başlangıcını hesapla
+    today = now().date()
+    this_week_start = today - timedelta(days=today.weekday())
+    last_week_start = this_week_start - timedelta(weeks=1)
+
+    # Geçen hafta ve bu hafta yapılan ödemeleri al
+    last_week_payments = Gelir_odemesi.objects.filter(
+        tarihi__gte=last_week_start,
+        tarihi__lt=this_week_start,
+        gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+        gelir_kime_ait_oldugu__silinme_bilgisi=False
+    ).aggregate(total=models.Sum('tutar'))['total'] or 0
+
+    this_week_payments = Gelir_odemesi.objects.filter(
+        tarihi__gte=this_week_start,
+        gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+        gelir_kime_ait_oldugu__silinme_bilgisi=False
+    ).aggregate(total=models.Sum('tutar'))['total'] or 0
+
+    # Yüzde farkını hesapla
+    if last_week_payments == 0:
+        tutar = 100 if this_week_payments > 0 else 0  # Geçen hafta ödeme yoksa, bu hafta varsa %100 artış
+    else:
+        tutar = ((this_week_payments - last_week_payments) / last_week_payments) * 100
+        tutar =  round(tutar, 2)
+    if tutar >=0:
+        arti = True
+    else:
+        arti = False
+    return {"fark":tutar,"arti":arti}
+
+def gider_yuzde_farki(customuser):
+    # Bu haftanın başlangıcını ve geçen haftanın başlangıcını hesapla
+    today = now().date()
+    this_week_start = today - timedelta(days=today.weekday())
+    last_week_start = this_week_start - timedelta(weeks=1)
+
+    # Geçen hafta ve bu hafta yapılan ödemeleri al
+    last_week_payments = Gider_odemesi.objects.filter(
+        tarihi__gte=last_week_start,
+        tarihi__lt=this_week_start,
+        gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+        gelir_kime_ait_oldugu__silinme_bilgisi=False
+    ).aggregate(total=models.Sum('tutar'))['total'] or 0
+
+    this_week_payments = Gider_odemesi.objects.filter(
+        tarihi__gte=this_week_start,
+        gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+        gelir_kime_ait_oldugu__silinme_bilgisi=False
+    ).aggregate(total=models.Sum('tutar'))['total'] or 0
+
+    # Yüzde farkını hesapla
+    if last_week_payments == 0:
+        tutar = 100 if this_week_payments > 0 else 0  # Geçen hafta ödeme yoksa, bu hafta varsa %100 artış
+    else:
+        tutar = ((this_week_payments - last_week_payments) / last_week_payments) * 100
+        tutar =  round(tutar, 2)
+    if tutar >=0:
+        arti = True
+    else:
+        arti = False
+    return {"fark":tutar,"arti":arti}
+def son_dort_ay_tutar(customuser):
+    today = datetime.today()
+    aylar = []
+    tutarlar = []
+
+    # Ay isimleri için kullanılacak format
+    month_names = {
+        1: _("January"),
+        2: _("February"),
+        3: _("March"),
+        4: _("April"),
+        5: _("May"),
+        6: _("June"),
+        7: _("July"),
+        8: _("August"),
+        9: _("September"),
+        10: _("October"),
+        11: _("November"),
+        12: _("December"),
+    }
+
+    # Son 4 ayı bul ve her aya ait ödemeleri hesapla
+    for i in range(4):
+        # Bu aydan i ay geriye git
+        start_of_month = (today - relativedelta(months=i)).replace(day=1)
+        end_of_month = (start_of_month + relativedelta(months=1)) - relativedelta(days=1)
+
+        # O ay içerisindeki ödemeleri al
+        total_payment = Gelir_odemesi.objects.filter(
+            tarihi__gte=start_of_month,
+            tarihi__lte=end_of_month,
+            gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+            gelir_kime_ait_oldugu__silinme_bilgisi=False
+        ).aggregate(total=Sum('tutar'))['total'] or 0
+
+        # Ay adı ve toplam tutarı listeye ekle
+        ay_adi = f"{month_names[start_of_month.month]} {start_of_month.year}"  # Örneğin: "September 2023"
+        tutarlar.append(round(total_payment, 2))
+        aylar.append(ay_adi)
+
+    return {"aylar": aylar, "tutarlar": tutarlar}
+
+
+def son_dort_ay_tutar_gider(customuser):
+    today = datetime.today()
+    aylar = []
+    tutarlar = []
+
+    # Ay isimleri için kullanılacak format
+    month_names = {
+        1: _("January"),
+        2: _("February"),
+        3: _("March"),
+        4: _("April"),
+        5: _("May"),
+        6: _("June"),
+        7: _("July"),
+        8: _("August"),
+        9: _("September"),
+        10: _("October"),
+        11: _("November"),
+        12: _("December"),
+    }
+
+    # Son 4 ayı bul ve her aya ait ödemeleri hesapla
+    for i in range(4):
+        # Bu aydan i ay geriye git
+        start_of_month = (today - relativedelta(months=i)).replace(day=1)
+        end_of_month = (start_of_month + relativedelta(months=1)) - relativedelta(days=1)
+
+        # O ay içerisindeki ödemeleri al
+        total_payment = Gider_odemesi.objects.filter(
+            tarihi__gte=start_of_month,
+            tarihi__lte=end_of_month,
+            gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=customuser,
+            gelir_kime_ait_oldugu__silinme_bilgisi=False
+        ).aggregate(total=Sum('tutar'))['total'] or 0
+
+        # Ay adı ve toplam tutarı listeye ekle
+        ay_adi = f"{month_names[start_of_month.month]} {start_of_month.year}"  # Örneğin: "September 2023"
+        tutarlar.append(round(total_payment, 2))
+        aylar.append(ay_adi)
+
+    return {"aylar": aylar, "tutarlar": tutarlar}
+
+def gelirler_tutari(bilgi):
+    if bilgi.is_superuser:
+        a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__silinme_bilgisi= False)
+        toplam = 0
+        for i in a:
+            toplam = toplam+i.tutar
+        a = gelir_urun_bilgisi.objects.filter(gider_bilgis__silinme_bilgisi= False)
+        genel_toplam = 0
+        indirim = 0
+        for i in a:
+            genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+            indirim = indirim+ i.urun_indirimi
+        return {"tutar":float(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+    else:
+        a = Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,gelir_kime_ait_oldugu__silinme_bilgisi= False)
+        toplam = 0
+        for i in a:
+            toplam = toplam+i.tutar
+        a = gelir_urun_bilgisi.objects.filter(gider_bilgis__gelir_kime_ait_oldugu = bilgi,gider_bilgis__silinme_bilgisi= False)
+        genel_toplam = 0
+        indirim = 0
+        for i in a:
+            genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+            indirim = indirim+ i.urun_indirimi
+        return {"tutar":float(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2)}
+
+
+def giderler_tutari(bilgi):
+    if bilgi.is_superuser:
+        a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__silinme_bilgisi= False)
+        toplam = 0
+        for i in a:
+            toplam = toplam+i.tutar
+        a = gider_urun_bilgisi.objects.filter(gider_bilgis__silinme_bilgisi= False)
+        genel_toplam = 0
+        indirim = 0
+        for i in a:
+            genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+            indirim = indirim+ i.urun_indirimi
+
+        return {"tutar":float(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2),"genel_odeme2":float(round(float(toplam-indirim),2))}
+    else:
+        a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,gelir_kime_ait_oldugu__silinme_bilgisi= False)
+        toplam = 0
+        for i in a:
+            toplam = toplam+i.tutar
+        a = gider_urun_bilgisi.objects.filter(gider_bilgis__gelir_kime_ait_oldugu = bilgi,gider_bilgis__silinme_bilgisi= False)
+        genel_toplam = 0
+        indirim = 0
+        for i in a:
+            genel_toplam = genel_toplam+(i.urun_fiyati*i.urun_adeti)
+            indirim = indirim+ i.urun_indirimi
+        return {"tutar":float(round(float(genel_toplam),2)),"genel_odeme":round(float(toplam-indirim),2),"genel_odeme2":float(round(float(toplam-indirim),2))}
+def borc_yuzde_farki(customuser):
+    today = now()
+    start_of_week = today - timedelta(days=today.weekday())
+    end_of_last_week = start_of_week - timedelta(days=1)
+    start_of_last_week = end_of_last_week - timedelta(days=6)
+    
+    # Bu haftanın giderleri
+    this_week_total = Gider_Bilgisi.objects.filter(
+        fatura_tarihi__gte=start_of_week,
+        fatura_tarihi__lte=end_of_last_week,
+        gelir_kime_ait_oldugu=customuser,
+        silinme_bilgisi=False
+    ).aggregate(total=Sum('kalan_tutar'))['total'] or 0
+    
+    # Geçen haftanın giderleri
+    last_week_total = Gider_Bilgisi.objects.filter(
+        fatura_tarihi__gte=start_of_last_week,
+        fatura_tarihi__lte=end_of_last_week,
+        gelir_kime_ait_oldugu=customuser,
+        silinme_bilgisi=False
+    ).aggregate(total=Sum('kalan_tutar'))['total'] or 0
+
+    
+    # Yüzde farkını hesapla
+    if last_week_total == 0:
+        tutar = 100 if this_week_total > 0 else 0  # Geçen hafta ödeme yoksa, bu hafta varsa %100 artış
+    else:
+        tutar = ((this_week_total - last_week_total) / last_week_total) * 100
+        tutar =  round(tutar, 2)
+    if tutar >=0:
+        arti = True
+    else:
+        arti = False
+    return {"fark":tutar,"arti":arti}
+    
+
+def kasa_toplam(bilgi):
+    bilgi = get_object_or_404(Kasa,id = bilgi)
+    if bilgi:
+        toplam = 0
+        a = Gider_odemesi.objects.filter(kasa_bilgisi = bilgi,silinme_bilgisi = False)
+        b = Gelir_odemesi.objects.filter(kasa_bilgisi = bilgi,silinme_bilgisi = False)
+        for i in a : 
+            toplam = toplam - i.tutar
+        for i in b : 
+            toplam = toplam + i.tutar
+        toplam = toplam + bilgi.bakiye
+        return round(float(toplam),2)
+    return 0
+def borc_son_dort_ay_tutar(customuser):
+    today = datetime.today()
+    aylar = []
+    tutarlar = []
+
+    # Son 4 ayı bul ve her aya ait ödemeleri hesapla
+    for i in range(4):
+        # Bu aydan i ay geriye git
+        start_of_month = (today - relativedelta(months=i)).replace(day=1)
+        end_of_month = (start_of_month + relativedelta(months=1)) - relativedelta(days=1)
+
+        # O ay içerisindeki giderleri al
+        total_payment = Gider_Bilgisi.objects.filter(
+            fatura_tarihi__gte=start_of_month,
+            fatura_tarihi__lte=end_of_month,
+            gelir_kime_ait_oldugu=customuser,
+            silinme_bilgisi=False
+        ).aggregate(total=Sum('kalan_tutar'))['total'] or 0
+
+        # Ayın adını çevir
+        ay_adi = start_of_month.strftime('%Y-%m')
+        ay_adlari = {
+            '01': _('January'),
+            '02': _('February'),
+            '03': _('March'),
+            '04': _('April'),
+            '05': _('May'),
+            '06': _('June'),
+            '07': _('July'),
+            '08': _('August'),
+            '09': _('September'),
+            '10': _('October'),
+            '11': _('November'),
+            '12': _('December')
+        }
+
+        ay_kod = start_of_month.strftime('%m')
+        ay_isim = f"{start_of_month.strftime('%Y')} {ay_adlari.get(ay_kod, 'Unknown')}"
+        
+        # Listeye ekle
+        tutarlar.append(round(total_payment, 2))
+        aylar.append(ay_isim)
+
+    return {"aylar": aylar, "tutarlar": tutarlar}
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
@@ -64,14 +372,24 @@ def homepage_api(request):
 
     # Gelir bilgileri
     if super_admin_kontrolu(request):
-        profile = Gelir_Bilgisi.objects.all()
+        gelir_profile = Gelir_Bilgisi.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
         content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
     else:
-        profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")
-        content["kasa"] = KasaSerializer(Kasa.objects.filter(silinme_bilgisi=False, kasa_kart_ait_bilgisi=request.user), many=True).data
+        gelir_profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")
+        # Kasa bilgilerini al
+        kasa_queryset = Kasa.objects.filter(silinme_bilgisi=False, kasa_kart_ait_bilgisi=request.user)
+        kasa_serialized = KasaSerializer(kasa_queryset, many=True).data
 
-    content["santiyeler"] = GelirBilgisiSerializer(profile, many=True).data
+        # Her kasanın id'sini fonksiyona gönder ve sonucu ekle
+        for kasa in kasa_serialized:
+            kasa_id = kasa["id"]
+            ekstra_bilgi = kasa_toplam(kasa_id)  # Örnek fonksiyon
+            kasa["kasa_hesaplı_bakiyesi"] = ekstra_bilgi  # Ekstra bilgi ekle
+
+        content["kasa"] = kasa_serialized
+
+    content["gelir_faturalari"] = GelirBilgisiSerializer(gelir_profile, many=True).data
 
     # Gider bilgileri
     if super_admin_kontrolu(request):
@@ -90,18 +408,35 @@ def homepage_api(request):
             sonuc.append(i)
         if len(sonuc) >= 5:
             break
-    content["gider"] = GiderBilgisiSerializer(sonuc, many=True).data
-    content["bilgi"] = GiderBilgisiSerializer(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")[:5], many=True).data
 
+    content["gider"] = GiderBilgisiSerializer(sonuc, many=True).data
+    content["bilgi"] = GiderBilgisiSerializer(
+        Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")[:5],
+        many=True
+    ).data
+    content["gelir_yuzde_farki"] = gelir_yuzde_farki(request.user)
+    content["gider_yuzde_farki"] = gider_yuzde_farki(request.user)
+    content["son_dort_ay_tutar_gelir"] = son_dort_ay_tutar(request.user)
+    content["son_dort_ay_tutar_gider"] = son_dort_ay_tutar_gider(request.user)
+    content["gelir_tutari"] = gelirler_tutari(request.user)
+    content["gider_tutari"] = giderler_tutari(request.user)
+    borc_bilgisi_gelir = gelirler_tutari(request.user)["tutar"] - gelirler_tutari(request.user)["genel_odeme"]
+    borc_bilgisi_gider= giderler_tutari(request.user)["tutar"] - giderler_tutari(request.user)["genel_odeme"]
+    borc_bilgisi = borc_bilgisi_gelir - borc_bilgisi_gider
+    content["borc_bilgisi"] = borc_bilgisi
+    content["borc_yuzde_farki"] = borc_yuzde_farki(request.user)
+    content["son_dort_ay_tutar_borc"] = borc_son_dort_ay_tutar(request.user)
     return Response(content)
+
 import requests
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@api_view(['GET'])
+@api_view(['POST'])
 def hava_durumu_api(request):
     content = {}
     if request.method == 'POST':
         ip = request.data.get("ip")
+        print(ip)
     try: 
         weather_data = None
         ip_info = None
@@ -383,7 +718,7 @@ def santiye_projesi_bloklar_ekle_api(request, id):
                 "id_bilgisi": id,
                 "proje_tipleri": ProjeTipiSerializer(proje_tipi.objects.filter(proje_ait_bilgisi=request.user), many=True).data,
             }
-        content["santiyeler"] = BloglarSerializer(profile, many=True).data
+        content["bloglar"] = BloglarSerializer(profile, many=True).data
         return Response(content, status=status.HTTP_200_OK)
 
     except Exception as e:
@@ -703,8 +1038,8 @@ def blogtan_kaleme_ilerleme_takibi_api(request, id):
             
             kalem_id = list(set(i.kalem_bilgisi.id for i in kalemler))
             profile =santiye_kalemleri.objects.filter(id__in=kalem_id, silinme_bilgisi=False)  
-            content["santiyeler"] = SantiyeKalemleriSerializer(profile, many=True).data
-            content["ilerlemeler"] = SantiyeKalemlerinDagilisiSerializer(kalemler, many=True).data
+            content["santiye_kalemleri"] = SantiyeKalemleriSerializer(profile, many=True).data
+            content["ilerlemeler_dagilis"] = SantiyeKalemlerinDagilisiSerializer(kalemler, many=True).data
         
         else:
             return Response({"error": "Kullanıcı giriş yapmamış."}, status=status.HTTP_401_UNAUTHORIZED)
@@ -1753,14 +2088,16 @@ def yapilacak_durumu_yenileme(request):
 @permission_classes([IsAuthenticated])
 def yapilacaklar_durum_bilgisi(request):
     content = {}
-    id = request.data.get("id")
+    if request.method == 'POST':
+        id = request.data.get("id")
     # Süper admin kontrolü
     if super_admin_kontrolu(request):
-        profile = IsplaniPlanlariIlerleme.objects.filter(id = id)
+        profile = IsplaniPlanlariIlerleme.objects.filter(proje_ait_bilgisi__id = id)
         kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
         content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
     else:
-        profile = IsplaniPlanlariIlerleme.objects.filter(id = id)
+        profile = IsplaniPlanlariIlerleme.objects.filter(proje_ait_bilgisi__id = id)
+    
     content["santiyeler"] = IsplaniPlanlariIlerlemeSerializer(profile, many=True).data
     content["isplani_dosyalari"] = IsplaniIlerlemeDosyalariSerializer(IsplaniIlerlemeDosyalari.objects.filter(dosya_sahibi__id = id), many=True).data
     content["kullanicilari"] =CustomUserSerializer( CustomUser.objects.filter(
@@ -1768,7 +2105,7 @@ def yapilacaklar_durum_bilgisi(request):
         kullanici_silme_bilgisi=False,
         is_active=True
     ),many = True).data
-    
+    print(content)
     return Response(content, status=status.HTTP_200_OK)
 
 
@@ -1779,13 +2116,13 @@ def yapilacaklar_durum_bilgisi(request):
 def yapilacalar_duzenle_api(request):
     if request.user.is_superuser:
         return Response({"error": "Superusers are not allowed to modify tasks."}, status=status.HTTP_403_FORBIDDEN)
-
+    print(request.POST)
     id = request.data.get("id_bilgisi")
     baslik = request.data.get("baslik")
     durum = request.data.get("durum")
     aciliyet = request.data.get("aciliyet")
     teslim_tarihi = request.data.get("teslim_tarihi")
-    blogbilgisi = request.data.getlist("kullanicilari")
+    blogbilgisi = request.data.get("kullanicilari")
     aciklama = request.data.get("aciklama")
     katman_bilgisi = request.data.get("katman_bilgisi")
     yapi_gonder = request.data.get("yapi_gonder")
@@ -1796,32 +2133,43 @@ def yapilacalar_duzenle_api(request):
     # Get the task and update
     project = get_object_or_404(IsplaniPlanlari, id=id)
     project.proje_ait_bilgisi = request.user
-    project.title = baslik
-    project.status = durum
-    project.aciklama = aciklama
-    project.oncelik_durumu = aciliyet
-    project.teslim_tarihi = teslim_tarihi
+    if baslik:
+        project.title = baslik
+    if durum:
+        project.status = durum
+    if aciklama:
+        project.aciklama = aciklama
+    if aciliyet:
+        project.oncelik_durumu = aciliyet
+    if teslim_tarihi:
+        project.teslim_tarihi = teslim_tarihi
     project.silinme_bilgisi = False
-    project.blok = get_object_or_404(bloglar,id = yapi_gonder)
-    project.katman = get_object_or_404(katman,id = katman_bilgisi)
-    project.kat = kat
-    project.locasyonx = locasyonx
-    project.locasyony = locasyony
+    if yapi_gonder:
+        project.blok = get_object_or_404(bloglar,id = yapi_gonder)
+    if katman_bilgisi:
+        project.katman = get_object_or_404(katman,id = katman_bilgisi)
+    if kat:
+        project.kat = kat
+    if locasyonx:
+        project.locasyonx = locasyonx
+    if locasyony:
+        project.locasyony = locasyony
     project.save()
 
     # Update the users assigned to the task
-    bloglar_bilgisi = [CustomUser.objects.get(id=int(user_id)) for user_id in blogbilgisi]
-    project.yapacaklar.set(bloglar_bilgisi)
+    if blogbilgisi:
+        bloglar_bilgisi = [CustomUser.objects.get(id=int(user_id)) for user_id in blogbilgisi]
+        project.yapacaklar.set(bloglar_bilgisi)
 
     # Handle file uploads
     files = request.FILES.getlist('file')
-    for file in files:
-        IsplaniDosyalari.objects.create(
-            proje_ait_bilgisi=project,
-            dosya_sahibi=request.user,
-            dosya=file
-        )
-
+    if files:
+        for file in files:
+            IsplaniDosyalari.objects.create(
+                proje_ait_bilgisi=project,
+                dosya_sahibi=request.user,
+                dosya=file
+            )
     return Response({"message": "Task başarıyla Güncellendi."}, status=status.HTTP_200_OK)
 
 
