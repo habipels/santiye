@@ -638,7 +638,7 @@ def personeller_ekle(request):
                 currency = False
             bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
-            isim = firstName+str(i),soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
+            isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
             calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
             for i in documents:
@@ -697,7 +697,7 @@ def personeller_ekle_2(request,hash):
                 currency = False
             bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
-            isim = firstName+str(i),soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
+            isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
             calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
             for i in documents:
@@ -834,7 +834,7 @@ def personelleri_düzenle(request):
                 currency = False
             bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
-            isim = firstName+str(i),soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
+            isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
             calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
             for i in documents:
