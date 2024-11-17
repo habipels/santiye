@@ -1700,8 +1700,6 @@ openModal("is-emri-duzenle");
                                 <tr>
                                           <th scope="col">{% trans 'İş Emri Adı' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
-                                            <th scope="col">{% trans 'Blok' %}</th>
-                                            <th scope="col">{% trans 'Kat' %}</th>
                                             <th scope="col">{% trans 'Kullanıcılar' %}</th>
                                             <th scope="col">{% trans 'Başlangıç' %}</th>
                                             <th scope="col">{% trans 'Hedef Tarih' %}</th>
@@ -1724,16 +1722,6 @@ openModal("is-emri-duzenle");
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
-                                    {% if i.blok %}
-                                        {{i.blok.blog_adi}}
-                                    {% else %}
-                                    {% endif %}
-                                    </td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
-                                        {{i.kat}}
-                                    {% else %}
-                                    {% endif %}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1750,8 +1738,8 @@ openModal("is-emri-duzenle");
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
-                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.kayit_tarihi}}</td>
+                                    <td>{{i.teslim_tarihi}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
@@ -1795,7 +1783,7 @@ openModal("is-emri-duzenle");
                                 </tr>
                                  {% else %}
                                     {% if request.user in i.yapacaklar.all %}
-                                     <tr>
+                                      <tr>
                                     <td>
                                         <div class="task-check">
                                             
@@ -1803,16 +1791,6 @@ openModal("is-emri-duzenle");
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
-                                   <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
-                                    {% if i.blok %}
-                                        {{i.blok.blog_adi}}
-                                    {% else %}
-                                    {% endif %}
-                                    </td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
-                                        {{i.kat}}
-                                    {% else %}
-                                    {% endif %}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1829,8 +1807,8 @@ openModal("is-emri-duzenle");
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
-                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.kayit_tarihi}}</td>
+                                    <td>{{i.teslim_tarihi}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
@@ -1848,15 +1826,15 @@ openModal("is-emri-duzenle");
                                         
                                     </td>
                                     <td>
-                                         {% if i.oncelik_durumu == "High" %}
-                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+                                      {% if i.oncelik_durumu == "High" %}
+                                    <div class="td-info"><span class="status-cancel stats-lg">{% trans 'Acil' %}</span></div>
                         
                                             {% elif i.oncelik_durumu == "Medium" %}
-                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            <div class="td-info"><span class="status-orange stats-lg">{% trans 'Orta' %}</span></div>
                                             {% elif i.oncelik_durumu == "Low" %}
-                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            <div class="td-info"><span class="status-dark stats-lg">{% trans 'Düşük' %}</span></div>
                                             {% endif %}
-                                    </td>
+                                     </td>
                                     <td>
                                         <div class="td-actions">
                                             <a onclick="yapilacak_duzenle('{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
@@ -1877,25 +1855,14 @@ openModal("is-emri-duzenle");
                                 {% endif %}
                                         
                                 {% else %}
-                                 <tr>
+                                  <tr>
                                     <td>
                                         <div class="task-check">
-                                            
+                                           
                                             {{i.title}}
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
-                                    {% if i.blok %}
-                                        {{i.blok.blog_adi}}
-                                    {% else %}
-                                    {% endif %}
-                                    </td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
-                                        {{i.kat}}
-                                    {% else %}
-                                    {% endif %}</td>
-                                    
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1912,39 +1879,42 @@ openModal("is-emri-duzenle");
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
-                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.kayit_tarihi}}</td>
+                                    <td>{{i.teslim_tarihi}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
                                                 {% if i.status == "Inprogress" %}
                                                     <span
-                                                    class="status-inprogress stats-lg">{{i.status}}</span>
+                                                    class="status-inprogress stats-lg">{% trans 'Devam Eden' %}</span>
                                                 {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
+                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeniler' %}</span></div>
                                                 {% elif i.status == "Pending" %}
-                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
+                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Devam Eden' %}</span></div>
                                                  {% elif i.status == "Completed" %}
-                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
+                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlanan' %}</span></div>
                                                     {% endif %}
                                                 
                                         
                                     </td>
                                     <td>
-                                         {% if i.oncelik_durumu == "High" %}
-                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+                                    {% if i.oncelik_durumu == "High" %}
+                                    <div class="td-info"><span class="status-cancel stats-lg">{% trans 'Acil' %}</span></div>
                         
                                             {% elif i.oncelik_durumu == "Medium" %}
-                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            <div class="td-info"><span class="status-orange stats-lg">{% trans 'Orta' %}</span></div>
                                             {% elif i.oncelik_durumu == "Low" %}
-                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                            <div class="td-info"><span class="status-dark stats-lg">{% trans 'Düşük' %}</span></div>
                                             {% endif %}
+                                        
                                     </td>
                                     <td>
                                         <div class="td-actions">
                                             <a onclick="yapilacak_duzenle('{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                             <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
+                                                    <a onclick="openModal('ilerleme{{i.id}}')" class="status-view"><i
+                                                        class="icon icon-view"></i></a>
                                             <div class="biadago-tooltip">
                                                 <a><i class="icon icon-three-dots"></i></a>
                                                 <div class="biadago-tooltip-content">
@@ -1952,6 +1922,7 @@ openModal("is-emri-duzenle");
                                                     <a  onclick="openModal('ilerleme{{i.id}}')">{% trans 'Süreç İzleme' %}</a>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </td>
                                 </tr>
