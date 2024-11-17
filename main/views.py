@@ -287,7 +287,6 @@ def homepage(request):
                 weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
                 
                 weather_response = requests.get(weather_api_url)
-                print(weather_response)
                 if weather_response.status_code == 200:
                     weather_data = weather_response.json()
                 a = weather_data["weather"][0]
@@ -522,7 +521,6 @@ def homepage_2(request,hash):
                     weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
                     
                     weather_response = requests.get(weather_api_url)
-                    print(weather_response)
                     if weather_response.status_code == 200:
                         weather_data = weather_response.json()
                     a = weather_data["weather"][0]
