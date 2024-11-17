@@ -83,6 +83,8 @@
                                 <tr>
                                           <th scope="col">{% trans 'İş Emri Adı' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
+                                            <th scope="col">{% trans 'Blok' %}</th>
+                                            <th scope="col">{% trans 'Kat' %}</th>
                                             <th scope="col">{% trans 'Kullanıcılar' %}</th>
                                             <th scope="col">{% trans 'Başlangıç' %}</th>
                                             <th scope="col">{% trans 'Hedef Tarih' %}</th>
@@ -105,6 +107,16 @@
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -121,8 +133,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi}}</td>
-                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
@@ -174,7 +186,18 @@
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
                                     <td>
+
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
                                                  {% for yazar in i.yapacaklar.all %}
@@ -190,8 +213,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi}}</td>
-                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
@@ -246,6 +269,16 @@
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -262,8 +295,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi}}</td>
-                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
@@ -737,7 +770,7 @@
                         <span>{{i.kayit_tarihi}}</span>
                         <div class="ilerleme-durumu-content">
                             {% trans 'Başlık ' %}  {{i.title}} <br>
-                            {% trans 'Açıklama ' %} <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td><br>
+                            {% trans 'Açıklama ' %}<br>
                             {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
                             {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
                             {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
@@ -1700,6 +1733,9 @@ openModal("is-emri-duzenle");
                                 <tr>
                                           <th scope="col">{% trans 'İş Emri Adı' %}</th>
                                             <th scope="col">{% trans 'Açıklama' %}</th>
+                                            <th scope="col">{% trans 'Blok' %}</th>
+                                            <th scope="col">{% trans 'Kat' %}</th>
+                                      
                                             <th scope="col">{% trans 'Kullanıcılar' %}</th>
                                             <th scope="col">{% trans 'Başlangıç' %}</th>
                                             <th scope="col">{% trans 'Hedef Tarih' %}</th>
@@ -1722,6 +1758,16 @@ openModal("is-emri-duzenle");
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1738,8 +1784,8 @@ openModal("is-emri-duzenle");
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi}}</td>
-                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
+                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
@@ -1791,6 +1837,16 @@ openModal("is-emri-duzenle");
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1807,8 +1863,8 @@ openModal("is-emri-duzenle");
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi}}</td>
-                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
@@ -1863,6 +1919,16 @@ openModal("is-emri-duzenle");
                                         </div>
                                     </td>
                                     <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
                                     <td>
                                         <div class="td-assigned-people">
                                             <div class="td-assigned-people-profiles">
@@ -1879,8 +1945,8 @@ openModal("is-emri-duzenle");
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{i.kayit_tarihi}}</td>
-                                    <td>{{i.teslim_tarihi}}</td>
+                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
                                     <td>
                                     {% isplani_durumu_kontrol i.id as b %}
                                                 
