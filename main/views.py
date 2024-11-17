@@ -25,7 +25,7 @@ def get_client_ip(request):
 
 def get_csrf_token(request):
     token = get_token(request)
-    print(token)
+    #print(token)
     return JsonResponse({'csrfToken': token})
 # Salt değeri ve minimum hash uzunluğu belirleyin
 HASHIDS_SALT = "habip_elis_12345"
@@ -135,7 +135,7 @@ def homepage(request):
     if request.user.is_authenticated:
         pass
     else:
-        print("login")
+        #print("login")
         return redirect("/users/login/")
     if request.user.is_authenticated:
         content = sozluk_yapisi()
@@ -262,7 +262,7 @@ def homepage(request):
             loc = ip_info.get('loc')
             
             if loc:  # Eğer 'loc' None değilse
-                print(loc)
+                #print(loc)
                 location = loc.split(',')
                 lat, lon = location[0], location[1]
                 # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
@@ -270,7 +270,7 @@ def homepage(request):
                 weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
                 
                 weather_response = requests.get(weather_api_url)
-                print(weather_response)
+                #print(weather_response)
                 if weather_response.status_code == 200:
                     weather_data = weather_response.json()
                 a = weather_data["weather"][0]
@@ -419,13 +419,13 @@ def ana_sayfa(request):
     # ipinfo.io API'sini kullanarak IP'ye göre konum alıyoruz
     ipinfo_api_url = f"http://ipinfo.io/{ip}/json"
     ip_response = requests.get(ipinfo_api_url)
-    print(ip_response.json())
+    #print(ip_response.json())
     if ip_response.status_code == 200:
         ip_info = ip_response.json()
         loc = ip_info.get('loc')
         
         if loc:  # Eğer 'loc' None değilse
-            print(loc)
+            #print(loc)
             location = loc.split(',')
             lat, lon = location[0], location[1]
             
@@ -434,7 +434,7 @@ def ana_sayfa(request):
             weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
             
             weather_response = requests.get(weather_api_url)
-            print(weather_response)
+            #print(weather_response)
             if weather_response.status_code == 200:
                 weather_data = weather_response.json()
             a = weather_data["weather"][0]
@@ -496,7 +496,7 @@ def homepage_2(request,hash):
                 loc = ip_info.get('loc')
                 
                 if loc:  # Eğer 'loc' None değilse
-                    print(loc)
+                    #print(loc)
                     location = loc.split(',')
                     lat, lon = location[0], location[1]
                     # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
@@ -504,7 +504,7 @@ def homepage_2(request,hash):
                     weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
                     
                     weather_response = requests.get(weather_api_url)
-                    print(weather_response)
+                    #print(weather_response)
                     if weather_response.status_code == 200:
                         weather_data = weather_response.json()
                     a = weather_data["weather"][0]
@@ -627,7 +627,7 @@ def santiye_ekle(request):
             email = request.POST.get("email")
             santiyeAdi = request.POST.get("santiyeAdi")
             sfire = request.POST.get("sfire")
-            print(yetkiliAdSoyad,email,santiyeAdi,sfire)
+            #print(yetkiliAdSoyad,email,santiyeAdi,sfire)
             newUser = CustomUser(username =email,email=email,first_name = santiyeAdi,last_name =yetkiliAdSoyad )
             newUser.set_password(sfire)
             newUser.save()
@@ -2657,7 +2657,7 @@ def taseron_duzelt_2(request,hash):
                             j  = get_object_or_none(projeler,blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                                     kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0]),proje_ait_bilgisi = request.user.kullanicilar_db)
                             if j:
-                                print(j,"geldi")
+                                #print(j,"geldi")
                                 bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
                             else:
                                 proje = projeler.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,
@@ -2696,7 +2696,7 @@ def taseron_duzelt_2(request,hash):
                     j  = projeler.objects.filter(blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                         kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])).last()
                     if j:
-                        print(j,"geldi")       
+                        #print(j,"geldi")       
                         bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
                     else:
                         proje = projeler.objects.create(proje_ait_bilgisi = request.user,
@@ -2776,7 +2776,7 @@ def taseron_duzelt(request):
                             j  = get_object_or_none(projeler,blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                                     kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0]),proje_ait_bilgisi = request.user.kullanicilar_db)
                             if j:
-                                print(j,"geldi")
+                                #print(j,"geldi")
                                 bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
                             else:
                                 proje = projeler.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,
@@ -2815,7 +2815,7 @@ def taseron_duzelt(request):
                     j  = projeler.objects.filter(blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                         kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])).last()
                     if j:
-                        print(j,"geldi")       
+                        #print(j,"geldi")       
                         bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
                     else:
                         proje = projeler.objects.create(proje_ait_bilgisi = request.user,
@@ -2921,7 +2921,7 @@ def ust_yuklenici_ekle_2(request,hash):
                 new_project.save()
                 
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
@@ -2944,7 +2944,7 @@ def ust_yuklenici_ekle_2(request,hash):
                         )
                         new_project.save()
                         images = request.FILES.getlist('file')
-                        print(images)
+                        #print(images)
                         isim = 1
                         for images in images:
                             ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
@@ -2969,7 +2969,7 @@ def ust_yuklenici_ekle_2(request,hash):
                 new_project.save()
                 
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
@@ -2995,7 +2995,7 @@ def ust_yuklenici_silme_2(request,hash):
                 return redirect("main:yetkisiz")
         else:
             pass
-        print("Üst Yüklenici Sil")
+        #print("Üst Yüklenici Sil")
         buttonId = request.POST.get("buttonId")
         ust_yuklenici.objects.filter(id = buttonId).update(silinme_bilgisi = True)
     return redirect("main:ust_yuklenici_sayfasi_2",hash)
@@ -3171,7 +3171,7 @@ def ust_yuklenici_ekle(request):
                         )
                         new_project.save()
                         images = request.FILES.getlist('file')
-                        print(images)
+                        #print(images)
                         isim = 1
                         for images in images:
                             ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
@@ -3196,7 +3196,7 @@ def ust_yuklenici_ekle(request):
                 new_project.save()
                 
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
@@ -3218,7 +3218,7 @@ def ust_yuklenici_silme(request):
                 return redirect("main:yetkisiz")
         else:
             pass
-        print("Üst Yüklenici Sil")
+        #print("Üst Yüklenici Sil")
         buttonId = request.POST.get("buttonId")
         ust_yuklenici.objects.filter(id = buttonId).update(silinme_bilgisi = True)
     return redirect("main:ust_yuklenici_sayfasi")
@@ -6128,7 +6128,7 @@ def yapilacak_gonder_json(request,id):
         sonuc["isaretli"] = IsplaniDosyalari.objects.filter(proje_ait_bilgisi = a,pin = "pin").last().dosya.url
     except:
         sonuc["isaretli"] =""
-    print(sonuc)
+    #print(sonuc)
     return JsonResponse(sonuc)
 import base64
 from django.core.files.base import ContentFile
@@ -6183,7 +6183,7 @@ def yapilacalar_ekle(request):
                             bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                         new_project.yapacaklar.add(*bloglar_bilgisi)
                         images = request.FILES.getlist('file')
-                        print(images)
+                        #print(images)
                         isim = 1
                         for images in images:
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6215,7 +6215,7 @@ def yapilacalar_ekle(request):
                     file_extension = 'jpeg'
                 if kat == None or kat  == ""  :
                     kat = 0
-                print(kat)
+                #print(kat)
                 new_project = IsplaniPlanlari(
                     proje_ait_bilgisi = request.user,
                     title = baslik,
@@ -6233,7 +6233,7 @@ def yapilacalar_ekle(request):
                     bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                 new_project.yapacaklar.add(*bloglar_bilgisi)
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6274,7 +6274,7 @@ def yapilacalar_ekle_2(request,hash):
                     file_extension = 'jpeg'
                 if kat == None or kat  == ""  :
                     kat = 0
-                print(kat)
+                #print(kat)
                 new_project = IsplaniPlanlari(
                     proje_ait_bilgisi = users,
                     title = baslik,
@@ -6292,7 +6292,7 @@ def yapilacalar_ekle_2(request,hash):
                     bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                 new_project.yapacaklar.add(*bloglar_bilgisi)
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6349,7 +6349,7 @@ def yapilacalar_ekle_2(request,hash):
                             bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                         new_project.yapacaklar.add(*bloglar_bilgisi)
                         images = request.FILES.getlist('file')
-                        print(images)
+                        #print(images)
                         isim = 1
                         for images in images:
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6381,7 +6381,7 @@ def yapilacalar_ekle_2(request,hash):
                     file_extension = 'jpeg'
                 if kat == None or kat  == ""  :
                     kat = 0
-                print(kat)
+                #print(kat)
                 new_project = IsplaniPlanlari(
                     proje_ait_bilgisi = request.user,
                     title = baslik,
@@ -6399,7 +6399,7 @@ def yapilacalar_ekle_2(request,hash):
                     bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                 new_project.yapacaklar.add(*bloglar_bilgisi)
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6462,7 +6462,7 @@ def yapilacalar_ekle_duzenleme(request):
                             bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                         new_project.yapacaklar.add(*bloglar_bilgisi)
                         images = request.FILES.getlist('file')
-                        print(images)
+                        #print(images)
                         isim = 1
                         for images in images:
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6516,7 +6516,7 @@ def yapilacalar_ekle_duzenleme(request):
                     bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                 new_project.yapacaklar.add(*bloglar_bilgisi)
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6576,7 +6576,7 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                     bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                 new_project.yapacaklar.add(*bloglar_bilgisi)
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6630,7 +6630,7 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                             bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                         new_project.yapacaklar.add(*bloglar_bilgisi)
                         images = request.FILES.getlist('file')
-                        print(images)
+                        #print(images)
                         isim = 1
                         for images in images:
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6684,7 +6684,7 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                     bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
                 new_project.yapacaklar.add(*bloglar_bilgisi)
                 images = request.FILES.getlist('file')
-                print(images)
+                #print(images)
                 isim = 1
                 for images in images:
                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
@@ -6725,7 +6725,7 @@ def yapilacalar_ekle_toplu(request):
                                 new_project.yapacaklar.add(*bloglar_bilgisi)
                                 images = request.FILES.getlist('file')
                                 isim = 1
-                                print(images,"resim geldi")
+                                #print(images,"resim geldi")
                                 for images in images:
                                     IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                                     isim = isim+1
@@ -6757,7 +6757,7 @@ def yapilacalar_ekle_toplu(request):
                         new_project.yapacaklar.add(*bloglar_bilgisi)
                         images = request.FILES.getlist('file')
                         isim = 1
-                        print(images,"resim geldi")
+                        #print(images,"resim geldi")
                         for images in images:
                             IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
@@ -7796,8 +7796,8 @@ def giderleri_excelden_ekle(request,id):
         for col in dataframe1.iter_cols(1, dataframe1.max_column):
             a.append(col[row].value)
         data.append(a)
-        print(a)
-    print("-" * 50)
+        #print(a)
+    #print("-" * 50)
     for i in data:
         if i[3] not in sadece_cari:
             sadece_cari.append(i[3])
@@ -7824,7 +7824,7 @@ def giderleri_excelden_ekle(request,id):
                                 ,urun_adi = i,urun_fiyati = sadece_fiyat[k]
 
                                 )
-        print(i)
+        #print(i)
         k = k+1
         sozluk_urun[i] = l.id
     for i in sadece_kategorisi:
@@ -7846,7 +7846,7 @@ def giderleri_excelden_ekle(request,id):
             fatura_tarihi=i[2],vade_tarihi=i[2],fatura_no = m,
             gelir_kategorisi = get_object_or_none( gider_kategorisi,id =sozluk_kategorisi[i[8]] ),doviz = i[11],aciklama = i[10]
                                          )
-        print(sozluk_cari[i[3]])
+        #print(sozluk_cari[i[3]])
         new_project.save()
         gelir_etiketi_sec = []
         gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(sozluk_etiket[i[5]])))
@@ -7887,8 +7887,8 @@ def gelirleri_excelden_ekle(request,id):
         for col in dataframe1.iter_cols(1, dataframe1.max_column):
             a.append(col[row].value)
         data.append(a)
-        print(a)
-    print("-" * 50)
+        #print(a)
+    #print("-" * 50)
     for i in data:
         if i[3] not in sadece_cari:
             sadece_cari.append(i[3])
@@ -9355,6 +9355,6 @@ def rapor_gonder(request, rapor_id):
             } for aciklama in genel_aciklama_bilgisi
         ],
     }
-    print(fatura_data)
+    #print(fatura_data)
     # Veriyi JSON olarak döndür
     return JsonResponse(fatura_data)

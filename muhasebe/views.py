@@ -39,7 +39,7 @@ def kalan_tutuari(id):
 
 
 def get_fatura_gelir(request, fatura_id):
-    print(fatura_id)
+    #print(fatura_id)
     if True:
         fatura = get_object_or_none(Gelir_Bilgisi , id = fatura_id)
         kalemler = gelir_urun_bilgisi.objects.filter(gider_bilgis = fatura)
@@ -100,12 +100,12 @@ def get_fatura_gelir(request, fatura_id):
         "id" : fatura.id,
         "kalan_tutar":str(kalan_tutuar(fatura))
         }
-        print(fatura_data)
+        #print(fatura_data)
         return JsonResponse(fatura_data)
 
 
 def get_fatura_gider(request, fatura_id):
-    print(fatura_id)
+    #print(fatura_id)
     if True:
         fatura = get_object_or_none(Gider_Bilgisi , id = fatura_id)
         kalemler = gider_urun_bilgisi.objects.filter(gider_bilgis = fatura)
@@ -166,7 +166,7 @@ def get_fatura_gider(request, fatura_id):
         "id" : fatura.id,
         "kalan_tutar":str(kalan_tutuari(fatura))
         }
-        print(fatura_data)
+        #print(fatura_data)
         return JsonResponse(fatura_data)
 import time
 
@@ -3212,7 +3212,7 @@ def search(request):
         user = request.user
     results = urunler.objects.filter(urun_adi__icontains=term, urun_ait_oldugu=user)
     suggestions = [{'label': result.urun_adi, 'value': result.urun_fiyati} for result in results]
-    print("oldu mu yav")
+    #print("oldu mu yav")
     return JsonResponse(suggestions, safe=False)
 def cariler_bilgisi(request):
     term = request.GET.get('term', '')
@@ -3237,7 +3237,7 @@ def search_2(request,hash):
     #user = request.user
     results = urunler.objects.filter(urun_adi__icontains=term, urun_ait_oldugu=user)
     suggestions = [{'label': result.urun_adi, 'value': result.urun_fiyati} for result in results]
-    print("oldu mu yav")
+    #print("oldu mu yav")
     return JsonResponse(suggestions, safe=False)
 def cariler_bilgisi_2(request,hash):
     term = request.GET.get('term', '')
@@ -3274,7 +3274,7 @@ def gelir_faturasi_kaydet(request):
         profile = request.FILES.get("fatura_belgesi")
         gelir_kate = request.POST.get("gelir_kategorisi_gonder")
         kate = get_object_or_none(gelir_kategorisi,id = gelir_kate)
-        print(kate,"kategorisi gönder",gelir_kate)
+        #print(kate,"kategorisi gönder",gelir_kate)
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -3859,7 +3859,7 @@ def gider_faturasi_kaydet(request):
         aciklama_id = request.POST.getlist('aciklama_id')
         doviz_kuru = request.POST.get("doviz_kuru")
         profile = request.FILES.get("fatura_belgesi")
-        print(gelir_kategorisii,"veri verme")
+        #print(gelir_kategorisii,"veri verme")
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -3944,7 +3944,7 @@ def gider_faturasi_kaydet(request):
         Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
         
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
-        print(aciklama_id,"gelen id")
+        #print(aciklama_id,"gelen id")
         if profile:
             u = Gider_Bilgisi.objects.get(id = new_project.id )
             u.fatura_gorseli = profile
@@ -3952,7 +3952,7 @@ def gider_faturasi_kaydet(request):
     return redirect("accounting:giderler_sayfasi")
 
 def gider_faturasi_kaydet_2(request,hash):
-    print("kayıt")
+    #print("kayıt")
     content = {}
     d = decode_id(hash)
     content["hashler"] = hash
@@ -4057,7 +4057,7 @@ def gider_faturasi_kaydet_2(request,hash):
         Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
         
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
-        print(aciklama_id,"gelen id")
+        #print(aciklama_id,"gelen id")
         if profile:
             u = Gider_Bilgisi.objects.get(id = new_project.id )
             u.fatura_gorseli = profile
@@ -4100,7 +4100,7 @@ def gider_odemesi_ekle(request):
 
 def fatura_sil(request):
     if request.POST:
-        print("Fatura sil Çalıştı")
+        #print("Fatura sil Çalıştı")
         gelir_gider = request.POST.get("gelir_gelir")
         id_bilgisi  = request.POST.get("idbilgisicek")
         if gelir_gider == "0":
@@ -4293,7 +4293,7 @@ def gider_gelir_ekleme(request):
     adi = request.POST.get("adi")
     aciklama= request.POST.get("aciklama")
     renk = request.POST.get("renk")
-    print("selam")
+    #print("selam")
     if tur == "0":
         gelir_kategorisi.objects.create(
             gelir_kategoris_ait_bilgisi = user,
@@ -4317,7 +4317,7 @@ def gider_gelir_ekleme_2(request,hash):
     adi = request.POST.get("adi")
     aciklama= request.POST.get("aciklama")
     renk = request.POST.get("renk")
-    print("selam")
+    #print("selam")
     if tur == "0":
         gelir_kategorisi.objects.create(
             gelir_kategoris_ait_bilgisi = user,
@@ -4607,7 +4607,8 @@ def muhasebe_ayarlari(request):
         fatura_etiketi  = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici  = kullanici).last()
         if fatura_etiketi:
             if fatura_etiketi.gider_etiketi == gideretiketi and fatura_etiketi.gelir_etiketi == gelir_etiketi :
-                print("2 tane if pas geçti")
+                #print("2 tane if pas geçti")
+                pass
             else:
                 faturalardaki_gelir_gider_etiketi_ozel.objects.create(
                 kullanici  = kullanici,
@@ -4720,7 +4721,7 @@ def muhasebe_ayarlari_2(request,hash):
         fatura_etiketi  = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici  = users).last()
         if fatura_etiketi:
             if fatura_etiketi.gider_etiketi == gideretiketi and fatura_etiketi.gelir_etiketi == gelir_etiketi :
-                print("2 tane if pas geçti")
+                pass
             else:
                 faturalardaki_gelir_gider_etiketi_ozel.objects.create(
                 kullanici  = users,
@@ -5640,7 +5641,7 @@ def stok_girisi_yap(request):
             stok_giren_urun= get_object_or_none(urunler,id = urun),
             stok_durumu = transactionType,stok_adeti  = transactionAmount
         )
-        print("kaydedildi")
+        #print("kaydedildi")
     return redirect("accounting:stok")
 def stok_sayisi(id):
     toplam = 0
@@ -5677,7 +5678,7 @@ def urun_bilgisi(request,id):
             } for kalem in zimmetler
         ]
         }
-        print(fatura_data)
+        #print(fatura_data)
         return JsonResponse(fatura_data)
 
 def zimmetler(request):
@@ -5996,7 +5997,7 @@ def gider_faturasi_kaydet_personel(request):
         aciklama_id = request.POST.getlist('aciklama_id')
         doviz_kuru = request.POST.get("doviz_kuru")
         profile = request.FILES.get("fatura_belgesi")
-        print(gelir_kategorisii,"veri verme")
+        #print(gelir_kategorisii,"veri verme")
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -6081,7 +6082,7 @@ def gider_faturasi_kaydet_personel(request):
         Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =0 )
         
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
-        print(aciklama_id,"gelen id")
+        #print(aciklama_id,"gelen id")
         fatura_gorsel = get_object_or_none(calisanlar_calismalari_odemeleri,id = faturaya_bagla )
         if fatura_gorsel.dosya:
             u = Gider_Bilgisi.objects.get(id = new_project.id )
@@ -6153,7 +6154,7 @@ def gider_faturasi_kaydet_personel_2(request,hash):
         aciklama_id = request.POST.getlist('aciklama_id')
         doviz_kuru = request.POST.get("doviz_kuru")
         profile = request.FILES.get("fatura_belgesi")
-        print(gelir_kategorisii,"veri verme")
+        #print(gelir_kategorisii,"veri verme")
         cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici)
         if cari_bilgisi:
             date_range_parts = daterange.split(' - ')
@@ -6238,7 +6239,7 @@ def gider_faturasi_kaydet_personel_2(request,hash):
         Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =0 )
         
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
-        print(aciklama_id,"gelen id")
+        #print(aciklama_id,"gelen id")
         fatura_gorsel = get_object_or_none(calisanlar_calismalari_odemeleri,id = faturaya_bagla )
         if fatura_gorsel.dosya:
             u = Gider_Bilgisi.objects.get(id = new_project.id )
@@ -6514,7 +6515,7 @@ def stok_girisi_yap_2(request,hash):
             stok_giren_urun= get_object_or_none(urunler,id = urun),
             stok_durumu = transactionType,stok_adeti  = transactionAmount
         )
-        print("kaydedildi")
+        #print("kaydedildi")
     return redirect("accounting:stok_2",hash)
 
 

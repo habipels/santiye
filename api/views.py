@@ -437,7 +437,7 @@ def hava_durumu_api(request):
     content = {}
     if request.method == 'POST':
         ip = request.data.get("ip")
-        print(ip)
+        #print(ip)
     try: 
         weather_data = None
         ip_info = None
@@ -453,7 +453,7 @@ def hava_durumu_api(request):
             loc = ip_info.get('loc')
             
             if loc:  # Eğer 'loc' None değilse
-                print(loc)
+                #print(loc)
                 location = loc.split(',')
                 lat, lon = location[0], location[1]
                 # OpenWeatherMap API'yi kullanarak hava durumu alıyoruz
@@ -461,7 +461,7 @@ def hava_durumu_api(request):
                 weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
                 
                 weather_response = requests.get(weather_api_url)
-                print(weather_response)
+                #print(weather_response)
                 if weather_response.status_code == 200:
                     weather_data = weather_response.json()
                 a = weather_data["weather"][0]
@@ -479,7 +479,7 @@ def hava_durumu_api(request):
                 weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
                 
                 weather_response = requests.get(weather_api_url)
-                print(weather_response)
+                #print(weather_response)
                 if weather_response.status_code == 200:
                     weather_data = weather_response.json()
                 a = weather_data["weather"][0]
@@ -2106,7 +2106,7 @@ def yapilacaklar_durum_bilgisi(request):
         kullanici_silme_bilgisi=False,
         is_active=True
     ),many = True).data
-    print(content)
+    #print(content)
     return Response(content, status=status.HTTP_200_OK)
 
 
@@ -2117,7 +2117,7 @@ def yapilacaklar_durum_bilgisi(request):
 def yapilacalar_duzenle_api(request):
     if request.user.is_superuser:
         return Response({"error": "Superusers are not allowed to modify tasks."}, status=status.HTTP_403_FORBIDDEN)
-    print(request.POST)
+    #print(request.POST)
     id = request.data.get("id_bilgisi")
     baslik = request.data.get("baslik")
     durum = request.data.get("durum")
