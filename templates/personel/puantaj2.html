@@ -524,9 +524,10 @@
             {% else %}
             {% trans "IQD" %}
             {% endif %}
-
-            <input type="number" class="saatlik"  data-tutar="{{tutari_ver.saatlik}}" data-parabirimi = "{{para_birimi_bilgi}}" data-person="{{i.id}}" data-day="Normal_mesai_tutari" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal Mesai Tutarı' %}">
-            <input type="number" class="fazlamesai" data-person="{{i.id}}" data-tutar="{{tutari_ver.fazla_mesai}}" data-parabirimi = "{{para_birimi_bilgi}}"  data-day="Fazla_mesai_tutari"  step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai Tutarı' %}"></td>
+            <span class="saatlikspan" data-tutar="{{tutari_ver.saatlik}}" data-person="{{i.id}}" ></span>
+            <span class="fazlamesaispan" data-tutar="{{tutari_ver.fazla_mesai}}" data-person="{{i.id}}" ></span>
+            <input type="number" hidden class="saatlik"  data-tutar="{{tutari_ver.saatlik}}" data-parabirimi = "{{para_birimi_bilgi}}" data-person="{{i.id}}" data-day="Normal_mesai_tutari" step="0.01" min="0" max="24" value="{{bilgi.normal_saat|stringformat:'.2f'}}" placeholder="{% trans 'Normal Mesai Tutarı' %}">
+            <input type="number" hidden class="fazlamesai" data-person="{{i.id}}" data-tutar="{{tutari_ver.fazla_mesai}}" data-parabirimi = "{{para_birimi_bilgi}}"  data-day="Fazla_mesai_tutari"  step="0.01" min="0" max="24" value="{{bilgi.mesai_saati|stringformat:'.2f'}}" placeholder="{% trans 'Fazla Mesai Tutarı' %}"></td>
 
                     </tr>
                     <!-- Dinamik personel satırları buraya gelecek -->
@@ -1167,7 +1168,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const normalInputs = document.querySelectorAll(`.saatlik[data-person="${personId}"]`);
         const overtimeInputs = document.querySelectorAll(`.fazlamesai[data-person="${personId}"]`);
-
+        const normalInputsspan = document.querySelectorAll(`.saatlikspan[data-person="${personId}"]`);
+        const overtimeInputsspan = document.querySelectorAll(`.fazlamesaispan[data-person="${personId}"]`);
         normalInputs.forEach(input => {
             const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
             const total = tutar * totalNormalHours / 2;
@@ -1178,6 +1180,18 @@ document.addEventListener('DOMContentLoaded', function () {
             const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
             const total = tutar * totalOvertimeHours / 2;
             input.value = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
+        });
+
+        normalInputsspan.forEach(input => {
+            const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
+            const total = tutar * totalNormalHours / 2;
+            input.textContent = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
+        });
+
+        overtimeInputsspan.forEach(input => {
+            const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
+            const total = tutar * totalOvertimeHours / 2;
+            input.textContent = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
         });
     });
 
@@ -1201,7 +1215,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const normalInputs = document.querySelectorAll(`.saatlik[data-person="${personId}"]`);
         const overtimeInputs = document.querySelectorAll(`.fazlamesai[data-person="${personId}"]`);
-        
+        const normalInputsspan = document.querySelectorAll(`.saatlikspan[data-person="${personId}"]`);
+        const overtimeInputsspan = document.querySelectorAll(`.fazlamesaispan[data-person="${personId}"]`);
         normalInputs.forEach(input => {
             const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
             const total = tutar * totalNormalHours / 2;
@@ -1213,7 +1228,18 @@ document.addEventListener('DOMContentLoaded', function () {
             const total = tutar * totalOvertimeHours / 2;
             input.value = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
         });
+        
+        normalInputsspan.forEach(input => {
+            const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
+            const total = tutar * totalNormalHours / 2;
+            input.textContent = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
+        });
 
+        overtimeInputsspan.forEach(input => {
+            const tutar = parseFloat(input.getAttribute('data-tutar').replace(',', '.')) || 0; // Virgülü noktaya çevir
+            const total = tutar * totalOvertimeHours / 2;
+            input.textContent = total.toFixed(2); // Toplamı iki ondalık basamakla güncelle
+        });
         hakedis_toplama() 
     }
     function hakedis_toplama() {
