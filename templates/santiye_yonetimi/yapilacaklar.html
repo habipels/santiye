@@ -445,11 +445,12 @@
                         <div class="modal-form-row">
                             <div class="form-element">
                                 <label for="baslik">{% trans 'Başlık Ekle' %}</label>
-                                <input type="text" required name="baslik"  name="baslik" id="baslik">
+                                <input type="text" required name="baslik" id="baslik" style="text-transform: uppercase;" oninput="convertToUpperCase(this)">
+                        
                             </div>
                             <div class="form-element">
                                 <label for="aciklama">{% trans 'Açıklama' %}</label>
-                                <input type="text" required name="aciklama" id="aciklama">
+                                <input type="text" required name="aciklama" id="aciklama" style="text-transform: capitalize;" oninput="capitalizeFirstLetter(this)">
                             </div>
                             <div class="form-row">
                                 <div class="form-element">
@@ -594,11 +595,11 @@
                         <div class="modal-form-row">
                             <div class="form-element">
                                 <label for="baslik">{% trans 'Başlık Ekle' %}</label>
-                                <input type="text" required name="baslik"  name="baslik" id="baslikd">
+                                <input type="text" required name="baslik" id="baslikd" style="text-transform: uppercase;" oninput="convertToUpperCase(this)">
                             </div>
                             <div class="form-element">
                                 <label for="aciklama">{% trans 'Açıklama' %}</label>
-                                <input type="text" required name="aciklama" id="aciklamad">
+                                <input type="text" required name="aciklama" id="aciklamad" style="text-transform: capitalize;" oninput="capitalizeFirstLetter(this)">
                             </div>
                             <div class="form-row">
                                 <div class="form-element">
@@ -796,7 +797,7 @@
                     
                     <div class="form-element">
                         <label for="aciklama">{% trans 'Açıklama' %}</label>
-                        <input type="text"  name="aciklama" id="aciklama">
+                        <input type="text"  name="aciklama" id="aciklama" oninput="capitalizeFirstLetter(this)">
                     </div>
                     <div class="form-element">
                         <label for="tarih">{% trans 'Hedef Tarih:' %}</label>
@@ -831,6 +832,14 @@
 
 
 {% endfor %}
+<script>
+    function capitalizeFirstLetter(input) {
+        input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+    }
+     function convertToUpperCase(input) {
+        input.value = input.value.toUpperCase();
+    }
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('katmanSelect').addEventListener('change', function() {
@@ -2086,11 +2095,11 @@ openModal("is-emri-duzenle");
                         <div class="modal-form-row">
                             <div class="form-element">
                                 <label for="baslik">{% trans 'Başlık Ekle' %}</label>
-                                <input type="text" required name="baslik"  name="baslik" id="baslik">
+                                <input type="text" required name="baslik" id="baslik" style="text-transform: uppercase;" oninput="convertToUpperCase(this)">
                             </div>
                             <div class="form-element">
                                 <label for="aciklama">{% trans 'Açıklama' %}</label>
-                                <input type="text" required name="aciklama" id="aciklama">
+                                <input type="text" required name="aciklama" id="aciklama" style="text-transform: capitalize;" oninput="capitalizeFirstLetter(this)">
                             </div>
                             <div class="form-row">
                                 <div class="form-element">
@@ -2234,11 +2243,11 @@ openModal("is-emri-duzenle");
                         <div class="modal-form-row">
                             <div class="form-element">
                                 <label for="baslik">{% trans 'Başlık Ekle' %}</label>
-                                <input type="text" required name="baslik"  name="baslik" id="baslikd">
+                                <input type="text" required name="baslik" id="baslikd" style="text-transform: uppercase;" oninput="convertToUpperCase(this)">
                             </div>
                             <div class="form-element">
                                 <label for="aciklama">{% trans 'Açıklama' %}</label>
-                                <input type="text" required name="aciklama" id="aciklamad">
+                                <input type="text" required name="aciklama" id="aciklamad" style="text-transform: capitalize;" oninput="capitalizeFirstLetter(this)">
                             </div>
                             <div class="form-row">
                                 <div class="form-element">
@@ -2365,64 +2374,62 @@ openModal("is-emri-duzenle");
     </div>
 </div>
 
-    <div class="modal" id="ilerleme{{i.id}}">
-        <div class="modal-inner" style="width: 500px;">
-            <div class="modal-header">
-                {% trans 'Süreç Takibi' %}
-            </div>
-            <div class="modal-body">
-                <div class="ilerleme-durumlari">
-                    <div class="ilerleme-durumu{{i.id}}">
-                        <span>{{i.kayit_tarihi}}</span>
-                        <div class="ilerleme-durumu-content">
-                            {% trans 'Başlık ' %}  {{i.title}} <br>
-                            {% trans 'Açıklama ' %} <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td><br>
-                            {% trans 'Teslim Tarihi ' %} {{i.teslim_tarihi}} <br>
-                            {% if i.katman %}
-                            {% trans 'Yapı Bilgisi ' %} {{i.blok.blog_adi}} <br>
-                            {% trans 'Kat Bilgisi ' %} {{i.kat}} <br>
-                            
-                                <button onclick="katman_goster('{{i.katman.katman_dosyasi.url}}','{{i.locasyonx}}','{{i.locasyony}}')" > {% trans "Katmanı Göster" %}</button>
-
-                            {% else %}
-                            {% endif %}
-                            {% trans 'Dosyalar ' %} {% dosya_varsa_indirme_isplani i %}
-                            
-                            
-                            {% trans 'Atamalar: ' %} {% for yazar in i.yapacaklar.all %}
-                            {{yazar.last_name}},
-                     {% endfor %}
-
-                        </div>
+   <div class="modal" id="ilerleme{{ i.id }}" >
+<div class="modal-inner" style="width: 500px; margin: auto; max-width: 100%;">
+        <div class="modal-header">
+            <span style="text-transform: capitalize;">{{ i.title }}</span>
+        </div>
+        <div class="modal-body" >
+            <div class="ilerleme-durumlari">
+                <!-- İlk Durum -->
+                <div class="ilerleme-durumu" id="durum-{{ i.id }}">
+                    <span style="font-weight: bold;">{{ i.kayit_tarihi }}</span>
+                    <div class="ilerleme-durumu-content" style="margin-top: 10px;">
+                        <p><strong>{% trans 'Başlık:' %}</strong> {{ i.title }}</p>
+                        <p><strong>{% trans 'Açıklama:' %}</strong> <span style="text-transform: capitalize;">{{ i.aciklama }}</span></p>
+                        <p><strong>{% trans 'Teslim Tarihi:' %}</strong> {{ i.teslim_tarihi }}</p>
+                        {% if i.katman %}
+                            <p><strong>{% trans 'Yapı Bilgisi:' %}</strong> {{ i.blok.blog_adi }}</p>
+                            <p><strong>{% trans 'Kat Bilgisi:' %}</strong> {{ i.kat }}</p>
+                            <button style="background-color: #24d6b5; color: #fff; border: none; padding: 10px; border-radius: 4px; cursor: pointer;" 
+                                    onclick="katman_goster('{{ i.katman.katman_dosyasi.url }}', '{{ i.locasyonx }}', '{{ i.locasyony }}')">
+                                {% trans "Katmanı Göster" %}
+                            </button>
+                        {% endif %}
+                        <p><strong>{% trans 'Dosyalar:' %}</strong> {% dosya_varsa_indirme_isplani i %}</p>
+                        <p><strong>{% trans 'Atamalar:' %}</strong>
+                            {% for yazar in i.yapacaklar.all %}
+                                {{ yazar.last_name }},
+                            {% endfor %}
+                        </p>
                     </div>
-                    {% ilerleme_goster i.id as veriler %}
-                        {% for k in  veriler %}
+                </div>
+
+                <!-- İlerleme Durumları -->
+                {% ilerleme_goster i.id as veriler %}
+                {% if veriler|length > 0 %}
+                    {% for k in veriler %}
                         <div class="ilerleme-durumu">
-                        <span>{{k.kayit_tarihi}}</span>
-                        <div class="ilerleme-durumu-content">
-                           {% trans 'İşlemi Yapan ' %} {{k.yapan_kisi.last_name}} <br>
-                           {% trans 'Açıklama ' %}{{k.aciklama}}<br>
-                            {% trans 'Durum ' %}{{k.status}} <br>
-                            {% trans 'Teslim Tarihi ' %}{{k.teslim_tarihi}}<br>
-                            
-                            
-                        </div>
-                            <div class="ilerleme-durumu-dosyalar">
+                            <span style="font-weight: bold;">{{ k.kayit_tarihi }}</span>
+                            <div class="ilerleme-durumu-content" style="margin-top: 10px;">
+                                <p><strong>{% trans 'İşlemi Yapan:' %}</strong> {{ k.yapan_kisi.last_name }}</p>
+                                <p><strong>{% trans 'Açıklama:' %}</strong> {{ k.aciklama }}</p>
+                                <p><strong>{% trans 'Durum:' %}</strong> {{ k.status }}</p>
+                                <p><strong>{% trans 'Teslim Tarihi:' %}</strong> {{ k.teslim_tarihi }}</p>
+                            </div>
+                            <div class="ilerleme-durumu-dosyalar" style="margin-top: 10px;">
                                 {% dosya_varsa_indirme_isplani_ilerleme k.id %}
-                                
-                               
                             </div>
                         </div>
-                   
-                    
-                        
-                    
-                        {% endfor %}
-                    </div>
-                
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #999; text-align: center;">{% trans 'Daha fazla ilerleme kaydı bulunmamaktadır.' %}</p>
+                {% endif %}
             </div>
         </div>
+    </div>
+</div>
+
     
 
 
@@ -2447,7 +2454,7 @@ openModal("is-emri-duzenle");
                     
                     <div class="form-element">
                         <label for="aciklama">{% trans 'Açıklama' %}</label>
-                        <input type="text"  name="aciklama" id="aciklama">
+                        <input type="text"  name="aciklama" id="aciklama" oninput="capitalizeFirstLetter(this)">
                     </div>
                     <div class="form-element">
                         <label for="tarih">{% trans 'Hedef Tarih:' %}</label>
