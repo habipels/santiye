@@ -1472,7 +1472,7 @@ function openPersonelDetails(id) {
                     </div>
                     <div class="form-element">
                         <label for="ucret-tipi">{% trans "Para Birimi" %}</label>
-                        <select name="salaryType" id="ucret-tipi">
+                        <select name="salaryType" id="ucret_tipi_duzeltme_verisi">
                             <option value="" selected disabled></option>
                             <option value="USD">{% trans "USD" %}</option>
                             <option value="IQD">{% trans "IQD" %}</option>
@@ -1484,7 +1484,7 @@ function openPersonelDetails(id) {
                 <div class="form-row">
                 <div class="form-element">
                         <label for="date">{% trans "Pozisyonu" %}</label>
-                        <select id="position" name="position" class="form-control" required>
+                        <select id="position_duzeltme" name="position" class="form-control" required>
                             <option value="">Seçiniz</option>
                             {% for i in pozisyonlari %}
                             <option value="{{i.id}}">{{i.kategori_isimi}}</option>
@@ -1493,7 +1493,7 @@ function openPersonelDetails(id) {
                     </div>
                     <div class="form-element">
                         <label for="para-birimi">{% trans "Departman" %}</label>
-                        <select id="department" name="department" required>
+                        <select id="department_duzeltme" name="department" required>
                             <option value="">Seçiniz</option>
                             {% for i in departmanlar %}
                             <option value="{{i.id}}">{{i.kategori_isimi}}</option>
@@ -1502,12 +1502,21 @@ function openPersonelDetails(id) {
                     </div>
                     <div class="form-element">
                         <label for="gunluk-ucret">{% trans "Günlük Ücret" %}</label>
-                        <input type="number" name="dailyWage" id="gunluk-ucretduzeltme">
+                        <input type="number" step="0.0001" name="dailyWage" id="gunluk_ucret_duzeltme" oninput="calculateHourlyWage()">
+                    </div>
+                    <div class="form-element">
+                        <label for="fazla_mesai_orani">{% trans "Fazla Mesai Oranı" %}</label>
+                        <input type="number" step="0.0001" name="fazla_mesai_orani_duzeltme"  id="fazla_mesai_orani" oninput="calculateHourlyWage()">
+                    </div>
+                    <div class="form-element">
+                        <label for="saatlik-ucret">{% trans "Günlük Saatlik Ücret" %}</label>
+                        <input type="number" step="0.0001" id="gunluk_saatlik_ucret_duzeltme" oninput="gunluk_saatlik()">
                     </div>
                     <div class="form-element">
                         <label for="saatlik-ucret">{% trans "Saatlik Ücret" %}</label>
-                        <input type="number" name="hourlyWage" id="saatlik-ucret" step="any">
+                        <input type="number" step="0.0001" name="hourlyWage" id="saatlik_ucret_duzeltme" oninput="calculateDailyWage()">
                     </div>
+                   
                 </div>
 
                 <div class="form-element">
@@ -1713,14 +1722,29 @@ function openPersonelDetails(id) {
                 document.getElementById('detailuygugu').innerText  = data.uyrugu;
                 document.getElementById('detaildogumtarihi').innerText  = data.dogum_tarihi;
                 document.getElementById('dateduzeltme').value  =  formatDate(data.dogum_tarihi);
+                
                 var select = document.getElementById("nationalityduzeltme"); // Select öğesini al
-                var found = false; // Eşleşme bulup bulmadığınızı kontrol etmek için bir bayrak
 
                 // Mevcut option öğelerini kontrol et
                 for (var i = 0; i < select.options.length; i++) {
                 if (select.options[i].value === data.uyrugu) {
                     select.options[i].selected = true; // Eşleşen bir seçenek bulunursa onu seçili yap
-                    found = true;
+                    break;
+                }
+                }// Yeni seçeneği select öğesine ekleyin
+                var select = document.getElementById("position_duzeltme"); // Select öğesini al
+                for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === data.calisan_pozisyonu_id) {
+                    select.options[i].selected = true; // Eşleşen bir seçenek bulunursa onu seçili yap
+                    
+                    break;
+                }
+               
+                }// Yeni seçeneği select öğesine ekleyin
+                var select = document.getElementById("department_duzeltme"); // Select öğesini al
+                for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === data.calisan_kategori_id) {
+                    select.options[i].selected = true; // Eşleşen bir seçenek bulunursa onu seçili yap
                     break;
                 }
                 }// Yeni seçeneği select öğesine ekleyin
@@ -1737,14 +1761,25 @@ function openPersonelDetails(id) {
                 if (data.para_birimi == "1") {
                     document.getElementById('detailparabirimi').innerText  = "$";
                     document.getElementById('detailucret').innerText  = data.maas+" $";
+                    document.getElementById('gunluk_ucret_duzeltme').value  =parseFloat(data.maas);
+                    document.getElementById('fazla_mesai_orani_duzeltme').value  = parseFloat(data.faza_mesai_orani);
+                    document.getElementById('gunluk_saatlik_ucret_duzeltme').value  = parseFloat(data.yevmiye);
                     document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" $";
                     document.getElementById("maaslar_sinifi").innerText =data.maas+" $";
+                    var select = document.getElementById("ucret_tipi_duzeltme_verisi"); // Select öğesini al
+                    select.options[1].selected = true;
                 } else {
                     document.getElementById('detailparabirimi').innerText  = "IQD";
                     document.getElementById('detailucret').innerText  = data.maas+" IQD";
+                    document.getElementById('gunluk_ucret_duzeltme').value  =parseFloat(data.maas);
+                    document.getElementById('fazla_mesai_orani_duzeltme').value  = parseFloat(data.faza_mesai_orani);
+                    document.getElementById('gunluk_saatlik_ucret_duzeltme').value  = parseFloat(data.yevmiye);
                     document.getElementById('detailsaatlikucret').innerText  = data.yevmiye+" IQD";
+                    var select = document.getElementById("ucret_tipi_duzeltme_verisi"); // Select öğesini al
+                    select.options[2].selected = true;
                     
                 }
+                
                                 // Belirli bir elementin innerHTML özelliğini güncelleme
                 document.getElementById('puantajGirisi').innerHTML = `<a href="/users/tally/?monthFilter=&jobTypeFilter=&personelID=${id}">Puantaj Girişi</a>`;
                 document.getElementById('odemeturu').innerHTML = `<input type="text" hidden value="${id}" name="users_id">`;

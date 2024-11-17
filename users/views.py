@@ -55,6 +55,8 @@ def personel_bilgisi_axaj(request, id):
             'id': str(id),
             'calisan_kategori': calisan.calisan_kategori.kategori_isimi,
             'calisan_pozisyonu': calisan.calisan_pozisyonu.kategori_isimi,
+            'calisan_kategori_id': str(calisan.calisan_kategori.id),
+            'calisan_pozisyonu_id': str(calisan.calisan_pozisyonu.id),
             'uyrugu': calisan.uyrugu,
             'pasaport_numarasi': calisan.pasaport_numarasi,
             'isim': calisan.isim,
@@ -65,6 +67,7 @@ def personel_bilgisi_axaj(request, id):
             'status': str(calisan.status),
             'maas': str(maasli.maas),
             'yevmiye': str(maasli.yevmiye),
+            'faza_mesai_orani': str(maasli.fazla_mesai_orani),
             'durum': "1" if maasli.durum else "0",
             'para_birimi': "1" if maasli.para_birimi else "0",
             'belgeler': [
@@ -85,7 +88,7 @@ def personel_bilgisi_axaj(request, id):
             ]
         }
         
-        #print(personel_detayi)
+        print(personel_detayi)
         return JsonResponse(personel_detayi)
 
 
