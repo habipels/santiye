@@ -22,6 +22,20 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import (
+    CustomUserSerializer, GelirBilgisiSerializer, KasaSerializer, GiderBilgisiSerializer
+)
+from django.utils.timezone import now, timedelta
+from django import template
+from django.utils.translation import gettext as _
+from django.db.models import Sum
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -53,20 +67,7 @@ def super_admin_kontrolu(request):
     else:
         return 0
 
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import (
-    CustomUserSerializer, GelirBilgisiSerializer, KasaSerializer, GiderBilgisiSerializer
-)
-from django.utils.timezone import now, timedelta
-from django import template
-from django.utils.translation import gettext as _
-from django.db.models import Sum
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+
 def gelir_yuzde_farki(customuser):
     # Bu haftanın başlangıcını ve geçen haftanın başlangıcını hesapla
     today = now().date()
