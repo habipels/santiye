@@ -55,7 +55,7 @@ if DEPLOY__:
          'channels',
          'pwa',
         #
-        'main',
+        'main',"crm",
         'users',
         "site_settings",
         "muhasebe",
@@ -254,7 +254,7 @@ else:
          'channels',
          'pwa',
         #
-        'main',
+        'main',"crm",
         'users',
         "site_settings",
         "muhasebe",

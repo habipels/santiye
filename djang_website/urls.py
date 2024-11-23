@@ -25,6 +25,7 @@ urlpatterns = [
     path("accounting/", include('muhasebe.urls', namespace='muhasebe')),
     path('admin/', admin.site.urls),
     path('users/',include("users.urls", namespace='users')),
+    path('crm/',include("crm.urls", namespace='crm')),
     path('biadago/api/',include("api.urls", namespace='api')),
     path('', include('pwa.urls')),  # PWA URL - Tolga
 
@@ -34,6 +35,7 @@ urlpatterns = [
 urlpatterns += i18n_patterns (
     path("", include('main.urls', namespace='main')),
     path('users/',include("users.urls", namespace='users')),
+    path('crm/',include("crm.urls", namespace='crm')),
     path("accounting/", include('muhasebe.urls', namespace='muhasebe')),
     
 )
