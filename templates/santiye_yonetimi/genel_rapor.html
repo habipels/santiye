@@ -96,6 +96,9 @@
     box-shadow: 0 2px 11px rgb(77 77 77 / 66%);
     border-color: #676767;
 }
+.dark-mode .mini-modal-content {
+    background: #1d1d1d;
+}
 /* Listeleme ve Silme Butonları */
 .listing {
     margin-top: 10px;
@@ -213,7 +216,10 @@
     cursor: pointer;
     transition: all 0.3s ease;
 }
-
+.dark-mode .rapor-buton {
+    background-color: #2b2b2b;
+    color: #9c9c9c;
+}
 .rapor-buton:hover {
     background-color: #052941;
     color: white;
@@ -316,7 +322,7 @@
     flex: 1 1 18%; /* 5 kutucuk için eşit genişlik */
     min-width: 100px;
     padding: 10px;
-    background-color: #e5e8ea;
+    background-color: #f4f6f8;
     border: 1px solid #ddd;
     border-radius: 5px;
     text-align: center;
@@ -378,6 +384,126 @@
         padding: 10px 15px;
     }
 }
+/* Genel Ayarlar */
+.dark-mode .content-container {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dark-mode .form-container {
+    background-color: transparent;
+    color: #e0e0e0;
+}
+
+.dark-mode .form-group {
+    margin-bottom: 20px;
+}
+
+/* Input ve Textarea */
+.dark-mode .input-kayip {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+.dark-mode .input-kayip:focus {
+    border-color: #24d6b5;
+    box-shadow: 0 0 5px rgba(36, 214, 181, 0.8);
+}
+
+/* Info Box */
+.dark-mode .info-box {
+    background-color: #2b2b2b;
+    border-left: 4px solid #24d6b5;
+    color: #e0e0e0;
+}
+
+.dark-mode .info-box h4 {
+    color: #24d6b5;
+}
+
+.dark-mode .info-box p,
+.dark-mode .info-box ul {
+    color: #c0c0c0;
+}
+
+/* Cancel Buton */
+.dark-mode .cancel-button {
+    background-color: transparent;
+    color: #ff8686;
+    border: 1px solid #ff8686;
+}
+
+.dark-mode .cancel-button:hover {
+    background-color: #ff5c5c;
+    color: #fff;
+}
+
+/* Custom Button */
+.dark-mode .custom-button {
+    background-color: transparent;
+    color: #24d6b5;
+    border: 2px solid #24d6b5;
+}
+
+.dark-mode .custom-button:hover {
+    background-color: #24d6b5;
+    color: #000;
+}
+
+/* Dinamik İçerik */
+.dark-mode #dynamicContent {
+    background-color: #2b2b2b;
+    border: 1px solid #555;
+    color: #e0e0e0;
+}
+
+/* Header Stats Info Boxes */
+.dark-mode .header-stats-info-boxes {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+}
+
+/* Info Stats Box */
+.dark-mode .info-stats-box,
+.dark-mode .info-stats-box-total {
+    background-color: #333;
+    border: 1px solid #555;
+    color: #e0e0e0;
+}
+
+.dark-mode .info-stats-box:hover,
+.dark-mode .info-stats-box-total:hover {
+    background-color: #444;
+    transform: translateY(-3px);
+    box-shadow: 0 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+/* Info Stats Label */
+.dark-mode .info-stats-label {
+    color: #bbb;
+}
+
+/* Info Stats Value */
+.dark-mode .info-stats-value {
+    color: #24d6b5;
+}
+
+.dark-mode .info-stats-value-total {
+    color: #72e0c8;
+}
+
+/* Mobil Uyum */
+@media (max-width: 768px) {
+    .dark-mode .header-stats-info-boxes {
+        background-color: #1e1e1e;
+    }
+
+    .dark-mode .info-stats-box {
+        background-color: #333;
+        text-align: left;
+    }
+}
 
 </style>
 
@@ -405,25 +531,24 @@
 
     <div class="large-stats-card table-card table-detail-card">
         <div class="stats-header">
-<div class="header-stats-info-boxes">
-    <div class="info-stats-box-total">
-        <h4 class="info-stats-label">{% trans "Toplam Kayıp Gün Sayısı" %}</h4>
-        <p class="info-stats-value-total" id="totalLossDays">15</p>
-    </div>
-    <div class="info-stats-box">
-        <h4 class="info-stats-label">{% trans "Hava Durumu Kaynaklı Kayıp Gün" %}</h4>
-        <p class="info-stats-value" id="weatherLossDays">5</p>
-    </div>
-    <div class="info-stats-box">
-        <h4 class="info-stats-label">{% trans "Üst Yüklenici Kaynaklı Kayıp Gün" %}</h4>
-        <p class="info-stats-value" id="contractorLossDays">7</p>
-    </div>
-    <div class="info-stats-box">
-        <h4 class="info-stats-label">{% trans "Elektrik Kaynaklı Kayıp Gün" %}</h4>
-        <p class="info-stats-value" id="electricLossDays">3</p>
-    </div>
-</div>
-            
+                <div class="header-stats-info-boxes">
+                    <div class="info-stats-box-total">
+                        <h4 class="info-stats-label">{% trans "Toplam Kayıp Gün Sayısı" %}</h4>
+                        <p class="info-stats-value-total" id="totalLossDays">15</p>
+                    </div>
+                    <div class="info-stats-box">
+                        <h4 class="info-stats-label">{% trans "Hava Durumu Kaynaklı Kayıp Gün" %}</h4>
+                        <p class="info-stats-value" id="weatherLossDays">5</p>
+                    </div>
+                    <div class="info-stats-box">
+                        <h4 class="info-stats-label">{% trans "Üst Yüklenici Kaynaklı Kayıp Gün" %}</h4>
+                        <p class="info-stats-value" id="contractorLossDays">7</p>
+                    </div>
+                    <div class="info-stats-box">
+                        <h4 class="info-stats-label">{% trans "Elektrik Kaynaklı Kayıp Gün" %}</h4>
+                        <p class="info-stats-value" id="electricLossDays">3</p>
+                    </div>
+                </div>
             <div class="stats-search">
                 <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
                 <button><i class="icon icon-search"></i></button>
@@ -944,8 +1069,11 @@
             let datatable = $('#datatable').DataTable({
                 paging: true,
                 searching: true,
-                info: false,
+                info: true,
                 ordering: true,
+                language: {
+            info: "{% trans 'Toplam _TOTAL_ rapordan _START_ ile _END_ arası gösteriliyor' %}",
+        },
             dom: 'Btip', // Butonları etkinleştirir
             buttons: [
                 {
