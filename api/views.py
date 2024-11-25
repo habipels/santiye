@@ -1055,14 +1055,10 @@ def blogtan_kaleme_ilerleme_takibi_api(request, id):
 @permission_classes([IsAuthenticated])
 def ilerleme_kaydet_api(request):
     try:
-        kalem = request.data.getlist("kalem")
-        tumbilgi = request.data.getlist("tumbilgi")
+        kalem = request.data.get("kalem")
+        tumbilgi = request.data.get("tumbilgi")
         
-        a = []
-        for i in tumbilgi:
-            k = i.split(",")
-            for j in k:
-                a.append(j)
+        a = tumbilgi.split(",")
 
         # Seçilen kalemleri tamamlandı olarak işaretle
         for i in kalem:
@@ -1071,8 +1067,7 @@ def ilerleme_kaydet_api(request):
             # Güncellenen nesneleri serileştir
             updated_item = santiye_kalemlerin_dagilisi.objects.get(id=int(i))
             updated_serializer = SantiyeKalemlerinDagilisiSerializer(updated_item)
-
-        # Seçilmeyen kalemleri tamamlanmadı olarak işaretle
+        
         for i in a:
             if i != "":
                 dagilis = santiye_kalemlerin_dagilisi.objects.filter(id=int(i)).update(tamamlanma_bilgisi=False)
