@@ -332,7 +332,7 @@ var options = {
         type: 'image',
         opacity: 1,
         image: {
-            src: ['/static/images/users/avatar-1.jpg', '/static/images/users/avatar-2.jpg'],
+            src: ['/static/images/users/profile.png', '/static/images/users/avatar-2.jpg'],
             width: 40,
             height: 40
         }

@@ -55,7 +55,7 @@ var rate = 0;
 var Invoices = [{
     invoice_no: '25000351',
     customer: 'Valentine Morin',
-    img: 'avatar-1.jpg',
+    img: 'profile.png',
     email: "euismod.enim@outlook.net",
     date: new Date(2021, 3, d - 23, 21, 58),
     invoice_amount: 875,
@@ -567,7 +567,7 @@ var Invoices = [{
 }, {
     invoice_no: '25000359',
     customer: 'Christian Cardenas',
-    img: 'avatar-1.jpg',
+    img: 'profile.png',
     email: "id.erat@aol.org",
     date: new Date(2022, 1, d - 20, 21, 58),
     invoice_amount: 875,
@@ -1015,7 +1015,7 @@ var Invoices = [{
 }, {
     invoice_no: '25000366',
     customer: 'Paki Grimes',
-    img: 'avatar-1.jpg',
+    img: 'profile.png',
     email: "ante.lectus.convallis@google.com",
     date: new Date(2021, 3, d - 23, 21, 58),
     invoice_amount: 875,

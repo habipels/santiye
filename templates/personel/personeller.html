@@ -11,12 +11,12 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
-                    {% trans "Personnel" %}
+                    {% trans "Personel" %}
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans "Dashboard" %}</a></li>
                     <li><a href="#">{% trans "Employee Management" %}</a></li>
-                    <li><a href="#">{% trans "Personnel" %}</a></li>
+                    <li><a href="#">{% trans "Personel" %}</a></li>
                 </ul>
             </div>
 
@@ -34,7 +34,7 @@
             
             <div class="employeep" onclick="openPersonelDetails('{{i.id}}')">
                 <div class="employeep-image">
-                <img src="{% if i.profile %}{{i.profile.url}}{% else %}https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png{% endif %}" alt="{% trans 'employee' %}">
+                <img src="{% if i.profile %}{{i.profile.url}}{% else %}{% static 'go/content/images/default-profile.png' %}{% endif %}" alt="{% trans 'employee' %}">
                     
                 </div>
                 <div class="employeep-name">{{i.isim}} {{i.soyisim}}</div>
@@ -224,8 +224,8 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
-                            onclick="closeModal('maas-olustur')">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Devam Et</button>
+                            onclick="closeModal('maas-olustur')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Devam Et' %}</button>
                     </div>
                 </form>
             </div>
@@ -235,14 +235,14 @@
 <div class="modal" id="maasOdeModal">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Maaş Öde
+                {% trans 'Maaş Öde' %}
             </div>
             <div class="modal-body">
                 <form enctype="multipart/form-data" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet_2' hashler %}">
                     {% csrf_token %} 
                     <div id="odemeturuu" ></div>
                     <div class="form-element">
-                        <label for="maas-ayi">Maaş Ayı</label>
+                        <label for="maas-ayi">{% trans 'Maaş Ayı' %}</label>
                         <select required id="maasAy" name="maas_ayi">
                             <option value="" selected disabled></option>
                             <option value="Ay">Ay</option>
@@ -251,7 +251,7 @@
                         </select>
                     </div>
                     <div class="form-element">
-                        <label for="kalan-bakiye">Kalan Bakiye</label>
+                        <label for="kalan-bakiye">{% trans 'Kalan Bakiye' %}</label>
                         <input required type="number"  name="tutar" id="maasBakiye"  value="0">
                     </div>
                     <div class="form-element">
@@ -259,7 +259,7 @@
                         <input required type="number" name="kur"  class="form-control" placeholder="Kur">
                     </div>
                     <div class="form-element">
-                        <label for="odeme-tarihi">Ödeme Tarihi</label>
+                        <label for="odeme-tarihi">{% trans 'Ödeme Tarihi' %}</label>
                         <input required type="date" name="odeme_tarihi">
                     </div>
                     <div class="form-element">
@@ -267,11 +267,11 @@
                         <textarea id="avansAciklama" name="aciklama"></textarea>
                     </div>
                     <div class="form-element">
-                        <label for="ekler">Dosya Yükle</label>
+                        <label for="ekler">{% trans 'Dosya Yükle' %}</label>
 
                         <div class="file-input">
                             <label for="ekler">
-                                <img src="./content/images/illustration-upload.png">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
 
                                 <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
                             </label>
@@ -284,8 +284,8 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button"
-                            onclick="closeModal('maasOdeModal')">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Maaş Öde</button>
+                            onclick="closeModal('maasOdeModal')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Maaş Öde' %}</button>
                     </div>
                 </form>
             </div>
@@ -314,15 +314,15 @@
                         </select>
                     </div>
                     <div class="form-element">
-                        <label for="avansTutar">Ödeme Tarihi</label>
+                        <label for="avansTutar">{% trans 'Ödeme Tarihi' %}</label>
                         <input required type="date" name="odeme_tarihi"  >
                     </div>
                     <div class="form-element">
-                        <label for="tutar">Tutar</label>
+                        <label for="tutar">{% trans 'Tutar' %}</label>
                         <input required type="number" name="tutar" id="avansTutar">
                     </div>
                     <div class="form-element">
-                        <label for="kur">Kur</label>
+                        <label for="kur">{% trans 'Kur' %}</label>
                         <input required type="number" name="kur" >
                     </div>
                     
@@ -331,11 +331,11 @@
                         <textarea id="avansAciklama" name="aciklama"></textarea>
                     </div>
                     <div class="form-element">
-                        <label for="ekler">Dosya Yükle</label>
+                        <label for="ekler">{% trans 'Dosya Yükle' %}</label>
 
                         <div class="file-input">
                             <label for="ekler">
-                                <img src="./content/images/illustration-upload.png">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
 
                                 <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
                             </label>
@@ -402,10 +402,10 @@
                     <div class="form-element">
                         <label for="uyruk">{% trans "Uyruğu" %}</label>
                         <select id="nationality" name="nationality" class="form-control" required>
-                            <option value="">Seçiniz</option>
-                            <option value="Türkiye">Türkiye</option>
-                            <option value="Irak">Irak</option>
-                            <option value="Suriye">Suriye</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
+                            <option value="Türkiye">{% trans 'Türkiye' %}</option>
+                            <option value="Irak">{% trans 'Irak' %}</option>
+                            <option value="Suriye">{% trans 'Suriye' %}</option>
                         </select>
                     </div>
                     <div class="form-element">
@@ -444,7 +444,7 @@
                 <div class="form-element">
                         <label for="date">{% trans "Pozisyonu" %}</label>
                         <select id="position" name="position" class="form-control" required>
-                            <option value="">Seçiniz</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
                             {% for i in pozisyonlari %}
                             <option value="{{i.id}}">{{i.kategori_isimi}}</option>
                             {% endfor %}
@@ -453,12 +453,15 @@
                     <div class="form-element">
                         <label for="para-birimi">{% trans "Departman" %}</label>
                         <select id="department" name="department" required>
-                            <option value="">Seçiniz</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
                             {% for i in departmanlar %}
                             <option value="{{i.id}}">{{i.kategori_isimi}}</option>
                             {% endfor %}
                         </select>
                     </div>
+                    </div>
+
+                <div class="form-row">
                     <div class="form-element">
     <label for="gunluk-ucret">{% trans "Günlük Ücret" %}</label>
     <input type="number" step="0.0001" name="dailyWage" id="gunluk-ucret" oninput="calculateHourlyWage()">
@@ -467,6 +470,9 @@
         <label for="saatlik-ucret">{% trans "Günlük Saatlik Ücret" %}</label>
         <input type="number" step="0.0001" id="gunluk_saatlik-ucret" oninput="gunluk_saatlik()">
     </div>
+    </div>
+
+                <div class="form-row">
     <div class="form-element">
         <label for="fazla_mesai_orani">{% trans "Fazla Mesai Oranı" %}</label>
         <input type="number" step="0.0001" name="fazla_mesai_orani" value="0.20" id="fazla_mesai_orani" oninput="calculateHourlyWage()">
@@ -501,8 +507,8 @@
                 
 
                 <div class="form-actions">
-                    <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
-                    <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
+                    <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="submit">{% trans "Personel Ekle" %}</button>
                 </div>
             </form>
             </div>
@@ -556,10 +562,10 @@
                     <div class="form-element">
                         <label for="uyruk">{% trans "Uyruğu" %}</label>
                         <select id="nationality" name="nationality" class="form-control" required>
-                            <option value="">Seçiniz</option>
-                            <option value="Türkiye">Türkiye</option>
-                            <option value="Irak">Irak</option>
-                            <option value="Suriye">Suriye</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
+                            <option value="Türkiye">{% trans 'Türkiye' %}</option>
+                            <option value="Irak">{% trans 'Irak' %}</option>
+                            <option value="Suriye">{% trans 'Suriye' %}</option>
                         </select>
                     </div>
                     <div class="form-element">
@@ -598,7 +604,7 @@
                 <div class="form-element">
                         <label for="date">{% trans "Pozisyonu" %}</label>
                         <select id="position" name="position" class="form-control" required>
-                            <option value="">Seçiniz</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
                             {% for i in pozisyonlari %}
                             <option value="{{i.id}}">{{i.kategori_isimi}}</option>
                             {% endfor %}
@@ -607,12 +613,15 @@
                     <div class="form-element">
                         <label for="para-birimi">{% trans "Departman" %}</label>
                         <select id="department" name="department" required>
-                            <option value="">Seçiniz</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
                             {% for i in departmanlar %}
                             <option value="{{i.id}}">{{i.kategori_isimi}}</option>
                             {% endfor %}
                         </select>
                     </div>
+                    </div>
+
+                <div class="form-row">
                     <div class="form-element">
                         <label for="gunluk-ucret">{% trans "Günlük Ücret" %}</label>
                         <input type="number" name="dailyWage" id="gunluk-ucret">
@@ -647,8 +656,8 @@
             
 
             <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal('personel-duzenle')">{% trans "Cancel" %}</button>
-                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-duzenle')">{% trans "Vazgeç" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Güncelle" %}</button>
             </div>
         </form>
         </div>
@@ -896,7 +905,7 @@ function openPersonelDetails(id) {
             <div class="page-info">
                 <div class="page-title">
                     <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
-                    {% trans "Personnel" %}
+                    {% trans "Personel" %}
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans "Dashboard" %}</a></li>
@@ -919,7 +928,7 @@ function openPersonelDetails(id) {
             
             <div class="employeep" onclick="openPersonelDetails('{{i.id}}')">
                 <div class="employeep-image">
-                <img src="{% if i.profile %}{{i.profile.url}}{% else %}https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png{% endif %}" alt="{% trans 'employee' %}">
+                <img src="{% if i.profile %}{{i.profile.url}}{% else %}{% static 'go/content/images/default-profile.png' %}{% endif %}" alt="{% trans 'employee' %}">
                     
                 </div>
                 <div class="employeep-name">{{i.isim}} {{i.soyisim}}</div>
@@ -1158,7 +1167,7 @@ function openPersonelDetails(id) {
 
                         <div class="file-input">
                             <label for="ekler">
-                                <img src="./content/images/illustration-upload.png">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
 
                                 <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
                             </label>
@@ -1222,7 +1231,7 @@ function openPersonelDetails(id) {
 
                         <div class="file-input">
                             <label for="ekler">
-                                <img src="./content/images/illustration-upload.png">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
 
                                 <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
                             </label>
@@ -1244,157 +1253,146 @@ function openPersonelDetails(id) {
 </div>
 
 <div class="modal" id="personel-olustur">
-        <div class="modal-inner" style="width: 724px;">
-            <div class="modal-header">
-                {% trans "Personel Ekle" %}
-            </div>
-            <div class="modal-body">
-
-            <form id="addPersonForm" method="post" action="/{{dil}}{% url 'user:personeller_ekle' %}"  enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="form-row">
-                        <div class="form-element add-employee-image">
-                            <img src="{% static 'go/content/images/default-profile.png' %}" id="personel-olustur-img">
-                            <div class="file-input">
-                                <label for="personel-profile">
-                                    <button type="button"><i class="icon icon-file"></i> {% trans "Dosya Seçiniz" %}</button>
-                                </label>
-                                <input type="file" name="profilePicture"id="personel-profile">
-                            </div>
-                            <script>
-                                $('#personel-profile').change(function (event) {
-                                    const file = event.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = function (e) {
-                                            $('#personel-olustur-img').attr('src', e.target.result);
-                                        }
-                                        reader.readAsDataURL(file);
-                                    }
-                                });
-                            </script>
-                        </div>
-                        <div class="form-element">
-                            <label for="adsoyad">{% trans "Adı Soyadı" %}</label>
-                            <input type="text" name="firstName" id="adsoyad">
-                            <input type="text" name="lastName" id="adsoyad">
+    <div class="modal-inner" style="width: 724px;">
+        <div class="modal-header">
+            {% trans "Personel Ekle" %}
+        </div>
+        <div class="modal-body">
+            <form id="addPersonForm" method="post" action="/{{dil}}{% url 'user:personeller_ekle' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-element add-employee-image">
+                        <img src="{% static 'go/content/images/default-profile.png' %}" id="personel-olustur-img" alt="Default Profile">
+                        <div class="file-input">
+                            <label for="personel-profile">
+                                <button type="button">
+                                    <i class="icon icon-file"></i> {% trans "Dosya Seçiniz" %}
+                                </button>
+                            </label>
+                            <input type="file" name="profilePicture" id="personel-profile">
                         </div>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-element">
-                            <label for="pasaport-no">{% trans "Pasaport No" %}</label>
-                            <input type="text" name="passportNo" id="pasaport-no">
-                        </div>
-                        <div class="form-element">
-                            <label for="uyruk">{% trans "Uyruğu" %}</label>
-                            <select id="nationality" name="nationality" class="form-control" required>
-                                <option value="">Seçiniz</option>
-                                <option value="Türkiye">Türkiye</option>
-                                <option value="Irak">Irak</option>
-                                <option value="Suriye">Suriye</option>
-                            </select>
-                        </div>
-                        <div class="form-element">
-                            <label for="date">{% trans "Doğum Tarihi" %}</label>
-                            <input type="date" name="dob"  id="date">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        
-                        <div class="form-element">
-                            <label for="telefon-no">{% trans "Telefon Numarası" %}</label>
-                            <input type="text" name="phoneNumber" id="telefon-no">
-                        </div>
-                        <div class="form-element">
-                            <label for="ucret-tipi">{% trans "Ödeme Şekli" %}</label>
-                            <select name="salaryType" id="ucret-tipi">
-                                <option value="" selected disabled></option>
-                                <option value="Yevmiye">{% trans "Günlük Yevmiye" %}</option>
-                                <option value="maas">{% trans "Aylık Maaş" %}</option>
-                                
-                            </select>
-                        </div>
-                        <div class="form-element">
-                            <label for="ucret-tipi">{% trans "Para Birimi" %}</label>
-                            <select name="currency" id="ucret-tipi">
-                                <option value="" selected disabled></option>
-                                <option value="USD">{% trans "USD" %}</option>
-                                <option value="IQD">{% trans "IQD" %}</option>
-                                
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
                     <div class="form-element">
-                            <label for="date">{% trans "Pozisyonu" %}</label>
-                            <select id="position" name="position" class="form-control" required>
-                                <option value="">Seçiniz</option>
-                                {% for i in pozisyonlari %}
+                        <label for="adsoyad">{% trans "Adı Soyadı" %}</label>
+                        <input type="text" name="firstName" id="adsoyad" placeholder="{% trans 'Adı' %}">
+                        <input type="text" name="lastName" placeholder="{% trans 'Soyadı' %}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-element">
+                        <label for="pasaport-no">{% trans "Pasaport No" %}</label>
+                        <input type="text" name="passportNo" id="pasaport-no">
+                    </div>
+                    <div class="form-element">
+                        <label for="nationality">{% trans "Uyruğu" %}</label>
+                        <select id="nationality" name="nationality" class="form-control" required>
+                            <option value="">{% trans 'Seçiniz' %}</option>
+                            <option value="Türkiye">{% trans 'Türkiye' %}</option>
+                            <option value="Irak">{% trans 'Irak' %}</option>
+                            <option value="Suriye">{% trans 'Suriye' %}</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="date">{% trans "Doğum Tarihi" %}</label>
+                        <input type="date" name="dob" id="date">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-element">
+                        <label for="telefon-no">{% trans "Telefon Numarası" %}</label>
+                        <input type="text" name="phoneNumber" id="telefon-no">
+                    </div>
+                    <div class="form-element">
+                        <label for="ucret-tipi">{% trans "Ödeme Şekli" %}</label>
+                        <select name="salaryType" id="ucret-tipi">
+                            <option value="" selected disabled>{% trans 'Seçiniz' %}</option>
+                            <option value="Yevmiye">{% trans "Günlük Yevmiye" %}</option>
+                            <option value="maas">{% trans "Aylık Maaş" %}</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="para-birimi">{% trans "Para Birimi" %}</label>
+                        <select name="currency" id="para-birimi">
+                            <option value="" selected disabled>{% trans 'Seçiniz' %}</option>
+                            <option value="USD">{% trans "USD" %}</option>
+                            <option value="IQD">{% trans "IQD" %}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-element">
+                        <label for="position">{% trans "Pozisyonu" %}</label>
+                        <select id="position" name="position" class="form-control" required>
+                            <option value="">{% trans 'Seçiniz' %}</option>
+                            {% for i in pozisyonlari %}
                                 <option value="{{i.id}}">{{i.kategori_isimi}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-element">
-                            <label for="para-birimi">{% trans "Departman" %}</label>
-                            <select id="department" name="department" required>
-                                <option value="">Seçiniz</option>
-                                {% for i in departmanlar %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="department">{% trans "Departman" %}</label>
+                        <select id="department" name="department" required>
+                            <option value="">{% trans 'Seçiniz' %}</option>
+                            {% for i in departmanlar %}
                                 <option value="{{i.id}}">{{i.kategori_isimi}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    <div class="form-element">
-        <label for="gunluk-ucret">{% trans "Günlük Ücret" %}</label>
-        <input type="number" step="0.0001" name="dailyWage" id="gunluk-ucret" oninput="calculateHourlyWage()">
-    </div>
-    <div class="form-element">
-        <label for="fazla_mesai_orani">{% trans "Fazla Mesai Oranı" %}</label>
-        <input type="number" step="0.0001" name="fazla_mesai_orani" value="0.20" id="fazla_mesai_orani" oninput="calculateHourlyWage()">
-    </div>
-    <div class="form-element">
-        <label for="saatlik-ucret">{% trans "Günlük Saatlik Ücret" %}</label>
-        <input type="number" step="0.0001" id="gunluk_saatlik-ucret" oninput="gunluk_saatlik()">
-    </div>
-    <div class="form-element">
-        <label for="saatlik-ucret">{% trans "Saatlik Ücret" %}</label>
-        <input type="number" step="0.0001" name="hourlyWage" id="saatlik-ucret" oninput="calculateDailyWage()">
-    </div>
+                            {% endfor %}
+                        </select>
                     </div>
+                </div>
 
+                <div class="form-row">
                     <div class="form-element">
-                        <label for="not">{% trans "Not" %}</label>
-                        <input type="text" name="not" id="not">
+                        <label for="gunluk-ucret">{% trans "Günlük Ücret" %}</label>
+                        <input type="number" step="0.0001" name="dailyWage" id="gunluk-ucret" oninput="calculateHourlyWage()">
                     </div>
+                    <div class="form-element">
+                        <label for="fazla_mesai_orani">{% trans "Fazla Mesai Oranı" %}</label>
+                        <input type="number" step="0.0001" name="fazla_mesai_orani" value="0.20" id="fazla_mesai_orani" oninput="calculateHourlyWage()">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-element">
+                        <label for="gunluk_saatlik-ucret">{% trans "Günlük Saatlik Ücret" %}</label>
+                        <input type="number" step="0.0001" id="gunluk_saatlik-ucret" oninput="gunluk_saatlik()">
+                    </div>
+                    <div class="form-element">
+                        <label for="saatlik-ucret">{% trans "Saatlik Ücret" %}</label>
+                        <input type="number" step="0.0001" name="hourlyWage" id="saatlik-ucret" oninput="calculateDailyWage()">
+                    </div>
+                </div>
+
+                <div class="form-element">
+                    <label for="not">{% trans "Not" %}</label>
+                    <input type="text" name="not" id="not">
+                </div>
 
                 <div class="form-element">
                     <label for="ekler">{% trans "Döküman Yükle" %}</label>
-
                     <div class="file-input">
                         <label for="ekler">
-                            <img src="{% static 'go/content/images/illustration-upload.png' %}">
-
-                            <button><i class="icon icon-file"></i> {% trans "Dosya Seçiniz" %}</button>
+                            <img src="{% static 'go/content/images/illustration-upload.png' %}" alt="{% trans 'Upload Illustration' %}">
+                            <button>
+                                <i class="icon icon-file"></i> {% trans "Dosya Seçiniz" %}
+                            </button>
                         </label>
-
                         <input type="file" name="ekler" id="ekler">
                     </div>
-
-                    <ul class="fileList">
-                    </ul>
+                    <ul class="fileList"></ul>
                 </div>
-            
 
-            <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Cancel" %}</button>
-                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
-            </div>
-        </form>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal('personel-olustur')">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="submit">{% trans "Personel Ekle" %}</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 
 <div class="modal" id="personel-duzenle">
     <div class="modal-inner" style="width: 724px;">
@@ -1443,10 +1441,10 @@ function openPersonelDetails(id) {
                     <div class="form-element">
                         <label for="uyruk">{% trans "Uyruğu" %}</label>
                         <select id="nationalityduzeltme" name="nationality" class="form-control" required>
-                            <option value="">Seçiniz</option>
-                            <option value="Türkiye">Türkiye</option>
-                            <option value="Irak">Irak</option>
-                            <option value="Suriye">Suriye</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
+                            <option value="Türkiye">{% trans 'Türkiye' %}</option>
+                            <option value="Irak">{% trans 'Irak' %}</option>
+                            <option value="Suriye">{% trans 'Suriye' %}</option>
                         </select>
                     </div>
                     <div class="form-element">
@@ -1485,7 +1483,7 @@ function openPersonelDetails(id) {
                 <div class="form-element">
                         <label for="date">{% trans "Pozisyonu" %}</label>
                         <select id="position_duzeltme" name="position" class="form-control" required>
-                            <option value="">Seçiniz</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
                             {% for i in pozisyonlari %}
                             <option value="{{i.id}}">{{i.kategori_isimi}}</option>
                             {% endfor %}
@@ -1494,12 +1492,15 @@ function openPersonelDetails(id) {
                     <div class="form-element">
                         <label for="para-birimi">{% trans "Departman" %}</label>
                         <select id="department_duzeltme" name="department" required>
-                            <option value="">Seçiniz</option>
+                            <option value="">{% trans 'Seçiniz' %}</option>
                             {% for i in departmanlar %}
                             <option value="{{i.id}}">{{i.kategori_isimi}}</option>
                             {% endfor %}
                         </select>
                     </div>
+                    </div>
+
+                <div class="form-row">
                     <div class="form-element">
                         <label for="gunluk-ucret">{% trans "Günlük Ücret" %}</label>
                         <input type="number" step="0.0001" name="dailyWage" id="gunluk-ucretduzelt" oninput="calculateHourlyWage()">
@@ -1508,6 +1509,9 @@ function openPersonelDetails(id) {
                         <label for="fazla_mesai_orani">{% trans "Fazla Mesai Oranı" %}</label>
                         <input type="number" step="0.0001" name="fazla_mesai_orani" value="0.20" id="fazla_mesai_oraniduzelt" oninput="calculateHourlyWage()">
                     </div>
+                    </div>
+
+                <div class="form-row">
                     <div class="form-element">
                         <label for="saatlik-ucret">{% trans "Günlük Saatlik Ücret" %}</label>
                         <input type="number" step="0.0001" id="gunluk_saatlik-ucretduzelt" oninput="gunluk_saatlik()">
@@ -1543,8 +1547,8 @@ function openPersonelDetails(id) {
             
 
             <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal('personel-duzenle')">{% trans "Cancel" %}</button>
-                <button class="form-action-primary" type="submit">{% trans "Continue" %}</button>
+                <button class="form-action-secondary" type="button" onclick="closeModal('personel-duzenle')">{% trans "Vazgeç" %}</button>
+                <button class="form-action-primary" type="submit">{% trans "Güncelle" %}</button>
             </div>
         </form>
         </div>
