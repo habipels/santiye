@@ -14,7 +14,8 @@ from hashids import Hashids
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
 import requests
-from main.views import sozluk_yapisi
+from main.views import sozluk_yapisi ,get_object_or_none
+
 def crm_dashboard(request):
     content = sozluk_yapisi()
     return render(request,"crm/crm-dashboard.html",content)
@@ -38,10 +39,23 @@ def crm_musteri_detayi(request):
     content = sozluk_yapisi()
     return render(request,"crm/musteri-detay.html",content)
 
-def crm_musteri_yonetimi(request):
+def musteri_sayfasi(request):
     content = sozluk_yapisi()
     return render(request,"crm/musteri-yonetimi.html",content)
-
+def musteri_ekleme(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    return redirect("crm:musteri_sayfasi")
 
 def crm_talepler_sikayetler(request):
     content = sozluk_yapisi()
