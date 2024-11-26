@@ -563,6 +563,11 @@ def personeller_sayfasi(request):
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
         content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
+        bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = kullanici).last()
+        if bilgi.gunluk_calisma_saati:
+            pass
+        else:
+            return redirect("accounting:muhasebe_ayarlari")
     return render(request,"personel/personeller.html",content)
 #
 
