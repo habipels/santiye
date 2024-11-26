@@ -60,6 +60,7 @@ if DEPLOY__:
         "site_settings",
         "muhasebe",
         "site_info",
+        'django_extensions',
     ]
     DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
     AUTH_USER_MODEL = 'users.CustomUser'

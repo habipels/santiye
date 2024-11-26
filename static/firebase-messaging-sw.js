@@ -1,4 +1,3 @@
-// Firebase SDK'yı dahil et
 importScripts("https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js");
 importScripts("https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js");
 

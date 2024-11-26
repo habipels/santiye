@@ -9,18 +9,7 @@ app_name = "crm"
 #
 # Dil kodu eklenmeyen yol
 urlpatterns = [
-    # Service Worker
-    re_path(
-        r'^service-worker\.js$',
-        serve,
-        {'document_root': os.path.join(settings.BASE_DIR, 'static'), 'path': 'service-worker.js'},
-    ),
-    # Firebase Messaging Service Worker
-    re_path(
-        r'^firebase-messaging-sw\.js$',
-        serve,
-        {'document_root': os.path.join(settings.BASE_DIR, 'static'), 'path': 'firebase-messaging-sw.js'},
-    ),
+
     path("", views.crm_dashboard, name="crm_dashboard"),
     path("dairedetayi", views.crm_dairedetayi, name="crm_dairedetayi"),
     path("daireyonetimi", views.crm_daireyonetimi, name="crm_daireyonetimi"),
