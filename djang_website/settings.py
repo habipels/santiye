@@ -269,6 +269,7 @@ else:
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
         #
+        'djang_website.middleware.ExcludeFirebaseSWMiddleware',  # Doğrudan sınıf adı
         'django.middleware.locale.LocaleMiddleware',
         'simple_history.middleware.HistoryRequestMiddleware',
         
@@ -412,4 +413,3 @@ PWA_APP_ICONS = [
     }
 ]
 PWA_APP_OFFLINE_PAGE = '/offline/'
-
