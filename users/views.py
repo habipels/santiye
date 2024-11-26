@@ -803,6 +803,7 @@ def personelleri_düzenle(request):
     else:
         kullanici = request.user
     if request.POST:
+        idbilgisi = request.POST.get("idbilgisi")
         profilePicture = request.FILES.get("profilePicture")
         passportNo = request.POST.get("passportNo")
         firstName = request.POST.get("firstName")
@@ -821,7 +822,9 @@ def personelleri_düzenle(request):
         for i in range(1):
             #print(belgeler,documents)
             if profilePicture:
-                pass
+                duzenle = calisanlar.objects.get(id = idbilgisi)
+                duzenle.profile = profilePicture
+                duzenle.save()
             else:
                 profilePicture =None
             if salaryType == "maas":
@@ -832,13 +835,14 @@ def personelleri_düzenle(request):
                 currency = True
             else:
                 currency = False
-            bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
+            bilgi = calisanlar.objects.filter(id = idbilgisi).update(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
-            isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
-            calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
+            isim = firstName,soyisim = lastName,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
+            calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =idbilgisi),maas = dailyWage,
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
             for i in documents:
-                calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
+                calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =idbilgisi ) ,belge = i )
+        return redirect("user:personeller_sayfasi")
 #######################################################3
 #Pozisyonlar
 def personeller_kategori_sayfalari_2(request,hash):
