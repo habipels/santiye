@@ -1,6 +1,6 @@
-// Firebase SDK'ları dahil et
-importScripts('/static/firebase-app.js');
-importScripts('/static/firebase-messaging.js');
+// Firebase SDK'ları import edin (Non-Modüler Sürüm)
+importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js");
 
 // Firebase yapılandırması
 const firebaseConfig = {
@@ -21,16 +21,17 @@ const messaging = firebase.messaging();
 
 // Arka planda alınan bildirimleri işleyin
 messaging.onBackgroundMessage((payload) => {
-  console.log("[firebase-messaging-sw.js] Background Notification Received", payload);
+  console.log("[Service Worker] Background Notification Received", payload);
   const notificationTitle = payload.notification?.title || "Bildirim";
   const notificationOptions = {
     body: payload.notification?.body || "Bir mesajınız var.",
     icon: "/static/go/icon/favicon-32x32.png",
   };
+
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// PWA önbellekleme ve çevrimdışı işlevsellik
+// PWA önbellekleme için yapılandırma
 const CACHE_NAME = 'biadago-cache-v1';
 const urlsToCache = [
   '/',
@@ -46,6 +47,7 @@ const urlsToCache = [
 
 // Service Worker kurulumu ve önbelleğe alma
 self.addEventListener('install', (event) => {
+  console.log('[Service Worker] Kuruluyor...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(urlsToCache))
@@ -55,30 +57,16 @@ self.addEventListener('install', (event) => {
 
 // Fetch olayını dinleme ve önbellekten yanıt verme
 self.addEventListener('fetch', (event) => {
-  if (!navigator.onLine && event.request.url.includes('ipinfo.io')) {
-    saveRequestOffline({
-      url: event.request.url,
-      method: event.request.method,
-      headers: [...event.request.headers],
-      body: event.request.body ? event.request.body : null,
-    });
-
-    event.respondWith(
-      new Response(JSON.stringify({ error: 'You are offline, request queued.' }), {
-        headers: { 'Content-Type': 'application/json' },
-      })
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request)
-        .then((response) => response || fetch(event.request))
-        .catch(() => caches.match('/offline.html'))
-    );
-  }
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => response || fetch(event.request))
+      .catch(() => caches.match('/offline.html'))
+  );
 });
 
 // Eski cacheleri temizleme
 self.addEventListener('activate', (event) => {
+  console.log('[Service Worker] Aktivasyon tamamlandı.');
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) =>
@@ -91,13 +79,6 @@ self.addEventListener('activate', (event) => {
       )
     )
   );
-});
-
-// Background Sync: Kuyruğa alınan API isteklerini çevrim içi olduğunda gönderme
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sendQueuedRequests') {
-    event.waitUntil(sendQueuedRequests());
-  }
 });
 
 // IndexedDB işlemleri

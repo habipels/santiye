@@ -198,6 +198,20 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <script>
+document.getElementById("enable-notifications").addEventListener("click", () => {
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      console.log("Bildirim izni verildi.");
+    } else {
+      console.log("Bildirim izni reddedildi.");
+    }
+  }).catch(error => {
+    console.error("Bildirim izni isteği başarısız:", error);
+  });
+});
+
+</script>
+<script>
 document.getElementById('submitForm').addEventListener('click', function() {
     if ('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready.then(function(registration) {
