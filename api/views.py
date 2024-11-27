@@ -2392,24 +2392,21 @@ def api_katman_sayfasi(request):
     
     # Check for super admin
     if request.user.is_superuser:
-        content["profile"] = katman.objects.all().values()
+        content["katmanlar"] = katman.objects.all().values()
         content["kullanicilar"] = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id").values()
     else:
         # Regular user with `kullanicilar_db` access level
         if request.user.kullanicilar_db:
             a = get_object_or_404(bagli_kullanicilar, kullanicilar=request.user)
             if a and a.izinler.katman_gorme:
-                content["profile"] = katman.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user.kullanicilar_db).values()
-                content["insaatlar"] = santiye.objects.filter(proje_ait_bilgisi=request.user.kullanicilar_db, silinme_bilgisi=False).values()
+                content["katmanlar"] = katman.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user.kullanicilar_db).values()
+                content["santiye"] = santiye.objects.filter(proje_ait_bilgisi=request.user.kullanicilar_db, silinme_bilgisi=False).values()
             else:
                 return Response({"detail": "Yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
         else:
-            content["profile"] = katman.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user).values()
-            content["insaatlar"] = santiye.objects.filter(proje_ait_bilgisi=request.user, silinme_bilgisi=False).values()
+            content["katmanlar"] = katman.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user).values()
+            content["santiye"] = santiye.objects.filter(proje_ait_bilgisi=request.user, silinme_bilgisi=False).values()
 
-    content["santiyeler"] = content.get("profile", [])
-    content["top"] = content.get("profile", [])
-    content["medya"] = content.get("profile", [])
 
     return Response(content, status=status.HTTP_200_OK)
 
