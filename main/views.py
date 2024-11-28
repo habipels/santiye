@@ -9344,8 +9344,21 @@ def genel_rapor_sayfasi(request):
     content["urunler"] =  urunler.objects.filter(urun_ait_oldugu = kullanici,silinme_bilgisi = False)
     content["imalat_kalemleri"] =  santiye_kalemleri.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
     content["santiyeler"] = genel_rapor.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
+    from django.db.models import Sum
+    # Kaybedilen gün sayısını hesapla ve content sözlüğüne ekle
+    content["rapor_sayisi"] = genel_rapor.objects.filter(proje_ait_bilgisi=kullanici, silinme_bilgisi=False).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
 
-    
+    content["hava_durumu_kaynakli"] = genel_rapor.objects.filter(
+        kayip_gun_sebebi="1", proje_ait_bilgisi=kullanici, silinme_bilgisi=False
+    ).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
+
+    content["ust_yuklenici"] = genel_rapor.objects.filter(
+        kayip_gun_sebebi="0", proje_ait_bilgisi=kullanici, silinme_bilgisi=False
+    ).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
+
+    content["elektirik_kesintisi"] = genel_rapor.objects.filter(
+        kayip_gun_sebebi="3", proje_ait_bilgisi=kullanici, silinme_bilgisi=False
+    ).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
     return render(request,"santiye_yonetimi/genel_rapor.html",content)
 #taseron olaylari
 def genel_rapor_olustur(request):
@@ -9362,6 +9375,10 @@ def genel_rapor_olustur(request):
         imalat = request.POST.getlist("imalat")
         aciklama = request.POST.getlist("aciklama")
         aciklamalar = request.POST.getlist("aciklamalar")
+        rapor_bitis_tarihi =request.POST.get("rapor_bitis_tarihi")
+        kayipgun = request.POST.get("kayipgun")
+        kayipsebebi = request.POST.get("kayipsebebi")
+        otherReason = request.POST.get("otherReason")
         if super_admin_kontrolu(request):
             pass
         else:
@@ -9379,7 +9396,8 @@ def genel_rapor_olustur(request):
                 kullanici =  request.user
         veri = genel_rapor.objects.create(proje_ait_bilgisi = kullanici,raporu_olusturan = request.user,
                                    proje_santiye_Ait = get_object_or_none(santiye,id=secili_santiye),
-                                   tarih =rapor_tarihi)
+                                   tarih =rapor_tarihi,bitis_tarih = rapor_bitis_tarihi,kayip_gun_sayisi = float(kayipgun),
+                                   kayip_gun_aciklamasi =otherReason , kayip_gun_sebebi = kayipsebebi )
         for i in range(len(depertman)):
             genel_personel.objects.create(hangi_rapor = kullanici,
                                           proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),

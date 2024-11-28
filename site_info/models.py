@@ -299,6 +299,7 @@ class gantt_verileri(models.Model):
 
 class genel_rapor(models.Model):
     Kayip_gun_sabepleri = (
+        ('-1', '-1'),
         ('0', '0'),
         ('1', '1'),
         ('2', '2'),

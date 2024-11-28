@@ -534,19 +534,19 @@
                 <div class="header-stats-info-boxes">
                     <div class="info-stats-box-total">
                         <h4 class="info-stats-label">{% trans "Toplam Kayıp Gün Sayısı" %}</h4>
-                        <p class="info-stats-value-total" id="totalLossDays">15</p>
+                        <p class="info-stats-value-total" id="totalLossDays">{{rapor_sayisi}}</p>
                     </div>
                     <div class="info-stats-box">
                         <h4 class="info-stats-label">{% trans "Hava Durumu Kaynaklı Kayıp Gün" %}</h4>
-                        <p class="info-stats-value" id="weatherLossDays">5</p>
+                        <p class="info-stats-value" id="weatherLossDays">{{hava_durumu_kaynakli}}</p>
                     </div>
                     <div class="info-stats-box">
                         <h4 class="info-stats-label">{% trans "Üst Yüklenici Kaynaklı Kayıp Gün" %}</h4>
-                        <p class="info-stats-value" id="contractorLossDays">7</p>
+                        <p class="info-stats-value" id="contractorLossDays">{{ust_yuklenici}}</p>
                     </div>
                     <div class="info-stats-box">
                         <h4 class="info-stats-label">{% trans "Elektrik Kaynaklı Kayıp Gün" %}</h4>
-                        <p class="info-stats-value" id="electricLossDays">3</p>
+                        <p class="info-stats-value" id="electricLossDays">{{elektirik_kesintisi}}</p>
                     </div>
                 </div>
             <div class="stats-search">
@@ -559,7 +559,10 @@
             <table id="datatable">
                 <thead>
                     <tr>
-                        <th>{% trans 'Rapor Tarihi' %}</th>
+                        <th>{% trans 'Rapor Başlangıç Tarihi' %}</th>
+                        <th>{% trans 'Rapor Bitiş Tarihi' %}</th>
+                        <th>{% trans 'Kayıp Gün Sayısı' %}</th>
+                        <th>{% trans 'Kayıp Gün Açıklaması' %}</th>
                         <th>{% trans 'Şantiye' %}</th>
                         <th>{% trans 'Proje' %}</th>
                         <th>{% trans 'Oluşturan' %}</th>
@@ -574,6 +577,14 @@
                     
                     <tr>
                         <td>{{i.tarih|date:"d.m.Y"}}</td>
+                         <td>{{i.bitis_tarih|date:"d.m.Y"}}</td>
+                         <td>{{i.kayip_gun_sayisi}}</td>
+                         <td>
+                         {% if i.kayip_gun_aciklamasi %}
+                         {{i.kayip_gun_aciklamasi}}
+                         {% else %}
+                         {% endif %}
+                         </td>
                         <td>{{i.proje_santiye_Ait.proje_adi}}</td>
                         <td>{{i.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
                         <td>{{i.raporu_olusturan.last_name}}</td>
@@ -666,13 +677,13 @@
                                 <div class="form-element">
                                     <label for="kayipsebebi">{% trans "Kayıp Gün Sebebi" %}</label>
                                     <select name="kayipsebebi" id="kayipsebebi" class="input-kayip">
-                                        <option value="">{% trans "Bir sebep seçin" %}</option>
-                                        <option value="ust-yuklenici">{% trans "Üst Yüklenici Kaynaklı" %}</option>
-                                        <option value="hava-durumu">{% trans "Hava Durumu Kaynaklı" %}</option>
-                                        <option value="malzeme-tedarigi">{% trans "Malzeme Tedarik Sorunu" %}</option>
-                                        <option value="elektrik-kesintisi">{% trans "Elektrik Kesintisi" %}</option>
-                                        <option value="is-kazasi">{% trans "İş Kazası" %}</option>
-                                        <option value="diger">{% trans "Diğer" %}</option>
+                                        <option value="-1">{% trans "Bir sebep seçin" %}</option>
+                                        <option value="0">{% trans "Üst Yüklenici Kaynaklı" %}</option>
+                                        <option value="1">{% trans "Hava Durumu Kaynaklı" %}</option>
+                                        <option value="2">{% trans "Malzeme Tedarik Sorunu" %}</option>
+                                        <option value="3">{% trans "Elektrik Kesintisi" %}</option>
+                                        <option value="4">{% trans "İş Kazası" %}</option>
+                                        <option value="5">{% trans "Diğer" %}</option>
                                     </select>
                                 </div>
 
