@@ -7774,7 +7774,184 @@ def get_object_or_none(model, *args, **kwargs):
         return model.objects.get(*args, **kwargs)
     except :
         return None
+    
+
 def giderleri_excelden_ekle(request,id):
+    import openpyxl
+    Gider_excel_ekl = get_object_or_404(Gider_excel_ekleme,id = id)
+    kullanici = Gider_excel_ekl.gelir_kime_ait_oldugu
+    dataframe = openpyxl.load_workbook(Gider_excel_ekl.gelir_makbuzu)
+    dataframe1 = dataframe.active
+    data = []
+    y = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu).count()
+    for row in range(1, dataframe1.max_row):
+        a = []
+        a.append(row + 1)
+        for col in dataframe1.iter_cols(1, dataframe1.max_column):
+            a.append(col[row].value)
+        data.append(a)
+    for i in data:
+        fatura_tarihi = i[1]
+        vade_tarihi = i[2]
+        cari_bilgisi = i[3]
+        tutar = i[4]
+        tutar = float((str(str(str(tutar).replace("$",""))).replace(".","")).replace(",","."))
+        kur = i[5]
+        kategori = i[6]
+        urun = i[7]
+        etiket1 = i[8]
+        etiket2 = i[9]
+        aciklama = i[10]
+        makbuz_bilgisi = i[11]
+        if makbuz_bilgisi :
+            makbuz_bilgisi = makbuz_bilgisi
+        else:
+            makbuz_bilgisi = None
+        if get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici ):
+            cari_bilgisii = get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici )
+        else:
+
+            cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                ,cari_adi = cari_bilgisi,aciklama = "",telefon_numarasi = 0.0)
+            cari_bilgisii = get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici )
+        if get_object_or_none(gider_kategorisi,gider_kategori_adi=kategori ,gider_kategoris_ait_bilgisi = kullanici ):
+            kategorii = get_object_or_none(gider_kategorisi,gider_kategori_adi=kategori ,gider_kategoris_ait_bilgisi = kullanici )
+        else:
+
+            gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                            ,gider_kategori_adi = kategori,gider_kategorisi_renk = "#000000",aciklama = "")
+            kategorii = get_object_or_none(gider_kategorisi,gider_kategori_adi=kategori ,gider_kategoris_ait_bilgisi = kullanici )
+        if get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici ):
+            uruni = get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici )
+        else:
+
+            urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                ,urun_adi = urun,urun_fiyati = tutar)
+            uruni = get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici )
+        if get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket1 ,gider_kategoris_ait_bilgisi = kullanici ):
+            etiket1i =  get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket1 ,gider_kategoris_ait_bilgisi = kullanici )
+        else:
+
+            gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                         ,gider_etiketi_adi = etiket1)
+            etiket1i =  get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket1 ,gider_kategoris_ait_bilgisi = kullanici )
+        if get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket2 ,gider_kategoris_ait_bilgisi = kullanici ):
+            etiket2i =  get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket2 ,gider_kategoris_ait_bilgisi = kullanici )
+        else:
+
+            gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                         ,gider_etiketi_adi = etiket2)
+            etiket2i =  get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket2 ,gider_kategoris_ait_bilgisi = kullanici )
+        y = y+1
+        b = len(str(y))
+        c = 8 - b
+        m = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+str(y)
+        new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            cari_bilgisi = cari_bilgisii,
+            fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
+            gelir_kategorisii = kategorii,doviz = 1500,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = 0 )
+        new_project.save()
+        gelir_etiketi_sec = []
+        gelir_etiketi_sec.append(etiket1i)
+        gelir_etiketi_sec.append(etiket2i)
+        new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+        gider_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi =uruni,
+                            urun_fiyati = tutar,urun_indirimi = 0.0,urun_adeti = 1,
+                            gider_bilgis =  get_object_or_404(Gider_Bilgisi,id = new_project.id),
+                            aciklama = "")
+        bir = Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+                                     tutar =tutar,tarihi =fatura_tarihi,
+                                       aciklama = "",makbuz_no =m ,gelir_makbuzu = makbuz_bilgisi )
+        bir.set_gelir_makbuzu(makbuz_bilgisi)
+        gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
+    return redirect("main:ana_sayfa")
+
+
+def gelirleri_excelden_ekle(request,id):
+    import openpyxl
+    Gider_excel_ekl = get_object_or_404(Gelir_excel_ekleme,id = id)
+    kullanici = Gider_excel_ekl.gelir_kime_ait_oldugu
+    dataframe = openpyxl.load_workbook(Gider_excel_ekl.gelir_makbuzu)
+    dataframe1 = dataframe.active
+    data = []
+    y = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu).count()
+    for row in range(1, dataframe1.max_row):
+        a = []
+        a.append(row + 1)
+        for col in dataframe1.iter_cols(1, dataframe1.max_column):
+            a.append(col[row].value)
+        data.append(a)
+    for i in data:
+        fatura_tarihi = i[1]
+        vade_tarihi = i[2]
+        cari_bilgisi = i[3]
+        tutar = i[4]
+        tutar = float((str(str(str(tutar).replace("$",""))).replace(".","")).replace(",","."))
+        kur = i[5]
+        kategori = i[6]
+        urun = i[7]
+        etiket1 = i[8]
+        aciklama = i[9]
+        makbuz_bilgisi = None
+        if makbuz_bilgisi :
+            makbuz_bilgisi = makbuz_bilgisi
+        else:
+            makbuz_bilgisi = None
+        if get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici ):
+            cari_bilgisii = get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici )
+        else:
+
+            cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                ,cari_adi = cari_bilgisi,aciklama = "",telefon_numarasi = 0.0)
+            cari_bilgisii = get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici )
+        if get_object_or_none(gelir_kategorisi,gelir_kategori_adi=kategori ,gelir_kategoris_ait_bilgisi = kullanici ):
+            kategorii = get_object_or_none(gelir_kategorisi,gelir_kategori_adi=kategori ,gelir_kategoris_ait_bilgisi = kullanici )
+        else:
+
+            gelir_kategorisi.objects.create(gelir_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                            ,gelir_kategori_adi = kategori,gelir_kategorisi_renk = "#000000",aciklama = "")
+            kategorii = get_object_or_none(gelir_kategorisi,gelir_kategori_adi=kategori ,gelir_kategoris_ait_bilgisi = kullanici )
+        if get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici ):
+            uruni = get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici )
+        else:
+
+            urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                ,urun_adi = urun,urun_fiyati = tutar)
+            uruni = get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici )
+        if get_object_or_none(gelir_etiketi,gelir_etiketi_adi=etiket1 ,gelir_kategoris_ait_bilgisi = kullanici ):
+            etiket1i =  get_object_or_none(gelir_etiketi,gelir_etiketi_adi=etiket1 ,gelir_kategoris_ait_bilgisi = kullanici )
+        else:
+
+            gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+                                         ,gelir_etiketi_adi = etiket1)
+            etiket1i =  get_object_or_none(gelir_etiketi,gelir_etiketi_adi=etiket1 ,gelir_kategoris_ait_bilgisi = kullanici )
+        
+        y = y+1
+        b = len(str(y))
+        c = 8 - b
+        m = faturalardaki_gelir_gider_etiketi.objects.last().gelir_etiketi+(c*"0")+str(y)
+        new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            cari_bilgisi = cari_bilgisii,
+            fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
+            gelir_kategorisii = kategorii,doviz = 1500,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = 0 )
+        new_project.save()
+        gelir_etiketi_sec = []
+        gelir_etiketi_sec.append(etiket1i)
+        #gelir_etiketi_sec.append(etiket2i)
+        new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
+        gelir_urun_bilgisi.objects.create(
+                            urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi =uruni,
+                            urun_fiyati = tutar,urun_indirimi = 0.0,urun_adeti = 1,
+                            gider_bilgis =  get_object_or_404(Gelir_Bilgisi,id = new_project.id),
+                            aciklama = "")
+        bir = Gelir_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+                                     tutar =tutar,tarihi =fatura_tarihi,
+                                       aciklama = "",makbuz_no =m ,gelir_makbuzu = makbuz_bilgisi )
+        bir.set_gelir_makbuzu(makbuz_bilgisi)
+        gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id))
+    return redirect("main:ana_sayfa")
+def giderleri_excelden_eklei(request,id):
     import openpyxl
     
     Gider_excel_ekl = get_object_or_404(Gider_excel_ekleme,id = id)
@@ -7866,7 +8043,7 @@ def giderleri_excelden_ekle(request,id):
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
     return redirect("main:ana_sayfa")
 
-def gelirleri_excelden_ekle(request,id):
+def gelirleri_excelden_eklei(request,id):
     import openpyxl
     Gider_excel_ekl = get_object_or_404(Gelir_excel_ekleme,id = id)
     dataframe = openpyxl.load_workbook(Gider_excel_ekl.gelir_makbuzu)

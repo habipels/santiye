@@ -298,11 +298,23 @@ class gantt_verileri(models.Model):
 
 
 class genel_rapor(models.Model):
+    Kayip_gun_sabepleri = (
+        ('0', '0'),
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+    )
     raporu_olusturan = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="raporu_olusturan")
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     tarih = models.DateTimeField(default=datetime.now,null=True)
+    bitis_tarih = models.DateTimeField(default=datetime.now,null=True)
     raporu_onaylayan = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="raporu_onaylayan")
+    kayip_gun_sayisi = models.IntegerField(default=0,verbose_name="Kayıp Gün Sayısı")
+    kayip_gun_aciklamasi = models.CharField(max_length=200,verbose_name="Kayıp Gün Açıklaması",blank=True,null=True)
+    kayip_gun_sebebi = models.CharField(default='0',choices=Kayip_gun_sabepleri,max_length=200)
     onaylama_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
