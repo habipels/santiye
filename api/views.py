@@ -496,6 +496,12 @@ def hava_durumu_api(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
+def kullanicilari(request):
+    content = {}
+    content["kullanicilari"] = CustomUserSerializer(CustomUser.objects.filter(kullanicilar_db = request.user), many=True).data
+
+
+    return Response(content, status=status.HTTP_200_OK)
 def proje_tipi_api(request):
     content = {}
     

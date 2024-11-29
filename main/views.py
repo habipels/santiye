@@ -9508,22 +9508,25 @@ def rapor_gonder(request, rapor_id):
     genel_imalat_bilgisi = genel_imalat.objects.filter(proje_ait_bilgisi=genel_rapor_bilgisi)
     genel_aciklama_bilgisi = genel_aciklamalar.objects.filter(proje_ait_bilgisi=genel_rapor_bilgisi)
     genel_hava_bilgisi = genel_hava_durumu.objects.filter(proje_ait_bilgisi=genel_rapor_bilgisi).last()
-
+    print(gelen_malzemeler_bilgisi,genel_personel_bilgisi,genel_imalat_bilgisi,genel_aciklama_bilgisi,genel_hava_bilgisi)
     # Rapor verilerini toplama
     fatura_data = {
         'id': genel_rapor_bilgisi.id if genel_rapor_bilgisi else None,
         'santiye_id': genel_rapor_bilgisi.proje_santiye_Ait.id if genel_rapor_bilgisi and genel_rapor_bilgisi.proje_santiye_Ait else None,
         'santiye_Adi': genel_rapor_bilgisi.proje_santiye_Ait.proje_adi if genel_rapor_bilgisi and genel_rapor_bilgisi.proje_santiye_Ait else None,
         'rapor_tarihi': genel_rapor_bilgisi.tarih.strftime("%d.%m.%Y") if genel_rapor_bilgisi and genel_rapor_bilgisi.tarih else None,
+        "bitis_tarih" : genel_rapor_bilgisi.bitis_tarih.strftime("%d.%m.%Y") if genel_rapor_bilgisi and genel_rapor_bilgisi.bitis_tarih else None,
+        "kayip_gun_aciklamasi" : genel_rapor_bilgisi.kayip_gun_aciklamasi if genel_rapor_bilgisi and genel_rapor_bilgisi.kayip_gun_aciklamasi else None,
+        "kayip_gun_sebebi": genel_rapor_bilgisi.kayip_gun_sebebi if genel_rapor_bilgisi and genel_rapor_bilgisi.kayip_gun_sebebi else None,
         'raporu_olusturan': genel_rapor_bilgisi.raporu_olusturan.last_name if genel_rapor_bilgisi and genel_rapor_bilgisi.raporu_olusturan else None,
         'rapor_sahibi': genel_rapor_bilgisi.raporu_olusturan.first_name if genel_rapor_bilgisi and genel_rapor_bilgisi.raporu_olusturan else None,
         'hava_durumu_sicaklik': genel_hava_bilgisi.hava_durumu_sicaklik if genel_hava_bilgisi else None,
         'hava_durumu_ruzgar': genel_hava_bilgisi.hava_durumu_ruzgar if genel_hava_bilgisi else None,
         "gelen_malzemeler_bilgisi": [
             {
-                "id": malzeme.id,
-                "malzeme_id": malzeme.urun.id,
-                "malzeme_adi": malzeme.urun.urun_adi,
+                "id": malzeme.id ,
+                "malzeme_id": malzeme.urun.id if malzeme.urun else None,
+                "malzeme_adi": malzeme.urun.urun_adi if malzeme.urun else None,
                 "malzeme_adedi": malzeme.urun_adeti
             } for malzeme in gelen_malzemeler_bilgisi
         ],
@@ -9550,6 +9553,6 @@ def rapor_gonder(request, rapor_id):
             } for aciklama in genel_aciklama_bilgisi
         ],
     }
-    #print(fatura_data)
+    print(fatura_data)
     # Veriyi JSON olarak döndür
     return JsonResponse(fatura_data)

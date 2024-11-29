@@ -1158,13 +1158,26 @@
         fetch(`/generalreporttake/${id}`)
             .then(response => response.json())
             .then(data => {
+                
                 console.log(data)
                 const tarih = data.rapor_tarihi; // Örneğin "05.11.2024" gibi
                 const [day, month, year] = tarih.split('.'); // Gün, ay ve yılı ayır
+                const ids = ['personel-listt', 'hava-listt', 'malzeme-listt', 'imalat-listt', 'genel-durum-listt'];
+
+                ids.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        console.log(`Temizlenen element: ${id}`);
+                        element.innerHTML = ''; // İçeriği temizle
+                    } else {
+                        console.error(`Element bulunamadı: ${id}`);
+                    }
+                });
 
                 // Formatı YYYY-MM-DD olarak birleştir
                 const formattedDate = `${year}-${month}-${day}`;
                 if (acilan_modals == 0) {
+                    
                     const  selectElement = document.getElementById("santiye-secimid");
                     const option = document.createElement("option");
                     option.value = `${data.santiye_id}`;      // Option'ın değerini ayarla
