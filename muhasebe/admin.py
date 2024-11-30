@@ -9,8 +9,13 @@ admin.site.register(gelir_kategorisi)
 admin.site.register(gider_kategorisi)
 admin.site.register(gelir_etiketi)
 admin.site.register(gider_etiketi)
-admin.site.register(Gelir_Bilgisi)
-admin.site.register(Gider_Bilgisi)
+@admin.register(Gelir_Bilgisi)
+class GelirBilgisiAdmin(admin.ModelAdmin):
+    list_filter = ('gelir_kime_ait_oldugu',)  # CustomUser ile ilişkili alanı burada belirtin
+
+@admin.register(Gider_Bilgisi)
+class GiderBilgisiAdmin(admin.ModelAdmin):
+    list_filter = ('gelir_kime_ait_oldugu',)  # CustomUser ile ilişkili alanı burada belirtin
 admin.site.register(virman)
 admin.site.register(urunler)
 admin.site.register(gider_urun_bilgisi)

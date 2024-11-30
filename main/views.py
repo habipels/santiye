@@ -7795,14 +7795,18 @@ def giderleri_excelden_ekle(request,id):
         vade_tarihi = i[2]
         cari_bilgisi = i[3]
         tutar = i[4]
-        tutar = float((str(str(str(tutar).replace("$",""))).replace(".","")).replace(",","."))
+        tutar = float(str(tutar).replace("$", ""))
+        print(tutar)
         kur = i[5]
         kategori = i[6]
         urun = i[7]
         etiket1 = i[8]
         etiket2 = i[9]
         aciklama = i[10]
-        makbuz_bilgisi = i[11]
+        makbuz_bilgisi = None
+        odeme_durumu = i[11]
+        print(odeme_durumu)
+        print(type(odeme_durumu))
         if makbuz_bilgisi :
             makbuz_bilgisi = makbuz_bilgisi
         else:
@@ -7846,10 +7850,17 @@ def giderleri_excelden_ekle(request,id):
         b = len(str(y))
         c = 8 - b
         m = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+str(y)
-        new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
-            cari_bilgisi = cari_bilgisii,
-            fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
-            gelir_kategorisii = kategorii,doviz = 1500,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = 0 )
+        print(i)
+        if odeme_durumu == 1:
+            new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+                cari_bilgisi = cari_bilgisii,
+                fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
+                gelir_kategorisii = kategorii,doviz = 0,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = 0 )
+        elif odeme_durumu == 0:
+            new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+                cari_bilgisi = cari_bilgisii,
+                fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
+                gelir_kategorisii = kategorii,doviz = 0,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = tutar )
         new_project.save()
         gelir_etiketi_sec = []
         gelir_etiketi_sec.append(etiket1i)
@@ -7860,10 +7871,11 @@ def giderleri_excelden_ekle(request,id):
                             urun_fiyati = tutar,urun_indirimi = 0.0,urun_adeti = 1,
                             gider_bilgis =  get_object_or_404(Gider_Bilgisi,id = new_project.id),
                             aciklama = "")
-        bir = Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
-                                     tutar =tutar,tarihi =fatura_tarihi,
-                                       aciklama = "",makbuz_no =m ,gelir_makbuzu = makbuz_bilgisi )
-        bir.set_gelir_makbuzu(makbuz_bilgisi)
+        if odeme_durumu == 1:
+            bir = Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+                                        tutar =tutar,tarihi =fatura_tarihi,
+                                        aciklama = "",makbuz_no =m ,gelir_makbuzu = makbuz_bilgisi )
+            bir.set_gelir_makbuzu(makbuz_bilgisi)
         gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
     return redirect("main:ana_sayfa")
 
@@ -7887,13 +7899,16 @@ def gelirleri_excelden_ekle(request,id):
         vade_tarihi = i[2]
         cari_bilgisi = i[3]
         tutar = i[4]
-        tutar = float((str(str(str(tutar).replace("$",""))).replace(".","")).replace(",","."))
+        tutar = float(str(tutar).replace("$", ""))
+        print(tutar)
         kur = i[5]
         kategori = i[6]
         urun = i[7]
         etiket1 = i[8]
         aciklama = i[9]
+        odeme_durumu = i[11]
         makbuz_bilgisi = None
+        print(i)
         if makbuz_bilgisi :
             makbuz_bilgisi = makbuz_bilgisi
         else:
@@ -7931,10 +7946,16 @@ def gelirleri_excelden_ekle(request,id):
         b = len(str(y))
         c = 8 - b
         m = faturalardaki_gelir_gider_etiketi.objects.last().gelir_etiketi+(c*"0")+str(y)
-        new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+        if odeme_durumu == 1:
+            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
             cari_bilgisi = cari_bilgisii,
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
-            gelir_kategorisii = kategorii,doviz = 1500,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = 0 )
+            gelir_kategorisii = kategorii,doviz = 0,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = 0 )
+        else:
+            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            cari_bilgisi = cari_bilgisii,
+            fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
+            gelir_kategorisii = kategorii,doviz = 0,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar =tutar )
         new_project.save()
         gelir_etiketi_sec = []
         gelir_etiketi_sec.append(etiket1i)
@@ -7945,10 +7966,11 @@ def gelirleri_excelden_ekle(request,id):
                             urun_fiyati = tutar,urun_indirimi = 0.0,urun_adeti = 1,
                             gider_bilgis =  get_object_or_404(Gelir_Bilgisi,id = new_project.id),
                             aciklama = "")
-        bir = Gelir_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
-                                     tutar =tutar,tarihi =fatura_tarihi,
-                                       aciklama = "",makbuz_no =m ,gelir_makbuzu = makbuz_bilgisi )
-        bir.set_gelir_makbuzu(makbuz_bilgisi)
+        if odeme_durumu == 1:
+            bir = Gelir_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+                                        tutar =tutar,tarihi =fatura_tarihi,
+                                        aciklama = "",makbuz_no =m ,gelir_makbuzu = makbuz_bilgisi )
+            bir.set_gelir_makbuzu(makbuz_bilgisi)
         gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id))
     return redirect("main:ana_sayfa")
 def giderleri_excelden_eklei(request,id):

@@ -55,6 +55,9 @@ def musteri_ekleme(request):
         
     else : 
         kullanici = request.user
+    if request.POST:
+        musteri_adi = request.POST.get("musteri_adi")
+        musteri_soyadi = request.POST.get("musteri_soyadi")
     return redirect("crm:musteri_sayfasi")
 
 def crm_talepler_sikayetler(request):
