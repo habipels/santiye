@@ -965,6 +965,22 @@
     </div>
 
 <script>
+$(document).ready(function() {
+    // Mobil cihazlar için
+    if ($(window).width() < 768) {
+        // Alt menü aç/kapat işlevi
+        $('.sidebar-sub-toggle').on('click', function(event) {
+            event.preventDefault(); // Varsayılan davranışı engelle
+            let $submenu = $(this).next('.sidebar-sub-menu'); // Alt menü
+            if ($submenu.is(':visible')) {
+                $submenu.slideUp(); // Açık olanı kapat
+            } else {
+                $('.sidebar-sub-menu').slideUp(); // Diğer tüm alt menüleri kapat
+                $submenu.slideDown(); // Sadece tıklananı aç
+            }
+        });
+    }
+});
     let sidebar = document.querySelector(".sidebar");
     let sidebarToggle = document.querySelector(".sidebar-toggle");
     let sidebarMobileToggle = document.querySelector(".sidebar-mobile-toggle");

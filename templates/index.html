@@ -4,7 +4,14 @@
 {% load custom_tags %}
 {% block sidebar %}
 {% if hash_bilgi %}
-
+<style>@media (max-width: 768px) {
+    .building-container {
+        width: 58%;
+        height: 70vh;
+        /* Mobilde yükseklik %70 olacak */
+        padding-top: 20px;
+        box-sizing: border-box;
+    }</style>
 <main>
 
     <div class="quick-actions">
@@ -604,9 +611,13 @@
         </div>
         <div class="large-stats-card expenses-by-category">
             <div class="stats-header">
-                <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
-            </div>
+    <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
+   
+</div>
             <div id="expenses-by-category"></div>
+            <span>
+                {% trans 'En yüksek değere sahip 10 kategori listelenmiştir.' %}
+            </span>
             <div class="stats-footer">
                 <div class="stats-footer-part">
                     <span>{% trans 'Kategori Sayısı' %}</span>
@@ -663,22 +674,45 @@
 
 
 
-        var options = {
-            series: {{bilgi_cagir.a}},
-            labels: {{bilgi_cagir.isimleri |safe}},
-            chart: {
-                type: 'polarArea',
-            },
-            stroke: {
-                colors: ['#fff']
-            },
-            fill: {
-                opacity: 0.8
-            },
-        };
+        // Örnek veriler
+let seriesData = {{bilgi_cagir.a}}; // Gider değerleri
+let labelsData = {{bilgi_cagir.isimleri |safe}}; // Gider kategorileri
 
-        var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
-        chart.render();
+// Giderleri sıralayıp en büyük 10'u seçiyoruz
+let combinedData = seriesData.map((value, index) => ({ value, label: labelsData[index] }));
+combinedData.sort((a, b) => b.value - a.value); // Büyükten küçüğe sıralama
+let top10Data = combinedData.slice(0, 10);
+
+// Yeni series ve labels oluşturuyoruz
+let top10Series = top10Data.map(item => item.value);
+let top10Labels = top10Data.map(item => item.label);
+
+// ApexCharts için ayarlar
+var options = {
+    series: top10Series,
+    labels: top10Labels,
+    chart: {
+        type: 'polarArea',
+    },
+    stroke: {
+        colors: ['#fff']
+    },
+    fill: {
+        opacity: 0.8
+    },
+    tooltip: {
+        y: {
+            formatter: function (value) {
+                return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            }
+        }
+    },
+};
+
+var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
+chart.render();
+
+
 
 
 
@@ -701,10 +735,14 @@
             <div id="gelirgider"></div>
         </div>
         <div class="large-stats-card expenses-by-category">
-            <div class="stats-header">
-                <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
-            </div>
+           <div class="stats-header">
+    <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
+    
+</div>
             <div id="expenses-by-category"></div>
+            <span>
+                {% trans 'En yüksek değere sahip 10 kategori listelenmiştir.' %}
+            </span>
             <div class="stats-footer">
                 <div class="stats-footer-part">
                     <span>{% trans 'Kategori Sayısı' %}</span>
@@ -761,22 +799,45 @@
 
 
 
-        var options = {
-            series: {{bilgi_cagir.a}},
-            labels: {{bilgi_cagir.isimleri |safe}},
-            chart: {
-                type: 'polarArea',
-            },
-            stroke: {
-                colors: ['#fff']
-            },
-            fill: {
-                opacity: 0.8
-            },
-        };
+       // Örnek veriler
+let seriesData = {{bilgi_cagir.a}}; // Gider değerleri
+let labelsData = {{bilgi_cagir.isimleri |safe}}; // Gider kategorileri
 
-        var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
-        chart.render();
+// Giderleri sıralayıp en büyük 10'u seçiyoruz
+let combinedData = seriesData.map((value, index) => ({ value, label: labelsData[index] }));
+combinedData.sort((a, b) => b.value - a.value); // Büyükten küçüğe sıralama
+let top10Data = combinedData.slice(0, 10);
+
+// Yeni series ve labels oluşturuyoruz
+let top10Series = top10Data.map(item => item.value);
+let top10Labels = top10Data.map(item => item.label);
+
+// ApexCharts için ayarlar
+var options = {
+    series: top10Series,
+    labels: top10Labels,
+    chart: {
+        type: 'polarArea',
+    },
+    stroke: {
+        colors: ['#fff']
+    },
+    fill: {
+        opacity: 0.8
+    },
+    tooltip: {
+        y: {
+            formatter: function (value) {
+                return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            }
+        }
+    },
+};
+
+var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
+chart.render();
+
+
 
 
 
@@ -2374,9 +2435,13 @@
             </div>
             <div class="large-stats-card expenses-by-category">
                 <div class="stats-header">
-                    <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
-                </div>
+    <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
+
+</div>
                 <div id="expenses-by-category"></div>
+                <span>
+                {% trans 'En yüksek değere sahip 10 kategori listelenmiştir.' %}
+            </span>
                 <div class="stats-footer">
                     <div class="stats-footer-part">
                         <span>{% trans 'Kategori Sayısı' %}</span>
@@ -2433,22 +2498,45 @@
 
 
 
-            var options = {
-                series: {{bilgi_cagir.a}},
-                labels: {{bilgi_cagir.isimleri |safe}},
-                chart: {
-                    type: 'polarArea',
-                },
-                stroke: {
-                    colors: ['#fff']
-                },
-                fill: {
-                    opacity: 0.8
-                },
-            };
+           // Örnek veriler
+let seriesData = {{bilgi_cagir.a}}; // Gider değerleri
+let labelsData = {{bilgi_cagir.isimleri |safe}}; // Gider kategorileri
 
-            var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
-            chart.render();
+// Giderleri sıralayıp en büyük 10'u seçiyoruz
+let combinedData = seriesData.map((value, index) => ({ value, label: labelsData[index] }));
+combinedData.sort((a, b) => b.value - a.value); // Büyükten küçüğe sıralama
+let top10Data = combinedData.slice(0, 10);
+
+// Yeni series ve labels oluşturuyoruz
+let top10Series = top10Data.map(item => item.value);
+let top10Labels = top10Data.map(item => item.label);
+
+// ApexCharts için ayarlar
+var options = {
+    series: top10Series,
+    labels: top10Labels,
+    chart: {
+        type: 'polarArea',
+    },
+    stroke: {
+        colors: ['#fff']
+    },
+    fill: {
+        opacity: 0.8
+    },
+    tooltip: {
+        y: {
+            formatter: function (value) {
+                return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            }
+        }
+    },
+};
+
+var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
+chart.render();
+
+
 
 
 
@@ -2472,9 +2560,13 @@
             </div>
             <div class="large-stats-card expenses-by-category">
                 <div class="stats-header">
-                    <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
-                </div>
+    <div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
+    
+</div>
                 <div id="expenses-by-category"></div>
+                <span>
+                {% trans 'En yüksek değere sahip 10 kategori listelenmiştir.' %}
+            </span>
                 <div class="stats-footer">
                     <div class="stats-footer-part">
                         <span>{% trans 'Kategori Sayısı' %}</span>
@@ -2531,22 +2623,44 @@
 
 
 
-            var options = {
-                series: {{bilgi_cagir.a}},
-                labels: {{bilgi_cagir.isimleri |safe}},
-                chart: {
-                    type: 'polarArea',
-                },
-                stroke: {
-                    colors: ['#fff']
-                },
-                fill: {
-                    opacity: 0.8
-                },
-            };
+// Örnek veriler
+let seriesData = {{bilgi_cagir.a}}; // Gider değerleri
+let labelsData = {{bilgi_cagir.isimleri |safe}}; // Gider kategorileri
 
-            var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
-            chart.render();
+// Giderleri sıralayıp en büyük 10'u seçiyoruz
+let combinedData = seriesData.map((value, index) => ({ value, label: labelsData[index] }));
+combinedData.sort((a, b) => b.value - a.value); // Büyükten küçüğe sıralama
+let top10Data = combinedData.slice(0, 10);
+
+// Yeni series ve labels oluşturuyoruz
+let top10Series = top10Data.map(item => item.value);
+let top10Labels = top10Data.map(item => item.label);
+
+// ApexCharts için ayarlar
+var options = {
+    series: top10Series,
+    labels: top10Labels,
+    chart: {
+        type: 'polarArea',
+    },
+    stroke: {
+        colors: ['#fff']
+    },
+    fill: {
+        opacity: 0.8
+    },
+    tooltip: {
+        y: {
+            formatter: function (value) {
+                return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            }
+        }
+    },
+};
+
+var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
+chart.render();
+
 
 
 
@@ -2897,7 +3011,8 @@
                                 <tr>
                                     <th>{% trans 'Görev Adı' %}</th>
                                     <th>{% trans 'Açıklama' %}</th>
-                                    
+                                    <th scope="col">{% trans 'Blok' %}</th>
+                                    <th scope="col">{% trans 'Kat' %}</th>
                                     <th>{% trans 'Bitiş Tarihi' %}</th>
                                     <th>{% trans 'Öncelik' %}</th>
                                 </tr>
@@ -2907,7 +3022,16 @@
                                 <tr>
                                     <td>{{i.title}}</td>
                                     <td>{{i.aciklama}}</td>
-                                
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
                                     <td>{{i.teslim_tarihi|date:"d.m.Y"}}</td>
                                     <td>
                                     {% if i.oncelik_durumu == "High" %}
@@ -3850,6 +3974,7 @@ createBuilding();
         margin-bottom: 1rem;
         z-index: 10; /* Butonların üstte kalmasını sağlar */
         position: relative; /* Butonların bina tarafından kaplanmasını önler */
+        overflow-x: auto;
     }
   
 
