@@ -9365,11 +9365,11 @@ def genel_rapor_sayfasi(request):
     content["personel_depertmani"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici,silinme_bilgisi = False)
     content["urunler"] =  urunler.objects.filter(urun_ait_oldugu = kullanici,silinme_bilgisi = False)
     content["imalat_kalemleri"] =  santiye_kalemleri.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
-    content["santiyeler"] = genel_rapor.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
+    content["santiyeler"] = genel_rapor.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False).order_by("tarih")
     from django.db.models import Sum
     # Kaybedilen gün sayısını hesapla ve content sözlüğüne ekle
     content["rapor_sayisi"] = genel_rapor.objects.filter(proje_ait_bilgisi=kullanici, silinme_bilgisi=False).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
-
+    
     content["hava_durumu_kaynakli"] = genel_rapor.objects.filter(
         kayip_gun_sebebi="1", proje_ait_bilgisi=kullanici, silinme_bilgisi=False
     ).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
@@ -9401,6 +9401,10 @@ def genel_rapor_olustur(request):
         kayipgun = request.POST.get("kayipgun")
         kayipsebebi = request.POST.get("kayipsebebi")
         otherReason = request.POST.get("otherReason")
+        if kayipgun:
+            pass
+        else:
+            kayipgun = 0
         if super_admin_kontrolu(request):
             pass
         else:
@@ -9502,7 +9506,7 @@ def rapor_onaylama(request):
         return redirect("main:genel_rapor_onaylama",buttonId)
 def rapor_sil(request):
     if request.POST:
-        
+        buttonId = request.POST.get("buttonId")
         if super_admin_kontrolu(request):
             pass
         else:
@@ -9518,7 +9522,7 @@ def rapor_sil(request):
                     return redirect("main:yetkisiz")
             else:
                 kullanici =  request.user
-        #genel_rapor.objects.filter(id = buttonId)
+        genel_rapor.objects.filter(id = buttonId).update(silinme_bilgisi = True)
         return redirect("main:genel_rapor_sayfasi")
 def rapor_gonder(request, rapor_id):
     # Belirtilen ID'ye sahip genel rapor bilgisi yoksa hata döner

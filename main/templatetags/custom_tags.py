@@ -1188,6 +1188,7 @@ def basit_cikarma_duzenli(a,b):
 def sorgu(a):
     y = float(a)
     return str(round(y,2))
+
 @register.simple_tag
 def basit_toplama(a,b):
     y = float(a)+float(b)
@@ -2035,3 +2036,17 @@ def show_content_for_country(context, country_code):
         return user_country_code == country_code
     except Exception:
         return False
+    
+from geopy.geocoders import Nominatim
+@register.simple_tag
+def get_city_from_lat_lon(lat, lon):
+    import requests
+    api_key = 'dee0661903df4f2c76ccfd8afab8be69'
+    weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}'
+                
+    weather_response = requests.get(weather_api_url)
+    if weather_response.status_code == 200:
+        weather_data = weather_response.json()
+        a = weather_data["weather"][0]
+        icon = a["icon"]
+    return weather_data["name"]

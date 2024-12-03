@@ -28,76 +28,24 @@
 
 
         <div class="tum-daireler daire-yonetimi" style="margin-top: 30px;">
+            {% for i in daireler %}
+            
+            
             <div class="daire">
                 <div class="daire-images">
                     <span class="daire-status daire-status-completed">Teslim Edildi</span>
                     <div class="daire-thumbnail">
-                        <img src="./content/images/daire-1.jfif" alt="">
+                        <!--<img src="./content/images/daire-1.jfif" alt="">-->
                     </div>
                 </div>
                 <div class="daire-details">
-                    <span>Tamamlanma Tarihi: 21 Ağustos 2024</span>
-                    <div class="daire-title">Yeşil Yapı Konutları</div>
-                    <div class="daire-location"><i class="icon icon-location"></i> İstanbul</div>
+                    <span>Tamamlanma Tarihi: {{i.kayit_tarihi|date:'d.m.Y'}}</span>
+                    <div class="daire-title">{{i.blog_bilgisi.proje_santiye_Ait.proje_adi}}</div>
+                    <div class="daire-location"><i class="icon icon-location"></i> {% get_city_from_lat_lon i.blog_bilgisi.proje_santiye_Ait.lat i.blog_bilgisi.proje_santiye_Ait.lon  %}</div>
                     <div class="daire-customer"><i class="icon icon-customer"></i> 223 Atanan Müşteri</div>
                 </div>
             </div>
-            <div class="daire">
-                <div class="daire-images">
-                    <span class="daire-status daire-status-pending">Beklemede</span>
-                    <div class="daire-thumbnail">
-                        <img src="./content/images/daire-1.jfif" alt="">
-                    </div>
-                </div>
-                <div class="daire-details">
-                    <span>Tamamlanma Tarihi: 21 Ağustos 2024</span>
-                    <div class="daire-title">Yeşil Yapı Konutları</div>
-                    <div class="daire-location"><i class="icon icon-location"></i> İstanbul</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> 223 Atanan Müşteri</div>
-                </div>
-            </div>
-            <div class="daire">
-                <div class="daire-images">
-                    <span class="daire-status daire-status-completed">Teslim Edildi</span>
-                    <div class="daire-thumbnail">
-                        <img src="./content/images/daire-1.jfif" alt="">
-                    </div>
-                </div>
-                <div class="daire-details">
-                    <span>Tamamlanma Tarihi: 21 Ağustos 2024</span>
-                    <div class="daire-title">Yeşil Yapı Konutları</div>
-                    <div class="daire-location"><i class="icon icon-location"></i> İstanbul</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> 223 Atanan Müşteri</div>
-                </div>
-            </div>
-            <div class="daire">
-                <div class="daire-images">
-                    <span class="daire-status daire-status-completed">Teslim Edildi</span>
-                    <div class="daire-thumbnail">
-                        <img src="./content/images/daire-1.jfif" alt="">
-                    </div>
-                </div>
-                <div class="daire-details">
-                    <span>Tamamlanma Tarihi: 21 Ağustos 2024</span>
-                    <div class="daire-title">Yeşil Yapı Konutları</div>
-                    <div class="daire-location"><i class="icon icon-location"></i> İstanbul</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> 223 Atanan Müşteri</div>
-                </div>
-            </div>
-            <div class="daire">
-                <div class="daire-images">
-                    <span class="daire-status daire-status-completed">Teslim Edildi</span>
-                    <div class="daire-thumbnail">
-                        <img src="./content/images/daire-1.jfif" alt="">
-                    </div>
-                </div>
-                <div class="daire-details">
-                    <span>Tamamlanma Tarihi: 21 Ağustos 2024</span>
-                    <div class="daire-title">Yeşil Yapı Konutları</div>
-                    <div class="daire-location"><i class="icon icon-location"></i> İstanbul</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> 223 Atanan Müşteri</div>
-                </div>
-            </div>
+          {% endfor %}
         </div>
 
 
@@ -115,23 +63,21 @@
                 Daire Ekle
             </div>
             <div class="modal-body">
-                <form>
+                <form method="POST" action="/{{dil}}{% url 'crm:daire_ekle' %}">
+                    {% csrf_token %} 
                     <div class="form-element">
                         <label for="santiye">Şantiye</label>
                         <select name="santiye" id="santiye">
-                            <option value="" selected disabled></option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
+                            <option value="" selected disabled>Şantiye Seçiniz</option>
+                            {% for santiye in santiyeler %}
+                                <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="form-element">
                         <label for="blok">Blok</label>
                         <select name="blok" id="blok">
-                            <option value="" selected disabled></option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
+                            <option value="" selected disabled>Blok Seçiniz</option>
                         </select>
                     </div>
                     <div class="form-row">
@@ -146,32 +92,17 @@
                         </div>
                         <div class="form-element">
                             <label for="daire-no">Daire No</label>
-                            <select name="daire-no" id="daire-no">
-                                <option value="" selected disabled></option>
-                                <option value="...">...</option>
-                                <option value="...">...</option>
-                                <option value="...">...</option>
-                            </select>
+                            <input type="text" required name="daire_no">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-element">
                             <label for="oda-sayisi">Oda Sayisi</label>
-                            <select name="oda-sayisi" id="oda-sayisi">
-                                <option value="" selected disabled></option>
-                                <option value="...">...</option>
-                                <option value="...">...</option>
-                                <option value="...">...</option>
-                            </select>
+                            <input type="number" required name="oda_Sayisi">
                         </div>
                         <div class="form-element">
                             <label for="m2brut">M<sup>2</sup> (brüt)</label>
-                            <select name="m2brut" id="m2brut">
-                                <option value="" selected disabled></option>
-                                <option value="...">...</option>
-                                <option value="...">...</option>
-                                <option value="...">...</option>
-                            </select>
+                            <input type="number" required name="metrekare">
                         </div>
                     </div>
                     <div class="form-actions">
@@ -184,7 +115,27 @@
     </div>
 
 
-
+    <script>
+        document.getElementById('santiye').addEventListener('change', function() {
+            const santiyeId = this.value;
+        
+            fetch("{% url 'crm:get_bloglar' %}?santiye_id=" + santiyeId)
+                .then(response => response.json())
+                .then(data => {
+                    const blokSelect = document.getElementById('blok');
+                    blokSelect.innerHTML = '<option value="" selected disabled>Blok Seçiniz</option>'; // Önce eski verileri temizle
+        
+                    data.forEach(blok => {
+                        const option = document.createElement('option');
+                        option.value = blok.id;
+                        option.textContent = blok.blog_adi;
+                        blokSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        </script>
+        
 
 
 
@@ -212,7 +163,27 @@
         });
 
     </script>
-
+<script>
+    document.getElementById('blok').addEventListener('change', function() {
+        const blokId = this.value;
+    
+        fetch("{% url 'crm:get_katlar' %}?blok_id=" + blokId)
+            .then(response => response.json())
+            .then(data => {
+                const katSelect = document.getElementById('kat');
+                katSelect.innerHTML = '<option value="" selected disabled>Kat Seçiniz</option>'; // Önce eski verileri temizle
+    
+                data.forEach(kat => {
+                    const option = document.createElement('option');
+                    option.value = kat.id;
+                    option.textContent = kat.kat_adi;
+                    katSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+    </script>
+    
 
 
 
