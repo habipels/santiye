@@ -61,16 +61,26 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            {% for i in talepler %}
+                            
+                            
                                 <tr>
-                                    <td>Nakliye Tarih Değişikliği Talebi</td>
-                                    <td>10 Ekim 2024</td>
-                                    <td>-</td>
-                                    <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle
-                                        taşınma tarihini ertelemek istemektedir. Nakliye firmasından uygun bir
-                                        alternatif tarih belirlenmesini rica ediyor.</td>
+                                    <td>{{i.sikayet_nedeni}}</td>
+                                    <td>{{i.kayit_tarihi | date:'d.m.Y' }}</td>
+                                    <td>{{i.islem_tarihi | date:'d.m.Y' }}</td>
+                                    <td style="text-align: left;">{{i.sikayet_aciklamasi |safe}}</td>
                                     <td>
-                                        <div class="td-info"><span class="status-pending stats-lg">Beklemede</span>
+                                    {% if i.durum == "0" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span>
                                         </div>
+                                    {% elif i.durum == "1" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Tamamlandı</span>
+                                        </div>
+                                    {% elif i.durum == "2" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Reddedildi</span>
+                                        </div>
+                                    {% endif %}
+                                        
                                     </td>
                                     <td>
                                         <div class="td-actions">
@@ -82,7 +92,7 @@
                                         </div>
                                     </td>
                                 </tr>
-
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -93,25 +103,34 @@
                         <table id="sikayetler-table">
                             <thead>
                                 <tr>
-                                    <th>Talep Adı</th>
-                                    <th>Talep Tarihi</th>
+                                    <th>Şikayet Adı</th>
+                                    <th>Şikayet Tarihi</th>
                                     <th>İşlem Tarihi</th>
-                                    <th>Talep Gerekçesi</th>
+                                    <th>Şikayet Gerekçesi</th>
                                     <th>Durum</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for i in sikayetler %}
+                            
+                            
                                 <tr>
-                                    <td>Nakliye Tarih Değişikliği Talebi</td>
-                                    <td>10 Ekim 2024</td>
-                                    <td>-</td>
-                                    <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle
-                                        taşınma tarihini ertelemek istemektedir. Nakliye firmasından uygun bir
-                                        alternatif tarih belirlenmesini rica ediyor.</td>
+                                    <td>{{i.sikayet_nedeni}}</td>
+                                    <td>{{i.kayit_tarihi | date:'d.m.Y' }}</td>
+                                    <td>{{i.islem_tarihi | date:'d.m.Y' }}</td>
+                                    <td style="text-align: left;">{{i.sikayet_aciklamasi |safe}}</td>
                                     <td>
-                                        <div class="td-info"><span class="status-pending stats-lg">Beklemede</span>
+                                        {% if i.durum == "0" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span>
                                         </div>
+                                    {% elif i.durum == "1" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Tamamlandı</span>
+                                        </div>
+                                    {% elif i.durum == "2" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Reddedildi</span>
+                                        </div>
+                                    {% endif %}
                                     </td>
                                     <td>
                                         <div class="td-actions">
@@ -123,6 +142,7 @@
                                         </div>
                                     </td>
                                 </tr>
+                                {% endfor %}
 
                             </tbody>
                         </table>
@@ -156,7 +176,7 @@
                 info: false,
                 layout: {
                     topStart: {
-                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                        
                     }
                 },
                 columnDefs: [{ width: '40%', targets: 3 }]
@@ -168,7 +188,7 @@
                 info: false,
                 layout: {
                     topStart: {
-                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                        
                     }
                 },
                 columnDefs: [{ width: '40%', targets: 3 }]
@@ -193,22 +213,23 @@
                 Talep/Şikayet Oluştur
             </div>
             <div class="modal-body">
-                <form>
+                <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_olustur' %}">
+                    {% csrf_token %}
                     <div class="form-row">
                         <div class="form-element">
-                            <input type="radio" name="tur" id="tur-talep" value="talep">
+                            <input type="radio" name="tur" id="tur-talep" value="0">
                             <label for="tur-talep">Talep</label>
-                            <input type="radio" name="tur" id="tur-sikayet" value="sikayet">
+                            <input type="radio" name="tur" id="tur-sikayet" value="1">
                             <label for="tur-sikayet">Şikayet</label>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">Talep/Şikayet Nedeni</label>
-                        <select name="talep-nedeni" id="talep-nedeni">
-                            <option value="" selected disabled></option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
+                        <select name="talep_nedeni" id="talep-nedeni">
+                            <option value="" selected disabled>Talep Seçin</option>
+                            <option value="1">talep1</option>
+                            <option value="2">talep2</option>
+                            <option value="3">talep3</option>
                         </select>
                         <div class="form-element">
                             <label for="aciklama">Açıklama</label>
@@ -217,7 +238,7 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="button" onclick="openModal('yeni-sozlesme')">Devam
+                        <button class="form-action-primary" type="submit" >Devam
                             Et</button>
                     </div>
                 </form>

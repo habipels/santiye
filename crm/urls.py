@@ -27,6 +27,8 @@ urlpatterns = [
 
     
     path("taleplervesikayetler", views.crm_talepler_sikayetler, name="crm_talepler_sikayetler"),
+    path("talepsikayetolustur", views.talep_veya_sikayet_olustur, name="talep_veya_sikayet_olustur"),
+    
     path("teklifolustur", views.crm_teklif_olustur, name="crm_teklif_olustur"),
     path("teklifyonetimi", views.crm_teklif_yonetimi, name="crm_teklif_yonetimi"),
 ]

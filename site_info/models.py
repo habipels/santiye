@@ -57,6 +57,26 @@ class musteri_bilgisi(models.Model):
     musteri_soyadi = models.CharField(max_length=200,verbose_name="Müşteri Soyadı ", blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+class talep_ve_sikayet(models.Model):
+    talep_sikayet_kategorisi =(
+        ('0', '0'), #talep
+        ('1', '1'), #şikayet
+    )
+    durum_bilgisi =(
+        ('0', '0'),
+        ('1', '1'),
+        ('2','2'),
+    )
+    sikayet_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    musteri = models.ForeignKey(musteri_bilgisi,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    sikayet_nedeni = models.CharField(max_length=10,verbose_name="Şikayet_nedeni",blank=True,null=True)
+    sikayet_aciklamasi = models.TextField()
+    talep_sikayet_ayrimi = models.CharField(max_length=100, choices=talep_sikayet_kategorisi, default='0')
+    durum = models.CharField(max_length=100, choices=durum_bilgisi, default='0')
+    islem_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class musteri_daire_baglama(models.Model):
     baglama_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="baglama_kime_ait")
     musterisi = models.ForeignKey(musteri_bilgisi,verbose_name="Müşeterisi",blank=True,null=True,on_delete=models.SET_NULL)

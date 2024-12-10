@@ -142,8 +142,46 @@ def musteri_duzenleme(request):
     return redirect("crm:musteri_sayfasi")
 def crm_talepler_sikayetler(request):
     content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    content["talepler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait = kullanici,talep_sikayet_ayrimi = "0")
+    content["sikayetler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait = kullanici,talep_sikayet_ayrimi = "1")
     return render(request,"crm/talep-ve-sikayetler.html",content)
+def talep_veya_sikayet_olustur(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        tur = request.POST.get("tur")
+        talep_nedeni = request.POST.get("talep_nedeni")
+        aciklama = request.POST.get("aciklama")
 
+        talep_ve_sikayet.objects.create(
+            sikayet_kime_ait = kullanici,
+            sikayet_nedeni = talep_nedeni,
+            talep_sikayet_ayrimi = tur,
+            sikayet_aciklamasi = aciklama
+        )
+    return redirect("crm:crm_talepler_sikayetler")
 def crm_teklif_olustur(request):
     content = sozluk_yapisi()
     return render(request,"crm/teklif-olustur.html",content)

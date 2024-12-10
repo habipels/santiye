@@ -2048,5 +2048,4 @@ def get_city_from_lat_lon(lat, lon):
     if weather_response.status_code == 200:
         weather_data = weather_response.json()
         a = weather_data["weather"][0]
-        icon = a["icon"]
-    return weather_data["name"]
+        return weather_data["name"]

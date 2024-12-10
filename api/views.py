@@ -1990,6 +1990,7 @@ def yapilacalar_ekle_api(request):
         aciliyet = request.data.get("aciliyet")
         teslim_tarihi = request.data.get("teslim_tarihi")
         blogbilgisi = request.data.get("kullanicilari")
+        blogbilgisi = blogbilgisi.split(",")
         aciklama = request.data.get("aciklama")
         katman_bilgisi = request.data.get("katman_bilgisi")
         yapi_gonder = request.data.get("yapi_gonder")
