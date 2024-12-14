@@ -2049,3 +2049,18 @@ def get_city_from_lat_lon(lat, lon):
         weather_data = weather_response.json()
         a = weather_data["weather"][0]
         return weather_data["name"]
+    
+
+@register.simple_tag
+def atanan_musteri_sayisi(daire):
+    bilgi = musteri_daire_baglama.objects.filter(daire = daire).count()
+    return bilgi
+
+@register.simple_tag
+def musteriye_atanan_daire(musterisi):
+    bilgi = musteri_daire_baglama.objects.filter(musterisi = musterisi).count()
+    return bilgi
+@register.simple_tag
+def musteriye_atanan_daire_teslim_edilen(musterisi):
+    bilgi = musteri_daire_baglama.objects.filter(musterisi = musterisi,durum ="1").count()
+    return bilgi

@@ -38,7 +38,16 @@ def get_katlar(request):
             katlar = [{"id": i, "kat_adi": f"{i}. Kat"} for i in range(1, int(kat_sayisi) + 1)]
             return JsonResponse(katlar, safe=False)
     return JsonResponse({'error': 'Blok bulunamadı veya kat bilgisi yok'}, status=400)
-
+def get_daireler(request):
+    blok_id = request.GET.get('blok_id')
+    kat_bilgisi = request.GET.get("kat")
+    if blok_id and kat_bilgisi:
+        daireler  = daire_bilgisi.objects.filter(blog_bilgisi__id = blok_id , kat = kat_bilgisi)
+        if daireler:
+            daireler = [{"id": i.id, "daire_adi": f"{i.daire_no}"} for i in daireler]
+            print(daireler)
+            return JsonResponse(daireler, safe=False)
+    return JsonResponse({'error': 'Blok bulunamadı veya kat bilgisi yok'}, status=400)
 def crm_daireyonetimi(request):
     content = sozluk_yapisi()
     content["daireler"]  = daire_bilgisi.objects.filter(daire_kime_ait = request.user)
@@ -77,9 +86,49 @@ def crm_evrak_dokuman(request):
     content = sozluk_yapisi()
     return render(request,"crm/crm-evrak-ve-dokuman.html",content)
 
-def crm_musteri_detayi(request):
+def crm_musteri_detayi(request,id):
     content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    content["musteri_detayi"] = get_object_or_none(musteri_bilgisi,id = id,musteri_kime_ait = kullanici)
+    content["bloglar"] = bloglar.objects.filter(proje_ait_bilgisi = kullanici,proje_santiye_Ait__silinme_bilgisi = False)
+    content["santiyeler"] = santiye.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
+    content["musteri_daireleri"] = musteri_daire_baglama.objects.filter(baglama_kime_ait = kullanici,musterisi = get_object_or_none(musteri_bilgisi,id = id,musteri_kime_ait = kullanici))
     return render(request,"crm/musteri-detay.html",content)
+def daire_musteriye_ata(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        musteri = request.POST.get("musteri")
+        blok = request.POST.get("blok")
+        kat = request.POST.get("kat")
+        daire = request.POST.get("daire")
+        musteri_sec = get_object_or_none(musteri_bilgisi,musteri_kime_ait = kullanici,id = musteri)
+        daire = get_object_or_none(daire_bilgisi,id = daire,daire_kime_ait = kullanici,kat = kat,blog_bilgisi__id =blok)
+        if musteri_sec and daire:
+            musteri_daire_baglama.objects.create(baglama_kime_ait = kullanici,musterisi = musteri_sec,
+                                                 daire = daire)
+    return redirect("crm:crm_musteri_detayi",musteri)
 
 def musteri_sayfasi(request):
     content = sozluk_yapisi()
@@ -101,7 +150,9 @@ def musteri_ekleme(request):
     if request.POST:
         musteri_adi = request.POST.get("musteri_adi")
         musteri_soyadi = request.POST.get("musteri_soyadi")
-        musteri_bilgisi.objects.create(musteri_kime_ait = kullanici,musteri_adi = musteri_adi , musteri_soyadi =musteri_soyadi )
+        musteri_telefon_numarasi = request.POST.get("musteri_telefon_numarasi")
+        musteri_bilgisi.objects.create(musteri_kime_ait = kullanici,musteri_adi = musteri_adi , musteri_soyadi =musteri_soyadi ,
+                                       musteri_telefon_numarasi = musteri_telefon_numarasi)
     return redirect("crm:musteri_sayfasi")
 def musteri_silme(request):
     if request.user.kullanicilar_db:

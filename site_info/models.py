@@ -45,7 +45,7 @@ class bloglar(models.Model):
 class daire_bilgisi(models.Model):
     daire_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     blog_bilgisi = models.ForeignKey(bloglar,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
-    kat = models.FloatField(default = 1,verbose_name="Kat Bilgisi")
+    kat = models.IntegerField(default = 1,verbose_name="Kat Bilgisi")
     daire_no = models.CharField(max_length=200,verbose_name="Daire No", blank=True,null=True)
     oda_sayisi = models.FloatField(default = 1,verbose_name="Oda Sayısı")
     metre_kare_brut = models.FloatField(default = 1,verbose_name="Metre Kare ")
@@ -55,6 +55,7 @@ class musteri_bilgisi(models.Model):
     musteri_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     musteri_adi = models.CharField(max_length=200,verbose_name="Müşteri Adı ", blank=True,null=True)
     musteri_soyadi = models.CharField(max_length=200,verbose_name="Müşteri Soyadı ", blank=True,null=True)
+    musteri_telefon_numarasi = models.CharField(max_length=200,verbose_name="Telefon Numarası", blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
@@ -78,9 +79,15 @@ class talep_ve_sikayet(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class musteri_daire_baglama(models.Model):
+    durum_bilgisi =(
+        ('0', '0'),
+        ('1', '1'),
+        ('2','2'),
+    )
     baglama_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="baglama_kime_ait")
     musterisi = models.ForeignKey(musteri_bilgisi,verbose_name="Müşeterisi",blank=True,null=True,on_delete=models.SET_NULL)
     daire = models.ForeignKey(daire_bilgisi,verbose_name="Daire",blank=True,null=True,on_delete=models.SET_NULL)
+    durum = models.CharField(max_length=100, choices=durum_bilgisi, default='0')
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class santiye_kalemleri(models.Model):

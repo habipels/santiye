@@ -35,6 +35,7 @@
                 <thead>
                     <tr>
                         <th>Müşteri Adı</th>
+                        <th>Atanan Daireler</th>
                         <th>Teslim Edilen Daire</th>
                         <th>Aksiyonlar</th>
                     </tr>
@@ -48,9 +49,11 @@
                             <div class="musteri-detay"> {{i.musteri_adi}} {{i.musteri_soyadi}}
                             </div>
                         </td>
-                        <td>12</td>
+                        <td>{% musteriye_atanan_daire i %}</td>
+                        <td>{% musteriye_atanan_daire_teslim_edilen i %}</td>
                         <td>
                             <div class="td-actions">
+                            <a href="/{{dil}}{% url 'crm:crm_musteri_detayi' i.id %}" class="status-success">{% trans 'Detay' %}</a>
                                 <a onclick="openModal('yeni-musteri-ekle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                 <a onclick="openModal('departman-sil{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
                             </div>
@@ -100,6 +103,10 @@
                             <label for="musteri-soyadi">Müşteri Soyadı</label>
                             <input type="text" name="musteri_soyadi" id="musteri-soyadi">
                         </div>
+                           <div class="form-element">
+                            <label for="musteri-soyadi">Müşteri Telefon  Numarası</label>
+                            <input type="text" name="musteri_telefon_numarasi" id="musteri-soyadi">
+                        </div>
                     </div>
                     
                     <div class="form-actions">
@@ -129,6 +136,10 @@
                         <div class="form-element">
                             <label for="musteri-soyadi">Müşteri Soyadı</label>
                             <input type="text" name="musteri_soyadi" value="{{i.musteri_soyadi}}" id="musteri-soyadi">
+                        </div>
+                          <div class="form-element">
+                            <label for="musteri-soyadi">Müşteri Telefon  Numarası</label>
+                            <input type="text" name="musteri_telefon_numarasi" value="{{i.musteri_telefon_numarasi}}" id="musteri-soyadi">
                         </div>
                     </div>
                     

@@ -38,13 +38,13 @@
                 <div class="musteri-detay-profile">
                     <img src="./content/images/avatar-2.png" alt="">
                     <div class="musteri-detay-title">
-                        Jane Copper
+                        {{musteri_detayi.musteri_adi}} {{musteri_detayi.musteri_soyadi}}
                         <span>Müşteri</span>
                     </div>
                 </div>
                 <div class="musteri-detay-other">
-                    <div><span>Telefon No: </span>0555 555 5555</div>
-                    <div><span>Müşteri ID: </span>123456798</div>
+                    <div><span>Telefon No: </span>{{musteri_detayi.musteri_telefon_numarasi}}</div>
+                    <div><span>Müşteri ID: </span>{{musteri_detayi.id}}</div>
                 </div>
             </div>
             <div class="musteri-detay-nav">
@@ -79,16 +79,23 @@
                                     <th>Teslim Tarihi</th>
                                     <th>Proje Tipi</th>
                                     <th>Proje Adı</th>
+                                    <th>Yapı Adı</th>
+                                    <th>Kat</th>
+                                    <th>Daire Numarası</th>
                                     <th>Durum</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for i in musteri_daireleri %}
                                 <tr>
-                                    <td>Barbaros Mahallesi, İstanbul</td>
+                                    <td>{% get_city_from_lat_lon i.daire.blog_bilgisi.proje_santiye_Ait.lat i.daire.blog_bilgisi.proje_santiye_Ait.lon  %}</td>
                                     <td>10 Ekim 2024</td>
-                                    <td>Apartman</td>
-                                    <td>Yeşil Daire Konutları</td>
+                                    <td>{{i.daire.blog_bilgisi.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
+                                    <td>{{i.daire.blog_bilgisi.proje_santiye_Ait.proje_adi}}</td>
+                                    <td>{{i.daire.blog_bilgisi.blog_adi}}</td>
+                                    <td>{{i.daire.kat}}</td>
+                                    <td>{{i.daire.daire_no}}</td>
                                     <td>
                                         <div class="td-info"><span class="status-pending stats-lg">Devam Ediyor</span>
                                         </div>
@@ -101,7 +108,7 @@
                                         </div>
                                     </td>
                                 </tr>
-
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -117,7 +124,7 @@
                         info: false,
                         layout: {
                             topStart: {
-                                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                                ////buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
                             }
                         }
                     });
@@ -263,7 +270,7 @@
                         info: false,
                         layout: {
                             topStart: {
-                                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                                //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
                             }
                         },
                         columnDefs: [{ width: '40%', targets: 3 }]
@@ -275,7 +282,7 @@
                         info: false,
                         layout: {
                             topStart: {
-                                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                                //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
                             }
                         },
                         columnDefs: [{ width: '40%', targets: 3 }]
@@ -331,7 +338,7 @@
                         info: false,
                         layout: {
                             topStart: {
-                                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                                //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
                             }
                         },
                         columnDefs: [{ width: '40%', targets: 2 }]
@@ -391,7 +398,7 @@
                         info: false,
                         layout: {
                             topStart: {
-                                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                                //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
                             }
                         },
                         columnDefs: [{ width: '40%', targets: 3 }]
@@ -443,9 +450,125 @@
         </div>
     </div>
 
+ <div class="modal" id="yeni-daire-ata">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Müşteriye Daire Ata 
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_ata' %}">
+                    {% csrf_token %} 
+                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                    <div class="form-element">
+                        <label for="santiye">Şantiye</label>
+                        <select name="santiye" id="santiye">
+                            <option value="" selected disabled>Şantiye Seçiniz</option>
+                            {% for santiye in santiyeler %}
+                                <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="blok">Blok</label>
+                        <select name="blok" id="blok">
+                            <option value="" selected disabled>Blok Seçiniz</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="kat">Kat</label>
+                            <select name="kat" id="kat">
+                                <option value="" selected disabled></option>
+                                <option value="...">...</option>
+                                <option value="...">...</option>
+                                <option value="...">...</option>
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label for="daire-no">Daire No</label>
+                            <select name="daire" id="daire">
+                                <option value="" selected disabled></option>
+                                <option value="...">...</option>
+                                <option value="...">...</option>
+                                <option value="...">...</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Daire Ekle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+ <script>
+ 
+        document.getElementById('santiye').addEventListener('change', function() {
+            const santiyeId = this.value;
+        
+            fetch("{% url 'crm:get_bloglar' %}?santiye_id=" + santiyeId)
+                .then(response => response.json())
+                .then(data => {
+                    const blokSelect = document.getElementById('blok');
+                    blokSelect.innerHTML = '<option value="" selected disabled>Blok Seçiniz</option>'; // Önce eski verileri temizle
+        
+                    data.forEach(blok => {
+                        const option = document.createElement('option');
+                        option.value = blok.id;
+                        option.textContent = blok.blog_adi;
+                        blokSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        </script>
+        
+<script>
+    let blog_bilgisi = "";
+document.getElementById('blok').addEventListener('change', function() {
+        const blokId = this.value;
+        blog_bilgisi= this.value;
+        fetch("{% url 'crm:get_katlar' %}?blok_id=" + blokId)
+            .then(response => response.json())
+            .then(data => {
+                const katSelect = document.getElementById('kat');
+                katSelect.innerHTML = '<option value="" selected disabled>Kat Seçiniz</option>'; // Önce eski verileri temizle
+    
+                data.forEach(kat => {
+                    const option = document.createElement('option');
+                    option.value = kat.id;
+                    option.textContent = kat.kat_adi;
+                    katSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+    document.getElementById('kat').addEventListener('change', function() {
+        
+        const kat_bilgisi = this.value
+        fetch("{% url 'crm:get_daireler' %}?blok_id=" + blog_bilgisi+"&kat="+kat_bilgisi)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                const daire = document.getElementById('daire');
+                daire.innerHTML = '<option value="" selected disabled>Kat Seçiniz</option>'; // Önce eski verileri temizle
+    
+                data.forEach(kat => {
+                    const option = document.createElement('option');
+                    option.value = kat.id;
+                    option.textContent = kat.daire_adi;
+                    daire.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
 
-
-
+    
+    </script>
+    
 
     <script>
         function openModal(modalID, close = true) {
