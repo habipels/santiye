@@ -74,6 +74,7 @@ class talep_ve_sikayet(models.Model):
     sikayet_nedeni = models.CharField(max_length=10,verbose_name="Şikayet_nedeni",blank=True,null=True)
     sikayet_aciklamasi = models.TextField()
     talep_sikayet_ayrimi = models.CharField(max_length=100, choices=talep_sikayet_kategorisi, default='0')
+    daire = models.ForeignKey(daire_bilgisi,verbose_name="Daire",blank=True,null=True,on_delete=models.SET_NULL)
     durum = models.CharField(max_length=100, choices=durum_bilgisi, default='0')
     islem_tarihi = models.DateTimeField(default=datetime.now,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
