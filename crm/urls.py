@@ -20,6 +20,7 @@ urlpatterns = [
     path("get_bloglar", views.get_bloglar, name="get_bloglar"),
     path("get_katlar", views.get_katlar, name="get_katlar"),
     path("get_daireler", views.get_daireler, name="get_daireler"),
+    path("get_talep", views.get_talep, name="get_talep"),
     
     path("musteriyonetimi", views.musteri_sayfasi, name="musteri_sayfasi"),
     path("musteri_ekle", views.musteri_ekleme, name="musteri_ekleme"),
@@ -32,7 +33,9 @@ urlpatterns = [
 
     path("taleplervesikayetler", views.crm_talepler_sikayetler, name="crm_talepler_sikayetler"),
     path("talepsikayetolustur", views.talep_veya_sikayet_olustur, name="talep_veya_sikayet_olustur"),
-    
+    path("taleplervesikayetlerduzenle", views.talep_veya_sikayet_duzenle, name="talep_veya_sikayet_duzenle"),
+    path("taleplervesikayetlersil", views.talep_veya_sikayet_sil, name="talep_veya_sikayet_sil"),
+
     path("teklifolustur", views.crm_teklif_olustur, name="crm_teklif_olustur"),
     path("teklifyonetimi", views.crm_teklif_yonetimi, name="crm_teklif_yonetimi"),
 ]

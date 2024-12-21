@@ -269,9 +269,71 @@ def crm_talepler_sikayetler(request):
         
     else : 
         kullanici = request.user
-    content["talepler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait = kullanici,talep_sikayet_ayrimi = "0")
-    content["sikayetler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait = kullanici,talep_sikayet_ayrimi = "1")
+    content["talepler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait = kullanici,talep_sikayet_ayrimi = "0",silinme_bilgisi = False)
+    content["sikayetler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait = kullanici,talep_sikayet_ayrimi = "1",silinme_bilgisi = False)
     return render(request,"crm/talep-ve-sikayetler.html",content)
+def get_talep(request):
+    talep_id = request.GET.get('talep_id')
+    talep =get_object_or_none(talep_ve_sikayet,id = talep_id)  
+    daire_no = ""
+    musteri = ""
+    if talep.musteri:
+        musteri = f"{talep.musteri.musteri_adi} {talep.musteri.musteri_soyadi}"
+    if talep.daire:
+        daire_no = talep.daire.daire_no
+    veriler = {
+        "id": talep.id, "musteri":  musteri,
+        "daire" :daire_no,"durum" : talep.durum,
+        "islem_tarihi" : talep.islem_tarihi,
+        "sikayet_aciklamasi" :talep.sikayet_aciklamasi
+    }
+            
+    return JsonResponse(veriler, safe=False)
+    #return JsonResponse({'error': 'Blok bulunamadı veya kat bilgisi yok'}, status=400)
+def talep_veya_sikayet_duzenle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        tur = request.POST.get("tur")
+        talep_nedeni = request.POST.get("talep_nedeni")
+        aciklama = request.POST.get("aciklama")
+        talep_id = request.POST.get("talep_id")
+        talep_ve_sikayet.objects.filter(id = talep_id).update(
+            sikayet_kime_ait = kullanici,
+            sikayet_nedeni = talep_nedeni,
+            talep_sikayet_ayrimi = tur,
+            sikayet_aciklamasi = aciklama
+        )
+    return redirect("crm:crm_talepler_sikayetler")
+def talep_veya_sikayet_sil(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        talep_id = request.POST.get("buttonId")
+        talep_ve_sikayet.objects.filter(id = talep_id).update(
+            silinme_bilgisi = True
+        )
+    return redirect("crm:crm_talepler_sikayetler")
 def talep_veya_sikayet_olustur(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)

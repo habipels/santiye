@@ -87,6 +87,7 @@ class talep_ve_sikayet(models.Model):
     daire = models.ForeignKey(daire_bilgisi,verbose_name="Daire",blank=True,null=True,on_delete=models.SET_NULL)
     durum = models.CharField(max_length=100, choices=durum_bilgisi, default='0')
     islem_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class musteri_daire_baglama(models.Model):
