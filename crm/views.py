@@ -106,7 +106,7 @@ def crm_musteri_detayi(request,id):
     content["musteri_daireleri"] = musteri_daire_baglama.objects.filter(baglama_kime_ait = kullanici,musterisi = get_object_or_none(musteri_bilgisi,id = id,musteri_kime_ait = kullanici))
     content["talepler"] = talep_ve_sikayet.objects.filter(musteri =get_object_or_none(musteri_bilgisi,id = id,musteri_kime_ait = kullanici),sikayet_kime_ait = kullanici,talep_sikayet_ayrimi = "0")
     content["sikayetler"] = talep_ve_sikayet.objects.filter(musteri = get_object_or_none(musteri_bilgisi,id = id,musteri_kime_ait = kullanici),sikayet_kime_ait = kullanici,talep_sikayet_ayrimi = "1")
-    
+    content["musteri_gorusme_notu"] = musteri_notlari.objects.filter( kime_ait = kullanici,musterisi = get_object_or_none(musteri_bilgisi,id = id,musteri_kime_ait = kullanici),silinme_bilgisi = False)
     return render(request,"crm/musteri-detay.html",content)
 def daire_musteriye_ata(request):
     if request.user.kullanicilar_db:
@@ -136,6 +136,34 @@ def daire_musteriye_ata(request):
                 musteri_daire_baglama.objects.create(baglama_kime_ait = kullanici,musterisi = musteri_sec,
                                                     daire = daire)
     return redirect("crm:crm_musteri_detayi",musteri)
+def museri_notu_ekle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        musteri = request.POST.get("musteri")
+        tarih = request.POST.get("tarih")
+        not_basligi = request.POST.get("not_basligi")
+        aciklama = request.POST.get("aciklama")
+        musteri_sec = get_object_or_none(musteri_bilgisi,musteri_kime_ait = kullanici,id = musteri)
+        musteri_notlari.objects.create(
+            kime_ait = kullanici,
+            musterisi = musteri_sec,
+            not_basligi = not_basligi,
+            not_aciklamasi = aciklama,
+            not_tarihi = tarih
+        )
+    
+        return redirect("crm:crm_musteri_detayi",musteri)
 
 def talep_veya_sikayet_olustur_musteri_detayi(request):
     if request.user.kullanicilar_db:

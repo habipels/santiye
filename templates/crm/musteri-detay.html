@@ -344,12 +344,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for i in musteri_gorusme_notu %}
+                                
+                                
                                 <tr>
-                                    <td>Müşteri telefon ile bilgilendirildi</td>
-                                    <td>10 Ekim 2024</td>
-                                    <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle taşınma
-                                        tarihini ertelemek istemektedir. Nakliye firmasından uygun bir alternatif tarih
-                                        belirlenmesini rica ediyor.</td>
+                                    <td>{{i.not_basligi}}</td>
+                                    <td>{{i.not_tarihi | date:'d.m.Y'}}</td>
+                                    <td style="text-align: left;">{{i.not_aciklamasi|safe}}</td>
                                     <td>
                                         <div class="td-actions">
                                             <div class="td-actions">
@@ -360,7 +361,7 @@
                                         </div>
                                     </td>
                                 </tr>
-    
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -538,6 +539,40 @@
             </div>
         </div>
 </div>
+
+   <div class="modal" id="yeni-not">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Görüşme Notu Ekle
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/{{dil}}{% url 'crm:museri_notu_ekle' %}">
+                    {% csrf_token %}
+                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                    <div class="form-row">
+                        <div class="form-element">
+                            <input type="date" name="tarih" id="tarih" >
+                            <label for="tur-talep">Tarih</label>
+                           
+                        </div>
+                    </div>
+                    <div class="form-element">
+                        <label for="talep-nedeni">Not Başlığı</label>
+                        <input type="text" name="not_basligi">
+                        <div class="form-element">
+                            <label for="aciklama">Açıklama</label>
+                            <textarea name="aciklama" id="aciklama"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit" >Devam
+                            Et</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="yeni-talep-sikayet">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">

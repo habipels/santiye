@@ -56,9 +56,19 @@ class musteri_bilgisi(models.Model):
     musteri_adi = models.CharField(max_length=200,verbose_name="Müşteri Adı ", blank=True,null=True)
     musteri_soyadi = models.CharField(max_length=200,verbose_name="Müşteri Soyadı ", blank=True,null=True)
     musteri_telefon_numarasi = models.CharField(max_length=200,verbose_name="Telefon Numarası", blank=True,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
+class musteri_notlari(models.Model):
+    kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    musterisi = models.ForeignKey(musteri_bilgisi,verbose_name="Müşeterisi",blank=True,null=True,on_delete=models.SET_NULL)
+    not_basligi = models.CharField(max_length=400,verbose_name="Not Başlığı",blank=True,null=True)
+    not_aciklamasi = models.TextField()
+    
+    not_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class talep_ve_sikayet(models.Model):
     talep_sikayet_kategorisi =(
         ('0', '0'), #talep
@@ -89,6 +99,14 @@ class musteri_daire_baglama(models.Model):
     musterisi = models.ForeignKey(musteri_bilgisi,verbose_name="Müşeterisi",blank=True,null=True,on_delete=models.SET_NULL)
     daire = models.ForeignKey(daire_bilgisi,verbose_name="Daire",blank=True,null=True,on_delete=models.SET_NULL)
     durum = models.CharField(max_length=100, choices=durum_bilgisi, default='0')
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class musteri_evraklari(models.Model):
+    belge_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="belge_kime_ait")
+    musterisi = models.ForeignKey(musteri_bilgisi,verbose_name="Müşeterisi",blank=True,null=True,on_delete=models.SET_NULL)
+    belgenin_ait_oldugu_yer = models.ForeignKey(musteri_daire_baglama,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="belgenin_ait_oldugu_yer")
+    oturma_belgesi = models.FileField(upload_to='oturma_belgesi/',verbose_name="Oturma Belgesi",blank=True,null=True)
+    kira_kontrati = models.FileField(upload_to='kira_kontrati/',verbose_name="Kira_kontrati",blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class santiye_kalemleri(models.Model):
