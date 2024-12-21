@@ -97,11 +97,21 @@
                                     <td>{{i.daire.kat}}</td>
                                     <td>{{i.daire.daire_no}}</td>
                                     <td>
-                                        <div class="td-info"><span class="status-pending stats-lg">Devam Ediyor</span>
+                                    {% if i.durum == "0" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">Devam Ediyor</span>
                                         </div>
+                                    {% elif i.durum == "1" %}
+                                     <div class="td-info"><span class="status-pending stats-lg">Onaylandı</span>
+                                        </div>
+                                        {% elif i.durum == "2" %}
+                                     <div class="td-info"><span class="status-pending stats-lg">Reddedildi</span>
+                                        </div>
+                                    {% endif %}
+                                        
                                     </td>
                                     <td>
                                         <div class="td-actions">
+                                        <a onclick="openModal('daire_teslim_et{{i.id}}')" class="status-success">Daireyi Onayla</a>
                                             <a onclick="openModal('yeni-daire-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                             <a onclick="openModal('daireler{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
@@ -609,6 +619,28 @@
             </div>
         </div>
     </div>
+
+<div class="modal" id="daire_teslim_et{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Daireyi Onaylma Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'crm:daire_musteriye_onayla' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                    <p> {% trans 'Daire Teslim Edilsin Mi ? ' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('daire_teslim_et{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Onayla' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 {% endfor %}
 
 

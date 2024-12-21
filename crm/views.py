@@ -15,7 +15,22 @@ from django.middleware.csrf import get_token
 from django.http import JsonResponse
 import requests
 from main.views import sozluk_yapisi ,get_object_or_none
-
+def musteri_bilgisi_views(request):
+    term = request.GET.get('term', '')
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gelir_faturasi_kesme_izni or a.izinler.gider_faturasi_kesme_izni:
+                    user = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:
+        user = request.user
+    results = musteri_bilgisi.objects.filter(musteri_adi__icontains=term, musteri_kime_ait=user)
+    suggestions = [{'label': result.musteri_adi +" "+result.musteri_soyadi , 'value':result.musteri_telefon_numarasi} for result in results]
+    return JsonResponse(suggestions, safe=False)
 def crm_dashboard(request):
     content = sozluk_yapisi()
     return render(request,"crm/crm-dashboard.html",content)
@@ -183,6 +198,28 @@ def daire_musteriye_sil(request):
         musteri = request.POST.get("musteri")
 
         musteri_daire_baglama.objects.filter(id =duzenle ).delete()
+    return redirect("crm:crm_musteri_detayi",musteri)
+def daire_musteriye_onayla(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        duzenle = request.POST.get("buttonId")
+        musteri = request.POST.get("musteri")
+
+        
+        daire = get_object_or_404(musteri_daire_baglama,id = duzenle)
+        musteri_daire_baglama.objects.filter(daire =daire.daire ).update(durum = "2")
+        musteri_daire_baglama.objects.filter(id =duzenle ).update(durum = "1")
     return redirect("crm:crm_musteri_detayi",musteri)
 def museri_notu_ekle(request):
     if request.user.kullanicilar_db:

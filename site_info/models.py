@@ -106,8 +106,33 @@ class musteri_evraklari(models.Model):
     belge_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="belge_kime_ait")
     musterisi = models.ForeignKey(musteri_bilgisi,verbose_name="Müşeterisi",blank=True,null=True,on_delete=models.SET_NULL)
     belgenin_ait_oldugu_yer = models.ForeignKey(musteri_daire_baglama,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="belgenin_ait_oldugu_yer")
-    oturma_belgesi = models.FileField(upload_to='oturma_belgesi/',verbose_name="Oturma Belgesi",blank=True,null=True)
-    kira_kontrati = models.FileField(upload_to='kira_kontrati/',verbose_name="Kira_kontrati",blank=True,null=True)
+    evrak_detayi = models.CharField(max_length=200,verbose_name="Evrak Adı",blank=True,null= True)
+    evrak = models.FileField(upload_to='evrak/',verbose_name="evrak",blank=True,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+class teklifler(models.Model):
+    durum_bilgisi =(
+        ('0', '0'),
+        ('1', '1'),
+        ('2','2'),
+    )
+    teklif_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL,related_name="teklif_kime_ait")
+    teklif_basligi = models.CharField(max_length=200,verbose_name="Teklif Başlığı",blank=True,null=True)
+    musterisi = models.ForeignKey(musteri_bilgisi,verbose_name="Müşeterisi",blank=True,null=True,on_delete=models.SET_NULL)
+    toplam_tutar  = models.FloatField(default=0,verbose_name="Toplam Tutar")
+    durum = models.CharField(max_length=100, choices=durum_bilgisi, default='0')
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class teklif_icerikleri(models.Model):
+    kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    hangi_teklif = models.ForeignKey(teklifler,verbose_name="Teklif ",blank=True,null=True,on_delete=models.SET_NULL)
+    urun_hizmet = models.CharField(max_length=200,verbose_name="Ürün Başlığı",blank=True,null=True)
+    urun_aciklama = models.CharField(max_length=400,verbose_name="Ürün Açıklama",blank=True,null=True)
+    indirim = models.FloatField(default=0,verbose_name="İndirim Oranı")
+    miktar = models.FloatField(default=0,verbose_name="Miktar")
+    birim_fiyati = models.FloatField(default=0,verbose_name="Birim Fİyati")
+    genel_toplam = models.FloatField(default=0,verbose_name="Genel Toplam")
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class santiye_kalemleri(models.Model):
