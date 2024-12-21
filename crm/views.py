@@ -165,6 +165,38 @@ def museri_notu_ekle(request):
     
         return redirect("crm:crm_musteri_detayi",musteri)
 
+
+def talep_veya_sikayet_duzenle_musteri_detayi(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        talep_id = request.POST.get("talep_id")
+        tur = request.POST.get("tur")
+        talep_nedeni = request.POST.get("talep_nedeni")
+        aciklama = request.POST.get("aciklama")
+        musteri = request.POST.get("musteri")
+        daireler = request.POST.get("daireler")
+        talep_ve_sikayet.objects.filter(id = talep_id).update(
+            sikayet_kime_ait = kullanici,
+            sikayet_nedeni = talep_nedeni,
+            talep_sikayet_ayrimi = tur,
+            sikayet_aciklamasi = aciklama,
+            daire = get_object_or_none(daire_bilgisi,id = daireler),
+            musteri = get_object_or_none(musteri_bilgisi , id = musteri)
+        )
+    return redirect("crm:crm_musteri_detayi",musteri)
+
+
 def talep_veya_sikayet_olustur_musteri_detayi(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
