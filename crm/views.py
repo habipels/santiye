@@ -20,7 +20,7 @@ def crm_dashboard(request):
     content = sozluk_yapisi()
     return render(request,"crm/crm-dashboard.html",content)
 
-def crm_dairedetayi(request):
+def crm_dairedetayi(request,id):
     content = sozluk_yapisi()
     return render(request,"crm/crm-daire-detay.html",content)
 def get_bloglar(request):
@@ -135,6 +135,54 @@ def daire_musteriye_ata(request):
             else:
                 musteri_daire_baglama.objects.create(baglama_kime_ait = kullanici,musterisi = musteri_sec,
                                                     daire = daire)
+    return redirect("crm:crm_musteri_detayi",musteri)
+def daire_musteriye_duzenle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        duzenle = request.POST.get("duzenle")
+        musteri = request.POST.get("musteri")
+        blok = request.POST.get("blok")
+        kat = request.POST.get("kat")
+        daire = request.POST.get("daire")
+        musteri_sec = get_object_or_none(musteri_bilgisi,musteri_kime_ait = kullanici,id = musteri)
+        daire = get_object_or_none(daire_bilgisi,id = daire,daire_kime_ait = kullanici,kat = kat,blog_bilgisi__id =blok)
+        if musteri_sec and daire:
+            if get_object_or_none(musteri_daire_baglama,baglama_kime_ait = kullanici,musterisi = musteri_sec,
+                                                 daire = daire):
+                pass
+            else:
+                musteri_daire_baglama.objects.filter(id =duzenle ).update(baglama_kime_ait = kullanici,musterisi = musteri_sec,
+                                                    daire = daire)
+    return redirect("crm:crm_musteri_detayi",musteri)
+def daire_musteriye_sil(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        duzenle = request.POST.get("buttonId")
+        musteri = request.POST.get("musteri")
+
+        musteri_daire_baglama.objects.filter(id =duzenle ).delete()
     return redirect("crm:crm_musteri_detayi",musteri)
 def museri_notu_ekle(request):
     if request.user.kullanicilar_db:

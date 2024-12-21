@@ -11,7 +11,7 @@ app_name = "crm"
 urlpatterns = [
 #
     path("", views.crm_dashboard, name="crm_dashboard"),#
-    path("dairedetayi", views.crm_dairedetayi, name="crm_dairedetayi"),
+    path("dairedetayi/<int:id>", views.crm_dairedetayi, name="crm_dairedetayi"),
     path("daire_ekle", views.daire_ekle, name="daire_ekle"),
     path("daireyonetimi", views.crm_daireyonetimi, name="crm_daireyonetimi"),
     path("dokumanlar", views.crm_evr, name="crm_evr"),
@@ -30,6 +30,8 @@ urlpatterns = [
     path("talep_veya_sikayet_olustur_musteri_detayi", views.talep_veya_sikayet_olustur_musteri_detayi, name="talep_veya_sikayet_olustur_musteri_detayi"),
     path("talep_veya_sikayet_duzenle_musteri_detayi", views.talep_veya_sikayet_duzenle_musteri_detayi, name="talep_veya_sikayet_duzenle_musteri_detayi"),
     path("musterinotu", views.museri_notu_ekle, name="museri_notu_ekle"),
+    path("duzenle", views.daire_musteriye_duzenle, name="daire_musteriye_duzenle"),
+    path("sil", views.daire_musteriye_sil, name="daire_musteriye_sil"),
 #
 
     path("taleplervesikayetler", views.crm_talepler_sikayetler, name="crm_talepler_sikayetler"),

@@ -102,8 +102,8 @@
                                     </td>
                                     <td>
                                         <div class="td-actions">
-                                            <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                            <a href="#" class="status-cancel"><i
+                                            <a onclick="openModal('yeni-daire-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="openModal('daireler{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                         </div>
                                     </td>
@@ -484,7 +484,6 @@
             </div>
         </div>
     </div>
-
  <div class="modal" id="yeni-daire-ata">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
@@ -539,6 +538,79 @@
             </div>
         </div>
 </div>
+{% for i in musteri_daireleri %}
+ <div class="modal" id="yeni-daire-duzenle{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Müşteriye Daire Düzenle 
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_duzenle' %}">
+                    {% csrf_token %} 
+                    <input type="text" hidden name="duzenle" value="{{i.id}}">
+                    <div class="form-element">
+                        <label for="santiye">Şantiye</label>
+                        <select name="santiye" id="santiye">
+                            <option value="{{i.daire.blog_bilgisi.proje_santiye_Ait.id}}" selected disabled>{{i.daire.blog_bilgisi.proje_santiye_Ait.proje_adi}}</option>
+                            {% for santiye in santiyeler %}
+                                <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="blok">Blok</label>
+                        <select name="blok" id="blok">
+                            <option value="{{i.daire.blog_bilgisi.id}}" selected disabled>{{i.daire.blog_bilgisi.blog_adi}}</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="kat">Kat</label>
+                            <select name="kat" id="kat">
+                                <option value="{{i.daire.kat}}" selected disabled>{{i.daire.kat}}</option>
+                               
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label for="daire-no">Daire No</label>
+                            <select name="daire" id="daire">
+                                <option value="{{i.daire.daire_no}}" selected disabled>{{i.daire.daire_no}}</option>
+                                
+                            </select>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Daire Ekle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+<div class="modal" id="daireler{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'crm:daire_musteriye_sil' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('departman-sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
 
    <div class="modal" id="yeni-not">
         <div class="modal-inner" style="width: 500px">
