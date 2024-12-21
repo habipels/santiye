@@ -132,6 +132,7 @@ class teklif_icerikleri(models.Model):
     indirim = models.FloatField(default=0,verbose_name="İndirim Oranı")
     miktar = models.FloatField(default=0,verbose_name="Miktar")
     birim_fiyati = models.FloatField(default=0,verbose_name="Birim Fİyati")
+    birim_fiyati_ıqd = models.FloatField(default=0,verbose_name="Birim Fİyati")
     genel_toplam = models.FloatField(default=0,verbose_name="Genel Toplam")
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

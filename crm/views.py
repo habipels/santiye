@@ -29,7 +29,8 @@ def musteri_bilgisi_views(request):
     else:
         user = request.user
     results = musteri_bilgisi.objects.filter(musteri_adi__icontains=term, musteri_kime_ait=user)
-    suggestions = [{'label': result.musteri_adi +" "+result.musteri_soyadi , 'value':result.musteri_telefon_numarasi} for result in results]
+    suggestions = [{'label': result.musteri_adi +" "+result.musteri_soyadi , 'value':result.musteri_telefon_numarasi,
+                    "adi" :result.musteri_adi , "soyadi": result.musteri_soyadi } for result in results]
     return JsonResponse(suggestions, safe=False)
 def crm_dashboard(request):
     content = sozluk_yapisi()
@@ -482,4 +483,82 @@ def crm_teklif_olustur(request):
 
 def crm_teklif_yonetimi(request):
     content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    tekliff = teklifler.objects.filter(
+            teklif_kime_ait = kullanici,
+            
+        )
+    content["teklifler"] = tekliff
     return render(request,"crm/teklif-yonetimi.html",content)
+
+def crm_teklif_olustur_gonder(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    if request.POST:
+        adsoyad = request.POST.get("adsoyad")
+        soyad = request.POST.get("soyad")
+        telefon = request.POST.get("telefon")
+        Teklif_basligi = request.POST.get("Teklif_basligi")
+        urun= request.POST.getlist("kalem-urun-hizmet-adi")
+        aciklama= request.POST.getlist("kalem-aciklama")
+        indirim= request.POST.getlist("kalem-indirim")
+        miktar= request.POST.getlist("kalem-miktar")
+        birim_fiyat= request.POST.getlist("kalem-birim-fiyati")
+        toplam= request.POST.getlist("kalem-toplam")
+        iqd= request.POST.getlist("kalem-toplam-iqd")
+        musteri = get_object_or_none(musteri_bilgisi,musteri_kime_ait = kullanici,
+                                     musteri_adi = adsoyad,
+                                     musteri_soyadi = soyad,
+                                     musteri_telefon_numarasi =telefon)
+        if musteri:
+            pass
+        else:
+            musteri = musteri_bilgisi.objects.create(musteri_kime_ait = kullanici,
+                                     musteri_adi = adsoyad,
+                                     musteri_soyadi = soyad,
+                                     musteri_telefon_numarasi =telefon
+            )
+        toplam_tutar = 0
+        tekliff = teklifler.objects.create(
+            teklif_kime_ait = kullanici,
+            teklif_basligi = Teklif_basligi,
+            musterisi = musteri
+        )
+        for i in range(0,len(urun)):
+            teklif_icerikleri.objects.create(
+                kime_ait = kullanici,
+                hangi_teklif = get_object_or_none(teklifler,id = tekliff.id),
+                urun_hizmet = urun[i],
+                urun_aciklama = aciklama[i],
+                indirim = indirim[i],
+                miktar = miktar[i],
+                birim_fiyati = birim_fiyat[i],
+                birim_fiyati_ıqd = iqd[i],
+                genel_toplam = toplam[i]
+            )
+            toplam_tutar += float(toplam[i])
+        teklifler.objects.filter(id =tekliff.id ).update(
+            toplam_tutar = toplam_tutar
+        )
+    return redirect("crm:crm_teklif_yonetimi")
