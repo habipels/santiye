@@ -60,14 +60,13 @@ class musteri_bilgisi(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class musteri_notlari(models.Model):
-    kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
-    musterisi = models.ForeignKey(musteri_bilgisi,verbose_name="Müşeterisi",blank=True,null=True,on_delete=models.SET_NULL)
-    not_basligi = models.CharField(max_length=400,verbose_name="Not Başlığı",blank=True,null=True)
+    kime_ait = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
+    musterisi = models.ForeignKey(musteri_bilgisi, verbose_name="Müşterisi", blank=True, null=True, on_delete=models.SET_NULL)
+    not_basligi = models.CharField(max_length=400, verbose_name="Not Başlığı", blank=True, null=True)
     not_aciklamasi = models.TextField()
-    
-    not_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    not_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
-    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class talep_ve_sikayet(models.Model):
     talep_sikayet_kategorisi =(

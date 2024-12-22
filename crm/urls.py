@@ -38,6 +38,8 @@ urlpatterns = [
     path("teklif_silme", views.teklif_silme, name="teklif_silme"),
     path("teklif_duzenleme/<int:id>", views.teklif_duzenleme, name="teklif_duzenleme"),
     path("crm_teklif_duzenle_gonder", views.crm_teklif_duzenle_gonder, name="crm_teklif_duzenle_gonder"),
+    path("musteri_notu_sil", views.musteri_notu_sil, name="musteri_notu_sil"),
+    path("musteri_notu_duzenle", views.musteri_notu_duzenle, name="musteri_notu_duzenle"),
 #
 
     path("taleplervesikayetler", views.crm_talepler_sikayetler, name="crm_talepler_sikayetler"),

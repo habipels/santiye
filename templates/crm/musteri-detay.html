@@ -1,4 +1,3 @@
-
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load static %}
@@ -350,7 +349,7 @@
                                     <th>Not Başlığı</th>
                                     <th>Tarih</th>
                                     <th>Görüşme Detayı</th>
-                                    <th></th>
+                                    <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -409,29 +408,35 @@
                                     <th>Teklif Başlığı</th>
                                     <th>Tarih</th>
                                     <th>Teklif Tutarı</th>
-                                    <th>Hizmetler</th>
-                                    <th></th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for i in teklifler %}
+                            
+                            
                                 <tr>
-                                    <td>Müşteri telefon ile bilgilendirildi</td>
-                                    <td>10 Ekim 2024</td>
-                                    <td>10.000 TL</td>
-                                    <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle taşınma
-                                        tarihini ertelemek istemektedir. Nakliye firmasından uygun bir alternatif tarih
-                                        belirlenmesini rica ediyor.</td>
+                                    <td>{{ i.teklif_basligi }}</td>
+                                    <td>{{ i.kayit_tarihi|date:'d.m.Y' }}</td>
+                                    <td>{{ i.toplam_tutar }} $</td>
+                                    <td>
+                                        {% if i.durum == "0" %}
+                                        <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                        {% elif i.durum == "1" %}
+                                        <div class="td-info"><span class="status-success stats-lg">Onaylandı</span></div>
+                                        {% elif i.durum == "2" %}
+                                        <div class="td-info"><span class="status-cancel stats-lg">Reddedildi</span></div>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <div class="td-actions">
-                                            <div class="td-actions">
-                                                <a class="status-info"><i class="icon icon-eye"></i></a>
-                                                <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                                <a href="#" class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                                            </div>
+                                            <a href="/{{ dil }}{% url 'crm:teklif_duzenleme' i.id %}" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="openModal('teklif_sil{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
                                         </div>
                                     </td>
                                 </tr>
-    
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -944,7 +949,82 @@
     </div>
 
 {% endfor %}
+{% for i in teklifler %}
+<div class="modal" id="teklif_sil{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'crm:teklif_silme' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                 
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('departman-sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 
+{% for i in musteri_gorusme_notu %}
+<div class="modal" id="duzelt-not{{ i.id }}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            Görüşme Notu Düzenle
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/{{ dil }}{% url 'crm:musteri_notu_duzenle' %}">
+                {% csrf_token %}
+                <input type="hidden" name="not_id" value="{{ i.id }}">
+                <input type="hidden" name="musteri" value="{{ musteri_detayi.id }}">
+                <div class="form-row">
+                    <div class="form-element">
+                        <input type="date" name="tarih" id="tarih" value="{{ i.not_tarihi|date:'Y-m-d' }}">
+                        <label for="tarih">Tarih</label>
+                    </div>
+                </div>
+                <div class="form-element">
+                    <label for="not_basligi">Not Başlığı</label>
+                    <input type="text" name="not_basligi" value="{{ i.not_basligi }}">
+                </div>
+                <div class="form-element">
+                    <label for="aciklama">Açıklama</label>
+                    <textarea name="aciklama" id="aciklama">{{ i.not_aciklamasi }}</textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-primary" type="submit">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal" id="sil-not{{ i.id }}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            Silme Uyarısı
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/{{ dil }}{% url 'crm:musteri_notu_sil' %}">
+                {% csrf_token %}
+                <input type="hidden" name="not_id" value="{{ i.id }}">
+                <input type="hidden" name="musteri" value="{{ musteri_detayi.id }}">
+                <p>Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-danger" type="submit">Sil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
  <script>
  
