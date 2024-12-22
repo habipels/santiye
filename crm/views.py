@@ -590,3 +590,69 @@ def crm_teklif_olustur_gonder(request):
             toplam_tutar = toplam_tutar
         )
     return redirect("crm:crm_teklif_yonetimi")
+
+def crm_teklif_duzenle_gonder(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
+
+    if request.POST:
+        teklif_id = request.POST.get("teklif_id")
+        adsoyad = request.POST.get("adsoyad")
+        soyad = request.POST.get("soyad")
+        telefon = request.POST.get("telefon")
+        Teklif_basligi = request.POST.get("Teklif_basligi")
+        urun = request.POST.getlist("kalem-urun-hizmet-adi")
+        aciklama = request.POST.getlist("kalem-aciklama")
+        indirim = request.POST.getlist("kalem-indirim")
+        miktar = request.POST.getlist("kalem-miktar")
+        birim_fiyat = request.POST.getlist("kalem-birim-fiyati")
+        toplam = request.POST.getlist("kalem-toplam")
+        iqd = request.POST.getlist("kalem-toplam-iqd")
+
+        musteri = get_object_or_none(musteri_bilgisi, musteri_kime_ait=kullanici,
+                                     musteri_adi=adsoyad,
+                                     musteri_soyadi=soyad,
+                                     musteri_telefon_numarasi=telefon)
+        if not musteri:
+            musteri = musteri_bilgisi.objects.create(musteri_kime_ait=kullanici,
+                                                     musteri_adi=adsoyad,
+                                                     musteri_soyadi=soyad,
+                                                     musteri_telefon_numarasi=telefon)
+
+        teklif = get_object_or_none(teklifler, id=teklif_id)
+        if teklif:
+            teklif.teklif_basligi = Teklif_basligi
+            teklif.musterisi = musteri
+            teklif.save()
+
+            # Delete all existing items before adding new ones
+            teklif_icerikleri.objects.filter(hangi_teklif=teklif).delete()
+
+            toplam_tutar = 0
+            for i in range(len(urun)):
+                teklif_icerikleri.objects.create(
+                    kime_ait=kullanici,
+                    hangi_teklif=teklif,
+                    urun_hizmet=urun[i],
+                    urun_aciklama=aciklama[i],
+                    indirim=indirim[i],
+                    miktar=miktar[i],
+                    birim_fiyati=birim_fiyat[i],
+                    birim_fiyati_ıqd=iqd[i],
+                    genel_toplam=toplam[i]
+                )
+                toplam_tutar += float(toplam[i])
+
+            teklif.toplam_tutar = toplam_tutar
+            teklif.save()
+
+    return redirect("crm:crm_teklif_yonetimi")
