@@ -62,40 +62,36 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            {% for i in teklifler %}
+                            
+                            
                                 <tr>
-                                    <td>#123-12312</td>
-                                    <td>Ahmet Yılmaz</td>
-                                    <td>01.01.2000</td>
-                                    <td>10.000 TL</td>
+                                    <td>{{i.id}}</td>
+                                    <td>{{i.musterisi.musteri_adi}}</td>
+                                    <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
+                                    <td>{{i.toplam_tutar}} $</td>
                                     <td>
-                                        <div class="td-info"><span class="status-cancel stats-lg">Reddedildi</span>
+                                    {% if i.durum == "0" %}
+                                    <div class="td-info"><span class="status-cancel stats-lg">Beklemede</span>
                                         </div>
+                                    {% elif i.durum == "1" %}
+                                    <div class="td-info"><span class="status-cancel stats-lg">Onaylandı</span>
+                                        </div>
+                                    {% elif i.durum == "2" %}
+                                    <div class="td-info"><span class="status-cancel stats-lg">Reddedildi</span>
+                                        </div>
+                                    {% endif %}
+                                        
                                     </td>
                                     <td>
                                         <div class="td-actions">
-                                            <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                            <a onclick="openModal('delete-modal')" class="status-cancel"><i
+                                            <a href="/{{dil}}{% url 'crm:teklif_duzenleme' i.id %}" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                            <a onclick="openModal('departman-sil{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>#123-12312</td>
-                                    <td>Ahmet Yılmaz</td>
-                                    <td>01.01.2000</td>
-                                    <td>10.000 TL</td>
-                                    <td>
-                                        <div class="td-info"><span class="status-success stats-lg">Onaylandı</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="td-actions">
-                                            <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                            <a onclick="openModal('delete-modal')" class="status-cancel"><i
-                                                    class="icon icon-action-delete"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -146,7 +142,28 @@
 
 
     </main>
-
+{% for i in teklifler %}
+<div class="modal" id="departman-sil{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'crm:teklif_silme' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                 
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('departman-sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 
 
     <div class="modal" id="delete-modal">

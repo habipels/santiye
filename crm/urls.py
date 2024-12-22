@@ -35,6 +35,8 @@ urlpatterns = [
     path("baglama_onayla", views.daire_musteriye_onayla, name="daire_musteriye_onayla"),
     path("musteri_bilgisi_views/", views.musteri_bilgisi_views, name="musteri_bilgisi_views"),
     path("crm_teklif_olustur_gonder", views.crm_teklif_olustur_gonder, name="crm_teklif_olustur_gonder"),
+    path("teklif_silme", views.teklif_silme, name="teklif_silme"),
+    path("teklif_duzenleme/<int:id>", views.teklif_duzenleme, name="teklif_duzenleme"),
 #
 
     path("taleplervesikayetler", views.crm_talepler_sikayetler, name="crm_talepler_sikayetler"),

@@ -501,7 +501,35 @@ def crm_teklif_yonetimi(request):
         )
     content["teklifler"] = tekliff
     return render(request,"crm/teklif-yonetimi.html",content)
-
+def teklif_silme(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            kullanici = request.user.kullanicilar_db
+        else:
+            return redirect("main:yetkisiz")
+    else : 
+        kullanici = request.user
+    if request.POST:
+        teklif_id = request.POST.get("buttonId")
+        teklifler.objects.filter(id = teklif_id).delete()
+    return redirect("crm:crm_teklif_yonetimi")
+def teklif_duzenleme(request,id):
+    content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            kullanici = request.user.kullanicilar_db
+        else:
+            return redirect("main:yetkisiz")
+    else : 
+        kullanici = request.user
+    
+    
+    tekif_bilgisi = get_object_or_none(teklifler,id = id)
+    content["teklifler"] = tekif_bilgisi
+    content["teklif_icerikleri"] = teklif_icerikleri.objects.filter(hangi_teklif = tekif_bilgisi)
+    return render(request,"crm/teklif_duzenle.html",content)
 def crm_teklif_olustur_gonder(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -548,7 +576,7 @@ def crm_teklif_olustur_gonder(request):
         for i in range(0,len(urun)):
             teklif_icerikleri.objects.create(
                 kime_ait = kullanici,
-                hangi_teklif = get_object_or_none(teklifler,id = tekliff.id),
+                hangi_teklif= tekliff,
                 urun_hizmet = urun[i],
                 urun_aciklama = aciklama[i],
                 indirim = indirim[i],
