@@ -39,6 +39,7 @@ $(document).ready(function () {
             'fatura_no': '{{i.fatura_no}}', 
             'cari': '{{i.cari_bilgisi.cari_adi}}', 
             'aciklama': '<span class="monospace-bold" title="{% if i.aciklama %}{{i.aciklama |escapejs}}{% else %}{% endif %}">  {% if i.aciklama %}{{i.aciklama | slice:":15" |escapejs}} {% endif %}</span>', 
+            'kategori': '{{i.gelir_kategorisii.gider_kategori_adi}}',
             'etiket1': '{% if i.gelir_etiketi_sec.all|length > 0 %}{{ i.gelir_etiketi_sec.all.0.gider_etiketi_adi|escapejs }}{% endif %}', 
             'etiket2': '{% if i.gelir_etiketi_sec.all|length > 1 %}{{ i.gelir_etiketi_sec.all.1.gider_etiketi_adi|escapejs }}{% endif %}', 
             'etiket3': '{% if i.gelir_etiketi_sec.all|length > 2 %}{{ i.gelir_etiketi_sec.all.2.gider_etiketi_adi|escapejs }}{% endif %}', 
@@ -57,6 +58,7 @@ $(document).ready(function () {
             { data: 'fatura_no' },
             { data: 'cari' },
             { data: 'aciklama' },
+            { data: 'kategori' },
             { data: 'etiket1' },
             { data: 'etiket2' },
             { data: 'etiket3' },
@@ -233,7 +235,7 @@ $(document).ready(function () {
        
     columnDefs: [
         {
-            targets: [0, 4, 5, 6],  // 0: "İncele", 4: "Etiket 1", 5: "Etiket 2", 6: "Etiket 3"
+            targets: [0, 5, 6, 7],  // 0: "İncele", 4: "Etiket 1", 5: "Etiket 2", 6: "Etiket 3"
             className: 'no-export',  // Bu sütunları no-export sınıfıyla işaretliyoruz
             searchable: false,
             orderable: false
