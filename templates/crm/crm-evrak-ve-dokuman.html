@@ -1,127 +1,79 @@
-
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load static %}
 {% load custom_tags %}
 {% block sidebar %}
 
-
-
-
-    <main>
-
-
-
-        <!-- Evrak ve Dokümanlar -->
-
-
-        <div class="page-header">
-            <div class="page-info">
-                <div class="page-title">
-                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    Evrak ve Dokümanlar
-                </div>
-                <ul class="page-breadcrumb">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Evrak ve Dokümanlar</a></li>
-                </ul>
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                Evrak ve Dokümanlar
             </div>
-
-            <div class="page-actions">
-                <a href="#" class="page-primary-btn"><i class="icon icon-new"></i>
-                    Yeni Doküman Ekle</a>
-            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Evrak ve Dokümanlar</a></li>
+            </ul>
         </div>
-
-        <div class="evd-folders evd-folders-lg" style="margin-top: 30px;">
-            <div class="evd-folder">
-                <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                <i class="icon icon-folder"></i>
-                <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                <span>2.3GB - 100 adet dosya</span>
-            </div>
-            <div class="evd-folder">
-                <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                <i class="icon icon-folder"></i>
-                <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                <span>2.3GB - 100 adet dosya</span>
-            </div>
-            <div class="evd-folder">
-                <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                <i class="icon icon-folder"></i>
-                <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                <span>2.3GB - 100 adet dosya</span>
-            </div>
-            <div class="evd-folder">
-                <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                <i class="icon icon-folder"></i>
-                <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                <span>2.3GB - 100 adet dosya</span>
-            </div>
-            <div class="evd-folder">
-                <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                <i class="icon icon-folder"></i>
-                <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                <span>2.3GB - 100 adet dosya</span>
-            </div>
-            <div class="evd-folder">
-                <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                <i class="icon icon-folder"></i>
-                <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                <span>2.3GB - 100 adet dosya</span>
-            </div>
+        <div class="page-actions">
+            <a href="#" class="page-primary-btn"><i class="icon icon-new"></i> Yeni Doküman Ekle</a>
         </div>
+    </div>
 
+    <div class="evd-folders evd-folders-lg" style="margin-top: 30px;">
+        {% for daire in daireler %}
+        <div class="evd-folder" onclick="window.location.href='{% url 'crm:crm_dairedetayi' daire.id %}'">
+            <i class="icon icon-folder"></i>
+            <div class="evd-folder-name">Daire - {{ daire.daire_no }} / Dokümanlar</div>
+            <span>{{ daire.daire_evraklari.count }} adet dosya</span>
+        </div>
+        {% endfor %}
+    </div>
+</main>
 
-
-
-    </main>
-
-
-
-
-    <script>
-        function toggleDarkMode() {
-            if ($("body").hasClass("dark-mode")) {
-                document.cookie = "dark-mode=false; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-            } else {
-                document.cookie = "dark-mode=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-            }
-            $("body").toggleClass("dark-mode");
+<script>
+    function toggleDarkMode() {
+        if ($("body").hasClass("dark-mode")) {
+            document.cookie = "dark-mode=false; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+        } else {
+            document.cookie = "dark-mode=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
         }
+        $("body").toggleClass("dark-mode");
+    }
 
-        window.onload = function () {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith("dark-mode=true")) {
-                    document.body.classList.add('dark-mode');
-                    break;
-                }
-            }
-        };
-
-        function toggleFullScreen() {
-            var doc = window.document;
-            var docEl = doc.documentElement;
-
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
+    window.onload = function () {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith("dark-mode=true")) {
+                document.body.classList.add('dark-mode');
+                break;
             }
         }
+    };
 
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+    function toggleFullScreen() {
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || doc.msRequestFullscreen;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+        if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
         }
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
+        else {
+            cancelFullScreen.call(doc);
+        }
+    }
+
+    function updateMaxWidth() {
+        var tableCardWidth = $(".table-card")[0].clientWidth;
+        $(".table-wrapper").css("max-width", tableCardWidth + "px");
+    }
+    $(document).ready(updateMaxWidth);
+    $(window).resize(updateMaxWidth);
+</script>
 
 {% endblock sidebar %}

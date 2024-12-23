@@ -122,7 +122,20 @@ def crm_evr(request):
     return render(request,"crm/crm-evrak-ve-dokuman-detay.html",content)
 def crm_evrak_dokuman(request):
     content = sozluk_yapisi()
-    return render(request,"crm/crm-evrak-ve-dokuman.html",content)
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
+
+    content["daireler"] = daire_bilgisi.objects.filter(daire_kime_ait=kullanici)
+    return render(request, "crm/crm-evrak-ve-dokuman.html", content)
 
 def crm_musteri_detayi(request, id):
     content = sozluk_yapisi()
@@ -756,4 +769,12 @@ def daire_evrak_ekle(request):
         return redirect("crm:crm_dairedetayi", daire_id)
 
     return redirect("crm:crm_dairedetayi", daire_id)
+
+def get_daire_evraklari(request):
+    daire_id = request.GET.get('daire_id')
+    if daire_id:
+        evraklar = daire_evraklari.objects.filter(daire_id=daire_id).values('evrak_adi', 'evrak')
+        evrak_list = [{'evrak_adi': evrak['evrak_adi'], 'evrak_url': evrak['evrak']} for evrak in evraklar]
+        return JsonResponse(evrak_list, safe=False)
+    return JsonResponse({'error': 'Daire bulunamadı'}, status=400)
 

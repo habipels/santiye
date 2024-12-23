@@ -22,6 +22,7 @@ urlpatterns = [
     path("get_katlar", views.get_katlar, name="get_katlar"),
     path("get_daireler", views.get_daireler, name="get_daireler"),
     path("get_talep", views.get_talep, name="get_talep"),
+    path("get_daire_evraklari", views.get_daire_evraklari, name="get_daire_evraklari"),
     
     path("musteriyonetimi", views.musteri_sayfasi, name="musteri_sayfasi"),
     path("musteri_ekle", views.musteri_ekleme, name="musteri_ekleme"),
