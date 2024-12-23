@@ -15,6 +15,9 @@ from django.middleware.csrf import get_token
 from django.http import JsonResponse
 import requests
 from main.views import sozluk_yapisi ,get_object_or_none
+from django.core.files.storage import FileSystemStorage
+from site_info.models import daire_evraklari
+
 def musteri_bilgisi_views(request):
     term = request.GET.get('term', '')
     if request.user.kullanicilar_db:
@@ -38,6 +41,25 @@ def crm_dashboard(request):
 
 def crm_dairedetayi(request,id):
     content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+        
+    else : 
+        kullanici = request.user
+    daire = get_object_or_none(daire_bilgisi, id=id, daire_kime_ait=kullanici)
+    content["daire_detayi"] = daire
+    content["daire_evraklari"] = daire_evraklari.objects.filter(daire=daire, evrak_kime_ait=kullanici)
+    content["talepler"] = talep_ve_sikayet.objects.filter(daire=daire, sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="0")
+    content["sikayetler"] = talep_ve_sikayet.objects.filter(daire=daire, sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1")
+    content["atanan_musteri"] = get_object_or_none(musteri_daire_baglama, daire=daire, durum="1")
+    content["image_extensions"] = [".jpg", ".jpeg", ".png"]
     return render(request,"crm/crm-daire-detay.html",content)
 def get_bloglar(request):
     santiye_id = request.GET.get('santiye_id')
@@ -704,3 +726,34 @@ def crm_teklif_duzenle_gonder(request):
             teklif.save()
 
     return redirect("crm:crm_teklif_yonetimi")
+
+def daire_evrak_ekle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
+
+    if request.method == 'POST':
+        daire_id = request.POST.get('daire_id')
+        evrak_adi = request.POST.get('evrak_adi')
+        evrak = request.FILES.get('evrak')
+
+        daire = get_object_or_none(daire_bilgisi, id=daire_id, daire_kime_ait=kullanici)
+        if daire and evrak:
+            daire_evraklari.objects.create(
+                evrak_kime_ait=kullanici,
+                daire=daire,
+                evrak_adi=evrak_adi,
+                evrak=evrak
+            )
+        return redirect("crm:crm_dairedetayi", daire_id)
+
+    return redirect("crm:crm_dairedetayi", daire_id)
+

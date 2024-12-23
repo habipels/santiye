@@ -427,3 +427,12 @@ class genel_hava_durumu(models.Model):
     hava_durumu_ruzgar = models.FloatField(blank=True,null=True,verbose_name="hava_durumu rüzgar") 
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+class daire_evraklari(models.Model):
+    evrak_kime_ait = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
+    daire = models.ForeignKey(daire_bilgisi, verbose_name="Daire", blank=True, null=True, on_delete=models.SET_NULL)
+    evrak_adi = models.CharField(max_length=200, verbose_name="Evrak Adı", blank=True, null=True)
+    evrak = models.FileField(upload_to='daire_evraklari/', verbose_name="Evrak", blank=True, null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

@@ -1,326 +1,252 @@
-
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load static %}
 {% load custom_tags %}
 {% block sidebar %}
 
-    <main>
-
-
-        <div class="page-header">
-            <div class="page-info">
-                <div class="page-title">
-                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    Daire Detay
-                </div>
-                <ul class="page-breadcrumb">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Daire Yönetimi</a></li>
-                    <li><a href="#">Daire Detay</a></li>
-                </ul>
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                Daire Detay
             </div>
-
-            <div class="page-actions">
-                <button class="page-primary-btn" onclick="openModal('musteri-ekle')"><i class="icon icon-new"></i>
-                    Yeni Müşteri</button>
-            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Daire Yönetimi</a></li>
+                <li><a href="#">Daire Detay</a></li>
+            </ul>
         </div>
-
-
-        <div class="daire-detay" style="margin-top: 30px;">
-            <div class="daire-detay-images">
-                <div class="daire-thumbnail">
-                    <img src="./content/images/daire-1.jfif" alt="">
-                </div>
-                <div class="daire-other-images">
-                    <img src="./content/images/daire-2.jfif" alt="">
-                    <img src="./content/images/daire-3.jfif" alt="">
-                    <img src="./content/images/daire-3.jfif" alt="">
-                    <img src="./content/images/daire-2.jfif" alt="">
-                </div>
-            </div>
-
-            <div class="daire-content">
-                <div class="daire-bilgiler">
-                    <div class="daire-lokasyon"><i class="icon icon-location"></i> İstanbul</div>
-                    <div class="daire-bilgi">Teslim Tarihi: <span>06/03/2024</span></div>
-                    <div class="daire-bilgi">Teslim Durumu: <div class="daire-status daire-status-completed">Tamamlandı
-                        </div>
-                    </div>
-                    <div class="daire-bilgi">
-                        <div>m<sup>2</sup> (Brüt):</div> <span>200</span>
-                    </div>
-                    <div class="daire-bilgi">Oda Sayısı: <span>3+1</span></div>
-                    <div class="daire-bilgi">Kat Sayısı: <span>10</span></div>
-                    <div class="daire-atanan-musteri">
-                        Atanan Müşteri
-                        <div class="daire-atanan-musteri-inner">
-                            <img src="./content/images/avatar.png" alt="">
-                            <span>Jane Cooper</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="daire-detaylar">
-                    <div class="info-header">Teslim Sırasında Alınan Evraklar</div>
-                    <div class="daire-detay-evraklar">
-                        <div class="dde-evrak">
-                            <i class="icon icon-folder"></i>
-                            <span>Evrak 1</span>
-                        </div>
-                        <div class="dde-evrak">
-                            <i class="icon icon-folder"></i>
-                            <span>Evrak 1</span>
-                        </div>
-                        <div class="dde-evrak">
-                            <i class="icon icon-folder"></i>
-                            <span>Evrak 1</span>
-                        </div>
-                        <div class="dde-evrak">
-                            <i class="icon icon-folder"></i>
-                            <span>Evrak 1</span>
-                        </div>
-                        <div class="dde-evrak">
-                            <i class="icon icon-folder"></i>
-                            <span>Evrak 1</span>
-                        </div>
-                    </div>
-
-
-
-                    <div class="large-stats-card table-card table-detail-card">
-                        <div class="stats-header">
-                            <div class="stats-title">Müşteri Talepleri</div>
-                        </div>
-
-                        <div class="table-wrapper">
-                            <table id="musteri-talepleri">
-                                <thead>
-                                    <tr>
-                                        <th>Talep Tarihi</th>
-                                        <th>Talep Gerekçesi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>10 Ekim 2024</td>
-                                        <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle taşınma tarihini ertelemek
-                                            istemektedir. Nakliye firmasından uygun bir alternatif tarih belirlenmesini
-                                            rica ediyor.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>10 Ekim 2024</td>
-                                        <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle taşınma tarihini ertelemek
-                                            istemektedir. Nakliye firmasından uygun bir alternatif tarih belirlenmesini
-                                            rica ediyor.</td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-
-
-                    </div>
-
-
-                    <div class="large-stats-card table-card table-detail-card">
-                        <div class="stats-header">
-                            <div class="stats-title">Şikayetler</div>
-                        </div>
-
-                        <div class="table-wrapper">
-                            <table id="sikayetler">
-                                <thead>
-                                    <tr>
-                                        <th>Talep Tarihi</th>
-                                        <th>Talep Gerekçesi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>10 Ekim 2024</td>
-                                        <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle taşınma tarihini ertelemek
-                                            istemektedir. Nakliye firmasından uygun bir alternatif tarih belirlenmesini
-                                            rica ediyor.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>10 Ekim 2024</td>
-                                        <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle taşınma tarihini ertelemek
-                                            istemektedir. Nakliye firmasından uygun bir alternatif tarih belirlenmesini
-                                            rica ediyor.</td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-
-
-                    </div>
-
-
-                    <script>
-
-                        let musteriTalepleri = new DataTable('#musteri-talepleri', {
-                            paging: false,
-                            searching: true,
-                            info: false,
-                            layout: {
-                                topStart: {
-                                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                                }
-                            },
-                            columnDefs: [{ width: '20%', targets: 0 }]
-                        });
-
-                        let sikayetler = new DataTable('#sikayetler', {
-                            paging: false,
-                            searching: true,
-                            info: false,
-                            layout: {
-                                topStart: {
-                                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                                }
-                            },
-                            columnDefs: [{ width: '20%', targets: 0 }]
-                        });
-
-                    </script>
-
-
-
-
-
-
-
-
-
-                </div>
-            </div>
-        </div>
-
-
-    </main>
-
-
-
-
-
-    <div class="modal" id="musteri-ekle">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                Müşteri Ekle
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-element">
-                        <label for="musteri">Müşteri</label>
-                        <select name="musteri" id="musteri">
-                            <option value="" selected disabled></option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                        </select>
-                    </div>
-                    <div class="form-element">
-                        <label for="kat">Kat</label>
-                        <select name="kat" id="kat">
-                            <option value="" selected disabled></option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                        </select>
-                    </div>
-                    <div class="form-element">
-                        <label for="no">No</label>
-                        <select name="no" id="no">
-                            <option value="" selected disabled></option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                            <option value="...">...</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Müşteri Ekle</button>
-                    </div>
-                </form>
-            </div>
+        <div class="page-actions">
+            <button class="page-primary-btn" onclick="openModal('musteri-ekle')"><i class="icon icon-new"></i>Yeni Müşteri</button>
+            <button class="page-primary-btn" onclick="openModal('yeni-evrak-ekle')"><i class="icon icon-new"></i>Yeni Evrak</button>
         </div>
     </div>
 
+    <div class="daire-detay" style="margin-top: 30px;">
+        <div class="daire-detay-images">
+            <div class="daire-thumbnail">
+                <img src="{% static 'content/images/daire-1.jfif' %}" alt="">
+            </div>
+            <div class="daire-other-images">
+                {% for evrak in daire_evraklari %}
+                {% if evrak.evrak.url|lower|slice:"-4:" in image_extensions %}
+                <img src="{{ evrak.evrak.url }}" alt="{{ evrak.evrak_adi }}">
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
 
-    <script>
-        function openModal(modalID, close = true) {
-            if (close) {
-                closeModal();
-            }
-            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        <div class="daire-content">
+            <div class="daire-bilgiler">
+                <div class="daire-lokasyon"><i class="icon icon-location"></i> {{ daire_detayi.blog_bilgisi.proje_santiye_Ait.proje_adi }}</div>
+                <div class="daire-bilgi">Teslim Tarihi: <span>{{ daire_detayi.kayit_tarihi|date:"d/m/Y" }}</span></div>
+                <div class="daire-bilgi">Teslim Durumu: <div class="daire-status daire-status-completed">Tamamlandı</div></div>
+                <div class="daire-bilgi">
+                    <div>m<sup>2</sup> (Brüt):</div> <span>{{ daire_detayi.metre_kare_brut }}</span>
+                </div>
+                <div class="daire-bilgi">Oda Sayısı: <span>{{ daire_detayi.oda_sayisi }}</span></div>
+                <div class="daire-bilgi">Kat Sayısı: <span>{{ daire_detayi.kat }}</span></div>
+                <div class="daire-atanan-musteri">
+                    Atanan Müşteri
+                    <div class="daire-atanan-musteri-inner">
+                        <img src="{% static 'content/images/avatar.png' %}" alt="">
+                        <span>{{ atanan_musteri.musterisi.musteri_adi }} {{ atanan_musteri.musterisi.musteri_soyadi }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="daire-detaylar">
+                <div class="info-header">Teslim Sırasında Alınan Evraklar</div>
+                <div class="daire-detay-evraklar">
+                    {% for evrak in daire_evraklari %}
+                    <div class="dde-evrak">
+                        <i class="icon icon-folder"></i>
+                        <a href="{{ evrak.evrak.url }}" target="_blank">{{ evrak.evrak_adi }}</a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="info-header">Resimler</div>
+                <div class="daire-detay-resimler">
+                    {% for evrak in daire_evraklari %}
+                    {% if evrak.evrak.url|lower|slice:"-4:" in image_extensions %}
+                    <div class="dde-resim">
+                        <img src="{{ evrak.evrak.url }}" alt="{{ evrak.evrak_adi }}">
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="large-stats-card table-card table-detail-card">
+                    <div class="stats-header">
+                        <div class="stats-title">Müşteri Talepleri</div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="musteri-talepleri">
+                            <thead>
+                                <tr>
+                                    <th>Talep Tarihi</th>
+                                    <th>Talep Gerekçesi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for talep in talepler %}
+                                <tr>
+                                    <td>{{ talep.kayit_tarihi|date:"d M Y" }}</td>
+                                    <td style="text-align: left;">{{ talep.sikayet_aciklamasi }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="large-stats-card table-card table-detail-card">
+                    <div class="stats-header">
+                        <div class="stats-title">Şikayetler</div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="sikayetler">
+                            <thead>
+                                <tr>
+                                    <th>Şikayet Tarihi</th>
+                                    <th>Şikayet Gerekçesi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sikayet in sikayetler %}
+                                <tr>
+                                    <td>{{ sikayet.kayit_tarihi|date:"d M Y" }}</td>
+                                    <td style="text-align: left;">{{ sikayet.sikayet_aciklamasi }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <script>
+                    let musteriTalepleri = new DataTable('#musteri-talepleri', {
+                        paging: false,
+                        searching: true,
+                        info: false,
+                        layout: {
+                            topStart: {
+                                //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                            }
+                        },
+                        columnDefs: [{ width: '20%', targets: 0 }]
+                    });
+
+                    let sikayetler = new DataTable('#sikayetler', {
+                        paging: false,
+                        searching: true,
+                        info: false,
+                        layout: {
+                            topStart: {
+                                //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                            }
+                        },
+                        columnDefs: [{ width: '20%', targets: 0 }]
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="modal" id="musteri-ekle">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            Müşteri Ekle
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-element">
+                    <label for="musteri">Müşteri</label>
+                    <select name="musteri" id="musteri">
+                        <option value="" selected disabled></option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="kat">Kat</label>
+                    <select name="kat" id="kat">
+                        <option value="" selected disabled></option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="no">No</label>
+                    <select name="no" id="no">
+                        <option value="" selected disabled></option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-primary" type="submit">Müşteri Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="yeni-evrak-ekle">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            Evrak Ekle
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/{{ dil }}{% url 'crm:daire_evrak_ekle' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="daire_id" value="{{ daire_detayi.id }}">
+                <div class="form-element">
+                    <label for="evrak_adi">Evrak Adı</label>
+                    <input type="text" name="evrak_adi" id="evrak_adi" required>
+                </div>
+                <div class="form-element">
+                    <label for="evrak">Evrak</label>
+                    <input type="file" name="evrak" id="evrak" required>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-primary" type="submit">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal(modalID, close = true) {
+        if (close) {
+            closeModal();
         }
+        $("#" + modalID).css("display", "flex").hide().fadeIn()
+    }
 
-        function closeModal(modalID = "") {
-            console.log(modalID.length);
-            if (modalID.length === 0) {
-                $(".modal").fadeOut();
-            } else {
-                $("#" + modalID).fadeOut();
-            }
+    function closeModal(modalID = "") {
+        if (modalID.length === 0) {
+            $(".modal").fadeOut();
+        } else {
+            $("#" + modalID).fadeOut();
         }
+    }
 
-        $(".modal").on("click", function (e) {
-            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
-                closeModal();
-            }
-        });
-
-    </script>
-
-
-
-
-
-
-    <script>
-        function toggleDarkMode() {
-            if ($("body").hasClass("dark-mode")) {
-                document.cookie = "dark-mode=false; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-            } else {
-                document.cookie = "dark-mode=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-            }
-            $("body").toggleClass("dark-mode");
+    $(".modal").on("click", function (e) {
+        if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+            closeModal();
         }
-
-        window.onload = function () {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith("dark-mode=true")) {
-                    document.body.classList.add('dark-mode');
-                    break;
-                }
-            }
-        };
-
-        function toggleFullScreen() {
-            var doc = window.document;
-            var docEl = doc.documentElement;
-
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
-            }
-        }
-
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
-        }
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
+    });
+</script>
 
 {% endblock sidebar %}

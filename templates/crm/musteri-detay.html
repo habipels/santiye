@@ -1026,6 +1026,32 @@
 </div>
 {% endfor %}
 
+<div class="modal" id="yeni-evrak-ekle">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            Evrak Ekle
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/{{ dil }}{% url 'crm:daire_evrak_ekle' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="daire_id" value="{{ musteri_detayi.id }}">
+                <div class="form-element">
+                    <label for="evrak_adi">Evrak Adı</label>
+                    <input type="text" name="evrak_adi" id="evrak_adi" required>
+                </div>
+                <div class="form-element">
+                    <label for="evrak">Evrak</label>
+                    <input type="file" name="evrak" id="evrak" required>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-primary" type="submit">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
  <script>
  
         document.getElementById('santiye').addEventListener('change', function() {

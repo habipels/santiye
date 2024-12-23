@@ -13,6 +13,7 @@ urlpatterns = [
     path("", views.crm_dashboard, name="crm_dashboard"),#
     path("dairedetayi/<int:id>", views.crm_dairedetayi, name="crm_dairedetayi"),
     path("daire_ekle", views.daire_ekle, name="daire_ekle"),
+    path("daire_evrak_ekle", views.daire_evrak_ekle, name="daire_evrak_ekle"),
     path("daireyonetimi", views.crm_daireyonetimi, name="crm_daireyonetimi"),
     path("dokumanlar", views.crm_evr, name="crm_evr"),
     path("dokumanyonetimi", views.crm_evrak_dokuman, name="crm_evrak_dokuman"),
@@ -40,6 +41,7 @@ urlpatterns = [
     path("crm_teklif_duzenle_gonder", views.crm_teklif_duzenle_gonder, name="crm_teklif_duzenle_gonder"),
     path("musteri_notu_sil", views.musteri_notu_sil, name="musteri_notu_sil"),
     path("musteri_notu_duzenle", views.musteri_notu_duzenle, name="musteri_notu_duzenle"),
+
 #
 
     path("taleplervesikayetler", views.crm_talepler_sikayetler, name="crm_talepler_sikayetler"),
