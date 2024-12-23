@@ -795,7 +795,8 @@ def get_daire_evraklari(request):
     daire_id = request.GET.get('daire_id')
     if daire_id:
         evraklar = daire_evraklari.objects.filter(daire_id=daire_id).values('evrak_adi', 'evrak')
-        evrak_list = [{'evrak_adi': evrak['evrak_adi'], 'evrak_url': evrak['evrak']} for evrak in evraklar]
+        image_extensions = [".jpg", ".jpeg", ".png"]
+        evrak_list = [{'evrak_adi': evrak['evrak_adi'], 'evrak_url': evrak['evrak'], 'is_image': evrak['evrak'].lower().endswith(tuple(image_extensions))} for evrak in evraklar]
         return JsonResponse(evrak_list, safe=False)
     return JsonResponse({'error': 'Daire bulunamadı'}, status=400)
 

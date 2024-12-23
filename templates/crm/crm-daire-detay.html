@@ -59,10 +59,12 @@
                 <div class="info-header">Teslim Sırasında Alınan Evraklar</div>
                 <div class="daire-detay-evraklar">
                     {% for evrak in daire_evraklari %}
+                    {% if not evrak.evrak.url|lower|slice:"-4:" in image_extensions %}
                     <div class="dde-evrak">
                         <i class="icon icon-folder"></i>
                         <a href="{{ evrak.evrak.url }}" target="_blank">{{ evrak.evrak_adi }}</a>
                     </div>
+                    {% endif %}
                     {% endfor %}
                 </div>
 
