@@ -37,7 +37,28 @@ def musteri_bilgisi_views(request):
     return JsonResponse(suggestions, safe=False)
 def crm_dashboard(request):
     content = sozluk_yapisi()
-    return render(request,"crm/crm-dashboard.html",content)
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
+
+    content["toplam_daire"] = daire_bilgisi.objects.filter(daire_kime_ait=kullanici).count()
+    content["atanan_daire"] = musteri_daire_baglama.objects.filter(baglama_kime_ait=kullanici, durum="1").count()
+    content["atanmamis_daire"] = content["toplam_daire"] - content["atanan_daire"]
+    content["acik_talep"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="0", durum="0").count()
+    content["acik_sikayet"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1", durum="0").count()
+    content["beklemedeki_teklifler"] = teklifler.objects.filter(teklif_kime_ait=kullanici, durum="0").count()
+    content["toplam_musteri"] = musteri_bilgisi.objects.filter(musteri_kime_ait=kullanici).count()
+    content["daireler"] = daire_bilgisi.objects.filter(daire_kime_ait=kullanici)
+
+    return render(request, "crm/crm-dashboard.html", content)
 
 def crm_dairedetayi(request,id):
     content = sozluk_yapisi()

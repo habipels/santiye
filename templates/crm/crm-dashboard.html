@@ -3,416 +3,183 @@
 {% load static %}
 {% load custom_tags %}
 {% block sidebar %}
-    <main>
+<main>
+    <div class="crm-infos">
+        <div class="crm-info">
+            <i class="icon icon-home"></i>
+            <span>{{ toplam_daire }}</span>
+            <span>Toplam<br>Daire</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-atanan-daire"></i>
+            <span>{{ atanan_daire }}</span>
+            <span>Atanan<br>Daire</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-atanmamis-daire"></i>
+            <span>{{ atanmamis_daire }}</span>
+            <span>Atanmamış<br>Daire</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-clipboard"></i>
+            <span>{{ acik_talep }}</span>
+            <span>Açık Talep<br>Sayısı</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-clipboard"></i>
+            <span>{{ acik_sikayet }}</span>
+            <span>Açık Şikayet<br>Sayısı</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-watch"></i>
+            <span>{{ beklemedeki_teklifler }}</span>
+            <span>Beklemedeki Teklifler</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-people"></i>
+            <span>{{ toplam_musteri }}</span>
+            <span>Toplam<br>Müşteri</span>
+        </div>
+    </div>
 
+    <div class="crm-head" style="margin-top: 30px;">
+        <div class="crm-title">Tüm Daireler</div>
+        <div class="crm-right"><a href="#" class="crm-head-btn">Tümünü Gör</a></div>
+    </div>
 
-        <div class="crm-infos">
-            <div class="crm-info">
-                <i class="icon icon-home"></i>
-                <span>6</span>
-                <span>Toplam<br>Daire</span>
+    <div class="tum-daireler">
+        {% for daire in daireler %}
+        <div class="daire">
+            <div class="daire-images">
+                <span class="daire-status daire-status-{{ daire.durum }}">{{ daire.durum }}</span>
+                <div class="daire-thumbnail">
+                    <img src="{% static 'content/images/daire-1.jfif' %}" alt="">
+                </div>
+                <div class="daire-other-images">
+                    <img src="{% static 'content/images/daire-2.jfif' %}" alt="">
+                    <img src="{% static 'content/images/daire-3.jfif' %}" alt="">
+                </div>
             </div>
-            <div class="crm-info">
-                <i class="icon icon-atanan-daire"></i>
-                <span>6</span>
-                <span>Atanan<br>Daire</span>
-            </div>
-            <div class="crm-info">
-                <i class="icon icon-atanmamis-daire"></i>
-                <span>6</span>
-                <span>Atanmamış<br>Daire</span>
-            </div>
-            <div class="crm-info">
-                <i class="icon icon-clipboard"></i>
-                <span>6</span>
-                <span>Açık Talep<br>Sayısı</span>
-            </div>
-            <div class="crm-info">
-                <i class="icon icon-clipboard"></i>
-                <span>6</span>
-                <span>Açık Şikayet<br>Sayısı</span>
-            </div>
-            <div class="crm-info">
-                <i class="icon icon-watch"></i>
-                <span>6</span>
-                <span>Beklemedeki Teklifler</span>
-            </div>
-            <div class="crm-info">
-                <i class="icon icon-people"></i>
-                <span>6</span>
-                <span>Toplam<br>Müşteri</span>
+            <div class="daire-details">
+                <span>Tamamlanma Tarihi: {{ daire.kayit_tarihi|date:"d M Y" }}</span>
+                <div class="daire-title">{{ daire.blog_bilgisi.proje_santiye_Ait.proje_adi }}</div>
+                <div class="daire-location"><i class="icon icon-location"></i> {{ daire.blog_bilgisi.proje_santiye_Ait.proje_adi }}</div>
+                <div class="daire-customer"><i class="icon icon-customer"></i> {{ daire.oda_sayisi }} Oda</div>
             </div>
         </div>
-        
+        {% endfor %}
+    </div>
 
-        <div class="crm-head" style="margin-top: 30px;">
-            <div class="crm-title">Tüm Daireler</div>
-            <div class="crm-right"><a href="#" class="crm-head-btn">Tümünü Gör</a></div>
-        </div>
+    <div class="crm-head" style="margin-top: 30px;">
+        <div class="crm-title">Talep ve Şikayetler <a href="#"><i class="icon icon-crm-new"></i></a></div>
+        <div class="crm-right"><a href="#" class="crm-head-btn">Tümünü Gör</a></div>
+    </div>
 
-        <div class="tum-daireler">
-            <div class="daire">
-                <div class="daire-images">
-                    <span class="daire-status daire-status-completed">Teslim Edildi</span>
-                    <div class="daire-thumbnail">
-                        <img src="./content/images/daire-1.jfif" alt="">
-                    </div>
-                    <div class="daire-other-images">
-                        <img src="./content/images/daire-2.jfif" alt="">
-                        <img src="./content/images/daire-3.jfif" alt="">
-                    </div>
-                </div>
-                <div class="daire-details">
-                    <span>Tamamlanma Tarihi: 21 Ağustos 2024</span>
-                    <div class="daire-title">Yeşil Yapı Konutları</div>
-                    <div class="daire-location"><i class="icon icon-location"></i> İstanbul</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> 223 Atanan Müşteri</div>
-                </div>
-            </div>
-            <div class="daire">
-                <div class="daire-images">
-                    <span class="daire-status daire-status-pending">Beklemede</span>
-                    <div class="daire-thumbnail">
-                        <img src="./content/images/daire-1.jfif" alt="">
-                    </div>
-                    <div class="daire-other-images">
-                        <img src="./content/images/daire-2.jfif" alt="">
-                        <img src="./content/images/daire-3.jfif" alt="">
-                    </div>
-                </div>
-                <div class="daire-details">
-                    <span>Tamamlanma Tarihi: 21 Ağustos 2024</span>
-                    <div class="daire-title">Yeşil Yapı Konutları</div>
-                    <div class="daire-location"><i class="icon icon-location"></i> İstanbul</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> 223 Atanan Müşteri</div>
-                </div>
-            </div>
-            <div class="daire">
-                <div class="daire-images">
-                    <span class="daire-status daire-status-completed">Teslim Edildi</span>
-                    <div class="daire-thumbnail">
-                        <img src="./content/images/daire-1.jfif" alt="">
-                    </div>
-                    <div class="daire-other-images">
-                        <img src="./content/images/daire-2.jfif" alt="">
-                        <img src="./content/images/daire-3.jfif" alt="">
-                    </div>
-                </div>
-                <div class="daire-details">
-                    <span>Tamamlanma Tarihi: 21 Ağustos 2024</span>
-                    <div class="daire-title">Yeşil Yapı Konutları</div>
-                    <div class="daire-location"><i class="icon icon-location"></i> İstanbul</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> 223 Atanan Müşteri</div>
-                </div>
-            </div>
-        </div>
+    <div class="tab-navs" style="margin-top: 30px; margin-bottom: 10px;">
+        <button class="tab-navs-btn active" data-tab="talepler">Talepler</button>
+        <button class="tab-navs-btn" data-tab="sikayetler">Şikayetler</button>
+    </div>
 
-
-
-
-
-
-
-        <!-- Talepler ve Şikayetler -->
-
-        <div class="crm-head" style="margin-top: 30px;">
-            <div class="crm-title">Talep ve Şikayetler <a href="#"><i class="icon icon-crm-new"></i></a></div>
-            <div class="crm-right"><a href="#" class="crm-head-btn">Tümünü Gör</a></div>
-        </div>
-
-
-        <div class="tab-navs" style="margin-top: 30px; margin-bottom: 10px;">
-            <button class="tab-navs-btn active" data-tab="talepler">Talepler</button>
-            <button class="tab-navs-btn " data-tab="sikayetler">Şikayetler</button>
-        </div>
-
-        <div class="tab-contents">
-
-            <div class="tab-content active" id="talepler">
-                <div class="table-wrapper">
-                    <table id="talepler-table">
-                        <thead>
-                            <tr>
-                                <th>Talep Adı</th>
-                                <th>Talep Tarihi</th>
-                                <th>İşlem Tarihi</th>
-                                <th>Talep Gerekçesi</th>
-                                <th>Durum</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Nakliye Tarih Değişikliği Talebi</td>
-                                <td>10 Ekim 2024</td>
-                                <td>15 Ekim 2024</td>
-                                <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle taşınma
-                                    tarihini ertelemek istemektedir. Nakliye firmasından uygun bir alternatif tarih
-                                    belirlenmesini rica ediyor.</td>
-                                <td>
-                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
-                                </td>
-                                <td>
-                                    <div class="td-actions">
-                                        <a href="#"><i class="icon icon-eye"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="sikayetler">
-                <div class="table-wrapper">
-                    <table id="sikayetler-table">
-                        <thead>
-                            <tr>
-                                <th>Talep Adı</th>
-                                <th>Talep Tarihi</th>
-                                <th>İşlem Tarihi</th>
-                                <th>Talep Gerekçesi</th>
-                                <th>Durum</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Nakliye Tarih Değişikliği Talebi</td>
-                                <td>10 Ekim 2024</td>
-                                <td>15 Ekim 2024</td>
-                                <td style="text-align: left;">Müşteri iş yerindeki acil bir toplantı nedeniyle taşınma
-                                    tarihini ertelemek istemektedir. Nakliye firmasından uygun bir alternatif tarih
-                                    belirlenmesini rica ediyor.</td>
-                                <td>
-                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
-                                </td>
-                                <td>
-                                    <div class="td-actions">
-                                        <a href="#"><i class="icon icon-eye"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-
-        <script>
-            $(".tab-navs-btn").on("click", function () {
-                $(".tab-navs-btn").removeClass("active");
-                $(".tab-content").removeClass("active");
-
-                $(this).addClass("active");
-                $("#" + $(this).attr("data-tab")).addClass("active");
-            })
-        </script>
-
-        <script>
-            let talepler_table = new DataTable('#talepler-table', {
-                paging: false,
-                searching: true,
-                info: false,
-                layout: {
-                    topStart: {
-                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                    }
-                },
-                columnDefs: [{ width: '40%', targets: 3 }]
-            });
-
-            let sikayetler_table = new DataTable('#sikayetler-table', {
-                paging: false,
-                searching: true,
-                info: false,
-                layout: {
-                    topStart: {
-                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                    }
-                },
-                columnDefs: [{ width: '40%', targets: 3 }]
-            });
-        </script>
-
-
-
-
-        <!-- Evrak ve Dokümanlar -->
-
-
-
-        <div class="crm-head" style="margin-top: 30px;">
-            <div class="crm-title">Evrak ve Dokümanlar <a href="#"><i class="icon icon-crm-new"></i></a></div>
-            <div class="crm-right"><a href="#" class="crm-head-btn">Tümünü Gör</a></div>
-        </div>
-
-        <div class="evrak-ve-dokumanlar">
-            <div class="evd-stats">
-                <div class="evd-stats-chart">
-                    <div id="evd-chart"></div>
-
-
-                    <script>
-                        var options = {
-                            series: [76],
-                            chart: {
-                                type: 'radialBar',
-                                offsetY: -20,
-                                sparkline: {
-                                    enabled: true
-                                }
-                            },
-                            plotOptions: {
-                                radialBar: {
-                                    startAngle: -90,
-                                    endAngle: 90,
-                                    track: {
-                                        background: "#e7e7e7",
-                                        strokeWidth: '97%',
-                                        margin: 0,
-                                    },
-                                    dataLabels: {
-                                        name: {
-                                            show: false
-                                        },
-                                        value: {
-                                            show: false
-                                        }
-                                    }
-                                }
-                            },
-                            fill: {
-                                type: 'solid',
-                                colors: ['#A04CFF']
-                            }
-                        };
-
-                        var chart = new ApexCharts(document.querySelector("#evd-chart"), options);
-                        chart.render();
-                    </script>
-
-                </div>
-
-                <div class="evd-stats-list">
-                    <div class="evd-stat">
-                        <i class="icon icon-images-file"></i>
-                        <div class="evd-stat-title">Images <span>12 files</span></div>
-                        <div class="evd-stat-size">3 GB</div>
-                    </div>
-                    <div class="evd-stat">
-                        <i class="icon icon-media-file"></i>
-                        <div class="evd-stat-title">Media <span>12 files</span></div>
-                        <div class="evd-stat-size">3 GB</div>
-                    </div>
-                    <div class="evd-stat">
-                        <i class="icon icon-documents-file"></i>
-                        <div class="evd-stat-title">Documents <span>12 files</span></div>
-                        <div class="evd-stat-size">3 GB</div>
-                    </div>
-                    <div class="evd-stat">
-                        <i class="icon icon-other-file"></i>
-                        <div class="evd-stat-title">Other <span>12 files</span></div>
-                        <div class="evd-stat-size">175 MB</div>
-                    </div>
-
-                </div>
-
-            </div>
-            <div class="evd-folders">
-                <div class="evd-folder">
-                    <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                    <i class="icon icon-folder"></i>
-                    <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                    <span>2.3GB - 100 adet dosya</span>
-                </div>
-                <div class="evd-folder">
-                    <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                    <i class="icon icon-folder"></i>
-                    <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                    <span>2.3GB - 100 adet dosya</span>
-                </div>
-                <div class="evd-folder">
-                    <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                    <i class="icon icon-folder"></i>
-                    <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                    <span>2.3GB - 100 adet dosya</span>
-                </div>
-                <div class="evd-folder">
-                    <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                    <i class="icon icon-folder"></i>
-                    <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                    <span>2.3GB - 100 adet dosya</span>
-                </div>
-                <div class="evd-folder">
-                    <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                    <i class="icon icon-folder"></i>
-                    <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                    <span>2.3GB - 100 adet dosya</span>
-                </div>
-                <div class="evd-folder">
-                    <a href="#" class="evd-forward"><i class="icon icon-forward"></i></a>
-                    <i class="icon icon-folder"></i>
-                    <div class="evd-folder-name">Daire - 1 / Dokümanlar</div>
-                    <span>2.3GB - 100 adet dosya</span>
-                </div>
+    <div class="tab-contents">
+        <div class="tab-content active" id="talepler">
+            <div class="table-wrapper">
+                <table id="talepler-table">
+                    <thead>
+                        <tr>
+                            <th>Talep Adı</th>
+                            <th>Talep Tarihi</th>
+                            <th>İşlem Tarihi</th>
+                            <th>Talep Gerekçesi</th>
+                            <th>Durum</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for talep in talepler %}
+                        <tr>
+                            <td>{{ talep.sikayet_nedeni }}</td>
+                            <td>{{ talep.kayit_tarihi|date:"d M Y" }}</td>
+                            <td>{{ talep.islem_tarihi|date:"d M Y" }}</td>
+                            <td style="text-align: left;">{{ talep.sikayet_aciklamasi }}</td>
+                            <td>
+                                <div class="td-info"><span class="status-{{ talep.durum }} stats-lg">{{ talep.durum }}</span></div>
+                            </td>
+                            <td>
+                                <div class="td-actions">
+                                    <a onclick="openModal('talep-detay{{ talep.id }}')" class="status-info"><i class="icon icon-eye"></i></a>
+                                    <a onclick="openModal('duzelt-talep{{ talep.id }}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                    <a onclick="openModal('departman-sil{{ talep.id }}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
-
-
-
-
-    </main>
-
-
-
+        <div class="tab-content" id="sikayetler">
+            <div class="table-wrapper">
+                <table id="sikayetler-table">
+                    <thead>
+                        <tr>
+                            <th>Şikayet Adı</th>
+                            <th>Şikayet Tarihi</th>
+                            <th>İşlem Tarihi</th>
+                            <th>Şikayet Gerekçesi</th>
+                            <th>Durum</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sikayet in sikayetler %}
+                        <tr>
+                            <td>{{ sikayet.sikayet_nedeni }}</td>
+                            <td>{{ sikayet.kayit_tarihi|date:"d M Y" }}</td>
+                            <td>{{ sikayet.islem_tarihi|date:"d M Y" }}</td>
+                            <td style="text-align: left;">{{ sikayet.sikayet_aciklamasi }}</td>
+                            <td>
+                                <div class="td-info"><span class="status-{{ sikayet.durum }} stats-lg">{{ sikayet.durum }}</span></div>
+                            </td>
+                            <td>
+                                <div class="td-actions">
+                                    <a onclick="openModal('sikayet-detay{{ sikayet.id }}')" class="status-info"><i class="icon icon-eye"></i></a>
+                                    <a onclick="openModal('duzelt-sikayet{{ sikayet.id }}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                    <a onclick="openModal('departman-sil{{ sikayet.id }}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <script>
-        function toggleDarkMode() {
-            if ($("body").hasClass("dark-mode")) {
-                document.cookie = "dark-mode=false; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-            } else {
-                document.cookie = "dark-mode=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-            }
-            $("body").toggleClass("dark-mode");
-        }
-
-        window.onload = function () {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith("dark-mode=true")) {
-                    document.body.classList.add('dark-mode');
-                    break;
+        let talepler_table = new DataTable('#talepler-table', {
+            paging: false,
+            searching: true,
+            info: false,
+            layout: {
+                topStart: {
+                    //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
                 }
-            }
-        };
+            },
+            columnDefs: [{ width: '40%', targets: 3 }]
+        });
 
-        function toggleFullScreen() {
-            var doc = window.document;
-            var docEl = doc.documentElement;
-
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
-            }
-        }
-
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
-        }
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
+        let sikayetler_table = new DataTable('#sikayetler-table', {
+            paging: false,
+            searching: true,
+            info: false,
+            layout: {
+                topStart: {
+                    //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            },
+            columnDefs: [{ width: '40%', targets: 3 }]
+        });
     </script>
-
+</main>
 {% endblock sidebar %}
