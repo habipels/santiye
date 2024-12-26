@@ -42,6 +42,9 @@ urlpatterns = [
     path("crm_teklif_duzenle_gonder", views.crm_teklif_duzenle_gonder, name="crm_teklif_duzenle_gonder"),
     path("musteri_notu_sil", views.musteri_notu_sil, name="musteri_notu_sil"),
     path("musteri_notu_duzenle", views.musteri_notu_duzenle, name="musteri_notu_duzenle"),
+    path("musteri_evrak_ekle", views.musteri_evrak_ekle, name="musteri_evrak_ekle"),
+    path("musteri_evrak_duzenle", views.musteri_evrak_duzenle, name="musteri_evrak_duzenle"),
+    path("musteri_evrak_sil", views.musteri_evrak_sil, name="musteri_evrak_sil"),
 
 #
 

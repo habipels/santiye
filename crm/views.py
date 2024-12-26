@@ -187,6 +187,7 @@ def crm_musteri_detayi(request, id):
     content["sikayetler"] = talep_ve_sikayet.objects.filter(musteri=musteri, sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1")
     content["musteri_gorusme_notu"] = musteri_notlari.objects.filter(kime_ait=kullanici, musterisi=musteri, silinme_bilgisi=False)
     content["teklifler"] = teklifler.objects.filter(musterisi=musteri)
+    content["musteri_evraklari"] = musteri_evraklari.objects.filter(musterisi=musteri, silinme_bilgisi=False)
 
     return render(request, "crm/musteri-detay.html", content)
 
@@ -805,4 +806,84 @@ def get_daire_evraklari(request):
         evrak_list = [{'evrak_adi': evrak['evrak_adi'], 'evrak_url': evrak['evrak'], 'is_image': evrak['evrak'].lower().endswith(tuple(image_extensions))} for evrak in evraklar]
         return JsonResponse(evrak_list, safe=False)
     return JsonResponse({'error': 'Daire bulunamadı'}, status=400)
+
+def musteri_evrak_ekle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
+
+    if request.method == 'POST':
+        musteri_id = request.POST.get('musteri_id')
+        evrak_adi = request.POST.get('evrak_adi')
+        evrak = request.FILES.get('evrak')
+
+        musteri = get_object_or_none(musteri_bilgisi, id=musteri_id, musteri_kime_ait=kullanici)
+        if musteri and evrak:
+            musteri_evraklari.objects.create(
+                belge_kime_ait=kullanici,
+                musterisi=musteri,
+                evrak_detayi=evrak_adi,
+                evrak=evrak
+            )
+        return redirect("crm:crm_musteri_detayi", musteri_id)
+
+    return redirect("crm:crm_musteri_detayi", musteri_id)
+
+def musteri_evrak_duzenle(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
+
+    if request.method == 'POST':
+        evrak_id = request.POST.get('evrak_id')
+        evrak_adi = request.POST.get('evrak_adi')
+        evrak = request.FILES.get('evrak')
+
+        musteri_evrak = get_object_or_none(musteri_evraklari, id=evrak_id, belge_kime_ait=kullanici)
+        if musteri_evrak:
+            musteri_evrak.evrak_detayi = evrak_adi
+            if evrak:
+                musteri_evrak.evrak = evrak
+            musteri_evrak.save()
+        return redirect("crm:crm_musteri_detayi", musteri_evrak.musterisi.id)
+
+    return redirect("crm:crm_musteri_detayi", musteri_evrak.musterisi.id)
+
+def musteri_evrak_sil(request):
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+        if a:
+            if a.izinler.musteri_olusturma:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
+
+    if request.method == 'POST':
+        evrak_id = request.POST.get('evrak_id')
+        musteri_id = request.POST.get('musteri_id')
+
+        musteri_evraklari.objects.filter(id=evrak_id, belge_kime_ait=kullanici).delete()
+        return redirect("crm:crm_musteri_detayi", musteri_id)
+
+    return redirect("crm:crm_musteri_detayi", musteri_id)
 

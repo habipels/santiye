@@ -147,37 +147,33 @@
 
             </div>
             <div class="tab-content" id="evraklar">
-                
-                <div class="large-stats-card table-card table-detail-card">
-                    
-                    <div class="documents">
-                        <div class="document">
-                            <div class="document-title">Oturum Belgesi</div>
-                            <img src="./content/images/oturum-belgesi.png" alt="">
-                        </div>
-                        <div class="document">
-                            <div class="document-title">Oturum Belgesi</div>
-                            <img src="./content/images/oturum-belgesi.png" alt="">
-                        </div>
-                        <div class="document">
-                            <div class="document-title">Kira Kontratı</div>
-                            <div class="document-no-file">
-                                <i class="icon icon-no-file"></i>
-                                Doküman ya da<br>Fotoğraf Ekle
-                            </div>
-                        </div>
-                        <div class="document">
-                            <div class="document-title">Kira Kontratı</div>
-                            <div class="document-no-file">
-                                <i class="icon icon-no-file"></i>
-                                Doküman ya da<br>Fotoğraf Ekle
-                            </div>
-                        </div>
-                    </div>
-
+    <div class="large-stats-card table-card table-detail-card">
+        <div class="stats-header">
+            <div class="stats-title">Evraklar</div>
+        </div>
+        <div class="documents">
+            {% for evrak in musteri_evraklari %}
+            <div class="document">
+                <div class="document-title">{{ evrak.evrak_detayi }}</div>
+                {% if evrak.evrak.url %}
+                <a href="{{ evrak.evrak.url }}" target="_blank">
+                    <img src="{{ evrak.evrak.url }}" alt="{{ evrak.evrak_detayi }}">
+                </a>
+                {% else %}
+                <div class="document-no-file">
+                    <i class="icon icon-no-file"></i>
+                    Doküman ya da<br>Fotoğraf Ekle
                 </div>
-
+                {% endif %}
+                <div class="document-actions">
+                    <a onclick="openModal('duzelt-evrak{{ evrak.id }}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                    <a onclick="openModal('sil-evrak{{ evrak.id }}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                </div>
             </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
             <div class="tab-content" id="talep-sikayet">
                 
                 <div class="large-stats-card table-card table-detail-card">
@@ -1032,9 +1028,9 @@
             Evrak Ekle
         </div>
         <div class="modal-body">
-            <form method="post" action="/{{ dil }}{% url 'crm:daire_evrak_ekle' %}" enctype="multipart/form-data">
+            <form method="post" action="/{{ dil }}{% url 'crm:musteri_evrak_ekle' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="hidden" name="daire_id" value="{{ musteri_detayi.id }}">
+                <input type="hidden" name="musteri_id" value="{{ musteri_detayi.id }}">
                 <div class="form-element">
                     <label for="evrak_adi">Evrak Adı</label>
                     <input type="text" name="evrak_adi" id="evrak_adi" required>
@@ -1051,6 +1047,54 @@
         </div>
     </div>
 </div>
+
+{% for evrak in musteri_detayi.musteri_evraklari_set.all %}
+<div class="modal" id="duzelt-evrak{{ evrak.id }}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            Evrak Düzenle
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/{{ dil }}{% url 'crm:musteri_evrak_duzenle' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="evrak_id" value="{{ evrak.id }}">
+                <div class="form-element">
+                    <label for="evrak_adi">Evrak Adı</label>
+                    <input type="text" name="evrak_adi" id="evrak_adi" value="{{ evrak.evrak_detayi }}" required>
+                </div>
+                <div class="form-element">
+                    <label for="evrak">Evrak</label>
+                    <input type="file" name="evrak" id="evrak">
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-primary" type="submit">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="sil-evrak{{ evrak.id }}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            Silme Uyarısı
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/{{ dil }}{% url 'crm:musteri_evrak_sil' %}">
+                {% csrf_token %}
+                <input type="hidden" name="evrak_id" value="{{ evrak.id }}">
+                <input type="hidden" name="musteri_id" value="{{ musteri_detayi.id }}">
+                <p>Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-danger" type="submit">Sil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
  <script>
  
