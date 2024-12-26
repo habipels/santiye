@@ -18,21 +18,24 @@
             </ul>
         </div>
         <div class="page-actions">
-            <button class="page-primary-btn" onclick="openModal('musteri-ekle')"><i class="icon icon-new"></i>Yeni Müşteri</button>
             <button class="page-primary-btn" onclick="openModal('yeni-evrak-ekle')"><i class="icon icon-new"></i>Yeni Evrak</button>
+            <button class="page-primary-btn" onclick="openModal('daire-ata')"><i class="icon icon-new"></i>Yeni Müşteri</button>
         </div>
     </div>
 
     <div class="daire-detay" style="margin-top: 30px;">
         <div class="daire-detay-images">
             <div class="daire-thumbnail">
-                <img src="{% static 'content/images/daire-1.jfif' %}" alt="">
+            {% if birinci_resim %}
+                <img src="{{birinci_resim.evrak.url}}" alt="">
+            {% else %}
+            {% endif %}
+                
             </div>
             <div class="daire-other-images">
-                {% for evrak in daire_evraklari %}
-                {% if evrak.evrak.url|lower|slice:"-4:" in image_extensions %}
+                {% for evrak in image_extensions %}
                 <img src="{{ evrak.evrak.url }}" alt="{{ evrak.evrak_adi }}">
-                {% endif %}
+                
                 {% endfor %}
             </div>
         </div>
@@ -228,6 +231,36 @@
     </div>
 </div>
 
+<div class="modal" id="daire-ata">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            Müşteriye Daire Ata
+        </div>
+        <div class="modal-body">
+            <form id="daireAtaForm" method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_ata' %}">
+                {% csrf_token %}
+                <input type="hidden" name="daire" value="{{daire_detayi.id}}">
+                <input type="hidden" name="blok" value="{{daire_detayi.blog_bilgisi.id}}">
+                <input type="hidden" name="kat" value="{{daire_detayi.kat}}">
+                <input type="hidden" name="daire_no" value="{{daire_detayi.daire_no}}">
+                <div class="form-element">
+                    <label for="musteri">Müşteri</label>
+                    <select name="musteri" id="musteri" required>
+                        <option value="" selected disabled></option>
+                        {% for musteri in musteriler %}
+                        <option value="{{musteri.id}}">{{musteri.musteri_adi}} {{musteri.musteri_soyadi}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
+                    <button class="form-action-primary" type="submit" onclick="validateForm(event)">Ata</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     function openModal(modalID, close = true) {
         if (close) {
@@ -248,6 +281,49 @@
         if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
             closeModal();
         }
+    });
+
+    function validateForm(event) {
+        const musteri = document.getElementById('musteri').value;
+        if (!musteri) {
+            alert('Lütfen bir müşteri seçin.');
+            event.preventDefault();
+        }
+    }
+
+    document.getElementById('blok').addEventListener('change', function() {
+        const blok_id = this.value;
+        fetch("{% url 'crm:get_katlar' %}?blok_id=" + blok_id)
+            .then(response => response.json())
+            .then(data => {
+                const katSelect = document.getElementById('kat');
+                katSelect.innerHTML = '<option value="" selected disabled>Kat Seçiniz</option>'; // Clear previous options
+                data.forEach(kat => {
+                    const option = document.createElement('option');
+                    option.value = kat.id;
+                    option.textContent = kat.kat_adi;
+                    katSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('kat').addEventListener('change', function() {
+        const blok_id = document.getElementById('blok').value;
+        const kat_bilgisi = this.value;
+        fetch("{% url 'crm:get_daireler' %}?blok_id=" + blok_id + "&kat=" + kat_bilgisi)
+            .then(response => response.json())
+            .then(data => {
+                const daireSelect = document.getElementById('daire');
+                daireSelect.innerHTML = '<option value="" selected disabled>Daire Seçiniz</option>'; // Clear previous options
+                data.forEach(daire => {
+                    const option = document.createElement('option');
+                    option.value = daire.id;
+                    option.textContent = daire.daire_adi;
+                    daireSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
     });
 </script>
 

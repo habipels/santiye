@@ -505,7 +505,7 @@
                 Müşteriye Daire Ata 
             </div>
             <div class="modal-body">
-                <form method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_ata' %}">
+                <form id="yeniDaireAtaForm" method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_ata' %}">
                     {% csrf_token %} 
                     <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
                     <div class="form-element">
@@ -547,7 +547,7 @@
                     
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Daire Ekle</button>
+                        <button class="form-action-primary" type="submit" onclick="validateForm(event)">Daire Ekle</button>
                     </div>
                 </form>
             </div>
@@ -1140,6 +1140,14 @@ document.getElementById('blok').addEventListener('change', function() {
                 closeModal();
             }
         });
+
+        function validateForm(event) {
+            const musteri = document.getElementById('musteri').value;
+            if (!musteri) {
+                alert('Lütfen bir müşteri seçin.');
+                event.preventDefault();
+            }
+        }
 
     </script>
 

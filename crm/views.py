@@ -17,7 +17,8 @@ import requests
 from main.views import sozluk_yapisi ,get_object_or_none
 from django.core.files.storage import FileSystemStorage
 from site_info.models import daire_evraklari
-
+from functools import reduce
+import operator
 def musteri_bilgisi_views(request):
     term = request.GET.get('term', '')
     if request.user.kullanicilar_db:
@@ -60,10 +61,10 @@ def crm_dashboard(request):
 
     return render(request, "crm/crm-dashboard.html", content)
 
-def crm_dairedetayi(request,id):
+def crm_dairedetayi(request, id):
     content = sozluk_yapisi()
     if request.user.kullanicilar_db:
-        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
@@ -71,17 +72,22 @@ def crm_dairedetayi(request,id):
                 return redirect("main:yetkisiz")
         else:
             return redirect("main:yetkisiz")
-        
-    else : 
+    else:
         kullanici = request.user
+
     daire = get_object_or_none(daire_bilgisi, id=id, daire_kime_ait=kullanici)
     content["daire_detayi"] = daire
     content["daire_evraklari"] = daire_evraklari.objects.filter(daire=daire, evrak_kime_ait=kullanici)
     content["talepler"] = talep_ve_sikayet.objects.filter(daire=daire, sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="0")
     content["sikayetler"] = talep_ve_sikayet.objects.filter(daire=daire, sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1")
     content["atanan_musteri"] = get_object_or_none(musteri_daire_baglama, daire=daire, durum="1")
-    content["image_extensions"] = [".jpg", ".jpeg", ".png"]
-    return render(request,"crm/crm-daire-detay.html",content)
+    dosya_turu = [".jpg", ".jpeg", ".png", ".ico", ".css", ".JFIF", ".GIF", ".WEBP"]
+    content["image_extensions"] = daire_evraklari.objects.filter(daire=daire, evrak_kime_ait=kullanici).filter(reduce(operator.or_, (Q(evrak__icontains=x) for x in dosya_turu)))
+    content["birinci_resim"] = daire_evraklari.objects.filter(daire=daire, evrak_kime_ait=kullanici).filter(reduce(operator.or_, (Q(evrak__icontains=x) for x in dosya_turu))).first()
+    content["musteriler"] = musteri_bilgisi.objects.filter(musteri_kime_ait=kullanici)
+    content["bloglar"] = bloglar.objects.filter(proje_ait_bilgisi=kullanici, proje_santiye_Ait__silinme_bilgisi=False)
+    return render(request, "crm/crm-daire-detay.html", content)
+
 def get_bloglar(request):
     santiye_id = request.GET.get('santiye_id')
     if santiye_id:
