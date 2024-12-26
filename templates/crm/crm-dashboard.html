@@ -48,25 +48,22 @@
     </div>
 
     <div class="tum-daireler">
-        {% for daire in daireler %}
+        {% for i in daireler %}
         <div class="daire">
-            <div class="daire-images">
-                <span class="daire-status daire-status-{{ daire.durum }}">{{ daire.durum }}</span>
-                <div class="daire-thumbnail">
-                    <img src="{% static 'content/images/daire-1.jfif' %}" alt="">
+                <div class="daire-images">
+                    <span class="daire-status daire-status-completed">Teslim Edildi</span>
+                    <div class="daire-thumbnail">
+                        <!--<img src="./content/images/daire-1.jfif" alt="">-->
+                    </div>
                 </div>
-                <div class="daire-other-images">
-                    <img src="{% static 'content/images/daire-2.jfif' %}" alt="">
-                    <img src="{% static 'content/images/daire-3.jfif' %}" alt="">
+                <div class="daire-details">
+                    <span>Tamamlanma Tarihi: {{i.kayit_tarihi|date:'d.m.Y'}}</span>
+                    <div class="daire-title">{{i.blog_bilgisi.proje_santiye_Ait.proje_adi}}</div>
+                    <div class="daire-title"> <a href="/{{dil}}{% url 'crm:crm_dairedetayi' i.id %}"> Daire No : {{i.daire_no}}</a></div>
+                    <div class="daire-location"><i class="icon icon-location"></i> {% get_city_from_lat_lon i.blog_bilgisi.proje_santiye_Ait.lat i.blog_bilgisi.proje_santiye_Ait.lon  %}</div>
+                    <div class="daire-customer"><i class="icon icon-customer"></i> {% atanan_musteri_sayisi i %} Atanan Müşteri</div>
                 </div>
             </div>
-            <div class="daire-details">
-                <span>Tamamlanma Tarihi: {{ daire.kayit_tarihi|date:"d M Y" }}</span>
-                <div class="daire-title">{{ daire.blog_bilgisi.proje_santiye_Ait.proje_adi }}</div>
-                <div class="daire-location"><i class="icon icon-location"></i> {{ daire.blog_bilgisi.proje_santiye_Ait.proje_adi }}</div>
-                <div class="daire-customer"><i class="icon icon-customer"></i> {{ daire.oda_sayisi }} Oda</div>
-            </div>
-        </div>
         {% endfor %}
     </div>
 
@@ -91,7 +88,7 @@
                             <th>İşlem Tarihi</th>
                             <th>Talep Gerekçesi</th>
                             <th>Durum</th>
-                            <th></th>
+                           
                         </tr>
                     </thead>
                     <tbody>
@@ -104,13 +101,7 @@
                             <td>
                                 <div class="td-info"><span class="status-{{ talep.durum }} stats-lg">{{ talep.durum }}</span></div>
                             </td>
-                            <td>
-                                <div class="td-actions">
-                                    <a onclick="openModal('talep-detay{{ talep.id }}')" class="status-info"><i class="icon icon-eye"></i></a>
-                                    <a onclick="openModal('duzelt-talep{{ talep.id }}')" class="status-success"><i class="icon icon-action-edit"></i></a>
-                                    <a onclick="openModal('departman-sil{{ talep.id }}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                                </div>
-                            </td>
+                            
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -128,7 +119,7 @@
                             <th>İşlem Tarihi</th>
                             <th>Şikayet Gerekçesi</th>
                             <th>Durum</th>
-                            <th></th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -141,13 +132,7 @@
                             <td>
                                 <div class="td-info"><span class="status-{{ sikayet.durum }} stats-lg">{{ sikayet.durum }}</span></div>
                             </td>
-                            <td>
-                                <div class="td-actions">
-                                    <a onclick="openModal('sikayet-detay{{ sikayet.id }}')" class="status-info"><i class="icon icon-eye"></i></a>
-                                    <a onclick="openModal('duzelt-sikayet{{ sikayet.id }}')" class="status-success"><i class="icon icon-action-edit"></i></a>
-                                    <a onclick="openModal('departman-sil{{ sikayet.id }}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                                </div>
-                            </td>
+                           
                         </tr>
                         {% endfor %}
                     </tbody>
