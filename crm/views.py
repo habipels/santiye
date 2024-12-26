@@ -19,6 +19,8 @@ from django.core.files.storage import FileSystemStorage
 from site_info.models import daire_evraklari
 from functools import reduce
 import operator
+import os
+
 def musteri_bilgisi_views(request):
     term = request.GET.get('term', '')
     if request.user.kullanicilar_db:
@@ -58,6 +60,22 @@ def crm_dashboard(request):
     content["beklemedeki_teklifler"] = teklifler.objects.filter(teklif_kime_ait=kullanici, durum="0").count()
     content["toplam_musteri"] = musteri_bilgisi.objects.filter(musteri_kime_ait=kullanici).count()
     content["daireler"] = daire_bilgisi.objects.filter(daire_kime_ait=kullanici)
+    content["talepler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="0")
+    content["sikayetler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1")
+
+    # Document statistics
+    image_files = daire_evraklari.objects.filter(evrak_kime_ait=kullanici, evrak__iregex=r'\.(jpg|jpeg|png|gif|webp)$')
+    media_files = daire_evraklari.objects.filter(evrak_kime_ait=kullanici, evrak__iregex=r'\.(mp4|avi|mov|wmv)$')
+    other_files = daire_evraklari.objects.filter(evrak_kime_ait=kullanici).exclude(evrak__iregex=r'\.(jpg|jpeg|png|gif|webp|mp4|avi|mov|wmv)$')
+
+    content["total_documents"] = image_files.count() + media_files.count() + other_files.count()
+    content["image_documents"] = image_files.count()
+    content["media_documents"] = media_files.count()
+    content["other_documents"] = other_files.count()
+
+    content["image_size"] = sum([file.evrak.size for file in image_files]) / (1024 * 1024)  # size in MB
+    content["media_size"] = sum([file.evrak.size for file in media_files]) / (1024 * 1024)  # size in MB
+    content["other_size"] = sum([file.evrak.size for file in other_files]) / (1024 * 1024)  # size in MB
 
     return render(request, "crm/crm-dashboard.html", content)
 

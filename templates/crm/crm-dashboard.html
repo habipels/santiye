@@ -155,7 +155,15 @@
             </div>
         </div>
     </div>
+     <script>
+                $(".tab-navs-btn").on("click", function () {
+                    $(".tab-navs-btn").removeClass("active");
+                    $(".tab-content").removeClass("active");
 
+                    $(this).addClass("active");
+                    $("#" + $(this).attr("data-tab")).addClass("active");
+                })
+            </script>
     <script>
         let talepler_table = new DataTable('#talepler-table', {
             paging: false,
@@ -181,5 +189,87 @@
             columnDefs: [{ width: '40%', targets: 3 }]
         });
     </script>
+    
+    <div class="crm-head" style="margin-top: 30px;">
+        <div class="crm-title">Evrak ve Dokümanlar <a href="#"><i class="icon icon-crm-new"></i></a></div>
+        <div class="crm-right"><a href="#" class="crm-head-btn">Tümünü Gör</a></div>
+    </div>
+
+    <div class="evrak-ve-dokumanlar">
+        <div class="evd-stats">
+            <div class="evd-stats-chart">
+                <div id="evd-chart"></div>
+
+
+                <script>
+                    var options = {
+                        series: [{{ total_documents }}],
+                        chart: {
+                            type: 'radialBar',
+                            offsetY: -20,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        plotOptions: {
+                            radialBar: {
+                                startAngle: -90,
+                                endAngle: 90,
+                                track: {
+                                    background: "#e7e7e7",
+                                    strokeWidth: '97%',
+                                    margin: 0,
+                                },
+                                dataLabels: {
+                                    name: {
+                                        show: false
+                                    },
+                                    value: {
+                                        show: false
+                                    }
+                                }
+                            }
+                        },
+                        fill: {
+                            type: 'solid',
+                            colors: ['#A04CFF']
+                        }
+                    };
+
+                    var chart = new ApexCharts(document.querySelector("#evd-chart"), options);
+                    chart.render();
+                </script>
+
+            </div>
+
+            <div class="evd-stats-list">
+                <div class="evd-stat">
+                    <i class="icon icon-images-file"></i>
+                    <div class="evd-stat-title">Images <span>{{ image_documents }} files</span></div>
+                    <div class="evd-stat-size">{{ image_size|floatformat:2 }} MB</div>
+                </div>
+                <div class="evd-stat">
+                    <i class="icon icon-media-file"></i>
+                    <div class="evd-stat-title">Media <span>{{ media_documents }} files</span></div>
+                    <div class="evd-stat-size">{{ media_size|floatformat:2 }} MB</div>
+                </div>
+                <div class="evd-stat">
+                    <i class="icon icon-documents-file"></i>
+                    <div class="evd-stat-title">Documents <span>{{ other_documents }} files</span></div>
+                    <div class="evd-stat-size">{{ other_size|floatformat:2 }} MB</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="evd-folders">
+            {% for daire in daireler %}
+            <div class="evd-folder" onclick="window.location.href='{% url 'crm:crm_dairedetayi' daire.id %}'">
+                <i class="icon icon-folder"></i>
+                <div class="evd-folder-name">Daire - {{ daire.daire_no }} / Dokümanlar</div>
+                <span>{{ daire.daire_evraklari.count }} adet dosya</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </main>
 {% endblock sidebar %}
