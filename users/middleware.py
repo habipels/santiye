@@ -7,10 +7,10 @@ class LockScreenMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        print("Middleware çalıştı!")
+        #print("")
 
         if not hasattr(request, 'user') or not request.user.is_authenticated:
-            print("bitti")
+            #print("bitti")
             # Eğer request objesinde 'user' özelliği yoksa veya oturum açık değilse
             return self.get_response(request)
 
