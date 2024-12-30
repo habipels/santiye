@@ -130,6 +130,7 @@ def yetki(request):
         return redirect("main:yetkisiz")
 # Create your views here,
 # Anasayfa
+
 def homepage(request):
     content = sozluk_yapisi()
     if request.user.is_authenticated:
@@ -139,6 +140,7 @@ def homepage(request):
         return redirect("/users/login/")
     if request.user.is_authenticated:
         content = sozluk_yapisi()
+        CustomUser.objects.filter(id = request.user.id).update(kullanici_tercih_dili =content["dil"])
         if super_admin_kontrolu(request):
             profile =Gelir_Bilgisi.objects.all()
             kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
