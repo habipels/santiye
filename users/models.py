@@ -29,7 +29,7 @@ class CustomUser(AbstractUser):
     adrrsi = models.TextField("Adres", max_length=600, default='', blank=True)
     online  = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-    
+    kullanici_tercih_dili = models.CharField(max_length=10,verbose_name="Kullanıcı Tercih Dili",default="en")
 
     def __str__(self):
         return self.username
