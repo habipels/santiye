@@ -38,10 +38,10 @@
             {% if request.user.kullanicilar_db %}
                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                 {% if yetki.santiye_olusturma %}
-                    <button class="page-primary-btn" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
+                    <button class="page-primary-btn" id="yeni_santiye" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
                 {% endif %}
             {% else %}
-                <button class="page-primary-btn"  onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
+                <button class="page-primary-btn"  id="yeni_santiye" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
             {% endif %}
         </div>
     </div>
@@ -830,37 +830,43 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    // Haritayı başlat ve başlangıç konumunu ayarla (Ankara koordinatları)
-    var map = L.map('map').setView([39.9334, 32.8597], 6);  // Türkiye'nin ortalama koordinatları
+    var map, marker;
 
-    // OpenStreetMap harita katmanını ekle
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
-    }).addTo(map);
+    function initializeMap() {
+        if (!map) {
+            map = L.map('map').setView([39.9334, 32.8597], 6);  // Türkiye'nin ortalama koordinatları
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19
+            }).addTo(map);
 
-    // Haritaya işaretçi (marker) ekle ve sürüklenebilir hale getir
-    var marker = L.marker([39.9334, 32.8597], {draggable: true}).addTo(map);
+            marker = L.marker([39.9334, 32.8597], {draggable: true}).addTo(map);
 
-    // Haritaya tıklandığında marker'ı o konuma taşı ve koordinatları gizli alanlara ekle
-    map.on('click', function (e) {
-        marker.setLatLng(e.latlng);  // Marker'ı yeni tıklanan konuma taşır
-        document.getElementById('latitude').value = e.latlng.lat;
-        document.getElementById('longitude').value = e.latlng.lng;
-        marker.bindPopup("Tıklanan Konum: " + e.latlng.toString()).openPopup();
-    });
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                document.getElementById('latitude').value = e.latlng.lat;
+                document.getElementById('longitude').value = e.latlng.lng;
+                marker.bindPopup("Tıklanan Konum: " + e.latlng.toString()).openPopup();
+            });
 
-    // Marker sürüklendiğinde de koordinatları gizli alanlara güncelle
-    marker.on('dragend', function (e) {
-        var latLng = marker.getLatLng();
-        document.getElementById('latitude').value = latLng.lat;
-        document.getElementById('longitude').value = latLng.lng;
-    });
+            marker.on('dragend', function (e) {
+                var latLng = marker.getLatLng();
+                document.getElementById('latitude').value = latLng.lat;
+                document.getElementById('longitude').value = latLng.lng;
+            });
+        }
+    }
 
-    // Modal açıldığında haritanın boyutlarını güncelleme
     $('#yeni-santiye').on('shown.bs.modal', function () {
         setTimeout(function() {
-            map.invalidateSize();  // Haritanın boyutlarını modal açıldıktan sonra güncelle
-        }, 500);  // 500ms gecikme ile yeniden boyutlandırma
+            initializeMap();
+            map.invalidateSize();
+        }, 500);
+    });
+
+    window.addEventListener('resize', function() {
+        if (map) {
+            map.invalidateSize();
+        }
     });
 </script>
 
@@ -898,10 +904,10 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
             {% if request.user.kullanicilar_db %}
                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                 {% if yetki.santiye_olusturma %}
-                    <button class="page-primary-btn" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
+                    <button class="page-primary-btn" id="yeni_santiye" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
                 {% endif %}
             {% else %}
-                <button class="page-primary-btn"  onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
+                <button class="page-primary-btn"  id="yeni_santiye" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
             {% endif %}
         </div>
     </div>
@@ -1691,39 +1697,38 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    // Haritayı başlat ve başlangıç konumunu ayarla (Ankara koordinatları)
-    var map = L.map('map').setView([39.9334, 32.8597], 6);  // Türkiye'nin ortalama koordinatları
+    var map, marker;
 
-    // OpenStreetMap harita katmanını ekle
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
-    }).addTo(map);
+    function initializeMap() {
+        if (!map) {
+            map = L.map('map').setView([39.9334, 32.8597], 6);  // Türkiye'nin ortalama koordinatları
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19
+            }).addTo(map);
 
-    // Haritaya işaretçi (marker) ekle ve sürüklenebilir hale getir
-    var marker = L.marker([39.9334, 32.8597], {draggable: true}).addTo(map);
+            marker = L.marker([39.9334, 32.8597], {draggable: true}).addTo(map);
 
-    // Haritaya tıklandığında marker'ı o konuma taşı ve koordinatları gizli alanlara ekle
-    map.on('click', function (e) {
-        marker.setLatLng(e.latlng);  // Marker'ı yeni tıklanan konuma taşır
-        document.getElementById('latitude').value = e.latlng.lat;
-        document.getElementById('longitude').value = e.latlng.lng;
-        marker.bindPopup("Tıklanan Konum: " + e.latlng.toString()).openPopup();
-    });
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                document.getElementById('latitude').value = e.latlng.lat;
+                document.getElementById('longitude').value = e.latlng.lng;
+                marker.bindPopup("Tıklanan Konum: " + e.latlng.toString()).openPopup();
+            });
 
-    // Marker sürüklendiğinde de koordinatları gizli alanlara güncelle
-    marker.on('dragend', function (e) {
-        var latLng = marker.getLatLng();
-        document.getElementById('latitude').value = latLng.lat;
-        document.getElementById('longitude').value = latLng.lng;
-    });
-
-    // Modal açıldığında haritanın boyutlarını güncelleme
-    $('#yeni-santiye').on('shown.bs.modal', function () {
-        setTimeout(function() {
-            map.invalidateSize();  // Haritanın boyutlarını modal açıldıktan sonra güncelle
-        }, 500);  // 500ms gecikme ile yeniden boyutlandırma
-    });
+            marker.on('dragend', function (e) {
+                var latLng = marker.getLatLng();
+                document.getElementById('latitude').value = latLng.lat;
+                document.getElementById('longitude').value = latLng.lng;
+            });
+        }
+    }
+    
 </script>
 
 {% endif %}
+<script>
+$("#yeni_santiye").click(function () {
+        initializeMap();
+    });
+    </script>
 {% endblock sidebar %}
