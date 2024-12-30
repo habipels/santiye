@@ -538,7 +538,7 @@ def parola_degistime(request):
                 messages.success(request, 'Eski Parolanız hatalı')
         else:
             messages.success(request, 'Parolanız Uyuşmuyor')
-    return redirect("users:logout")
+    return redirect("/")
 
 
 
