@@ -1,14 +1,19 @@
 <script>
     // Resim URL'leri statik dosya olarak ayarlanıyor
     const buildingImages = {
-        {% for i in binalar %}
-        "{{i.id}}": {
-            "front": "{% static i.ondden_goruntu %}",
-            "back": "{% static i.arkadan_goruntu %}",
-            "left": "{% static i.soldan_goruntu %}",
-            "right": "{% static i.sagdan_goruntu %}"
+        "building1": {
+            "front": "{% static 'go/images/building1_front.png' %}",
+            "back": "{% static 'go/images/building1_back.png' %}",
+            "left": "{% static 'go/images/building1_left.png' %}",
+            "right": "{% static 'go/images/building1_right.png' %}"
         },
-        {% endfor %}
+        "building2": {
+            "front": "{% static 'go/images/building2_front.png' %}",
+            "back": "{% static 'go/images/building2_back.png' %}",
+            "left": "{% static 'go/images/building2_left.png' %}",
+            "right": "{% static 'go/images/building2_right.png' %}"
+        }
+        // Diğer binalar için benzer şekilde ekleyin
     };
 </script>
 <style>
@@ -59,9 +64,9 @@ function createBuilding() {
         const buildingId = currentBlok.id;
 
         for (let j = 1; j <= 4; j++) {
-            const face = document.getElementById(`${currentBlok.gorseli}-${buildingId}-face${j}`);
+            const face = document.getElementById(`${buildingId}-face${j}`);
             if (!face) {
-                console.error(`${currentBlok.gorseli}-${buildingId}-face${j} elementi bulunamadı!`);
+                console.error(`${buildingId}-face${j} elementi bulunamadı!`);
                 continue; // Eğer yüzey yoksa, bu döngüyü atla
             }
 
@@ -118,18 +123,18 @@ function createBuilding() {
 }
 
 function getFaceImageUrl(buildingId, faceIndex) {
-    const building = buildingImages[buildingId];
+    const building = buildingImages[`building${buildingId}`];
     if (!building) return '';
 
     switch (faceIndex) {
         case 1:
             return building.front;
         case 2:
-            return building.right;
-        case 3:
             return building.back;
-        case 4:
+        case 3:
             return building.left;
+        case 4:
+            return building.right;
         default:
             return building.front;
     }
@@ -310,4 +315,3 @@ createBuilding();
         position: relative;
     }
 </style>
-

@@ -1226,10 +1226,11 @@ def santiye_ekleme_sahibi(request):
                     if a.izinler.santiye_olusturma:
                             projetipi = request.POST.get("projetipi")
                             proje_adi = request.POST.get("yetkili_adi")
-
+                            resim_secme = request.POST.get("options")
                             a = santiye.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
-                                                proje_adi = proje_adi
-                                                )
+                                                proje_adi = proje_adi,bina_goruntuleri_aitlik = get_object_or_none(bina_goruntuleri,id = resim_secme)
+                                    )
+                                                
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -1237,9 +1238,9 @@ def santiye_ekleme_sahibi(request):
             else:
                 projetipi = request.POST.get("projetipi")
                 proje_adi = request.POST.get("yetkili_adi")
-
+                resim_secme = request.POST.get("options")
                 a = santiye.objects.create(proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
-                                    proje_adi = proje_adi
+                                    proje_adi = proje_adi,bina_goruntuleri_aitlik = get_object_or_none(bina_goruntuleri,id = resim_secme)
                                     )
     return redirect("main:santiye_projesi_ekle_")
 def santiye_ekleme_sahibi_2(request,hash):
@@ -1334,6 +1335,7 @@ def santiye_projesi_duzenle(request):
         kullanici_bilgisi  = request.POST.get("kullanici")
         proje_tip_adi   = request.POST.get("yetkili_adi")
         silinmedurumu = request.POST.get("silinmedurumu")
+        resim_secme = request.POST.get("options")
         if silinmedurumu == "1":
             silinmedurumu = False
             santiye.objects.filter(id = id).update(proje_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
@@ -1342,19 +1344,20 @@ def santiye_projesi_duzenle(request):
             santiye.objects.filter(id = id).update(proje_adi = proje_tip_adi,silinme_bilgisi = silinmedurumu)
 
     else:
+        resim_secme = request.POST.get("options")
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
                 if a.izinler.santiye_duzenleme:
                     proje_tip_adi   = request.POST.get("yetkili_adi")
-                    santiye.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,id = id).update(proje_adi = proje_tip_adi)
+                    santiye.objects.filter(proje_ait_bilgisi = request.user.kullanicilar_db,id = id).update(proje_adi = proje_tip_adi,bina_goruntuleri_aitlik = get_object_or_none(bina_goruntuleri,id = resim_secme))
                 else:
                     return redirect("main:yetkisiz")
             else:
                 return redirect("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
-            santiye.objects.filter(proje_ait_bilgisi = request.user,id = id).update(proje_adi = proje_tip_adi)
+            santiye.objects.filter(proje_ait_bilgisi = request.user,id = id).update(proje_adi = proje_tip_adi,bina_goruntuleri_aitlik = get_object_or_none(bina_goruntuleri,id = resim_secme))
     return redirect("main:santiye_projesi_ekle_")
 
 #şantiye Kalemleri

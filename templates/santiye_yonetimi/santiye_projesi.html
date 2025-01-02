@@ -452,7 +452,33 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                             <input type="text" value="{{i.proje_adi}}"    name="yetkili_adi" id="date-field"  placeholder="{% trans 'Proje Adı' %}" />
                                         </div>
 
-
+                                        
+                                        <div class="form-element">
+                                            <label for="date-field">{% trans 'Şantiye Modelinizi Seçiniz' %}</label>
+                                           <div class="radio-container">
+                                                {% for j in binalar %}
+                                                <div class="radio-box" style="margin: 5px; border: 1px solid black;" data-radio="{{i.id}}ooption{{j.id}}">
+                                                <div class="radio-box-inner" >
+                                                    {% for k in '0123456789'|make_list %}
+                                                    <div style="background-image: url({{j.ondden_goruntu.url}});height: 10px; background-size: cover; background-position: center;"></div>
+                                
+                                                    {% endfor %}
+                                                    
+                                                   
+                                                </div>
+                                            </div>
+                                                {% endfor %}
+                                            
+                                            {% for j in binalar %}
+                                            {% if i.bina_goruntuleri_aitlik.id == j.id  %}
+                                                <input checked type="radio" id="{{i.id}}ooption{{j.id}}" name="options" value="{{j.id}}">
+                                            {% else %}
+                                            <input type="radio" id="{{i.id}}ooption{{j.id}}" name="options" value="{{j.id}}">
+                                            {% endif %}
+                                            
+                                                {% endfor %}
+                                        </div>
+                                    </div>
                                
                   
                     <div class="form-actions">
@@ -1339,7 +1365,33 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                             <input type="text" value="{{i.proje_adi}}"    name="yetkili_adi" id="date-field"  placeholder="{% trans 'Proje Adı' %}" />
                                         </div>
 
-
+                            
+                                        <div class="form-element">
+                                            <label for="date-field">{% trans 'Şantiye Modelinizi Seçiniz' %}</label>
+                                           <div class="radio-container">
+                                                {% for j in binalar %}
+                                                <div class="radio-box" style="margin: 5px; border: 1px solid black;" data-radio="{{i.id}}ooption{{j.id}}">
+                                                <div class="radio-box-inner" >
+                                                    {% for k in '0123456789'|make_list %}
+                                                    <div style="background-image: url({{j.ondden_goruntu.url}});height: 10px; background-size: cover; background-position: center;"></div>
+                                
+                                                    {% endfor %}
+                                                    
+                                                   
+                                                </div>
+                                            </div>
+                                                {% endfor %}
+                                            
+                                            {% for j in binalar %}
+                                            {% if i.bina_goruntuleri_aitlik.id == j.id  %}
+                                                <input checked type="radio" id="{{i.id}}ooption{{j.id}}" name="options" value="{{j.id}}">
+                                            {% else %}
+                                            <input type="radio" id="{{i.id}}ooption{{j.id}}" name="options" value="{{j.id}}">
+                                            {% endif %}
+                                            
+                                                {% endfor %}
+                                        </div>
+                                    </div>
                       
                   
                     <div class="form-actions">
@@ -1471,7 +1523,6 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                             <label for="date-field"  >{% trans 'Bitiş Tarihi' %}</label>
                                             <input type="date" required  name="bitistarihi" required id="date-field"    />
                                         </div>
-
 
                     
                     <div class="form-actions">
