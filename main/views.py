@@ -84,7 +84,7 @@ def sozluk_yapisi():
     sozluk["layout_sitili"] = layout_sitili.objects.last()
     sozluk["etiketler"] = faturalardaki_gelir_gider_etiketi.objects.last()
     sozluk["latest_actions"] =LogEntry.objects.all().order_by('-action_time')[:10]
-    
+    sozluk["binalar"]=bina_goruntuleri.objects.all()
     sozluk["trans"]=trans
     sozluk["dil"]=dil
     return sozluk

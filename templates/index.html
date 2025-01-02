@@ -11,7 +11,7 @@
         /* Mobilde yükseklik %70 olacak */
         padding-top: 20px;
         box-sizing: border-box;
-    }</style>
+    }}</style>
 <main>
 
     <div class="quick-actions">
@@ -3126,10 +3126,10 @@ chart.render();
             
             
             <div class="building" id="building-{{i.id}}" style="display: none;">
-                <div class="face" id="{{i.id}}-face1"><div class="roof">Kuzey</div></div>
-                <div class="face" id="{{i.id}}-face2"><div class="roof">Doğu</div></div>
-                <div class="face" id="{{i.id}}-face3"><div class="roof">Güney</div></div>
-                <div class="face" id="{{i.id}}-face4"><div class="roof">Batı</div></div>
+                <div class="face" id="{{i.gorseli}}-{{i.id}}-face1"><div class="roof">Kuzey</div></div>
+                <div class="face" id="{{i.gorseli}}-{{i.id}}-face2"><div class="roof">Doğu</div></div>
+                <div class="face" id="{{i.gorseli}}-{{i.id}}-face3"><div class="roof">Güney</div></div>
+                <div class="face" id="{{i.gorseli}}-{{i.id}}-face4"><div class="roof">Batı</div></div>
             </div>
             {% endfor %}
         </div>
@@ -3706,6 +3706,16 @@ chart.render();
 <script>
     // Resim URL'si statik dosya olarak ayarlanıyor
     const imageUrl = "{% static 'go/images/3dbuild.png' %}";
+    const buildingImages = {
+        {% for i in binalar %}
+        "{{i.id}}": {
+            "front": "{{i.ondden_goruntu}}",
+            "back": "{{i.arkadan_goruntu}}",
+            "left": "{{i.soldan_goruntu }}",
+            "right": "{{i.sagdan_goruntu}}"
+        },
+        {% endfor %}
+    };
 </script>
 <style>
     {% if request.user.kullanicilar_db %}
@@ -3748,7 +3758,23 @@ const infoModal = document.getElementById('infoModal');
             {% blok_bilgilerii request.user as blok_olusturmaa %}
             {% endif %}
             
-            
+function getFaceImageUrl(buildingId, faceIndex) {
+    const building = buildingImages[buildingId];
+    if (!building) return '';
+
+    switch (faceIndex) {
+        case 1:
+            return building.front;
+        case 2:
+            return building.right;
+        case 3:
+            return building.back;
+        case 4:
+            return building.left;
+        default:
+            return building.front;
+    }
+}          
 function createBuilding() {
     // Django şablon değişkenlerini bu şekilde kullanabilirsiniz
     const bloklar = JSON.parse('{{ blok_olusturmaa }}');
@@ -3758,9 +3784,9 @@ function createBuilding() {
         const floors = currentBlok.kat; // Kat sayısını alın
 
         for (let j = 1; j <= 4; j++) {
-            const face = document.getElementById(`${currentBlok.id}-face${j}`);
+            const face = document.getElementById(`${currentBlok.gorseli}-${currentBlok.id}-face${j}`);
             if (!face) {
-                console.error(`${currentBlok.id}-face${j} elementi bulunamadı!`);
+                console.error(`${currentBlok.gorseli}-${currentBlok.id}-face${j} elementi bulunamadı!`);
                 continue; // Eğer yüzey yoksa, bu döngüyü atla
             }
 
@@ -3769,7 +3795,7 @@ function createBuilding() {
             for (let k = floors; k >= 1; k--) { // Katları oluştur
                 const floor = document.createElement('div');
                 floor.className = 'floor';
-                floor.style.backgroundImage = `url(${imageUrl})`;  // Resim URL'si
+                floor.style.backgroundImage = `url(${getFaceImageUrl(currentBlok.gorseli, j)})`;  // Resim URL'si
                 floor.setAttribute('data-floor', `Kat ${k}-${currentBlok.id}`);
                 floor.innerHTML = `Kat ${k}`;
                 floor.onclick = function(event) {

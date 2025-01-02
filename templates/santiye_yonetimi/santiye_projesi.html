@@ -424,7 +424,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
             <label for="date-field">{% trans 'Proje Adı' %}</label>
             <input type="text" name="yetkili_adi" id="date-field" placeholder="{% trans 'Proje Adı' %}" required />
         </div>
-
+        
         <div class="form-actions">
             <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
             <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
@@ -1291,7 +1291,27 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
             <input type="text" name="yetkili_adi" id="date-field" placeholder="{% trans 'Proje Adı' %}" required />
         </div>
         
+        <div class="form-element">
+            <label for="date-field">{% trans 'Şantiye Modelinizi Seçiniz' %}</label>
+           <div class="radio-container">
+                {% for i in binalar %}
+                <div class="radio-box" style="margin: 5px; border: 1px solid black;" data-radio="option{{i.id}}">
+                <div class="radio-box-inner" >
+                    {% for j in '0123456789'|make_list %}
+                    <div style="background-image: url({{i.ondden_goruntu.url}});height: 10px; background-size: cover; background-position: center;"></div>
 
+                    {% endfor %}
+                    
+                   
+                </div>
+            </div>
+                {% endfor %}
+            
+            {% for i in binalar %}
+            <input type="radio" id="option{{i.id}}" name="options" value="{{i.id}}">
+                {% endfor %}
+        </div>
+    </div>
         <div class="form-actions">
             <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
             <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
@@ -1731,4 +1751,21 @@ $("#yeni_santiye").click(function () {
         initializeMap();
     });
     </script>
+    <script>
+    const radioBoxes = document.querySelectorAll('.radio-box');
+
+    radioBoxes.forEach((box) => {
+      box.addEventListener('click', () => {
+        // Tüm kutuların seçimini temizle
+        radioBoxes.forEach((b) => b.classList.remove('selected'));
+
+        // Seçilen kutuyu işaretle
+        box.classList.add('selected');
+
+        // İlgili radio input'u seçili hale getir
+        const radioId = box.getAttribute('data-radio');
+        document.getElementById(radioId).checked = true;
+      });
+    });
+  </script>
 {% endblock sidebar %}

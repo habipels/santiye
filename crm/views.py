@@ -20,7 +20,7 @@ from site_info.models import daire_evraklari
 from functools import reduce
 import operator
 import os
-
+from main.views import decode_id
 def musteri_bilgisi_views(request):
     term = request.GET.get('term', '')
     if request.user.kullanicilar_db:
@@ -43,7 +43,7 @@ def crm_dashboard(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_musteri_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -133,6 +133,17 @@ def get_daireler(request):
     return JsonResponse({'error': 'Blok bulunamadı veya kat bilgisi yok'}, status=400)
 def crm_daireyonetimi(request):
     content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+        if a:
+            if a.izinler.crm_daire_gorme:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            return redirect("main:yetkisiz")
+    else:
+        kullanici = request.user
     content["daireler"]  = daire_bilgisi.objects.filter(daire_kime_ait = request.user)
     content["santiyeler"] = santiye.objects.filter(proje_ait_bilgisi = request.user,silinme_bilgisi = False)
     content["bloglar"] = bloglar.objects.filter(proje_ait_bilgisi = request.user,proje_santiye_Ait__silinme_bilgisi = False)
@@ -142,7 +153,7 @@ def daire_ekle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_daire_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -170,7 +181,7 @@ def crm_evrak_dokuman(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_evrak_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -187,7 +198,7 @@ def crm_musteri_detayi(request, id):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_musteri_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -213,7 +224,7 @@ def daire_musteriye_ata(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_daire_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -241,7 +252,7 @@ def daire_musteriye_duzenle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_daire_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -270,7 +281,7 @@ def daire_musteriye_sil(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_daire_silme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -449,7 +460,7 @@ def musteri_ekleme(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -469,7 +480,7 @@ def musteri_silme(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_musteri_silme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -487,7 +498,7 @@ def musteri_duzenleme(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_musteri_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -615,7 +626,7 @@ def crm_teklif_yonetimi(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_teklif_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -634,7 +645,10 @@ def teklif_silme(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            kullanici = request.user.kullanicilar_db
+            if a.izinler.crm_teklif_silme:
+                kullanici = request.user.kullanicilar_db
+            else:
+                return redirect("main:yetkisiz")
         else:
             return redirect("main:yetkisiz")
     else : 
@@ -663,7 +677,7 @@ def crm_teklif_olustur_gonder(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_teklif_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -724,7 +738,7 @@ def crm_teklif_duzenle_gonder(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_teklif_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -790,7 +804,7 @@ def daire_evrak_ekle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_evrak_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -829,7 +843,7 @@ def musteri_evrak_ekle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_evrak_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -859,7 +873,7 @@ def musteri_evrak_duzenle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_evrak_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")
@@ -887,7 +901,7 @@ def musteri_evrak_sil(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
         if a:
-            if a.izinler.musteri_olusturma:
+            if a.izinler.crm_evrak_silme:
                 kullanici = request.user.kullanicilar_db
             else:
                 return redirect("main:yetkisiz")

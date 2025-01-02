@@ -261,6 +261,31 @@ class personel_izinleri(models.Model):
     musteri_gorme = models.BooleanField(default = False)
     musteri_duzenleme = models.BooleanField(default = False)
     musteri_silme = models.BooleanField(default = False)
+    # CRM permissions
+    crm_musteri_olusturma = models.BooleanField(default=False, verbose_name="CRM Müşteri Oluşturma İzni")
+    crm_musteri_silme = models.BooleanField(default=False, verbose_name="CRM Müşteri Silme İzni")
+    crm_musteri_gorme = models.BooleanField(default=False, verbose_name="CRM Müşteri Görme İzni")
+    crm_musteri_duzenleme = models.BooleanField(default=False, verbose_name="CRM Müşteri Düzenleme İzni")
+    
+    crm_talep_olusturma = models.BooleanField(default=False, verbose_name="CRM Talep Oluşturma İzni")
+    crm_talep_silme = models.BooleanField(default=False, verbose_name="CRM Talep Silme İzni")
+    crm_talep_gorme = models.BooleanField(default=False, verbose_name="CRM Talep Görme İzni")
+    crm_talep_duzenleme = models.BooleanField(default=False, verbose_name="CRM Talep Düzenleme İzni")
+    
+    crm_teklif_olusturma = models.BooleanField(default=False, verbose_name="CRM Teklif Oluşturma İzni")
+    crm_teklif_silme = models.BooleanField(default=False, verbose_name="CRM Teklif Silme İzni")
+    crm_teklif_gorme = models.BooleanField(default=False, verbose_name="CRM Teklif Görme İzni")
+    crm_teklif_duzenleme = models.BooleanField(default=False, verbose_name="CRM Teklif Düzenleme İzni")
+    
+    crm_daire_olusturma = models.BooleanField(default=False, verbose_name="CRM Daire Oluşturma İzni")
+    crm_daire_silme = models.BooleanField(default=False, verbose_name="CRM Daire Silme İzni")
+    crm_daire_gorme = models.BooleanField(default=False, verbose_name="CRM Daire Görme İzni")
+    crm_daire_duzenleme = models.BooleanField(default=False, verbose_name="CRM Daire Düzenleme İzni")
+    
+    crm_evrak_olusturma = models.BooleanField(default=False, verbose_name="CRM Evrak Oluşturma İzni")
+    crm_evrak_silme = models.BooleanField(default=False, verbose_name="CRM Evrak Silme İzni")
+    crm_evrak_gorme = models.BooleanField(default=False, verbose_name="CRM Evrak Görme İzni")
+    crm_evrak_duzenleme = models.BooleanField(default=False, verbose_name="CRM Evrak Düzenleme İzni")
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):

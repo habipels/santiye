@@ -21,10 +21,21 @@ class birimler(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     durum_bilgisi = models.BooleanField(default=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class bina_goruntuleri(models.Model):
+    isimi = models.CharField(max_length=400,verbose_name="Görüntü Adı",blank=True,null=True)
+    ondden_goruntu = models.FileField(upload_to='bina_goruntuleri/',verbose_name="Önden Görüntü",blank=True,null=True)
+    arkadan_goruntu = models.FileField(upload_to='bina_goruntuleri/',verbose_name="Arka Görüntü",blank=True,null=True)
+    sagdan_goruntu = models.FileField(upload_to='bina_goruntuleri/',verbose_name="Sağdan Görüntü",blank=True,null=True)
+    soldan_goruntu = models.FileField(upload_to='bina_goruntuleri/',verbose_name="Soldan Görüntü",blank=True,null=True)
+    ustten_goruntu = models.FileField(upload_to='bina_goruntuleri/',verbose_name="Üstten Görüntü",blank=True,null=True)
+    alttan_goruntu = models.FileField(upload_to='bina_goruntuleri/',verbose_name="Alttan Görüntü",blank=True,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class santiye(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_tipi = models.ForeignKey(proje_tipi,verbose_name="Proje Tipi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    bina_goruntuleri_aitlik = models.ForeignKey(bina_goruntuleri,verbose_name="Bina Görüntüleri",blank=True,null=True,on_delete=models.SET_NULL)
     proje_adi = models.CharField(max_length = 200,verbose_name="Proje Adı",blank=True,null = True)
     lat = models.TextField(null = True,blank=True)
     lon = models.TextField(null = True,blank=True)

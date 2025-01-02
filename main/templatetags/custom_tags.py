@@ -1955,14 +1955,14 @@ def blok_bilgileri(users):
     bilgi = []
     bilgiler=bloglar.objects.filter(proje_ait_bilgisi = users,proje_santiye_Ait__silinme_bilgisi = False)
     for  i in bilgiler:
-        bilgi.append({"id":i.id,"yapi":i.blog_adi,"kat":int(i.kat_sayisi)})
+        bilgi.append({"id":i.id,"yapi":i.blog_adi,"kat":int(i.kat_sayisi),"gorseli":i.proje_santiye_Ait.bina_goruntuleri_aitlik.id})
     return bilgi
 @register.simple_tag
 def blok_bilgilerii(users):
     bilgi = []
     bilgiler = bloglar.objects.filter(proje_ait_bilgisi=users, proje_santiye_Ait__silinme_bilgisi=False)
     for i in bilgiler:
-        bilgi.append({"id": i.id, "yapi": i.blog_adi, "kat": int(i.kat_sayisi)})
+        bilgi.append({"id": i.id, "yapi": i.blog_adi, "kat": int(i.kat_sayisi),"gorseli":i.proje_santiye_Ait.bina_goruntuleri_aitlik.id})
     
     # Python nesnesini JSON'a dönüştür ve güvenli hale getir
     json_data = json.dumps(bilgi)
