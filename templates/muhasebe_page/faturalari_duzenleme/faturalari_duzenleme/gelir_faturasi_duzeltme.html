@@ -131,12 +131,16 @@
                             <label for="etiketler">{% trans 'Etiketler' %} <a onclick="openModal('etiket-ekle')">{% trans '+Ekle' %}</a></label>
                             <select name="etiketler"  id="etiketler" multiple>
                                 {% for i in gelir_etiketi %}
+                                {% if i.silinme_bilgisi %}
+                                {% else %}
                                         {% if i in bilgi.gelir_etiketi_sec.all %}
                                             <option selected value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
                                         {% else %}
                                         <option value="{{i.id}}">{{i.gelir_etiketi_adi}}</option>
                                         {% endif %}
+                                {% endif %}
                                         {% endfor %}
+
                             </select>
                         </div>
                         <script>

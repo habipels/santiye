@@ -2,6 +2,10 @@
 {% load custom_tags %}
 {% load static %}
                 <script>
+                    function formatNumber(num) {
+                        return num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&.').replace('.', '.');
+                    }
+
                     let indirim_input = $("input[name='kalem-indirim']");
                     let miktar_input = $("input[name='kalem-miktar']");
                     let birim_fiyati_input = $("input[name='kalem-birim-fiyati']");
@@ -45,11 +49,11 @@
 
                         }
 
-                        $("#info-ara-toplam").text("$" + ara_toplam);
-                        $("#info-toplam-indirim").text("$" + toplam_indirim);
-                        $("#info-toplam-iqd").text("$" + toplam_iqd);
-                        $("#head-toplam-iqd").val(toplam_iqd);
-                        $("#info-toplam").text("$" + toplam_fiyat);
+                        $("#info-ara-toplam").text("$" + formatNumber(ara_toplam));
+                        $("#info-toplam-indirim").text("$" + formatNumber(toplam_indirim));
+                        $("#info-toplam-iqd").text("$" + formatNumber(toplam_iqd));
+                        $("#head-toplam-iqd").val(formatNumber(toplam_iqd));
+                        $("#info-toplam").text("$" + formatNumber(toplam_fiyat));
 
                     }
                 </script>
@@ -183,11 +187,11 @@ $(document).ready(function () {
             toplamFiyat += urunToplamFiyat;
         });
 
-        araToplamElement.text("$" + araToplam.toFixed(2));
-        toplamIndirimElement.text("-$" + toplamIndirim.toFixed(2));
-        toplamFiyatElement.text("$" + toplamFiyat.toFixed(2));
-        toplamIqdElement.text("$" + toplamIqd.toFixed(2));
-        headToplamIqdInput.val(toplamIqd.toFixed(2));
+        araToplamElement.text("$" + formatNumber(araToplam));
+        toplamIndirimElement.text("-$" + formatNumber(toplamIndirim));
+        toplamFiyatElement.text("$" + formatNumber(toplamFiyat));
+        toplamIqdElement.text("$" + formatNumber(toplamIqd));
+        headToplamIqdInput.val(formatNumber(toplamIqd));
     }
 
     function toplamIqdDegisikligi() {
