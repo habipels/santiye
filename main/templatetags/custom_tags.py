@@ -1349,46 +1349,85 @@ from django.db.models import Sum
 from django.utils.timezone import now
 @register.simple_tag
 def ozellikler(bilgi):
-    if bilgi.is_superuser:
-        this_year = now().year
-        aylik_gelir = []
-        aylik_gider = []
-        for month in range(1, 13):
-            total = Gelir_odemesi.objects.filter(
-                tarihi__year=this_year,
-                tarihi__month=month,
-                silinme_bilgisi=False
-            ).aggregate(total_gelir=Sum('tutar'))['total_gelir'] or 0
-            aylik_gelir.append(round(total,2))
-            total_g = Gider_odemesi.objects.filter(
-                tarihi__year=this_year,
-                tarihi__month=month,
-                silinme_bilgisi=False
-            ).aggregate(total_gider=Sum('tutar'))['total_gider'] or 0
-            aylik_gider.append(round(total_g,2))
+    from datetime import datetime
+    from dateutil.relativedelta import relativedelta
+    from django.utils.translation import gettext as _
 
-        kategoriler = ["Oct","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
-    else:
-        this_year = now().year
-        aylik_gelir = []
-        aylik_gider = []
-        for month in range(1, 13):
-            total = Gelir_odemesi.objects.filter(
-                tarihi__year=this_year,gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,
-                tarihi__month=month,
-                silinme_bilgisi=False
-            ).aggregate(total_gelir=Sum('tutar'))['total_gelir'] or 0
-            aylik_gelir.append(round(total,2))
-            total_g = Gider_odemesi.objects.filter(
-                tarihi__year=this_year,gelir_kime_ait_oldugu__gelir_kime_ait_oldugu = bilgi,
-                tarihi__month=month,
-                silinme_bilgisi=False
-            ).aggregate(total_gider=Sum('tutar'))['total_gider'] or 0
-            aylik_gider.append(round(total_g,2))
+    today = datetime.today()
+    aylar = []
+    gelirler = []
+    giderler = []
 
-        kategoriler = ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]
-    return {"gelir":aylik_gelir,"gider":aylik_gider,"kategoriler":kategoriler}
+    # Ay isimleri için kullanılacak format
+    month_names = {
+        1: _("Ocak"),
+        2: _("Şubat"),
+        3: _("Mart"),
+        4: _("Nisan"),
+        5: _("Mayıs"),
+        6: _("Haziran"),
+        7: _("Temmuz"),
+        8: _("Ağustos"),
+        9: _("Eylül"),
+        10: _("Ekim"),
+        11: _("Kasım"),
+        12: _("Aralık")
+    }
 
+    # Son 12 ayı bul ve her aya ait gelir ve giderleri hesapla
+    for i in range(12):
+        # Bu aydan i ay geriye git
+        start_of_month = (today - relativedelta(months=i)).replace(day=1)
+        end_of_month = (start_of_month + relativedelta(months=1)) - relativedelta(days=1)
+
+        if bilgi.is_superuser:
+            # Gelirleri al
+            total_gelir = Gelir_odemesi.objects.filter(
+                tarihi__gte=start_of_month,
+                tarihi__lte=end_of_month,
+                silinme_bilgisi=False
+            ).aggregate(total=Sum('tutar'))['total'] or 0
+            gelirler.append(round(total_gelir, 2))
+
+            # Giderleri al
+            total_gider = Gider_odemesi.objects.filter(
+                tarihi__gte=start_of_month,
+                tarihi__lte=end_of_month,
+                silinme_bilgisi=False
+            ).aggregate(total=Sum('tutar'))['total'] or 0
+            giderler.append(round(total_gider, 2))
+        else:
+            # Gelirleri al
+            total_gelir = Gelir_odemesi.objects.filter(
+                tarihi__gte=start_of_month,
+                tarihi__lte=end_of_month,
+                gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=bilgi,
+                silinme_bilgisi=False
+            ).aggregate(total=Sum('tutar'))['total'] or 0
+            gelirler.append(round(total_gelir, 2))
+
+            # Giderleri al
+            total_gider = Gider_odemesi.objects.filter(
+                tarihi__gte=start_of_month,
+                tarihi__lte=end_of_month,
+                gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=bilgi,
+                silinme_bilgisi=False
+            ).aggregate(total=Sum('tutar'))['total'] or 0
+            giderler.append(round(total_gider, 2))
+
+        # Ay adı ve yılı listeye ekle
+        aylar.append(f"{month_names[start_of_month.month]} {start_of_month.year}")
+
+    # Listeleri ters çevir (eski tarihlerden yeniye doğru sıralamak için)
+    aylar.reverse()
+    gelirler.reverse()
+    giderler.reverse()
+
+    return {
+        "gelir": gelirler,
+        "gider": giderler,
+        "aylar": aylar
+    }
 
 #@register.filter
 @register.simple_tag
