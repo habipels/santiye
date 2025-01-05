@@ -9587,3 +9587,94 @@ def rapor_gonder(request, rapor_id):
     print(fatura_data)
     # Veriyi JSON olarak döndür
     return JsonResponse(fatura_data)
+
+
+def santiye_kontrol(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+    return render(request,"checklist/santiye_kontrol.html",content)
+
+
+def santiye_kontrol_detayi(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+    return render(request,"checklist/santiye_kontrol_detayi.html",content)
+
+def santiye_projeleri(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici =request.user
+    #content["projeler"] = santiye.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
+    return render(request,"checklist/santiye_projeleri.html",content)
+def santiye_onay_listesi(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:       
+            kullanici =request.user
+    return render(request,"checklist/santiye_onay_listesi.html",content)
+def santiye_sablonu(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:       
+            kullanici =request.user
+    return render(request,"checklist/santiye_sablonu.html",content)

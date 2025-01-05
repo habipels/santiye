@@ -1,0 +1,159 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'go/content/style/style.css' %}">
+    <link rel="stylesheet" href="{% static 'go/content/style/custom-checklist.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'go/content/style/control-page.css' %}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{% static 'go/content/js/control-manager.js' %}"></script>
+{% endblock head %}
+{% block sidebar %}
+{% if hash_bilgi %}
+   
+{% else %}
+ <main>
+        <div class="page-header">
+            <div class="page-title">
+                <h2>R5 Blok Kontrol Listesi</h2>
+                <div class="block-info">
+                    <span class="info-item">
+                        <i class="fa-solid fa-building"></i> 12 Daire
+                    </span>
+                    <span class="info-item">
+                        <i class="fa-solid fa-layer-group"></i> 4 Kat
+                    </span>
+                </div>
+            </div>
+            <div class="page-actions">
+                <button class="button" id="exportReport">
+                    <i class="fa-solid fa-file-export"></i> Rapor Al
+                </button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <!-- Filtreler -->
+            <div class="filters-section card">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>İş Grubu</label>
+                            <select class="form-control" id="workGroupFilter">
+                                <option value="all">Tümü</option>
+                                <option value="civil">İnşaat İşleri</option>
+                                <option value="electrical">Elektrik İşleri</option>
+                                <option value="mechanical">Mekanik İşleri</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Durum</label>
+                            <select class="form-control" id="statusFilter">
+                                <option value="all">Tümü</option>
+                                <option value="pending">Kontrol Edilmedi</option>
+                                <option value="inProgress">Kontrol Ediliyor</option>
+                                <option value="completed">Tamamlandı</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Arama</label>
+                            <input type="text" class="form-control" placeholder="Daire no, bölüm adı...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kontrol Listesi -->
+            <div class="areas-container">
+                <!-- Katlar -->
+                <div class="area-section">
+                    <div class="section-header" data-toggle="collapse" data-target="#floor4">
+                        <h3>4. Kat</h3>
+                        <div class="section-status">
+                            <span class="progress-text">8/12 Tamamlandı</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div id="floor4" class="section-content">
+                        <!-- Daireler -->
+                        <div class="units-grid">
+                            <div class="unit-card" onclick="location.href='santiye-kontrol-detay.html?unit=401'">
+                                <div class="unit-header">
+                                    <h4>Daire 401</h4>
+                                    <span class="status-badge in-progress">Kontrol Ediliyor</span>
+                                </div>
+                                <div class="unit-body">
+                                    <div class="progress-section">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 65%"></div>
+                                        </div>
+                                        <span class="progress-text">65%</span>
+                                    </div>
+                                    <div class="work-groups">
+                                        <span class="work-badge completed">İnşaat</span>
+                                        <span class="work-badge in-progress">Elektrik</span>
+                                        <span class="work-badge pending">Mekanik</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Diğer daireler... -->
+                        </div>
+
+                        <!-- Ortak Alanlar -->
+                        <div class="common-areas">
+                            <div class="unit-card" onclick="location.href='santiye-kontrol-detay.html?unit=4floor-corridor'">
+                                <div class="unit-header">
+                                    <h4>4. Kat Koridor</h4>
+                                    <span class="status-badge pending">Kontrol Edilmedi</span>
+                                </div>
+                                <div class="unit-body">
+                                    <div class="progress-section">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 0%"></div>
+                                        </div>
+                                        <span class="progress-text">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cepheler -->
+                <div class="area-section">
+                    <div class="section-header" data-toggle="collapse" data-target="#facades">
+                        <h3>Cepheler</h3>
+                        <div class="section-status">
+                            <span class="progress-text">2/4 Tamamlandı</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div id="facades" class="section-content">
+                        <div class="units-grid">
+                            <div class="unit-card facade-card" onclick="location.href='santiye-kontrol-detay.html?unit=north-facade'">
+                                <div class="unit-header">
+                                    <h4>Kuzey Cephesi</h4>
+                                    <span class="status-badge completed">Tamamlandı</span>
+                                </div>
+                                <div class="unit-body">
+                                    <div class="progress-section">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 100%"></div>
+                                        </div>
+                                        <span class="progress-text">100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Diğer cepheler... -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endif %}
+
+{% endblock sidebar %}

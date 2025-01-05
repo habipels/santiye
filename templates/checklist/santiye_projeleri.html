@@ -1,0 +1,140 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+
+    <link rel="stylesheet" href="{% static 'go/content/style/style.css' %}">
+    <link rel="stylesheet" href="{% static 'go/content/style/custom-checklist.css' %}">
+    <link rel="stylesheet" href="{% static 'go/content/style/project-page.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{% static 'go/content/js/project-manager.js' %}"></script>
+{% endblock head %}
+{% block sidebar %}
+{% if hash_bilgi %}
+   
+{% else %}
+   <main>
+        <div class="page-header">
+            <div class="page-title">
+                <h2>R5 Blok Detayları</h2>
+                <p>Blok bilgilerini düzenleyin ve kontrol listesi oluşturun</p>
+            </div>
+            <div class="page-actions">
+                <button class="button" id="previewUnits">
+                    <i class="fa-solid fa-eye"></i> Ön İzleme
+                </button>
+                <button class="button button-primary" id="saveProject">
+                    <i class="fa-solid fa-save"></i> Kaydet
+                </button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Temel Bilgiler -->
+                    <div class="section">
+                        <div class="section-title">Blok Bilgileri</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Blok Adı</label>
+                                <input type="text" class="form-control" id="blockName" value="R5 Blok">
+                            </div>
+                            <div class="form-group">
+                                <label>Kat Sayısı</label>
+                                <input type="number" class="form-control" id="floorCount" value="4">
+                            </div>
+                            <div class="form-group">
+                                <label>Kat Başına Daire</label>
+                                <input type="number" class="form-control" id="unitsPerFloor" value="3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daire Numaralandırma -->
+                    <div class="section">
+                        <div class="section-title">Daire Numaralandırma</div>
+                        <div class="form-group">
+                            <label>Başlangıç Numarası</label>
+                            <input type="number" class="form-control" id="startNumber" value="101">
+                        </div>
+                        <div class="numbering-preview">
+                            <div class="preview-header">
+                                <h4>Ön İzleme</h4>
+                                <div class="preview-filters">
+                                    <button class="preview-filter active" data-view="floors">Kat Bazlı</button>
+                                    <button class="preview-filter" data-view="list">Liste</button>
+                                </div>
+                            </div>
+                            <div class="preview-container">
+                                <div id="numberingPreview">
+                                    <!-- Ön izleme içeriği buraya gelecek -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ortak Alanlar -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">Ortak Alanlar</div>
+                            <div class="section-actions">
+                                <button class="button button-outline" id="addCommonArea">
+                                    <i class="fa-solid fa-plus"></i> Alan Ekle
+                                </button>
+                            </div>
+                        </div>
+                        <div class="common-areas-list" id="commonAreasList">
+                            <!-- Örnek ortak alan -->
+                            <div class="area-item">
+                                <input type="text" class="form-control" placeholder="Ortak alan adı...">
+                                <select class="form-control">
+                                    <option value="">Alan Tipi Seçin</option>
+                                    <option value="corridor">Koridor</option>
+                                    <option value="stairs">Merdiven</option>
+                                    <option value="entrance">Giriş</option>
+                                    <option value="other">Diğer</option>
+                                </select>
+                                <button class="button-icon remove-area">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cepheler -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">Cepheler</div>
+                            <div class="section-actions">
+                                <button class="button button-outline" id="addFacade">
+                                    <i class="fa-solid fa-plus"></i> Cephe Ekle
+                                </button>
+                            </div>
+                        </div>
+                        <div class="facades-list" id="facadesList">
+                            <!-- Örnek cephe -->
+                            <div class="facade-item">
+                                <input type="text" class="form-control" placeholder="Cephe adı...">
+                                <select class="form-control">
+                                    <option value="">Yön Seçin</option>
+                                    <option value="north">Kuzey</option>
+                                    <option value="south">Güney</option>
+                                    <option value="east">Doğu</option>
+                                    <option value="west">Batı</option>
+                                </select>
+                                <button class="button-icon remove-facade">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endif %}
+
+{% endblock sidebar %}

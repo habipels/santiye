@@ -235,5 +235,11 @@ urlpatterns = [#
     path("control/kullaniciyetkisil/<str:hash>", views.kullanici_yetki_sil_2, name="kullanici_yetki_sil_2"),
     path("control/userauthorizationsset/<int:id>/<str:hash>", views.kullanici_yetkileri_duzenle_2, name="kullanici_yetkileri_duzenle_2"),
     path("control/kullaniciyetkialma/<str:hash>", views.kullanici_yetki_alma_2, name="kullanici_yetki_alma_2"),
+    #şantiye Kontrol
+    path("site/", views.santiye_kontrol, name="santiye_kontrol"),
+    path("sitedetail/", views.santiye_kontrol_detayi, name="santiye_kontrol_detayi"),
+    path("siteprojects/", views.santiye_projeleri, name="santiye_projeleri"),
+    path("siteprojectslist/", views.santiye_onay_listesi, name="santiye_onay_listesi"),
+    path("siteprojectsablone/", views.santiye_sablonu, name="santiye_sablonu"),
 ]
 #

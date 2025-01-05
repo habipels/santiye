@@ -1,0 +1,118 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+
+    <link rel="stylesheet" href="{% static 'go/content/style/style.css' %}">
+    <link rel="stylesheet" href="{% static 'go/content/style/custom-checklist.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{% static 'go/content/js/custom-checklist.js' %}"></script>
+{% endblock head %}
+{% block sidebar %}
+{% if hash_bilgi %}
+   
+{% else %}
+    <main>
+        <div class="page-header">
+            <div class="page-title">
+                <h2>Kontrol Listesi Şablonu</h2>
+                <p>Şantiye kontrol listesi şablonu oluşturun ve düzenleyin</p>
+            </div>
+            <div class="page-actions">
+                <button class="button" id="loadTemplate">
+                    <i class="fa-solid fa-folder-open"></i> Şablon Yükle
+                </button>
+                <button class="button button-primary" id="saveTemplate">
+                    <i class="fa-solid fa-save"></i> Şablonu Kaydet
+                </button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="template-container">
+                <!-- Sol Panel - Temel Bilgiler ve İş Grupları -->
+                <div class="template-sidebar">
+                    <!-- Temel Bilgiler -->
+                    <div class="sidebar-section">
+                        <h3>Temel Bilgiler</h3>
+                        <div class="form-group">
+                            <label>Şablon Adı</label>
+                            <input type="text" class="form-control" id="templateName" placeholder="Örn: R5 Blok Kontrol Listesi">
+                        </div>
+                        <div class="form-group">
+                            <label>Proje Tipi</label>
+                            <select class="form-control" id="projectType">
+                                <option value="apartment">Apartman</option>
+                                <option value="site">Site</option>
+                                <option value="commercial">Ticari Bina</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- İş Grupları -->
+                    <div class="sidebar-section">
+                        <div class="section-header">
+                            <h3>İş Grupları</h3>
+                            <button class="button-icon" id="addWorkGroup" title="İş Grubu Ekle">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="work-groups-list" id="workGroupsList">
+                            <!-- İş grupları buraya gelecek -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ana İçerik - Yapı Bölümleri -->
+                <div class="template-content">
+                    <div class="content-header">
+                        <h3>Yapı Bölümleri</h3>
+                        <button class="button-outline" id="addStructureSection">
+                            <i class="fa-solid fa-plus"></i> Bölüm Ekle
+                        </button>
+                    </div>
+
+                    <div class="structure-sections" id="structureSections">
+                        <!-- Örnek Bölüm -->
+                        <div class="section-card">
+                            <div class="card-header">
+                                <select class="form-control section-type">
+                                    <option value="exterior">Dış Mekan</option>
+                                    <option value="floor">Kat</option>
+                                    <option value="common">Ortak Alan</option>
+                                    <option value="apartment">Daire</option>
+                                </select>
+                                <div class="card-actions">
+                                    <button class="button-icon toggle-section">
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+                                    <button class="button-icon remove-section">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="categories-list">
+                                    <!-- İmalat kategorileri buraya gelecek -->
+                                </div>
+                                <button class="button-dashed add-category-btn">
+                                    <i class="fa-solid fa-plus"></i> Yeni İmalat Ekle
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Şablon Yükleme Modalı -->
+    <div id="loadTemplateModal" class="modal">
+        <!-- Modal içeriği aynı kalacak -->
+    </div>
+{% endif %}
+
+{% endblock sidebar %}

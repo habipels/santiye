@@ -1,0 +1,173 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+
+    <!-- CSS dosyaları -->
+    <link rel="stylesheet" href="{% static 'go/content/style/style.css' %}">
+    <link rel="stylesheet" href="{% static 'go/content/style/custom-checklist.css' %}">
+    <link rel="stylesheet" href="{% static 'go/content/style/checklist-detail.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'go/content/style/control-detail.css' %}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{% static 'go/content/js/checklist-detail.js' %}"></script>
+{% endblock head %}
+{% block sidebar %}
+{% if hash_bilgi %}
+   
+{% else %}
+    <main>
+        <div class="page-header">
+            <div class="page-title">
+                <a href="santiye-kontrol.html" class="back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h2>Daire 103 - Elektrik Kontrol</h2>
+                    <div class="control-info">
+                        <span class="date">23.03.2024</span>
+                        <span class="status pending">Kontrol Ediliyor</span>
+                    </div>
+                </div>
+            </div>
+            <div class="page-actions">
+                <button class="button" id="saveDraft">
+                    <i class="fa-solid fa-save"></i> Kaydet
+                </button>
+                <button class="button button-primary" id="completeCheck">
+                    <i class="fa-solid fa-check"></i> Kontrolü Tamamla
+                </button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <!-- Kontrol Listesi -->
+            <div class="checklist-container">
+                <!-- Priz Tesisatı -->
+                <div class="control-card">
+                    <div class="control-header">
+                        <div class="control-title">
+                            <h3>Priz Tesisatı</h3>
+                            <span class="control-count">0/4 Tamamlandı</span>
+                        </div>
+                        <div class="control-actions">
+                            <button class="button-icon" data-action="toggle">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="control-body">
+                        <div class="control-items">
+                            <div class="control-item">
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" class="control-checkbox">
+                                    <span>Priz yükseklikleri standartlara uygun</span>
+                                </label>
+                                <button class="button-note" data-action="add-note">
+                                    <i class="fa-solid fa-pen"></i>
+                                    <span>Not Ekle</span>
+                                </button>
+                            </div>
+
+                            <div class="control-item">
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" class="control-checkbox">
+                                    <span>Topraklama bağlantıları yapılmış</span>
+                                </label>
+                                <button class="button-note" data-action="add-note">
+                                    <i class="fa-solid fa-pen"></i>
+                                    <span>Not Ekle</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aydınlatma Tesisatı -->
+                <div class="control-card">
+                    <div class="control-header">
+                        <div class="control-title">
+                            <h3>Aydınlatma Tesisatı</h3>
+                            <span class="control-count">2/3 Tamamlandı</span>
+                        </div>
+                        <div class="control-actions">
+                            <button class="button-icon" data-action="toggle">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Genel Notlar Bölümü -->
+            <div class="general-notes-section">
+                <div class="control-card">
+                    <div class="control-header">
+                        <div class="control-title">
+                            <h3>Genel Notlar</h3>
+                        </div>
+                    </div>
+                    <div class="control-body">
+                        <div class="form-group">
+                            <label>Genel Değerlendirme ve Notlar</label>
+                            <textarea class="form-control" rows="4" placeholder="Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Fotoğraflar</label>
+                            <div class="photo-upload-area">
+                                <div class="photo-grid">
+                                    <!-- Yüklenen fotoğraflar buraya gelecek -->
+                                    <div class="photo-upload" id="generalPhotosUpload">
+                                        <i class="fa-solid fa-camera"></i>
+                                        <span>Fotoğraf Ekle</span>
+                                        <input type="file" accept="image/*" multiple>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="general-notes-actions">
+                            <button class="button button-primary" id="saveGeneralNotes">
+                                <i class="fa-solid fa-save"></i> Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Not Ekleme Paneli -->
+            <div class="notes-panel" id="notesPanel">
+                <div class="notes-header">
+                    <h3>Notlar ve Fotoğraflar</h3>
+                    <button class="button-icon" data-action="close-notes">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+                <div class="notes-content">
+                    <div class="form-group">
+                        <label>Not</label>
+                        <textarea class="form-control" rows="3" placeholder="Kontrol ile ilgili notunuzu yazın..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Fotoğraflar</label>
+                        <div class="photo-upload-area">
+                            <div class="photo-grid">
+                                <div class="photo-upload">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>Fotoğraf Ekle</span>
+                                    <input type="file" accept="image/*" multiple>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notes-actions">
+                        <button class="button" data-action="cancel-note">İptal</button>
+                        <button class="button button-primary" data-action="save-note">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endif %}
+
+{% endblock sidebar %}
