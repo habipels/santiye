@@ -345,17 +345,21 @@ def get_son_bir_hafta_icinde_degisenler(id):
     }
 
 
+from collections import defaultdict
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta  # Tarih işlemleri için
 
 @register.simple_tag
 def get_yil_icinde_degisenler(id):
     """
-    Yıl içinde değişen ve tamamlanma bilgisi True olan santiye_kalemlerin_dagilisi kayıtlarını ay bazında ayırarak
-    fiziksel ve finansal değerleri ay bazında döndürür.
+    Son 12 ay (bulunduğumuz ay dahil) içinde değişen ve tamamlanma bilgisi True olan 
+    santiye_kalemlerin_dagilisi kayıtlarını ay bazında ayırarak
+    fiziksel ve finansal değerleri döndürür.
     """
     now = timezone.now()
-    baslangic_tarihi = now.replace(month=1, day=1)  # Yıl başına gidiyoruz
+    baslangic_tarihi = now - relativedelta(months=11)  # 11 ay geriye gidiyoruz, bulunduğumuz ay dahil
 
-    # Yıl içinde değişen ve tamamlanma bilgisi True olan kayıtlar
+    # Son 12 ayda (bulunduğumuz ay dahil) değişen ve tamamlanma bilgisi True olan kayıtlar
     degisen_kalemler = santiye_kalemlerin_dagilisi.objects.filter(
         blog_bilgisi__id=id,
         degistirme_tarihi__gte=baslangic_tarihi,
@@ -378,8 +382,11 @@ def get_yil_icinde_degisenler(id):
         ay_bazinda_kalemlerfiz[degisme_ayi] += sonuc_fiziksel
         ay_bazinda_kalemlerfin[degisme_ayi] += sonuc_finansal
 
-    # Yılın tüm aylarını sıraya göre döndürüyoruz
-    aylar = [f"{now.year}-{str(i).zfill(2)}" for i in range(1, 13)]
+    # Son 12 ayın (bulunduğumuz ay dahil) tüm aylarını sıraya göre döndürüyoruz
+    aylar = [
+        (now - relativedelta(months=i)).strftime("%Y-%m")
+        for i in range(11, -1, -1)  # 11 aydan başlayıp 0'a kadar (bulunduğumuz ay dahil)
+    ]
     deger_gonder_fizi = []
     deger_gonder_finn = []
 
