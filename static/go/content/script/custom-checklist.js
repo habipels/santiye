@@ -141,6 +141,7 @@ class TemplateManager {
 
     saveTemplate() {
         const template = {
+            santiyeId: $('#santiye').val(),
             name: $('#templateName').val(),
             projectType: $('#projectType').val(),
             sections: this.getSectionsData()
