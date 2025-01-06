@@ -63,17 +63,17 @@ class TemplateManager {
                         </select>
                     </div>
                     <div class="card-actions">
-                        <button class="button-icon toggle-section">
+                        <button type="button" class="button-icon toggle-section">
                             <i class="icon icon-chevron-down"></i>
                         </button>
-                        <button class="button-icon remove-section">
+                        <button type="button" class="button-icon remove-section">
                             <i class="icon icon-trash"></i>
                         </button>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="categories-list">
-                        <button class="button button-dashed add-category-btn">
+                        <button type="button" class="button button-dashed add-category-btn">
                             <i class="icon icon-plus"></i> Yeni İmalat Ekle
                         </button>
                     </div>
@@ -88,25 +88,25 @@ class TemplateManager {
         const categoryHtml = `
             <div class="category-item">
                 <div class="category-header">
-                    <input type="text" class="form-control" placeholder="İmalat kategorisi adı...">
-                    <select class="form-control work-group-select">
+                    <input type="text" name="imalat_kalemleri" class="form-control" placeholder="İmalat kategorisi adı...">
+                    <select name="is_gurubu_imalat_kaleminin" class="form-control work-group-select">
                         <option value="">İş Grubu Seçin</option>
                         ${this.workGroups.map(group => 
                             `<option value="${group}">${group}</option>`
                         ).join('')}
                     </select>
                     <div class="category-actions">
-                        <button class="button-icon toggle-category">
+                        <button type="button" class="button-icon toggle-category">
                             <i class="fa-solid fa-chevron-down"></i>
                         </button>
-                        <button class="button-icon remove-category">
+                        <button type="button" class="button-icon remove-category">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </div>
                 <div class="category-content">
                     <div class="checklist-items"></div>
-                    <button class="button button-dashed add-checklist-item">
+                    <button type="button" class="button button-dashed add-checklist-item">
                         <i class="fa-solid fa-plus"></i> Kontrol Maddesi Ekle
                     </button>
                 </div>
@@ -120,7 +120,7 @@ class TemplateManager {
         const itemHtml = `
             <div class="checklist-item">
                 <input type="text" class="form-control" placeholder="Kontrol maddesi">
-                <button class="button-icon remove-item">
+                <button type="button" class="button-icon remove-item">
                     <i class="icon icon-trash"></i>
                 </button>
             </div>
@@ -201,8 +201,8 @@ class TemplateManager {
     addWorkGroup() {
         const workGroupHtml = `
             <div class="work-group-item">
-                <input type="text" class="form-control" placeholder="İş grubu adı...">
-                <button class="button-icon" data-action="remove">
+                <input name="is_grubu" type="text" class="form-control" placeholder="İş grubu adı...">
+                <button type="button" class="button-icon" data-action="remove">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -253,4 +253,4 @@ class TemplateManager {
 // Sayfa yüklendiğinde başlat
 $(document).ready(() => {
     window.templateManager = new TemplateManager();
-}); 
+});

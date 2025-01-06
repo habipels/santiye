@@ -43,6 +43,51 @@ class santiye(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+class santiye_sablonlari(models.Model):
+    status=(("0","0"),("1","1"),("2","2"))
+
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    sablon_adi = models.CharField(max_length=200,verbose_name="Sablon Adı",blank=True,null = True)
+    sablon_durumu = models.CharField(max_length=200,verbose_name="Sablon Durumu",blank=True,null = True,choices=status)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+class sanytiye_sablon_bolumleri(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    sablon_adi = models.ForeignKey(santiye_sablonlari,verbose_name="Sablon Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    bolum = models.CharField(max_length=200,verbose_name="Sablon Bölüm Adı",blank=True,null = True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class santiye_sablon_bolum_detaylari(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    bolum = models.ForeignKey(sanytiye_sablon_bolumleri,verbose_name="Bölüm Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    detay_adi = models.CharField(max_length=200,verbose_name="Detay Adı",blank=True,null = True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class santiye_imalat_kalemleri(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    detay = models.ForeignKey(santiye_sablon_bolum_detaylari,verbose_name="Detay Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    icerik = models.CharField(max_length=200,verbose_name="İçerik Adı",blank=True,null = True)
+    is_grubu = models.CharField(max_length=200,verbose_name="İçerik Adı",blank=True,null = True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class imalat_kalemleri_imalat_detaylari(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    icerik = models.ForeignKey(santiye_imalat_kalemleri,verbose_name="İçerik Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    imalat_detayi = models.CharField(max_length=200,verbose_name="İmalat Detayı",blank=True,null = True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
 class bloglar(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)

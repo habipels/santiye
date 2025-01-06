@@ -240,6 +240,9 @@ urlpatterns = [#
     path("sitedetail/", views.santiye_kontrol_detayi, name="santiye_kontrol_detayi"),
     path("siteprojects/", views.santiye_projeleri, name="santiye_projeleri"),
     path("siteprojectslist/", views.santiye_onay_listesi, name="santiye_onay_listesi"),
-    path("siteprojectsablone/", views.santiye_sablonu, name="santiye_sablonu"),
+    path("siteprojectsablone/<int:id>/", views.santiye_sablonu, name="santiye_sablonu"),
+    path("createsiteprojectsablone/", views.santiye_sablonu_olustur, name="santiye_sablonu_olustur"),
+    path("mysiteprojects/", views.santiyelerim, name="santiyelerim"),
 ]
-#
+
+#santiyelerim

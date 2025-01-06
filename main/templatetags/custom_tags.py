@@ -2118,3 +2118,8 @@ def musteriye_atanan_daire(musterisi):
 def musteriye_atanan_daire_teslim_edilen(musterisi):
     bilgi = musteri_daire_baglama.objects.filter(musterisi = musterisi,durum ="1").count()
     return bilgi
+
+@register.simple_tag
+def santiye_sablonu_gonder(users):
+    bilgi = get_object_or_none(santiye_sablonlari,proje_santiye_Ait  = users)
+    return bilgi

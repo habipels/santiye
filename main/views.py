@@ -9661,7 +9661,7 @@ def santiye_onay_listesi(request):
         else:       
             kullanici =request.user
     return render(request,"checklist/santiye_onay_listesi.html",content)
-def santiye_sablonu(request):
+def santiye_sablonu(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         pass
@@ -9677,4 +9677,84 @@ def santiye_sablonu(request):
                 return redirect("main:yetkisiz")
         else:       
             kullanici =request.user
+    content["santiye"] = get_object_or_404(santiye,id = id)
     return render(request,"checklist/santiye_sablonu.html",content)
+def santiye_sablonu_olustur(request):
+    content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.sablon_olusturma:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:       
+        kullanici =request.user
+    if request.POST:
+        sablon_adi = request.POST.get("sablon_adi")
+        sablon_tipi  = request.POST.get("sablon_tipi")
+        is_grubu = request.POST.getlist("is_grubu")
+        bolum_adi = request.POST.getlist("bolum_adi")
+        imalat_kalemleri = request.POST.getlist("imalat_kalemleri")
+        is_gurubu_imalat_kaleminin = request.POST.getlist("is_gurubu_imalat_kaleminin")
+
+def santiyelerim(request):
+    content = sozluk_yapisi()
+    m = folium.Map(location=[20, 0], zoom_start=2)
+    # Haritayı HTML'ye dönüştürme
+    map_html = m._repr_html_()
+    content['map'] = map_html
+    content["birim_bilgisi"] = birimler.objects.filter(silinme_bilgisi = False)
+    content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user)
+    if super_admin_kontrolu(request):
+        profile =santiye.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_gorme:
+                    profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user.kullanicilar_db)
+                    content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user.kullanicilar_db)
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            profile = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = request.user)
+            content["proje_tipleri"] = proje_tipi.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi =  request.user)
+    if request.GET.get("search"):
+        search = request.GET.get("search")
+        if super_admin_kontrolu(request):
+            profile =santiye.objects.filter(Q(proje_ait_bilgisi__last_name__icontains = search)|Q(Proje_tipi_adi__icontains = search))
+            kullanicilar = CustomUser.objects.filter( kullanicilar_db = None,is_superuser = False).order_by("-id")
+            content["kullanicilar"] =kullanicilar
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.santiye_gorme:
+                        profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user.kullanicilar_db) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                profile = santiye.objects.filter(Q(proje_ait_bilgisi = request.user) & Q(Proje_tipi_adi__icontains = search)& Q(silinme_bilgisi = False))
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(profile, 10) # 6 employees per page
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+            # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+            # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+    content["santiyeler"] = profile
+
+    return render(request,"checklist/santiyeler.html",content)

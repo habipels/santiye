@@ -1,317 +1,121 @@
-<script>
-    // Resim URL'leri statik dosya olarak ayarlanıyor
-    const buildingImages = {
-        "building1": {
-            "front": "{% static 'go/images/building1_front.png' %}",
-            "back": "{% static 'go/images/building1_back.png' %}",
-            "left": "{% static 'go/images/building1_left.png' %}",
-            "right": "{% static 'go/images/building1_right.png' %}"
-        },
-        "building2": {
-            "front": "{% static 'go/images/building2_front.png' %}",
-            "back": "{% static 'go/images/building2_back.png' %}",
-            "left": "{% static 'go/images/building2_left.png' %}",
-            "right": "{% static 'go/images/building2_right.png' %}"
-        }
-        // Diğer binalar için benzer şekilde ekleyin
-    };
-</script>
-<style>
-    {% if request.user.kullanicilar_db %}
-        {% blok_bilgileri request.user.kullanicilar_db as blok_olusturmaaa %}
-    {% else %}
-        {% blok_bilgileri request.user as blok_olusturmaaa %}
-    {% endif %}
-    
-    {% for j in blok_olusturmaaa %}
-        {% bina_3d2 j.id  as sonuc_veriyor_yanma_sonme %}
-        {% for i in sonuc_veriyor_yanma_sonme.kat_bilgileri %}
-            .floor[data-floor="{{ i }}"]{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    {% endfor %}
-    {
-        animation: red-flash 1s infinite;
-    }
-</style>
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans 'Şantiyeler' %}
+            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                <li><a href="#" >{% trans 'Şantiye Yönetimi' %}</a></li>
+                <li><a href="#">{% trans 'Şantiye Şablonları' %}</a></li>
+            </ul>
+        </div>
+        <div class="page-actions">
+         {% if request.user.kullanicilar_db %}
+                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                        {% if yetki.kasa_olusturma_izni %}
+                                                <button class="page-primary-btn" onclick="openModal('kasa-ekle')"><i class="icon icon-new"></i>{% trans 'Kasa Ekle' %}</button>                                               
+                                                                                                        
+                                        {% endif %}
+                                        {% if yetki.kasa_virman_olusturma_izni %}
+                                                         <button class="page-primary-btn" onclick="openModal('virman')">{% trans 'Virman' %}</button>                                          
+                                           
+                                        {% endif %}
+                                        {% else %}
+                                                <button class="page-primary-btn" onclick="openModal('kasa-ekle')"><i class="icon icon-new"></i>{% trans 'Kasa Ekle' %}</button>
+            <button class="page-primary-btn" onclick="openModal('virman')">{% trans 'Virman' %}</button>                                             
+                                        {% endif %}
+                                               
+                                            
+            
+        </div>
+    </div>
 
-<script>
-function modals_actirma(event, title, id) {
-    openModal(`gorevleri_goster${title}-${id}`);
-}
+    <div class="large-stats-card table-card table-detail-card">
+        <div class="stats-header">
+            <div class="stats-title">{% trans 'Şantiye' %}</div>
+            <div class="stats-search">
+                <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                <button><i class="icon icon-search"></i></button>
+            </div>
+        </div>
 
-function closeModal() {
-    const modal = document.getElementById("infoModal");
-    modal.style.display = "none";
-}
+        <div class="table-wrapper">
+            <table id="datatable">
+                <thead>
+                    <tr>
+                         <!-- Gizli ID sütunu -->
+                        <th>{% trans 'Proje Tipi' %}</th>
+                        <th>{% trans 'Proje Adı' %}</th>
+                        <th>{% trans 'Şantiye Şablon Adı' %}</th>
+                        <th>{% trans 'Şantiye Şablon Tipi' %}</th>
+                        <th>{% trans 'Kayıt Tarihi' %}</th>
+                        <th>{% trans 'Aksiyon' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in santiyeler %}
+                    {%  santiye_sablonu_gonder i as bilgi %}
+                        <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey; color: white; {% endif %} {% endif %}">
+                            <td class="kasa">{{ i.proje_tipi.Proje_tipi_adi }}</td>
+                            <td class="bakiye">{{ i.proje_adi }}<span>$</span></td>
+                            <td class="konum">{{ bilgi.sablon_adi}}</td>
+                           
+                            <td class="kasa">
+                            {% if bilgi.sablon_durumu == "0"  %}
+                            
+                            {% elif bilgi.sablon_durumu == "1"  %}
+                            {% elif bilgi.sablon_durumu == "3"  %}
+                            {% endif %}
+                                
+                            </td>
+                            <td class="konum">{{ i.kayit_tarihi }}</td>
+                            <td>
+                                <div class="td-actions">
+                                    
 
-let currentRotation = 0;
-let isDragging = false; // Fare sürükleme durumu
-let startX = 0;
-const infoModal = document.getElementById('infoModal');
-{% if request.user.kullanicilar_db %}
-    {% blok_bilgilerii request.user.kullanicilar_db as blok_olusturmaa %}
-{% else %}
-    {% blok_bilgilerii request.user as blok_olusturmaa %}
-{% endif %}
+                                    {% if request.user.kullanicilar_db %}
+                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                        {% if yetki.kasa_guncelleme_izni %}
+                                            <a onclick="openModal('departman-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                
+                                        {% endif %}
+                                        {% if yetki.Kasa_silme_izni %}
+                                            
+                                        <a onclick="openModal('departman-sil{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>                                               
+                                        {% endif %}
+                                        {% if yetki.kasa_detay_izni %}
+                                            <a href="/{{dil}}{% url 'accounting:kasa_tekli' i.id %}" class="status-success">{% trans 'Detay' %}</a>
+                                                                                    
+                                        {% endif %}
+                                    {% else %}
+                                    <a href="/{{dil}}{% url 'accounting:kasa_tekli' i.id %}" class="status-success">{% trans 'Detay' %}</a>
+                                    <a onclick="openModal('departman-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                        <a onclick="openModal('departman-sil{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                    {% endif %}
 
-function createBuilding() {
-    // Django şablon değişkenlerini bu şekilde kullanabilirsiniz
-    const bloklar = JSON.parse('{{ blok_olusturmaa }}');
-
-    for (let i = 0; i < bloklar.length; i++) {
-        const currentBlok = bloklar[i];
-        const floors = currentBlok.kat; // Kat sayısını alın
-        const buildingId = currentBlok.id;
-
-        for (let j = 1; j <= 4; j++) {
-            const face = document.getElementById(`${buildingId}-face${j}`);
-            if (!face) {
-                console.error(`${buildingId}-face${j} elementi bulunamadı!`);
-                continue; // Eğer yüzey yoksa, bu döngüyü atla
-            }
-
-            face.innerHTML = ''; // Yüzeyi temizle
-
-            for (let k = floors; k >= 1; k--) { // Katları oluştur
-                const floor = document.createElement('div');
-                floor.className = 'floor';
-                floor.style.backgroundImage = `url(${getFaceImageUrl(buildingId, j)})`;  // Resim URL'si
-                floor.setAttribute('data-floor', `Kat ${k}-${buildingId}`);
-                floor.innerHTML = `Kat ${k}`;
-                floor.onclick = function(event) {
-                    console.log(`Tıklandı: Kat ${k}-${buildingId}`); // Tıklama olayını kontrol et
-                    modals_actirma(event, k, buildingId);
-                };
-                face.appendChild(floor);
-            }
-        }
-
-        // Bina döndürme işlevi (Fare ve Touch Eventleri ile)
-        document.body.addEventListener('pointerdown', function(e) {
-            isDragging = true;
-            startX = e.clientX; // Başlangıç noktası kaydediliyor
-        });
-
-        document.body.addEventListener('pointermove', function(e) {
-            if (!isDragging) return;
-            const deltaX = e.clientX - startX;
-            currentRotation += deltaX * 0.1; // Döndürme hassasiyeti ayarlandı
-            document.querySelector(`#building-${buildingId}`).style.transform = `rotateY(${currentRotation}deg)`;
-            startX = e.clientX; // Yeni başlangıç pozisyonu
-        });
-
-        document.body.addEventListener('pointerup', function() {
-            isDragging = false; // Sürükleme sonlandırıldı
-        });
-
-        // Dokunmatik cihazlarda döndürme işlevi
-        document.body.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1) {
-                startX = e.touches[0].clientX; // Tek parmakla başla
-            }
-        });
-
-        document.body.addEventListener('touchmove', function(e) {
-            if (e.touches.length === 1) {
-                const deltaX = e.touches[0].clientX - startX;
-                currentRotation += deltaX * 0.1; // Dokunmatik döndürme hassasiyeti
-                document.querySelector(`#building-${buildingId}`).style.transform = `rotateY(${currentRotation}deg)`;
-                startX = e.touches[0].clientX; // Yeni başlangıç pozisyonu
-            }
-        });
-    }
-}
-
-function getFaceImageUrl(buildingId, faceIndex) {
-    const building = buildingImages[`building${buildingId}`];
-    if (!building) return '';
-
-    switch (faceIndex) {
-        case 1:
-            return building.front;
-        case 2:
-            return building.back;
-        case 3:
-            return building.left;
-        case 4:
-            return building.right;
-        default:
-            return building.front;
-    }
-}
-
-createBuilding();
-</script>
-
-<script>
-    function openModal(modalID, close = true) {
-        if (close) {
-            closeModal();
-        }
-        if (modalID === "plan-konumu") {
-            $("#" + modalID).css({
-                "display": "flex",
-                "z-index": 100000
-            }).hide().fadeIn();
-        } else {
-            $("#" + modalID).css("display", "flex").hide().fadeIn();
-        }
-    }
-
-    function closeModal(modalID = "") {
-        console.log(modalID.length);
-        if (modalID.length === 0) {
-            $(".modal").fadeOut();
-        } else {
-            $("#" + modalID).fadeOut();
-        }
-    }
-
-    $(".modal").on("click", function (e) {
-        if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
-            closeModal();
-        }
-    });
-
-    $(document).ready(function () {
-        $('input[type="file"]').on('change', function () {
-            var files = $(this).prop('files');
-            var formElement = $(this).closest('.form-element');
-            var fileList = formElement.find('.fileList');
-            fileList.find('li:not(label)').remove();
-
-            var selectedFiles = Array.from(files);
-
-            for (var i = 0; i < selectedFiles.length; i++) {
-                (function (file) {
-                    var listItem = $('<li></li>');
-
-                    if (file.type.startsWith('image/') && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')) {
-                        var reader = new FileReader();
-                        reader.onload = function (e) {
-                            listItem.append(`
-                                <div class="file-input-uploaded">
-                                    <div class="file-input-uploaded-head">
-                                        <div class="file-input-uploaded-title" title="${file.name}">${file.name}</div>
-                                        <button type="button" class="file-input-uploaded-remove"><i class="icon icon-trash"></i></button>
-                                    </div>
-                                    <div class="file-input-uploaded-preview">
-                                        <img src="${e.target.result}">
-                                    </div>
-                                </div>
-                            `);
-                            fileList.append(listItem);
-
-                            listItem.find('.file-input-uploaded-remove').on('click', function () {
-                                $(this).closest('li').remove();
-                                selectedFiles = selectedFiles.filter(f => f.name !== file.name);
-                                updateInput(selectedFiles);
-                            });
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        listItem.append(`
-                            <div class="file-input-uploaded">
-                                <div class="file-input-uploaded-head">
-                                    <div class="file-input-uploaded-title" title="${file.name}">${file.name}</div>
-                                    <button type="button" class="file-input-uploaded-remove"><i class="icon icon-trash"></i></button>
-                                </div>
-                                <div class="file-input-uploaded-no-preview">
-                                    <img src="{% static 'go/content/images/illustration-upload.png' %}">
-                                </div>
+                                    
+                               </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
                             </div>
-                        `);
-                        fileList.append(listItem);
+        </div>
+    </div>
 
-                        listItem.find('.file-input-uploaded-remove').on('click', function () {
-                            $(this).closest('li').remove();
-                            selectedFiles = selectedFiles.filter(f => f.name !== file.name);
-                            updateInput(selectedFiles);
-                        });
-                    }
-                })(selectedFiles[i]);
-            }
-        });
-    });
-
-    function updateInput(selectedFiles) {
-        var dataTransfer = new DataTransfer();
-        selectedFiles.forEach(function (file) {
-            dataTransfer.items.add(file);
-        });
-        $('input[type="file"]').prop('files', dataTransfer.files);
-    }
-</script>
-<script>
-    document.querySelectorAll('.table').forEach(function(table) {
-        let dataTable = new DataTable(table, {
-            paging: false,
-            searching: true,
-            info: false
-        });
-    });
-
-    $('#stats-search').keyup(function () {
-        table.search($(this).val()).draw();
-    })
-</script>
-<script>
-    function showBlock(blockId, floors) {
-        // Tüm blokları gizle
-        document.querySelectorAll('.building').forEach((element) => {
-            element.style.display = 'none';
-        });
-
-        // Seçili bloğu göster ve kat sayısına göre yüksekliğini ayarla
-        const building = document.getElementById('building-' + blockId);
-        const buildingContainer = document.getElementById('buildingContainer');
-        const cardBody = document.getElementById('cardBody');
-        const buildingHeight = floors * 20;
-
-        // Null kontrolü
-        if (building && buildingContainer && cardBody) {
-            building.style.display = 'block';
-            building.style.height = buildingHeight + 'px'; // Bina yüksekliği
-            buildingContainer.style.height = buildingHeight + 'px'; // Container yüksekliği
-            cardBody.style.height = buildingHeight + 100 + 'px'; // Card-body yüksekliği ek boşluk ile
-        } else {
-            console.error('Elementlerden biri bulunamadı. Lütfen ID veya sınıf adlarını kontrol edin.');
-        }
-    }
-
-    // Varsayılan olarak ilk bloğu gösterelim
-    document.querySelector('.building').style.display = 'block';
-</script>
-<style>
-    .block-selector {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 1rem;
-        z-index: 10; /* Butonların üstte kalmasını sağlar */
-        position: relative; /* Butonların bina tarafından kaplanmasını önler */
-        overflow-x: auto;
-    }
-
-    .block-btn {
-        padding: 0.5rem 1rem;
-        margin: 0 0.5rem;
-        cursor: pointer;
-        border: 1px solid #24d6b5;
-        background-color: #042940;
-        color: #fff;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-    }
-
-    .block-btn:hover {
-        background-color: #24d6b5;
-    }
-    .block-btn:active {
-        background-color: #24d6b5;
-    }
-
-    .building-container {
-        transition: height 0.3s ease;
-        position: relative;
-    }
-</style>
+</main>
