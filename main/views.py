@@ -9679,26 +9679,49 @@ def santiye_sablonu(request,id):
             kullanici =request.user
     content["santiye"] = get_object_or_404(santiye,id = id)
     return render(request,"checklist/santiye_sablonu.html",content)
-def santiye_sablonu_olustur(request):
-    content = sozluk_yapisi()
-    if request.user.kullanicilar_db:
-            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
-            if a:
-                if a.izinler.sablon_olusturma:
-                    kullanici =request.user.kullanicilar_db
-                else:
-                    return redirect("main:yetkisiz")
-            else:
-                return redirect("main:yetkisiz")
-    else:       
-        kullanici =request.user
-    if request.POST:
-        sablon_adi = request.POST.get("sablon_adi")
-        sablon_tipi  = request.POST.get("sablon_tipi")
-        is_grubu = request.POST.getlist("is_grubu")
-        bolum_adi = request.POST.getlist("bolum_adi")
-        imalat_kalemleri = request.POST.getlist("imalat_kalemleri")
-        is_gurubu_imalat_kaleminin = request.POST.getlist("is_gurubu_imalat_kaleminin")
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
+def save_template(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            print(data)
+            """
+            # Template kaydet
+            template = Template.objects.create(
+                name=data.get('name', 'Unnamed Template'),
+                project_type=data.get('projectType', 'Unknown')
+            )
+
+            # Sections ve alt elemanlarını kaydet
+            for section_data in data.get('sections', []):
+                section = Section.objects.create(
+                    template=template,
+                    section_type=section_data.get('type', 'Unknown')
+                )
+
+                for category_data in section_data.get('categories', []):
+                    category = Category.objects.create(
+                        section=section,
+                        name=category_data.get('name', 'Unnamed Category'),
+                        work_group=category_data.get('workGroup', 'Unknown Work Group')
+                    )
+
+                    for item_name in category_data.get('checklistItems', []):
+                        ChecklistItem.objects.create(
+                            category=category,
+                            name=item_name
+                        )
+            """
+            return JsonResponse({"status": "success", "message": "Şablon başarıyla kaydedildi."})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
 
 def santiyelerim(request):
     content = sozluk_yapisi()

@@ -1,53 +1,44 @@
 class TemplateManager {
     constructor() {
+        this.workGroups = []; // İş Grupları
         this.init();
-        this.workGroups = [];
     }
 
     init() {
         this.bindEvents();
-        this.initWorkGroups();
+        this.updateWorkGroupSelects();
     }
 
     bindEvents() {
         // Bölüm ekleme
         $(document).on('click', '#addStructureSection', () => this.addStructureSection());
-        
+
         // Kategori ve kontrol maddesi ekleme
         $(document).on('click', '.add-category-btn', (e) => this.addCategory(e));
         $(document).on('click', '.add-checklist-item', (e) => this.addChecklistItem(e));
-        
+
         // Silme işlemleri
         $(document).on('click', '.remove-section', (e) => this.removeSection(e.target));
         $(document).on('click', '.remove-category', (e) => this.removeCategory(e.target));
         $(document).on('click', '.remove-item', (e) => this.removeChecklistItem(e.target));
-        
+
         // Toggle işlemleri
         $(document).on('click', '.toggle-section', (e) => this.toggleSection(e.target));
         $(document).on('click', '.toggle-category', (e) => this.toggleCategory(e.target));
-        
+
         // Şablon işlemleri
         $(document).on('click', '#saveTemplate', () => this.saveTemplate());
-        $(document).on('click', '#loadTemplate', () => this.loadTemplateModal());
 
-        // İş Grubu ekleme
+        // İş Grubu işlemleri
         $('#addWorkGroup').on('click', () => {
             this.addWorkGroup();
             this.updateWorkGroupSelects();
         });
-        
-        // İş Grubu silme
         $(document).on('click', '[data-action="remove"]', (e) => {
-            const workGroup = $(e.target).closest('.work-group-item');
-            const workGroupName = workGroup.find('input').val();
-            workGroup.remove();
+            $(e.target).closest('.work-group-item').remove();
             this.updateWorkGroupSelects();
         });
-
-        // İş Grubu adı değiştiğinde
-        $(document).on('input', '.work-group-item input', () => {
-            this.updateWorkGroupSelects();
-        });
+        $(document).on('input', '.work-group-item input', () => this.updateWorkGroupSelects());
     }
 
     addStructureSection() {
@@ -56,10 +47,10 @@ class TemplateManager {
                 <div class="card-header">
                     <div class="card-title">
                         <select class="form-control section-type">
-                            <option value="exterior">Dış Mekan</option>
-                            <option value="floor">Kat</option>
-                            <option value="common">Ortak Alan</option>
-                            <option value="apartment">Daire</option>
+                            <option value="0">Dış Mekan</option>
+                            <option value="1">Kat</option>
+                            <option value="2">Ortak Alan</option>
+                            <option value="3">Daire</option>
                         </select>
                     </div>
                     <div class="card-actions">
@@ -80,7 +71,6 @@ class TemplateManager {
                 </div>
             </div>
         `;
-        
         $('#structureSections').append(sectionHtml);
     }
 
@@ -91,9 +81,7 @@ class TemplateManager {
                     <input type="text" name="imalat_kalemleri" class="form-control" placeholder="İmalat kategorisi adı...">
                     <select name="is_gurubu_imalat_kaleminin" class="form-control work-group-select">
                         <option value="">İş Grubu Seçin</option>
-                        ${this.workGroups.map(group => 
-                            `<option value="${group}">${group}</option>`
-                        ).join('')}
+                        ${this.workGroups.map(group => `<option value="${group}">${group}</option>`).join('')}
                     </select>
                     <div class="category-actions">
                         <button type="button" class="button-icon toggle-category">
@@ -112,7 +100,6 @@ class TemplateManager {
                 </div>
             </div>
         `;
-        
         $(event.target).closest('.categories-list').find('.add-category-btn').before(categoryHtml);
     }
 
@@ -125,7 +112,6 @@ class TemplateManager {
                 </button>
             </div>
         `;
-        
         $(event.target).closest('.category-content').find('.checklist-items').append(itemHtml);
     }
 
@@ -160,8 +146,18 @@ class TemplateManager {
             sections: this.getSectionsData()
         };
 
-        console.log('Kaydedilen şablon:', template);
-        alert('Şablon başarıyla kaydedildi!');
+        $.ajax({
+            url: '/createsiteprojectsablone/',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(template),
+            success: (response) => {
+                alert('Şablon başarıyla kaydedildi!');
+            },
+            error: (xhr, status, error) => {
+                alert('Şablon kaydedilirken bir hata oluştu.');
+            }
+        });
     }
 
     getSectionsData() {
@@ -180,24 +176,23 @@ class TemplateManager {
         const categories = [];
         section.find('.category-item').each((i, el) => {
             const category = {
-                name: $(el).find('.category-title input').val(),
-                items: []
+                name: $(el).find('input[name="imalat_kalemleri"]').val(),
+                workGroup: $(el).find('select[name="is_gurubu_imalat_kaleminin"]').val(),
+                checklistItems: this.getChecklistItems($(el))
             };
-            
-            $(el).find('.checklist-items .checklist-item input').each((i, input) => {
-                category.items.push($(input).val());
-            });
-            
             categories.push(category);
         });
         return categories;
     }
 
-    loadTemplateModal() {
-        $('#loadTemplateModal').addClass('active');
+    getChecklistItems(category) {
+        const items = [];
+        category.find('.checklist-items .checklist-item input').each((i, input) => {
+            items.push($(input).val());
+        });
+        return items;
     }
 
-    // İş Grubu ekleme
     addWorkGroup() {
         const workGroupHtml = `
             <div class="work-group-item">
@@ -210,43 +205,27 @@ class TemplateManager {
         $('#workGroupsList').append(workGroupHtml);
     }
 
-    // İş Grubu seçeneklerini güncelleme
     updateWorkGroupSelects() {
-        // İş gruplarını topla
         this.workGroups = [];
         $('.work-group-item input').each((i, input) => {
             const name = $(input).val().trim();
-            if (name) {
-                this.workGroups.push(name);
-            }
+            if (name) this.workGroups.push(name);
         });
 
-        // Select'leri güncelle
         $('.work-group-select').each((i, select) => {
             const $select = $(select);
             const currentValue = $select.val();
-            
-            // Mevcut seçenekleri temizle
+
             $select.empty();
-            
-            // Varsayılan seçenek
             $select.append('<option value="">İş Grubu Seçin</option>');
-            
-            // İş gruplarını ekle
             this.workGroups.forEach(group => {
                 $select.append(`<option value="${group}">${group}</option>`);
             });
 
-            // Önceki seçimi koru
             if (currentValue && this.workGroups.includes(currentValue)) {
                 $select.val(currentValue);
             }
         });
-    }
-
-    initWorkGroups() {
-        // Sayfa yüklendiğinde mevcut iş gruplarını seçim kutularına ekle
-        this.updateWorkGroupSelects();
     }
 }
 
