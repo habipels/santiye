@@ -9679,6 +9679,29 @@ def santiye_sablonu(request,id):
             kullanici =request.user
     content["santiye"] = get_object_or_404(santiye,id = id)
     return render(request,"checklist/santiye_sablonu.html",content)
+def santiye_sablonu_duzenle(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:       
+            kullanici =request.user
+    content["santiye"] = get_object_or_404(santiye,id = id)
+    content["santiye_sablonlari"]  = get_object_or_none(santiye_sablonlari,proje_santiye_Ait = get_object_or_404(santiye,id = id),silinme_bilgisi = False)
+    content["sanytiye_sablon_bolumleri"] = sanytiye_sablon_bolumleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id),silinme_bilgisi = False)
+    content["santiye_imalat_kalemleri"] = santiye_imalat_kalemleri.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id),silinme_bilgisi = False)
+    content["imalat_kalemleri_imalat_detaylari"] = imalat_kalemleri_imalat_detaylari.objects.filter(proje_santiye_Ait = get_object_or_404(santiye,id = id),silinme_bilgisi = False)
+    return render(request,"checklist/sablon_duzeltme.html",content)
+
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

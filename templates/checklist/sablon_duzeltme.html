@@ -15,7 +15,9 @@
 {% if hash_bilgi %}
    
 {% else %}
-<main>
+<form action="{% url 'main:sablon_duzeltme' %}" method="post">
+    {% csrf_token %}
+    <main>
         <div class="page-header">
             <div class="page-title">
                 <h2>Kontrol Listesi Şablonu</h2>
@@ -26,7 +28,7 @@
                     <i class="fa-solid fa-folder-open"></i> Şablon Yükle
                 </button>
                 <button type="submit" class="button button-primary" id="saveTemplate">
-                    <i class="fa-solid fa-save"></i> Şablonu Kaydet
+                    <i class="fa-solid fa-save"></i> Şablonu Güncelle
                 </button>
                 <input type="text" hidden name="santiye" id="santiye" value="{{santiye.id}}">
             </div>
@@ -41,15 +43,17 @@
                         <h3>Temel Bilgiler</h3>
                         <div class="form-group">
                             <label>Şablon Adı</label>
-                            <input type="text" name="sablon_adi" class="form-control" id="templateName" placeholder="Örn: R5 Blok Kontrol Listesi">
+                            <input type="text" value="{{santiye_sablonlari.sablon_adi}}" name="sablon_adi" class="form-control" id="templateName" placeholder="Örn: R5 Blok Kontrol Listesi" >
+                            <input type="hidden" name="sablon_adi1" class="form-control" id="templateName1" value="{{ santiye_sablonlari.sablon_adi }}">
                         </div>
                         <div class="form-group">
                             <label>Proje Tipi</label>
                             <select name="sablon_tipi" class="form-control" id="projectType">
-                                <option value="0">Apartman</option>
-                                <option value="1">Site</option>
-                                <option value="2">Ticari Bina</option>
+                                <option value="0" {% if santiye_sablonlari.sablon_durumu == "0" %}selected{% endif %}>Apartman</option>
+                                <option value="1" {% if santiye_sablonlari.sablon_durumu == "1" %}selected{% endif %}>Site</option>
+                                <option value="2" {% if santiye_sablonlari.sablon_durumu == "2" %}selected{% endif %}>Ticari Bina</option>
                             </select>
+                            <input type="hidden" name="sablon_tipi1" class="form-control" id="projectType1" value="{{ template.projectType }}">
                         </div>
                     </div>
 
@@ -62,7 +66,15 @@
                             </button>
                         </div>
                         <div class="work-groups-list" id="workGroupsList">
-                            <!-- İş grupları buraya gelecek -->
+                            {% for workGroup in santiye_imalat_kalemleri %}
+                            <div class="work-group-item">
+                                <input name="is_grubu" type="text" class="form-control" placeholder="İş grubu adı..." value="{{ workGroup.is_grubu }}">
+                                <input name="is_grubu1" type="hidden" class="form-control" value="{{ workGroup }}">
+                                <button type="button" class="button-icon" data-action="remove">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -77,15 +89,16 @@
                     </div>
 
                     <div class="structure-sections" id="structureSections">
-                        <!-- Örnek Bölüm -->
+                        {% for section in sanytiye_sablon_bolumleri %}
                         <div class="section-card">
                             <div class="card-header">
                                 <select name="bolum_adi" class="form-control section-type">
-                                    <option value="0">Dış Mekan</option>
-                                    <option value="1">Kat</option>
-                                    <option value="2">Ortak Alan</option>
-                                    <option value="3">Daire</option>
+                                    <option value="0" {% if section.sablon_durumu == "0" %}selected{% endif %}>Dış Mekan</option>
+                                    <option value="1" {% if section.sablon_durumu == "1"  %}selected{% endif %}>Kat</option>
+                                    <option value="2" {% if section.sablon_durumu == "2"  %}selected{% endif %}>Ortak Alan</option>
+                                    <option value="3" {% if section.sablon_durumu == "3"  %}selected{% endif %}>Daire</option>
                                 </select>
+                                <input type="hidden" name="bolum_adi1" class="form-control section-type" value="{{ section.type }}">
                                 <div class="card-actions">
                                     <button type="button" class="button-icon toggle-section">
                                         <i class="fa-solid fa-chevron-down"></i>
@@ -97,19 +110,67 @@
                             </div>
                             <div class="card-body">
                                 <div class="categories-list">
-                                    <!-- İmalat kategorileri buraya gelecek -->
+                                    {% for category in santiye_imalat_kalemleri %}
+                                    {% if  category.detay.id == section.id  %}
+                                    
+                                    
+                                    <div class="category-item">
+                                        <div class="category-header">
+                                            <input type="text" name="imalat_kalemleri" class="form-control" placeholder="İmalat kategorisi adı..." value="{{ category.icerik }}">
+                                            <input type="hidden" name="imalat_kalemleri1" class="form-control" value="{{ category.name }}">
+                                            <select name="is_gurubu_imalat_kaleminin" class="form-control work-group-select">
+                                                <option value="">İş Grubu Seçin</option>
+                                               
+                                                <option value="{{ category.is_grubu }}" selected>{{ category.is_grubu }}</option>
+                                                
+                                            </select>
+                                            <input type="hidden" name="is_gurubu_imalat_kaleminin1" class="form-control work-group-select" value="{{ category.workGroup }}">
+                                            <div class="category-actions">
+                                                <button type="button" class="button-icon toggle-category">
+                                                    <i class="fa-solid fa-chevron-down"></i>
+                                                </button>
+                                                <button type="button" class="button-icon remove-category">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="category-content">
+                                            <div class="checklist-items">
+                                                {% for item in imalat_kalemleri_imalat_detaylari %}
+                                                {% if item.icerik.id == category.id  %}
+                                                    <div class="checklist-item">
+                                                    <input type="text" class="form-control" placeholder="Kontrol maddesi" value="{{ item.imalat_detayi }}">
+                                                    <input type="hidden" class="form-control" value="{{ item }}">
+                                                    <button type="button" class="button-icon remove-item">
+                                                        <i class="icon icon-trash"></i>
+                                                    </button>
+                                                </div>
+                                                {% else %}
+                                                {% endif %}
+                                                
+                                                {% endfor %}
+                                            </div>
+                                            <button type="button" class="button button-dashed add-checklist-item">
+                                                <i class="fa-solid fa-plus"></i> Kontrol Maddesi Ekle
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    {% endif %}
+                                    {% endfor %}
                                 </div>
                                 <button type="button" class="button-dashed add-category-btn">
                                     <i class="fa-solid fa-plus"></i> Yeni İmalat Ekle
                                 </button>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </main>
-
+</form>
     <!-- Şablon Yükleme Modalı -->
     <div id="loadTemplateModal" class="modal">
         <!-- Modal içeriği aynı kalacak -->
