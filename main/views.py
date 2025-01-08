@@ -9962,6 +9962,8 @@ def santiye_kontrol_detayi(request,id):
             kullanici =request.user  
     daire = get_object_or_404(checkdaireleri,id = id)
     content["santiye"] = daire
+    content["ortak_alanlar"] = blog_ortak_alan_ve_cepheleri.objects.filter(blog_ait_bilgisi = daire.blog_bilgisi)
     content["imalatlar"] = imalat_daire_balama.objects.filter(daire_bilgisi = daire)
+    content["sanytiye_sablon_bolumleri"] = sanytiye_sablon_bolumleri.objects.filter(proje_santiye_Ait = daire.proje_santiye_Ait)
     print(content)
     return render(request,"checklist/santiye_kontrol_detayi.html",content)

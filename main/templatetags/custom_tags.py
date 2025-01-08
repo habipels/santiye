@@ -2132,3 +2132,9 @@ def daire_sayisi(id):
 def daire_sayisi_kat_basina_daire(id):
     a = checkdaireleri.objects.filter(blog_bilgisi = id).last().kat_daire_sayisi
     return int(a)
+
+@register.simple_tag
+def imalat_check_ve_sayisi(bolum,daire):
+    a = imalat_daire_balama.objects.filter(daire_bilgisi = daire,imalat_detayi__detay = bolum).count()
+    tamamlanma = imalat_daire_balama.objects.filter(daire_bilgisi = daire,imalat_detayi__detay = bolum,tamamlanma_bilgisi = True).count()
+    return {"a":a,"tamamlanma":tamamlanma}

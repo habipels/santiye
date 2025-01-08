@@ -24,7 +24,7 @@
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
                 <div>
-                    <h2>Daire 103 - Elektrik Kontrol</h2>
+                    <h2>Daire {{santiye.daire_no}} </h2>
                     <div class="control-info">
                         <span class="date">23.03.2024</span>
                         <span class="status pending">Kontrol Ediliyor</span>
@@ -44,12 +44,22 @@
         <div class="page-content">
             <!-- Kontrol Listesi -->
             <div class="checklist-container">
+            {% for i in sanytiye_sablon_bolumleri %}
+                {% imalat_check_ve_sayisi i santiye as veri_geldi %}
                 <!-- Priz Tesisatı -->
                 <div class="control-card">
                     <div class="control-header">
                         <div class="control-title">
-                            <h3>Priz Tesisatı</h3>
-                            <span class="control-count">0/4 Tamamlandı</span>
+                            <h3>{% if i.bolum == "0" %}
+                            Dış Mekan
+                            {% elif i.bolum == "1" %}
+                            Kat
+                            {% elif i.bolum == "2" %}
+                            Ortak Alan
+                            {% elif i.bolum == "3" %}
+                             Daire
+                            {% endif %}</h3>
+                            <span class="control-count">{{veri_geldi.tamamlanma}}/{{veri_geldi.a}} Tamamlandı</span>
                         </div>
                         <div class="control-actions">
                             <button class="button-icon" data-action="toggle">
@@ -59,45 +69,30 @@
                     </div>
                     <div class="control-body">
                         <div class="control-items">
+                        {% for j in imalatlar %}
+                        
+                            {% if i.id == j.imalat_detayi.detay.id %}
+                            
+                            
                             <div class="control-item">
                                 <label class="checkbox-wrapper">
                                     <input type="checkbox" class="control-checkbox">
-                                    <span>Priz yükseklikleri standartlara uygun</span>
+                                    <span>{{j.imalat_detayi.icerik}}</span>
                                 </label>
                                 <button class="button-note" data-action="add-note">
                                     <i class="fa-solid fa-pen"></i>
                                     <span>Not Ekle</span>
                                 </button>
                             </div>
+                            {% else %}
+                            {% endif %}
+                            {% endfor %}
 
-                            <div class="control-item">
-                                <label class="checkbox-wrapper">
-                                    <input type="checkbox" class="control-checkbox">
-                                    <span>Topraklama bağlantıları yapılmış</span>
-                                </label>
-                                <button class="button-note" data-action="add-note">
-                                    <i class="fa-solid fa-pen"></i>
-                                    <span>Not Ekle</span>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
 
-                <!-- Aydınlatma Tesisatı -->
-                <div class="control-card">
-                    <div class="control-header">
-                        <div class="control-title">
-                            <h3>Aydınlatma Tesisatı</h3>
-                            <span class="control-count">2/3 Tamamlandı</span>
-                        </div>
-                        <div class="control-actions">
-                            <button class="button-icon" data-action="toggle">
-                                <i class="fa-solid fa-chevron-down"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Genel Notlar Bölümü -->
