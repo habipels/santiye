@@ -86,6 +86,7 @@ class ProjectManager {
             const unitNumber = (floorNumber * 100) + (unit + 1);
             html += `
                 <div class="preview-item">
+                    <input type="text" name="daire_numarai" hidden value="${unitNumber}" >
                     Daire ${unitNumber}
                 </div>
             `;
@@ -96,15 +97,15 @@ class ProjectManager {
     addCommonArea() {
         const areaHtml = `
             <div class="area-item">
-                <input type="text" class="form-control" placeholder="Ortak alan adı...">
-                <select class="form-control">
-                    <option value="">Alan Tipi Seçin</option>
-                    <option value="corridor">Koridor</option>
-                    <option value="stairs">Merdiven</option>
-                    <option value="entrance">Giriş</option>
-                    <option value="other">Diğer</option>
+                <input type="text" name="ortak_alanadi" class="form-control" placeholder="Ortak alan adı...">
+                <select name="verisi" class="form-control">
+                    <option value="-1">Alan Tipi Seçin</option>
+                    <option value="0">Koridor</option>
+                    <option value="1">Merdiven</option>
+                    <option value="2">Giriş</option>
+                    <option value="3">Diğer</option>
                 </select>
-                <button class="button-icon remove-area">
+                <button type="button" class="button-icon remove-area">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -115,15 +116,15 @@ class ProjectManager {
     addFacade() {
         const facadeHtml = `
             <div class="facade-item">
-                <input type="text" class="form-control" placeholder="Cephe adı...">
-                <select class="form-control">
-                    <option value="">Yön Seçin</option>
-                    <option value="north">Kuzey</option>
-                    <option value="south">Güney</option>
-                    <option value="east">Doğu</option>
-                    <option value="west">Batı</option>
+                <input type="text" name="cepheaciklmasi" class="form-control" placeholder="Cephe adı...">
+                <select name="cephe_verisi"  class="form-control">
+                    <option value="-1">Yön Seçin</option>
+                    <option value="0">Kuzey</option>
+                    <option value="1">Güney</option>
+                    <option value="2">Doğu</option>
+                    <option value="3">Batı</option>
                 </select>
-                <button class="button-icon remove-facade">
+                <button type="button" class="button-icon remove-facade">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>

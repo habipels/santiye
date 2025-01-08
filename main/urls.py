@@ -238,13 +238,15 @@ urlpatterns = [#
     #şantiye Kontrol
     path("site/", views.santiye_kontrol, name="santiye_kontrol"),
     path("sitedetail/", views.santiye_kontrol_detayi, name="santiye_kontrol_detayi"),
-    path("siteprojects/", views.santiye_projeleri, name="santiye_projeleri"),
+    path("blockprojects/<int:id>", views.santiye_projeleri, name="santiye_projeleri"),
     path("siteprojectslist/", views.santiye_onay_listesi, name="santiye_onay_listesi"),
     path("siteprojectsablone/<int:id>/", views.santiye_sablonu, name="santiye_sablonu"),
     path("setsiteprojectsablone/<int:id>/", views.santiye_sablonu_duzenle, name="santiye_sablonu_duzenle"),
     path("createsiteprojectsablone/", views.save_template, name="save_template"),
     path("setcreatesiteprojectsablone/", views.save_template_duzenle, name="save_template_duzenle"),
     path("mysiteprojects/", views.santiyelerim, name="santiyelerim"),
+
+ path("savemystructures/", views.santiye_proje_olustur, name="santiye_proje_olustur"),
 
 path("mystructures/<int:id>", views.yapilarim, name="yapilarim"),
 ]

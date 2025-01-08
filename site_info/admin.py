@@ -6,7 +6,5 @@ from .models import *
 admin.site.register(birimler)
 
 admin.site.register(bina_goruntuleri)
-admin.site.register(santiye_sablonlari)
-admin.site.register(sanytiye_sablon_bolumleri)
-admin.site.register(santiye_imalat_kalemleri)
-admin.site.register(imalat_kalemleri_imalat_detaylari)
+admin.site.register(checkdaireleri)
+admin.site.register(blog_ortak_alan_ve_cepheleri)

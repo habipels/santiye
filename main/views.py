@@ -9626,7 +9626,7 @@ def santiye_kontrol_detayi(request):
             kullanici =request.user  
     return render(request,"checklist/santiye_kontrol_detayi.html",content)
 
-def santiye_projeleri(request):
+def santiye_projeleri(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         pass
@@ -9642,8 +9642,38 @@ def santiye_projeleri(request):
                 return redirect("main:yetkisiz")
         else:
             kullanici =request.user
+    content["blok"] = get_object_or_none(bloglar,id = id)
     #content["projeler"] = santiye.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
     return render(request,"checklist/santiye_projeleri.html",content)
+def santiye_proje_olustur(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici =request.user
+    if request.POST:
+        blok = request.POST.get("blok")
+        kat_basina_daire = request.POST.get("kat_basina_daire")
+        daire_numarai = request.POST.getlist("daire_numarai")
+        ortak_alanadi = request.POST.getlist("ortak_alanadi")
+        verisi = request.POST.getlist("verisi")
+        cepheaciklmasi = request.POST.getlist("cepheaciklmasi")
+        cephe_verisi = request.POST.getlist("cephe_verisi")
+        print(blok,kat_basina_daire,daire_numarai,ortak_alanadi,verisi,cepheaciklmasi,cephe_verisi)
+        block  = get_object_or_none(bloglar,id = blok)
+    return redirect("main:yapilarim",block.proje_santiye_Ait.id)
+    
+
 def santiye_onay_listesi(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):

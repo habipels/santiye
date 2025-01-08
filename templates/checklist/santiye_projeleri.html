@@ -15,17 +15,19 @@
 {% if hash_bilgi %}
    
 {% else %}
-   <main>
+<form action="/{{dil}}{% url 'main:santiye_proje_olustur' %}" method="post">
+   {% csrf_token %}
+    <main>
         <div class="page-header">
             <div class="page-title">
                 <h2>R5 Blok Detayları</h2>
                 <p>Blok bilgilerini düzenleyin ve kontrol listesi oluşturun</p>
             </div>
             <div class="page-actions">
-                <button class="button" id="previewUnits">
+                <button type="button" class="button" id="previewUnits">
                     <i class="fa-solid fa-eye"></i> Ön İzleme
                 </button>
-                <button class="button button-primary" id="saveProject">
+                <button type="submit" class="button button-primary" id="saveProject">
                     <i class="fa-solid fa-save"></i> Kaydet
                 </button>
             </div>
@@ -40,15 +42,16 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>Blok Adı</label>
-                                <input type="text" class="form-control" id="blockName" value="R5 Blok">
+                                <input type="text" class="form-control" disabled id="blockName" value="{{blok.blog_adi}}">
                             </div>
                             <div class="form-group">
                                 <label>Kat Sayısı</label>
-                                <input type="number" class="form-control" id="floorCount" value="4">
+                                <input type="number" class="form-control" disabled id="floorCount" value="{{blok.kat_sayisi|stringformat:'.F'}}">
                             </div>
                             <div class="form-group">
                                 <label>Kat Başına Daire</label>
-                                <input type="number" class="form-control" id="unitsPerFloor" value="3">
+                                <input type="number" name="blok" hidden class="form-control" id="unitsPerFloor" value="{{blok.id}}">
+                                <input type="number" name="kat_basina_daire" class="form-control" id="unitsPerFloor" value="3">
                             </div>
                         </div>
                     </div>
@@ -64,10 +67,10 @@
                             <div class="preview-header">
                                 <h4>Ön İzleme</h4>
                                 <div class="preview-filters">
-                                    <button class="preview-filter active" data-view="floors">Kat Bazlı</button>
-                                    <button class="preview-filter" data-view="list">Liste</button>
+                                    <button type="button" class="preview-filter active" data-view="floors">Kat Bazlı</button>
+                                    <button type="button" class="preview-filter" data-view="list">Liste</button>
                                 </div>
-                            </div>
+                            </div> 
                             <div class="preview-container">
                                 <div id="numberingPreview">
                                     <!-- Ön izleme içeriği buraya gelecek -->
@@ -81,7 +84,7 @@
                         <div class="section-header">
                             <div class="section-title">Ortak Alanlar</div>
                             <div class="section-actions">
-                                <button class="button button-outline" id="addCommonArea">
+                                <button type="button" class="button button-outline" id="addCommonArea">
                                     <i class="fa-solid fa-plus"></i> Alan Ekle
                                 </button>
                             </div>
@@ -89,15 +92,15 @@
                         <div class="common-areas-list" id="commonAreasList">
                             <!-- Örnek ortak alan -->
                             <div class="area-item">
-                                <input type="text" class="form-control" placeholder="Ortak alan adı...">
-                                <select class="form-control">
-                                    <option value="">Alan Tipi Seçin</option>
-                                    <option value="corridor">Koridor</option>
-                                    <option value="stairs">Merdiven</option>
-                                    <option value="entrance">Giriş</option>
-                                    <option value="other">Diğer</option>
+                                <input type="text" name="ortak_alanadi" class="form-control" placeholder="Ortak alan adı...">
+                                <select name="verisi" class="form-control">
+                                    <option value="-1">Alan Tipi Seçin</option>
+                                    <option value="0">Koridor</option>
+                                    <option value="1">Merdiven</option>
+                                    <option value="2">Giriş</option>
+                                    <option value="3">Diğer</option>
                                 </select>
-                                <button class="button-icon remove-area">
+                                <button type="button" class="button-icon remove-area">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
@@ -109,7 +112,7 @@
                         <div class="section-header">
                             <div class="section-title">Cepheler</div>
                             <div class="section-actions">
-                                <button class="button button-outline" id="addFacade">
+                                <button type="button" class="button button-outline" id="addFacade">
                                     <i class="fa-solid fa-plus"></i> Cephe Ekle
                                 </button>
                             </div>
@@ -117,15 +120,15 @@
                         <div class="facades-list" id="facadesList">
                             <!-- Örnek cephe -->
                             <div class="facade-item">
-                                <input type="text" class="form-control" placeholder="Cephe adı...">
-                                <select class="form-control">
-                                    <option value="">Yön Seçin</option>
-                                    <option value="north">Kuzey</option>
-                                    <option value="south">Güney</option>
-                                    <option value="east">Doğu</option>
-                                    <option value="west">Batı</option>
+                                <input type="text" name="cepheaciklmasi" class="form-control" placeholder="Cephe adı...">
+                                <select name="cephe_verisi"  class="form-control">
+                                    <option value="-1">Yön Seçin</option>
+                                    <option value="0">Kuzey</option>
+                                    <option value="1">Güney</option>
+                                    <option value="2">Doğu</option>
+                                    <option value="3">Batı</option>
                                 </select>
-                                <button class="button-icon remove-facade">
+                                <button type="button" class="button-icon remove-facade">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
@@ -135,6 +138,7 @@
             </div>
         </div>
     </main>
+</form>
 {% endif %}
 
 {% endblock sidebar %}
