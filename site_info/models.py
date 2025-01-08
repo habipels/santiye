@@ -95,9 +95,22 @@ class checkdaireleri(models.Model):
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     blog_bilgisi = models.ForeignKey(bloglar,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     kat = models.IntegerField(default = 1,verbose_name="Kat Bilgisi")
+    kat_daire_sayisi = models.IntegerField(default = 1,verbose_name="Kat Bilgisi")
     daire_no = models.CharField(max_length=200,verbose_name="Daire No", blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class imalat_daire_balama(models.Model):
+    proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    blog_bilgisi = models.ForeignKey(bloglar,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    daire_bilgisi = models.ForeignKey(checkdaireleri,verbose_name="Daire Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    imalat_detayi = models.ForeignKey(santiye_imalat_kalemleri,verbose_name="İmalat Detayı",blank=True,null=True,on_delete=models.SET_NULL)
+    tamamlanma_bilgisi = models.BooleanField(default=False)
+    tamamlamayi_yapan = models.ForeignKey(CustomUser,verbose_name="Tamamlamayı Yapan",blank=True,null=True,on_delete=models.SET_NULL,related_name="tamamlamayi_yapan")
+    onaylayan = models.ForeignKey(CustomUser,verbose_name="Onaylayan",blank=True,null=True,on_delete=models.SET_NULL,related_name="onaylayan")
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
 class blog_ortak_alan_ve_cepheleri(models.Model):
     status=(("0","0"),("1","1"),("2","2"))
     genel_icerik = (("0","0"),("1","1"),("2","2"),("3","3"))

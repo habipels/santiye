@@ -9608,23 +9608,6 @@ def santiye_kontrol(request):
     return render(request,"checklist/santiye_kontrol.html",content)
 
 
-def santiye_kontrol_detayi(request):
-    content = sozluk_yapisi()
-    if super_admin_kontrolu(request):
-        pass
-    else:
-        if request.user.kullanicilar_db:
-            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
-            if a:
-                if a.izinler.santiye_kontrol:
-                    kullanici =request.user.kullanicilar_db
-                else:
-                    return redirect("main:yetkisiz")
-            else:
-                return redirect("main:yetkisiz")   
-        else:
-            kullanici =request.user  
-    return render(request,"checklist/santiye_kontrol_detayi.html",content)
 
 def santiye_projeleri(request,id):
     content = sozluk_yapisi()
@@ -9669,8 +9652,21 @@ def santiye_proje_olustur(request):
         verisi = request.POST.getlist("verisi")
         cepheaciklmasi = request.POST.getlist("cepheaciklmasi")
         cephe_verisi = request.POST.getlist("cephe_verisi")
-        print(blok,kat_basina_daire,daire_numarai,ortak_alanadi,verisi,cepheaciklmasi,cephe_verisi)
+        kat_bilgisi = 1
+        print(len(daire_numarai),blok,kat_basina_daire,daire_numarai,ortak_alanadi,verisi,cepheaciklmasi,cephe_verisi)
         block  = get_object_or_none(bloglar,id = blok)
+        imalatlari = santiye_imalat_kalemleri.objects.filter(proje_santiye_Ait = block.proje_santiye_Ait,silinme_bilgisi = False)
+        for i in range(1,len(daire_numarai)+1):
+            a = checkdaireleri.objects.create(daire_no = daire_numarai[i-1] ,kat_daire_sayisi = kat_basina_daire,kat = kat_bilgisi,proje_ait_bilgisi = kullanici,blog_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait)
+            if i / int(kat_basina_daire) == 1:
+                kat_bilgisi += 1
+            for imalat in imalatlari:
+                imalat_daire_balama.objects.create(proje_ait_bilgisi = kullanici,blog_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,daire_bilgisi = a,imalat_detayi = imalat)
+            print(i)
+        for i in range(len(ortak_alanadi)):
+            blog_ortak_alan_ve_cepheleri.objects.create(proje_ait_bilgisi = kullanici,blog_ait_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,aciklama_adi = ortak_alanadi[i],bolum_icerigi = verisi[i])
+        for i in range(len(cepheaciklmasi)):
+            blog_ortak_alan_ve_cepheleri.objects.create(proje_ait_bilgisi = kullanici,blog_ait_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,aciklama_adi = cepheaciklmasi[i],bolum_icerigi = cephe_verisi[i])
     return redirect("main:yapilarim",block.proje_santiye_Ait.id)
     
 
@@ -9921,3 +9917,51 @@ def yapilarim(request,id):
 
     return render(request,"checklist/yapilar.html",content)
 
+def daireleri_gor(request,id):
+    content = sozluk_yapisi()
+    # Haritayı HTML'ye dönüştürme
+    if super_admin_kontrolu(request):
+        profile =santiye.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_gorme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        
+    profile = checkdaireleri.objects.filter(blog_bilgisi__id = id,proje_ait_bilgisi = kullanici) 
+    content["santiyeler"] = profile
+
+    return render(request,"checklist/daireler.html",content)
+
+
+
+def santiye_kontrol_detayi(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+    daire = get_object_or_404(checkdaireleri,id = id)
+    content["santiye"] = daire
+    content["imalatlar"] = imalat_daire_balama.objects.filter(daire_bilgisi = daire)
+    print(content)
+    return render(request,"checklist/santiye_kontrol_detayi.html",content)

@@ -2123,3 +2123,12 @@ def musteriye_atanan_daire_teslim_edilen(musterisi):
 def santiye_sablonu_gonder(users):
     bilgi = get_object_or_none(santiye_sablonlari,proje_santiye_Ait  = users)
     return bilgi
+@register.simple_tag
+def daire_sayisi(id):
+    a = checkdaireleri.objects.filter(blog_bilgisi = id).count()
+    return a
+
+@register.simple_tag
+def daire_sayisi_kat_basina_daire(id):
+    a = checkdaireleri.objects.filter(blog_bilgisi = id).last().kat_daire_sayisi
+    return int(a)

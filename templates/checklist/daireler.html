@@ -15,16 +15,16 @@
         <div class="page-info">
             <div class="page-title">
                 <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
-                {% trans 'Şantiye Şablonları' %}
+                {% trans 'Şantiye Yapılarım' %}
             </div>
              <ul class="page-breadcrumb">
                 <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
                 <li><a href="#" >{% trans 'Şantiye Yönetimi' %}</a></li>
-                <li><a href="#">{% trans 'Şantiye Şablonları' %}</a></li>
+                <li><a href="#">{% trans 'Şantiye Yapılarım' %}</a></li>
             </ul>
         </div>
         <div class="page-actions">
-
+         
        
 
         </div>
@@ -32,7 +32,7 @@
 
     <div class="large-stats-card table-card table-detail-card">
         <div class="stats-header">
-            <div class="stats-title">{% trans 'Şantiye Şablonları' %}</div>
+            <div class="stats-title">{% trans 'Şantiye Yapılarım' %}</div>
             <div class="stats-search">
                 <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
                 <button><i class="icon icon-search"></i></button>
@@ -43,52 +43,26 @@
             <table id="datatable">
                 <thead>
                     <tr>
- <th>{% trans 'Proje Tipi' %}</th>
-                        <th>{% trans 'Proje Adı' %}</th>
-                        <th>{% trans 'Şantiye Şablon Adı' %}</th>
-                        <th>{% trans 'Şantiye Kayıt Tarihi' %}</th>
-                        <th>{% trans 'Şantiye Şablon Tipi' %}</th>
-                        <th>{% trans 'Şablon Kayıt Tarihi' %}</th>
-                        <th>{% trans 'Yapıları İşle' %}</th>
+                        <th>{% trans 'Yapı Adı' %}</th>
+                        <th>{% trans 'Kat' %}</th>
+                        <th>{% trans 'Daire Numarası' %}</th>
+                        <th>{% trans 'Daire Oluşturma Tarihi' %}</th>
                         <th>{% trans 'Aksiyon' %}</th>
                     </tr>
                 </thead>
                 <tbody>
                   {% for i in santiyeler %}
-                    {%  santiye_sablonu_gonder i as bilgi %}
+                    
                         <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey; color: white; {% endif %} {% endif %}">
-                            <td class="kasa">{{ i.proje_tipi.Proje_tipi_adi }}</td>
-                            <td class="bakiye">{{ i.proje_adi }}<span></span></td>
+                            
+                            
+                            <td class="konum">{{ i.blog_bilgisi.blog_adi}}</td>
+                            <td class="konum">{{ i.kat | stringformat:".F"}}</td>
+                            <td class="konum">{{ i.daire_no }}</td>
                             <td class="konum">{{ i.kayit_tarihi }}</td>
-                            <td class="konum">{{ bilgi.sablon_adi}}</td>
-                           
-                            <td class="kasa">
-                            {% if bilgi.sablon_durumu == "0"  %}
-                            Apartman
-                            {% elif bilgi.sablon_durumu == "1"  %}
-                            Site
-                            {% elif bilgi.sablon_durumu == "2"  %}
-                            Ticari Bina
-                            {% endif %}
-                                
-                            </td>
-                            <td class="konum">{{ bilgi.kayit_tarihi }}</td>
-                             <td class="konum">
-                             {% if bilgi %}
-                            <a href="/{{dil}}{% url 'main:yapilarim' i.id %}" class="status-success">{% trans 'Yapılarım' %}</a>
-                                 {% endif %}
-                            </td>
                             <td>
                                 <div class="td-actions">
-                                    {% if bilgi %}
-                                    <a href="/{{dil}}{% url 'main:santiye_sablonu_duzenle' i.id %}" class="status-success">{% trans 'Şablon Düzenle' %}</a>
-                                    {% else %}
-                                    <a href="/{{dil}}{% url 'main:santiye_sablonu' i.id %}" class="status-success">{% trans 'Şablon Oluştur' %}</a>
-                                    {% endif %}
-                                    
-                                 
-
-                                    
+                                    <a href="/{{dil}}{% url 'main:santiye_kontrol_detayi' i.id %}" class="status-success">{% trans 'Daireyi Kontrol Et' %}</a>
                                </div>
                             </td>
                         </tr>

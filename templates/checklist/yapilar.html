@@ -24,18 +24,7 @@
             </ul>
         </div>
         <div class="page-actions">
-         {% if request.user.kullanicilar_db %}
-                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                            {% if yetki.gider_etiketi_olusturma %}
-                                                  <button class="page-primary-btn" onclick="openModal('cari-ekle')"><i class="icon icon-new"></i>{% trans "Gider Etiketi Ekle" %}</button>
-                                                  
-                                            {% else %}
-                                                                                                            
-                                            {% endif %}
-                                            {% else %}
-                                              <button class="page-primary-btn" onclick="openModal('cari-ekle')"><i class="icon icon-new"></i>{% trans "Gider Etiketi Ekle" %}</button>
-                                                    
-                                            {% endif %}
+         
        
 
         </div>
@@ -75,15 +64,16 @@
                             
                            
                             <td class="kasa">
-
+                                {%  daire_sayisi_kat_basina_daire i %}
                             </td>
                             <td class="kasa">
-
+                                    {% daire_sayisi i as bilgi %}
+                                    {{bilgi}}
                             </td>
                             <td>
                                 <div class="td-actions">
                                     {% if bilgi %}
-                                    <a href="/{{dil}}{% url 'main:santiye_sablonu_duzenle' i.id %}" class="status-success">{% trans 'Daireleri Düzenle' %}</a>
+                                        <a href="/{{dil}}{% url 'main:daireleri_gor' i.id %}" class="status-success">{% trans 'Daireleri Gör' %}</a>
                                     {% else %}
                                     <a href="/{{dil}}{% url 'main:santiye_projeleri' i.id %}" class="status-success">{% trans 'Daireleri Oluştur' %}</a>
                                     {% endif %}
