@@ -1,81 +1,20 @@
-from django.shortcuts import render,get_object_or_404,redirect
-from django.http import HttpResponse
-from site_set.models import *
-from urun.models import *
-from django.core.paginator import Paginator , EmptyPage, PageNotAnInteger
-from django.db.models.query_utils import Q
-from django.db.models import F
-from rapidfuzz import process, fuzz
+from django.shortcuts import render
+from django.shortcuts import render, redirect,get_object_or_404
 
-
-import unicodedata
-import re
-from django.db.models import Q
-
-# Türkçe karakterleri normalize et
-def normalize_text(text):
-    """text = unicodedata.normalize('NFKD', text)  # Unicode normalizasyonu
-    text = text.replace('ı', 'i').replace('ğ', 'g').replace('ü', 'u') \
-               .replace('ş', 's').replace('ç', 'c').replace('ö', 'o')  # Türkçe karakterleri düzelt
-    """
-    return text
-
-def search_products(query, threshold=50):
-    """
-    Kullanıcı sorgusunu tüm kelimeleriyle ürün adlarına eşleştirir ve kısmi eşleşmelerle genişletilmiş sonuçlar döndürür.
-
-    Args:
-        query (str): Kullanıcının aradığı kelime.
-        threshold (int): Benzerlik oranı için alt sınır (0-100 arasında bir değer).
-
-    Returns:
-        QuerySet: İlgili ürünler.
-    """
-    # Tüm ürünleri veritabanından çek
-    products = urun.objects.all()
-
-    # Ürün adlarını normalize et
-    product_names = [normalize_text(product.urun_adi) for product in products]
-    query = normalize_text(query)  # Sorguyu normalize et
-
-    # Kullanıcı sorgusunu kelimelere ayır
-    keywords = re.findall(r'\w+', query)  # Sorguyu kelimelere böl
-
-    # Her kelime için tüm ürün adlarını analiz et
-    result_ids = set()  # Benzersiz sonuçları toplamak için set kullan
-    for keyword in keywords:
-        matches = process.extract(
-            keyword,
-            product_names,
-            scorer=fuzz.partial_ratio,  # Kısmi eşleşme
-            limit=None  # Sınırsız sonuç döndür
-        )
-        for match_name, score, index in matches:
-            if score >= threshold:  # Benzerlik oranı yeterince yüksekse
-                result_ids.add(products[index].id)
-
-    # İlgili terimleri de ekle
-    related_terms = set()
-    for keyword in keywords:
-        related_terms.update([f"{keyword} takımı", f"ön {keyword}", f"arka {keyword}"])
-
-    for term in related_terms:
-        matches = process.extract(
-            term,
-            product_names,
-            scorer=fuzz.partial_ratio,  # Kısmi eşleşme
-            limit=None  # Sınırsız sonuç döndür
-        )
-        for match_name, score, index in matches:
-            if score >= threshold:  # Benzerlik oranı yeterince yüksekse
-                result_ids.add(products[index].id)
-
-    # Veritabanından benzersiz ürünleri döndür
-    return products.filter(id__in=result_ids).distinct()
-
-
-def page_not_found_view(request, exception):
-    return render(request, '404.html')
+import json
+from django.contrib.sites.shortcuts import get_current_site
+# Create your views here.
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+import requests
+from django.contrib import messages
+import pprint
+from .models import *
+from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives
+from main.views import site_bilgileri
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -83,7 +22,27 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
-def site_bilgileri():
+
+
+
+import base64
+import hashlib
+import hmac
+import html
+import json
+import random
+
+from django.shortcuts import render, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from site_set.models import *
+from urun.models import *
+def bugunsiparis():
+    bugunku_tarih_ve_saat = datetime.now()
+    a =satin_alinanlar.objects.filter(kayit_tarihi__gte=bugunku_tarih_ve_saat.replace(hour=0, minute=0, second=0, microsecond=0)).count()
+    b = str(bugunku_tarih_ve_saat.day)+str(bugunku_tarih_ve_saat.month)+str(bugunku_tarih_ve_saat.year)+str(a+1)
+
+    return b
+def home(request):
     sozluk = {}
     sozluk["facebook"] = sosyalmedyaFace.objects.last()
     sozluk["tw"] = sosyalmedyatw.objects.last()
@@ -92,7 +51,7 @@ def site_bilgileri():
     sozluk["youtube"] = sosyalmedyayoutube.objects.last()
     sozluk["logo"] = sayfa_logosu.objects.last()
     sozluk["pencere_icon"] = sayfa_iconu.objects.last()
-    sozluk["kategoriler"] = Meslek.objects.filter(slaytta_gorunsun = True).order_by("numarasi")
+    sozluk["kategoriler"] = Meslek.objects.all()
     sozluk["banner"] = banner.objects.filter(banner_gosterme = True).order_by("banner_sira")
     sozluk["site_adi"] = site_adi.objects.last()
     sozluk["email"] = email_adres.objects.last()
@@ -101,809 +60,186 @@ def site_bilgileri():
     sozluk["anasayfa"] = anasayfa.objects.last()
     sozluk["yasal_metinler"] = yasal_metinler.objects.all()
     sozluk["adres"] = adres.objects.last()
-    sozluk["gomulu"] = gomulu_adres.objects.last()
-    sozluk["footeryazisi"] = sitefooteryazisiz.objects.last()
-    sozluk["banner2"] = Meslek.objects.filter(slaytta_gorunsun = True).order_by("numarasi")
-
-    content = {"content":sozluk}
-    return content
-# Create your views here.
-def homepage(request):
-    content = site_bilgileri()
-    profile = urun.objects.filter(urun_stok__gte=1,silinme_bilgisi = False)
-    if request.GET.get("search"):
-        search = request.GET.get("search")
-        profile = search_products(search, threshold=50).filter( Q(urun_stok__gte=1),Q(silinme_bilgisi = False) )
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 20) # 6 employees per page
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
-    content["urunler1"] = urun.objects.filter(silinme_bilgisi = False)[0:4]
-    content["urunler2"] = urun.objects.filter(silinme_bilgisi = False)[4:8]
-    content["urunler3"] = urun.objects.filter(silinme_bilgisi = False)[8:12]
-    content["indirimdekiurunler1"] = urun.objects.filter(urun_stok__gte=1,eski_fiyat__gt=F('fiyat'),silinme_bilgisi = False)[0:4]
-    content["indirimdekiurunler2"] = urun.objects.filter(urun_stok__gte=1,eski_fiyat__gt=F('fiyat'),silinme_bilgisi = False)[4:8]
-    content["indirimdekiurunler3"] = urun.objects.filter(urun_stok__gte=1,eski_fiyat__gt=F('fiyat'),silinme_bilgisi = False)[8:12]
-    content["populer1"] = urun.objects.filter(urun_stok__gte=1,silinme_bilgisi = False).order_by("-urun_bakma_saysi")[0:4]
-    content["populer2"] = urun.objects.filter(urun_stok__gte=1,silinme_bilgisi = False).order_by("-urun_bakma_saysi")[4:8]
-    content["populer3"] = urun.objects.filter(urun_stok__gte=1,silinme_bilgisi = False).order_by("-urun_bakma_saysi")[8:12]
-    content["top"]  = profile
-    content["medya"] = page_obj
-    return render(request,"index.html",content)
-def hakkimizda_sayfasi(request):
-    content = site_bilgileri()
-    print(content)
-    return render(request,"hakkimizda.html",content)
-def yasal_metinler_sayfasi(request,id,slug):
-    content = site_bilgileri()
-    content["yasal_metin"] = get_object_or_404(yasal_metinler,id = id)
-    return render(request,"yasal.html",content)
-def iletisim_sayfasi(request):
-    content = site_bilgileri()
-    content["gomulu"] = gomulu_adres.objects.last()
-    return render(request,"iletisim.html",content)
-def urunler_tekli_sayfa (request,id,slug):
-    content = site_bilgileri()
-    content["urun_"] = get_object_or_404(urun,id = id)
-    a  = get_object_or_404(urun,id = id).urun_bakma_saysi+1
-    urun.objects.filter(id = id).update(urun_bakma_saysi = a)
-    content["urun_resimleri"] = urun_resimleri.objects.filter(urun_bilgisi = get_object_or_404(urun,id = id))
-    return render(request,"urunlist/urun_gosterme.html",content)
-
-
-def sepete_urun_ekleme(request,id,slug):
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-
-        try:
-            a = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).last()
-            adet = a.urun_adedi +1
-            sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).update(urun_adedi = adet)
-
-        except:
-            sepetteki_urunler.objects.create(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) )
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-
-        try:
-            a = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).last()
-            adet = a.urun_adedi +1
-            sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).update(urun_adedi = adet)
-        except:
-            sepetteki_urunler.objects.create(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) )
-    return redirect("/")
-
-def sepete_urun_ekleme_toplu(request):
-    if request.POST:
-        b = int(request.POST.get("adet"))
-        id = request.POST.get("urun")
-        urunadi = request.POST.get("urunadi")
-        if request.user.is_authenticated:
-
-            try:
-                sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-            except:
-                sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-
-            try:
-                a = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                            urun_bilgisi = get_object_or_404(urun,id = id) ).last()
-                adet = a.urun_adedi +b
-                sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                            urun_bilgisi = get_object_or_404(urun,id = id) ).update(urun_adedi = adet)
-
-            except:
-                sepetteki_urunler.objects.create(urun_adedi =b,kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                            urun_bilgisi = get_object_or_404(urun,id = id) )
-        else:
-            try:
-                sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-            except:
-                sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-
-            try:
-                a = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                            urun_bilgisi = get_object_or_404(urun,id = id) ).last()
-                adet = a.urun_adedi +b
-                sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                            urun_bilgisi = get_object_or_404(urun,id = id) ).update(urun_adedi = adet)
-            except:
-                sepetteki_urunler.objects.create(urun_adedi =b,kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                            urun_bilgisi = get_object_or_404(urun,id = id) )
-    z = "/urun/{}/{}".format(id,urunadi.replace("/",""))
-    return redirect(z)
-
-def sepet_git(request):
-    content = site_bilgileri()
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        veriler = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last() )
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        veriler =sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last() )
-    content["sepet_urunleri"] =veriler
-    return render(request,"urunlist/sepet.html",content)
-
-def sepete_urun_ekleme_sepette(request,id,slug):
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-
-        try:
-            a = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).last()
-            adet = a.urun_adedi +1
-            try:
-                sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id,urun_stok__gte = adet) ).update(urun_adedi = adet)
-            except:
-                pass
-        except:
-            sepetteki_urunler.objects.create(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) )
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-
-        try:
-            a = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).last()
-            adet = a.urun_adedi +1
-            try:
-                sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id,urun_stok__gte = adet) ).update(urun_adedi = adet)
-            except:
-                pass
-        except:
-            sepetteki_urunler.objects.create(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) )
-    return redirect("/sepetebak")
-
-def sepete_urun_ekleme_sepette_azaltma(request,id,slug):
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-
-        try:
-            a = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).last()
-            adet = a.urun_adedi -1
-            sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).update(urun_adedi = adet)
-
-        except:
-            sepetteki_urunler.objects.create(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) )
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-
-        try:
-            a = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).last()
-            adet = a.urun_adedi -1
-            sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).update(urun_adedi = adet)
-        except:
-            sepetteki_urunler.objects.create(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) )
-    return redirect("/sepetebak")
-
-
-def sepete_urun_ekleme_sepette_silme(request,id,slug):
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-
-        try:
-            a = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).last().delete()
-
-        except:
-            sepetteki_urunler.objects.create(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) )
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-
-        try:
-            a = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) ).last().delete()
-        except:
-            sepetteki_urunler.objects.create(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last(),
-                                         urun_bilgisi = get_object_or_404(urun,id = id) )
-    return redirect("/sepetebak")
-
-def kategori_ver_urunleri_gosterme(request,id,slug):
-    content = site_bilgileri()
-
-    kategorileri = []
-    a = get_object_or_404(Meslek,id = id)
-    tum_kategoriler = []
-    for i in Meslek.objects.filter(silinme_bilgisi = False):
-        if a.kategori in i.__str__() :
-            tum_kategoriler.append(i.id)
-    profile = urun.objects.filter(urun_stok__gte=1,kategori__id__in = tum_kategoriler,silinme_bilgisi = False).distinct()
-    if request.GET:
-        min_fiyat = request.GET.get("min")
-        max_fiyat = request.GET.get("max")
-        search = request.GET.get("search")
-        siralama = request.GET.get("siralama")
-        marka = request.GET.getlist("marka")  # Birden fazla filtre seçeneği için liste alıyoruz.
-        content['marka']= marka  # Birden fazla filtre seçeneği için liste alıyoruz.
-
-        profile = urun.objects.filter(
-            Q(silinme_bilgisi=False),
-            Q(kategori__id__in=tum_kategoriler),
-            Q(urun_stok__gte=1)
-        )
-
-        # Fiyat filtreleme
-        if max_fiyat and int(max_fiyat) < 9999:
-            profile = profile.filter(fiyat__lte=max_fiyat)
-        if min_fiyat and min_fiyat != 0:
-            profile = profile.filter(fiyat__gt=min_fiyat)
-
-        # Arama filtreleme
-        if search:
-            profile = search_products(search, threshold=50).filter( Q(urun_stok__gte=1),Q(silinme_bilgisi = False) )
-
-        # Filtre içeriklerine göre filtreleme
-        if marka:
-            profile = profile.filter(urun_filtre_tercihi__filtre_bilgisi__id__in=marka).distinct()
-
-        # Sıralama
-        if siralama == "0":
-            pass
-        elif siralama == "1":
-            profile = profile.order_by("fiyat")
-        elif siralama == "2":
-            profile = profile.order_by("-fiyat")
-        elif siralama == "3":
-            profile = profile.order_by("urun_adi")
-        elif siralama == "4":
-            profile = profile.order_by("-id")
-
-        profile = profile.distinct()
-
-    content["filtre_basliklari"] = filtre.objects.filter(silinme_bilgisi = False).filter(Q(filtre_bagli_oldu_kategori__id__in=tum_kategoriler) | Q(filtre_bagli_oldu_kategori = None)).order_by("filtre_adi")
-    content["filtre"] = filtre_icerigi.objects.filter(filtre_bagli_oldu_filtre__silinme_bilgisi = False).filter(Q(filtre_bagli_oldu_filtre__filtre_bagli_oldu_kategori__id__in=tum_kategoriler) | Q(filtre_bagli_oldu_filtre__filtre_bagli_oldu_kategori = None)).order_by("filtre_bagli_oldu_filtre__filtre_adi")
-
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 20) # 6 employees per page
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-    content["kategorisi"] = a
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
-    return render(request,"kategori/kategori_urun_goster.html",content)
-
-def indirimli_urunleri_gosterme(request):
-    content = site_bilgileri()
-
-    profile = urun.objects.filter(urun_stok__gte=1,silinme_bilgisi = False).distinct()
-    if request.GET:
-        min_fiyat = request.GET.get("min")
-        max_fiyat = request.GET.get("max")
-        search = request.GET.get("search")
-        siralama = request.GET.get("siralama")
-        marka = request.GET.getlist("marka")  # Birden fazla filtre seçeneği için liste alıyoruz.
-        content['marka']= marka
-        profile = urun.objects.filter(
-            Q(silinme_bilgisi=False),
-            Q(kategori__id__in=tum_kategoriler),
-            Q(urun_stok__gte=1)
-        )
-
-        # Fiyat filtreleme
-        if max_fiyat and int(max_fiyat) < 9999:
-            profile = profile.filter(fiyat__lte=max_fiyat)
-        if min_fiyat and min_fiyat != 0:
-            profile = profile.filter(fiyat__gt=min_fiyat)
-
-        # Arama filtreleme
-        if search:
-            profile = profile.filter(urun_adi__icontains=search)
-
-        # Filtre içeriklerine göre filtreleme
-        if marka:
-            profile = profile.filter(urun_filtre_tercihi__filtre_bilgisi__id__in=marka).distinct()
-
-        # Sıralama
-        if siralama == "0":
-            pass
-        elif siralama == "1":
-            profile = profile.order_by("fiyat")
-        elif siralama == "2":
-            profile = profile.order_by("-fiyat")
-        elif siralama == "3":
-            profile = profile.order_by("urun_adi")
-        elif siralama == "4":
-            profile = profile.order_by("-id")
-
-        profile = profile.distinct()
-
-    content["filtre"] = filtre_icerigi.objects.filter(filtre_bagli_oldu_filtre__filtre_adi = "MARKA")
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 20) # 6 employees per page
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
-    return render(request,"kategori/indirimli_urun_goster.html",content)
-
-def popiler_urunleri_gosterme(request):
-    content = site_bilgileri()
-
-    profile = urun.objects.filter(urun_stok__gte=1,silinme_bilgisi = False).distinct()
-    if request.GET:
-        min_fiyat = request.GET.get("min")
-        max_fiyat = request.GET.get("max")
-        search = request.GET.get("search")
-        siralama = request.GET.get("siralama")
-        marka = request.GET.getlist("marka")  # Birden fazla filtre seçeneği için liste alıyoruz.
-        content['marka']= marka  # Birden fazla filtre seçeneği için liste alıyoruz.
-
-        profile = urun.objects.filter(
-            Q(silinme_bilgisi=False),
-            Q(kategori__id__in=tum_kategoriler),
-            Q(urun_stok__gte=1)
-        )
-
-        # Fiyat filtreleme
-        if max_fiyat and int(max_fiyat) < 9999:
-            profile = profile.filter(fiyat__lte=max_fiyat)
-        if min_fiyat and min_fiyat != 0:
-            profile = profile.filter(fiyat__gt=min_fiyat)
-
-        # Arama filtreleme
-        if search:
-            profile = profile.filter(urun_adi__icontains=search)
-
-        # Filtre içeriklerine göre filtreleme
-        if marka:
-            profile = profile.filter(urun_filtre_tercihi__filtre_bilgisi__id__in=marka).distinct()
-
-        # Sıralama
-        if siralama == "0":
-            pass
-        elif siralama == "1":
-            profile = profile.order_by("fiyat")
-        elif siralama == "2":
-            profile = profile.order_by("-fiyat")
-        elif siralama == "3":
-            profile = profile.order_by("urun_adi")
-        elif siralama == "4":
-            profile = profile.order_by("-id")
-
-        profile = profile.distinct()
-
-    content["filtre"] = filtre_icerigi.objects.filter(filtre_bagli_oldu_filtre__filtre_adi = "MARKA")
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 20) # 6 employees per page
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
-    return render(request,"kategori/popiler.html",content)
-def tum_urunler(request):
-    content = site_bilgileri()
-    profile = urun.objects.filter(urun_stok__gte=1,silinme_bilgisi = False).distinct()
-    tum_kategoriler = []
-    for i in Meslek.objects.filter(silinme_bilgisi = False):
-
-        tum_kategoriler.append(i.id)
-    #profile = urun.objects.filter(urun_stok__gte=1,kategori__id__in = tum_kategoriler,silinme_bilgisi = False).distinct()
-    if request.GET:
-        min_fiyat = request.GET.get("min")
-        max_fiyat = request.GET.get("max")
-        search = request.GET.get("search")
-        siralama = request.GET.get("siralama")
-        marka = request.GET.getlist("marka")  # Birden fazla filtre seçeneği için liste alıyoruz.
-        content['marka']= marka  # Birden fazla filtre seçeneği için liste alıyoruz.
-
-        profile = urun.objects.filter(
-            Q(silinme_bilgisi=False),
-            Q(kategori__id__in=tum_kategoriler),
-            Q(urun_stok__gte=1)
-        )
-
-        # Fiyat filtreleme
-        if max_fiyat and int(max_fiyat) < 9999:
-            profile = profile.filter(fiyat__lte=max_fiyat)
-        if min_fiyat and min_fiyat != 0:
-            profile = profile.filter(fiyat__gt=min_fiyat)
-
-        # Arama filtreleme
-        if search:
-            profile = profile.filter(urun_adi__icontains=search)
-
-        # Filtre içeriklerine göre filtreleme
-        if marka:
-            profile = profile.filter(urun_filtre_tercihi__filtre_bilgisi__id__in=marka).distinct()
-
-        # Sıralama
-        if siralama == "0":
-            pass
-        elif siralama == "1":
-            profile = profile.order_by("fiyat")
-        elif siralama == "2":
-            profile = profile.order_by("-fiyat")
-        elif siralama == "3":
-            profile = profile.order_by("urun_adi")
-        elif siralama == "4":
-            profile = profile.order_by("-id")
-
-        profile = profile.distinct()
-
-    page_num = request.GET.get('page', 1)
-    paginator = Paginator(profile, 20) # 6 employees per page
-    try:
-        page_obj = paginator.page(page_num)
-    except PageNotAnInteger:
-            # if page is not an integer, deliver the first page
-        page_obj = paginator.page(1)
-    except EmptyPage:
-            # if the page is out of range, deliver the last page
-        page_obj = paginator.page(paginator.num_pages)
-    content["santiyeler"] = page_obj
-    content["top"]  = profile
-    content["medya"] = page_obj
-    content["filtre_basliklari"] = filtre.objects.filter(silinme_bilgisi = False).filter(Q(filtre_bagli_oldu_kategori__id__in=tum_kategoriler) | Q(filtre_bagli_oldu_kategori = None)).order_by("filtre_adi")
-    content["filtre"] = filtre_icerigi.objects.filter(filtre_bagli_oldu_filtre__silinme_bilgisi = False).filter(Q(filtre_bagli_oldu_filtre__filtre_bagli_oldu_kategori__id__in=tum_kategoriler) | Q(filtre_bagli_oldu_filtre__filtre_bagli_oldu_kategori = None)).order_by("filtre_bagli_oldu_filtre__filtre_adi")
-    return render(request,"kategori/news.html",content)
-
-
-def odeme_sayfasi(request):
-    content = site_bilgileri()
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        veriler = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last() )
-        try:
-            a = sepet_sahibi_bilgileri.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last()).last()
-        except:
-            a = ""
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        veriler =sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last() )
-        try:
-            a = sepet_sahibi_bilgileri.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last()).last()
-        except:
-            a = ""
-    content["adresler"] = a
-    content["sepet_urunleri"] = veriler
-    turkey_cities = [
-    "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir",
-    "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır",
-    "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay",
-    "Isparta", "Mersin", "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir", "Kocaeli",
-    "Konya", "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu",
-    "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Şanlıurfa",
-    "Uşak", "Van", "Yozgat", "Zonguldak", "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın",
-    "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce"
-    ]
-    content["turkey_cities"] =turkey_cities
-    return render(request,"odeme/odeme.html",content)
-
-
-def odeme_sayfasi_bilgileri_kaydet(request):
-    if request.POST:
-        sepet = str(request.POST.get("sepet"))
-        isim = request.POST.get("isim")
-        soyisim = request.POST.get("soyisim")
-        vergi_kimlik_no = request.POST.get("vergi_kimlik_no")
-        eposta = request.POST.get("eposta")
-        telefon = request.POST.get("telefon")
-        adres = request.POST.get("adres")
-        ulke = request.POST.get("ulke")
-        sehirler = request.POST.get("sehirler")
-        zip_kodu = request.POST.get("zip_kodu")
-        payment = request.POST.get("payment")
-        faturatipi = request.POST.get("faturatipi")
-        if faturatipi == "kurumsal":
-            faturatipi = True
-        else:
-            faturatipi = False
-        print(request.POST)
-        if "ip" in sepet:
-            sepet = sepet.replace("ip","")
-            sepet = int(sepet)
-            if sepet_sahibi_bilgileri.objects.filter(kayitli_olmayan_kullanici__id = sepet).count() > 0:
-                sepet_sahibi_bilgileri.objects.filter(kayitli_olmayan_kullanici = get_object_or_404(sepet_olusturma_ip,id = sepet)).update(
-                    isim = isim,soyisim = soyisim,
-                    vergi_tc = vergi_kimlik_no,email = eposta,
-                    telefon = telefon,adres = adres, ulke = ulke,
-                    sehirler = sehirler,
-                    zip_kodu = zip_kodu,
-                    payment = payment,
-                   faturatipi = faturatipi
-                )
-            else:
-                sepet_sahibi_bilgileri.objects.create(
-                    kayitli_olmayan_kullanici = get_object_or_404(sepet_olusturma_ip,id = sepet),
-                    isim = isim,soyisim = soyisim,
-                    vergi_tc = vergi_kimlik_no,email = eposta,
-                    telefon = telefon,adres = adres, ulke = ulke,
-                    sehirler = sehirler,
-                    zip_kodu = zip_kodu,
-                    payment = payment,
-                   faturatipi = faturatipi
-                )
-        elif "kayitli" in sepet:
-            sepet = sepet.replace("kayitli","")
-            sepet = int(sepet)
-            if sepet_sahibi_bilgileri.objects.filter(kayitli_kullanici = get_object_or_404(sepet_olusturma,id = sepet)).count() >1:
-                bilgisi = sepet_sahibi_bilgileri.objects.filter(kayitli_kullanici = get_object_or_404(sepet_olusturma,id = sepet)).update(
-                    isim = isim,soyisim = soyisim,
-                    vergi_tc = vergi_kimlik_no,email = eposta,
-                    telefon = telefon,adres = adres, ulke = ulke,
-                    sehirler = sehirler,
-                    zip_kodu = zip_kodu,
-                    payment = payment,
-                   faturatipi = faturatipi
-                )
-                a = sepet_sahibi_bilgileri.objects.filter(kayitli_kullanici = get_object_or_404(sepet_olusturma,id = sepet))
-                for i in a:
-                    print(i)
-            else:
-                bilgisi = sepet_sahibi_bilgileri.objects.create(
-                    kayitli_kullanici = get_object_or_404(sepet_olusturma,id = sepet),
-                    isim = isim,soyisim = soyisim,
-                    vergi_tc = vergi_kimlik_no,email = eposta,
-                    telefon = telefon,adres = adres, ulke = ulke,
-                    sehirler = sehirler,
-                    zip_kodu = zip_kodu,
-                    payment = payment,
-                   faturatipi = faturatipi
-                )
-                print(bilgisi.id)
-        else:
-            print("elseye takılıyor ")
-        if payment == "Havale":
-            return redirect("/odeme/havale/")
-        else:
-            return redirect("/pay/payment/")
-
-def havale_sayfasi(request):
-    content = site_bilgileri()
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        veriler = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last() )
-        try:
-            a = sepet_sahibi_bilgileri.objects.get(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last())
-        except:
-            a = ""
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        veriler =sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last() )
-        try:
-            a = sepet_sahibi_bilgileri.objects.get(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last())
-        except:
-            a = ""
-    content["adresler"] = a
-    content["sepet_urunleri"] = veriler
-    turkey_cities = [
-    "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir",
-    "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır",
-    "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay",
-    "Isparta", "Mersin", "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir", "Kocaeli",
-    "Konya", "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu",
-    "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Şanlıurfa",
-    "Uşak", "Van", "Yozgat", "Zonguldak", "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın",
-    "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce"
-    ]
-    content["turkey_cities"] =turkey_cities
-    content["banka"] = banka_bilgileri.objects.last()
-    return render(request,"odeme/odeme_havale.html",content)
-def bugunsiparis():
-    bugunku_tarih_ve_saat = datetime.now()
-    a =satin_alinanlar.objects.filter(kayit_tarihi__gte=bugunku_tarih_ve_saat.replace(hour=0, minute=0, second=0, microsecond=0)).count()
-    b = str(bugunku_tarih_ve_saat.day)+str(bugunku_tarih_ve_saat.month)+str(bugunku_tarih_ve_saat.year)+str(a+1)
-
-    return b
-def success(request):
+    merchant_id = odeme_ayarlari_paytr.objects.last().magaza_adi
+    merchant_key = bytes(odeme_ayarlari_paytr.objects.last().magaza_parolasi, 'utf-8')
+    merchant_salt = bytes(odeme_ayarlari_paytr.objects.last().magaza_gizli_anahtar, 'utf-8')
+    merchant_ok_url = "https://www.trakyaotoyedekparca.com/pay/success/"
+    merchant_fail_url = 'https://www.trakyaotoyedekparca.com/pay/result?basari=NO'
     context = dict()
     if request.user.is_authenticated:
-        ads =  sepet_sahibi_bilgileri.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last()).last()
+        ads =sepet_sahibi_bilgileri.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last()).last()
         user_sepet = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).last()
-        satin_alinanlar.objects.create(siparis_numarasi = bugunsiparis()+"IHavale"+str(user_sepet.id),siparis_sahibi_bilgileri = ads,kayitli_kullanici = user_sepet,)
-        sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = False).update(sepet_satin_alma_durumu = True)
+        sepetteki_urunler_getir = []
         a = sepetteki_urunler.objects.filter(kayitli_kullanici = user_sepet)
         toplam_fiyat = 0
         for i in a:
-            isilem = get_object_or_404(urun,id = i.urun_bilgisi.id).urun_stok-i.urun_adedi
-            urun.objects.filter(id = i.urun_bilgisi.id).update(urun_stok = isilem)
+            if i.urun_adedi > 0:
+                sepetteki_urunler_getir.append([str(i.urun_bilgisi.urun_adi),str(i.urun_bilgisi.fiyat),int(i.urun_adedi)])
+                toplam_fiyat = toplam_fiyat+ (float(i.urun_bilgisi.fiyat)*int(i.urun_adedi))
+        
+        merchant_oid =bugunsiparis()+'OS' + random.randint(1, 9999999).__str__()+"ID"+ str(user_sepet.id)
+        sepet_sahibi_bilgileri.objects.filter(id = ads.id).update(siparis_numarasi = merchant_oid)
     else:
         ads = get_object_or_404(sepet_sahibi_bilgileri,kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last())
         user_sepet = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last()
-        satin_alinanlar.objects.create(siparis_numarasi = bugunsiparis()+"KHavale"+str(user_sepet.id),siparis_sahibi_bilgileri = ads,kayitli_olmayan_kullanici = user_sepet,)
-        sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).update(sepet_satin_alma_durumu = True)
+        sepetteki_urunler_getir = []
         a = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = user_sepet)
         toplam_fiyat = 0
         for i in a:
-            isilem = get_object_or_404(urun,id = i.urun_bilgisi.id).urun_stok-i.urun_adedi
-            urun.objects.filter(id = i.urun_bilgisi.id).update(urun_stok = isilem)
+            if i.urun_adedi > 0:
+                sepetteki_urunler_getir.append([str(i.urun_bilgisi.urun_adi),str(i.urun_bilgisi.fiyat),int(i.urun_adedi)])
+                toplam_fiyat = toplam_fiyat+ (float(i.urun_bilgisi.fiyat)*int(i.urun_adedi))
+        merchant_oid =bugunsiparis()+'OS' + random.randint(1, 9999999).__str__()+"KayitsizID"+ str(user_sepet.id)
+        sepet_sahibi_bilgileri.objects.filter(id = ads.id).update(siparis_numarasi = merchant_oid)
+    user_basket = base64.b64encode(json.dumps(sepetteki_urunler_getir).encode())
+
+
+    test_mode = '1'
+    debug_on = '1'
+
+    # 3d'siz işlem
+    non_3d = '0'
+
+    # Ödeme süreci dil seçeneği tr veya en
+    client_lang = "tr"
+
+    # non3d işlemde, başarısız işlemi test etmek için 1 gönderilir (test_mode ve non_3d değerleri 1 ise dikkate alınır!)
+    non3d_test_failed = '0'
+    user_ip = str(get_client_ip(request))
+    email = str(ads.email)
+
+    # 100.99 TL ödeme
+
+    payment_amount = str(int(toplam_fiyat)*100)
+    currency = 'TL'
+    payment_type = 'card'
+    user_name = str(ads.isim)+" "+ str(ads.soyisim)
+    user_address = str(ads.adres) + " "+str(ads.sehirler)+" "+str(ads.ulke)
+    user_phone = str(ads.telefon)
+    no_installment = "1"
+    max_installment="3"
+    # Alabileceği değerler; advantage, axess, combo, bonus, cardfinans, maximum, paraf, world, saglamkart
+    card_type = 'bonus'
+    installment_count = '1'
+
+    hash_str = merchant_id + user_ip + merchant_oid + email + payment_amount + user_basket.decode()+ no_installment + max_installment + currency + test_mode
+    paytr_token = base64.b64encode(hmac.new(merchant_key, hash_str.encode() + merchant_salt, hashlib.sha256).digest())
+    context = {
+        'merchant_id': merchant_id,
+        'user_ip': user_ip,
+        'merchant_oid': merchant_oid,
+        'email': email,
+        'payment_type': payment_type,
+        'payment_amount': payment_amount,
+        'currency': currency,
+        'test_mode': test_mode,
+        'non_3d': non_3d,
+        'merchant_ok_url': merchant_ok_url,
+        'merchant_fail_url': merchant_fail_url,
+        'user_name': user_name,
+        'user_address': user_address,
+        'user_phone': user_phone,
+        'user_basket': user_basket.decode(),
+        'debug_on': debug_on,
+        'no_installment': no_installment,
+        'max_installment': max_installment,
+        'client_lang': client_lang,
+        'paytr_token': paytr_token.decode(),
+        'non3d_test_failed': non3d_test_failed,
+        'installment_count': installment_count,
+        'card_type': card_type,
+
+    }
+    result = requests.post('https://www.paytr.com/odeme/api/get-token', context)
+    res = json.loads(result.text)
+
+    if res['status'] == 'success':
+        print(res['token'])
+        print(result.text)
+
+
+        content = {
+            'token': res['token']
+        }
+
+    else:
+        print(result.text)
+    return render(request, 'odeme/payment.html',{"res":res,"content":sozluk})
+
+@csrf_exempt
+def callback(request):
+    
+    #return redirect("/")
+
+    
+
+    post = request.POST
+
+    # API Entegrasyon Bilgileri - Mağaza paneline giriş yaparak BİLGİ sayfasından alabilirsiniz.
+    merchant_id = odeme_ayarlari_paytr.objects.last().magaza_adi
+    merchant_key = bytes(odeme_ayarlari_paytr.objects.last().magaza_parolasi, 'utf-8')
+    merchant_salt = bytes(odeme_ayarlari_paytr.objects.last().magaza_gizli_anahtar, 'utf-8')
+
+    # Bu kısımda herhangi bir değişiklik yapmanıza gerek yoktur.
+    # POST değerleri ile hash oluştur.
+    hash_str = post['merchant_oid'] + merchant_salt + post['status'] + post['total_amount']
+    hash = base64.b64encode(hmac.new(merchant_key, hash_str.encode(), hashlib.sha256).digest())
+
+    # Oluşturulan hash'i, paytr'dan gelen post içindeki hash ile karşılaştır
+    # (isteğin paytr'dan geldiğine ve değişmediğine emin olmak için)
+    # Bu işlemi yapmazsanız maddi zarara uğramanız olasıdır.
+    if hash != post['hash']:
+        return HttpResponse(str('PAYTR notification failed: bad hash'))
+
+    # BURADA YAPILMASI GEREKENLER
+    # 1) Siparişin durumunu post['merchant_oid'] değerini kullanarak veri tabanınızdan sorgulayın.
+    # 2) Eğer sipariş zaten daha önceden onaylandıysa veya iptal edildiyse "OK" yaparak sonlandırın.
+
+    if post['status'] == 'success':  # Ödeme Onaylandı
+        if True : 
+            ads = get_object_or_404(sepet_sahibi_bilgileri,siparis_numarasi =  post[merchant_oid] )
+            
+            if ads.kayitli_olmayan_kullanici:
+                user_sepet = sepet_olusturma_ip.objects.filter(sepet_sahibi=ads.kayitli_olmayan_kullanici, sepet_satin_alma_durumu=False).last()
+
+                sepet_olusturma_ip.objects.filter(sepet_sahibi=ads.kayitli_olmayan_kullanici, sepet_satin_alma_durumu=False).update(sepet_satin_alma_durumu=True)
+                a = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici=user_sepet)
+                toplam_fiyat = 0
+                for i in a:
+                    isilem = get_object_or_404(urun, id=i.urun_bilgisi.id).urun_stok - i.urun_adedi
+                    toplam_fiyat = toplam_fiyat + get_object_or_404(urun, id=i.urun_bilgisi.id).fiyat
+                    urun.objects.filter(id=i.urun_bilgisi.id).update(urun_stok=isilem)
+                sonucu = satin_alinanlar.objects.create(siparis_numarasi=post[merchant_oid], siparis_sahibi_bilgileri=ads, kayitli_olmayan_kullanici=user_sepet, tutar=toplam_fiyat)
+            else:
+                user_sepet = sepet_olusturma.objects.filter(sepet_sahibi=ads.kayitli_kullanici, sepet_satin_alma_durumu=False).last()
+
+                sepet_olusturma.objects.filter(sepet_sahibi=ads.kayitli_kullanici, sepet_satin_alma_durumu=False).update(sepet_satin_alma_durumu=True)
+                a = sepetteki_urunler.objects.filter(kayitli_kullanici=user_sepet)
+                toplam_fiyat = 0
+                for i in a:
+                    isilem = get_object_or_404(urun, id=i.urun_bilgisi.id).urun_stok - i.urun_adedi
+                    toplam_fiyat = toplam_fiyat + get_object_or_404(urun, id=i.urun_bilgisi.id).fiyat
+                    urun.objects.filter(id=i.urun_bilgisi.id).update(urun_stok=isilem)
+                sonucu = satin_alinanlar.objects.create(siparis_numarasi=post[merchant_oid], siparis_sahibi_bilgileri=ads, kayitli_kullanici=user_sepet, tutar=toplam_fiyat)
+                        
+
+ 
+        return HttpResponse(str('OK'))
+        
+
+    
+    # Bildirimin alındığını PayTR sistemine bildir.
+
+
+
+def success(request):
 
     return redirect("/")
 
 
-def gecmis_siparislerim(request):
-    content = site_bilgileri()
-    if request.user.is_authenticated:
-        content["siparisler"] = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = True)
-        content["siparis_detaylari"] =satin_alinanlar.objects.filter(kayitli_kullanici__in = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = True)).order_by("-id")
-        try:
-            a = satin_alinanlar.objects.filter(kayitli_kullanici__in = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = True)).order_by("-id").first()
-            veriler = sepetteki_urunler.objects.filter(kayitli_kullanici = a.kayitli_kullanici)
-            content["sepet_urunleri"] =veriler
-            content["a"] = a
-        except:
-            pass
-    else:
-        content["siparisler"] = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = True)
-        content["siparis_detaylari"] =satin_alinanlar.objects.filter(kayitli_olmayan_kullanici__in = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = True)).order_by("-id")
-        try:
-            a =satin_alinanlar.objects.filter(kayitli_olmayan_kullanici__in = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = True)).order_by("-id").first()
-            veriler = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = a.kayitli_olmayan_kullanici)
-            content["sepet_urunleri"] =veriler
-            content["a"] = a
-        except:
-            pass
-    return render(request,"urunlist/gecmis_siparislerim.html",content)
+def fail(request):
+    context = dict()
+    context['fail'] = 'İşlem Başarısız'
 
-def gecmis_siparislerim_iki(request,id):
-    content = site_bilgileri()
-    if request.user.is_authenticated:
-        content["siparisler"] = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = True)
-        content["siparis_detaylari"] =satin_alinanlar.objects.filter(kayitli_kullanici__in = sepet_olusturma.objects.filter(sepet_sahibi = request.user,sepet_satin_alma_durumu = True)).order_by("-id")
-        a =get_object_or_404(satin_alinanlar,id = id)
-        veriler = sepetteki_urunler.objects.filter(kayitli_kullanici = a.kayitli_kullanici)
-        content["sepet_urunleri"] =veriler
-        content["a"] = a
-    else:
-        content["siparisler"] = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = True)
-        content["siparis_detaylari"] =satin_alinanlar.objects.filter(kayitli_olmayan_kullanici__in = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = True)).order_by("-id")
-        a =get_object_or_404(satin_alinanlar,id = id)
-        veriler = sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = a.kayitli_olmayan_kullanici)
-        content["sepet_urunleri"] =veriler
-        content["a"] = a
-    return render(request,"urunlist/gecmis_siparislerim.html",content)
-
-def hesabim (request):
-    content = site_bilgileri()
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        veriler = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last() )
-        try:
-            a = sepet_sahibi_bilgileri.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last()).last()
-        except:
-            a = ""
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        veriler =sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last() )
-        try:
-            a = sepet_sahibi_bilgileri.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last()).last()
-        except:
-            a = ""
-    content["adresler"] = a
-    return render(request,"account/hesabim_kismi.html",content)
-
-
-
-
-def hesabim_duzelt (request):
-    content = site_bilgileri()
-    if request.user.is_authenticated:
-        try:
-            sepet_olusturma.objects.get(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma.objects.create(sepet_sahibi = request.user,sepet_satin_alma_durumu = False)
-        veriler = sepetteki_urunler.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last() )
-        try:
-            a = sepet_sahibi_bilgileri.objects.filter(kayitli_kullanici = sepet_olusturma.objects.filter(sepet_sahibi = request.user).last()).last()
-        except:
-            a = ""
-    else:
-        try:
-            sepet_olusturma_ip.objects.get(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        except:
-            sepet_olusturma_ip.objects.create(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False)
-        veriler =sepetteki_urunler.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last() )
-        try:
-            a = sepet_sahibi_bilgileri.objects.filter(kayitli_olmayan_kullanici = sepet_olusturma_ip.objects.filter(sepet_sahibi = get_client_ip(request),sepet_satin_alma_durumu = False).last()).last()
-        except:
-            a = ""
-    if request.POST:
-        sepet_sahibi_bilgileri.objects.filter(id = a.id).update(
-            isim = request.POST.get("firstname"),
-            soyisim= request.POST.get("lastname"),
-            email= request.POST.get("email"),
-            telefon= request.POST.get("telephone"),
-            adres= request.POST.get("company"),
-            sehirler= request.POST.get("city"),
-            zip_kodu = request.POST.get("postcode")
-        )
-        return redirect("/hesabim/")
-    content["adresler"] = a
-    return render(request,"account/hesabim_kismi_duzeltme.html",content)
-
-
-
-
-
+    messages.success(request, f"Bundle Purchase Failed")
+    return HttpResponse("Bundle Purchase Failed")

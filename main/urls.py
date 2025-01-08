@@ -243,7 +243,10 @@ urlpatterns = [#
     path("siteprojectsablone/<int:id>/", views.santiye_sablonu, name="santiye_sablonu"),
     path("setsiteprojectsablone/<int:id>/", views.santiye_sablonu_duzenle, name="santiye_sablonu_duzenle"),
     path("createsiteprojectsablone/", views.save_template, name="save_template"),
+    path("setcreatesiteprojectsablone/", views.save_template_duzenle, name="save_template_duzenle"),
     path("mysiteprojects/", views.santiyelerim, name="santiyelerim"),
+
+path("mystructures/<int:id>", views.yapilarim, name="yapilarim"),
 ]
 
 #

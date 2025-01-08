@@ -9,14 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="{% static 'go/content/script/custom-checklist.js' %}"></script>
+    <script src="{% static 'go/content/script/custom-checklist_set.js' %}"></script>
 {% endblock head %}
 {% block sidebar %}
 {% if hash_bilgi %}
    
 {% else %}
-<form action="{% url 'main:sablon_duzeltme' %}" method="post">
-    {% csrf_token %}
+
     <main>
         <div class="page-header">
             <div class="page-title">
@@ -93,12 +92,12 @@
                         <div class="section-card">
                             <div class="card-header">
                                 <select name="bolum_adi" class="form-control section-type">
-                                    <option value="0" {% if section.sablon_durumu == "0" %}selected{% endif %}>Dış Mekan</option>
-                                    <option value="1" {% if section.sablon_durumu == "1"  %}selected{% endif %}>Kat</option>
-                                    <option value="2" {% if section.sablon_durumu == "2"  %}selected{% endif %}>Ortak Alan</option>
-                                    <option value="3" {% if section.sablon_durumu == "3"  %}selected{% endif %}>Daire</option>
+                                    <option value="0" {% if section.bolum == "0" %}selected{% endif %}>Dış Mekan</option>
+                                    <option value="1" {% if section.bolum == "1"  %}selected{% endif %}>Kat</option>
+                                    <option value="2" {% if section.bolum == "2"  %}selected{% endif %}>Ortak Alan</option>
+                                    <option value="3" {% if section.bolum == "3"  %}selected{% endif %}>Daire</option>
                                 </select>
-                                <input type="hidden" name="bolum_adi1" class="form-control section-type" value="{{ section.type }}">
+                                <input type="hidden" name="bolum_adi1" class="bolum_adi1 form-control section-type" value="{{ section.id }}">
                                 <div class="card-actions">
                                     <button type="button" class="button-icon toggle-section">
                                         <i class="fa-solid fa-chevron-down"></i>
@@ -117,7 +116,7 @@
                                     <div class="category-item">
                                         <div class="category-header">
                                             <input type="text" name="imalat_kalemleri" class="form-control" placeholder="İmalat kategorisi adı..." value="{{ category.icerik }}">
-                                            <input type="hidden" name="imalat_kalemleri1" class="form-control" value="{{ category.name }}">
+                                            <input type="hidden" name="imalat_kalemleri1" class="form-control" value="{{ category.id }}">
                                             <select name="is_gurubu_imalat_kaleminin" class="form-control work-group-select">
                                                 <option value="">İş Grubu Seçin</option>
                                                
@@ -140,7 +139,7 @@
                                                 {% if item.icerik.id == category.id  %}
                                                     <div class="checklist-item">
                                                     <input type="text" class="form-control" placeholder="Kontrol maddesi" value="{{ item.imalat_detayi }}">
-                                                    <input type="hidden" class="form-control" value="{{ item }}">
+                                                    
                                                     <button type="button" class="button-icon remove-item">
                                                         <i class="icon icon-trash"></i>
                                                     </button>
@@ -170,7 +169,7 @@
             </div>
         </div>
     </main>
-</form>
+
     <!-- Şablon Yükleme Modalı -->
     <div id="loadTemplateModal" class="modal">
         <!-- Modal içeriği aynı kalacak -->

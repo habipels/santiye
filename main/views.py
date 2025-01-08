@@ -9747,6 +9747,64 @@ def save_template(request):
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
 
+
+
+@csrf_exempt
+def save_template_duzenle(request):
+    if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+    else:       
+        kullanici =request.user
+    if request.method == 'POST':
+        if True:
+            data = json.loads(request.body)
+            print(data)
+            #şablonu oluştur
+            sablon = santiye_sablonlari.objects.filter(proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown'))).update(proje_ait_bilgisi = kullanici,
+                    sablon_adi =data.get('name', 'Unnamed Template'),sablon_durumu = data.get('projectType', 'Unknown') ,
+                    proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')))
+            sablon = santiye_sablonlari.objects.filter(proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown'))).last()
+            sanytiye_sablon_bolumleri.objects.filter(proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown'))).update(silinme_bilgisi = True  )
+            for section_data in data.get('sections', []):
+                if section_data.get('id') :
+                    sablon_bolumleri = sanytiye_sablon_bolumleri.objects.filter(id = int(section_data.get('id'))).update(proje_ait_bilgisi = kullanici,proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')) , sablon_adi = get_object_or_none(santiye_sablonlari,id = sablon.id),bolum =section_data.get('type', 'Unknown'),silinme_bilgisi = False  )
+                    sablon_bolumleri = sanytiye_sablon_bolumleri.objects.filter(id = section_data.get('id', 'Unknown')).last()
+                else:
+                    sablon_bolumleri = sanytiye_sablon_bolumleri.objects.create(proje_ait_bilgisi = kullanici,proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')) , sablon_adi = get_object_or_none(santiye_sablonlari,id = sablon.id),bolum =section_data.get('type', 'Unknown')  )
+                for category_data in section_data.get('categories', []):
+                    if category_data.get('last_name'):
+                        sablon_imalat_olayi = santiye_imalat_kalemleri.objects.filter(id = category_data.get('last_name')).update(
+                        proje_ait_bilgisi = kullanici ,proje_santiye_Ait =get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
+                        detay = get_object_or_none(sanytiye_sablon_bolumleri,id = section_data.get('id', 'Unknown')), 
+                        icerik = category_data.get('name'),is_grubu = category_data.get('workGroup', 'Unknown Work Group') )
+                        imalat_kalemleri_imalat_detaylari.objects.filter(icerik__id = category_data.get('last_name', 'Unnamed Category')).update(silinme_bilgisi = True)
+                        for item_name in category_data.get('checklistItems', []):
+                            imalat_kalemleri_imalat_detaylari.objects.create(proje_ait_bilgisi = kullanici,
+                            proje_santiye_Ait= get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
+                            icerik = get_object_or_none(santiye_imalat_kalemleri,id = category_data.get('last_name', 'Unnamed Category')),
+                            imalat_detayi = item_name)
+                    else:
+                        sablon_imalat_olayi = santiye_imalat_kalemleri.objects.create(
+                        proje_ait_bilgisi = kullanici ,proje_santiye_Ait =get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
+                        detay = get_object_or_none(sanytiye_sablon_bolumleri,id = sablon_bolumleri.id), 
+                        icerik = category_data.get('name', 'Unnamed Category'),is_grubu = category_data.get('workGroup', 'Unknown Work Group') )
+                        for item_name in category_data.get('checklistItems', []):
+                            imalat_kalemleri_imalat_detaylari.objects.create(proje_ait_bilgisi = kullanici,
+                            proje_santiye_Ait= get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
+                            icerik = get_object_or_none(santiye_imalat_kalemleri,id = sablon_imalat_olayi.id),
+                            imalat_detayi = item_name)
+            return JsonResponse({"status": "success", "message": "Şablon başarıyla kaydedildi."})
+        
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
 def santiyelerim(request):
     content = sozluk_yapisi()
     m = folium.Map(location=[20, 0], zoom_start=2)
@@ -9805,3 +9863,31 @@ def santiyelerim(request):
     content["santiyeler"] = profile
 
     return render(request,"checklist/santiyeler.html",content)
+
+
+def yapilarim(request,id):
+    content = sozluk_yapisi()
+    m = folium.Map(location=[20, 0], zoom_start=2)
+    # Haritayı HTML'ye dönüştürme
+    if super_admin_kontrolu(request):
+        profile =santiye.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_gorme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        
+    profile = bloglar.objects.filter(proje_santiye_Ait = get_object_or_none(santiye,id = id),proje_ait_bilgisi = kullanici) 
+    content["santiyeler"] = profile
+
+    return render(request,"checklist/yapilar.html",content)
+
