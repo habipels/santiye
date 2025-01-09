@@ -97,6 +97,7 @@ class checkdaireleri(models.Model):
     kat = models.IntegerField(default = 1,verbose_name="Kat Bilgisi")
     kat_daire_sayisi = models.IntegerField(default = 1,verbose_name="Kat Bilgisi")
     daire_no = models.CharField(max_length=200,verbose_name="Daire No", blank=True,null=True)
+    genel_notlar = models.TextField()
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class imalat_daire_balama(models.Model):
@@ -111,6 +112,12 @@ class imalat_daire_balama(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+class daire_resimleri_chjeckdaireleri(models.Model):
+    daire_bilgisi = models.ForeignKey(checkdaireleri,verbose_name="Daire Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
+    resim = models.FileField(upload_to='daire_resimleri/',verbose_name="Resim Adı",blank=True,null=True)
+    resim_aciklamasi = models.CharField(max_length=200,verbose_name="Resim Açıklaması", blank=True,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class blog_ortak_alan_ve_cepheleri(models.Model):
     status=(("0","0"),("1","1"),("2","2"))
     genel_icerik = (("0","0"),("1","1"),("2","2"),("3","3"))

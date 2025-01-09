@@ -17,6 +17,8 @@
 {% if hash_bilgi %}
    
 {% else %}
+<form action="/{{dil}}{% url 'main:daire_imalat_checklist' %}" method="post">
+    {% csrf_token %}
     <main>
         <div class="page-header">
             <div class="page-title">
@@ -25,6 +27,7 @@
                 </a>
                 <div>
                     <h2>Daire {{santiye.daire_no}} </h2>
+                    <input type="text" hidden name="daire" value="{{santiye.id}}">
                     <div class="control-info">
                         <span class="date">23.03.2024</span>
                         <span class="status pending">Kontrol Ediliyor</span>
@@ -32,10 +35,10 @@
                 </div>
             </div>
             <div class="page-actions">
-                <button class="button" id="saveDraft">
+                <button type="submit" class="button" id="saveDraft">
                     <i class="fa-solid fa-save"></i> Kaydet
                 </button>
-                <button class="button button-primary" id="completeCheck">
+                <button type="button" class="button button-primary" id="completeCheck">
                     <i class="fa-solid fa-check"></i> Kontrolü Tamamla
                 </button>
             </div>
@@ -62,7 +65,7 @@
                             <span class="control-count">{{veri_geldi.tamamlanma}}/{{veri_geldi.a}} Tamamlandı</span>
                         </div>
                         <div class="control-actions">
-                            <button class="button-icon" data-action="toggle">
+                            <button type="button" class="button-icon" data-action="toggle">
                                 <i class="fa-solid fa-chevron-down"></i>
                             </button>
                         </div>
@@ -76,10 +79,10 @@
                             
                             <div class="control-item">
                                 <label class="checkbox-wrapper">
-                                    <input type="checkbox" class="control-checkbox">
+                                    <input type="checkbox" name="check" value="{{j.id}}" class="control-checkbox">
                                     <span>{{j.imalat_detayi.icerik}}</span>
                                 </label>
-                                <button class="button-note" data-action="add-note">
+                                <button type="button" class="button-note" data-action="add-note">
                                     <i class="fa-solid fa-pen"></i>
                                     <span>Not Ekle</span>
                                 </button>
@@ -106,7 +109,7 @@
                     <div class="control-body">
                         <div class="form-group">
                             <label>Genel Değerlendirme ve Notlar</label>
-                            <textarea class="form-control" rows="4" placeholder="Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..."></textarea>
+                            <textarea name="aciklma" class="form-control" rows="4" placeholder="Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>Fotoğraflar</label>
@@ -122,7 +125,7 @@
                             </div>
                         </div>
                         <div class="general-notes-actions">
-                            <button class="button button-primary" id="saveGeneralNotes">
+                            <button type="button" class="button button-primary" id="saveGeneralNotes">
                                 <i class="fa-solid fa-save"></i> Kaydet
                             </button>
                         </div>
@@ -134,7 +137,7 @@
             <div class="notes-panel" id="notesPanel">
                 <div class="notes-header">
                     <h3>Notlar ve Fotoğraflar</h3>
-                    <button class="button-icon" data-action="close-notes">
+                    <button type="button" class="button-icon" data-action="close-notes">
                         <i class="fa-solid fa-times"></i>
                     </button>
                 </div>
@@ -156,13 +159,14 @@
                         </div>
                     </div>
                     <div class="notes-actions">
-                        <button class="button" data-action="cancel-note">İptal</button>
-                        <button class="button button-primary" data-action="save-note">Kaydet</button>
+                        <button type="button" class="button" data-action="cancel-note">İptal</button>
+                        <button type="button" class="button button-primary" data-action="save-note">Kaydet</button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+</form>
 {% endif %}
 
 {% endblock sidebar %}

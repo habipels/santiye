@@ -2138,3 +2138,12 @@ def imalat_check_ve_sayisi(bolum,daire):
     a = imalat_daire_balama.objects.filter(daire_bilgisi = daire,imalat_detayi__detay = bolum).count()
     tamamlanma = imalat_daire_balama.objects.filter(daire_bilgisi = daire,imalat_detayi__detay = bolum,tamamlanma_bilgisi = True).count()
     return {"a":a,"tamamlanma":tamamlanma}
+
+@register.simple_tag
+def daire_imalat_yuzde_hesabi(daire):
+    a = imalat_daire_balama.objects.filter(daire_bilgisi = daire).count()
+    tamamlanma = imalat_daire_balama.objects.filter(daire_bilgisi = daire,tamamlanma_bilgisi = True).count()
+    if a == 0:
+        return 0
+    else:
+        return round((tamamlanma/a)*100,2)

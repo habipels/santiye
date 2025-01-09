@@ -43,45 +43,22 @@
             <table id="datatable">
                 <thead>
                     <tr>
-                        <th>{% trans 'Şantiye Adı' %}</th>
                         <th>{% trans 'Yapı Adı' %}</th>
-                        <th>{% trans 'Kat Sayısı' %}</th>
-                        <th>{% trans 'Oluşturma Tarihi' %}</th>
-                        <th>{% trans 'Daire Düzeni' %}</th>
-                        <th>{% trans 'Daire Sayısı' %}</th>
+                        <th>{% trans 'Kat' %}</th>
                         <th>{% trans 'Aksiyon' %}</th>
                     </tr>
                 </thead>
                 <tbody>
                   {% for i in santiyeler %}
-                    {%  santiye_sablonu_gonder i as bilgi %}
+                    
                         <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey; color: white; {% endif %} {% endif %}">
                             
-                            <td class="bakiye">{{ i.proje_santiye_Ait.proje_adi }}<span></span></td>
-                            <td class="konum">{{ i.blog_adi}}</td>
-                            <td class="konum">{{ i.kat_sayisi | stringformat:".F"}}</td>
-                            <td class="konum">{{ i.kayit_tarihi }}</td>
                             
-                           
-                            <td class="kasa">
-                                {%  daire_sayisi_kat_basina_daire i %}
-                            </td>
-                            <td class="kasa">
-                                    {% daire_sayisi i as bilgi %}
-                                    {{bilgi}}
-                            </td>
+                            <td class="konum">{{ blok.blog_adi}}</td>
+                            <td class="konum">{{ i}}</td>
                             <td>
                                 <div class="td-actions">
-                                    {% if bilgi %}
-                                        <a href="/{{dil}}{% url 'main:daireleri_gor' i.id %}" class="status-success">{% trans 'Daireleri Gör' %}</a>
-                                        <a href="/{{dil}}{% url 'main:katlara_gore_gor' i.id %}" class="status-success">{% trans 'Kata Göre Gör' %}</a>
-                                    {% else %}
-                                    <a href="/{{dil}}{% url 'main:santiye_projeleri' i.id %}" class="status-success">{% trans 'Daireleri Oluştur' %}</a>
-                                    {% endif %}
-                                    
-                                 
-
-                                    
+                                    <a href="/{{dil}}{% url 'main:kat_daire_bilgisi' blok.id i %}" class="status-success">{% trans 'Katı Kontrol Et' %}</a>
                                </div>
                             </td>
                         </tr>

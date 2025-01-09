@@ -236,7 +236,7 @@ urlpatterns = [#
     path("control/userauthorizationsset/<int:id>/<str:hash>", views.kullanici_yetkileri_duzenle_2, name="kullanici_yetkileri_duzenle_2"),
     path("control/kullaniciyetkialma/<str:hash>", views.kullanici_yetki_alma_2, name="kullanici_yetki_alma_2"),
     #şantiye Kontrol
-    path("site/", views.santiye_kontrol, name="santiye_kontrol"),
+
     path("sitedetail/<int:id>/", views.santiye_kontrol_detayi, name="santiye_kontrol_detayi"),
     path("blockprojects/<int:id>", views.santiye_projeleri, name="santiye_projeleri"),
     path("siteprojectslist/", views.santiye_onay_listesi, name="santiye_onay_listesi"),
@@ -249,7 +249,10 @@ urlpatterns = [#
  path("savemystructures/", views.santiye_proje_olustur, name="santiye_proje_olustur"),
 
 path("mystructures/<int:id>", views.yapilarim, name="yapilarim"),
+path("check/", views.daire_imalat_checklist, name="daire_imalat_checklist"),
 path("myhouse/<int:id>", views.daireleri_gor, name="daireleri_gor"),
+path("level/<int:id>", views.katlara_gore_gor, name="katlara_gore_gor"),
+path("levelhouse/<int:id>/<int:kat>/", views.kat_daire_bilgisi, name="kat_daire_bilgisi"),
 ]
 
 #

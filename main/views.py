@@ -9589,24 +9589,6 @@ def rapor_gonder(request, rapor_id):
     return JsonResponse(fatura_data)
 
 
-def santiye_kontrol(request):
-    content = sozluk_yapisi()
-    if super_admin_kontrolu(request):
-        pass
-    else:
-        if request.user.kullanicilar_db:
-            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
-            if a:
-                if a.izinler.santiye_kontrol:
-                    kullanici =request.user.kullanicilar_db
-                else:
-                    return redirect("main:yetkisiz")
-            else:
-                return redirect("main:yetkisiz")   
-        else:
-            kullanici =request.user  
-    return render(request,"checklist/santiye_kontrol.html",content)
-
 
 
 def santiye_projeleri(request,id):
@@ -9653,7 +9635,6 @@ def santiye_proje_olustur(request):
         cepheaciklmasi = request.POST.getlist("cepheaciklmasi")
         cephe_verisi = request.POST.getlist("cephe_verisi")
         kat_bilgisi = 1
-        print(len(daire_numarai),blok,kat_basina_daire,daire_numarai,ortak_alanadi,verisi,cepheaciklmasi,cephe_verisi)
         block  = get_object_or_none(bloglar,id = blok)
         imalatlari = santiye_imalat_kalemleri.objects.filter(proje_santiye_Ait = block.proje_santiye_Ait,silinme_bilgisi = False)
         for i in range(1,len(daire_numarai)+1):
@@ -9963,7 +9944,78 @@ def santiye_kontrol_detayi(request,id):
     daire = get_object_or_404(checkdaireleri,id = id)
     content["santiye"] = daire
     content["ortak_alanlar"] = blog_ortak_alan_ve_cepheleri.objects.filter(blog_ait_bilgisi = daire.blog_bilgisi)
-    content["imalatlar"] = imalat_daire_balama.objects.filter(daire_bilgisi = daire)
+    content["imalatlar"] = imalat_daire_balama.objects.filter(daire_bilgisi = daire,tamamlanma_bilgisi = False)
     content["sanytiye_sablon_bolumleri"] = sanytiye_sablon_bolumleri.objects.filter(proje_santiye_Ait = daire.proje_santiye_Ait)
     print(content)
     return render(request,"checklist/santiye_kontrol_detayi.html",content)
+
+def daire_imalat_checklist(request):
+    if request.POST:
+        check = request.POST.getlist("check")
+        aciklma = request.POST.get("aciklma")
+        daire = request.POST.get("daire")
+        for i in check:
+            imalat_daire_balama.objects.filter(id = i).update(tamamlanma_bilgisi = True,tamamlamayi_yapan = request.user)
+        checkdaireleri.objects.filter(id = daire).update(genel_notlar = aciklma)
+    return redirect("main:santiyelerim")
+    
+
+def katlara_gore_gor(request,id):
+    content = sozluk_yapisi()
+    content = sozluk_yapisi()
+    m = folium.Map(location=[20, 0], zoom_start=2)
+    # Haritayı HTML'ye dönüştürme
+    if super_admin_kontrolu(request):
+        profile =santiye.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_gorme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        
+    profile =get_object_or_none(bloglar,id = id,proje_ait_bilgisi = kullanici)
+    katlar = []
+    for i in range(1,int(profile.kat_sayisi)+1):
+        katlar.append(i)
+    content["santiyeler"] = katlar
+    content["blok"] = profile
+    return render(request,"checklist/katlara_gore_daireler.html",content)
+
+def kat_daire_bilgisi(request,id,kat):
+    content = sozluk_yapisi()
+    content = sozluk_yapisi()
+    m = folium.Map(location=[20, 0], zoom_start=2)
+    # Haritayı HTML'ye dönüştürme
+    if super_admin_kontrolu(request):
+        profile =santiye.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_gorme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:
+            kullanici = request.user
+        
+    profile =get_object_or_none(bloglar,id = id,proje_ait_bilgisi = kullanici)
+    
+    content["santiyeler"] = profile
+    content["daireler"]  = checkdaireleri.objects.filter(blog_bilgisi = profile,kat = kat)
+    content["imalat"] = santiye_imalat_kalemleri.objects.filter(proje_santiye_Ait = profile.proje_santiye_Ait)
+    content["kat"] = kat
+    return render(request,"checklist/santiye_kontrol.html",content)
