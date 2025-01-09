@@ -10087,7 +10087,7 @@ def daire_imalat_checklist_onaylama(request):
     return redirect("main:santiyelerim")
 
 
-def santiye_kontrol_detayi_ust_yonetici(request,id):
+def santiye_kontrol_detayi_ust_yoneticii(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         pass
