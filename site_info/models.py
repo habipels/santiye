@@ -108,7 +108,10 @@ class imalat_daire_balama(models.Model):
     imalat_detayi = models.ForeignKey(santiye_imalat_kalemleri,verbose_name="İmalat Detayı",blank=True,null=True,on_delete=models.SET_NULL)
     tamamlanma_bilgisi = models.BooleanField(default=False)
     tamamlamayi_yapan = models.ForeignKey(CustomUser,verbose_name="Tamamlamayı Yapan",blank=True,null=True,on_delete=models.SET_NULL,related_name="tamamlamayi_yapan")
+    tarih = models.DateField(default=datetime.now,null=True,blank=True)  # Updates automatically on save
     onaylayan = models.ForeignKey(CustomUser,verbose_name="Onaylayan",blank=True,null=True,on_delete=models.SET_NULL,related_name="onaylayan")
+    onaylma_tarihi = models.DateField(default=datetime.now,null=True,blank=True)  # Updates automatically on save
+    onaylama_notu = models.TextField(blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 

@@ -2147,3 +2147,8 @@ def daire_imalat_yuzde_hesabi(daire):
         return 0
     else:
         return round((tamamlanma/a)*100,2)
+
+@register.simple_tag
+def daire_imalat_sonuncu(daire):
+    tamamlanma = imalat_daire_balama.objects.filter(daire_bilgisi = daire,tamamlanma_bilgisi = True).order_by("-tarih").last()
+    return tamamlanma
