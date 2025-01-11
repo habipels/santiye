@@ -22,6 +22,218 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+import geoip2.database
+from django.http import JsonResponse
+
+
+def get_country(request):
+    # Kullanıcının IP adresini al (varsayılan olarak, Django'dan gelen IP'yi alabilirsiniz)
+    ip_address = request.META.get('REMOTE_ADDR', None)
+
+    # Eğer IP adresi localhost (127.0.0.1) ise, bunu manuel olarak değiştirebiliriz
+    if ip_address == '127.0.0.1':
+        ip_address = '78.173.5.100'  # Google DNS IP'si gibi bir genel IP'yi kullanabilirsiniz
+
+    # Eğer IP adresi mevcutsa, GeoIP2 veritabanından ülkeyi sorgulayalım
+    if ip_address:
+        try:
+            # GeoIP2 veritabanını okuma işlemi
+            with geoip2.database.Reader('geoip/GeoLite2-Country.mmdb') as reader:
+                # IP adresine göre ülkeyi alıyoruz
+                response = reader.country(ip_address)
+                country = response.country.iso_code  # Ülke kodunu alıyoruz (örn. 'TR' için Türkiye)
+                return JsonResponse({'country': country})
+        
+        except geoip2.errors.AddressNotFoundError:
+            # Eğer ülke bulunamazsa 'Unknown' dönebiliriz
+            return JsonResponse({'country': 'Unknown'})
+        except Exception as e:
+            # Diğer hataları yakalamak için genel bir hata yönetimi ekleyebiliriz
+            return JsonResponse({'error': str(e)})
+
+    # Eğer IP adresi yoksa, hata mesajı döneriz
+    return JsonResponse({'error': 'IP address not found'})
+def get_time_zone_from_country(country):
+    # Ülke ISO kodlarına göre zaman dilimlerini döndüren harita
+    time_zones = {
+        'AF': 'Asia/Kabul',
+        'AL': 'Europe/Tirane',
+        'DZ': 'Africa/Algiers',
+        'AS': 'Pacific/Pago_Pago',
+        'AD': 'Europe/Andorra',
+        'AO': 'Africa/Luanda',
+        'AR': 'America/Argentina/Buenos_Aires',
+        'AM': 'Asia/Yerevan',
+        'AU': 'Australia/Sydney',
+        'AT': 'Europe/Vienna',
+        'AZ': 'Asia/Baku',
+        'BS': 'America/Nassau',
+        'BH': 'Asia/Bahrain',
+        'BD': 'Asia/Dhaka',
+        'BB': 'America/Barbados',
+        'BY': 'Europe/Minsk',
+        'BE': 'Europe/Brussels',
+        'BZ': 'America/Belize',
+        'BJ': 'Africa/Porto-Novo',
+        'BT': 'Asia/Thimphu',
+        'BO': 'America/La_Paz',
+        'BA': 'Europe/Sarajevo',
+        'BW': 'Africa/Gaborone',
+        'BR': 'America/Sao_Paulo',
+        'BN': 'Asia/Brunei',
+        'BG': 'Europe/Sofia',
+        'BF': 'Africa/Ouagadougou',
+        'BI': 'Africa/Bujumbura',
+        'KH': 'Asia/Phnom_Penh',
+        'CM': 'Africa/Douala',
+        'CA': 'America/Toronto',
+        'CV': 'Atlantic/Cape_Verde',
+        'KY': 'America/Cayman',
+        'CF': 'Africa/Bangui',
+        'TD': 'Africa/Ndjamena',
+        'CL': 'America/Santiago',
+        'CN': 'Asia/Shanghai',
+        'CO': 'America/Bogota',
+        'KM': 'Indian/Comoro',
+        'CG': 'Africa/Brazzaville',
+        'CD': 'Africa/Kinshasa',
+        'CK': 'Pacific/Rarotonga',
+        'CR': 'America/Costa_Rica',
+        'CI': 'Africa/Abidjan',
+        'HR': 'Europe/Zagreb',
+        'CU': 'America/Havana',
+        'CY': 'Asia/Nicosia',
+        'CZ': 'Europe/Prague',
+        'DK': 'Europe/Copenhagen',
+        'DJ': 'Africa/Djibouti',
+        'DM': 'America/Dominica',
+        'DO': 'America/Santo_Domingo',
+        'EC': 'America/Guayaquil',
+        'EG': 'Africa/Cairo',
+        'SV': 'America/El_Salvador',
+        'GQ': 'Africa/Malabo',
+        'ER': 'Africa/Asmara',
+        'EE': 'Europe/Tallinn',
+        'ET': 'Africa/Addis_Ababa',
+        'FJ': 'Pacific/Fiji',
+        'FI': 'Europe/Helsinki',
+        'FR': 'Europe/Paris',
+        'GA': 'Africa/Libreville',
+        'GB': 'Europe/London',
+        'GE': 'Asia/Tbilisi',
+        'GH': 'Africa/Accra',
+        'GR': 'Europe/Athens',
+        'GD': 'America/Grenada',
+        'GT': 'America/Guatemala',
+        'GN': 'Africa/Conakry',
+        'GW': 'Africa/Bissau',
+        'GY': 'America/Guyana',
+        'HT': 'America/Port-au-Prince',
+        'HN': 'America/Tegucigalpa',
+        'HK': 'Asia/Hong_Kong',
+        'HU': 'Europe/Budapest',
+        'IS': 'Atlantic/Reykjavik',
+        'IN': 'Asia/Kolkata',
+        'ID': 'Asia/Jakarta',
+        'IR': 'Asia/Tehran',
+        'IQ': 'Asia/Baghdad',
+        'IE': 'Europe/Dublin',
+        'IL': 'Asia/Jerusalem',
+        'IT': 'Europe/Rome',
+        'JM': 'America/Jamaica',
+        'JP': 'Asia/Tokyo',
+        'JO': 'Asia/Amman',
+        'KZ': 'Asia/Almaty',
+        'KE': 'Africa/Nairobi',
+        'KI': 'Pacific/Tarawa',
+        'KW': 'Asia/Kuwait',
+        'KG': 'Asia/Bishkek',
+        'LA': 'Asia/Vientiane',
+        'LV': 'Europe/Riga',
+        'LB': 'Asia/Beirut',
+        'LS': 'Africa/Maseru',
+        'LR': 'Africa/Monrovia',
+        'LY': 'Africa/Tripoli',
+        'LT': 'Europe/Vilnius',
+        'LU': 'Europe/Luxembourg',
+        'MO': 'Asia/Macau',
+        'MK': 'Europe/Skopje',
+        'MG': 'Indian/Antananarivo',
+        'MW': 'Africa/Blantyre',
+        'MY': 'Asia/Kuala_Lumpur',
+        'MV': 'Indian/Maldives',
+        'ML': 'Africa/Bamako',
+        'MT': 'Europe/Malta',
+        'MH': 'Pacific/Majuro',
+        'MQ': 'America/Martinique',
+        'MR': 'Africa/Nouakchott',
+        'MU': 'Indian/Mauritius',
+        'YT': 'Indian/Mayotte',
+        'MX': 'America/Mexico_City',
+        'FM': 'Pacific/Guam',
+        'MD': 'Europe/Chisinau',
+        'MC': 'Europe/Monaco',
+        'MN': 'Asia/Ulaanbaatar',
+        'ME': 'Europe/Belgrade',
+        'MS': 'America/Port_of_Spain',
+        'MA': 'Africa/Casablanca',
+        'MZ': 'Africa/Maputo',
+        'MM': 'Asia/Yangon',
+        'MW': 'Africa/Blantyre',
+        'NA': 'Africa/Windhoek',
+        'NP': 'Asia/Kathmandu',
+        'NI': 'America/Managua',
+        'NE': 'Africa/Niamey',
+        'NG': 'Africa/Lagos',
+        'NO': 'Europe/Oslo',
+        'NP': 'Asia/Kathmandu',
+        'PK': 'Asia/Karachi',
+        'PA': 'America/Panama',
+        'PG': 'Pacific/Port_Moresby',
+        'PY': 'America/Asuncion',
+        'PE': 'America/Lima',
+        'PH': 'Asia/Manila',
+        'PL': 'Europe/Warsaw',
+        'PT': 'Europe/Lisbon',
+        'PR': 'America/Puerto_Rico',
+        'QA': 'Asia/Qatar',
+        'RO': 'Europe/Bucharest',
+        'RU': 'Europe/Moscow',
+        'RW': 'Africa/Kigali',
+        'SA': 'Asia/Riyadh',
+        'RS': 'Europe/Belgrade',
+        'SC': 'Indian/Mahe',
+        'SL': 'Africa/Freetown',
+        'SG': 'Asia/Singapore',
+        'SK': 'Europe/Bratislava',
+        'SI': 'Europe/Ljubljana',
+        'SE': 'Europe/Stockholm',
+        'CH': 'Europe/Zurich',
+        'SY': 'Asia/Damascus',
+        'TJ': 'Asia/Dushanbe',
+        'TH': 'Asia/Bangkok',
+        'TG': 'Africa/Lome',
+        'TO': 'Pacific/Tongatapu',
+        'TT': 'America/Port_of_Spain',
+        'TN': 'Africa/Tunis',
+        'TR': 'Europe/Istanbul',
+        'TM': 'Asia/Ashgabat',
+        'UG': 'Africa/Kampala',
+        'UA': 'Europe/Kiev',
+        'AE': 'Asia/Dubai',
+        'GB': 'Europe/London',
+        'US': 'America/New_York',
+        'UY': 'America/Montevideo',
+        'UZ': 'Asia/Tashkent',
+        'VU': 'Pacific/Efate',
+        'VE': 'America/Caracas',
+        'VN': 'Asia/Ho_Chi_Minh',
+        'YE': 'Asia/Aden',
+        'ZM': 'Africa/Lusaka',
+        'ZW': 'Africa/Harare',
+        # Diğer ülkeler için zaman dilimlerini burada ekleyebilirsiniz
+    }
+    return time_zones.get(country, 'UTC')  # Varsayılan olarak UTC döner
 
 def get_csrf_token(request):
     token = get_token(request)

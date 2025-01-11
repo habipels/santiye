@@ -4,9 +4,202 @@ from datetime import datetime
 from muhasebe.models import *
 from simple_history.models import HistoricalRecords
 from django.conf import settings
-from django.db import models
-from simple_history.models import HistoricalRecords
-from users.models import calisanlar_kategorisi
+from django.utils import timezone
+import pytz
+import geoip2.database
+from django.http import JsonResponse
+def get_country_from_ip(ip_address):
+    # IP adresine göre ülkeyi döndüren fonksiyon
+    try:
+        with geoip2.database.Reader('geoip/GeoLite2-Country.mmdb') as reader:
+            response = reader.country(ip_address)
+            country = response.country.iso_code  # Ülke kodunu alıyoruz (örn. 'TR' için Türkiye)
+            return country
+    except geoip2.errors.AddressNotFoundError:
+        return 'Unknown'  # Eğer ülke bulunamazsa 'Unknown' dönebiliriz
+
+def get_time_zone_from_country(country):
+    # Ülke ISO kodlarına göre zaman dilimlerini döndüren harita
+    time_zones = {
+        'AF': 'Asia/Kabul',
+        'AL': 'Europe/Tirane',
+        'DZ': 'Africa/Algiers',
+        'AS': 'Pacific/Pago_Pago',
+        'AD': 'Europe/Andorra',
+        'AO': 'Africa/Luanda',
+        'AR': 'America/Argentina/Buenos_Aires',
+        'AM': 'Asia/Yerevan',
+        'AU': 'Australia/Sydney',
+        'AT': 'Europe/Vienna',
+        'AZ': 'Asia/Baku',
+        'BS': 'America/Nassau',
+        'BH': 'Asia/Bahrain',
+        'BD': 'Asia/Dhaka',
+        'BB': 'America/Barbados',
+        'BY': 'Europe/Minsk',
+        'BE': 'Europe/Brussels',
+        'BZ': 'America/Belize',
+        'BJ': 'Africa/Porto-Novo',
+        'BT': 'Asia/Thimphu',
+        'BO': 'America/La_Paz',
+        'BA': 'Europe/Sarajevo',
+        'BW': 'Africa/Gaborone',
+        'BR': 'America/Sao_Paulo',
+        'BN': 'Asia/Brunei',
+        'BG': 'Europe/Sofia',
+        'BF': 'Africa/Ouagadougou',
+        'BI': 'Africa/Bujumbura',
+        'KH': 'Asia/Phnom_Penh',
+        'CM': 'Africa/Douala',
+        'CA': 'America/Toronto',
+        'CV': 'Atlantic/Cape_Verde',
+        'KY': 'America/Cayman',
+        'CF': 'Africa/Bangui',
+        'TD': 'Africa/Ndjamena',
+        'CL': 'America/Santiago',
+        'CN': 'Asia/Shanghai',
+        'CO': 'America/Bogota',
+        'KM': 'Indian/Comoro',
+        'CG': 'Africa/Brazzaville',
+        'CD': 'Africa/Kinshasa',
+        'CK': 'Pacific/Rarotonga',
+        'CR': 'America/Costa_Rica',
+        'CI': 'Africa/Abidjan',
+        'HR': 'Europe/Zagreb',
+        'CU': 'America/Havana',
+        'CY': 'Asia/Nicosia',
+        'CZ': 'Europe/Prague',
+        'DK': 'Europe/Copenhagen',
+        'DJ': 'Africa/Djibouti',
+        'DM': 'America/Dominica',
+        'DO': 'America/Santo_Domingo',
+        'EC': 'America/Guayaquil',
+        'EG': 'Africa/Cairo',
+        'SV': 'America/El_Salvador',
+        'GQ': 'Africa/Malabo',
+        'ER': 'Africa/Asmara',
+        'EE': 'Europe/Tallinn',
+        'ET': 'Africa/Addis_Ababa',
+        'FJ': 'Pacific/Fiji',
+        'FI': 'Europe/Helsinki',
+        'FR': 'Europe/Paris',
+        'GA': 'Africa/Libreville',
+        'GB': 'Europe/London',
+        'GE': 'Asia/Tbilisi',
+        'GH': 'Africa/Accra',
+        'GR': 'Europe/Athens',
+        'GD': 'America/Grenada',
+        'GT': 'America/Guatemala',
+        'GN': 'Africa/Conakry',
+        'GW': 'Africa/Bissau',
+        'GY': 'America/Guyana',
+        'HT': 'America/Port-au-Prince',
+        'HN': 'America/Tegucigalpa',
+        'HK': 'Asia/Hong_Kong',
+        'HU': 'Europe/Budapest',
+        'IS': 'Atlantic/Reykjavik',
+        'IN': 'Asia/Kolkata',
+        'ID': 'Asia/Jakarta',
+        'IR': 'Asia/Tehran',
+        'IQ': 'Asia/Baghdad',
+        'IE': 'Europe/Dublin',
+        'IL': 'Asia/Jerusalem',
+        'IT': 'Europe/Rome',
+        'JM': 'America/Jamaica',
+        'JP': 'Asia/Tokyo',
+        'JO': 'Asia/Amman',
+        'KZ': 'Asia/Almaty',
+        'KE': 'Africa/Nairobi',
+        'KI': 'Pacific/Tarawa',
+        'KW': 'Asia/Kuwait',
+        'KG': 'Asia/Bishkek',
+        'LA': 'Asia/Vientiane',
+        'LV': 'Europe/Riga',
+        'LB': 'Asia/Beirut',
+        'LS': 'Africa/Maseru',
+        'LR': 'Africa/Monrovia',
+        'LY': 'Africa/Tripoli',
+        'LT': 'Europe/Vilnius',
+        'LU': 'Europe/Luxembourg',
+        'MO': 'Asia/Macau',
+        'MK': 'Europe/Skopje',
+        'MG': 'Indian/Antananarivo',
+        'MW': 'Africa/Blantyre',
+        'MY': 'Asia/Kuala_Lumpur',
+        'MV': 'Indian/Maldives',
+        'ML': 'Africa/Bamako',
+        'MT': 'Europe/Malta',
+        'MH': 'Pacific/Majuro',
+        'MQ': 'America/Martinique',
+        'MR': 'Africa/Nouakchott',
+        'MU': 'Indian/Mauritius',
+        'YT': 'Indian/Mayotte',
+        'MX': 'America/Mexico_City',
+        'FM': 'Pacific/Guam',
+        'MD': 'Europe/Chisinau',
+        'MC': 'Europe/Monaco',
+        'MN': 'Asia/Ulaanbaatar',
+        'ME': 'Europe/Belgrade',
+        'MS': 'America/Port_of_Spain',
+        'MA': 'Africa/Casablanca',
+        'MZ': 'Africa/Maputo',
+        'MM': 'Asia/Yangon',
+        'MW': 'Africa/Blantyre',
+        'NA': 'Africa/Windhoek',
+        'NP': 'Asia/Kathmandu',
+        'NI': 'America/Managua',
+        'NE': 'Africa/Niamey',
+        'NG': 'Africa/Lagos',
+        'NO': 'Europe/Oslo',
+        'NP': 'Asia/Kathmandu',
+        'PK': 'Asia/Karachi',
+        'PA': 'America/Panama',
+        'PG': 'Pacific/Port_Moresby',
+        'PY': 'America/Asuncion',
+        'PE': 'America/Lima',
+        'PH': 'Asia/Manila',
+        'PL': 'Europe/Warsaw',
+        'PT': 'Europe/Lisbon',
+        'PR': 'America/Puerto_Rico',
+        'QA': 'Asia/Qatar',
+        'RO': 'Europe/Bucharest',
+        'RU': 'Europe/Moscow',
+        'RW': 'Africa/Kigali',
+        'SA': 'Asia/Riyadh',
+        'RS': 'Europe/Belgrade',
+        'SC': 'Indian/Mahe',
+        'SL': 'Africa/Freetown',
+        'SG': 'Asia/Singapore',
+        'SK': 'Europe/Bratislava',
+        'SI': 'Europe/Ljubljana',
+        'SE': 'Europe/Stockholm',
+        'CH': 'Europe/Zurich',
+        'SY': 'Asia/Damascus',
+        'TJ': 'Asia/Dushanbe',
+        'TH': 'Asia/Bangkok',
+        'TG': 'Africa/Lome',
+        'TO': 'Pacific/Tongatapu',
+        'TT': 'America/Port_of_Spain',
+        'TN': 'Africa/Tunis',
+        'TR': 'Europe/Istanbul',
+        'TM': 'Asia/Ashgabat',
+        'UG': 'Africa/Kampala',
+        'UA': 'Europe/Kiev',
+        'AE': 'Asia/Dubai',
+        'GB': 'Europe/London',
+        'US': 'America/New_York',
+        'UY': 'America/Montevideo',
+        'UZ': 'Asia/Tashkent',
+        'VU': 'Pacific/Efate',
+        'VE': 'America/Caracas',
+        'VN': 'Asia/Ho_Chi_Minh',
+        'YE': 'Asia/Aden',
+        'ZM': 'Africa/Lusaka',
+        'ZW': 'Africa/Harare',
+        # Diğer ülkeler için zaman dilimlerini burada ekleyebilirsiniz
+    }
+    return time_zones.get(country, 'UTC')  # Varsayılan olarak UTC döner
+
 class proje_tipi(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Tipi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     Proje_tipi_adi = models.CharField(max_length=400,verbose_name="Proje Tipi Adı",blank=True,null=True)
@@ -15,12 +208,35 @@ class proje_tipi(models.Model):
     durum_bilgisi = models.BooleanField(default=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(proje_tipi, self).save(*args, **kwargs)
+
 class birimler(models.Model):
     Proje_tipi_adi = models.CharField(max_length=400,verbose_name="Birim  Adı",blank=True,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     durum_bilgisi = models.BooleanField(default=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(birimler, self).save(*args, **kwargs)
+
 class bina_goruntuleri(models.Model):
     isimi = models.CharField(max_length=400,verbose_name="Görüntü Adı",blank=True,null=True)
     ondden_goruntu = models.FileField(upload_to='bina_goruntuleri/',verbose_name="Önden Görüntü",blank=True,null=True)
@@ -31,6 +247,17 @@ class bina_goruntuleri(models.Model):
     alttan_goruntu = models.FileField(upload_to='bina_goruntuleri/',verbose_name="Alttan Görüntü",blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(bina_goruntuleri, self).save(*args, **kwargs)
 
 class santiye(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -43,6 +270,17 @@ class santiye(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(santiye, self).save(*args, **kwargs)
+
 class santiye_sablonlari(models.Model):
     status=(("0","0"),("1","1"),("2","2"))
 
@@ -54,6 +292,17 @@ class santiye_sablonlari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(santiye_sablonlari, self).save(*args, **kwargs)
+
 class sanytiye_sablon_bolumleri(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -62,6 +311,18 @@ class sanytiye_sablon_bolumleri(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(sanytiye_sablon_bolumleri, self).save(*args, **kwargs)
+
 class santiye_imalat_kalemleri(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -71,6 +332,18 @@ class santiye_imalat_kalemleri(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(santiye_imalat_kalemleri, self).save(*args, **kwargs)
+
 class imalat_kalemleri_imalat_detaylari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -79,6 +352,17 @@ class imalat_kalemleri_imalat_detaylari(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(imalat_kalemleri_imalat_detaylari, self).save(*args, **kwargs)
 
 class bloglar(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -90,6 +374,18 @@ class bloglar(models.Model):
     bitis_tarihi = models.DateTimeField(default=datetime.now,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(bloglar, self).save(*args, **kwargs)
+
 class checkdaireleri(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -100,6 +396,18 @@ class checkdaireleri(models.Model):
     genel_notlar = models.TextField()
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(checkdaireleri, self).save(*args, **kwargs)
+
 class imalat_daire_balama(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -115,12 +423,35 @@ class imalat_daire_balama(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(imalat_daire_balama, self).save(*args, **kwargs)
+
 class daire_resimleri_chjeckdaireleri(models.Model):
     daire_bilgisi = models.ForeignKey(checkdaireleri,verbose_name="Daire Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     resim = models.FileField(upload_to='daire_resimleri/',verbose_name="Resim Adı",blank=True,null=True)
     resim_aciklamasi = models.CharField(max_length=200,verbose_name="Resim Açıklaması", blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(daire_resimleri_chjeckdaireleri, self).save(*args, **kwargs)
+
 class blog_ortak_alan_ve_cepheleri(models.Model):
     status=(("0","0"),("1","1"),("2","2"))
     genel_icerik = (("0","0"),("1","1"),("2","2"),("3","3"))
@@ -131,6 +462,18 @@ class blog_ortak_alan_ve_cepheleri(models.Model):
     bolum_icerigi = models.CharField(max_length=200, default="0",choices=status,verbose_name="Bolum İçeriği")
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(blog_ortak_alan_ve_cepheleri, self).save(*args, **kwargs)
+
 class daire_bilgisi(models.Model):
     daire_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     blog_bilgisi = models.ForeignKey(bloglar,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -140,6 +483,18 @@ class daire_bilgisi(models.Model):
     metre_kare_brut = models.FloatField(default = 1,verbose_name="Metre Kare ")
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(daire_bilgisi, self).save(*args, **kwargs)
+
 class musteri_bilgisi(models.Model):
     musteri_kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     musteri_adi = models.CharField(max_length=200,verbose_name="Müşteri Adı ", blank=True,null=True)
@@ -148,6 +503,18 @@ class musteri_bilgisi(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(musteri_bilgisi, self).save(*args, **kwargs)
+
 class musteri_notlari(models.Model):
     kime_ait = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
     musterisi = models.ForeignKey(musteri_bilgisi, verbose_name="Müşterisi", blank=True, null=True, on_delete=models.SET_NULL)
@@ -157,6 +524,18 @@ class musteri_notlari(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(musteri_notlari, self).save(*args, **kwargs)
+
 class talep_ve_sikayet(models.Model):
     talep_sikayet_kategorisi =(
         ('0', '0'), #talep
@@ -178,6 +557,18 @@ class talep_ve_sikayet(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(talep_ve_sikayet, self).save(*args, **kwargs)
+
 class musteri_daire_baglama(models.Model):
     durum_bilgisi =(
         ('0', '0'),
@@ -190,6 +581,18 @@ class musteri_daire_baglama(models.Model):
     durum = models.CharField(max_length=100, choices=durum_bilgisi, default='0')
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(musteri_daire_baglama, self).save(*args, **kwargs)
+
 class musteri_evraklari(models.Model):
     belge_kime_ait = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="belge_kime_ait")
     musterisi = models.ForeignKey(musteri_bilgisi, verbose_name="Müşterisi", blank=True, null=True, on_delete=models.SET_NULL)
@@ -199,6 +602,17 @@ class musteri_evraklari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(musteri_evraklari, self).save(*args, **kwargs)
 
 class teklifler(models.Model):
     durum_bilgisi =(
@@ -213,6 +627,18 @@ class teklifler(models.Model):
     durum = models.CharField(max_length=100, choices=durum_bilgisi, default='0')
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(teklifler, self).save(*args, **kwargs)
+
 class teklif_icerikleri(models.Model):
     kime_ait = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     hangi_teklif = models.ForeignKey(teklifler,verbose_name="Teklif ",blank=True,null=True,on_delete=models.SET_NULL)
@@ -225,6 +651,18 @@ class teklif_icerikleri(models.Model):
     genel_toplam = models.FloatField(default=0,verbose_name="Genel Toplam")
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(teklif_icerikleri, self).save(*args, **kwargs)
+
 class santiye_kalemleri(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -237,6 +675,18 @@ class santiye_kalemleri(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(santiye_kalemleri, self).save(*args, **kwargs)
+
 class katman(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     proje_santiye_Ait = models.ForeignKey(santiye,verbose_name="santiye Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -245,6 +695,17 @@ class katman(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(katman, self).save(*args, **kwargs)
 
 class santiye_kalemlerin_dagilisi (models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.CASCADE)
@@ -270,6 +731,7 @@ class proje_dosyalari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(projeler,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     dosya = models.FileField(upload_to='proje_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
 class taseronlar(models.Model):
     taseron_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     taseron_adi = models.CharField(max_length = 200,verbose_name="Taşeron Adı",blank = True,null = True)
@@ -281,6 +743,16 @@ class taseronlar(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(taseronlar, self).save(*args, **kwargs)
 
 class taseron_sozlesme_dosyalari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(taseronlar,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -292,6 +764,18 @@ class taseron_sozlesme_dosyalari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(taseron_sozlesme_dosyalari, self).save(*args, **kwargs)
+
 class ust_yuklenici(models.Model):
     taseron_ait_bilgisi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     taseron_adi = models.CharField(max_length = 200,verbose_name="Taşeron Adı",blank = True,null = True)
@@ -302,6 +786,16 @@ class ust_yuklenici(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(ust_yuklenici, self).save(*args, **kwargs)
 
 class ust_yuklenici_dosyalari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(ust_yuklenici,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -314,14 +808,23 @@ class ust_yuklenici_dosyalari(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(ust_yuklenici_dosyalari, self).save(*args, **kwargs)
+
 class cari_taseron_baglantisi(models.Model):
     gelir_kime_ait_oldugu = models.ForeignKey(taseronlar,verbose_name="Gelir Kategorisi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     cari_bilgisi = models.ForeignKey(cari,verbose_name="Cari Bilgisi",blank=True,null=True,on_delete=models.SET_NULL)
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
-
 
 class taseron_hakedisles(models.Model):
     proje_ait_bilgisi = models.ForeignKey(taseronlar,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -334,6 +837,17 @@ class taseron_hakedisles(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(taseron_hakedisles, self).save(*args, **kwargs)
+
 class klasorler(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     klasor_adi = models.CharField(max_length = 200,verbose_name="Klasor Adı",blank = True,null = True)
@@ -341,6 +855,17 @@ class klasorler(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(klasorler, self).save(*args, **kwargs)
 
 class klasor_dosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -352,6 +877,17 @@ class klasor_dosyalari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(klasor_dosyalari, self).save(*args, **kwargs)
 
 class Event(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -366,7 +902,16 @@ class Event(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
-
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(Event, self).save(*args, **kwargs)
 
 class YapilacakPlanlari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
@@ -380,13 +925,34 @@ class YapilacakPlanlari(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
-
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(YapilacakPlanlari, self).save(*args, **kwargs)
 
 class YapilacakDosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi")
     proje_ait_bilgisi = models.ForeignKey(YapilacakPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="todo_sahibi")
     dosya = models.FileField(upload_to='yapilacak_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(YapilacakDosyalari, self).save(*args, **kwargs)
+
 class IsplaniPlanlari(models.Model):
     proje_ait_bilgisi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
     katman = models.ForeignKey(katman, verbose_name="Proje KAtmanı", blank=True, null=True, on_delete=models.SET_NULL)
@@ -403,6 +969,18 @@ class IsplaniPlanlari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(IsplaniPlanlari, self).save(*args, **kwargs)
+
 class IsplaniPlanlariIlerleme(models.Model):
     proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
     teslim_tarihi = models.DateField(verbose_name="Proje Tarihi", blank=True, null=True)
@@ -412,12 +990,36 @@ class IsplaniPlanlariIlerleme(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(IsplaniPlanlariIlerleme, self).save(*args, **kwargs)
+
 class IsplaniIlerlemeDosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_ilerleme_dosyalari")
     yapan_kisi = models.ForeignKey(CustomUser, verbose_name="Yapan Kişi", related_name="isplani_ilerleme_dosyalari_yapanlar", blank=True, null=True, on_delete=models.SET_NULL)
     proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlariIlerleme, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_ilerleme_dosyalari")
     dosya = models.FileField(upload_to='isplani_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(IsplaniIlerlemeDosyalari, self).save(*args, **kwargs)
+
 class IsplaniDosyalari(models.Model):
     dosya_sahibi = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")
     proje_ait_bilgisi = models.ForeignKey(IsplaniPlanlari, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL, related_name="dosya_sahibi_isplani_dosyalari")
@@ -425,6 +1027,16 @@ class IsplaniDosyalari(models.Model):
     dosya = models.FileField(upload_to='isplani_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(IsplaniDosyalari, self).save(*args, **kwargs)
 
 class gantt_olayi(models.Model):
     gantt_sahibii = models.ForeignKey(CustomUser, verbose_name="Gantt Sahibi", blank=True, null=True, on_delete=models.SET_NULL, related_name="gantt_sahibii")
@@ -433,6 +1045,18 @@ class gantt_olayi(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(gantt_olayi, self).save(*args, **kwargs)
+
 class gantt_verileri(models.Model):
     gantt_sahibi = models.ForeignKey(CustomUser, verbose_name="Gantt Sahibi", blank=True, null=True, on_delete=models.SET_NULL, related_name="gantt_sahibi")
     name = models.CharField(max_length=200,verbose_name="Gantt Adı",blank=True,null=True)
@@ -458,6 +1082,16 @@ class gantt_verileri(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(gantt_verileri, self).save(*args, **kwargs)
 
 class genel_rapor(models.Model):
     Kayip_gun_sabepleri = (
@@ -483,6 +1117,17 @@ class genel_rapor(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(genel_rapor, self).save(*args, **kwargs)
+
 class gelen_malzeme(models.Model):
     proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -490,6 +1135,18 @@ class gelen_malzeme(models.Model):
     urun_adeti = models.FloatField(blank=True,null=True,verbose_name="Ürün Adeti")
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(gelen_malzeme, self).save(*args, **kwargs)
+
 class genel_personel(models.Model):
     proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -497,6 +1154,18 @@ class genel_personel(models.Model):
     personel_sayisi = models.FloatField(blank=True,null=True,verbose_name="Personel Sayısı")
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(genel_personel, self).save(*args, **kwargs)
+
 class genel_imalat(models.Model):
     proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -504,12 +1173,36 @@ class genel_imalat(models.Model):
     imalat_aciklama = models.TextField()
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(genel_imalat, self).save(*args, **kwargs)
+
 class genel_aciklamalar(models.Model):
     proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     genel_aciklama =  models.TextField()
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(genel_aciklamalar, self).save(*args, **kwargs)
+
 class genel_hava_durumu(models.Model):
     proje_ait_bilgisi = models.ForeignKey(genel_rapor,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     hangi_rapor = models.ForeignKey(CustomUser,verbose_name="Proje Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
@@ -517,6 +1210,17 @@ class genel_hava_durumu(models.Model):
     hava_durumu_ruzgar = models.FloatField(blank=True,null=True,verbose_name="hava_durumu rüzgar") 
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(genel_hava_durumu, self).save(*args, **kwargs)
 
 class daire_evraklari(models.Model):
     evrak_kime_ait = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
@@ -526,3 +1230,14 @@ class daire_evraklari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+    def save(self, *args, **kwargs):
+        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
+        if ip_address == '127.0.0.1':
+            ip_address = '8.8.8.8'
+        country = get_country_from_ip(ip_address)
+        country_time_zone = get_time_zone_from_country(country)
+        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
+        if local_time:
+            self.kayit_tarihi = local_time
+        super(daire_evraklari, self).save(*args, **kwargs)

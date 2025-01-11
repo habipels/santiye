@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 app_name = "main"
 urlpatterns = [#
+    path('get-country/', views.get_country, name='get-country'),
     path("get-csrf-token/", views.get_csrf_token, name="get_csrf_token"),
     path("", views.homepage, name="homepage"),
     path("home", views.ana_sayfa, name="ana_sayfa"),

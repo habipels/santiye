@@ -9,13 +9,18 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 DEPLOY__ = 0
 if DEPLOY__:
     from pathlib import Path
     import os
+    
     # Build paths inside the project like this: BASE_DIR / 'subdir'.
     BASE_DIR = Path(__file__).resolve().parent.parent
+    GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
+
+
 
 
     # Quick-start development settings - unsuitable for production
@@ -218,7 +223,7 @@ else:
     import os
     # Build paths inside the project like this: BASE_DIR / 'subdir'.
     BASE_DIR = Path(__file__).resolve().parent.parent
-
+    GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
 
     # Quick-start development settings - unsuitable for production
     # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
