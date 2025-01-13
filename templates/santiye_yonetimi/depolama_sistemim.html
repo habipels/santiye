@@ -703,7 +703,12 @@
             
         </div>
                                                     </div>
-                                                    <a href="/{{dil}}{% url 'main:klasore_gir' i.id i.klasor_adi %}">
+                                                    {% if i.klasor_adi %}
+                                                        <a href="/{{dil}}{% url 'main:klasore_gir' i.id i.klasor_adi %}">
+                                                    {% else %}
+                                                    <a href="/{{dil}}{% url 'main:klasore_gir' i.id 'untitle' %}">
+                                                    {% endif %}
+                                                    
                                                     <div class="text-center">
                                                         <div class="mb-2">
                                                             <i class="ri-folder-2-fill align-bottom text-warning display-5"></i>

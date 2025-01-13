@@ -4282,7 +4282,7 @@ def gider_gelir_ekleme(request):
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
                 if a.izinler.gider_faturasi_kesme_izni or a.izinler.gelir_faturasi_kesme_izni:
-                    user = request.user
+                    user = request.user.kullanicilar_db
                 else:
                     return redirect("main:yetkisiz")
             else:
@@ -4341,7 +4341,7 @@ def gider_gelir_etiketekleme(request):
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
                 if a.izinler.gider_faturasi_kesme_izni or a.izinler.gelir_faturasi_kesme_izni:
-                    user = request.user
+                    user = request.user.kullanicilar_db
                 else:
                     return redirect("main:yetkisiz")
             else:

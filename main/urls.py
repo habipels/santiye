@@ -157,7 +157,7 @@ urlpatterns = [#
     path("storage/savemydir", views.dosya_geri_getir, name="dosya_geri_getir"),
     path("control/storage/savemydir/<str:hash>", views.dosya_geri_getir_2, name="dosya_geri_getir_2"),
     #
-    path("storage/mydir/<int:id>/<str:slug>/", views.klasore_gir, name="klasore_gir"),
+    path("storage/mydir/files/<int:id>/<str:slug>/", views.klasore_gir, name="klasore_gir"),
     path("control/storage/mydir/<int:id>/<str:slug>/<str:hash>", views.klasore_gir_2, name="klasore_gir_2"),
     path("storage/addfile", views.dosya_ekle, name="dosya_ekle"),
     path("control/storage/addfile/<str:hash>", views.dosya_ekle_2, name="dosya_ekle_2"),
