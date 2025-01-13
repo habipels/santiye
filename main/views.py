@@ -24,7 +24,7 @@ def get_client_ip(request):
     return ip
 import geoip2.database
 from django.http import JsonResponse
-
+import pytz
 
 def get_country(request):
     # Kullanıcının IP adresini al (varsayılan olarak, Django'dan gelen IP'yi alabilirsiniz)
@@ -234,7 +234,26 @@ def get_time_zone_from_country(country):
         # Diğer ülkeler için zaman dilimlerini burada ekleyebilirsiniz
     }
     return time_zones.get(country, 'UTC')  # Varsayılan olarak UTC döner
+def get_kayit_tarihi_from_request(request):
+    ip_address = request.META.get('REMOTE_ADDR', None)
+    if ip_address == '127.0.0.1':
+        ip_address = '78.173.5.100'  # Lokal IP için genel bir IP kullan
 
+    try:
+        with geoip2.database.Reader('geoip/GeoLite2-Country.mmdb') as reader:
+            response = reader.country(ip_address)
+            country = response.country.iso_code
+            country_time_zone = get_time_zone_from_country(country)
+            # Yerel zaman dilimi
+            tz = pytz.timezone(country_time_zone)
+            
+            # Zamanı UTC'den yerel zaman dilimine dönüştürme
+            utc_time = timezone.now()  # UTC zamanı alıyoruz
+            local_time = utc_time.astimezone(tz)  #
+            print(local_time,pytz.timezone(country_time_zone))
+            return local_time
+    except Exception:
+        return timezone.now()  # Hata durumunda UTC döndür
 def get_csrf_token(request):
     token = get_token(request)
     #print(token)
@@ -770,43 +789,43 @@ def site_ayari_kaydet(request):
     if request.POST:
         data_layout = request.POST.get("data-layout")
         if data_layout:
-            layout.objects.create(isim =data_layout,data_layout =data_layout )
+            layout.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_layout,data_layout =data_layout )
         data_bs_theme = request.POST.get("data-bs-theme")
         if data_bs_theme:
-            color_sheme.objects.create(isim =data_bs_theme,data_bs_theme =data_bs_theme )
+            color_sheme.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_bs_theme,data_bs_theme =data_bs_theme )
         data_sidebar_visibility = request.POST.get("data-sidebar-visibility")
         if data_sidebar_visibility :
-            side_bar_gorunum.objects.create(isim =data_sidebar_visibility,data_sidebar_visibility =data_sidebar_visibility )
+            side_bar_gorunum.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_sidebar_visibility,data_sidebar_visibility =data_sidebar_visibility )
         data_layout_width = request.POST.get("data-layout-width")
         if data_layout_width:
-            layout_uzunlugu.objects.create(isim =data_layout_width,data_layout_width =data_layout_width )
+            layout_uzunlugu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_layout_width,data_layout_width =data_layout_width )
         data_layout_position = request.POST.get("data-layout-position")
         if data_layout_position:
-            layout_pozisyonu.objects.create(isim =data_layout_position,data_layout_position =data_layout_position )
+            layout_pozisyonu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_layout_position,data_layout_position =data_layout_position )
         data_topbar = request.POST.get("data-topbar")
         if data_topbar:
-            topbar_color.objects.create(isim =data_topbar,data_topbar =data_topbar )
+            topbar_color.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_topbar,data_topbar =data_topbar )
         data_sidebar_size = request.POST.get("data-sidebar-size")
         if data_sidebar_size:
-            sidebar_boyutu.objects.create(isim =data_sidebar_size,data_sidebar_size =data_sidebar_size )
+            sidebar_boyutu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_sidebar_size,data_sidebar_size =data_sidebar_size )
         data_layout_style = request.POST.get("data-layout-style")
         if data_layout_style:
-            layout_sitili.objects.create(isim =data_layout_style,data_layout_style =data_layout_style )
+            layout_sitili.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_layout_style,data_layout_style =data_layout_style )
         data_sidebar = request.POST.get("data-sidebar")
         if data_sidebar:
-            sidebar_rengi.objects.create(isim =data_sidebar,data_sidebar =data_sidebar )
+            sidebar_rengi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),isim =data_sidebar,data_sidebar =data_sidebar )
         dark_logo = request.FILES.get("dark_logo")
 
         site_adi_bilgisi = request.POST.get("site_adi")
         footeryazisi = request.POST.get("footeryazisi")
         if site_adi_bilgisi:
-            site_adi.objects.create(site_adi_sekme_tr = site_adi_bilgisi)
+            site_adi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),site_adi_sekme_tr = site_adi_bilgisi)
         if footeryazisi:
-            site_adi.objects.create(footer = footeryazisi)
+            site_adi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),footer = footeryazisi)
         gideretiketi = request.POST.get("gideretiketi")
         geliretiketi = request.POST.get("gelir_etiketi")
         if gideretiketi and geliretiketi :
-            faturalardaki_gelir_gider_etiketi.objects.create(gider_etiketi = gideretiketi,gelir_etiketi = geliretiketi )
+            faturalardaki_gelir_gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_etiketi = gideretiketi,gelir_etiketi = geliretiketi )
 
 
         if dark_logo:
@@ -1140,21 +1159,21 @@ def proje_ekleme(request):
         if super_admin_kontrolu(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             proje_tip_adi   = request.POST.get("yetkili_adi")
-            proje_tipi.objects.create(proje_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,Proje_tipi_adi = proje_tip_adi)
+            proje_tipi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,Proje_tipi_adi = proje_tip_adi)
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
                     if a.izinler.projeler_olusturma:
                         proje_tip_adi   = request.POST.get("yetkili_adi")
-                        proje_tipi.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,Proje_tipi_adi = proje_tip_adi)
+                        proje_tipi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user.kullanicilar_db,Proje_tipi_adi = proje_tip_adi)
                     else:
                         return redirect("main:yetkisiz")
                 else:
                     return redirect("main:yetkisiz")
             else:
                 proje_tip_adi   = request.POST.get("yetkili_adi")
-                proje_tipi.objects.create(proje_ait_bilgisi = request.user,Proje_tipi_adi = proje_tip_adi)
+                proje_tipi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user,Proje_tipi_adi = proje_tip_adi)
     return redirect("main:proje_tipi_")
 #Proje Adı Silme
 def proje_Adi_sil(request):
@@ -1374,7 +1393,7 @@ def blog_ekle(request):
         kat_sayisi = request.POST.get("kat_sayisi")
         baslangictarihi = request.POST.get("baslangictarihi")
         bitistarihi =request.POST.get("bitistarihi")
-        bloglar.objects.create(
+        bloglar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             proje_ait_bilgisi = get_object_or_404(santiye,id = santiye_bilgisi).proje_ait_bilgisi,
             proje_santiye_Ait = get_object_or_404(santiye,id = santiye_bilgisi),
             blog_adi = blok_adi,kat_sayisi = kat_sayisi,
@@ -1439,7 +1458,7 @@ def santiye_ekleme_sahibi(request):
                             projetipi = request.POST.get("projetipi")
                             proje_adi = request.POST.get("yetkili_adi")
                             resim_secme = request.POST.get("options")
-                            a = santiye.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                            a = santiye.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user.kullanicilar_db,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
                                                 proje_adi = proje_adi,bina_goruntuleri_aitlik = get_object_or_none(bina_goruntuleri,id = resim_secme)
                                     )
                                                 
@@ -1451,7 +1470,7 @@ def santiye_ekleme_sahibi(request):
                 projetipi = request.POST.get("projetipi")
                 proje_adi = request.POST.get("yetkili_adi")
                 resim_secme = request.POST.get("options")
-                a = santiye.objects.create(proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                a = santiye.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
                                     proje_adi = proje_adi,bina_goruntuleri_aitlik = get_object_or_none(bina_goruntuleri,id = resim_secme)
                                     )
     return redirect("main:santiye_projesi_ekle_")
@@ -1466,7 +1485,7 @@ def santiye_ekleme_sahibi_2(request,hash):
             projetipi = request.POST.get("projetipi")
             proje_adi = request.POST.get("yetkili_adi")
 
-            a = santiye.objects.create(proje_ait_bilgisi = users,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+            a = santiye.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = users,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
                                     proje_adi = proje_adi
                                     )
         else:
@@ -1477,7 +1496,7 @@ def santiye_ekleme_sahibi_2(request,hash):
                             projetipi = request.POST.get("projetipi")
                             proje_adi = request.POST.get("yetkili_adi")
 
-                            a = santiye.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                            a = santiye.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user.kullanicilar_db,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
                                                 proje_adi = proje_adi
                                                 )
                     else:
@@ -1488,7 +1507,7 @@ def santiye_ekleme_sahibi_2(request,hash):
                 projetipi = request.POST.get("projetipi")
                 proje_adi = request.POST.get("yetkili_adi")
 
-                a = santiye.objects.create(proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+                a = santiye.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user,proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
                                     proje_adi = proje_adi
                                     )
     return redirect("main:santiye_projesi_ekle_2",hash)
@@ -1508,7 +1527,7 @@ def santiye_ekleme_super_admin(request,id):
         bitis_tarihi = request.POST.get("bitis_tarihi")
         latitude = request.POST.get("latitude")
         longitude = request.POST.get("longitude")
-        a = santiye.objects.create(proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
+        a = santiye.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),proje_tipi = get_object_or_404(proje_tipi,id = projetipi),
                                proje_adi = proje_adi,baslangic_tarihi = baslangic_tarihi,
                                tahmini_bitis_tarihi = bitis_tarihi,lat = latitude,lon = longitude
                                )
@@ -1655,7 +1674,7 @@ def santiyeye_kalem_ekle(request):
                         birim_bilgisi = request.POST.get("birim_bilgisi")
                         kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
                         id = bloglar.objects.filter(id__in = projetipi).first()
-                        kalem = santiye_kalemleri.objects.create(
+                        kalem = santiye_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             proje_ait_bilgisi = request.user.kullanicilar_db,
                             proje_santiye_Ait =id.proje_santiye_Ait,
                             kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
@@ -1667,7 +1686,7 @@ def santiyeye_kalem_ekle(request):
                             blog_lar = bloglar.objects.filter(id__in = projetipi)
                             for i in blog_lar:
                                 for j in range(0,int(i.kat_sayisi)):
-                                    santiye_kalemlerin_dagilisi.objects.create(
+                                    santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                         proje_ait_bilgisi = request.user.kullanicilar_db,
                                         proje_santiye_Ait = id.proje_santiye_Ait,
                                         kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -1677,7 +1696,7 @@ def santiyeye_kalem_ekle(request):
                             blog_lar = bloglar.objects.filter(id__in = projetipi)
                             for i in blog_lar:
                                 for j in range(0,int(i.kat_sayisi)):
-                                    santiye_kalemlerin_dagilisi.objects.create(
+                                    santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                         proje_ait_bilgisi = request.user.kullanicilar_db,
                                         proje_santiye_Ait = id.proje_santiye_Ait,
                                         kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -1688,7 +1707,7 @@ def santiyeye_kalem_ekle(request):
                             blog_lar = bloglar.objects.filter(id__in = projetipi)
                             for i in blog_lar:
                                 for j in range(0,4):
-                                    santiye_kalemlerin_dagilisi.objects.create(
+                                    santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                         proje_ait_bilgisi = request.user.kullanicilar_db,
                                         proje_santiye_Ait = id.proje_santiye_Ait,
                                         kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -1708,7 +1727,7 @@ def santiyeye_kalem_ekle(request):
                 birim_bilgisi = request.POST.get("birim_bilgisi")
                 kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
                 id = bloglar.objects.filter(id__in = projetipi).first()
-                kalem = santiye_kalemleri.objects.create(
+                kalem = santiye_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     proje_ait_bilgisi = request.user,
                     proje_santiye_Ait =id.proje_santiye_Ait,
                     kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
@@ -1720,7 +1739,7 @@ def santiyeye_kalem_ekle(request):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,int(i.kat_sayisi)):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
                                 proje_santiye_Ait = id.proje_santiye_Ait,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -1730,7 +1749,7 @@ def santiyeye_kalem_ekle(request):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,int(i.kat_sayisi)):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
                                 proje_santiye_Ait = id.proje_santiye_Ait,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -1741,7 +1760,7 @@ def santiyeye_kalem_ekle(request):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,4):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
                                 proje_santiye_Ait = id.proje_santiye_Ait,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -1822,7 +1841,7 @@ def santiye_kalemleri_duzenle(request):
                                 blog_lar = bloglar.objects.filter(id__in = projetipi)
                                 for i in blog_lar:
                                     for j in range(0,int(i.kat_sayisi)):
-                                        santiye_kalemlerin_dagilisi.objects.create(
+                                        santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                             proje_ait_bilgisi = request.user.kullanicilar_db,
                                             proje_santiye_Ait_id = geri_don,
                                             kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
@@ -1832,7 +1851,7 @@ def santiye_kalemleri_duzenle(request):
                                 blog_lar = bloglar.objects.filter(id__in = projetipi)
                                 for i in blog_lar:
                                     for j in range(0,int(i.kat_sayisi)):
-                                        santiye_kalemlerin_dagilisi.objects.create(
+                                        santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                             proje_ait_bilgisi = request.user.kullanicilar_db,
                                             proje_santiye_Ait_id = geri_don,
                                             kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
@@ -1843,7 +1862,7 @@ def santiye_kalemleri_duzenle(request):
                                 blog_lar = bloglar.objects.filter(id__in = projetipi)
                                 for i in blog_lar:
                                     for j in range(0,4):
-                                        santiye_kalemlerin_dagilisi.objects.create(
+                                        santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                             proje_ait_bilgisi = request.user.kullanicilar_db,
                                             proje_santiye_Ait_id = geri_don,
                                             kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
@@ -1864,7 +1883,7 @@ def santiye_kalemleri_duzenle(request):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,int(i.kat_sayisi)):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
                                 proje_santiye_Ait_id = geri_don,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
@@ -1874,7 +1893,7 @@ def santiye_kalemleri_duzenle(request):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,int(i.kat_sayisi)):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
                                 proje_santiye_Ait_id = geri_don,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId),
@@ -1885,7 +1904,7 @@ def santiye_kalemleri_duzenle(request):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,4):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
                                 proje_santiye_Ait_id = geri_don,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
@@ -2180,7 +2199,7 @@ def santiye_kalem_ekle_admin(request,id):
         tutar = request.POST.get("tutar")
         birim_bilgisi = request.POST.get("birim_bilgisi")
         
-        kalem = santiye_kalemleri.objects.create(
+        kalem = santiye_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(CustomUser,id = id),
                 proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
                 kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
@@ -2192,7 +2211,7 @@ def santiye_kalem_ekle_admin(request,id):
         kat_sayisi = int(get_object_or_404(santiye,id =projetipi ).kat_sayisi)
         for i in blog_lar:
             for j in range(0,kat_sayisi):
-                santiye_kalemlerin_dagilisi.objects.create(
+                santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     proje_ait_bilgisi = get_object_or_404(CustomUser,id = id) ,
                     proje_santiye_Ait = get_object_or_404(santiye,id =projetipi ),
                     kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -2267,7 +2286,7 @@ def proje_ekle(request):
             new_project.blog_bilgisi.add(*bloglar_bilgisi)
             images = request.FILES.getlist('file')
             for images in images:
-                proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                proje_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
 
     return redirect("main:projeler_sayfasi")
 
@@ -2299,7 +2318,7 @@ def proje_ekle_admin(request,id):
 
         images = request.FILES.getlist('file')
         for images in images:
-            proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+            proje_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
         return redirect("main:projeler_sayfasi")
 
     return render(request,"santiye_yonetimi/proje_ekle_admin.html",content)
@@ -2342,7 +2361,7 @@ def proje_duzenle_bilgi(request):
             z.blog_bilgisi.add(*bloglar_bilgisi)
             images = request.FILES.getlist('file')
             for images in images:
-                proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
+                proje_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
         else:
             yetkili_adi = request.POST.get("yetkili_adi")
             tarih_bilgisi = request.POST.get("tarih_bilgisi")
@@ -2367,7 +2386,7 @@ def proje_duzenle_bilgi(request):
             z.blog_bilgisi.add(*bloglar_bilgisi)
             images = request.FILES.getlist('file')
             for images in images:
-                proje_dosyalari.objects.create(dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
+                proje_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosya=images,proje_ait_bilgisi = get_object_or_404(projeler,id = buttonIdInput))  # Urun_resimleri modeline resimleri kaydet
     return redirect("main:projeler_sayfasi")
 #proje düzenleme
 
@@ -2523,7 +2542,7 @@ def taseron_ekle_2(request,hash):
                 bloglar_bilgisi = []
                 for i in blogbilgisi:
                     liste = str(i).split(",")
-                    proje = projeler.objects.create(proje_ait_bilgisi = users,
+                    proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = users,
                             blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                             kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                             )
@@ -2532,15 +2551,15 @@ def taseron_ekle_2(request,hash):
                 images = request.FILES.getlist('file')
                 isim = 1
                 for images in images:
-                    taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                    taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
-                car = cari.objects.create(
+                car = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     cari_kart_ait_bilgisi = users,
                     cari_adi = taseron_adi,
                     telefon_numarasi = telefonnumarasi,
                     aciklama = aciklama
                 )
-                cari_taseron_baglantisi.objects.create(
+                cari_taseron_baglantisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     gelir_kime_ait_oldugu = get_object_or_404(taseronlar,id = new_project.id ),
                     cari_bilgisi = get_object_or_404(cari,id = car.id)
                 )
@@ -2565,7 +2584,7 @@ def taseron_ekle_2(request,hash):
                         bloglar_bilgisi = []
                         for i in blogbilgisi:
                             liste = str(i).split(",")
-                            proje = projeler.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,
+                            proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user.kullanicilar_db,
                                     blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                                     kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                                     )
@@ -2575,15 +2594,15 @@ def taseron_ekle_2(request,hash):
                         images = request.FILES.getlist('file')
                         isim = 1
                         for images in images:
-                            taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                            taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
-                        car = cari.objects.create(
+                        car = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             cari_kart_ait_bilgisi = request.user.kullanicilar_db,
                             cari_adi = taseron_adi,
                             telefon_numarasi = telefonnumarasi,
                             aciklama = aciklama
                         )
-                        cari_taseron_baglantisi.objects.create(
+                        cari_taseron_baglantisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             gelir_kime_ait_oldugu = get_object_or_404(taseronlar,id = new_project.id ),
                             cari_bilgisi = get_object_or_404(cari,id = car.id)
                         )
@@ -2608,7 +2627,7 @@ def taseron_ekle_2(request,hash):
                 bloglar_bilgisi = []
                 for i in blogbilgisi:
                     liste = str(i).split(",")
-                    proje = projeler.objects.create(proje_ait_bilgisi = request.user,
+                    proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user,
                             blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                             kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                             )
@@ -2617,15 +2636,15 @@ def taseron_ekle_2(request,hash):
                 images = request.FILES.getlist('file')
                 isim = 1
                 for images in images:
-                    taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                    taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
-                car = cari.objects.create(
+                car = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     cari_kart_ait_bilgisi = request.user,
                     cari_adi = taseron_adi,
                     telefon_numarasi = telefonnumarasi,
                     aciklama = aciklama
                 )
-                cari_taseron_baglantisi.objects.create(
+                cari_taseron_baglantisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     gelir_kime_ait_oldugu = get_object_or_404(taseronlar,id = new_project.id ),
                     cari_bilgisi = get_object_or_404(cari,id = car.id)
                 )
@@ -2657,7 +2676,7 @@ def taseron_ekle(request):
                         bloglar_bilgisi = []
                         for i in blogbilgisi:
                             liste = str(i).split(",")
-                            proje = projeler.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,
+                            proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user.kullanicilar_db,
                                     blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                                     kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                                     )
@@ -2667,15 +2686,15 @@ def taseron_ekle(request):
                         images = request.FILES.getlist('file')
                         isim = 1
                         for images in images:
-                            taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                            taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
-                        car = cari.objects.create(
+                        car = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             cari_kart_ait_bilgisi = request.user.kullanicilar_db,
                             cari_adi = taseron_adi,
                             telefon_numarasi = telefonnumarasi,
                             aciklama = aciklama
                         )
-                        cari_taseron_baglantisi.objects.create(
+                        cari_taseron_baglantisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             gelir_kime_ait_oldugu = get_object_or_404(taseronlar,id = new_project.id ),
                             cari_bilgisi = get_object_or_404(cari,id = car.id)
                         )
@@ -2700,7 +2719,7 @@ def taseron_ekle(request):
                 bloglar_bilgisi = []
                 for i in blogbilgisi:
                     liste = str(i).split(",")
-                    proje = projeler.objects.create(proje_ait_bilgisi = request.user,
+                    proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user,
                             blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                             kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                             )
@@ -2709,15 +2728,15 @@ def taseron_ekle(request):
                 images = request.FILES.getlist('file')
                 isim = 1
                 for images in images:
-                    taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                    taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
-                car = cari.objects.create(
+                car = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     cari_kart_ait_bilgisi = request.user,
                     cari_adi = taseron_adi,
                     telefon_numarasi = telefonnumarasi,
                     aciklama = aciklama
                 )
-                cari_taseron_baglantisi.objects.create(
+                cari_taseron_baglantisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     gelir_kime_ait_oldugu = get_object_or_404(taseronlar,id = new_project.id ),
                     cari_bilgisi = get_object_or_404(cari,id = car.id)
                 )
@@ -2744,7 +2763,7 @@ def taseron_ekle_admin(request,id):
             bloglar_bilgisi = []
             for i in blogbilgisi:
                 liste = str(i).split(",")
-                proje = projeler.objects.create(proje_ait_bilgisi__id = id,
+                proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi__id = id,
                         blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                         kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                         )
@@ -2753,15 +2772,15 @@ def taseron_ekle_admin(request,id):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
-            car = cari.objects.create(
+            car = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = id),
                 cari_adi = taseron_adi,
                 telefon_numarasi = telefonnumarasi,
                 aciklama = aciklama
             )
-            cari_taseron_baglantisi.objects.create(
+            cari_taseron_baglantisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 gelir_kime_ait_oldugu = get_object_or_404(taseronlar,id = new_project.id ),
                 cari_bilgisi = get_object_or_404(cari,id = car.id)
             )
@@ -2849,7 +2868,7 @@ def taseron_duzelt_2(request,hash):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
         else:
             if request.user.kullanicilar_db:
@@ -2877,7 +2896,7 @@ def taseron_duzelt_2(request,hash):
                                 #print(j,"geldi")
                                 bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
                             else:
-                                proje = projeler.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,
+                                proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user.kullanicilar_db,
                                         blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                                         kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                                         )
@@ -2887,7 +2906,7 @@ def taseron_duzelt_2(request,hash):
                         images = request.FILES.getlist('file')
                         isim = 1
                         for images in images:
-                            taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                            taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                     else:
                         return redirect("main:yetkisiz")
@@ -2916,7 +2935,7 @@ def taseron_duzelt_2(request,hash):
                         #print(j,"geldi")       
                         bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
                     else:
-                        proje = projeler.objects.create(proje_ait_bilgisi = request.user,
+                        proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user,
                         blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                         kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                         )
@@ -2926,7 +2945,7 @@ def taseron_duzelt_2(request,hash):
                 images = request.FILES.getlist('file')
                 isim = 1
                 for images in images:
-                    taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                    taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
     return redirect("main:taseron_sayfasi_2",hash)
 
@@ -2968,7 +2987,7 @@ def taseron_duzelt(request):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
         else:
             if request.user.kullanicilar_db:
@@ -2996,7 +3015,7 @@ def taseron_duzelt(request):
                                 #print(j,"geldi")
                                 bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
                             else:
-                                proje = projeler.objects.create(proje_ait_bilgisi = request.user.kullanicilar_db,
+                                proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user.kullanicilar_db,
                                         blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                                         kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                                         )
@@ -3006,7 +3025,7 @@ def taseron_duzelt(request):
                         images = request.FILES.getlist('file')
                         isim = 1
                         for images in images:
-                            taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                            taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                     else:
                         return redirect("main:yetkisiz")
@@ -3035,7 +3054,7 @@ def taseron_duzelt(request):
                         #print(j,"geldi")       
                         bloglar_bilgisi.append(projeler.objects.get(id=int(j.id)))
                     else:
-                        proje = projeler.objects.create(proje_ait_bilgisi = request.user,
+                        proje = projeler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = request.user,
                         blog_bilgisi = get_object_or_none(bloglar,id = liste[1]),
                         kalem_bilgisi = get_object_or_none(santiye_kalemleri,id = liste[0])
                         )
@@ -3045,7 +3064,7 @@ def taseron_duzelt(request):
                 images = request.FILES.getlist('file')
                 isim = 1
                 for images in images:
-                    taseron_sozlesme_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                    taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(taseronlar,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
     return redirect("main:taseron_sayfasi")
 
@@ -3141,7 +3160,7 @@ def ust_yuklenici_ekle_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                    ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
         else:
             if request.user.kullanicilar_db:
@@ -3164,7 +3183,7 @@ def ust_yuklenici_ekle_2(request,hash):
                         #print(images)
                         isim = 1
                         for images in images:
-                            ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                            ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                     else:
                         return redirect("main:yetkisiz")
@@ -3189,7 +3208,7 @@ def ust_yuklenici_ekle_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                    ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
 
     return redirect("main:ust_yuklenici_sayfasi_2",hash)
@@ -3256,7 +3275,7 @@ def ust_yuklenici_duzelt_2(request,hash):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
         else:
             if request.user.kullanicilar_db:
@@ -3278,7 +3297,7 @@ def ust_yuklenici_duzelt_2(request,hash):
                         images = request.FILES.getlist('file')
                         isim = 1
                         for images in images:
-                            ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                            ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                     else:
                         return redirect("main:yetkisiz")
@@ -3302,7 +3321,7 @@ def ust_yuklenici_duzelt_2(request,hash):
                 images = request.FILES.getlist('file')
                 isim = 1
                 for images in images:
-                    ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                    ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
     return redirect("main:ust_yuklenici_sayfasi_2",hash)
 
@@ -3391,7 +3410,7 @@ def ust_yuklenici_ekle(request):
                         #print(images)
                         isim = 1
                         for images in images:
-                            ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                            ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                     else:
                         return redirect("main:yetkisiz")
@@ -3416,7 +3435,7 @@ def ust_yuklenici_ekle(request):
                 #print(images)
                 isim = 1
                 for images in images:
-                    ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
+                    ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = new_project.id))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
 
     return redirect("main:ust_yuklenici_sayfasi")
@@ -3474,7 +3493,7 @@ def ust_yuklenici_duzelt(request):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
         else:
             if request.user.kullanicilar_db:
@@ -3496,7 +3515,7 @@ def ust_yuklenici_duzelt(request):
                         images = request.FILES.getlist('file')
                         isim = 1
                         for images in images:
-                            ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                            ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                     else:
                         return redirect("main:yetkisiz")
@@ -3520,7 +3539,7 @@ def ust_yuklenici_duzelt(request):
                 images = request.FILES.getlist('file')
                 isim = 1
                 for images in images:
-                    ust_yuklenici_dosyalari.objects.create(aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
+                    ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),aciklama="",dosya_adi = isim,dosya=images,proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = id_bilgisi))  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
     return redirect("main:ust_yuklenici_sayfasi")
 
@@ -3680,7 +3699,7 @@ def ust_yuklenici_sozlesme_ekle_2(request,hash):
                 durumu = True
             else:
                 durumu = False
-            ust_yuklenici_dosyalari.objects.create(
+            ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
                 dosya = file,dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
@@ -3706,7 +3725,7 @@ def ust_yuklenici_sozlesme_ekle_2(request,hash):
                 durumu = True
             else:
                 durumu = False
-            ust_yuklenici_dosyalari.objects.create(
+            ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
                 dosya = file,dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
@@ -3818,7 +3837,7 @@ def sozlesme_ekle_2(request,hash):
                 durumu = True
             else:
                 durumu = False
-            taseron_sozlesme_dosyalari.objects.create(
+            taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                 dosya = file,dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
@@ -3844,7 +3863,7 @@ def sozlesme_ekle_2(request,hash):
                 durumu = True
             else:
                 durumu = False
-            taseron_sozlesme_dosyalari.objects.create(
+            taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                 dosya = file,dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
@@ -4085,7 +4104,7 @@ def ust_yuklenici_sozlesme_ekle(request):
                 durumu = True
             else:
                 durumu = False
-            ust_yuklenici_dosyalari.objects.create(
+            ust_yuklenici_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(ust_yuklenici,id = taseron),
                 dosya = file,dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
@@ -4194,7 +4213,7 @@ def sozlesme_ekle(request):
                 durumu = True
             else:
                 durumu = False
-            taseron_sozlesme_dosyalari.objects.create(
+            taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                 dosya = file,dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
@@ -4217,7 +4236,7 @@ def sozlesme_ekle_admin(request,id):
                 durumu = True
             else:
                 durumu = False
-            taseron_sozlesme_dosyalari.objects.create(
+            taseron_sozlesme_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                 dosya = file,dosya_adi = dosyaadi,
                 tarih = tarih,aciklama = aciklama,
@@ -4385,7 +4404,7 @@ def hakedis_ekle_2(request,hash):
                 file = request.FILES.get("file")
                 fatura_no = request.POST.get("fatura_no")
                 
-                taseron_hakedisles.objects.create(
+                taseron_hakedisles.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                     dosya = file,
                     dosya_adi = dosyaadi,
@@ -4404,7 +4423,7 @@ def hakedis_ekle_2(request,hash):
                         file = request.FILES.get("file")
                         fatura_no = request.POST.get("fatura_no")
                        
-                        taseron_hakedisles.objects.create(
+                        taseron_hakedisles.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                             dosya = file,
                             dosya_adi = dosyaadi,
@@ -4423,7 +4442,7 @@ def hakedis_ekle_2(request,hash):
                 file = request.FILES.get("file")
                 fatura_no = request.POST.get("fatura_no")
                 
-                taseron_hakedisles.objects.create(
+                taseron_hakedisles.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                     dosya = file,
                     dosya_adi = dosyaadi,
@@ -4634,7 +4653,7 @@ def hakedis_ekle(request):
                         file = request.FILES.get("file")
                         fatura_no = request.POST.get("fatura_no")
                        
-                        taseron_hakedisles.objects.create(
+                        taseron_hakedisles.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                             dosya = file,
                             dosya_adi = dosyaadi,
@@ -4653,7 +4672,7 @@ def hakedis_ekle(request):
                 file = request.FILES.get("file")
                 fatura_no = request.POST.get("fatura_no")
                 
-                taseron_hakedisles.objects.create(
+                taseron_hakedisles.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                     dosya = file,
                     dosya_adi = dosyaadi,
@@ -4696,7 +4715,7 @@ def hakedis_ekle_admin(request,id):
                 durumu = True
             else:
                 durumu = False
-            taseron_hakedisles.objects.create(
+            taseron_hakedisles.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 proje_ait_bilgisi = get_object_or_404(taseronlar,id = taseron),
                 dosya = file,
                 dosya_adi = dosyaadi,
@@ -4941,7 +4960,7 @@ def klasor_olustur_2(request,hash):
                 if ust_klasor:
                     klasor = request.POST.get("klasor")
 
-                    klasorler.objects.create(
+                    klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                         dosya_sahibi = users,
                         klasor_adi = klasor,
                         klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
@@ -4949,7 +4968,7 @@ def klasor_olustur_2(request,hash):
                 else:
                     klasor = request.POST.get("klasor")
 
-                    klasorler.objects.create(
+                    klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                         dosya_sahibi = users,
                         klasor_adi = klasor
                     )
@@ -4962,7 +4981,7 @@ def klasor_olustur_2(request,hash):
                         if ust_klasor:
                             klasor = request.POST.get("klasor")
 
-                            klasorler.objects.create(
+                            klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 dosya_sahibi = request.user.kullanicilar_db,
                                 klasor_adi = klasor,
                                 klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
@@ -4970,7 +4989,7 @@ def klasor_olustur_2(request,hash):
                         else:
                             klasor = request.POST.get("klasor")
 
-                            klasorler.objects.create(
+                            klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 dosya_sahibi = request.user.kullanicilar_db,
                                 klasor_adi = klasor
                             )
@@ -4983,7 +5002,7 @@ def klasor_olustur_2(request,hash):
                 if ust_klasor:
                     klasor = request.POST.get("klasor")
 
-                    klasorler.objects.create(
+                    klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                         dosya_sahibi = request.user,
                         klasor_adi = klasor,
                         klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
@@ -4991,7 +5010,7 @@ def klasor_olustur_2(request,hash):
                 else:
                     klasor = request.POST.get("klasor")
 
-                    klasorler.objects.create(
+                    klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                         dosya_sahibi = request.user,
                         klasor_adi = klasor
                     )
@@ -5077,7 +5096,7 @@ def klasor_olustur(request):
                         if ust_klasor:
                             klasor = request.POST.get("klasor")
 
-                            klasorler.objects.create(
+                            klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 dosya_sahibi = request.user.kullanicilar_db,
                                 klasor_adi = klasor,
                                 klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
@@ -5085,7 +5104,7 @@ def klasor_olustur(request):
                         else:
                             klasor = request.POST.get("klasor")
 
-                            klasorler.objects.create(
+                            klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 dosya_sahibi = request.user.kullanicilar_db,
                                 klasor_adi = klasor
                             )
@@ -5098,7 +5117,7 @@ def klasor_olustur(request):
                 if ust_klasor:
                     klasor = request.POST.get("klasor")
 
-                    klasorler.objects.create(
+                    klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                         dosya_sahibi = request.user,
                         klasor_adi = klasor,
                         klasor_adi_db = get_object_or_404(klasorler,id =ust_klasor )
@@ -5106,7 +5125,7 @@ def klasor_olustur(request):
                 else:
                     klasor = request.POST.get("klasor")
 
-                    klasorler.objects.create(
+                    klasorler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                         dosya_sahibi = request.user,
                         klasor_adi = klasor
                     )
@@ -5304,7 +5323,7 @@ def dosya_ekle(request):
                         aciklama = request.POST.get("aciklama")
                         dosya = request.FILES.get("file")
 
-                        klasor_dosyalari.objects.create(
+                        klasor_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             dosya_sahibi=request.user.kullanicilar_db,
                             proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
                             dosya=dosya,
@@ -5323,7 +5342,7 @@ def dosya_ekle(request):
                 aciklama = request.POST.get("aciklama")
                 dosya = request.FILES.get("file")
 
-                klasor_dosyalari.objects.create(
+                klasor_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     dosya_sahibi=request.user,
                     proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
                     dosya=dosya,
@@ -5350,7 +5369,7 @@ def dosya_ekle_2(request,hash):
                 aciklama = request.POST.get("aciklama")
                 dosya = request.FILES.get("file")
 
-                klasor_dosyalari.objects.create(
+                klasor_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     dosya_sahibi=request.user,
                     proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
                     dosya=dosya,
@@ -5370,7 +5389,7 @@ def dosya_ekle_2(request,hash):
                         aciklama = request.POST.get("aciklama")
                         dosya = request.FILES.get("file")
 
-                        klasor_dosyalari.objects.create(
+                        klasor_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             dosya_sahibi=request.user.kullanicilar_db,
                             proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
                             dosya=dosya,
@@ -5389,7 +5408,7 @@ def dosya_ekle_2(request,hash):
                 aciklama = request.POST.get("aciklama")
                 dosya = request.FILES.get("file")
 
-                klasor_dosyalari.objects.create(
+                klasor_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     dosya_sahibi=request.user,
                     proje_ait_bilgisi=get_object_or_404(klasorler, id=ust_klasor),
                     dosya=dosya,
@@ -6403,10 +6422,10 @@ def yapilacalar_ekle(request):
                         #print(images)
                         isim = 1
                         for images in images:
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                         if base64_image !="" :
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -6453,13 +6472,13 @@ def yapilacalar_ekle(request):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !=""  :
                     image_data = base64.b64decode(base64_image)
                     image_file = ContentFile(image_data, name=f'image.{file_extension}')
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect("main:yapilacaklar")
 #
 def yapilacalar_ekle_2(request,hash):
@@ -6512,13 +6531,13 @@ def yapilacalar_ekle_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !=""  :
                     image_data = base64.b64decode(base64_image)
                     image_file = ContentFile(image_data, name=f'image.{file_extension}')
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -6569,10 +6588,10 @@ def yapilacalar_ekle_2(request,hash):
                         #print(images)
                         isim = 1
                         for images in images:
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                         if base64_image !="" :
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -6619,13 +6638,13 @@ def yapilacalar_ekle_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !=""  :
                     image_data = base64.b64decode(base64_image)
                     image_file = ContentFile(image_data, name=f'image.{file_extension}')
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect("main:yapilacaklar_2",hash)
 #
 def yapilacalar_ekle_duzenleme(request):
@@ -6682,10 +6701,10 @@ def yapilacalar_ekle_duzenleme(request):
                         #print(images)
                         isim = 1
                         for images in images:
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                         if base64_image !="" :
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -6736,10 +6755,10 @@ def yapilacalar_ekle_duzenleme(request):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect("main:yapilacaklar")
 #
 def yapilacalar_ekle_duzenleme_2(request,hash):
@@ -6796,10 +6815,10 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -6850,10 +6869,10 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                         #print(images)
                         isim = 1
                         for images in images:
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                         if base64_image !="" :
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect("main:yetkisiz")
                 else:
@@ -6904,10 +6923,10 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect("main:yapilacaklar_2",hash)
 #
 def yapilacalar_ekle_toplu(request):
@@ -6944,7 +6963,7 @@ def yapilacalar_ekle_toplu(request):
                                 isim = 1
                                 #print(images,"resim geldi")
                                 for images in images:
-                                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                                     isim = isim+1
                     else:
                         return redirect("main:yetkisiz")
@@ -6976,7 +6995,7 @@ def yapilacalar_ekle_toplu(request):
                         isim = 1
                         #print(images,"resim geldi")
                         for images in images:
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
     return redirect("main:yapilacaklar")
 
@@ -7039,7 +7058,7 @@ def yapilacak_durumu_yenileme(request):
         images = request.FILES.getlist('file')
         isim = 1
         for images in images:
-            IsplaniIlerlemeDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlariIlerleme,id = new_project.id),yapan_kisi = request.user,dosya=images,dosya_sahibi = get_object_or_404(IsplaniPlanlari,id =yenilenecekeklemeyapilacak))  # Urun_resimleri modeline resimleri kaydet
+            IsplaniIlerlemeDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlariIlerleme,id = new_project.id),yapan_kisi = request.user,dosya=images,dosya_sahibi = get_object_or_404(IsplaniPlanlari,id =yenilenecekeklemeyapilacak))  # Urun_resimleri modeline resimleri kaydet
             isim = isim+1
     return redirect("main:yapilacaklar")
 
@@ -7071,7 +7090,7 @@ def yapilacalar_duzenle(request):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect("main:yapilacaklar")
 
@@ -7148,7 +7167,7 @@ def yapilacalar_time_line_ekle(request):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                YapilacakDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                YapilacakDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect("main:yapilacaklar_timeline")
 
@@ -7186,7 +7205,7 @@ def yapilacalar_time_line_duzenle(request):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                YapilacakDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                YapilacakDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(YapilacakPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect("main:yapilacaklar_timeline")
 
@@ -7237,7 +7256,7 @@ def gant_kaydet(request):
             else:
                 kullanici = request.user
 
-        gantt_olayi.objects.create(
+        gantt_olayi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             gantt_sahibii=kullanici,
             ganti_degistiren_kisi=request.user,
             gantt_verisi=gant_verisi
@@ -7311,7 +7330,7 @@ def kullanici_yetki_olustur(request):
         return redirect("main:yetkisiz")
     if request.POST:
         grup_adi = request.POST.get("grup_adi")
-        personel_izinleri.objects.create(
+        personel_izinleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             isim = grup_adi,
             izinlerin_sahibi_kullanici = request.user
         )
@@ -8032,35 +8051,35 @@ def giderleri_excelden_ekle(request,id):
             cari_bilgisii = get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici )
         else:
 
-            cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+            cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                 ,cari_adi = cari_bilgisi,aciklama = "",telefon_numarasi = 0.0)
             cari_bilgisii = get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici )
         if get_object_or_none(gider_kategorisi,gider_kategori_adi=kategori ,gider_kategoris_ait_bilgisi = kullanici ):
             kategorii = get_object_or_none(gider_kategorisi,gider_kategori_adi=kategori ,gider_kategoris_ait_bilgisi = kullanici )
         else:
 
-            gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+            gider_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                             ,gider_kategori_adi = kategori,gider_kategorisi_renk = "#000000",aciklama = "")
             kategorii = get_object_or_none(gider_kategorisi,gider_kategori_adi=kategori ,gider_kategoris_ait_bilgisi = kullanici )
         if get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici ):
             uruni = get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici )
         else:
 
-            urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+            urunler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
                                 ,urun_adi = urun,urun_fiyati = tutar)
             uruni = get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici )
         if get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket1 ,gider_kategoris_ait_bilgisi = kullanici ):
             etiket1i =  get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket1 ,gider_kategoris_ait_bilgisi = kullanici )
         else:
 
-            gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+            gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                          ,gider_etiketi_adi = etiket1)
             etiket1i =  get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket1 ,gider_kategoris_ait_bilgisi = kullanici )
         if get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket2 ,gider_kategoris_ait_bilgisi = kullanici ):
             etiket2i =  get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket2 ,gider_kategoris_ait_bilgisi = kullanici )
         else:
 
-            gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+            gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                          ,gider_etiketi_adi = etiket2)
             etiket2i =  get_object_or_none(gider_etiketi,gider_etiketi_adi=etiket2 ,gider_kategoris_ait_bilgisi = kullanici )
         y = y+1
@@ -8069,12 +8088,12 @@ def giderleri_excelden_ekle(request,id):
         m = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+str(y)
         print(i)
         if odeme_durumu == 1:
-            new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
                 cari_bilgisi = cari_bilgisii,
                 fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
                 gelir_kategorisii = kategorii,doviz = 0,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = 0 )
         elif odeme_durumu == 0:
-            new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
                 cari_bilgisi = cari_bilgisii,
                 fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
                 gelir_kategorisii = kategorii,doviz = 0,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = tutar )
@@ -8083,17 +8102,17 @@ def giderleri_excelden_ekle(request,id):
         gelir_etiketi_sec.append(etiket1i)
         gelir_etiketi_sec.append(etiket2i)
         new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
-        gider_urun_bilgisi.objects.create(
+        gider_urun_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi =uruni,
                             urun_fiyati = tutar,urun_indirimi = 0.0,urun_adeti = 1,
                             gider_bilgis =  get_object_or_404(Gider_Bilgisi,id = new_project.id),
                             aciklama = "")
         if odeme_durumu == 1:
-            bir = Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+            bir = Gider_odemesi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
                                         tutar =tutar,tarihi =fatura_tarihi,
                                         aciklama = "",makbuz_no =m ,gelir_makbuzu = makbuz_bilgisi )
             bir.set_gelir_makbuzu(makbuz_bilgisi)
-        gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
+        gider_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
     return redirect("main:ana_sayfa")
 
 
@@ -8134,28 +8153,28 @@ def gelirleri_excelden_ekle(request,id):
             cari_bilgisii = get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici )
         else:
 
-            cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+            cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                 ,cari_adi = cari_bilgisi,aciklama = "",telefon_numarasi = 0.0)
             cari_bilgisii = get_object_or_none(cari,cari_adi=cari_bilgisi ,cari_kart_ait_bilgisi = kullanici )
         if get_object_or_none(gelir_kategorisi,gelir_kategori_adi=kategori ,gelir_kategoris_ait_bilgisi = kullanici ):
             kategorii = get_object_or_none(gelir_kategorisi,gelir_kategori_adi=kategori ,gelir_kategoris_ait_bilgisi = kullanici )
         else:
 
-            gelir_kategorisi.objects.create(gelir_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+            gelir_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                             ,gelir_kategori_adi = kategori,gelir_kategorisi_renk = "#000000",aciklama = "")
             kategorii = get_object_or_none(gelir_kategorisi,gelir_kategori_adi=kategori ,gelir_kategoris_ait_bilgisi = kullanici )
         if get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici ):
             uruni = get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici )
         else:
 
-            urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+            urunler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
                                 ,urun_adi = urun,urun_fiyati = tutar)
             uruni = get_object_or_none(urunler,urun_adi=urun ,urun_ait_oldugu = kullanici )
         if get_object_or_none(gelir_etiketi,gelir_etiketi_adi=etiket1 ,gelir_kategoris_ait_bilgisi = kullanici ):
             etiket1i =  get_object_or_none(gelir_etiketi,gelir_etiketi_adi=etiket1 ,gelir_kategoris_ait_bilgisi = kullanici )
         else:
 
-            gelir_etiketi.objects.create(gelir_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+            gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                          ,gelir_etiketi_adi = etiket1)
             etiket1i =  get_object_or_none(gelir_etiketi,gelir_etiketi_adi=etiket1 ,gelir_kategoris_ait_bilgisi = kullanici )
         
@@ -8164,12 +8183,12 @@ def gelirleri_excelden_ekle(request,id):
         c = 8 - b
         m = faturalardaki_gelir_gider_etiketi.objects.last().gelir_etiketi+(c*"0")+str(y)
         if odeme_durumu == 1:
-            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            new_project =Gelir_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
             cari_bilgisi = cari_bilgisii,
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
             gelir_kategorisii = kategorii,doviz = 0,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar = 0 )
         else:
-            new_project =Gelir_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+            new_project =Gelir_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
             cari_bilgisi = cari_bilgisii,
             fatura_tarihi=fatura_tarihi,vade_tarihi=vade_tarihi,fatura_no = m,
             gelir_kategorisii = kategorii,doviz = 0,aciklama = aciklama,toplam_tutar =tutar ,kalan_tutar =tutar )
@@ -8178,17 +8197,17 @@ def gelirleri_excelden_ekle(request,id):
         gelir_etiketi_sec.append(etiket1i)
         #gelir_etiketi_sec.append(etiket2i)
         new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
-        gelir_urun_bilgisi.objects.create(
+        gelir_urun_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi =uruni,
                             urun_fiyati = tutar,urun_indirimi = 0.0,urun_adeti = 1,
                             gider_bilgis =  get_object_or_404(Gelir_Bilgisi,id = new_project.id),
                             aciklama = "")
         if odeme_durumu == 1:
-            bir = Gelir_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+            bir = Gelir_odemesi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
                                         tutar =tutar,tarihi =fatura_tarihi,
                                         aciklama = "",makbuz_no =m ,gelir_makbuzu = makbuz_bilgisi )
             bir.set_gelir_makbuzu(makbuz_bilgisi)
-        gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id))
+        gelir_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_404(Gelir_Bilgisi,id = new_project.id))
     return redirect("main:ana_sayfa")
 def giderleri_excelden_eklei(request,id):
     import openpyxl
@@ -8231,12 +8250,12 @@ def giderleri_excelden_eklei(request,id):
         if i[9] not in sadece_kategorisi:
             sadece_kategorisi.append(i[9])
     for i in sadece_cari:
-        l = cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+        l = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                 ,cari_adi = i,aciklama = "",telefon_numarasi = 0.0)
         sozluk_cari[i] = l.id
     k = 0
     for i in sadece_urunler:
-        l = urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+        l = urunler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
                                 ,urun_adi = i,urun_fiyati = sadece_fiyat[k]
 
                                 )
@@ -8244,11 +8263,11 @@ def giderleri_excelden_eklei(request,id):
         k = k+1
         sozluk_urun[i] = l.id
     for i in sadece_kategorisi:
-        z = gider_kategorisi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+        z = gider_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                             ,gider_kategori_adi = i,gider_kategorisi_renk = "#000000",aciklama = "")
         sozluk_kategorisi[i] = z.id
     for i in sadece_etiket:
-        z = gider_etiketi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+        z = gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                          ,gider_etiketi_adi = i)
         sozluk_etiket[i] = z.id
     y = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu).count()
@@ -8257,7 +8276,7 @@ def giderleri_excelden_eklei(request,id):
         b = len(str(y))
         c = 8 - b
         m = faturalardaki_gelir_gider_etiketi.objects.last().gider_etiketi+(c*"0")+str(y)
-        new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+        new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
             cari_bilgisi = get_object_or_none(cari,id = sozluk_cari[i[3]]),
             fatura_tarihi=i[2],vade_tarihi=i[2],fatura_no = m,
             gelir_kategorisi = get_object_or_none( gider_kategorisi,id =sozluk_kategorisi[i[8]] ),doviz = i[11],aciklama = i[10]
@@ -8268,18 +8287,18 @@ def giderleri_excelden_eklei(request,id):
         gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(sozluk_etiket[i[5]])))
         gelir_etiketi_sec.append(gider_etiketi.objects.get(id=int(sozluk_etiket[i[6]])))
         new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
-        #bilgi_getirler = urunler.objects.create(urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_adi = sozluk_urun[i[5]],urun_fiyati = float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")))
-        gider_urun_bilgisi.objects.create(
+        #bilgi_getirler = urunler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_adi = sozluk_urun[i[5]],urun_fiyati = float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")))
+        gider_urun_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi = get_object_or_404(urunler, 
                             id = sozluk_urun[i[5]]),
                             urun_fiyati = float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")),urun_indirimi = 0.0,urun_adeti = 1,
                             gider_bilgis =  get_object_or_404(Gider_Bilgisi,id = new_project.id),
                             aciklama = "")
-        bir = Gider_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+        bir = Gider_odemesi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
                                      tutar =float((str(str(str(i[4]).replace("$",""))).replace(".","")).replace(",",".")),tarihi =i[2],
                                        aciklama = "",makbuz_no =str(i[13] ) ,gelir_makbuzu = str(i[12] ) )
         bir.set_gelir_makbuzu(str(i[13] ))
-        gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
+        gider_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_404(Gider_Bilgisi,id = new_project.id))
     return redirect("main:ana_sayfa")
 
 def gelirleri_excelden_eklei(request,id):
@@ -8320,23 +8339,23 @@ def gelirleri_excelden_eklei(request,id):
         if i[8] not in sadece_kategorisi:
             sadece_kategorisi.append(i[8])
     for i in sadece_cari:
-        z = cari.objects.create(cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+        z = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_kart_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                 ,cari_adi = i,aciklama = "",telefon_numarasi = 0.0)
         sozluk_cari[i] = z.id
     k = 0
     for i in sadece_urunler:
-        z = urunler.objects.create(urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
+        z = urunler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),urun_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu
                                 ,urun_adi = i,urun_fiyati = sadece_fiyat[k]
 
                                 )
         k = k+1
         sozluk_urun[i] = z.id
     for i in sadece_kategorisi:
-        z = gelir_kategorisi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+        z = gelir_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                             ,gider_kategori_adi = i,gider_kategorisi_renk = "#000000",aciklama = "")
         sozluk_kategorisi[i] = z.id
     for i in sadece_etiket:
-        z = gelir_etiketi.objects.create(gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
+        z = gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = Gider_excel_ekl.gelir_kime_ait_oldugu
                                          ,gider_etiketi_adi = i)
         sozluk_etiket[i] = z.id
     y = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu).count()
@@ -8345,7 +8364,7 @@ def gelirleri_excelden_eklei(request,id):
         b = len(str(y))
         c = 8 - b
         m = faturalardaki_gelir_gider_etiketi.objects.last().gelir_etiketi+(c*"0")+str(y)
-        new_project =Gider_Bilgisi.objects.create(gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
+        new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = Gider_excel_ekl.gelir_kime_ait_oldugu,
             cari_bilgisi = get_object_or_none(cari,cari_adi = sozluk_cari[i[3]],cari_kart_ait_bilgisi = request.user),
             fatura_tarihi=i[2],vade_tarihi=i[2],fatura_no = m,
             gelir_kategorisi = get_object_or_none( gelir_kategorisi,id =sozluk_kategorisi[i[8]] ),doviz = i[10],aciklama = i[9]
@@ -8355,13 +8374,13 @@ def gelirleri_excelden_eklei(request,id):
         gelir_etiketi_sec.append(gelir_etiketi.objects.get(id=int(sozluk_etiket[i[5]])))
         gelir_etiketi_sec.append(gelir_etiketi.objects.get(id=int(sozluk_etiket[i[6]])))
         new_project.gelir_etiketi_sec.add(*gelir_etiketi_sec)
-        gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(
+        gelir_urun_bilgisi_bi = gelir_urun_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                             urun_ait_oldugu =  Gider_excel_ekl.gelir_kime_ait_oldugu,urun_bilgisi = get_object_or_none(urunler, urun_ait_oldugu=Gider_excel_ekl.gelir_kime_ait_oldugu,urun_adi = sozluk_urun[i[5]]),
                             urun_fiyati = float(str(str(i[4]).replace("$","")).replace(",",".")),urun_indirimi = 0.0,urun_adeti = 1,
                             gider_bilgis =  get_object_or_none(Gelir_Bilgisi,id = new_project.id),
                             aciklama = ""
                         )
-        Gelir_odemesi.objects.create(gelir_kime_ait_oldugu = get_object_or_404(Gelir_odemesi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
+        Gelir_odemesi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_404(Gelir_odemesi,id = new_project.id ),kasa_bilgisi = Gider_excel_ekl.kasa,
                                      tutar =float(str(str(i[4]).replace("$","")).replace(",",".")),tarihi =i[2],makbuz_no = new_project.id,
                                        aciklama = "deneme"  )
     return redirect("main:ana_sayfa")
@@ -8415,7 +8434,7 @@ def katman_ekle(request):
         katman_adi = request.POST.get("taseron_adi")
         santiye_al = request.POST.get("blogbilgisi")
         dosya = request.FILES.get("file")
-        katman.objects.create(
+        katman.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             proje_ait_bilgisi = kullanici,
             proje_santiye_Ait = get_object_or_none(santiye,id = santiye_al),
             katman_adi  = katman_adi,
@@ -8529,7 +8548,7 @@ def kullanici_yetki_olustur_2(request,hash):
         return redirect("main:yetkisiz")
     if request.POST:
         grup_adi = request.POST.get("grup_adi")
-        personel_izinleri.objects.create(
+        personel_izinleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             isim = grup_adi,
             izinlerin_sahibi_kullanici = users
         )
@@ -9187,7 +9206,7 @@ def proje_ekleme_2(request,hash):
         if super_admin_kontrolu(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             proje_tip_adi   = request.POST.get("yetkili_adi")
-            proje_tipi.objects.create(proje_ait_bilgisi = users ,Proje_tipi_adi = proje_tip_adi)
+            proje_tipi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = users ,Proje_tipi_adi = proje_tip_adi)
         
     return redirect("main:proje_tipi_2",hash)
 #Proje Adı Silme
@@ -9247,7 +9266,7 @@ def santiyeye_kalem_ekle_2(request,hash):
                 birim_bilgisi = request.POST.get("birim_bilgisi")
                 kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
                 id = bloglar.objects.filter(id__in = projetipi).first()
-                kalem = santiye_kalemleri.objects.create(
+                kalem = santiye_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     proje_ait_bilgisi = users,
                     proje_santiye_Ait =id.proje_santiye_Ait,
                     kalem_adi = yetkili_adi,santiye_agirligi = santiye_agirligi,
@@ -9259,7 +9278,7 @@ def santiyeye_kalem_ekle_2(request,hash):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,int(i.kat_sayisi)):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = users,
                                 proje_santiye_Ait = id.proje_santiye_Ait,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -9269,7 +9288,7 @@ def santiyeye_kalem_ekle_2(request,hash):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,int(i.kat_sayisi)):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = users,
                                 proje_santiye_Ait = id.proje_santiye_Ait,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -9280,7 +9299,7 @@ def santiyeye_kalem_ekle_2(request,hash):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,4):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = users,
                                 proje_santiye_Ait = id.proje_santiye_Ait,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
@@ -9301,7 +9320,7 @@ def blog_ekle_2(request,hash):
         kat_sayisi = request.POST.get("kat_sayisi")
         baslangictarihi = request.POST.get("baslangictarihi")
         bitistarihi =request.POST.get("bitistarihi")
-        bloglar.objects.create(
+        bloglar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             proje_ait_bilgisi = get_object_or_404(santiye,id = santiye_bilgisi).proje_ait_bilgisi,
             proje_santiye_Ait = get_object_or_404(santiye,id = santiye_bilgisi),
             blog_adi = blok_adi,kat_sayisi = kat_sayisi,
@@ -9339,7 +9358,7 @@ def santiye_kalemleri_duzenle_2(request,hash):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,int(i.kat_sayisi)):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = users,
                                 proje_santiye_Ait_id = geri_don,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
@@ -9349,7 +9368,7 @@ def santiye_kalemleri_duzenle_2(request,hash):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,int(i.kat_sayisi)):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = users,
                                 proje_santiye_Ait_id = geri_don,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId),
@@ -9360,7 +9379,7 @@ def santiye_kalemleri_duzenle_2(request,hash):
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
                         for j in range(0,4):
-                            santiye_kalemlerin_dagilisi.objects.create(
+                            santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = users,
                                 proje_santiye_Ait_id = geri_don,
                                 kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =buttonId ),
@@ -9493,7 +9512,7 @@ def katman_ekle_2(request,hash):
         katman_adi = request.POST.get("taseron_adi")
         santiye_al = request.POST.get("blogbilgisi")
         dosya = request.FILES.get("file")
-        katman.objects.create(
+        katman.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             proje_ait_bilgisi = kullanici,
             proje_santiye_Ait = get_object_or_none(santiye,id = santiye_al),
             katman_adi  = katman_adi,
@@ -9637,32 +9656,32 @@ def genel_rapor_olustur(request):
                     return redirect("main:yetkisiz")
             else:
                 kullanici =  request.user
-        veri = genel_rapor.objects.create(proje_ait_bilgisi = kullanici,raporu_olusturan = request.user,
+        veri = genel_rapor.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,raporu_olusturan = request.user,
                                    proje_santiye_Ait = get_object_or_none(santiye,id=secili_santiye),
                                    tarih =rapor_tarihi,bitis_tarih = rapor_bitis_tarihi,kayip_gun_sayisi = float(kayipgun),
                                    kayip_gun_aciklamasi =otherReason , kayip_gun_sebebi = kayipsebebi )
         for i in range(len(depertman)):
-            genel_personel.objects.create(hangi_rapor = kullanici,
+            genel_personel.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
                                           proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
                                           personel_departmani = get_object_or_none(calisanlar_kategorisi,id = depertman[i]),
                                           personel_sayisi = float(personel[i]) )
         for i in range(len(hava_durumu_sicaklik)):
-            genel_hava_durumu.objects.create(hangi_rapor = kullanici,
+            genel_hava_durumu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
                                           proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
                                           hava_durumu_sicaklik =  hava_durumu_sicaklik[i],
                                           hava_durumu_ruzgar = float(hava_durumu_ruzgar[i]) )
         for i in range(len(malzeme)):
-            gelen_malzeme.objects.create(hangi_rapor = kullanici,
+            gelen_malzeme.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
                                           proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
                                           urun = get_object_or_none(urunler,id = malzeme[i]),
                                           urun_adeti = float(malzemesayisi[i]) )
         for i in range(len(imalat)):
-            genel_imalat.objects.create(hangi_rapor = kullanici,
+            genel_imalat.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
                                           proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
                                           imalet_kalemi = get_object_or_none(santiye_kalemleri,id = imalat[i]),
                                           imalat_aciklama = aciklama[i] )
         for i in range(len(aciklamalar)):
-            genel_aciklamalar.objects.create(hangi_rapor = kullanici,
+            genel_aciklamalar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
                                           proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
                                           genel_aciklama = aciklamalar[i] )
     return redirect("main:genel_rapor_sayfasi")
@@ -9850,16 +9869,16 @@ def santiye_proje_olustur(request):
         block  = get_object_or_none(bloglar,id = blok)
         imalatlari = santiye_imalat_kalemleri.objects.filter(proje_santiye_Ait = block.proje_santiye_Ait,silinme_bilgisi = False)
         for i in range(1,len(daire_numarai)+1):
-            a = checkdaireleri.objects.create(daire_no = daire_numarai[i-1] ,kat_daire_sayisi = kat_basina_daire,kat = kat_bilgisi,proje_ait_bilgisi = kullanici,blog_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait)
+            a = checkdaireleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),daire_no = daire_numarai[i-1] ,kat_daire_sayisi = kat_basina_daire,kat = kat_bilgisi,proje_ait_bilgisi = kullanici,blog_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait)
             if i / int(kat_basina_daire) == 1:
                 kat_bilgisi += 1
             for imalat in imalatlari:
-                imalat_daire_balama.objects.create(proje_ait_bilgisi = kullanici,blog_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,daire_bilgisi = a,imalat_detayi = imalat)
+                imalat_daire_balama.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,blog_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,daire_bilgisi = a,imalat_detayi = imalat)
             print(i)
         for i in range(len(ortak_alanadi)):
-            blog_ortak_alan_ve_cepheleri.objects.create(proje_ait_bilgisi = kullanici,blog_ait_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,aciklama_adi = ortak_alanadi[i],bolum_icerigi = verisi[i])
+            blog_ortak_alan_ve_cepheleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,blog_ait_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,aciklama_adi = ortak_alanadi[i],bolum_icerigi = verisi[i])
         for i in range(len(cepheaciklmasi)):
-            blog_ortak_alan_ve_cepheleri.objects.create(proje_ait_bilgisi = kullanici,blog_ait_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,aciklama_adi = cepheaciklmasi[i],bolum_icerigi = cephe_verisi[i])
+            blog_ortak_alan_ve_cepheleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,blog_ait_bilgisi = block,proje_santiye_Ait= block.proje_santiye_Ait,aciklama_adi = cepheaciklmasi[i],bolum_icerigi = cephe_verisi[i])
     return redirect("main:yapilarim",block.proje_santiye_Ait.id)
     
 
@@ -9946,19 +9965,19 @@ def save_template(request):
             data = json.loads(request.body)
             print(data)
             #şablonu oluştur
-            sablon = santiye_sablonlari.objects.create(proje_ait_bilgisi = kullanici,
+            sablon = santiye_sablonlari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,
                     sablon_adi =data.get('name', 'Unnamed Template'),sablon_durumu = data.get('projectType', 'Unknown') ,
                     proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')))
             
             for section_data in data.get('sections', []):
-                sablon_bolumleri = sanytiye_sablon_bolumleri.objects.create(proje_ait_bilgisi = kullanici,proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')) , sablon_adi = get_object_or_none(santiye_sablonlari,id = sablon.id),bolum =section_data.get('type', 'Unknown')  )
+                sablon_bolumleri = sanytiye_sablon_bolumleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')) , sablon_adi = get_object_or_none(santiye_sablonlari,id = sablon.id),bolum =section_data.get('type', 'Unknown')  )
                 for category_data in section_data.get('categories', []):
-                    sablon_imalat_olayi = santiye_imalat_kalemleri.objects.create(
+                    sablon_imalat_olayi = santiye_imalat_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                         proje_ait_bilgisi = kullanici ,proje_santiye_Ait =get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
                         detay = get_object_or_none(sanytiye_sablon_bolumleri,id = sablon_bolumleri.id), 
                         icerik = category_data.get('name', 'Unnamed Category'),is_grubu = category_data.get('workGroup', 'Unknown Work Group') )
                     for item_name in category_data.get('checklistItems', []):
-                        imalat_kalemleri_imalat_detaylari.objects.create(proje_ait_bilgisi = kullanici,
+                        imalat_kalemleri_imalat_detaylari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,
                         proje_santiye_Ait= get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
                         icerik = get_object_or_none(santiye_imalat_kalemleri,id = sablon_imalat_olayi.id),
                         imalat_detayi = item_name)
@@ -9998,7 +10017,7 @@ def save_template_duzenle(request):
                     sablon_bolumleri = sanytiye_sablon_bolumleri.objects.filter(id = int(section_data.get('id'))).update(proje_ait_bilgisi = kullanici,proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')) , sablon_adi = get_object_or_none(santiye_sablonlari,id = sablon.id),bolum =section_data.get('type', 'Unknown'),silinme_bilgisi = False  )
                     sablon_bolumleri = sanytiye_sablon_bolumleri.objects.filter(id = section_data.get('id', 'Unknown')).last()
                 else:
-                    sablon_bolumleri = sanytiye_sablon_bolumleri.objects.create(proje_ait_bilgisi = kullanici,proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')) , sablon_adi = get_object_or_none(santiye_sablonlari,id = sablon.id),bolum =section_data.get('type', 'Unknown')  )
+                    sablon_bolumleri = sanytiye_sablon_bolumleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,proje_santiye_Ait = get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')) , sablon_adi = get_object_or_none(santiye_sablonlari,id = sablon.id),bolum =section_data.get('type', 'Unknown')  )
                 for category_data in section_data.get('categories', []):
                     if category_data.get('last_name'):
                         sablon_imalat_olayi = santiye_imalat_kalemleri.objects.filter(id = category_data.get('last_name')).update(
@@ -10007,17 +10026,17 @@ def save_template_duzenle(request):
                         icerik = category_data.get('name'),is_grubu = category_data.get('workGroup', 'Unknown Work Group') )
                         imalat_kalemleri_imalat_detaylari.objects.filter(icerik__id = category_data.get('last_name', 'Unnamed Category')).update(silinme_bilgisi = True)
                         for item_name in category_data.get('checklistItems', []):
-                            imalat_kalemleri_imalat_detaylari.objects.create(proje_ait_bilgisi = kullanici,
+                            imalat_kalemleri_imalat_detaylari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,
                             proje_santiye_Ait= get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
                             icerik = get_object_or_none(santiye_imalat_kalemleri,id = category_data.get('last_name', 'Unnamed Category')),
                             imalat_detayi = item_name)
                     else:
-                        sablon_imalat_olayi = santiye_imalat_kalemleri.objects.create(
+                        sablon_imalat_olayi = santiye_imalat_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                         proje_ait_bilgisi = kullanici ,proje_santiye_Ait =get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
                         detay = get_object_or_none(sanytiye_sablon_bolumleri,id = sablon_bolumleri.id), 
                         icerik = category_data.get('name', 'Unnamed Category'),is_grubu = category_data.get('workGroup', 'Unknown Work Group') )
                         for item_name in category_data.get('checklistItems', []):
-                            imalat_kalemleri_imalat_detaylari.objects.create(proje_ait_bilgisi = kullanici,
+                            imalat_kalemleri_imalat_detaylari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,
                             proje_santiye_Ait= get_object_or_none(santiye,id = data.get('santiyeId', 'Unknown')),
                             icerik = get_object_or_none(santiye_imalat_kalemleri,id = sablon_imalat_olayi.id),
                             imalat_detayi = item_name)

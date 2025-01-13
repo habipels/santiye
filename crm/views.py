@@ -21,6 +21,7 @@ from functools import reduce
 import operator
 import os
 from main.views import decode_id
+from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki,get_kayit_tarihi_from_request,get_time_zone_from_country,get_country
 def musteri_bilgisi_views(request):
     term = request.GET.get('term', '')
     if request.user.kullanicilar_db:
@@ -169,7 +170,7 @@ def daire_ekle(request):
         daire_no = request.POST.get("daire_no")
         oda_Sayisi = request.POST.get("oda_Sayisi")
         metrekare = request.POST.get("metrekare")
-        daire_bilgisi.objects.create(daire_kime_ait = kullanici,blog_bilgisi = get_object_or_none(bloglar,id = blok),kat =kat,
+        daire_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),daire_kime_ait = kullanici,blog_bilgisi = get_object_or_none(bloglar,id = blok),kat =kat,
          daire_no = daire_no,oda_sayisi = oda_Sayisi,
         metre_kare_brut = metrekare )
         return redirect("crm:crm_daireyonetimi")
@@ -245,7 +246,7 @@ def daire_musteriye_ata(request):
                                                  daire = daire):
                 pass
             else:
-                musteri_daire_baglama.objects.create(baglama_kime_ait = kullanici,musterisi = musteri_sec,
+                musteri_daire_baglama.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),baglama_kime_ait = kullanici,musterisi = musteri_sec,
                                                     daire = daire)
     return redirect("crm:crm_musteri_detayi",musteri)
 def daire_musteriye_duzenle(request):
@@ -337,7 +338,7 @@ def museri_notu_ekle(request):
         not_basligi = request.POST.get("not_basligi")
         aciklama = request.POST.get("aciklama")
         musteri_sec = get_object_or_none(musteri_bilgisi,musteri_kime_ait = kullanici,id = musteri)
-        musteri_notlari.objects.create(
+        musteri_notlari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             kime_ait = kullanici,
             musterisi = musteri_sec,
             not_basligi = not_basligi,
@@ -442,7 +443,7 @@ def talep_veya_sikayet_olustur_musteri_detayi(request):
         aciklama = request.POST.get("aciklama")
         musteri = request.POST.get("musteri")
         daireler = request.POST.get("daireler")
-        talep_ve_sikayet.objects.create(
+        talep_ve_sikayet.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             sikayet_kime_ait = kullanici,
             sikayet_nedeni = talep_nedeni,
             talep_sikayet_ayrimi = tur,
@@ -473,7 +474,7 @@ def musteri_ekleme(request):
         musteri_adi = request.POST.get("musteri_adi")
         musteri_soyadi = request.POST.get("musteri_soyadi")
         musteri_telefon_numarasi = request.POST.get("musteri_telefon_numarasi")
-        musteri_bilgisi.objects.create(musteri_kime_ait = kullanici,musteri_adi = musteri_adi , musteri_soyadi =musteri_soyadi ,
+        musteri_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),musteri_kime_ait = kullanici,musteri_adi = musteri_adi , musteri_soyadi =musteri_soyadi ,
                                        musteri_telefon_numarasi = musteri_telefon_numarasi)
     return redirect("crm:musteri_sayfasi")
 def musteri_silme(request):
@@ -610,7 +611,7 @@ def talep_veya_sikayet_olustur(request):
         talep_nedeni = request.POST.get("talep_nedeni")
         aciklama = request.POST.get("aciklama")
 
-        talep_ve_sikayet.objects.create(
+        talep_ve_sikayet.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             sikayet_kime_ait = kullanici,
             sikayet_nedeni = talep_nedeni,
             talep_sikayet_ayrimi = tur,
@@ -705,19 +706,19 @@ def crm_teklif_olustur_gonder(request):
         if musteri:
             pass
         else:
-            musteri = musteri_bilgisi.objects.create(musteri_kime_ait = kullanici,
+            musteri = musteri_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),musteri_kime_ait = kullanici,
                                      musteri_adi = adsoyad,
                                      musteri_soyadi = soyad,
                                      musteri_telefon_numarasi =telefon
             )
         toplam_tutar = 0
-        tekliff = teklifler.objects.create(
+        tekliff = teklifler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             teklif_kime_ait = kullanici,
             teklif_basligi = Teklif_basligi,
             musterisi = musteri
         )
         for i in range(0,len(urun)):
-            teklif_icerikleri.objects.create(
+            teklif_icerikleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 kime_ait = kullanici,
                 hangi_teklif= tekliff,
                 urun_hizmet = urun[i],
@@ -766,7 +767,7 @@ def crm_teklif_duzenle_gonder(request):
                                      musteri_soyadi=soyad,
                                      musteri_telefon_numarasi=telefon)
         if not musteri:
-            musteri = musteri_bilgisi.objects.create(musteri_kime_ait=kullanici,
+            musteri = musteri_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),musteri_kime_ait=kullanici,
                                                      musteri_adi=adsoyad,
                                                      musteri_soyadi=soyad,
                                                      musteri_telefon_numarasi=telefon)
@@ -782,7 +783,7 @@ def crm_teklif_duzenle_gonder(request):
 
             toplam_tutar = 0
             for i in range(len(urun)):
-                teklif_icerikleri.objects.create(
+                teklif_icerikleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                     kime_ait=kullanici,
                     hangi_teklif=teklif,
                     urun_hizmet=urun[i],
@@ -820,7 +821,7 @@ def daire_evrak_ekle(request):
 
         daire = get_object_or_none(daire_bilgisi, id=daire_id, daire_kime_ait=kullanici)
         if daire and evrak:
-            daire_evraklari.objects.create(
+            daire_evraklari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 evrak_kime_ait=kullanici,
                 daire=daire,
                 evrak_adi=evrak_adi,
@@ -859,7 +860,7 @@ def musteri_evrak_ekle(request):
 
         musteri = get_object_or_none(musteri_bilgisi, id=musteri_id, musteri_kime_ait=kullanici)
         if musteri and evrak:
-            musteri_evraklari.objects.create(
+            musteri_evraklari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 belge_kime_ait=kullanici,
                 musterisi=musteri,
                 evrak_detayi=evrak_adi,

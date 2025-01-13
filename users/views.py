@@ -9,7 +9,7 @@ from .decorators import user_not_authenticated ,lock_screen_required
 from .tokens import account_activation_token
 from django.contrib.auth.decorators import login_required
 from site_info.models import *
-from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki
+from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki,get_kayit_tarihi_from_request,get_time_zone_from_country,get_country
 from django.core.paginator import Paginator , EmptyPage, PageNotAnInteger
 from django.db.models.query_utils import Q
 from django.http import JsonResponse
@@ -154,7 +154,7 @@ def loginUser(request):
             lock_status.save()
         except :
             # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
-            lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=False)
+            lock_status = LockScreenStatus.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),user=request.user, is_locked=False)
         dil = request.user.kullanici_tercih_dili
         return redirect(f"/{dil}/")
     return render(request,"account/login.html",context)
@@ -167,7 +167,7 @@ def logoutUser(request):
         lock_status.save()
     except LockScreenStatus.DoesNotExist:
         # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
-        lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=False)
+        lock_status = LockScreenStatus.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),user=request.user, is_locked=False)
     logout(request)
     messages.success(request,"Başarıyla Çıkış Yaptınız")
     return redirect("users:yonlendir")
@@ -247,9 +247,9 @@ def kullanici_ekleme(request):
 
             a.save()
             for images in file:
-                personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
+                personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
-                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
+                bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
         return redirect("users:kullanicilarim")
 
 
@@ -288,9 +288,9 @@ def kullanici_bilgileri_duzenle(request):
             )
             if len(file)> 1:
                 for images in file:
-                    personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
+                    personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
-                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
+                bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
         return redirect("users:kullanicilarim")
 
 ######################3
@@ -350,9 +350,9 @@ def kullanici_ekleme_2(request,hash):
 
             a.save()
             for images in file:
-                personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
+                personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
-                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
+                bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
         else:
             yetkili_adi = request.POST.get("yetkili_adi")
             email = request.POST.get("email")
@@ -378,9 +378,9 @@ def kullanici_ekleme_2(request,hash):
 
             a.save()
             for images in file:
-                personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
+                personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
-                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
+                bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
         return redirect("users:kullanicilarim_2",hash)
 
 
@@ -426,9 +426,9 @@ def kullanici_bilgileri_duzenle_2(request,hash):
             )
             if len(file)> 1:
                 for images in file:
-                    personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
+                    personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
-                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
+                bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
         else:
             
             buttonId = request.POST.get("buttonId")
@@ -454,9 +454,9 @@ def kullanici_bilgileri_duzenle_2(request,hash):
             )
             if len(file)> 1:
                 for images in file:
-                    personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
+                    personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
-                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
+                bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
         return redirect("users:kullanicilarim_2",hash)
 
 ######################
@@ -473,7 +473,7 @@ def lock_screen(request):
         lock_status.save()
     except LockScreenStatus.DoesNotExist:
         # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
-        lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=True)
+        lock_status = LockScreenStatus.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),user=request.user, is_locked=True)
 
     if request.method == 'POST':
         password = request.POST.get('userpassword')
@@ -645,13 +645,13 @@ def personeller_ekle(request):
                 currency = True
             else:
                 currency = False
-            bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
+            bilgi = calisanlar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
             isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
-            calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
+            calisan_maas_durumlari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
             for i in documents:
-                calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
+                calisan_belgeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
     return redirect("user:personeller_sayfasi")
 def personeller_ekle_2(request,hash):
     content = sozluk_yapisi()
@@ -704,13 +704,13 @@ def personeller_ekle_2(request,hash):
                 currency = True
             else:
                 currency = False
-            bilgi = calisanlar.objects.create(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
+            bilgi = calisanlar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
             isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
-            calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
+            calisan_maas_durumlari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
             for i in documents:
-                calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
+                calisan_belgeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
     return redirect("user:personeller_sayfasi_2",hash)
 def personeller_sil_2(request,hash):
     content = sozluk_yapisi()
@@ -847,10 +847,10 @@ def personelleri_düzenle(request):
             bilgi = calisanlar.objects.filter(id = idbilgisi).update(calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
             calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
             isim = firstName,soyisim = lastName,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
-            calisan_maas_durumlari.objects.create(calisan = get_object_or_none(calisanlar,id =idbilgisi),maas = dailyWage,
+            calisan_maas_durumlari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =idbilgisi),maas = dailyWage,
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
             for i in documents:
-                calisan_belgeleri.objects.create(calisan = get_object_or_none(calisanlar,id =idbilgisi ) ,belge = i )
+                calisan_belgeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =idbilgisi ) ,belge = i )
         return redirect("user:personeller_sayfasi")
 #######################################################3
 #Pozisyonlar
@@ -903,7 +903,7 @@ def personeller_kategori_ekle_2(request,hash):
                     return redirect("main:yetkisiz")
             else:
                 kullanici = request.user
-    calisanlar_pozisyonu.objects.create(kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
+    calisanlar_pozisyonu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
         
     return redirect("users:personeller_kategori_sayfalari_2",hash)   
 def personeller_kategori_sil_2(request,hash):
@@ -961,7 +961,7 @@ def personeller_departman_ekle_2(request,hash):
         pozsiyon = request.POST.get("yetkili_adi")
         if super_admin_kontrolu(request):
             kullanici = users
-        calisanlar_kategorisi.objects.create(kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
+        calisanlar_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
         
     return redirect("users:personeller_depertman_sayfalari_2",hash)   
 def personeller_departman_sil_2(request,hash):
@@ -1041,7 +1041,7 @@ def personeller_kategori_ekle(request):
                     return redirect("main:yetkisiz")
             else:
                 kullanici = request.user
-        calisanlar_pozisyonu.objects.create(kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
+        calisanlar_pozisyonu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
         
     return redirect("users:personeller_kategori_sayfalari")   
 def personeller_kategori_sil(request):
@@ -1129,7 +1129,7 @@ def personeller_departman_ekle(request):
                     return redirect("main:yetkisiz")
             else:
                 kullanici = request.user
-        calisanlar_kategorisi.objects.create(kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
+        calisanlar_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
         
     return redirect("users:personeller_depertman_sayfalari")   
 def personeller_departman_sil(request):
@@ -1324,7 +1324,7 @@ def save_attendance(request):
                     calisanlar_calismalari.objects.filter(calisan = get_object_or_none(calisanlar,id =person_id ),tarihi = date_obj
                     ).update(normal_calisma_saati =float(hours_value))
                 else:
-                    calisanlar_calismalari.objects.create(calisan = get_object_or_none(calisanlar,id =person_id )
+                    calisanlar_calismalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =person_id )
                     ,tarihi = date_obj,maas = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar,id =person_id )).last(),
                     normal_calisma_saati =float(hours_value) )
             elif work_type == "overtime":
@@ -1381,13 +1381,13 @@ def calisan_odemeleri_kaydet(request):
         # Ayın ilk günü ile Date nesnesini oluştur
         date_obj = datetime(year, month, 1)
         if odeme_turu:
-            calisanlar_calismalari_odemeleri.objects.create(
+            calisanlar_calismalari_odemeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 calisan = get_object_or_none(calisanlar,id =users_id,calisan_kime_ait =  kullanici),
                 tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
                 odeme_turu = True,aciklama = aciklama,dosya = file
             )
         else:
-            calisanlar_calismalari_odemeleri.objects.create(
+            calisanlar_calismalari_odemeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 calisan = get_object_or_none(calisanlar,id =users_id,calisan_kime_ait =  kullanici),
                 tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
                 odeme_turu = False,aciklama = aciklama,dosya = file
@@ -1415,13 +1415,13 @@ def calisan_odemeleri_kaydet_2(request,hash):
         # Ayın ilk günü ile Date nesnesini oluştur
         date_obj = datetime(year, month, 1)
         if odeme_turu:
-            calisanlar_calismalari_odemeleri.objects.create(
+            calisanlar_calismalari_odemeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 calisan = get_object_or_none(calisanlar,id =users_id,calisan_kime_ait =  kullanici),
                 tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
                 odeme_turu = True,aciklama = aciklama,dosya = file
             )
         else:
-            calisanlar_calismalari_odemeleri.objects.create(
+            calisanlar_calismalari_odemeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 calisan = get_object_or_none(calisanlar,id =users_id,calisan_kime_ait =  kullanici),
                 tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
                 odeme_turu = False,aciklama = aciklama,dosya = file
@@ -1483,7 +1483,7 @@ def group_chat(request, group_id):
     messages = group.messages.all()
     if request.method == "POST":
         content = request.POST.get('content')
-        Message.objects.create(sender=request.user, group=group, content=content)
+        Message.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),sender=request.user, group=group, content=content)
     return render(request, 'chat/group_chat.html', {'group': group, 'messages': messages})
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -1508,11 +1508,11 @@ def user_list(request):
 def user_chat(request, user_id):
     if True:
         recipient = get_object_or_404(User, id=user_id)
-        group, created = Group.objects.get_or_create(name=f"{request.user.username}-{recipient.username}")
+        group, created = Group.objects.get_or_create(kayit_tarihi=get_kayit_tarihi_from_request(request),name=f"{request.user.username}-{recipient.username}")
         if created:
             group.members.set([request.user, recipient])
             group.save()
-        #Message.objects.create(sender=request.user, group=group, content=content)
+        #Message.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),sender=request.user, group=group, content=content)
     return redirect('users:group_chat', group_id=group.id)
     #return render(request, 'chat/user_chat.html', context)
 @login_required
@@ -1522,9 +1522,9 @@ def create_group(request):
         member_ids = request.POST.getlist('members')
         image = request.FILES.get("image")
         if image:
-            group, created = Group.objects.get_or_create(name=group_name,image = image)
+            group, created = Group.objects.get_or_create(kayit_tarihi=get_kayit_tarihi_from_request(request),name=group_name,image = image)
         else:
-            group, created = Group.objects.get_or_create(name=group_name)
+            group, created = Group.objects.get_or_create(kayit_tarihi=get_kayit_tarihi_from_request(request),name=group_name)
         
         if created:
             group.members.set(member_ids + [request.user.id])
@@ -1552,7 +1552,7 @@ def group_chat(request, group_id):
     context["group"] = group
     if request.method == "POST":
         content = request.POST.get('content')
-        Message.objects.create(sender=request.user, group=group, content=content)
+        Message.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),sender=request.user, group=group, content=content)
     
     return render(request, 'chat/group_chat.html', context)
 @login_required

@@ -6,17 +6,6 @@ from simple_history.models import HistoricalRecords
 from django.conf import settings
 from django.db import models
 from simple_history.models import HistoricalRecords
-from django.utils import timezone
-import pytz
-
-def get_country_from_ip(ip_address):
-    # Implement this function to get the country from the IP address
-    pass
-
-def get_time_zone_from_country(country):
-    # Implement this function to get the time zone from the country
-    pass
-
 #from muhasebe.models import Gider_Bilgisi
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -312,32 +301,12 @@ class calisanlar_kategorisi(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-    def save(self, *args, **kwargs):
-        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
-        if ip_address == '127.0.0.1':
-            ip_address = '8.8.8.8'
-        country = get_country_from_ip(ip_address)
-        country_time_zone = get_time_zone_from_country(country)
-        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
-        if local_time:
-            self.kayit_tarihi = local_time
-        super(calisanlar_kategorisi, self).save(*args, **kwargs)
 class calisanlar_pozisyonu(models.Model):
     kategori_kime_ait = models.ForeignKey(CustomUser,verbose_name="Çalışan Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     kategori_isimi = models.CharField(max_length= 200 ,verbose_name="Çalışan Kategori İsmi")
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-    def save(self, *args, **kwargs):
-        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
-        if ip_address == '127.0.0.1':
-            ip_address = '8.8.8.8'
-        country = get_country_from_ip(ip_address)
-        country_time_zone = get_time_zone_from_country(country)
-        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
-        if local_time:
-            self.kayit_tarihi = local_time
-        super(calisanlar_pozisyonu, self).save(*args, **kwargs)
 class calisanlar(models.Model):
     STATUS = (
         ('0', '0'),
@@ -360,16 +329,6 @@ class calisanlar(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-    def save(self, *args, **kwargs):
-        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
-        if ip_address == '127.0.0.1':
-            ip_address = '8.8.8.8'
-        country = get_country_from_ip(ip_address)
-        country_time_zone = get_time_zone_from_country(country)
-        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
-        if local_time:
-            self.kayit_tarihi = local_time
-        super(calisanlar, self).save(*args, **kwargs)
 class calisan_maas_durumlari(models.Model):
     calisan = models.ForeignKey(calisanlar,verbose_name="işlem Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     maas = models.FloatField(verbose_name="Maaş",default=0,blank=True,null=True)
@@ -380,16 +339,6 @@ class calisan_maas_durumlari(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-    def save(self, *args, **kwargs):
-        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
-        if ip_address == '127.0.0.1':
-            ip_address = '8.8.8.8'
-        country = get_country_from_ip(ip_address)
-        country_time_zone = get_time_zone_from_country(country)
-        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
-        if local_time:
-            self.kayit_tarihi = local_time
-        super(calisan_maas_durumlari, self).save(*args, **kwargs)
 class calisan_belgeleri(models.Model):
     calisan = models.ForeignKey(calisanlar,verbose_name="işlem Kime Ait",blank=True,null=True,on_delete=models.SET_NULL)
     belge_turu = models.CharField(max_length=200,null=True,verbose_name="Soyisim",blank = True)
@@ -397,16 +346,6 @@ class calisan_belgeleri(models.Model):
     silinme_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-    def save(self, *args, **kwargs):
-        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
-        if ip_address == '127.0.0.1':
-            ip_address = '8.8.8.8'
-        country = get_country_from_ip(ip_address)
-        country_time_zone = get_time_zone_from_country(country)
-        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
-        if local_time:
-            self.kayit_tarihi = local_time
-        super(calisan_belgeleri, self).save(*args, **kwargs)
 from django.utils import timezone
 class calisanlar_calismalari(models.Model):
     mesai_orani = (
@@ -424,16 +363,6 @@ class calisanlar_calismalari(models.Model):
     guncelleme_tarihi = models.DateTimeField("Date modified", default=timezone.now)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-    def save(self, *args, **kwargs):
-        ip_address = kwargs.get('request').META.get('REMOTE_ADDR', None)
-        if ip_address == '127.0.0.1':
-            ip_address = '8.8.8.8'
-        country = get_country_from_ip(ip_address)
-        country_time_zone = get_time_zone_from_country(country)
-        local_time = timezone.now().astimezone(pytz.timezone(country_time_zone))
-        if local_time:
-            self.kayit_tarihi = local_time
-        super(calisanlar_calismalari, self).save(*args, **kwargs)
 from django.db import models
 
 
