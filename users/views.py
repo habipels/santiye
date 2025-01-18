@@ -154,7 +154,7 @@ def loginUser(request):
             lock_status.save()
         except :
             # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
-            lock_status = LockScreenStatus.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),user=request.user, is_locked=False)
+            lock_status = LockScreenStatus.objects.create(user=request.user, is_locked=False)
         dil = request.user.kullanici_tercih_dili
         return redirect(f"/{dil}/")
     return render(request,"account/login.html",context)
