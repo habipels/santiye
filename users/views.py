@@ -247,9 +247,9 @@ def kullanici_ekleme(request):
 
             a.save()
             for images in file:
-                personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
+                personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
-                bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
+                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
         return redirect("users:kullanicilarim")
 
 
