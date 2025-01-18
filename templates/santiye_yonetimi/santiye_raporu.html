@@ -5,6 +5,7 @@
 {% block sidebar %}
 
 
+{% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
 {%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
 {% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
 {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
@@ -81,7 +82,7 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
-                    Rapor
+                    Rapor 
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans 'Dashboard' %}</a></li>
@@ -107,68 +108,85 @@
                     <div id="ilerleme-chart"></div>
 
                     <script>
-                        var options = {
-                            series: [{
-                                name: "{% trans 'Finansal' %} ",
-                                data: {{gun_kalem_sayilari.degerler2 | safe}},
-                            }, {
-                                name:  "{% trans 'Fiziksel' %} ",
-                                data: {{gun_kalem_sayilari.degerler | safe}} 
-                            },],
-                            chart: {
-                                type: 'bar',
-                                height: 350,
-                                stacked: true,
-                                toolbar: {
-                                    show: false
-                                },
-                                zoom: {
-                                    enabled: false
-                                }
-                            },
-                            colors: ['#F9B035', '#6149CD'],
-                            responsive: [{
-                                breakpoint: 480,
-                                options: {
-                                    legend: {
-                                        position: 'bottom',
-                                        offsetX: -10,
-                                        offsetY: 0
-                                    }
-                                }
-                            }],
-                            plotOptions: {
-                                bar: {
-                                    horizontal: false,
-                                    borderRadius: 10,
-                                    borderRadiusApplication: 'end', // 'around', 'end'
-                                    borderRadiusWhenStacked: 'last', // 'all', 'last'
-                                    dataLabels: {
-                                        total: {
-                                            enabled: true,
-                                            style: {
-                                                fontSize: '13px',
-                                                fontWeight: 900
-                                            }
-                                        }
-                                    }
-                                },
-                            },
-                            xaxis: {
-                                type: 'text',
-                                categories: {{gun_kalem_sayilari.gunler | safe}},
-                            },
-                            legend: {
-                                show: false
-                            },
-                            fill: {
-                                opacity: 1
-                            }
-                        };
+    // Yuvarlama işlemi için verileri düzenle
+    var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
+    var roundedData2 = {{ gun_kalem_sayilari.degerler2 | safe }}.map(x => parseFloat(x.toFixed(2)));
+    var roundedCategories = {{ gun_kalem_sayilari.gunler | safe }};
 
-                        var chart = new ApexCharts(document.querySelector("#ilerleme-chart"), options);
-                        chart.render();
-                    </script>
+    var options = {
+        series: [
+            {
+                name: "{% trans 'Finansal' %} ",
+                data: roundedData2,
+            }, 
+            {
+                name: "{% trans 'Fiziksel' %} ",
+                data: roundedData1
+            }
+        ],
+        chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        colors: ['#F9B035', '#6149CD'],
+        responsive: [
+            {
+                breakpoint: 480,
+                options: {
+                    legend: {
+                        position: 'bottom',
+                        offsetX: -10,
+                        offsetY: 0
+                    }
+                }
+            }
+        ],
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 10,
+                borderRadiusApplication: 'end', // 'around', 'end'
+                borderRadiusWhenStacked: 'last', // 'all', 'last'
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 900
+                        }
+                    }
+                }
+            },
+        },
+        xaxis: {
+            type: 'text',
+            categories: roundedCategories,
+        },
+        legend: {
+            show: false
+        },
+        fill: {
+            opacity: 1
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function(val) {
+                return val.toFixed(2); // Değerleri 2 basamağa yuvarla
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#ilerleme-chart"), options);
+    chart.render();
+</script>
+
                 </div>
             </div>
 
@@ -271,11 +289,11 @@
                     <div class="report-bb-stats">
                         <div class="report-bb-stat">
                             <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i>{% trans 'Tamamlanan' %} </div>
-                            <div class="report-bb-stat-value" id="fiziksel" >%{{fiziksel_ilerleme |safe }}</div>
+                            <div class="report-bb-stat-value" id="fiziksel" >%{{fiziksel_ilerlemei |safe }}</div>
                         </div>
                         <div class="report-bb-stat">
                             <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i>{% trans 'Devam Eden' %} </div>
-                            <div class="report-bb-stat-value" id="finansal" >%{% basit_cikarma_duzenli 100 fiziksel_ilerleme  %} </div>
+                            <div class="report-bb-stat-value" id="finansal" >%{% basit_cikarma_duzenli 100 fiziksel_ilerlemei  %} </div>
                         </div>
                         
                         <!-- <div class="report-bb-stat">
@@ -286,7 +304,7 @@
 
                     <script>
                         var options = {
-                            series:  [{{fiziksel_ilerleme |safe }}, {% basit_cikarma_duzenli 100 fiziksel_ilerleme  %} ],
+                            series:  [{{fiziksel_ilerlemei |safe }}, {% basit_cikarma_duzenli 100 fiziksel_ilerlemei  %} ],
                             chart: {
                                 height: 500,
                                 type: 'radialBar',

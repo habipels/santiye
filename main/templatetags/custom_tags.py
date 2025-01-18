@@ -274,6 +274,21 @@ def bloglar_daireleri_kalemleri_finansal_bilgileri(id,k_b):
         except:
             genel_toplam = genel_toplam
     return round(genel_toplam,2)
+@register.simple_tag
+def bloglar_daireleri_kalemleri_fiziksel_bilgilerii(id):
+    genel_toplam = 0
+    if True:
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,silinme_bilgisi = False,kalem_bilgisi__silinme_bilgisi = False).exclude(kalem_bilgisi = None).count()
+        toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,silinme_bilgisi = False,kalem_bilgisi__silinme_bilgisi = False).exclude(kalem_bilgisi = None).count()
+        
+        toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,silinme_bilgisi = False,kalem_bilgisi__silinme_bilgisi = False).exclude(kalem_bilgisi = None).count()
+        try:
+            genel_toplam = ((toplam_yapilan_kalem*100)/(toplam_yapilmayan_kalem+toplam_yapilan_kalem))+genel_toplam
+        except:
+            genel_toplam = genel_toplam
+    print(genel_toplam,"genel toplam",(toplam_yapilmayan_kalem+toplam_yapilan_kalem),toplam_yapilan_kalem)
+    return round(genel_toplam,2)
+
 from collections import defaultdict
 from datetime import timedelta
 from django import template
