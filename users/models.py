@@ -6,6 +6,7 @@ from simple_history.models import HistoricalRecords
 from django.conf import settings
 from django.db import models
 from simple_history.models import HistoricalRecords
+from django.utils import timezone
 #from muhasebe.models import Gider_Bilgisi
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -30,9 +31,19 @@ class CustomUser(AbstractUser):
     online  = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
     kullanici_tercih_dili = models.CharField(max_length=10,verbose_name="Kullanıcı Tercih Dili",default="en")
+    last_seen = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.username
+
+    def update_last_seen(self):
+        self.last_seen = timezone.now()
+        self.save()
+
+    def is_online(self):
+        now = timezone.now()
+        return now - self.last_seen < timezone.timedelta(minutes=5)
+
 class faturalardaki_gelir_gider_etiketi_ozel(models.Model):
     kullanici = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
     gelir_etiketi = models.CharField(max_length=10,verbose_name  ="Gelir Etiketi",blank = True,null=True)
@@ -368,14 +379,14 @@ from django.db import models
 
 class Group(models.Model):
     name = models.CharField(max_length=100)
-    members = models.ManyToManyField(CustomUser, related_name='groups_in')
+    members = models.ManyToManyField(CustomUser, related_name='user_groups')
     image  = models.FileField(upload_to='chatgrup_resimleri/',verbose_name="Profile",blank=True,null=True,)
     def __str__(self):
         return self.name
 
 class Message(models.Model):
-    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_messages')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='group_messages')
     file = models.FileField(upload_to='uploads/', blank=True, null=True)  # Yeni dosya alanı
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

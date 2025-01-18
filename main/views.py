@@ -7330,7 +7330,7 @@ def kullanici_yetki_olustur(request):
         return redirect("main:yetkisiz")
     if request.POST:
         grup_adi = request.POST.get("grup_adi")
-        personel_izinleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+        personel_izinleri.objects.create(
             isim = grup_adi,
             izinlerin_sahibi_kullanici = request.user
         )
@@ -8548,7 +8548,7 @@ def kullanici_yetki_olustur_2(request,hash):
         return redirect("main:yetkisiz")
     if request.POST:
         grup_adi = request.POST.get("grup_adi")
-        personel_izinleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+        personel_izinleri.objects.create(
             isim = grup_adi,
             izinlerin_sahibi_kullanici = users
         )

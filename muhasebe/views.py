@@ -3361,7 +3361,7 @@ def gelir_faturasi_kaydet(request):
         for i in gelir_urun_bilgisi_al:
             toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
         Gelir_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
-        gelir_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
+        gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
         if profile:
             u = Gelir_Bilgisi.objects.get(id = new_project.id )
             u.fatura_gorseli = profile
@@ -3474,7 +3474,7 @@ def gelir_faturasi_kaydet_2(request,hash):
         for i in gelir_urun_bilgisi_al:
             toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
         Gelir_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
-        gelir_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
+        gelir_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gelir_Bilgisi,id = new_project.id))
         if profile:
             u = Gelir_Bilgisi.objects.get(id = new_project.id )
             u.fatura_gorseli = profile
@@ -3943,7 +3943,7 @@ def gider_faturasi_kaydet(request):
             toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
         Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
         
-        gider_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
+        gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         #print(aciklama_id,"gelen id")
         if profile:
             u = Gider_Bilgisi.objects.get(id = new_project.id )
@@ -4056,7 +4056,7 @@ def gider_faturasi_kaydet_2(request,hash):
             toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
         Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =toplam_tutar )
         
-        gider_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
+        gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         #print(aciklama_id,"gelen id")
         if profile:
             u = Gider_Bilgisi.objects.get(id = new_project.id )
@@ -6081,7 +6081,7 @@ def gider_faturasi_kaydet_personel(request):
             toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
         Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =0 )
         
-        gider_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
+        gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         #print(aciklama_id,"gelen id")
         fatura_gorsel = get_object_or_none(calisanlar_calismalari_odemeleri,id = faturaya_bagla )
         if fatura_gorsel.dosya:
@@ -6238,7 +6238,7 @@ def gider_faturasi_kaydet_personel_2(request,hash):
             toplam_tutar += (i.urun_fiyati)*(i.urun_adeti)-i.urun_indirimi
         Gider_Bilgisi.objects.filter(id =new_project.id ).update(toplam_tutar =toplam_tutar,kalan_tutar =0 )
         
-        gider_qr.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
+        gider_qr.objects.create(gelir_kime_ait_oldugu = get_object_or_none(Gider_Bilgisi,id = new_project.id))
         #print(aciklama_id,"gelen id")
         fatura_gorsel = get_object_or_none(calisanlar_calismalari_odemeleri,id = faturaya_bagla )
         if fatura_gorsel.dosya:

@@ -66,6 +66,7 @@ if DEPLOY__:
         "muhasebe",
         "site_info",
         'django_extensions',
+        "chat",
     ]
     DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
     AUTH_USER_MODEL = 'users.CustomUser'
@@ -150,9 +151,12 @@ if DEPLOY__:
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
-    }
+}
     # Password validation
     # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -238,9 +242,12 @@ else:
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
-    }
+}
 
     INSTALLED_APPS = [
         'django.contrib.admin',
@@ -265,6 +272,7 @@ else:
         "site_settings",
         "muhasebe",
         "site_info",
+        "chat",
     ]
     DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
     AUTH_USER_MODEL = 'users.CustomUser'

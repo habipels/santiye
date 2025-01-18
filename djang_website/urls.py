@@ -38,6 +38,7 @@ path("firebase-messaging.js",TemplateView.as_view(template_name="firebase-messag
     path('users/',include("users.urls", namespace='users')),
     path('biadago/api/',include("api.urls", namespace='api')),
     path('', include('pwa.urls')),  # PWA URL - Tolga
+    path('chat/', include('chat.urls')),
 
 ]
 

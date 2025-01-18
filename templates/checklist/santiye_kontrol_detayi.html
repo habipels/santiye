@@ -169,4 +169,53 @@
 </form>
 {% endif %}
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('katmanSelect').addEventListener('change', function() {
+            const katmanId = this.value;
+            const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
+            // ...existing code...
+
+            fetch(`/get_yapi/${santiyeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const yapiSelect = document.getElementById('yapiSelect');
+                    const odaSelect = document.getElementById('odaSelect');
+                    // Hata kontrolü ekleyelim
+                    if (!yapiSelect || !odaSelect) {
+                        console.error("Yapı veya oda select öğesi bulunamadı.");
+                        return; // Hata varsa burada çıkalım
+                    }
+                    yapiSelect.innerHTML = '<option value="">{% trans "Lütfen Yapıyı seçin" %}</option>'; // Default option
+                    odaSelect.innerHTML = '';
+
+                    // Yapılar yapiSelect içine ekleniyor
+                    data.yapilar.forEach(yapi => {
+                        const option = document.createElement('option');
+                        option.value = yapi.id;
+                        option.setAttribute('data-kat-sayisi', yapi.kat_sayisi);
+                        option.textContent = yapi.blog_adi;
+                        yapiSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Fetch hatası:", error));
+        });
+
+        // Yapı seçildiğinde kat numaralarını odaSelect alanına ekleme
+        document.getElementById('yapiSelect').addEventListener('change', function() {
+            const selectedYapi = this.options[this.selectedIndex];
+            const katSayisi = selectedYapi.getAttribute('data-kat-sayisi');
+            const odaSelect = document.getElementById('odaSelect');
+            odaSelect.innerHTML = '';
+
+            // Kat numaralarını ekliyoruz
+            for (let i = 1; i <= katSayisi; i++) {
+                const odaOption = document.createElement('option');
+                odaOption.value = i;
+                odaOption.textContent = `Kat ${i}`;
+                odaSelect.appendChild(odaOption);
+            }
+        });
+    });
+</script>
 {% endblock sidebar %}
