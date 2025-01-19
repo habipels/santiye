@@ -93,11 +93,7 @@
     </style>
 </head>
   <body class="sidebar">
-    <div class="chitchat-loader">
-      <div><img src="assets/images/logo/logo_big.png" alt=""/>
-        <h3>Şirketinize hızlı bağlantı için basit ve güvenli mesajlaşma..!</h3>
-      </div>
-    </div>
+  
     <div class="chitchat-container sidebar-toggle">
       <nav class="main-nav on custom-scroll">
         <div class="logo-warpper"><a href="messenger.html"><img src="assets/images/logo/logo.png" alt="logo"/></a></div>
@@ -458,7 +454,7 @@
                             <img class="bg-img" src="{% static 'go/chat/resimler/grup.png' %}" alt="Avatar"/>
                     
                         {% elif grb.resim == "1" %}
-                            <img class="bg-img" src="{% static 'go/images/avatar.png' %}" alt="Avatar"/>
+                            <img class="bg-img" src="{% static 'go/images/profile.png' %}" alt="Avatar"/>
                         {% else %}
                             <img class="bg-img" src="{{grb.resim}}" alt="Avatar"/>
                         {% endif %}
@@ -467,7 +463,7 @@
                     </div>
                     <div class="flex-grow-1">
                       <h5 class="mb-0">{{grb.isim}}</h5>
-                      <div class="badge badge-success">Active</div>
+                      <div class="badge badge-success">Activea</div>
                     </div>
                     <div class="media-right">
                       
@@ -489,7 +485,14 @@
                 {% if message.sender == request.user %}
                     <li class="replies">
                   <div class="d-flex">
-                    <div class="profile"><img class="bg-img" src="{% static 'go/chat/assets/images/contact/2.jpg' %}" alt="Avatar"/></div>
+                    <div class="profile">
+                      {% if message.sender.image %}
+                    <img class="bg-img" style="max-width: 50px !important;" src="{{ message.sender.image.url}}" alt="Avatar"/>
+                    {% else %}
+                    <img class="bg-img" style="max-width: 50px !important;" src="{% static 'go/images/profile.png' %}" alt="Avatar"/>
+                    {% endif %}
+
+                    </div>
                     <div class="flex-grow-1">
                       <div class="contact-name">
                         <h5>{{ message.sender.last_name }}</h5>
@@ -507,7 +510,13 @@
                                 </ul>
                               </div>
                             </div>
-                            <h5>{{ message.content }}</h5>
+                            <h5>
+                              {% if message.file %}
+                                <a href="{{message.file}}" target="_blank"><img src="{{message.file}}" alt="Image" style="max-width: 200px; max-height: 200px;"/></a>
+                              {% else %}
+                              {% endif %}
+                              
+                              {{ message.content }}</h5>
                           </li>
                         
                         </ul>
@@ -519,7 +528,13 @@
                 {% else %}
                 <li class="send">
                   <div class="d-flex">
-                    <div class="profile"><img class="bg-img" src="{% static 'go/chat/assets/images/contact/2.jpg' %}" alt="Avatar"/></div>
+                    <div class="profile">
+                      {% if message.sender.image %}
+                    <img class="bg-img" style="max-width: 50px !important;" src="{{ message.sender.image.url}}" alt="Avatar"/>
+                    {% else %}
+                    <img class="bg-img" style="max-width: 50px !important;" src="{% static 'go/images/profile.png' %}" alt="Avatar"/>
+                    {% endif %}
+                    </div>
                     <div class="flex-grow-1">
                       <div class="contact-name">
                         <h5>{{ message.sender.last_name }}</h5>
@@ -565,8 +580,7 @@
                       <div class="profile online menu-trigger"><img class="bg-img" src="assets/images/contact/2.jpg" alt="Avatar"/></div>
                     </div>
                     <div class="flex-grow-1">
-                      <h5>Josephin water</h5>
-                      <h6>Last Seen 5 hours</h6>
+                      
                     </div>
                     <div class="media-right">
                       <ul>
@@ -693,233 +707,7 @@
                 </div>
               </div>
             </div>
-            <div class="contact-chat">
-              <ul class="chatappend">
-                <li class="groupuser">
-                  <h4>Jewellery project</h4>
-                  <div class="gr-chat-friend-toggle"><a class="icon-btn btn-sm pull-right add-grbtn outside" href="#" data-tippy-content="Add User"><i data-feather="plus"></i></a>
-                    <div class="gr-chat-frind-content">
-                      <ul class="chat-main">
-                        <li>
-                          <div class="chat-box">
-                            <div class="d-flex">
-                              <div class="profile offline"><img class="bg-img" src="assets/images/contact/1.jpg" alt="Avatar"/></div>
-                              <div class="details">
-                                <h5>Josephin water</h5>
-                                <h6>Alabma , USA</h6>
-                              </div>
-                              <div class="flex-grow-1"><a class="icon-btn btn-outline-primary btn-sm" href="#" data-tippy-content="Add User"><i class="fa fa-plus"></i></a></div>
-                            </div>
-                          </div>
-                        </li>
-                        <li>
-                          <div class="chat-box">
-                            <div class="d-flex">
-                              <div class="profile"><img class="bg-img" src="assets/images/contact/2.jpg" alt="Avatar"/></div>
-                              <div class="details">
-                                <h5>Josephin water</h5>
-                                <h6>Alabma , USA</h6>
-                              </div>
-                              <div class="flex-grow-1"><a class="icon-btn btn-outline-primary btn-sm" href="#" data-tippy-content="Add User"><i class="fa fa-plus"></i></a></div>
-                            </div>
-                          </div>
-                        </li>
-                        <li>
-                          <div class="chat-box">
-                            <div class="d-flex">
-                              <div class="profile"><img class="bg-img" src="assets/images/contact/3.jpg" alt="Avatar"/></div>
-                              <div class="details">
-                                <h5>Josephin water</h5>
-                                <h6>Alabma , USA</h6>
-                              </div>
-                              <div class="flex-grow-1"><a class="icon-btn btn-outline-primary btn-sm" href="#" data-tippy-content="Add User"><i class="fa fa-plus"></i></a></div>
-                            </div>
-                          </div>
-                        </li>
-                        <li>
-                          <div class="chat-box">
-                            <div class="d-flex">
-                              <div class="profile unreachable"><img class="bg-img" src="assets/images/contact/4.jpg" alt="Avatar"/></div>
-                              <div class="details">
-                                <h5>Josephin water</h5>
-                                <h6>Alabma , USA</h6>
-                              </div>
-                              <div class="flex-grow-1"><a class="icon-btn btn-outline-primary btn-sm" href="#" data-tippy-content="Add User"><i class="fa fa-plus"></i></a></div>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="gr-profile dot-btn dot-success grow"><img class="bg-img" src="assets/images/avtar/3.jpg" alt="Avatar"/></div>
-                  <div class="gr-profile dot-btn dot-success grow"><img class="bg-img" src="assets/images/avtar/5.jpg" alt="Avatar"/></div>
-                </li>
-                <li class="sent">
-                  <div class="d-flex">
-                    <div class="profile"><img class="bg-img" src="assets/images/contact/2.jpg" alt="Avatar"/></div>
-                    <div class="flex-grow-1">
-                      <div class="contact-name">
-                        <h5>Josephin water</h5>
-                        <h6>01:35 AM</h6>
-                        <ul class="msg-box">
-                          <li class="msg-setting-main">
-                            <h5>Hi I am Josephin, can you help me to find best chat app?. </h5>
-                            <div class="msg-dropdown-main">
-                              <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                              <div class="msg-dropdown"> 
-                                <ul>
-                                  <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                  <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                  <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                  <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                          </li>
-                          <li class="msg-setting-main">
-                            <h5> it should from elite auther &#128519;</h5>
-                            <div class="badge badge-success sm mx-2"> R</div>
-                            <div class="msg-dropdown-main">
-                              <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                              <div class="msg-dropdown"> 
-                                <ul>
-                                  <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                  <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                  <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                  <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li class="replies">
-                  <div class="d-flex">
-                    <div class="profile"><img class="bg-img" src="assets/images/avtar/1.jpg" alt="Avatar"/></div>
-                    <div class="flex-grow-1">
-                      <div class="contact-name">
-                        <h5>Alan josheph</h5>
-                        <h6>01:40 AM</h6>
-                        <ul class="msg-box">
-                          <li class="msg-setting-main">
-                            <div class="msg-dropdown-main">
-                              <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                              <div class="msg-dropdown"> 
-                                <ul>
-                                  <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                  <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                  <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                  <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                            <h5>Sure, chitchat is best theme for chating project, you can it check<a class="ms-1" href="https://themeforest.net/user/pixelstrap/portfolio" target="_blank">here.</a></h5>
-                          </li>
-                          <li class="msg-setting-main">
-                            <div class="msg-dropdown-main">
-                              <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                              <div class="msg-dropdown"> 
-                                <ul>
-                                  <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                  <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                  <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                  <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                            <div class="document"><i class="fa fa-file-excel-o font-primary"></i>
-                              <div class="details">
-                                <h5>Document.xlsx</h5>
-                                <h6>25mb Seprate file</h6>
-                              </div>
-                              <div class="icon-btns"><a class="icon-btn btn-outline-light" href="assets/doc/Document.xlsx" target="_blank"><i data-feather="download"> </i></a></div>
-                            </div>
-                            <div class="badge badge-dark sm ms-2"> D</div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li class="sent">
-                  <div class="d-flex">
-                    <div class="profile"><img class="bg-img" src="assets/images/contact/2.jpg" alt="Avatar"/></div>
-                    <div class="flex-grow-1">
-                      <div class="contact-name">
-                        <h5>Josephin water</h5>
-                        <h6>01:42 AM</h6>
-                        <ul class="msg-box">
-                          <li class="msg-setting-main">
-                            <h5>I think it's best for my project.</h5>
-                            <div class="msg-dropdown-main">
-                              <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                              <div class="msg-dropdown"> 
-                                <ul>
-                                  <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                  <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                  <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                  <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                          </li>
-                          <li class="msg-setting-main">
-                            <ul class="auto-gallery">
-                              <li><img class="bg-img" src="assets/images/media/1.jpg" alt="Avatar"/></li>
-                              <li>   <img class="bg-img" src="assets/images/media/2.jpg" alt="Avatar"/></li>
-                              <li>   <img class="bg-img" src="assets/images/media/3.jpg" alt="Avatar"/></li>
-                            </ul>
-                            <div class="badge badge-danger sm ms-2"></div>
-                            <div class="badge badge-outline-primary refresh sm ms-2"> <i data-feather="rotate-cw"></i></div>
-                            <div class="msg-dropdown-main">
-                              <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                              <div class="msg-dropdown"> 
-                                <ul>
-                                  <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                  <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                  <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                  <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li class="replies">
-                  <div class="d-flex">
-                    <div class="profile"><img class="bg-img" src="assets/images/avtar/1.jpg" alt="Avatar"/></div>
-                    <div class="flex-grow-1">
-                      <div class="contact-name">
-                        <h5>Alan josheph</h5>
-                        <h6>01:45 AM</h6>
-                        <ul class="msg-box">
-                          <li class="msg-setting-main">
-                            <div class="msg-dropdown-main">
-                              <div class="msg-setting"><i class="ti-more-alt"></i></div>
-                              <div class="msg-dropdown"> 
-                                <ul>
-                                  <li><a href="#"><i class="fa fa-share"></i>forward</a></li>
-                                  <li><a href="#"><i class="fa fa-clone"></i>copy</a></li>
-                                  <li><a href="#"><i class="fa fa-star-o"></i>rating</a></li>
-                                  <li><a href="#"><i class="ti-trash"></i>delete</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                            <h5>If you have any other query then feel free to ask us.</h5>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
+          
           </div>
           <div class="messages custom-scroll" id="group_blank">
             <div class="contact-details">
@@ -1085,7 +873,7 @@
                 </div>
               </div>
         </div>
-
+       
 
       </div>
     </div>
@@ -1096,16 +884,24 @@
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        const chatLog = document.querySelector('#chatappend');
+        console.log('Received data:', data);  // Debugging log
+        const chatLog = document.getElementById('chatappend');
+        console.log('Chat log element:', chatLog);  // Debugging log
 
         const isSender = data.user === "{{ user.username }}";
+        console.log('Is sender:', isSender);  // Debugging log
 
-        if (data.message_type === 'text') {
+        if (data.file_url === null) {
             chatLog.innerHTML += `
             <li class="${isSender ? 'replies' : 'send'}">
                 <div class="d-flex">
                     <div class="profile">
-                        <img class="bg-img" src="/static/go/chat/assets/images/contact/2.jpg" alt="Avatar"/>
+                    {% if user.image %}
+                    <img class="bg-img" style="max-width: 50px !important;" src="{{ user.image.url}}" alt="Avatar"/>
+                    {% else %}
+                    <img class="bg-img" style="max-width: 50px !important;" src="{% static 'go/images/profile.png' %}" alt="Avatar"/>
+                    {% endif %}
+                        
                     </div>
                     <div class="flex-grow-1">
                         <div class="contact-name">
@@ -1120,12 +916,28 @@
                     </div>
                 </div>
             </li>`;
-        } else if (data.message_type === 'file') {
+        } else {
+            const fileType = data.file_url.split(';')[0].split(':')[1];
+            let fileDisplay = '';
+
+            if (fileType.startsWith('image/')) {
+              fileDisplay = `<a href="${data.file_url}" target="_blank"><img src="${data.file_url}" alt="Image" style="max-width: 200px; max-height: 200px;"/></a>`;
+            } else if (fileType === 'application/pdf') {
+              fileDisplay = `<embed src="${data.file_url}" type="application/pdf" width="200" height="200"/>`;
+            } else {
+              fileDisplay = `<a href="${data.file_url}" target="_blank">Dosyayı Görüntüle</a>`;
+            }
+
             chatLog.innerHTML += `
             <li class="${isSender ? 'replies' : 'send'}">
                 <div class="d-flex">
                     <div class="profile">
-                        <img class="bg-img" src="/static/go/chat/assets/images/contact/2.jpg" alt="Avatar"/>
+                                            {% if user.image %}
+                    <img class="bg-img" style="max-width: 50px !important;" src="{{ user.image.url}}" alt="Avatar"/>
+                    {% else %}
+                    <img class="bg-img" style="max-width: 50px !important;" src="{% static 'go/images/profile.png' %}" alt="Avatar"/>
+                    {% endif %}
+
                     </div>
                     <div class="flex-grow-1">
                         <div class="contact-name">
@@ -1133,7 +945,7 @@
                             <h6>${new Date().toLocaleTimeString()}</h6>
                             <ul class="msg-box">
                                 <li class="msg-setting-main">
-                                    <a href="${data.file_url}" target="_blank">Dosyayı Görüntüle</a>
+                                    ${fileDisplay}
                                 </li>
                             </ul>
                         </div>
@@ -1147,42 +959,43 @@
         console.error('Chat socket closed unexpectedly');
     };
 
-    // Metin mesajı gönderme
-    document.querySelector('#send-message').onclick = function(e) {
+    function sendMessage() {
         const messageInputDom = document.querySelector('#message-input');
+        const fileInput = document.querySelector('#file-input');
         const message = messageInputDom.value;
+        const file = fileInput.files[0];
 
-        if (message.trim() !== "") {
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const file_url = reader.result;
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'file_url': file_url
+                }));
+            };
+            reader.readAsDataURL(file);
+        } else {
             chatSocket.send(JSON.stringify({
                 'message': message,
-                'message_type': 'text'  // Mesajın türünü belirtelim
+                'file_url': null
             }));
         }
 
         messageInputDom.value = '';
+        fileInput.value = '';
+    }
+
+    document.querySelector('#send-message').onclick = function(e) {
+        sendMessage();
     };
 
-    // Dosya gönderme
-    document.querySelector('#upload-file-button').onclick = function(e) {
-        const fileInput = document.querySelector('#file-input');
-        const file = fileInput.files[0];
-
-        if (file) {
-            // Dosyayı Blob olarak okuyoruz
-            const reader = new FileReader();
-            reader.readAsDataURL(file);  // Dosyayı base64 formatında okuyoruz
-            reader.onload = function() {
-                const base64File = reader.result;
-                // Dosyayı WebSocket ile gönderiyoruz
-                chatSocket.send(JSON.stringify({
-                    'message_type': 'file',  // Mesajın dosya olduğunu belirtiyoruz
-                    'file_data': base64File,
-                    'file_name': file.name,
-                    'file_type': file.type
-                }));
-            };
+    document.querySelector('#message-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
         }
-    };
+    });
 });
 
 </script>

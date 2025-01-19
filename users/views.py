@@ -1508,7 +1508,7 @@ def user_list(request):
 def user_chat(request, user_id):
     if True:
         recipient = get_object_or_404(User, id=user_id)
-        group, created = Group.objects.get_or_create(kayit_tarihi=get_kayit_tarihi_from_request(request),name=f"{request.user.username}-{recipient.username}")
+        group, created = Group.objects.get_or_create(name=f"{request.user.username}-{recipient.username}")
         if created:
             group.members.set([request.user, recipient])
             group.save()
@@ -1522,9 +1522,9 @@ def create_group(request):
         member_ids = request.POST.getlist('members')
         image = request.FILES.get("image")
         if image:
-            group, created = Group.objects.get_or_create(kayit_tarihi=get_kayit_tarihi_from_request(request),name=group_name,image = image)
+            group, created = Group.objects.get_or_create(name=group_name,image = image)
         else:
-            group, created = Group.objects.get_or_create(kayit_tarihi=get_kayit_tarihi_from_request(request),name=group_name)
+            group, created = Group.objects.get_or_create(name=group_name)
         
         if created:
             group.members.set(member_ids + [request.user.id])
@@ -1550,6 +1550,7 @@ def group_chat(request, group_id):
     context["users"] = users
     context["groups"] = groups
     context["group"] = group
+    context["group_id"] = group_id  # Add group_id to context
     if request.method == "POST":
         content = request.POST.get('content')
         Message.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),sender=request.user, group=group, content=content)

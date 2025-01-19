@@ -66,7 +66,7 @@ if DEPLOY__:
         "muhasebe",
         "site_info",
         'django_extensions',
-        "chat",
+        
     ]
     DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
     AUTH_USER_MODEL = 'users.CustomUser'
@@ -151,10 +151,7 @@ if DEPLOY__:
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
     # Password validation
@@ -242,10 +239,7 @@ else:
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
 
@@ -272,7 +266,7 @@ else:
         "site_settings",
         "muhasebe",
         "site_info",
-        "chat",
+        
     ]
     DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
     AUTH_USER_MODEL = 'users.CustomUser'
