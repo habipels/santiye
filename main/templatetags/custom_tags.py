@@ -2173,3 +2173,8 @@ def daire_imalat_yuzde_hesabi(daire):
 def daire_imalat_sonuncu(daire):
     tamamlanma = imalat_daire_balama.objects.filter(daire_bilgisi = daire,tamamlanma_bilgisi = True).order_by("-tarih").last()
     return tamamlanma
+
+@register.simple_tag
+def klasor_adi_duzeltme(veri):
+    veri = veri.replace("/","_")
+    return veri
