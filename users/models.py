@@ -387,9 +387,10 @@ class Group(models.Model):
 class Message(models.Model):
     sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_messages')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='group_messages')
-    file = models.FileField(upload_to='uploads/', blank=True, null=True)  # Yeni dosya alanı
+    file = models.FileField(upload_to='uploads/', blank=True, null=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)  # Yeni alan
 
     def __str__(self):
         return f"{self.sender.username}: {self.content[:50]}"

@@ -1480,11 +1480,16 @@ from .models import Group, Message
 @login_required
 def group_chat(request, group_id):
     group = get_object_or_404(Group, id=group_id)
-    messages = group.messages.all()
-    if request.method == "POST":
-        content = request.POST.get('content')
-        Message.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),sender=request.user, group=group, content=content)
-    return render(request, 'chat/group_chat.html', {'group': group, 'messages': messages})
+    messages = Message.objects.filter(group=group).order_by('timestamp')
+    for message in messages:
+        if message.sender != request.user:
+            message.read = True
+            message.save()
+    return render(request, 'chat/group_chat.html', {
+        'group': group,
+        'messages': messages,
+        'users': CustomUser.objects.all(),
+    })
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Group, Message
@@ -1541,6 +1546,10 @@ def group_chat(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     messages = Message.objects.filter(group=group)
     messages = messages.order_by('timestamp')
+    for message in messages:
+        if message.sender != request.user:
+            message.read = True
+            message.save()
     if request.user.kullanicilar_db:
         users = User.objects.filter(kullanicilar_db = request.user.kullanicilar_db ).exclude(id=request.user.id)
     else:
@@ -1607,16 +1616,3 @@ def create_group_channel(user_ids, name):
         #print("Kanal oluşturulamadı:", response.json())
         return None
 
-
-def chat_view(request):
-    user_id = request.user.username
-    # Kullanıcıların ID’sini listeye ekleyin
-    user_ids = [user_id, "other_user_id"]  # Örnek diğer kullanıcı
-    channel_url = create_group_channel(user_ids, "My Group Channel")
-
-    context = {
-        'app_id': SENDBIRD_APP_ID,
-        'user_id': user_id,
-        'channel_url': channel_url
-    }
-    return render(request, 'denme_chat.html', context)
