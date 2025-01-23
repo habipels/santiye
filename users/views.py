@@ -1481,15 +1481,16 @@ from .models import Group, Message
 def group_chat(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     messages = Message.objects.filter(group=group).order_by('timestamp')
-    for message in messages:
-        if message.sender != request.user:
-            message.read = True
-            message.save()
-    return render(request, 'chat/group_chat.html', {
+    members = group.members.all()
+    for member in members:
+        member.is_online = member.is_online()  # Update the is_online status for each member
+
+    context = {
         'group': group,
         'messages': messages,
-        'users': CustomUser.objects.all(),
-    })
+        'members': members,
+    }
+    return render(request, 'chat/group_chat.html', context)
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Group, Message
@@ -1545,7 +1546,7 @@ def group_chat(request, group_id):
     context = sozluk_yapisi()
     group = get_object_or_404(Group, id=group_id)
     messages = Message.objects.filter(group=group)
-    messages = messages.order_by('timestamp')
+    messages = messages.order_by('timestamp')[:100]
     for message in messages:
         if message.sender != request.user:
             message.read = True
