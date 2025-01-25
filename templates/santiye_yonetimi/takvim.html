@@ -59,6 +59,26 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
+<script>
+$(function() {
+    $('input[name="start"], input[name="end"]').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        autoUpdateInput: false,
+        locale: {
+            format: 'YYYY-MM-DD'
+        },
+        isInvalidDate: function(date) {
+            return false; // Allow all dates including weekends
+        }
+    });
+
+    $('input[name="start"], input[name="end"]').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD'));
+    });
+});
+</script>
+
 {% endblock head %}
 
 {% block sidebar %}
@@ -303,7 +323,9 @@ function getDemoProject() {
   // Tarih ayarlaması
   var offset = new Date().getTime() - ret.tasks[0].start;
   ret.tasks.forEach(function(task) {
-    task.start = task.start + offset;
+
+    task.start = task.start ;
+    console.log(task.start);
   });
 
   return ret;

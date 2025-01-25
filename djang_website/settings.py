@@ -151,7 +151,10 @@ if DEPLOY__:
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
 }
     # Password validation
@@ -239,7 +242,10 @@ else:
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
 }
 
@@ -266,7 +272,7 @@ else:
         "site_settings",
         "muhasebe",
         "site_info",
-        
+
     ]
     DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 
     AUTH_USER_MODEL = 'users.CustomUser'
