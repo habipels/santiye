@@ -1,4 +1,3 @@
-
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load static %}
@@ -12,17 +11,17 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    Daire Yönetimi
+                    {% trans "Daire Yönetimi" %}
                 </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Daire Yönetimi</a></li>
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Daire Yönetimi" %}</a></li>
                 </ul>
             </div>
 
             <div class="page-actions">
                 <button class="page-primary-btn" onclick="openModal('daire-ekle')"><i class="icon icon-new"></i>
-                    Yeni Daire Ekle</button>
+                    {% trans "Yeni Daire Ekle" %}</button>
             </div>
         </div>
 
@@ -56,34 +55,32 @@
 
 
 
-
-
     <div class="modal" id="daire-ekle">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Daire Ekle
+                {% trans "Daire Ekle" %}
             </div>
             <div class="modal-body">
                 <form method="POST" action="/{{dil}}{% url 'crm:daire_ekle' %}">
                     {% csrf_token %} 
                     <div class="form-element">
-                        <label for="santiye">Şantiye</label>
+                        <label for="santiye">{% trans "Şantiye" %}</label>
                         <select name="santiye" id="santiye">
-                            <option value="" selected disabled>Şantiye Seçiniz</option>
+                            <option value="" selected disabled>{% trans "Şantiye Seçiniz" %}</option>
                             {% for santiye in santiyeler %}
                                 <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-element">
-                        <label for="blok">Blok</label>
+                        <label for="blok">{% trans "Blok" %}</label>
                         <select name="blok" id="blok">
-                            <option value="" selected disabled>Blok Seçiniz</option>
+                            <option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>
                         </select>
                     </div>
                     <div class="form-row">
                         <div class="form-element">
-                            <label for="kat">Kat</label>
+                            <label for="kat">{% trans "Kat" %}</label>
                             <select name="kat" id="kat">
                                 <option value="" selected disabled></option>
                                 <option value="...">...</option>
@@ -92,13 +89,13 @@
                             </select>
                         </div>
                         <div class="form-element">
-                            <label for="daire-no">Daire No</label>
+                            <label for="daire-no">{% trans "Daire No" %}</label>
                             <input type="text" required name="daire_no">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-element">
-                            <label for="oda-sayisi">Oda Sayisi</label>
+                            <label for="oda-sayisi">{% trans "Oda Sayisi" %}</label>
                             <input type="number" required name="oda_Sayisi">
                         </div>
                         <div class="form-element">
@@ -107,8 +104,8 @@
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Daire Ekle</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit">{% trans "Daire Ekle" %}</button>
                     </div>
                 </form>
             </div>
@@ -124,7 +121,7 @@
                 .then(response => response.json())
                 .then(data => {
                     const blokSelect = document.getElementById('blok');
-                    blokSelect.innerHTML = '<option value="" selected disabled>Blok Seçiniz</option>'; // Önce eski verileri temizle
+                    blokSelect.innerHTML = '<option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>'; // Önce eski verileri temizle
         
                     data.forEach(blok => {
                         const option = document.createElement('option');
@@ -172,7 +169,7 @@
             .then(response => response.json())
             .then(data => {
                 const katSelect = document.getElementById('kat');
-                katSelect.innerHTML = '<option value="" selected disabled>Kat Seçiniz</option>'; // Önce eski verileri temizle
+                katSelect.innerHTML = '<option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>'; // Önce eski verileri temizle
     
                 data.forEach(kat => {
                     const option = document.createElement('option');
@@ -214,7 +211,7 @@
             var doc = window.document;
             var docEl = doc.documentElement;
 
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || doc.msRequestFullscreen;
             var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
             if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {

@@ -9,17 +9,17 @@
         <div class="page-info">
             <div class="page-title">
                 <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                Daire Detay
+                {% trans "Daire Detay" %}
             </div>
             <ul class="page-breadcrumb">
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Daire Yönetimi</a></li>
-                <li><a href="#">Daire Detay</a></li>
+                <li><a href="#">{% trans "Dashboard" %}</a></li>
+                <li><a href="#">{% trans "Daire Yönetimi" %}</a></li>
+                <li><a href="#">{% trans "Daire Detay" %}</a></li>
             </ul>
         </div>
         <div class="page-actions">
-            <button class="page-primary-btn" onclick="openModal('yeni-evrak-ekle')"><i class="icon icon-new"></i>Yeni Evrak</button>
-            <button class="page-primary-btn" onclick="openModal('daire-ata')"><i class="icon icon-new"></i>Yeni Müşteri</button>
+            <button class="page-primary-btn" onclick="openModal('yeni-evrak-ekle')"><i class="icon icon-new"></i>{% trans "Yeni Evrak" %}</button>
+            <button class="page-primary-btn" onclick="openModal('daire-ata')"><i class="icon icon-new"></i>{% trans "Yeni Müşteri" %}</button>
         </div>
     </div>
 
@@ -165,12 +165,12 @@
 <div class="modal" id="musteri-ekle">
     <div class="modal-inner" style="width: 500px">
         <div class="modal-header">
-            Müşteri Ekle
+            {% trans "Müşteri Ekle" %}
         </div>
         <div class="modal-body">
             <form>
                 <div class="form-element">
-                    <label for="musteri">Müşteri</label>
+                    <label for="musteri">{% trans "Müşteri" %}</label>
                     <select name="musteri" id="musteri">
                         <option value="" selected disabled></option>
                         <option value="...">...</option>
@@ -179,7 +179,7 @@
                     </select>
                 </div>
                 <div class="form-element">
-                    <label for="kat">Kat</label>
+                    <label for="kat">{% trans "Kat" %}</label>
                     <select name="kat" id="kat">
                         <option value="" selected disabled></option>
                         <option value="...">...</option>
@@ -188,7 +188,7 @@
                     </select>
                 </div>
                 <div class="form-element">
-                    <label for="no">No</label>
+                    <label for="no">{% trans "No" %}</label>
                     <select name="no" id="no">
                         <option value="" selected disabled></option>
                         <option value="...">...</option>
@@ -197,8 +197,8 @@
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                    <button class="form-action-primary" type="submit">Müşteri Ekle</button>
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="submit">{% trans "Müşteri Ekle" %}</button>
                 </div>
             </form>
         </div>
@@ -208,23 +208,23 @@
 <div class="modal" id="yeni-evrak-ekle">
     <div class="modal-inner" style="width: 500px">
         <div class="modal-header">
-            Evrak Ekle
+            {% trans "Evrak Ekle" %}
         </div>
         <div class="modal-body">
             <form method="post" action="/{{ dil }}{% url 'crm:daire_evrak_ekle' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="daire_id" value="{{ daire_detayi.id }}">
                 <div class="form-element">
-                    <label for="evrak_adi">Evrak Adı</label>
+                    <label for="evrak_adi">{% trans "Evrak Adı" %}</label>
                     <input type="text" name="evrak_adi" id="evrak_adi" required>
                 </div>
                 <div class="form-element">
-                    <label for="evrak">Evrak</label>
+                    <label for="evrak">{% trans "Evrak" %}</label>
                     <input type="file" name="evrak" id="evrak" required>
                 </div>
                 <div class="form-actions">
-                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                    <button class="form-action-primary" type="submit">Ekle</button>
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="submit">{% trans "Ekle" %}</button>
                 </div>
             </form>
         </div>
@@ -234,7 +234,7 @@
 <div class="modal" id="daire-ata">
     <div class="modal-inner" style="width: 500px">
         <div class="modal-header">
-            Müşteriye Daire Ata
+            {% trans "Müşteriye Daire Ata" %}
         </div>
         <div class="modal-body">
             <form id="daireAtaForm" method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_ata' %}">
@@ -244,7 +244,7 @@
                 <input type="hidden" name="kat" value="{{daire_detayi.kat}}">
                 <input type="hidden" name="daire_no" value="{{daire_detayi.daire_no}}">
                 <div class="form-element">
-                    <label for="musteri">Müşteri</label>
+                    <label for="musteri">{% trans "Müşteri" %}</label>
                     <select name="musteri" id="musteri" required>
                         <option value="" selected disabled></option>
                         {% for musteri in musteriler %}
@@ -253,8 +253,8 @@
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                    <button class="form-action-primary" type="submit" onclick="validateForm(event)">Ata</button>
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="submit" onclick="validateForm(event)">{% trans "Ata" %}</button>
                 </div>
             </form>
         </div>

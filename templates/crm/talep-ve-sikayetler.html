@@ -1,4 +1,3 @@
-
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load static %}
@@ -14,17 +13,17 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    Talep ve Şikayetler
+                    <h1>{% trans "Talep ve Şikayetler" %}</h1>
                 </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Talep ve Şikayetler</a></li>
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Talep ve Şikayetler" %}</a></li>
                 </ul>
             </div>
 
             <div class="page-actions">
                 <button class="page-primary-btn" onclick="openModal('yeni-talep')"><i class="icon icon-new"></i>
-                    Yeni Talep/Şikayet Ekle</button>
+                    {% trans "Yeni Talep/Şikayet Ekle" %}</button>
             </div>
         </div>
 
@@ -210,7 +209,7 @@
     <div class="modal" id="yeni-talep">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Talep/Şikayet Oluştur
+                {% trans "Talep/Şikayet Oluştur" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_olustur' %}">
@@ -218,28 +217,27 @@
                     <div class="form-row">
                         <div class="form-element">
                             <input type="radio" name="tur" id="tur-talep" value="0">
-                            <label for="tur-talep">Talep</label>
+                            <label for="tur-talep">{% trans "Talep" %}</label>
                             <input type="radio" name="tur" id="tur-sikayet" value="1">
-                            <label for="tur-sikayet">Şikayet</label>
+                            <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
-                        <label for="talep-nedeni">Talep/Şikayet Nedeni</label>
+                        <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
                         <select name="talep_nedeni" id="talep-nedeni">
-                            <option value="" selected disabled>Talep Seçin</option>
-                            <option value="1">talep1</option>
-                            <option value="2">talep2</option>
-                            <option value="3">talep3</option>
+                            <option value="" selected disabled>{% trans "Talep Seçin" %}</option>
+                            <option value="1">{% trans "talep1" %}</option>
+                            <option value="2">{% trans "talep2" %}</option>
+                            <option value="3">{% trans "talep3" %}</option>
                         </select>
                         <div class="form-element">
-                            <label for="aciklama">Açıklama</label>
+                            <label for="aciklama">{% trans "Açıklama" %}</label>
                             <textarea name="aciklama" id="aciklama"></textarea>
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit" >Devam
-                            Et</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit" >{% trans "Devam Et" %}</button>
                     </div>
                 </form>
             </div>
@@ -249,7 +247,7 @@
 <div class="modal" id="duzelt-talep{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Talep/Şikayet Düzenle
+                {% trans "Talep/Şikayet Düzenle" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_duzenle' %}">
@@ -258,29 +256,28 @@
                     <div class="form-row">
                         <div class="form-element">
                             <input checked type="radio" name="tur" id="tur-talep" value="0">
-                            <label for="tur-talep">Talep</label>
+                            <label for="tur-talep">{% trans "Talep" %}</label>
                             <input type="radio" name="tur" id="tur-sikayet" value="1">
-                            <label for="tur-sikayet">Şikayet</label>
+                            <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
-                        <label for="talep-nedeni">Talep/Şikayet Nedeni</label>
+                        <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
                         <select name="talep_nedeni" id="talep-nedeni">
                             <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
                             
-                            <option value="1">talep1</option>
-                            <option value="2">talep2</option>
-                            <option value="3">talep3</option>
+                            <option value="1">{% trans "talep1" %}</option>
+                            <option value="2">{% trans "talep2" %}</option>
+                            <option value="3">{% trans "talep3" %}</option>
                         </select>
                         <div class="form-element">
-                            <label for="aciklama">Açıklama</label>
+                            <label for="aciklama">{% trans "Açıklama" %}</label>
                             <textarea name="aciklama" id="aciklama">{{i.sikayet_aciklamasi |safe}}</textarea>
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit" >Devam
-                            Et</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit" >{% trans "Devam Et" %}</button>
                     </div>
                 </form>
             </div>
@@ -298,9 +295,9 @@
                     {% else %}
                     {% endif %}
                 </div>
-                <p><span>Kayıt No: </span> {{i.id}}</p>
-                <p><span>Tarih: </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
-                <p><span>Durum: </span> {% if i.durum == "0" %}
+                <p><span>{% trans "Kayıt No:" %} </span> {{i.id}}</p>
+                <p><span>{% trans "Tarih:" %} </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
+                <p><span>{% trans "Durum:" %} </span> {% if i.durum == "0" %}
                                     <span class="status-pending stats-lg">Beklemede</span>
                                      
                                     {% elif i.durum == "1" %}
@@ -310,11 +307,11 @@
                                    <span class="status-pending stats-lg">Reddedildi</span>
                                         
                                     {% endif %}</p>
-                <p><span>Detay: </span> {{i.sikayet_aciklamasi |safe}}</p>
+                <p><span>{% trans "Detay:" %} </span> {{i.sikayet_aciklamasi |safe}}</p>
             </div>
             <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                <button class="form-action-primary" type="button">Tamam</button>
+                <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                <button class="form-action-primary" type="button">{% trans "Tamam" %}</button>
             </div>
         </div>
     </div>
@@ -344,7 +341,7 @@
 <div class="modal" id="duzelt-talep{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Talep/Şikayet Düzenle
+                {% trans "Talep/Şikayet Düzenle" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_duzenle' %}">
@@ -353,29 +350,28 @@
                     <div class="form-row">
                         <div class="form-element">
                             <input checked type="radio" name="tur" id="tur-talep" value="0">
-                            <label for="tur-talep">Talep</label>
+                            <label for="tur-talep">{% trans "Talep" %}</label>
                             <input type="radio" name="tur" id="tur-sikayet" value="1">
-                            <label for="tur-sikayet">Şikayet</label>
+                            <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
-                        <label for="talep-nedeni">Talep/Şikayet Nedeni</label>
+                        <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
                         <select name="talep_nedeni" id="talep-nedeni">
                             <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
                             
-                            <option value="1">talep1</option>
-                            <option value="2">talep2</option>
-                            <option value="3">talep3</option>
+                            <option value="1">{% trans "talep1" %}</option>
+                            <option value="2">{% trans "talep2" %}</option>
+                            <option value="3">{% trans "talep3" %}</option>
                         </select>
                         <div class="form-element">
-                            <label for="aciklama">Açıklama</label>
+                            <label for="aciklama">{% trans "Açıklama" %}</label>
                             <textarea name="aciklama" id="aciklama">{{i.sikayet_aciklamasi |safe}}</textarea>
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit" >Devam
-                            Et</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit" >{% trans "Devam Et" %}</button>
                     </div>
                 </form>
             </div>
@@ -393,9 +389,9 @@
                     {% else %}
                     {% endif %}
                 </div>
-                <p><span>Kayıt No: </span> {{i.id}}</p>
-                <p><span>Tarih: </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
-                <p><span>Durum: </span> {% if i.durum == "0" %}
+                <p><span>{% trans "Kayıt No:" %} </span> {{i.id}}</p>
+                <p><span>{% trans "Tarih:" %} </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
+                <p><span>{% trans "Durum:" %} </span> {% if i.durum == "0" %}
                                     <span class="status-pending stats-lg">Beklemede</span>
                                        
                                     {% elif i.durum == "1" %}
@@ -405,11 +401,11 @@
                                     <span class="status-pending stats-lg">Reddedildi</span>
                                         
                                     {% endif %}</p>
-                <p><span>Detay: </span> {{i.sikayet_aciklamasi |safe}}</p>
+                <p><span>{% trans "Detay:" %} </span> {{i.sikayet_aciklamasi |safe}}</p>
             </div>
             <div class="form-actions">
-                <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                <button class="form-action-primary" type="button">Tamam</button>
+                <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                <button class="form-action-primary" type="button">{% trans "Tamam" %}</button>
             </div>
         </div>
     </div>

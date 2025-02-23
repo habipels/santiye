@@ -1,4 +1,3 @@
-
 {% extends "homebase.html" %}
 {% load i18n %}
 {% load static %}
@@ -15,17 +14,16 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    Müşteri Yönetimi
+                    <h1>{% trans "Müşteri Yönetimi" %}</h1>
                 </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Müşteri Yönetimi</a></li>
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Müşteri Yönetimi" %}</a></li>
                 </ul>
             </div>
 
             <div class="page-actions">
-                <button onclick="openModal('yeni-musteri-ekle')" class="page-primary-btn" class="icon icon-new"></i>
-                    Yeni Müşteri Ekle</button>
+                <button onclick="openModal('yeni-musteri-ekle')" class="page-primary-btn"><i class="icon icon-new"></i>{% trans "Yeni Müşteri Ekle" %}</button>
             </div>
         </div>
 
@@ -89,29 +87,29 @@
     <div class="modal" id="yeni-musteri-ekle">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Yeni Müşteri Ekle
+                {% trans "Yeni Müşteri Ekle" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:musteri_ekleme' %}">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="form-element">
-                            <label for="musteri-adi">Müşteri Adı</label>
+                            <label for="musteri-adi">{% trans "Müşteri Adı" %}</label>
                             <input type="text" name="musteri_adi" id="musteri-adi">
                         </div>
                         <div class="form-element">
-                            <label for="musteri-soyadi">Müşteri Soyadı</label>
+                            <label for="musteri-soyadi">{% trans "Müşteri Soyadı" %}</label>
                             <input type="text" name="musteri_soyadi" id="musteri-soyadi">
                         </div>
                            <div class="form-element">
-                            <label for="musteri-soyadi">Müşteri Telefon  Numarası</label>
-                            <input type="text" name="musteri_telefon_numarasi" id="musteri-soyadi">
+                            <label for="musteri-telefon-numarasi">{% trans "Müşteri Telefon Numarası" %}</label>
+                            <input type="text" name="musteri_telefon_numarasi" id="musteri-telefon-numarasi">
                         </div>
                     </div>
                     
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Müşteri Ekle</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit">{% trans "Müşteri Ekle" %}</button>
                     </div>
                 </form>
             </div>
@@ -121,7 +119,7 @@
              <div class="modal" id="yeni-musteri-ekle{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Müşteri Düzenle 
+                {% trans "Müşteri Düzenle" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:musteri_duzenleme' %}">
@@ -130,22 +128,22 @@
 
                     <div class="form-row">
                         <div class="form-element">
-                            <label for="musteri-adi">Müşteri Adı</label>
+                            <label for="musteri-adi">{% trans "Müşteri Adı" %}</label>
                             <input type="text" name="musteri_adi" value="{{i.musteri_adi}}" id="musteri-adi">
                         </div>
                         <div class="form-element">
-                            <label for="musteri-soyadi">Müşteri Soyadı</label>
+                            <label for="musteri-soyadi">{% trans "Müşteri Soyadı" %}</label>
                             <input type="text" name="musteri_soyadi" value="{{i.musteri_soyadi}}" id="musteri-soyadi">
                         </div>
                           <div class="form-element">
-                            <label for="musteri-soyadi">Müşteri Telefon  Numarası</label>
-                            <input type="text" name="musteri_telefon_numarasi" value="{{i.musteri_telefon_numarasi}}" id="musteri-soyadi">
+                            <label for="musteri-telefon-numarasi">{% trans "Müşteri Telefon Numarası" %}</label>
+                            <input type="text" name="musteri_telefon_numarasi" value="{{i.musteri_telefon_numarasi}}" id="musteri-telefon-numarasi">
                         </div>
                     </div>
                     
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Müşteri Ekle</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit">{% trans "Müşteri Ekle" %}</button>
                     </div>
                 </form>
             </div>
