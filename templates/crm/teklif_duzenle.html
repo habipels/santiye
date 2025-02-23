@@ -15,47 +15,47 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    Teklif Düzenle
+                    {% trans "Teklif Düzenle" %}
                 </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Teklif Yönetimi</a></li>
-                    <li><a href="#">Teklif Düzenle</a></li>
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Teklif Yönetimi" %}</a></li>
+                    <li><a href="#">{% trans "Teklif Düzenle" %}</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="large-stats-card table-card table-detail-card">
             <div class="stats-header">
-                <div class="stats-title">Müşteri Bilgileri</div>
+                <div class="stats-title">{% trans "Müşteri Bilgileri" %}</div>
             </div>
 
             <div class="fatura-olustur">
                 <div class="fatura-doviz">
                     <div class="form-row" style="margin-bottom: 20px;">
                         <div class="form-element">
-                            <label for="email">Teklif Başlığı</label>
+                            <label for="email">{% trans "Teklif Başlığı" %}</label>
                             <input type="text" required name="Teklif_basligi" id="email" value="{{ teklifler.teklif_basligi }}">
                         </div>
                         <div class="form-element">
-                            <label for="adsoyad">Ad</label>
+                            <label for="adsoyad">{% trans "Ad" %}</label>
                             <input type="search" class="adsoyad" autocomplete="off" type="text" required name="adsoyad" id="adsoyad" value="{{ teklifler.musterisi.musteri_adi }}">
                         </div>
                         <div class="form-element">
-                            <label for="soyad">Soyad</label>
+                            <label for="soyad">{% trans "Soyad" %}</label>
                             <input type="search" class="soyad" autocomplete="off" type="text" required name="soyad" id="soyad" value="{{ teklifler.musterisi.musteri_soyadi }}">
                         </div>
                         <div class="form-element">
-                            <label for="telefon">Telefon No</label>
+                            <label for="telefon">{% trans "Telefon No" %}</label>
                             <input type="text" required name="telefon" id="telefon" value="{{ teklifler.musterisi.musteri_telefon_numarasi }}">
                         </div>
                     </div>
                 </div>
 
                 <div class="fatura-head">
-                    <h3>Fatura Kalemleri</h3>
+                    <h3>{% trans "Fatura Kalemleri" %}</h3>
                     <div class="fatura-head-action">
-                        <a id="kalem-ekle"><i class="icon icon-add"></i> Kalem Ekle</a>
+                        <a id="kalem-ekle"><i class="icon icon-add"></i> {% trans "Kalem Ekle" %}</a>
                     </div>
                 </div>
 
@@ -63,12 +63,12 @@
                     <table class="dataTable fatura-kalemleri">
                         <thead>
                             <tr>
-                                <th>Hizmet / ürün</th>
-                                <th>İndirim</th>
-                                <th>Miktar</th>
-                                <th>Birim Fiyatı</th>
-                                <th>Toplam</th>
-                                <th>Toplam IQD</th>
+                                <th>{% trans "Hizmet / ürün" %}</th>
+                                <th>{% trans "İndirim" %}</th>
+                                <th>{% trans "Miktar" %}</th>
+                                <th>{% trans "Birim Fiyatı" %}</th>
+                                <th>{% trans "Toplam" %}</th>
+                                <th>{% trans "Toplam IQD" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -76,10 +76,10 @@
                             <tr data-id="{{ forloop.counter }}">
                                 <td>
                                     <div class="form-element">
-                                        <input type="text" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="Ürün/Hizmet Adı Giriniz" value="{{ kalem.urun_hizmet }}">
+                                        <input type="text" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="{% trans "Ürün/Hizmet Adı Giriniz" %}" value="{{ kalem.urun_hizmet }}">
                                     </div>
                                     <div class="form-element">
-                                        <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="Açıklama" value="{{ kalem.urun_aciklama }}">
+                                        <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="{% trans "Açıklama" %}" value="{{ kalem.urun_aciklama }}">
                                     </div>
                                 </td>
                                 <td>
@@ -106,7 +106,7 @@
                                     <div class="form-element iqd-input">
                                         <input type="number" step="0.01" name="kalem-toplam-iqd" id="kalem-toplam-iqd" value="{{ kalem.birim_fiyati_ıqd|stringformat:'0.2f' }}">
                                     </div>
-                                    <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> Sil</a>
+                                    <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> {% trans "Sil" %}</a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -118,26 +118,26 @@
                     <table>
                         <tbody>
                             <tr>
-                                <td>Ara Toplam</td>
+                                <td>{% trans "Ara Toplam" %}</td>
                                 <th id="info-ara-toplam">$0,00</th>
                             </tr>
                             <tr>
-                                <td>İndirim</td>
+                                <td>{% trans "İndirim" %}</td>
                                 <td id="info-toplam-indirim" style="color: #ff0000;">-$0,00</td>
                             </tr>
                             <tr>
-                                <td>Toplam IQD</td>
+                                <td>{% trans "Toplam IQD" %}</td>
                                 <td id="info-toplam-iqd">$0,00</td>
                             </tr>
                             <tr>
-                                <th>Toplam</th>
+                                <th>{% trans "Toplam" %}</th>
                                 <th id="info-toplam">$0,00</th>
                             </tr>
                         </tbody>
                     </table>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-primary" type="submit">Kaydet</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit">{% trans "Kaydet" %}</button>
                     </div>
                 </div>
             </div>
@@ -148,14 +148,14 @@
 <div class="modal" id="delete-modal">
     <div class="modal-inner" style="width: 500px">
         <div class="modal-header">
-            Silmek istediğinize emin misiniz?
+            {% trans "Silmek istediğinize emin misiniz?" %}
         </div>
         <div class="modal-body">
             <form>
-                <p>Bu işlemin geri dönüşü olmayacaktır.</p>
+                <p>{% trans "Bu işlemin geri dönüşü olmayacaktır." %}</p>
                 <div class="form-actions">
-                    <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                    <button class="form-action-danger delete-modal-button" type="button">Evet, silinsin</button>
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-danger delete-modal-button" type="button">{% trans "Evet, silinsin" %}</button>
                 </div>
             </form>
         </div>
@@ -173,10 +173,10 @@
         $(".fatura-kalemleri tbody").append(`<tr data-id="${++lastID}">
             <td>
                 <div class="form-element">
-                    <input type="text" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="Ürün/Hizmet Adı Giriniz">
+                    <input type="text" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="{% trans "Ürün/Hizmet Adı Giriniz" %}">
                 </div>
                 <div class="form-element">
-                    <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="Açıklama">
+                    <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="{% trans "Açıklama" %}">
                 </div>
             </td>
             <td>
@@ -203,7 +203,7 @@
                 <div class="form-element iqd-input">
                     <input type="number" step="0.01" name="kalem-toplam-iqd" id="kalem-toplam-iqd">
                 </div>
-                <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> Sil</a>
+                <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> {% trans "Sil" %}</a>
             </td>
         </tr>`)
     });

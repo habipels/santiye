@@ -43,15 +43,15 @@
         <div class="daire-content">
             <div class="daire-bilgiler">
                 <div class="daire-lokasyon"><i class="icon icon-location"></i> {{ daire_detayi.blog_bilgisi.proje_santiye_Ait.proje_adi }}</div>
-                <div class="daire-bilgi">Teslim Tarihi: <span>{{ daire_detayi.kayit_tarihi|date:"d/m/Y" }}</span></div>
-                <div class="daire-bilgi">Teslim Durumu: <div class="daire-status daire-status-completed">Tamamlandı</div></div>
+                <div class="daire-bilgi">{% trans "Teslim Tarihi" %}: <span>{{ daire_detayi.kayit_tarihi|date:"d/m/Y" }}</span></div>
+                <div class="daire-bilgi">{% trans "Teslim Durumu" %}: <div class="daire-status daire-status-completed">{% trans "Tamamlandı" %}</div></div>
                 <div class="daire-bilgi">
                     <div>m<sup>2</sup> (Brüt):</div> <span>{{ daire_detayi.metre_kare_brut }}</span>
                 </div>
-                <div class="daire-bilgi">Oda Sayısı: <span>{{ daire_detayi.oda_sayisi }}</span></div>
-                <div class="daire-bilgi">Kat Sayısı: <span>{{ daire_detayi.kat }}</span></div>
+                <div class="daire-bilgi">{% trans "Oda Sayısı" %}: <span>{{ daire_detayi.oda_sayisi }}</span></div>
+                <div class="daire-bilgi">{% trans "Kat Sayısı" %}: <span>{{ daire_detayi.kat }}</span></div>
                 <div class="daire-atanan-musteri">
-                    Atanan Müşteri
+                    {% trans "Atanan Müşteri" %}
                     <div class="daire-atanan-musteri-inner">
                         <img src="{% static 'content/images/avatar.png' %}" alt="">
                         <span>{{ atanan_musteri.musterisi.musteri_adi }} {{ atanan_musteri.musterisi.musteri_soyadi }}</span>
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="daire-detaylar">
-                <div class="info-header">Teslim Sırasında Alınan Evraklar</div>
+                <div class="info-header">{% trans "Teslim Sırasında Alınan Evraklar" %}</div>
                 <div class="daire-detay-evraklar">
                     {% for evrak in daire_evraklari %}
                     {% if not evrak.evrak.url|lower|slice:"-4:" in image_extensions %}
@@ -71,7 +71,7 @@
                     {% endfor %}
                 </div>
 
-                <div class="info-header">Resimler</div>
+                <div class="info-header">{% trans "Resimler" %}</div>
                 <div class="daire-detay-resimler">
                     {% for evrak in daire_evraklari %}
                     {% if evrak.evrak.url|lower|slice:"-4:" in image_extensions %}
@@ -84,15 +84,15 @@
 
                 <div class="large-stats-card table-card table-detail-card">
                     <div class="stats-header">
-                        <div class="stats-title">Müşteri Talepleri</div>
+                        <div class="stats-title">{% trans "Müşteri Talepleri" %}</div>
                     </div>
 
                     <div class="table-wrapper">
                         <table id="musteri-talepleri">
                             <thead>
                                 <tr>
-                                    <th>Talep Tarihi</th>
-                                    <th>Talep Gerekçesi</th>
+                                    <th>{% trans "Talep Tarihi" %}</th>
+                                    <th>{% trans "Talep Gerekçesi" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,15 +109,15 @@
 
                 <div class="large-stats-card table-card table-detail-card">
                     <div class="stats-header">
-                        <div class="stats-title">Şikayetler</div>
+                        <div class="stats-title">{% trans "Şikayetler" %}</div>
                     </div>
 
                     <div class="table-wrapper">
                         <table id="sikayetler">
                             <thead>
                                 <tr>
-                                    <th>Şikayet Tarihi</th>
-                                    <th>Şikayet Gerekçesi</th>
+                                    <th>{% trans "Şikayet Tarihi" %}</th>
+                                    <th>{% trans "Şikayet Gerekçesi" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -297,7 +297,7 @@
             .then(response => response.json())
             .then(data => {
                 const katSelect = document.getElementById('kat');
-                katSelect.innerHTML = '<option value="" selected disabled>Kat Seçiniz</option>'; // Clear previous options
+                katSelect.innerHTML = '<option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>'; // Clear previous options
                 data.forEach(kat => {
                     const option = document.createElement('option');
                     option.value = kat.id;
@@ -315,7 +315,7 @@
             .then(response => response.json())
             .then(data => {
                 const daireSelect = document.getElementById('daire');
-                daireSelect.innerHTML = '<option value="" selected disabled>Daire Seçiniz</option>'; // Clear previous options
+                daireSelect.innerHTML = '<option value="" selected disabled>{% trans "Daire Seçiniz" %}</option>'; // Clear previous options
                 data.forEach(daire => {
                     const option = document.createElement('option');
                     option.value = daire.id;

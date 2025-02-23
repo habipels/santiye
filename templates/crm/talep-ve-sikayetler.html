@@ -29,10 +29,10 @@
 
         <div class="large-stats-card table-card table-detail-card">
             <div class="stats-header">
-                <div class="stats-title">Talep ve Şikayetler</div>
+                <div class="stats-title">{% trans "Talep ve Şikayetler" %}</div>
                 <div class="stats-right">
                     <div class="stats-search">
-                        <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                        <input type="text" name="stats-search" id="stats-search" placeholder="{% trans "Ara" %}">
                         <button><i class="icon icon-search"></i></button>
                     </div>
                 </div>
@@ -40,8 +40,8 @@
 
 
             <div class="tab-navs">
-                <button class="tab-navs-btn active" data-tab="talepler">Talepler</button>
-                <button class="tab-navs-btn " data-tab="sikayetler">Şikayetler</button>
+                <button class="tab-navs-btn active" data-tab="talepler">{% trans "Talepler" %}</button>
+                <button class="tab-navs-btn " data-tab="sikayetler">{% trans "Şikayetler" %}</button>
             </div>
 
             <div class="tab-contents">
@@ -51,11 +51,11 @@
                         <table id="talepler-table">
                             <thead>
                                 <tr>
-                                    <th>Talep nedeni</th>
-                                    <th>Talep Tarihi</th>
-                                    <th>İşlem Tarihi</th>
-                                    <th>Talep Gerekçesi</th>
-                                    <th>Durum</th>
+                                    <th>{% trans "Talep nedeni" %}</th>
+                                    <th>{% trans "Talep Tarihi" %}</th>
+                                    <th>{% trans "İşlem Tarihi" %}</th>
+                                    <th>{% trans "Talep Gerekçesi" %}</th>
+                                    <th>{% trans "Durum" %}</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -70,13 +70,13 @@
                                     <td style="text-align: left;">{{i.sikayet_aciklamasi |safe}}</td>
                                     <td>
                                     {% if i.durum == "0" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
                                         </div>
                                     {% elif i.durum == "1" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Tamamlandı</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
                                         </div>
                                     {% elif i.durum == "2" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Reddedildi</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         </div>
                                     {% endif %}
                                         
@@ -102,11 +102,11 @@
                         <table id="sikayetler-table">
                             <thead>
                                 <tr>
-                                    <th>Şikayet nedeni</th>
-                                    <th>Şikayet Tarihi</th>
-                                    <th>İşlem Tarihi</th>
-                                    <th>Şikayet Gerekçesi</th>
-                                    <th>Durum</th>
+                                    <th>{% trans "Şikayet nedeni" %}</th>
+                                    <th>{% trans "Şikayet Tarihi" %}</th>
+                                    <th>{% trans "İşlem Tarihi" %}</th>
+                                    <th>{% trans "Şikayet Gerekçesi" %}</th>
+                                    <th>{% trans "Durum" %}</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -121,13 +121,13 @@
                                     <td style="text-align: left;">{{i.sikayet_aciklamasi |safe}}</td>
                                     <td>
                                         {% if i.durum == "0" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
                                         </div>
                                     {% elif i.durum == "1" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Tamamlandı</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
                                         </div>
                                     {% elif i.durum == "2" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Reddedildi</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         </div>
                                     {% endif %}
                                     </td>
@@ -195,8 +195,8 @@
 
 
             $('#stats-search').keyup(function () {
-                ana_firma_sozlesmeleri.search($(this).val()).draw();
-                alt_yuklenizi_sozlesmeleri_table.search($(this).val()).draw();
+                talepler.search($(this).val()).draw();
+                sikayetler.search($(this).val()).draw();
             })
         </script>
 
@@ -298,13 +298,13 @@
                 <p><span>{% trans "Kayıt No:" %} </span> {{i.id}}</p>
                 <p><span>{% trans "Tarih:" %} </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
                 <p><span>{% trans "Durum:" %} </span> {% if i.durum == "0" %}
-                                    <span class="status-pending stats-lg">Beklemede</span>
+                                    <span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
                                      
                                     {% elif i.durum == "1" %}
-                                    <span class="status-pending stats-lg">Tamamlandı</span>
+                                    <span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
                                         
                                     {% elif i.durum == "2" %}
-                                   <span class="status-pending stats-lg">Reddedildi</span>
+                                   <span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         
                                     {% endif %}</p>
                 <p><span>{% trans "Detay:" %} </span> {{i.sikayet_aciklamasi |safe}}</p>
@@ -392,13 +392,13 @@
                 <p><span>{% trans "Kayıt No:" %} </span> {{i.id}}</p>
                 <p><span>{% trans "Tarih:" %} </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
                 <p><span>{% trans "Durum:" %} </span> {% if i.durum == "0" %}
-                                    <span class="status-pending stats-lg">Beklemede</span>
+                                    <span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
                                        
                                     {% elif i.durum == "1" %}
-                                    <span class="status-pending stats-lg">Tamamlandı</span>
+                                    <span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
                                       
                                     {% elif i.durum == "2" %}
-                                    <span class="status-pending stats-lg">Reddedildi</span>
+                                    <span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         
                                     {% endif %}</p>
                 <p><span>{% trans "Detay:" %} </span> {{i.sikayet_aciklamasi |safe}}</p>

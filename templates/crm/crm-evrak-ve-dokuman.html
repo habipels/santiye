@@ -25,8 +25,8 @@
         {% for daire in daireler %}
         <div class="evd-folder" onclick="window.location.href='{% url 'crm:crm_dairedetayi' daire.id %}'">
             <i class="icon icon-folder"></i>
-            <div class="evd-folder-name">Daire - {{ daire.daire_no }} / Dokümanlar</div>
-            <span>{{ daire.daire_evraklari.count }} adet dosya</span>
+            <div class="evd-folder-name">{% trans "Daire" %} - {{ daire.daire_no }} / {% trans "Dokümanlar" %}</div>
+            <span>{{ daire.daire_evraklari.count }} {% trans "adet dosya" %}</span>
         </div>
         {% endfor %}
     </div>
@@ -57,7 +57,7 @@
         var doc = window.document;
         var docEl = doc.documentElement;
 
-        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || doc.msRequestFullscreen;
+        var requestFullScreen = docEl.requestFullscreen || doc.mozRequestFullScreen || doc.webkitRequestFullScreen || doc.msRequestFullscreen;
         var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
         if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {

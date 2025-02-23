@@ -7,7 +7,6 @@
     <!-- CSS dosyaları -->
     <link rel="stylesheet" href="{% static 'go/content/style/style.css' %}">
     <link rel="stylesheet" href="{% static 'go/content/style/custom-checklist.css' %}">
-    <link rel="stylesheet" href="{% static 'go/content/style/checklist-detail.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'go/content/style/control-detail.css' %}">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -25,11 +24,11 @@
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
                 <div>
-                    <h2>Daire {{santiye.daire_no}} </h2>
+                    <h2>{% trans "Daire" %} {{santiye.daire_no}} </h2>
                     <input type="text" hidden name="daire" value="{{santiye.id}}">
                     <div class="control-info">
                         <span class="date">23.03.2024</span>
-                        <span class="status pending">Kontrol Ediliyor</span>
+                        <span class="status pending">{% trans "Kontrol Ediliyor" %}</span>
                     </div>
                 </div>
             </div>
@@ -47,16 +46,12 @@
                 <div class="control-card">
                     <div class="control-header">
                         <div class="control-title">
-                            <h3>{% if i.bolum == "0" %}
-                            Dış Mekan
-                            {% elif i.bolum == "1" %}
-                            Kat
-                            {% elif i.bolum == "2" %}
-                            Ortak Alan
-                            {% elif i.bolum == "3" %}
-                             Daire
+                            <h3>{% if i.bolum == "0" %}{% trans "Dış Mekan" %}
+                            {% elif i.bolum == "1" %}{% trans "Kat" %}
+                            {% elif i.bolum == "2" %}{% trans "Ortak Alan" %}
+                            {% elif i.bolum == "3" %}{% trans "Daire" %}
                             {% endif %}</h3>
-                            <span class="control-count">{{veri_geldi.tamamlanma}}/{{veri_geldi.a}} Tamamlandı</span>
+                            <span class="control-count">{{veri_geldi.tamamlanma}}/{{veri_geldi.a}} {% trans "Tamamlandı" %}</span>
                         </div>
                         <div class="control-actions">
                             <button type="button" class="button-icon" data-action="toggle">
@@ -78,7 +73,7 @@
                                 </label>
                                 <button type="button" class="button-note" data-action="add-note">
                                     <i class="fa-solid fa-pen"></i>
-                                    <span>Not Ekle</span>
+                                    <span>{% trans "Not Ekle" %}</span>
                                 </button>
                             </div>
                             {% else %}
@@ -97,13 +92,13 @@
                 <div class="control-card">
                     <div class="control-header">
                         <div class="control-title">
-                            <h3>Genel Notlar</h3>
+                            <h3>{% trans "Genel Notlar" %}</h3>
                         </div>
                     </div>
                     <div class="control-body">
                         <div class="form-group">
-                            <label>Genel Değerlendirme ve Notlar</label>
-                            <textarea name="aciklma" class="form-control" rows="4" placeholder="Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..."></textarea>
+                            <label>{% trans "Genel Değerlendirme ve Notlar" %}</label>
+                            <textarea name="aciklma" class="form-control" rows="4" placeholder="{% trans "Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..." %}"></textarea>
                         </div>
                      
                         

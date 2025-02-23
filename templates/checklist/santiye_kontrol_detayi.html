@@ -15,7 +15,7 @@
 {% endblock head %}
 {% block sidebar %}
 {% if hash_bilgi %}
-   
+
 {% else %}
 <form action="/{{dil}}{% url 'main:daire_imalat_checklist' %}" method="post">
     {% csrf_token %}
@@ -26,20 +26,20 @@
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
                 <div>
-                    <h2>Daire {{santiye.daire_no}} </h2>
+                    <h2>{% trans "Daire" %} {{santiye.daire_no}} </h2>
                     <input type="text" hidden name="daire" value="{{santiye.id}}">
                     <div class="control-info">
                         <span class="date">23.03.2024</span>
-                        <span class="status pending">Kontrol Ediliyor</span>
+                        <span class="status pending">{% trans "Kontrol Ediliyor" %}</span>
                     </div>
                 </div>
             </div>
             <div class="page-actions">
                 <button type="submit" class="button" id="saveDraft">
-                    <i class="fa-solid fa-save"></i> Kaydet
+                    <i class="fa-solid fa-save"></i> {% trans "Kaydet" %}
                 </button>
                 <button type="button" class="button button-primary" id="completeCheck">
-                    <i class="fa-solid fa-check"></i> Kontrolü Tamamla
+                    <i class="fa-solid fa-check"></i> {% trans "Kontrolü Tamamla" %}
                 </button>
             </div>
         </div>
@@ -53,16 +53,12 @@
                 <div class="control-card">
                     <div class="control-header">
                         <div class="control-title">
-                            <h3>{% if i.bolum == "0" %}
-                            Dış Mekan
-                            {% elif i.bolum == "1" %}
-                            Kat
-                            {% elif i.bolum == "2" %}
-                            Ortak Alan
-                            {% elif i.bolum == "3" %}
-                             Daire
+                            <h3>{% if i.bolum == "0" %}{% trans "Dış Mekan" %}
+                            {% elif i.bolum == "1" %}{% trans "Kat" %}
+                            {% elif i.bolum == "2" %}{% trans "Ortak Alan" %}
+                            {% elif i.bolum == "3" %}{% trans "Daire" %}
                             {% endif %}</h3>
-                            <span class="control-count">{{veri_geldi.tamamlanma}}/{{veri_geldi.a}} Tamamlandı</span>
+                            <span class="control-count">{{veri_geldi.tamamlanma}}/{{veri_geldi.a}} {% trans "Tamamlandı" %}</span>
                         </div>
                         <div class="control-actions">
                             <button type="button" class="button-icon" data-action="toggle">
@@ -84,7 +80,7 @@
                                 </label>
                                 <button type="button" class="button-note" data-action="add-note">
                                     <i class="fa-solid fa-pen"></i>
-                                    <span>Not Ekle</span>
+                                    <span>{% trans "Not Ekle" %}</span>
                                 </button>
                             </div>
                             {% else %}
@@ -103,22 +99,22 @@
                 <div class="control-card">
                     <div class="control-header">
                         <div class="control-title">
-                            <h3>Genel Notlar</h3>
+                            <h3>{% trans "Genel Notlar" %}</h3>
                         </div>
                     </div>
                     <div class="control-body">
                         <div class="form-group">
-                            <label>Genel Değerlendirme ve Notlar</label>
-                            <textarea name="aciklma" class="form-control" rows="4" placeholder="Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..."></textarea>
+                            <label>{% trans "Genel Değerlendirme ve Notlar" %}</label>
+                            <textarea name="aciklma" class="form-control" rows="4" placeholder="{% trans "Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..." %}"></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Fotoğraflar</label>
+                            <label>{% trans "Fotoğraflar" %}</label>
                             <div class="photo-upload-area">
                                 <div class="photo-grid">
                                     <!-- Yüklenen fotoğraflar buraya gelecek -->
                                     <div class="photo-upload" id="generalPhotosUpload">
                                         <i class="fa-solid fa-camera"></i>
-                                        <span>Fotoğraf Ekle</span>
+                                        <span>{% trans "Fotoğraf Ekle" %}</span>
                                         <input type="file" accept="image/*" multiple>
                                     </div>
                                 </div>
@@ -126,7 +122,7 @@
                         </div>
                         <div class="general-notes-actions">
                             <button type="button" class="button button-primary" id="saveGeneralNotes">
-                                <i class="fa-solid fa-save"></i> Kaydet
+                                <i class="fa-solid fa-save"></i> {% trans "Kaydet" %}
                             </button>
                         </div>
                     </div>
@@ -136,31 +132,31 @@
             <!-- Not Ekleme Paneli -->
             <div class="notes-panel" id="notesPanel">
                 <div class="notes-header">
-                    <h3>Notlar ve Fotoğraflar</h3>
+                    <h3>{% trans "Notlar ve Fotoğraflar" %}</h3>
                     <button type="button" class="button-icon" data-action="close-notes">
                         <i class="fa-solid fa-times"></i>
                     </button>
                 </div>
                 <div class="notes-content">
                     <div class="form-group">
-                        <label>Not</label>
-                        <textarea class="form-control" rows="3" placeholder="Kontrol ile ilgili notunuzu yazın..."></textarea>
+                        <label>{% trans "Not" %}</label>
+                        <textarea class="form-control" rows="3" placeholder="{% trans "Kontrol ile ilgili notunuzu yazın..." %}"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Fotoğraflar</label>
+                        <label>{% trans "Fotoğraflar" %}</label>
                         <div class="photo-upload-area">
                             <div class="photo-grid">
                                 <div class="photo-upload">
                                     <i class="fa-solid fa-camera"></i>
-                                    <span>Fotoğraf Ekle</span>
+                                    <span>{% trans "Fotoğraf Ekle" %}</span>
                                     <input type="file" accept="image/*" multiple>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="notes-actions">
-                        <button type="button" class="button" data-action="cancel-note">İptal</button>
-                        <button type="button" class="button button-primary" data-action="save-note">Kaydet</button>
+                        <button type="button" class="button" data-action="cancel-note">{% trans "İptal" %}</button>
+                        <button type="button" class="button button-primary" data-action="save-note">{% trans "Kaydet" %}</button>
                     </div>
                 </div>
             </div>

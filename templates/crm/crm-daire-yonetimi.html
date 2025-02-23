@@ -32,17 +32,17 @@
             
             <div class="daire">
                 <div class="daire-images">
-                    <span class="daire-status daire-status-completed">Teslim Edildi</span>
+                    <span class="daire-status daire-status-completed">{% trans "Teslim Edildi" %}</span>
                     <div class="daire-thumbnail">
                         <!--<img src="./content/images/daire-1.jfif" alt="">-->
                     </div>
                 </div>
                 <div class="daire-details">
-                    <span>Tamamlanma Tarihi: {{i.kayit_tarihi|date:'d.m.Y'}}</span>
+                    <span>{% trans "Tamamlanma Tarihi" %}: {{i.kayit_tarihi|date:'d.m.Y'}}</span>
                     <div class="daire-title">{{i.blog_bilgisi.proje_santiye_Ait.proje_adi}}</div>
-                    <div class="daire-title"> <a href="/{{dil}}{% url 'crm:crm_dairedetayi' i.id %}"> Daire No : {{i.daire_no}}</a></div>
+                    <div class="daire-title"> <a href="/{{dil}}{% url 'crm:crm_dairedetayi' i.id %}">{% trans "Daire No" %} : {{i.daire_no}}</a></div>
                     <div class="daire-location"><i class="icon icon-location"></i> {% get_city_from_lat_lon i.blog_bilgisi.proje_santiye_Ait.lat i.blog_bilgisi.proje_santiye_Ait.lon  %}</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> {% atanan_musteri_sayisi i %} Atanan Müşteri</div>
+                    <div class="daire-customer"><i class="icon icon-customer"></i> {% atanan_musteri_sayisi i %} {% trans "Atanan Müşteri" %}</div>
                 </div>
             </div>
           {% endfor %}
@@ -211,7 +211,7 @@
             var doc = window.document;
             var docEl = doc.documentElement;
 
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || doc.msRequestFullscreen;
+            var requestFullScreen = docEl.requestFullscreen || doc.mozRequestFullScreen || doc.webkitRequestFullScreen || doc.msRequestFullscreen;
             var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
             if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {

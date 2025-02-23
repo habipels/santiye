@@ -38,20 +38,20 @@
                     <img src="./content/images/avatar-2.png" alt="">
                     <div class="musteri-detay-title">
                         {{musteri_detayi.musteri_adi}} {{musteri_detayi.musteri_soyadi}}
-                        <span>Müşteri</span>
+                        <span>{% trans "Müşteri" %}</span>
                     </div>
                 </div>
                 <div class="musteri-detay-other">
-                    <div><span>Telefon No: </span>{{musteri_detayi.musteri_telefon_numarasi}}</div>
-                    <div><span>Müşteri ID: </span>{{musteri_detayi.id}}</div>
+                    <div><span>{% trans "Telefon No" %}: </span>{{musteri_detayi.musteri_telefon_numarasi}}</div>
+                    <div><span>{% trans "Müşteri ID" %}: </span>{{musteri_detayi.id}}</div>
                 </div>
             </div>
             <div class="musteri-detay-nav">
-                <div class="musteri-detay-nav-btn active" data-tab="daire-belgeleri">Teslim Edilen Daire Belgeleri</div>
-                <div class="musteri-detay-nav-btn" data-tab="evraklar">Evraklar</div>
-                <div class="musteri-detay-nav-btn" data-tab="talep-sikayet">Talep ve Şikayetler</div>
-                <div class="musteri-detay-nav-btn" data-tab="gorusme-notlari">Görüşme Notları</div>
-                <div class="musteri-detay-nav-btn" data-tab="teklifler">Teklifler</div>
+                <div class="musteri-detay-nav-btn active" data-tab="daire-belgeleri">{% trans "Teslim Edilen Daire Belgeleri" %}</div>
+                <div class="musteri-detay-nav-btn" data-tab="evraklar">{% trans "Evraklar" %}</div>
+                <div class="musteri-detay-nav-btn" data-tab="talep-sikayet">{% trans "Talep ve Şikayetler" %}</div>
+                <div class="musteri-detay-nav-btn" data-tab="gorusme-notlari">{% trans "Görüşme Notları" %}</div>
+                <div class="musteri-detay-nav-btn" data-tab="teklifler">{% trans "Teklifler" %}</div>
             </div>
         </div>
 
@@ -60,10 +60,10 @@
 
                 <div class="large-stats-card table-card table-detail-card">
                     <div class="stats-header">
-                        <div class="stats-title">Daireler</div>
+                        <div class="stats-title">{% trans "Daireler" %}</div>
                         <div class="stats-right">
                             <div class="stats-search">
-                                <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                                <input type="text" name="stats-search" id="stats-search" placeholder="{% trans "Ara" %}">
                                 <button><i class="icon icon-search"></i></button>
                             </div>
                         </div>
@@ -74,14 +74,14 @@
                         <table id="daireler-table">
                             <thead>
                                 <tr>
-                                    <th>Adres</th>
-                                    <th>Teslim Tarihi</th>
-                                    <th>Proje Tipi</th>
-                                    <th>Proje Adı</th>
-                                    <th>Yapı Adı</th>
-                                    <th>Kat</th>
-                                    <th>Daire Numarası</th>
-                                    <th>Durum</th>
+                                    <th>{% trans "Adres" %}</th>
+                                    <th>{% trans "Teslim Tarihi" %}</th>
+                                    <th>{% trans "Proje Tipi" %}</th>
+                                    <th>{% trans "Proje Adı" %}</th>
+                                    <th>{% trans "Yapı Adı" %}</th>
+                                    <th>{% trans "Kat" %}</th>
+                                    <th>{% trans "Daire Numarası" %}</th>
+                                    <th>{% trans "Durum" %}</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -97,20 +97,20 @@
                                     <td>{{i.daire.daire_no}}</td>
                                     <td>
                                     {% if i.durum == "0" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Devam Ediyor</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Devam Ediyor" %}</span>
                                         </div>
                                     {% elif i.durum == "1" %}
-                                     <div class="td-info"><span class="status-pending stats-lg">Onaylandı</span>
+                                     <div class="td-info"><span class="status-pending stats-lg">{% trans "Onaylandı" %}</span>
                                         </div>
                                         {% elif i.durum == "2" %}
-                                     <div class="td-info"><span class="status-pending stats-lg">Reddedildi</span>
+                                     <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         </div>
                                     {% endif %}
                                         
                                     </td>
                                     <td>
                                         <div class="td-actions">
-                                        <a onclick="openModal('daire_teslim_et{{i.id}}')" class="status-success">Daireyi Onayla</a>
+                                        <a onclick="openModal('daire_teslim_et{{i.id}}')" class="status-success">{% trans "Daireyi Onayla" %}</a>
                                             <a onclick="openModal('yeni-daire-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                             <a onclick="openModal('daireler{{i.id}}')" class="status-cancel"><i
                                                     class="icon icon-action-delete"></i></a>
@@ -149,7 +149,7 @@
             <div class="tab-content" id="evraklar">
     <div class="large-stats-card table-card table-detail-card">
         <div class="stats-header">
-            <div class="stats-title">Evraklar</div>
+            <div class="stats-title">{% trans "Evraklar" %}</div>
         </div>
         <div class="documents">
             {% for evrak in musteri_evraklari %}
@@ -162,7 +162,7 @@
                 {% else %}
                 <div class="document-no-file">
                     <i class="icon icon-no-file"></i>
-                    Doküman ya da<br>Fotoğraf Ekle
+                    {% trans "Doküman ya da<br>Fotoğraf Ekle" %}
                 </div>
                 {% endif %}
                 <div class="document-actions">
@@ -178,7 +178,7 @@
                 
                 <div class="large-stats-card table-card table-detail-card">
                     <div class="stats-header">
-                        <div class="stats-title">Talepler</div>
+                        <div class="stats-title">{% trans "Talepler" %}</div>
                     </div>
 
 
@@ -186,14 +186,14 @@
                         <table id="talepler-table">
                             <thead>
                                 <tr>
-                                     <th>Talep nedeni</th>
-                                    <th>Talep Tarihi</th>
-                                    <th>İşlem Tarihi</th>
-                                    <th>Talep Gerekçesi</th>
-                                    <th>Yapı Adı</th>
-                                    <th>Kat</th>
-                                    <th>Daire Numarası</th>
-                                    <th>Durum</th>
+                                     <th>{% trans "Talep nedeni" %}</th>
+                                    <th>{% trans "Talep Tarihi" %}</th>
+                                    <th>{% trans "İşlem Tarihi" %}</th>
+                                    <th>{% trans "Talep Gerekçesi" %}</th>
+                                    <th>{% trans "Yapı Adı" %}</th>
+                                    <th>{% trans "Kat" %}</th>
+                                    <th>{% trans "Daire Numarası" %}</th>
+                                    <th>{% trans "Durum" %}</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -211,13 +211,13 @@
                                     <td>{{i.daire.daire_no}}</td>
                                     <td>
                                     {% if i.durum == "0" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
                                         </div>
                                     {% elif i.durum == "1" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Tamamlandı</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
                                         </div>
                                     {% elif i.durum == "2" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Reddedildi</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         </div>
                                     {% endif %}
                                         
@@ -242,7 +242,7 @@
 
                 <div class="large-stats-card table-card table-detail-card">
                     <div class="stats-header">
-                        <div class="stats-title">Şikayetler</div>
+                        <div class="stats-title">{% trans "Şikayetler" %}</div>
                     </div>
 
 
@@ -250,14 +250,14 @@
                         <table id="sikayetler-table">
                             <thead>
                                 <tr>
-                                    <th>Talep Adı</th>
-                                    <th>Talep Tarihi</th>
-                                    <th>İşlem Tarihi</th>
-                                    <th>Talep Gerekçesi</th>
-                                    <th>Yapı Adı</th>
-                                    <th>Kat</th>
-                                    <th>Daire Numarası</th>
-                                    <th>Durum</th>
+                                    <th>{% trans "Talep Adı" %}</th>
+                                    <th>{% trans "Talep Tarihi" %}</th>
+                                    <th>{% trans "İşlem Tarihi" %}</th>
+                                    <th>{% trans "Talep Gerekçesi" %}</th>
+                                    <th>{% trans "Yapı Adı" %}</th>
+                                    <th>{% trans "Kat" %}</th>
+                                    <th>{% trans "Daire Numarası" %}</th>
+                                    <th>{% trans "Durum" %}</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -275,13 +275,13 @@
                                     <td>{{i.daire.daire_no}}</td>
                                     <td>
                                     {% if i.durum == "0" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
                                         </div>
                                     {% elif i.durum == "1" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Tamamlandı</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
                                         </div>
                                     {% elif i.durum == "2" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Reddedildi</span>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         </div>
                                     {% endif %}
                                         
@@ -334,7 +334,7 @@
                 
                 <div class="large-stats-card table-card table-detail-card">
                     <div class="stats-header">
-                        <div class="stats-title">Notlar</div>
+                        <div class="stats-title">{% trans "Notlar" %}</div>
                     </div>
 
 
@@ -342,10 +342,10 @@
                         <table id="notlar-table">
                             <thead>
                                 <tr>
-                                    <th>Not Başlığı</th>
-                                    <th>Tarih</th>
-                                    <th>Görüşme Detayı</th>
-                                    <th>İşlemler</th>
+                                    <th>{% trans "Not Başlığı" %}</th>
+                                    <th>{% trans "Tarih" %}</th>
+                                    <th>{% trans "Görüşme Detayı" %}</th>
+                                    <th>{% trans "İşlemler" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -393,7 +393,7 @@
                 
                 <div class="large-stats-card table-card table-detail-card">
                     <div class="stats-header">
-                        <div class="stats-title">Teklifler</div>
+                        <div class="stats-title">{% trans "Teklifler" %}</div>
                     </div>
 
 
@@ -401,11 +401,11 @@
                         <table id="teklifler-table">
                             <thead>
                                 <tr>
-                                    <th>Teklif Başlığı</th>
-                                    <th>Tarih</th>
-                                    <th>Teklif Tutarı</th>
-                                    <th>Durum</th>
-                                    <th>İşlemler</th>
+                                    <th>{% trans "Teklif Başlığı" %}</th>
+                                    <th>{% trans "Tarih" %}</th>
+                                    <th>{% trans "Teklif Tutarı" %}</th>
+                                    <th>{% trans "Durum" %}</th>
+                                    <th>{% trans "İşlemler" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -418,11 +418,11 @@
                                     <td>{{ i.toplam_tutar }} $</td>
                                     <td>
                                         {% if i.durum == "0" %}
-                                        <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                        <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span></div>
                                         {% elif i.durum == "1" %}
-                                        <div class="td-info"><span class="status-success stats-lg">Onaylandı</span></div>
+                                        <div class="td-info"><span class="status-success stats-lg">{% trans "Onaylandı" %}</span></div>
                                         {% elif i.durum == "2" %}
-                                        <div class="td-info"><span class="status-cancel stats-lg">Reddedildi</span></div>
+                                        <div class="td-info"><span class="status-cancel stats-lg">{% trans "Reddedildi" %}</span></div>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -482,14 +482,14 @@
     <div class="modal" id="delete-modal">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Silmek istediğinize emin misiniz?
+                {% trans "Silmek istediğinize emin misiniz?" %}
             </div>
             <div class="modal-body">
                 <form>
-                    <p>Bu işlemin geri dönüşü olmayacaktır.</p>
+                    <p>{% trans "Bu işlemin geri dönüşü olmayacaktır." %}</p>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">Vazgeç</button>
-                        <button class="form-action-danger" type="button">Evet, silinsin</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-danger" type="button">{% trans "Evet, silinsin" %}</button>
                     </div>
                 </form>
             </div>
@@ -498,7 +498,7 @@
  <div class="modal" id="yeni-daire-ata">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Müşteriye Daire Ata 
+                {% trans "Müşteriye Daire Ata" %}
             </div>
             <div class="modal-body">
                 <form id="yeniDaireAtaForm" method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_ata' %}">
@@ -553,7 +553,7 @@
  <div class="modal" id="yeni-daire-duzenle{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Müşteriye Daire Düzenle 
+                {% trans "Müşteriye Daire Düzenle" %}
             </div>
             <div class="modal-body">
                 <form method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_duzenle' %}">
@@ -648,7 +648,7 @@
    <div class="modal" id="yeni-not">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Görüşme Notu Ekle
+                {% trans "Görüşme Notu Ekle" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:museri_notu_ekle' %}">
@@ -680,7 +680,7 @@
     <div class="modal" id="yeni-talep-sikayet">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Talep/Şikayet Oluştur
+                {% trans "Talep/Şikayet Oluştur" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_olustur_musteri_detayi' %}">
@@ -732,7 +732,7 @@
 <div class="modal" id="duzelt-talep{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Talep/Şikayet Düzenle
+                {% trans "Talep/Şikayet Düzenle" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_duzenle_musteri_detayi' %}">
@@ -792,19 +792,19 @@
                     {% else %}
                     {% endif %}
                 </div>
-                <p><span>Kayıt No: </span> {{i.id}}</p>
-                <p><span>Tarih: </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
-                <p><span>Durum: </span> {% if i.durum == "0" %}
-                                    <span class="status-pending stats-lg">Beklemede</span>
+                <p><span>{% trans "Kayıt No" %}: </span> {{i.id}}</p>
+                <p><span>{% trans "Tarih" %}: </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
+                <p><span>{% trans "Durum" %}: </span> {% if i.durum == "0" %}
+                                    <span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
                                      
                                     {% elif i.durum == "1" %}
-                                    <span class="status-pending stats-lg">Tamamlandı</span>
+                                    <span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
                                         
                                     {% elif i.durum == "2" %}
-                                   <span class="status-pending stats-lg">Reddedildi</span>
+                                   <span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         
                                     {% endif %}</p>
-                <p><span>Detay: </span> {{i.sikayet_aciklamasi |safe}}</p>
+                <p><span>{% trans "Detay" %}: </span> {{i.sikayet_aciklamasi |safe}}</p>
             </div>
             <div class="form-actions">
                 <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
@@ -838,7 +838,7 @@
 <div class="modal" id="duzelt-talep{{i.id}}">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
-                Talep/Şikayet Düzenle
+                {% trans "Talep/Şikayet Düzenle" %}
             </div>
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_duzenle_musteri_detayi' %}">
@@ -898,19 +898,19 @@
                     {% else %}
                     {% endif %}
                 </div>
-                <p><span>Kayıt No: </span> {{i.id}}</p>
-                <p><span>Tarih: </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
-                <p><span>Durum: </span> {% if i.durum == "0" %}
-                                    <span class="status-pending stats-lg">Beklemede</span>
+                <p><span>{% trans "Kayıt No" %}: </span> {{i.id}}</p>
+                <p><span>{% trans "Tarih" %}: </span> {{i.islem_tarihi|date:'d.m.Y'}}</p>
+                <p><span>{% trans "Durum" %}: </span> {% if i.durum == "0" %}
+                                    <span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
                                        
                                     {% elif i.durum == "1" %}
-                                    <span class="status-pending stats-lg">Tamamlandı</span>
+                                    <span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
                                       
                                     {% elif i.durum == "2" %}
-                                    <span class="status-pending stats-lg">Reddedildi</span>
+                                    <span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
                                         
                                     {% endif %}</p>
-                <p><span>Detay: </span> {{i.sikayet_aciklamasi |safe}}</p>
+                <p><span>{% trans "Detay" %}: </span> {{i.sikayet_aciklamasi |safe}}</p>
             </div>
             <div class="form-actions">
                 <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
@@ -968,7 +968,7 @@
 <div class="modal" id="duzelt-not{{ i.id }}">
     <div class="modal-inner" style="width: 500px">
         <div class="modal-header">
-            Görüşme Notu Düzenle
+            {% trans "Görüşme Notu Düzenle" %}
         </div>
         <div class="modal-body">
             <form method="post" action="/{{ dil }}{% url 'crm:musteri_notu_duzenle' %}">
