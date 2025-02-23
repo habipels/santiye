@@ -17,16 +17,13 @@
                 <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
                 {% trans 'Şantiye Yapılarım' %}
             </div>
-             <ul class="page-breadcrumb">
+            <ul class="page-breadcrumb">
                 <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
-                <li><a href="#" >{% trans 'Şantiye Yönetimi' %}</a></li>
+                <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
                 <li><a href="#">{% trans 'Şantiye Yapılarım' %}</a></li>
             </ul>
         </div>
         <div class="page-actions">
-         
-       
-
         </div>
     </div>
 
@@ -53,40 +50,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                  {% for i in santiyeler %}
-                    {%  santiye_sablonu_gonder i as bilgi %}
-                        <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey; color: white; {% endif %} {% endif %}">
-                            
-                            <td class="bakiye">{{ i.proje_santiye_Ait.proje_adi }}<span></span></td>
-                            <td class="konum">{{ i.blog_adi}}</td>
-                            <td class="konum">{{ i.kat_sayisi | stringformat:".F"}}</td>
-                            <td class="konum">{{ i.kayit_tarihi }}</td>
-                            
-                           
-                            <td class="kasa">
-                                {%  daire_sayisi_kat_basina_daire i %}
-                            </td>
-                            <td class="kasa">
-                                    {% daire_sayisi i as bilgi %}
-                                    {{bilgi}}
-                            </td>
-                            <td>
-                                <div class="td-actions">
-                                    {% if bilgi %}
-                                        <a href="/{{dil}}{% url 'main:daireleri_gor' i.id %}" class="status-success">{% trans 'Daireleri Gör' %}</a>
-                                        <a href="/{{dil}}{% url 'main:katlara_gore_gor' i.id %}" class="status-success">{% trans 'Kata Göre Gör' %}</a>
-                                    {% else %}
-                                    <a href="/{{dil}}{% url 'main:santiye_projeleri' i.id %}" class="status-success">{% trans 'Daireleri Oluştur' %}</a>
-                                    {% endif %}
-                                    
-                                 
-
-                                    
-                               </div>
-                            </td>
-                        </tr>
+                    {% for i in santiyeler %}
+                    {% santiye_sablonu_gonder i as bilgi %}
+                    <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey; color: white; {% endif %} {% endif %}">
+                        <td class="bakiye">{{ i.proje_santiye_Ait.proje_adi }}<span></span></td>
+                        <td class="konum">{{ i.blog_adi }}</td>
+                        <td class="konum">{{ i.kat_sayisi | stringformat:".F" }}</td>
+                        <td class="konum">{{ i.kayit_tarihi }}</td>
+                        <td class="kasa">
+                            {% daire_sayisi_kat_basina_daire i %}
+                        </td>
+                        <td class="kasa">
+                            {% daire_sayisi i as bilgi %}
+                            {{ bilgi }}
+                        </td>
+                        <td>
+                            <div class="td-actions">
+                                {% if bilgi %}
+                                <a href="/{{dil}}{% url 'main:daireleri_gor' i.id %}" class="status-success">{% trans 'Daireleri Gör' %}</a>
+                                <a href="/{{dil}}{% url 'main:katlara_gore_gor' i.id %}" class="status-success">{% trans 'Kata Göre Gör' %}</a>
+                                {% else %}
+                                <a href="/{{dil}}{% url 'main:santiye_projeleri' i.id %}" class="status-success">{% trans 'Daireleri Oluştur' %}</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
                     {% endfor %}
-               </tbody>
+                </tbody>
             </table>
         </div>
 
@@ -103,10 +93,9 @@
                 paging: false,
                 searching: true,
                 info: false,
-                
             });
 
-            $('#stats-search').keyup(function () {
+            $('#stats-search').keyup(function() {
                 datatable.search($(this).val()).draw();
             });
         });
@@ -119,57 +108,53 @@
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
-
 </main>
-    <script>
-        function openModal(modalID, close = true) {
-            if (close) {
-                closeModal();
-            }
-            $("#" + modalID).css("display", "flex").hide().fadeIn()
+
+<script>
+    function openModal(modalID, close = true) {
+        if (close) {
+            closeModal();
         }
+        $("#" + modalID).css("display", "flex").hide().fadeIn()
+    }
 
-        function closeModal(modalID = "") {
-            console.log(modalID.length);
-            if (modalID.length === 0) {
-                $(".modal").fadeOut();
-            } else {
-                $("#" + modalID).fadeOut();
-            }
+    function closeModal(modalID = "") {
+        if (modalID.length === 0) {
+            $(".modal").fadeOut();
+        } else {
+            $("#" + modalID).fadeOut();
         }
+    }
 
-        $(".modal").on("click", function (e) {
-            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
-                closeModal();
-            }
-        });
-
-
-    </script>
-
-    <script>
-        function toggleFullScreen() {
-            var doc = window.document;
-            var docEl = doc.documentElement;
-
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
-            }
+    $(".modal").on("click", function(e) {
+        if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+            closeModal();
         }
+    });
+</script>
 
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+<script>
+    function toggleFullScreen() {
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || doc.mozRequestFullScreen || doc.webkitRequestFullScreen || doc.msRequestFullscreen;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+        if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+        } else {
+            cancelFullScreen.call(doc);
         }
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
+    }
+
+    function updateMaxWidth() {
+        var tableCardWidth = $(".table-card")[0].clientWidth;
+        $(".table-wrapper").css("max-width", tableCardWidth + "px");
+    }
+    $(document).ready(updateMaxWidth);
+    $(window).resize(updateMaxWidth);
+</script>
 {% endif %}
 {% endblock sidebar %}
 

@@ -17,16 +17,13 @@
                 <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
                 {% trans 'Şantiye Şablonları' %}
             </div>
-             <ul class="page-breadcrumb">
+            <ul class="page-breadcrumb">
                 <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
-                <li><a href="#" >{% trans 'Şantiye Yönetimi' %}</a></li>
+                <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
                 <li><a href="#">{% trans 'Şantiye Şablonları' %}</a></li>
             </ul>
         </div>
         <div class="page-actions">
-
-       
-
         </div>
     </div>
 
@@ -43,7 +40,7 @@
             <table id="datatable">
                 <thead>
                     <tr>
- <th>{% trans 'Proje Tipi' %}</th>
+                        <th>{% trans 'Proje Tipi' %}</th>
                         <th>{% trans 'Proje Adı' %}</th>
                         <th>{% trans 'Şantiye Şablon Adı' %}</th>
                         <th>{% trans 'Şantiye Kayıt Tarihi' %}</th>
@@ -54,46 +51,40 @@
                     </tr>
                 </thead>
                 <tbody>
-                  {% for i in santiyeler %}
-                    {%  santiye_sablonu_gonder i as bilgi %}
-                        <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey; color: white; {% endif %} {% endif %}">
-                            <td class="kasa">{{ i.proje_tipi.Proje_tipi_adi }}</td>
-                            <td class="bakiye">{{ i.proje_adi }}<span></span></td>
-                            <td class="konum">{{ i.kayit_tarihi }}</td>
-                            <td class="konum">{{ bilgi.sablon_adi}}</td>
-                           
-                            <td class="kasa">
-                            {% if bilgi.sablon_durumu == "0"  %}
-                            Apartman
-                            {% elif bilgi.sablon_durumu == "1"  %}
-                            Site
-                            {% elif bilgi.sablon_durumu == "2"  %}
-                            Ticari Bina
+                    {% for i in santiyeler %}
+                    {% santiye_sablonu_gonder i as bilgi %}
+                    <tr style="{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey; color: white; {% endif %} {% endif %}">
+                        <td class="kasa">{{ i.proje_tipi.Proje_tipi_adi }}</td>
+                        <td class="bakiye">{{ i.proje_adi }}<span></span></td>
+                        <td class="konum">{{ i.kayit_tarihi }}</td>
+                        <td class="konum">{{ bilgi.sablon_adi }}</td>
+                        <td class="kasa">
+                            {% if bilgi.sablon_durumu == "0" %}
+                            {% trans "Apartman" %}
+                            {% elif bilgi.sablon_durumu == "1" %}
+                            {% trans "Site" %}
+                            {% elif bilgi.sablon_durumu == "2" %}
+                            {% trans "Ticari Bina" %}
                             {% endif %}
-                                
-                            </td>
-                            <td class="konum">{{ bilgi.kayit_tarihi }}</td>
-                             <td class="konum">
-                             {% if bilgi %}
+                        </td>
+                        <td class="konum">{{ bilgi.kayit_tarihi }}</td>
+                        <td class="konum">
+                            {% if bilgi %}
                             <a href="/{{dil}}{% url 'main:yapilarim' i.id %}" class="status-success">{% trans 'Yapılarım' %}</a>
-                                 {% endif %}
-                            </td>
-                            <td>
-                                <div class="td-actions">
-                                    {% if bilgi %}
-                                    <a href="/{{dil}}{% url 'main:santiye_sablonu_duzenle' i.id %}" class="status-success">{% trans 'Şablon Düzenle' %}</a>
-                                    {% else %}
-                                    <a href="/{{dil}}{% url 'main:santiye_sablonu' i.id %}" class="status-success">{% trans 'Şablon Oluştur' %}</a>
-                                    {% endif %}
-                                    
-                                 
-
-                                    
-                               </div>
-                            </td>
-                        </tr>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="td-actions">
+                                {% if bilgi %}
+                                <a href="/{{dil}}{% url 'main:santiye_sablonu_duzenle' i.id %}" class="status-success">{% trans 'Şablon Düzenle' %}</a>
+                                {% else %}
+                                <a href="/{{dil}}{% url 'main:santiye_sablonu' i.id %}" class="status-success">{% trans 'Şablon Oluştur' %}</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
                     {% endfor %}
-               </tbody>
+                </tbody>
             </table>
         </div>
 
@@ -110,10 +101,9 @@
                 paging: false,
                 searching: true,
                 info: false,
-                
             });
 
-            $('#stats-search').keyup(function () {
+            $('#stats-search').keyup(function() {
                 datatable.search($(this).val()).draw();
             });
         });
@@ -126,57 +116,53 @@
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
-
 </main>
-    <script>
-        function openModal(modalID, close = true) {
-            if (close) {
-                closeModal();
-            }
-            $("#" + modalID).css("display", "flex").hide().fadeIn()
+
+<script>
+    function openModal(modalID, close = true) {
+        if (close) {
+            closeModal();
         }
+        $("#" + modalID).css("display", "flex").hide().fadeIn()
+    }
 
-        function closeModal(modalID = "") {
-            console.log(modalID.length);
-            if (modalID.length === 0) {
-                $(".modal").fadeOut();
-            } else {
-                $("#" + modalID).fadeOut();
-            }
+    function closeModal(modalID = "") {
+        if (modalID.length === 0) {
+            $(".modal").fadeOut();
+        } else {
+            $("#" + modalID).fadeOut();
         }
+    }
 
-        $(".modal").on("click", function (e) {
-            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
-                closeModal();
-            }
-        });
-
-
-    </script>
-
-    <script>
-        function toggleFullScreen() {
-            var doc = window.document;
-            var docEl = doc.documentElement;
-
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
-            }
+    $(".modal").on("click", function(e) {
+        if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+            closeModal();
         }
+    });
+</script>
 
-        function updateMaxWidth() {
-            var tableCardWidth = $(".table-card")[0].clientWidth;
-            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+<script>
+    function toggleFullScreen() {
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || doc.msRequestFullscreen;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+        if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+        } else {
+            cancelFullScreen.call(doc);
         }
-        $(document).ready(updateMaxWidth);
-        $(window).resize(updateMaxWidth);
-    </script>
+    }
+
+    function updateMaxWidth() {
+        var tableCardWidth = $(".table-card")[0].clientWidth;
+        $(".table-wrapper").css("max-width", tableCardWidth + "px");
+    }
+    $(document).ready(updateMaxWidth);
+    $(window).resize(updateMaxWidth);
+</script>
 {% endif %}
 {% endblock sidebar %}
 
