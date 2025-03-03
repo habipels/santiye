@@ -390,7 +390,7 @@ class Message(models.Model):
     file = models.FileField(upload_to='uploads/', blank=True, null=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    read = models.BooleanField(default=False)  # Yeni alan
+    read = models.BooleanField(default=False)  # New field
 
     def __str__(self):
         return f"{self.sender.username}: {self.content[:50]}"

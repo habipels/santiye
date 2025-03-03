@@ -2416,4 +2416,3 @@ def api_katman_sayfasi(request):
 
 
     return Response(content, status=status.HTTP_200_OK)
-
