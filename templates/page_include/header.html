@@ -741,6 +741,8 @@
     {% url 'main:ust_yuklenici_sayfasi' as ust_yuklenici_sayfasi_url %}
     {% url 'main:hakedis_sayfasi' as hakedis_sayfasi_url %}
     {% url 'main:sozlesmler_sayfasi' as sozlesmler_sayfasi_url %}
+    {% url 'main:santiyelerim' as santiyelerim_url %}
+                {% url 'main:santiye_onay_listesi' as santiye_onay_listesi_url %}
 
     <li class="{% if request.path == santiye_kalem_ve_blog_url or request.path == yapilacaklar_url or request.path == depolama_sistemim_url or request.path == taseron_sayfasi_url or request.path == ust_yuklenici_sayfasi_url or request.path == hakedis_sayfasi_url or request.path == sozlesmler_sayfasi_url %}active{% endif %}">
         <a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>{% trans 'Şantiye Yönetimi' %}</span> <i class="icon icon-caret"></i></a>
@@ -748,6 +750,12 @@
             <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
                 <a href="/{{dil}}{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Proje Yönetimi' %}</a>
             </li>
+             <li class="{% if request.path == santiyelerim_url %}active{% endif %}">
+                            <a href="/{{dil}}{{ santiyelerim_url }}" class="sidebar-sub-item">{% trans 'Şantiye Checklist' %}</a>
+                        </li>
+                        <li class="{% if request.path == santiye_onay_listesi_url %}active{% endif %}">
+                            <a href="/{{dil}}{{ santiye_onay_listesi_url }}" class="sidebar-sub-item">{% trans 'Checklist Onaylama' %}</a>
+                        </li>
             <li class="{% if request.path == '/gantt' %}active{% endif %}">
                 <a href="{% url 'main:takvim_olaylari' %}" class="sidebar-sub-item">{% trans 'Stratejik İş Planı' %}</a>
             </li>
@@ -887,8 +895,7 @@
                 {% url 'main:proje_tipi_' as proje_tipi_url %}
                 {% url 'main:santiye_projesi_ekle_' as santiye_projesi_ekle_url %}
                 {% url 'main:katman_sayfasi' as katman_sayfasi_url %}
-                {% url 'main:santiyelerim' as santiyelerim_url %}
-                {% url 'main:santiye_onay_listesi' as santiye_onay_listesi_url %}
+                
                 
                 <li>
                     <a class="sidebar-sub-toggle" href="#"><span>{% trans 'Şantiye Ayarları' %}</span> <i class="icon icon-caret"></i></a>
@@ -899,12 +906,7 @@
                         <li class="{% if request.path == santiye_projesi_ekle_url %}active{% endif %}">
                             <a href="/{{dil}}{{ santiye_projesi_ekle_url }}" class="sidebar-sub-item">{% trans 'Şantiye ' %}</a>
                         </li>
-                        <li class="{% if request.path == santiyelerim_url %}active{% endif %}">
-                            <a href="/{{dil}}{{ santiyelerim_url }}" class="sidebar-sub-item">{% trans 'Şantiye Checklist' %}</a>
-                        </li>
-                        <li class="{% if request.path == santiye_onay_listesi_url %}active{% endif %}">
-                            <a href="/{{dil}}{{ santiye_onay_listesi_url }}" class="sidebar-sub-item">{% trans 'Checklist Onaylama' %}</a>
-                        </li>
+                       
                         <li class="{% if request.path == proje_tipi_url %}active{% endif %}">
                             <a href="/{{dil}}{{ proje_tipi_url }}" class="sidebar-sub-item">{% trans 'Proje Tipi' %}</a>
                         </li>
