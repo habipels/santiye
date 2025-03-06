@@ -2416,3 +2416,74 @@ def api_katman_sayfasi(request):
 
 
     return Response(content, status=status.HTTP_200_OK)
+
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_list(request):
+    content = {}
+    if not request.user.is_authenticated:
+        return Response({'detail': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+    if request.user.kullanicilar_db:
+        users = CustomUserSerializer(CustomUser.objects.filter(kullanicilar_db = request.user), many=True).data
+    else:
+        users = CustomUserSerializer(CustomUser.objects.filter(kullanicilar_db = request.user), many=True).data
+    groups = Group.objects.filter(members=request.user)
+    content["users"] = users
+    content["groups"] = GroupSerializer(groups, many=True).data
+    return Response(content)
+
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def create_group(request):
+    if True:
+        group_name = request.data.get('group_name')
+        a = request.data.getlist('members')[0].split(",")
+        #print(a)
+        member_ids = []
+        for i in a:
+            member_ids.append(int(i))
+        #print(member_ids)
+        image = request.FILES.get("image")
+        if image:
+            group, created = Group.objects.get_or_create(name=group_name,image = image)
+        else:
+            group, created = Group.objects.get_or_create(name=group_name)
+        
+        if created:
+            group.members.set(member_ids + [request.user.id])
+            group.save()
+        
+        return Response({"detail": "Grup Başarılı Bir Şekilde OLuşturuldu."}, status=status.HTTP_201_CREATED)
+from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki,get_kayit_tarihi_from_request,get_time_zone_from_country,get_country
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def group_chat(request, group_id):
+    context = {}
+    group = get_object_or_404(Group, id=group_id)
+    messages = Message.objects.filter(group=group)
+    messages = messages.order_by('timestamp')[:100]
+    for message in messages:
+        if message.sender != request.user:
+            message.read = True
+            message.save()
+    if request.user.kullanicilar_db:
+        users = User.objects.filter(kullanicilar_db = request.user.kullanicilar_db ).exclude(id=request.user.id)
+    else:
+        users = User.objects.filter(kullanicilar_db = request.user ).exclude(id=request.user.id)
+    groups = Group.objects.filter(members=request.user)
+    context["messages"] = MessageSerializer(messages, many=True).data
+    context["users"] = CustomUserSerializer(users, many=True).data
+    context["groups"] = GroupSerializer(groups, many=True).data
+    #context["group"] = GroupSerializer(group, many=True).data
+    context["group_id"] = group_id  # Add group_id to context
+    if request.data:
+        content = request.data.get('content')
+        Message.objects.create(sender=request.user, group=group, content=content)
+    
+    return Response(context)

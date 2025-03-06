@@ -99,3 +99,25 @@ class YapilacakPlanlariSerializer(serializers.ModelSerializer):
         fields = '__all__'  # Veya ihtiyacınıza göre belirli alanları seçin
 
 
+from rest_framework import serializers
+from users.models import Group, Message
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
+class GroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = '__all__' 
+
+class MessageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'group', 'content', 'timestamp', 'file', 'read']

@@ -73,7 +73,5 @@ urlpatterns = [
     path('group/<int:group_id>/', views.group_chat, name='group_chat'),
     path('groups/', views.group_list, name='group_list'),  # Grup listeleme URL'si
     
-#
-#
 ]
 #lock_screen

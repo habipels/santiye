@@ -133,6 +133,9 @@ urlpatterns = [#deneme
     path('set/layer/', views.api_katman_duzenle, name="api_katman_duzenle"),
 
     path('weather', views.hava_durumu_api, name='hava_durumu_api'),
+    path('user_list', views.user_list, name='user_list'),
+     path('create_group', views.create_group, name='create_group'),
+     path('group_chat/<int:group_id>', views.group_chat, name='group_chat'),
 
 ]#
 #
