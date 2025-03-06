@@ -2178,3 +2178,34 @@ def daire_imalat_sonuncu(daire):
 def klasor_adi_duzeltme(veri):
     veri = veri.replace("/","_")
     return veri
+
+from django import template
+from django.conf import settings
+from django.utils.translation import get_language
+
+
+
+@register.simple_tag(takes_context=True)
+def remove_lang_from_url(context):
+    """
+    Mevcut URL'den dili kaldırarak geri kalan kısmı döndürür.
+    Örn: /tr/generalreport → /generalreport
+         /ckb/generalreport → /generalreport
+    """
+    request = context['request']
+    path = request.path  # Örn: "/tr/generalreport"
+    current_lang = get_language()  # Django'nun aktif dilini al (örn: "tr", "en", "ckb")
+    
+    # Tüm desteklenen dilleri settings.py'den al (örn: [('en', 'English'), ('tr', 'Türkçe'), ('ckb', 'Kurdî')])
+    supported_languages = [lang[0] for lang in settings.LANGUAGES]
+
+    # URL'yi / ile bölerek listeye çevir
+    path_parts = path.strip('/').split('/')  # Örn: ['tr', 'generalreport']
+
+    # Eğer ilk kısım bir dil koduna eşitse (örn: "tr", "ckb"), onu kaldır
+    if path_parts[0] in supported_languages:
+        path_parts.pop(0)  # İlk elemanı sil
+
+    # Yeni yolu oluştur ve başına / ekleyerek döndür
+    new_path = '/' + '/'.join(path_parts)
+    return new_path  # Örn: "/generalreport"

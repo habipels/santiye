@@ -5,7 +5,7 @@
  <aside class="sidebar">
         <div class="sidebar-toggle"><i class="icon icon-sidebar-right"></i><i class="icon icon-sidebar-left"></i></div>
     <div class="sidebar-logo">
-        <a href="/" class="logo-link">
+        <a href="/{{dil}}/" class="logo-link">
             <div class="sidebar-logo-main-part"></div>
             <div class="sidebar-logo-second-part"></div>
             <div class="sidebar-logo-large-parts">
@@ -97,7 +97,7 @@
                 <a href="/{{dil}}{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Proje Yönetimi' %}</a>
             </li>
             <li class="{% if request.path == '/gantt' %}active{% endif %}">
-                <a href="{% url 'main:takvim_olaylari' %}" class="sidebar-sub-item">{% trans 'Stratejik İş Planı' %}</a>
+                <a href="/{{dil}}{% url 'main:takvim_olaylari' %}" class="sidebar-sub-item">{% trans 'Stratejik İş Planı' %}</a>
             </li>
             <li class="{% if request.path == yapilacaklar_url %}active{% endif %}">
                 <a href="/{{dil}}{{ yapilacaklar_url }}" class="sidebar-sub-item">{% trans 'İş Emirleri' %}</a>
@@ -577,7 +577,7 @@
                         {% for i in diller  %}
                             {% if i.dil_kisaltması == lang.code %}
                 <div class="language-selector">
-                    <a href="/{{ lang.code }}/{{linki}}" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
+                    <a href="/{{ lang.code }}{% remove_lang_from_url %}" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
                                 <img src="{{i.dil_bayragi_icon.url}}" alt="{{ lang.code }}" height="18px">
                                 <span>{{ lang.name_local }}</span>
                                 </a>
@@ -656,7 +656,7 @@
  <aside class="sidebar">
         <div class="sidebar-toggle"><i class="icon icon-sidebar-right"></i><i class="icon icon-sidebar-left"></i></div>
     <div class="sidebar-logo">
-        <a href="/" class="logo-link">
+        <a href="/{{dil}}/" class="logo-link">
             <div class="sidebar-logo-main-part"></div>
             <div class="sidebar-logo-second-part"></div>
             <div class="sidebar-logo-large-parts">
@@ -757,7 +757,7 @@
                             <a href="/{{dil}}{{ santiye_onay_listesi_url }}" class="sidebar-sub-item">{% trans 'Checklist Onaylama' %}</a>
                         </li>
             <li class="{% if request.path == '/gantt' %}active{% endif %}">
-                <a href="{% url 'main:takvim_olaylari' %}" class="sidebar-sub-item">{% trans 'Stratejik İş Planı' %}</a>
+                <a href="/{{dil}}{% url 'main:takvim_olaylari' %}" class="sidebar-sub-item">{% trans 'Stratejik İş Planı' %}</a>
             </li>
             <li class="{% if request.path == yapilacaklar_url %}active{% endif %}">
                 <a href="/{{dil}}{{ yapilacaklar_url }}" class="sidebar-sub-item">{% trans 'İş Emirleri' %}</a>
@@ -1313,7 +1313,7 @@ $(document).ready(function() {
                         {% for i in diller  %}
                             {% if i.dil_kisaltması == lang.code %}
                 <div class="language-selector">
-                    <a href="/{{ lang.code }}/{{linki}}" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
+                    <a href="/{{ lang.code }}{% remove_lang_from_url %}" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
                                 <img src="{{i.dil_bayragi_icon.url}}" alt="{{ lang.code }}" height="18px">
                                 <span style="padding-left: 15px; color: var(--text-primary-color); font-weight: bolder; font-size: 14px;">
                                     {{ lang.name_local }}
