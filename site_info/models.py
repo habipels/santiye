@@ -118,6 +118,7 @@ class check_liste_onaylama_gruplari(models.Model):
     onaylayan = models.ForeignKey(CustomUser,verbose_name="Onaylayan",blank=True,null=True,on_delete=models.SET_NULL,related_name="onaylayan")
     onaylma_tarihi = models.DateTimeField(default=datetime.now,null=True,blank=True)  # Updates automatically on save
     onaylama_notu = models.TextField(blank=True,null=True)
+    tamamlanma_bilgisi = models.BooleanField(default=False)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class daire_resimleri_chjeckdaireleri(models.Model):

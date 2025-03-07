@@ -9919,6 +9919,111 @@ def santiye_sablonu(request,id):
             kullanici =request.user
     content["santiye"] = get_object_or_404(santiye,id = id)
     return render(request,"checklist/santiye_sablonu.html",content)
+def santiye_kontrolculeri_isle(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:   
+            kullanici =request.user
+    content["kullanicilar"] = CustomUser.objects.filter(kullanicilar_db = kullanici,is_superuser = False)
+    content["santiyeler"] = get_object_or_none(santiye,id = id)
+    kontroller = []
+
+    a = santiye_imalat_kalemleri.objects.filter(silinme_bilgisi = False,proje_santiye_Ait__id =id)
+    for i in a:
+        if i.is_grubu in kontroller:
+            pass
+        else:
+            kontroller.append(i.is_grubu)
+    content["is_gruplari"] = kontroller
+    #content["kontrolculer"] = bagli_kullanicilar.objects.filter(izinler__santiye_kontrol = True)
+    return render(request,"checklist/santiye_kontrolculeri.html",content)
+
+def santiye_onay_listesi_kontrol(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                return redirect("main:yetkisiz")
+        else:       
+            kullanici =request.user
+    profile = checkdaireleri.objects.filter(proje_ait_bilgisi = kullanici,proje_santiye_Ait__id = id) 
+    content["santiyeler"] = profile
+    content["kullanicilar"] = CustomUser.objects.filter(kullanicilar_db = kullanici,is_superuser = False)
+    return render(request,"checklist/santiye_onay_listesi.html",content)
+def santiye_kontrolculeri_ekle(request,id,slug):
+    content = sozluk_yapisi()
+    
+    if True:
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.santiye_kontrol:
+                        kullanici =request.user.kullanicilar_db 
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici =request.user
+    content["santiye"] = id
+    content["is_grubu"] = slug
+    content["users"] =  CustomUser.objects.filter(kullanicilar_db = kullanici,is_superuser = False)
+    content["kontrolculer"] = check_liste_onaylama_gruplari.objects.filter(imalat_kalemi_ait__proje_santiye_Ait__id = id,imalat_kalemi_ait__imalat_detayi__is_grubu = slug).values("onaylayan").distinct()
+
+    return render(request,"checklist/kontrolcüleri_isleme_sayfasi.html",content)
+
+def kontrolculeri_kaydet(request):
+    if request.POST:
+        kullanicilarim = request.POST.getlist("kullanici")
+        santiye = request.POST.get("santiye")
+        is_grubu = request.POST.get("is_grubu")
+        if super_admin_kontrolu(request):
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.santiye_kontrol:
+                        kullanici =request.user.kullanicilar_db
+                    else:
+                        return redirect("main:yetkisiz")
+                else:
+                    return redirect("main:yetkisiz")
+            else:
+                kullanici =request.user
+        
+        daireler_kontrol_list = imalat_daire_balama.objects.filter(proje_ait_bilgisi = kullanici,proje_santiye_Ait__id = santiye,imalat_detayi__is_grubu = is_grubu)
+        for i in daireler_kontrol_list:
+            for k in kullanicilarim:
+                check_liste_onaylama_gruplari.objects.filter(imalat_kalemi_ait = i).delete()
+        for i in daireler_kontrol_list:
+            for k in kullanicilarim:
+                check_liste_onaylama_gruplari.objects.create(imalat_kalemi_ait = i,onaylayan = get_object_or_none(CustomUser,id = k))
+        return redirect("main:santiye_kontrolculeri_isle",santiye)
+
+
 def santiye_sablonu_duzenle(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -10311,10 +10416,14 @@ def daire_imalat_checklist_onaylama(request):
         onayla = request.POST.get("onayla")
         if onayla == "onayla":
             for i in check:
-                imalat_daire_balama.objects.filter(id = i,onaylayan =None).update(onaylama_notu = aciklma,onaylma_tarihi = datetime.now(),onaylayan = request.user)
+                #imalat_daire_balama.objects.filter(id = i).update(onaylma_tarihi = datetime.now(),onaylayan = request.user)
+                a = imalat_daire_balama.objects.filter(id = i)
+                print(a)
+                for i in a:
+                    check_liste_onaylama_gruplari.objects.filter(imalat_kalemi_ait = i,onaylayan = request.user).update(onaylama_notu = aciklma,tamamlanma_bilgisi = True,onaylma_tarihi = datetime.now())
         else:
            for i in check:
-                imalat_daire_balama.objects.filter(id = i,onaylayan =None).update(tamamlanma_bilgisi = False,tamamlamayi_yapan = None,tarih = datetime.now(), onaylama_notu = aciklma,onaylma_tarihi = datetime.now(),onaylayan =None) 
+                imalat_daire_balama.objects.filter(id = i).update(tamamlanma_bilgisi = False,tamamlamayi_yapan = None,tarih = datetime.now(), ) 
     return redirect("main:santiyelerim")
 
 

@@ -2209,3 +2209,7 @@ def remove_lang_from_url(context):
     # Yeni yolu oluştur ve başına / ekleyerek döndür
     new_path = '/' + '/'.join(path_parts)
     return new_path  # Örn: "/generalreport"
+@register.simple_tag
+def onay_durumu(id):
+    a = check_liste_onaylama_gruplari.objects.filter(imalat_kalemi_ait__daire_bilgisi__id = id).values("onaylayan").distinct()  # Tekrar edenleri atar
+    return a

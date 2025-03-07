@@ -297,6 +297,7 @@ class personel_izinleri(models.Model):
     crm_evrak_silme = models.BooleanField(default=False, verbose_name="CRM Evrak Silme İzni")
     crm_evrak_gorme = models.BooleanField(default=False, verbose_name="CRM Evrak Görme İzni")
     crm_evrak_duzenleme = models.BooleanField(default=False, verbose_name="CRM Evrak Düzenleme İzni")
+    santiye_kontrol =  models.BooleanField(default=True, verbose_name="Santiye Kontrol")
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):

@@ -55,6 +55,7 @@
                             <th>{% trans "Durum" %}</th>
                             <th>{% trans "İlerleme" %}</th>
                             <th>{% trans "Onay Durumu" %}</th>
+                            <th>{% trans "Onay verecekler" %}</th>
                             <th>{% trans "İşlemler" %}</th>
                         </tr>
                     </thead>
@@ -94,6 +95,33 @@
                                         <i class="fa-solid fa-clock"></i> {% trans "Onaylanmadı" %}
                                     </span>
                                     <span class="approver">{{ chck.onaylayan.last_name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="approval-status">
+                                
+                                {%  onay_durumu i.id  as bilgis %}
+                                    {% if bilgis %}
+                                        {% for j in kullanicilar %}
+                                        {% for k in bilgis %}
+                                        
+                                        
+                                            {% if k.onaylayan == j.id %}
+                                            <span class="approval-badge {{ i.onay_durumu|lower }}">
+                                                
+                                                *{{j.last_name}} 
+                                                </span>
+                                            {% else %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% else %}
+                                    {% endif %}
+                                    
+                                        
+                                    
+                                    
+                            
                                 </div>
                             </td>
                             <td>

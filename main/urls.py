@@ -237,7 +237,11 @@ urlpatterns = [#
     path("control/userauthorizationsset/<int:id>/<str:hash>", views.kullanici_yetkileri_duzenle_2, name="kullanici_yetkileri_duzenle_2"),
     path("control/kullaniciyetkialma/<str:hash>", views.kullanici_yetki_alma_2, name="kullanici_yetki_alma_2"),
     #şantiye Kontrol
-    
+    #
+    path("checklist/<int:id>/", views.santiye_onay_listesi_kontrol, name="santiye_onay_listesi_kontrol"),
+    path("site_control_save/", views.kontrolculeri_kaydet, name="kontrolculeri_kaydet"),
+    path("site_control_add/<int:id>/<str:slug>", views.santiye_kontrolculeri_ekle, name="santiye_kontrolculeri_ekle"),
+    path("site_control/<int:id>/", views.santiye_kontrolculeri_isle, name="santiye_kontrolculeri_isle"),
     path("viewsitedetail/<int:id>/", views.santiye_kontrol_detayi_ust_yoneticii, name="santiye_kontrol_detayi_ust_yoneticii"),
     path("onaylama_islemi/", views.daire_imalat_checklist_onaylama, name="daire_imalat_checklist_onaylama"),
     path("mansitedetail/<int:id>/", views.santiye_kontrol_detayi_ust_yonetici, name="santiye_kontrol_detayi_ust_yonetici"),
