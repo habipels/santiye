@@ -110,13 +110,16 @@ class imalat_daire_balama(models.Model):
     imalat_detayi = models.ForeignKey(santiye_imalat_kalemleri,verbose_name="İmalat Detayı",blank=True,null=True,on_delete=models.SET_NULL)
     tamamlanma_bilgisi = models.BooleanField(default=False)
     tamamlamayi_yapan = models.ForeignKey(CustomUser,verbose_name="Tamamlamayı Yapan",blank=True,null=True,on_delete=models.SET_NULL,related_name="tamamlamayi_yapan")
-    tarih = models.DateField(default=datetime.now,null=True,blank=True)  # Updates automatically on save
+    tarih = models.DateTimeField(default=datetime.now,null=True,blank=True)  # Updates automatically on save
+    kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+class check_liste_onaylama_gruplari(models.Model):
+    imalat_kalemi_ait = models.ForeignKey(imalat_daire_balama,verbose_name="İmalat Kalemi Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     onaylayan = models.ForeignKey(CustomUser,verbose_name="Onaylayan",blank=True,null=True,on_delete=models.SET_NULL,related_name="onaylayan")
-    onaylma_tarihi = models.DateField(default=datetime.now,null=True,blank=True)  # Updates automatically on save
+    onaylma_tarihi = models.DateTimeField(default=datetime.now,null=True,blank=True)  # Updates automatically on save
     onaylama_notu = models.TextField(blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
-
 class daire_resimleri_chjeckdaireleri(models.Model):
     daire_bilgisi = models.ForeignKey(checkdaireleri,verbose_name="Daire Ait Olduğu",blank=True,null=True,on_delete=models.SET_NULL)
     resim = models.FileField(upload_to='daire_resimleri/',verbose_name="Resim Adı",blank=True,null=True)
