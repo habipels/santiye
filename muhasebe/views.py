@@ -4648,7 +4648,7 @@ def muhasebe_ayarlari(request):
                     # Güncelleme
                     Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kullanici, id=i.id).update(fatura_no=yeni_fatura_no)
         else:
-            faturalardaki_gelir_gider_etiketi_ozel.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+            faturalardaki_gelir_gider_etiketi_ozel.objects.create(
             kullanici  = kullanici,
             gelir_etiketi = gelir_etiketi,
             gider_etiketi = gideretiketi 
