@@ -9992,7 +9992,7 @@ def santiye_kontrolculeri_ekle(request,id,slug):
     content["users"] =  CustomUser.objects.filter(kullanicilar_db = kullanici,is_superuser = False)
     content["kontrolculer"] = check_liste_onaylama_gruplari.objects.filter(imalat_kalemi_ait__proje_santiye_Ait__id = id,imalat_kalemi_ait__imalat_detayi__is_grubu = slug).values("onaylayan").distinct()
 
-    return render(request,"checklist/kontrolcüleri_isleme_sayfasi.html",content)
+    return render(request,"checklist/kontrolculeri_isleme_sayfasi.html",content)
 
 def kontrolculeri_kaydet(request):
     if request.POST:
