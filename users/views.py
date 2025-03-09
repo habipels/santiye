@@ -19,7 +19,13 @@ from django.core.files.storage import FileSystemStorage
 from main.views import decode_id
 from django.utils import timezone
 from datetime import timedelta
-
+from django.urls import reverse
+from django.utils.translation  import gettext as _
+from django.utils.translation import get_language, activate, gettext
+def redirect_with_language(view_name, *args, **kwargs):
+    lang = get_language()
+    url = reverse(view_name, args=args, kwargs=kwargs)
+    return redirect(f'/{lang}{url}')
 def personel_bilgisi_axaj(request, id):
     bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()
     if True:
@@ -128,7 +134,7 @@ def register(request):
         login(request,newUser)
         messages.info(request,"Başarıyla Kayıt Oldunuz...")
 
-        return redirect("main:ana_sayfa")
+        return redirect_with_language("main:ana_sayfa")
 
     return render(request,"account/register.html",context)
 
@@ -173,7 +179,7 @@ def logoutUser(request):
         lock_status = LockScreenStatus.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),user=request.user, is_locked=False)
     logout(request)
     messages.success(request,"Başarıyla Çıkış Yaptınız")
-    return redirect("users:yonlendir")
+    return redirect_with_language("users:yonlendir")
 def yonlendir(request):
     return render(request,"account/logout.html")
 def profil_bilgisi (request):
@@ -253,14 +259,14 @@ def kullanici_ekleme(request):
                 personel_dosyalari.objects.create(dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
                 bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
-        return redirect("users:kullanicilarim")
+        return redirect_with_language("users:kullanicilarim")
 
 
 def kullanici_silme(request):
     if request.POST:
         buttonIdInput = request.POST.get("buttonId")
         CustomUser.objects.filter(id = buttonIdInput).update(is_active = False,kullanici_silme_bilgisi  = True)
-    return redirect("users:kullanicilarim")
+    return redirect_with_language("users:kullanicilarim")
 
 def kullanici_bilgileri_duzenle(request):
     if request.POST:
@@ -294,7 +300,7 @@ def kullanici_bilgileri_duzenle(request):
                     personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
                 bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
-        return redirect("users:kullanicilarim")
+        return redirect_with_language("users:kullanicilarim")
 
 ######################3
 #kullanıcılar
@@ -384,7 +390,7 @@ def kullanici_ekleme_2(request,hash):
                 personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = a.id))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
                 bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser,id = a.id))
-        return redirect("users:kullanicilarim_2",hash)
+        return redirect_with_language("users:kullanicilarim_2",hash)
 
 
 def kullanici_silme_2(request,hash):
@@ -396,7 +402,7 @@ def kullanici_silme_2(request,hash):
     if request.POST:
         buttonIdInput = request.POST.get("buttonId")
         CustomUser.objects.filter(id = buttonIdInput).update(is_active = False,kullanici_silme_bilgisi  = True)
-    return redirect("users:kullanicilarim_2",hash)
+    return redirect_with_language("users:kullanicilarim_2",hash)
 
 def kullanici_bilgileri_duzenle_2(request,hash):
     content = sozluk_yapisi()
@@ -460,7 +466,7 @@ def kullanici_bilgileri_duzenle_2(request,hash):
                     personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
                 bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
-        return redirect("users:kullanicilarim_2",hash)
+        return redirect_with_language("users:kullanicilarim_2",hash)
 
 ######################
 
@@ -486,7 +492,7 @@ def lock_screen(request):
             # Parola doğru, kullanıcıyı kilidi aç
             lock_status.is_locked = False
             lock_status.save()
-            return redirect('/')   # Yönlendireceğiniz sayfayı belirtin
+            return redirect_with_language('/')   # Yönlendireceğiniz sayfayı belirtin
         else:
             # Parola doğru değilse hata mesajını gösterin
             error_message = "Parola yanlış. Tekrar deneyin."
@@ -522,7 +528,7 @@ def profile_edit_kismi(request):
             u = CustomUser.objects.get(id = request.user.id)
             u.background_image = background
             u.save()
-        return redirect("users:profile_edit_kismi")
+        return redirect_with_language("users:profile_edit_kismi")
     return render(request,"account/profile_edit.html",content)
 
 
@@ -541,7 +547,7 @@ def parola_degistime(request):
                 messages.success(request, 'Eski Parolanız hatalı')
         else:
             messages.success(request, 'Parolanız Uyuşmuyor')
-    return redirect("/")
+    return redirect_with_language("/")
 
 
 
@@ -558,9 +564,9 @@ def personeller_sayfasi(request):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
@@ -572,9 +578,9 @@ def personeller_sayfasi(request):
             if bilgi.gunluk_calisma_saati:
                 pass
             else:
-                return redirect("accounting:muhasebe_ayarlari")
+                return redirect_with_language("accounting:muhasebe_ayarlari")
         else:
-            return redirect("accounting:muhasebe_ayarlari")
+            return redirect_with_language("accounting:muhasebe_ayarlari")
     return render(request,"personel/personeller.html",content)
 #
 
@@ -595,9 +601,9 @@ def personeller_sayfasi_2(request,hash):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
     content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
@@ -612,9 +618,9 @@ def personeller_ekle(request):
             if a.izinler.personeller_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
     if request.POST:
@@ -655,7 +661,7 @@ def personeller_ekle(request):
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
             for i in documents:
                 calisan_belgeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
-    return redirect("user:personeller_sayfasi")
+    return redirect_with_language("user:personeller_sayfasi")
 def personeller_ekle_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -671,9 +677,9 @@ def personeller_ekle_2(request,hash):
                 if a.izinler.personeller_olusturma:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
     if request.POST:
@@ -714,7 +720,7 @@ def personeller_ekle_2(request,hash):
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
             for i in documents:
                 calisan_belgeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
-    return redirect("user:personeller_sayfasi_2",hash)
+    return redirect_with_language("user:personeller_sayfasi_2",hash)
 def personeller_sil_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -724,7 +730,7 @@ def personeller_sil_2(request,hash):
     if request.POST:
         id = request.POST.get("idbilgisi")
         calisanlar.objects.filter(id =id).update(silinme_bilgisi = True)
-    return redirect("user:personeller_sayfasi_2",hash)
+    return redirect_with_language("user:personeller_sayfasi_2",hash)
 def personeller_odenmeye_maaslar(request):
     content = sozluk_yapisi()
 
@@ -738,9 +744,9 @@ def personeller_odenmeye_maaslar(request):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
@@ -765,9 +771,9 @@ def personeller_odenmeye_maaslar_2(request,hash):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
     content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
@@ -787,9 +793,9 @@ def bodro(request,tarih,id):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
@@ -801,7 +807,7 @@ def personeller_sil(request):
     if request.POST:
         id = request.POST.get("idbilgisi")
         calisanlar.objects.filter(id =id).update(silinme_bilgisi = True)
-    return redirect("user:personeller_sayfasi")
+    return redirect_with_language("user:personeller_sayfasi")
 def personelleri_düzenle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -809,9 +815,9 @@ def personelleri_düzenle(request):
             if a.izinler.personeller_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
     if request.POST:
@@ -854,7 +860,7 @@ def personelleri_düzenle(request):
             yevmiye = hourlyWage,durum =salaryType,para_birimi = currency )
             for i in documents:
                 calisan_belgeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =idbilgisi ) ,belge = i )
-        return redirect("user:personeller_sayfasi")
+        return redirect_with_language("user:personeller_sayfasi")
 #######################################################3
 #Pozisyonlar
 def personeller_kategori_sayfalari_2(request,hash):
@@ -874,9 +880,9 @@ def personeller_kategori_sayfalari_2(request,hash):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         #content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
@@ -901,14 +907,14 @@ def personeller_kategori_ekle_2(request,hash):
                         kullanici = request.user.kullanicilar_db
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
     calisanlar_pozisyonu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
         
-    return redirect("users:personeller_kategori_sayfalari_2",hash)   
+    return redirect_with_language("users:personeller_kategori_sayfalari_2",hash)   
 def personeller_kategori_sil_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -922,7 +928,7 @@ def personeller_kategori_sil_2(request,hash):
         
         calisanlar_pozisyonu.objects.filter(kategori_kime_ait =kullanici,id = pozsiyon ).delete()
         
-    return redirect("users:personeller_kategori_sayfalari_2",hash)   
+    return redirect_with_language("users:personeller_kategori_sayfalari_2",hash)   
 def personelleri_kategori_düzenle_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -937,7 +943,7 @@ def personelleri_kategori_düzenle_2(request,hash):
         
         calisanlar_pozisyonu.objects.filter(kategori_kime_ait =kullanici,id =buton ).update(kategori_isimi = pozsiyon )
         
-    return redirect("users:personeller_kategori_sayfalari_2",hash)
+    return redirect_with_language("users:personeller_kategori_sayfalari_2",hash)
 
 #
 def personeller_depertman_sayfalari_2(request,hash):
@@ -966,7 +972,7 @@ def personeller_departman_ekle_2(request,hash):
             kullanici = users
         calisanlar_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
         
-    return redirect("users:personeller_depertman_sayfalari_2",hash)   
+    return redirect_with_language("users:personeller_depertman_sayfalari_2",hash)   
 def personeller_departman_sil_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -980,7 +986,7 @@ def personeller_departman_sil_2(request,hash):
         
         calisanlar_kategorisi.objects.filter(kategori_kime_ait =kullanici,id = pozsiyon ).delete()
         
-    return redirect("users:personeller_depertman_sayfalari_2",hash)   
+    return redirect_with_language("users:personeller_depertman_sayfalari_2",hash)   
 def personelleri_departman_düzenle_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -995,7 +1001,7 @@ def personelleri_departman_düzenle_2(request,hash):
         
         calisanlar_kategorisi.objects.filter(kategori_kime_ait =kullanici,id =buton ).update(kategori_isimi = pozsiyon )
         
-    return redirect("users:personeller_depertman_sayfalari_2",hash)
+    return redirect_with_language("users:personeller_depertman_sayfalari_2",hash)
 
 
 
@@ -1017,9 +1023,9 @@ def personeller_kategori_sayfalari(request):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         #content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
@@ -1039,14 +1045,14 @@ def personeller_kategori_ekle(request):
                         kullanici = request.user.kullanicilar_db
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
         calisanlar_pozisyonu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
         
-    return redirect("users:personeller_kategori_sayfalari")   
+    return redirect_with_language("users:personeller_kategori_sayfalari")   
 def personeller_kategori_sil(request):
     if request.POST:
         pozsiyon = request.POST.get("buttonId")
@@ -1060,14 +1066,14 @@ def personeller_kategori_sil(request):
                         kullanici = request.user.kullanicilar_db
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
         calisanlar_pozisyonu.objects.filter(kategori_kime_ait =kullanici,id = pozsiyon ).delete()
         
-    return redirect("users:personeller_kategori_sayfalari")   
+    return redirect_with_language("users:personeller_kategori_sayfalari")   
 def personelleri_kategori_düzenle(request):
     if request.POST:
         buton = request.POST.get("buttonId")
@@ -1082,14 +1088,14 @@ def personelleri_kategori_düzenle(request):
                         kullanici = request.user.kullanicilar_db
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
         calisanlar_pozisyonu.objects.filter(kategori_kime_ait =kullanici,id =buton ).update(kategori_isimi = pozsiyon )
         
-    return redirect("users:personeller_kategori_sayfalari")
+    return redirect_with_language("users:personeller_kategori_sayfalari")
 
 #
 def personeller_depertman_sayfalari(request):
@@ -1105,9 +1111,9 @@ def personeller_depertman_sayfalari(request):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         content["santiyeler"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
@@ -1127,14 +1133,14 @@ def personeller_departman_ekle(request):
                         kullanici = request.user.kullanicilar_db
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
         calisanlar_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategori_kime_ait =kullanici,kategori_isimi = pozsiyon )
         
-    return redirect("users:personeller_depertman_sayfalari")   
+    return redirect_with_language("users:personeller_depertman_sayfalari")   
 def personeller_departman_sil(request):
     if request.POST:
         pozsiyon = request.POST.get("buttonId")
@@ -1148,14 +1154,14 @@ def personeller_departman_sil(request):
                         kullanici = request.user.kullanicilar_db
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
         calisanlar_kategorisi.objects.filter(kategori_kime_ait =kullanici,id = pozsiyon ).delete()
         
-    return redirect("users:personeller_depertman_sayfalari")   
+    return redirect_with_language("users:personeller_depertman_sayfalari")   
 def personelleri_departman_düzenle(request):
     if request.POST:
         buton = request.POST.get("buttonId")
@@ -1170,14 +1176,14 @@ def personelleri_departman_düzenle(request):
                         kullanici = request.user.kullanicilar_db
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
         calisanlar_kategorisi.objects.filter(kategori_kime_ait =kullanici,id =buton ).update(kategori_isimi = pozsiyon )
         
-    return redirect("users:personeller_depertman_sayfalari")
+    return redirect_with_language("users:personeller_depertman_sayfalari")
 import calendar
 from datetime import datetime
 def personeller_puantaj_sayfasi(request):
@@ -1193,9 +1199,9 @@ def personeller_puantaj_sayfasi(request):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         person = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
@@ -1256,9 +1262,9 @@ def personeller_puantaj_sayfasi_2(request,hash):
                     kullanici = request.user.kullanicilar_db
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
     if kullanici:
@@ -1372,11 +1378,11 @@ def calisan_odemeleri_kaydet(request):
                 if a.izinler.blog_olusturma:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         elif super_admin_kontrolu(request):
-            return redirect("/")
+            return redirect_with_language("/")
         else:
             kullanici = request.user
         year, month = map(int, maas_ayi.split('-'))
@@ -1395,7 +1401,7 @@ def calisan_odemeleri_kaydet(request):
                 tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
                 odeme_turu = False,aciklama = aciklama,dosya = file
             )
-    return redirect("users:personeller_sayfasi")
+    return redirect_with_language("users:personeller_sayfasi")
 def calisan_odemeleri_kaydet_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -1429,7 +1435,7 @@ def calisan_odemeleri_kaydet_2(request,hash):
                 tutar = tutar,kur = kur,tarihi = date_obj,odeme_tarihi = odeme_tarihi,
                 odeme_turu = False,aciklama = aciklama,dosya = file
             )
-    return redirect("users:personeller_sayfasi_2",hash)
+    return redirect_with_language("users:personeller_sayfasi_2",hash)
 
 import requests
 from django.shortcuts import render
@@ -1522,7 +1528,7 @@ def user_chat(request, user_id):
             group.members.set([request.user, recipient])
             group.save()
         #Message.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),sender=request.user, group=group, content=content)
-    return redirect('users:group_chat', group_id=group.id)
+    return redirect_with_language('users:group_chat', group_id=group.id)
     #return render(request, 'chat/user_chat.html', context)
 @login_required
 def create_group(request):
@@ -1539,7 +1545,7 @@ def create_group(request):
             group.members.set(member_ids + [request.user.id])
             group.save()
         
-        return redirect('users:group_chat', group_id=group.id)
+        return redirect_with_language('users:group_chat', group_id=group.id)
     
     users = CustomUser.objects.exclude(id=request.user.id)
     return render(request, 'chat/create_group.html', {'users': users})

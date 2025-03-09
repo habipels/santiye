@@ -23,6 +23,11 @@ def toplam_tutar_cikarmai(id):
     for i in a:
         topla = topla + ((i.urun_fiyati*i.urun_adeti)-i.urun_indirimi)
     return topla
+from django.urls import reverse
+def redirect_with_language(view_name, *args, **kwargs):
+    lang = get_language()
+    url = reverse(view_name, args=args, kwargs=kwargs)
+    return redirect(f'/{lang}{url}')
 def kalan_tutuari(id):
     a = Gider_odemesi.objects.filter(gelir_kime_ait_oldugu = id)
     toplam = 0
@@ -330,9 +335,9 @@ def kasa_viev(request):
                 if a.izinler.kasa_gosterme_izni:
                     profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
     if request.GET.get("search"):
@@ -348,9 +353,9 @@ def kasa_viev(request):
                     if a.izinler.kasa_gosterme_izni:
                         profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -418,9 +423,9 @@ def kasa_tekli(request,id):
                     profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                     k_gonder = get_object_or_404(Kasa,id = id)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
             k_gonder = get_object_or_404(Kasa,id = id)
@@ -437,9 +442,9 @@ def kasa_tekli(request,id):
                     if a.izinler.kasa_detay_izni:
                         profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -504,9 +509,9 @@ def kasa_ekle(request):
                             ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kasa_Adi   = request.POST.get("kasaadi")
                 bakiye = request.POST.get("bakiye")
@@ -525,7 +530,7 @@ def kasa_ekle(request):
                     ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
 
-    return redirect("accounting:kasa")
+    return redirect_with_language("accounting:kasa")
 
 #kasa silme
 def kasa_sil(request):
@@ -543,12 +548,12 @@ def kasa_sil(request):
                 if a.izinler.Kasa_silme_izni:
                     Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:kasa")
+    return redirect_with_language("accounting:kasa")
 
 
 #kasa düzenle
@@ -603,9 +608,9 @@ def kasa_duzenle(request):
                             ,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             konumu = request.POST.get("konumu")
@@ -622,7 +627,7 @@ def kasa_duzenle(request):
             Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(kasa_adi = proje_tip_adi
                     ,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
-    return redirect("accounting:kasa")
+    return redirect_with_language("accounting:kasa")
 
 def kasa_tekli_2(request,id,hash):
     content = sozluk_yapisi()
@@ -644,9 +649,9 @@ def kasa_tekli_2(request,id,hash):
                     profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                     k_gonder = get_object_or_404(Kasa,id = id)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
             k_gonder = get_object_or_404(Kasa,id = id)
@@ -663,9 +668,9 @@ def kasa_tekli_2(request,id,hash):
                     if a.izinler.kasa_detay_izni:
                         profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = Kasa.objects.filter(Q(kasa_kart_ait_bilgisi = request.user) & Q(kasa_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -735,9 +740,9 @@ def kasa_ekle_2(request,hash):
                             ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kasa_Adi   = request.POST.get("kasaadi")
                 bakiye = request.POST.get("bakiye")
@@ -756,7 +761,7 @@ def kasa_ekle_2(request,hash):
                     ,kasa_adi = kasa_Adi,aciklama = konumu,bakiye = bakiye,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
 
-    return redirect("accounting:a_kasa_viev",hash)
+    return redirect_with_language("accounting:a_kasa_viev",hash)
 
 #kasa silme
 def kasa_sil_2(request,hash):
@@ -778,12 +783,12 @@ def kasa_sil_2(request,hash):
                 if a.izinler.Kasa_silme_izni:
                     Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:a_kasa_viev",hash)
+    return redirect_with_language("accounting:a_kasa_viev",hash)
 
 
 #kasa düzenle
@@ -842,9 +847,9 @@ def kasa_duzenle_2(request,hash):
                             ,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             konumu = request.POST.get("konumu")
@@ -861,7 +866,7 @@ def kasa_duzenle_2(request,hash):
             Kasa.objects.filter(kasa_kart_ait_bilgisi = request.user,id = id).update(kasa_adi = proje_tip_adi
                     ,aciklama = konumu,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
-    return redirect("accounting:a_kasa_viev",hash)
+    return redirect_with_language("accounting:a_kasa_viev",hash)
 
 
 
@@ -879,9 +884,9 @@ def gelir_kategorisi_tipleri(request):
                 if a.izinler.gelir_kategorisi_gorme:
                     profile = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
     if request.GET.get("search"):
@@ -897,9 +902,9 @@ def gelir_kategorisi_tipleri(request):
                     if a.izinler.gelir_kategorisi_gorme:
                         profile = gelir_kategorisi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = gelir_kategorisi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -976,12 +981,12 @@ def gelir_kategoisi_sil_2(request,hash):
                 if a.izinler.gelir_kategorisi_silme:
                     gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:gelir_kategorisi_tipleri_2",hash)
+    return redirect_with_language("accounting:gelir_kategorisi_tipleri_2",hash)
 #gelir düzenleme
 def gelir_kategorisi_duzenle_2(request,hash):
     content = sozluk_yapisi()
@@ -997,7 +1002,7 @@ def gelir_kategorisi_duzenle_2(request,hash):
         renk = request.POST.get("renk")
         proje_tip_adi   = request.POST.get("yetkili_adi")
         gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = users,id = id).update(gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
-    return redirect("accounting:gelir_kategorisi_tipleri_2",hash)
+    return redirect_with_language("accounting:gelir_kategorisi_tipleri_2",hash)
 def gelir_kategorisi_ekleme_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -1014,7 +1019,7 @@ def gelir_kategorisi_ekleme_2(request,hash):
 
             gelir_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = users ,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
         
-    return redirect("accounting:gelir_kategorisi_tipleri_2",hash)
+    return redirect_with_language("accounting:gelir_kategorisi_tipleri_2",hash)
 
 #gelir Kategorisi Silme
 def gelir_kategorisi_ekleme(request):
@@ -1037,15 +1042,15 @@ def gelir_kategorisi_ekleme(request):
                         renk = request.POST.get("renk")
                         gelir_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 proje_tip_adi   = request.POST.get("yetkili_adi")
                 aciklama = request.POST.get("aciklama")
                 renk = request.POST.get("renk")
                 gelir_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = request.user,gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
-    return redirect("accounting:gelir_kategorisi_tipleri")
+    return redirect_with_language("accounting:gelir_kategorisi_tipleri")
 
 #gelir Kate
 def gelir_kategoisi_sil(request):
@@ -1063,12 +1068,12 @@ def gelir_kategoisi_sil(request):
                 if a.izinler.gelir_kategorisi_silme:
                     gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:gelir_kategorisi_tipleri")
+    return redirect_with_language("accounting:gelir_kategorisi_tipleri")
 #gelir düzenleme
 def gelir_kategorisi_duzenle(request):
     content = {}
@@ -1099,16 +1104,16 @@ def gelir_kategorisi_duzenle(request):
                     proje_tip_adi   = request.POST.get("yetkili_adi")
                     gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             aciklama = request.POST.get("aciklama")
             renk = request.POST.get("renk")
             proje_tip_adi   = request.POST.get("yetkili_adi")
             gelir_kategorisi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(gelir_kategori_adi = proje_tip_adi,gelir_kategorisi_renk = renk,aciklama = aciklama)
-    return redirect("accounting:gelir_kategorisi_tipleri")
+    return redirect_with_language("accounting:gelir_kategorisi_tipleri")
 
 
 
@@ -1128,9 +1133,9 @@ def gider_kategorisi_tipleri(request):
                 if a.izinler.gider_kategorisi_gorme:
                     profile = gider_kategorisi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = gider_kategorisi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user)
     if request.GET.get("search"):
@@ -1146,9 +1151,9 @@ def gider_kategorisi_tipleri(request):
                     if a.izinler.gider_kategorisi_gorme:
                         profile = gider_kategorisi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = gider_kategorisi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -1245,9 +1250,9 @@ def gider_kategorisi_ekleme(request):
                         gider_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 proje_tip_adi   = request.POST.get("yetkili_adi")
                 aciklama = request.POST.get("aciklama")
@@ -1264,7 +1269,7 @@ def gider_kategorisi_ekleme(request):
                     avanslarda_kullan = True
                 gider_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = request.user,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
-    return redirect("accounting:gider_kategorisi_tipleri")
+    return redirect_with_language("accounting:gider_kategorisi_tipleri")
 
 #gider Kategorisi Silme
 
@@ -1283,12 +1288,12 @@ def gider_kategoisi_sil(request):
                 if a.izinler.gider_kategorisi_silme:
                     gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:gider_kategorisi_tipleri")
+    return redirect_with_language("accounting:gider_kategorisi_tipleri")
 #gider düzenleme
 def gider_kategorisi_duzenle(request):
     content = {}
@@ -1344,9 +1349,9 @@ def gider_kategorisi_duzenle(request):
                         gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
         else:
                 proje_tip_adi   = request.POST.get("yetkili_adi")
                 aciklama = request.POST.get("aciklama")
@@ -1364,7 +1369,7 @@ def gider_kategorisi_duzenle(request):
                     avanslarda_kullan = True
                 gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
-    return redirect("accounting:gider_kategorisi_tipleri")
+    return redirect_with_language("accounting:gider_kategorisi_tipleri")
 #gider KAtegorisi Ekleme
 def gider_kategorisi_ekleme_2(request,hash):
     content = sozluk_yapisi()
@@ -1391,7 +1396,7 @@ def gider_kategorisi_ekleme_2(request,hash):
                 avanslarda_kullan = True
             gider_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = users ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
-    return redirect("accounting:gider_kategorisi_tipleri_2",hash)
+    return redirect_with_language("accounting:gider_kategorisi_tipleri_2",hash)
 
 #gider Kategorisi Silme
 
@@ -1408,7 +1413,7 @@ def gider_kategoisi_sil_2(request,hash):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         gider_kategorisi.objects.filter(id = id).update(silinme_bilgisi = True)
     
-    return redirect("accounting:gider_kategorisi_tipleri_2",hash)
+    return redirect_with_language("accounting:gider_kategorisi_tipleri_2",hash)
 #gider düzenleme
 def gider_kategorisi_duzenle_2(request,hash):
     content = sozluk_yapisi()
@@ -1438,7 +1443,7 @@ def gider_kategorisi_duzenle_2(request,hash):
             gider_kategorisi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = users ,gider_kategori_adi = proje_tip_adi,gider_kategorisi_renk = renk,aciklama = aciklama,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
     
-    return redirect("accounting:gider_kategorisi_tipleri_2",hash)
+    return redirect_with_language("accounting:gider_kategorisi_tipleri_2",hash)
 
 
 #cari işlemler
@@ -1455,9 +1460,9 @@ def cari_viev(request):
                 if a.izinler.cari_gosterme_izni:
                     profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
     if request.GET.get("search"):
@@ -1473,9 +1478,9 @@ def cari_viev(request):
                     if a.izinler.cari_gosterme_izni:
                         profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
 
@@ -1538,9 +1543,9 @@ def cari_views_details_2(request,id,hash):
                     profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user.kullanicilar_db)
                     k_gonder = get_object_or_404(cari,id = id)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
             k_gonder = get_object_or_404(cari,id = id)
@@ -1558,9 +1563,9 @@ def cari_views_details_2(request,id,hash):
                         profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
                         k_gonder = get_object_or_404(cari,id = id)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -1609,9 +1614,9 @@ def cari_ekle_2(request,hash):
                         cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_kart_ait_bilgisi = request.user.kullanicilar_db
                             ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 cari_Adi   = request.POST.get("cariadi")
                 bakiye = request.POST.get("bakiye")
@@ -1619,7 +1624,7 @@ def cari_ekle_2(request,hash):
                 cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_kart_ait_bilgisi = request.user
                     ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye)
 
-    return redirect("accounting:cari_viev_2",hash)
+    return redirect_with_language("accounting:cari_viev_2",hash)
 
 #cari silme
 def cari_sil_2(request,hash):
@@ -1641,12 +1646,12 @@ def cari_sil_2(request,hash):
                 if a.izinler.cari_silme_izni:
                     cari.objects.filter(cari_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:cari_viev_2",hash)
+    return redirect_with_language("accounting:cari_viev_2",hash)
 
 
 #cari düzenle
@@ -1681,15 +1686,15 @@ def cari_duzenle_2(request,hash):
                     cari.objects.filter(cari_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(cari_adi = proje_tip_adi
                             ,aciklama = konumu)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             konumu = request.POST.get("konumu")
             cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(cari_adi = proje_tip_adi
                     ,aciklama = konumu)
-    return redirect("accounting:cari_viev_2",hash)
+    return redirect_with_language("accounting:cari_viev_2",hash)
 ################################################3
 #cari işlemler
 def cari_views_details(request,id):
@@ -1707,9 +1712,9 @@ def cari_views_details(request,id):
                     profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user.kullanicilar_db)
                     k_gonder = get_object_or_404(cari,id = id)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = request.user)
             k_gonder = get_object_or_404(cari,id = id)
@@ -1727,9 +1732,9 @@ def cari_views_details(request,id):
                         profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user.kullanicilar_db) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
                         k_gonder = get_object_or_404(cari,id = id)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = cari.objects.filter(Q(cari_kart_ait_bilgisi = request.user) & Q(cari_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -1773,9 +1778,9 @@ def cari_ekle(request):
                         cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_kart_ait_bilgisi = request.user.kullanicilar_db
                             ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 cari_Adi   = request.POST.get("cariadi")
                 bakiye = request.POST.get("bakiye")
@@ -1783,7 +1788,7 @@ def cari_ekle(request):
                 cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_kart_ait_bilgisi = request.user
                     ,cari_adi = cari_Adi,aciklama = konumu,telefon_numarasi = bakiye)
 
-    return redirect("accounting:cari")
+    return redirect_with_language("accounting:cari")
 
 #cari silme
 def cari_sil(request):
@@ -1801,12 +1806,12 @@ def cari_sil(request):
                 if a.izinler.cari_silme_izni:
                     cari.objects.filter(cari_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:cari")
+    return redirect_with_language("accounting:cari")
 
 
 #cari düzenle
@@ -1837,15 +1842,15 @@ def cari_duzenle(request):
                     cari.objects.filter(cari_kart_ait_bilgisi = request.user.kullanicilar_db,id = id).update(cari_adi = proje_tip_adi
                             ,aciklama = konumu)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             konumu = request.POST.get("konumu")
             cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(cari_adi = proje_tip_adi
                     ,aciklama = konumu)
-    return redirect("accounting:cari")
+    return redirect_with_language("accounting:cari")
 #cari işlemler
 
 #gelir Etiketleri
@@ -1862,9 +1867,9 @@ def gelir_etiketi_tipleri(request):
                 if a.izinler.gelir_etiketi_gorme:
                     profile = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user)
     if request.GET.get("search"):
@@ -1880,9 +1885,9 @@ def gelir_etiketi_tipleri(request):
                     if a.izinler.gelir_etiketi_gorme:
                         profile = gelir_etiketi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = gelir_etiketi.objects.filter(Q(gelir_kategoris_ait_bilgisi = request.user) & Q(gelir_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -1954,13 +1959,13 @@ def gelir_etiketi_ekleme(request):
                         proje_tip_adi   = request.POST.get("yetkili_adi")
                         gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,gelir_etiketi_adi = proje_tip_adi)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 proje_tip_adi   = request.POST.get("yetkili_adi")
                 gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = request.user,gelir_etiketi_adi = proje_tip_adi)
-    return redirect("accounting:gelir_etiketi_tipleri")
+    return redirect_with_language("accounting:gelir_etiketi_tipleri")
 
 def gelir_etiketi_sil(request):
     content = {}
@@ -1977,12 +1982,12 @@ def gelir_etiketi_sil(request):
                 if a.izinler.gelir_etiketi_silme:
                     gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:gelir_etiketi_tipleri")
+    return redirect_with_language("accounting:gelir_etiketi_tipleri")
 def gelir_etiketi_duzenle(request):
     content = {}
     if request.POST:
@@ -2009,14 +2014,14 @@ def gelir_etiketi_duzenle(request):
                     proje_tip_adi   = request.POST.get("yetkili_adi")
                     gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gelir_etiketi_adi = proje_tip_adi)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             proje_tip_adi   = request.POST.get("yetkili_adi")
             gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,id = id).update(gelir_etiketi_adi = proje_tip_adi)
-    return redirect("accounting:gelir_etiketi_tipleri")
+    return redirect_with_language("accounting:gelir_etiketi_tipleri")
 #gelir Etiketleri
 
 def gelir_etiketi_ekleme_2(request,hash):
@@ -2033,7 +2038,7 @@ def gelir_etiketi_ekleme_2(request,hash):
 
             gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = users ,gelir_etiketi_adi = proje_tip_adi)
         
-    return redirect("accounting:gelir_etiketi_tipleri_2",hash)
+    return redirect_with_language("accounting:gelir_etiketi_tipleri_2",hash)
 
 def gelir_etiketi_sil_2(request,hash):
     content = sozluk_yapisi()
@@ -2048,7 +2053,7 @@ def gelir_etiketi_sil_2(request,hash):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         gelir_etiketi.objects.filter(id = id).update(silinme_bilgisi = True)
     
-    return redirect("accounting:gelir_etiketi_tipleri_2",hash)
+    return redirect_with_language("accounting:gelir_etiketi_tipleri_2",hash)
 def gelir_etiketi_duzenle_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -2062,7 +2067,7 @@ def gelir_etiketi_duzenle_2(request,hash):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         proje_tip_adi   = request.POST.get("yetkili_adi")
         gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = users,id = id).update(gelir_etiketi_adi = proje_tip_adi)
-    return redirect("accounting:gelir_etiketi_tipleri_2",hash)
+    return redirect_with_language("accounting:gelir_etiketi_tipleri_2",hash)
 #gelir Etiketleri
 #gider etiketi
 
@@ -2081,9 +2086,9 @@ def gider_etiketi_tipleri(request):
                 if a.izinler.gider_etiketi_gorme:
                     profile = gider_etiketi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = gider_etiketi.objects.filter(silinme_bilgisi = False,gider_kategoris_ait_bilgisi = request.user)
     if request.GET.get("search"):
@@ -2099,9 +2104,9 @@ def gider_etiketi_tipleri(request):
                     if a.izinler.gider_etiketi_gorme:
                         profile = gider_etiketi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = gider_etiketi.objects.filter(Q(gider_kategoris_ait_bilgisi = request.user) & Q(gider_kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -2193,9 +2198,9 @@ def gider_etiketi_ekleme(request):
                         gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 proje_tip_adi   = request.POST.get("yetkili_adi")
                 maaslarda_kullan = request.POST.get("maaslarda_kullan")
@@ -2210,7 +2215,7 @@ def gider_etiketi_ekleme(request):
                     avanslarda_kullan = True
                 gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = request.user,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
-    return redirect("accounting:gider_etiketi_tipleri")
+    return redirect_with_language("accounting:gider_etiketi_tipleri")
 
 def gider_etiketi_sil(request):
     content = {}
@@ -2227,12 +2232,12 @@ def gider_etiketi_sil(request):
                 if a.izinler.gider_etiketi_silme:
                     gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:gider_etiketi_tipleri")
+    return redirect_with_language("accounting:gider_etiketi_tipleri")
 def gider_etiketi_duzenle(request):
     content = {}
     if request.POST:
@@ -2283,9 +2288,9 @@ def gider_etiketi_duzenle(request):
                     gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db,id = id).update(gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             proje_tip_adi   = request.POST.get("yetkili_adi")
@@ -2301,7 +2306,7 @@ def gider_etiketi_duzenle(request):
                 avanslarda_kullan = True
             gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user,id = id).update(gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
-    return redirect("accounting:gider_etiketi_tipleri")
+    return redirect_with_language("accounting:gider_etiketi_tipleri")
 #gider Etiketleri
 #gider etiketi
 #
@@ -2329,7 +2334,7 @@ def gider_etiketi_ekleme_2(request,hash):
             gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gider_kategoris_ait_bilgisi = users ,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
         
-    return redirect("accounting:gider_etiketi_tipleri_2",hash)
+    return redirect_with_language("accounting:gider_etiketi_tipleri_2",hash)
 
 def gider_etiketi_sil_2(request,hash):
     content = sozluk_yapisi()
@@ -2344,7 +2349,7 @@ def gider_etiketi_sil_2(request,hash):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         gider_etiketi.objects.filter(id = id).update(silinme_bilgisi = True)
 
-    return redirect("accounting:gider_etiketi_tipleri_2",hash)
+    return redirect_with_language("accounting:gider_etiketi_tipleri_2",hash)
 def gider_etiketi_duzenle_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -2371,7 +2376,7 @@ def gider_etiketi_duzenle_2(request,hash):
             gider_etiketi.objects.filter(id = id).update(gider_kategoris_ait_bilgisi = users,gider_etiketi_adi = proje_tip_adi,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
     
-    return redirect("accounting:gider_etiketi_tipleri_2",hash)
+    return redirect_with_language("accounting:gider_etiketi_tipleri_2",hash)
 #gider Etiketleri
 #gider etiketi
 #virman olayları
@@ -2382,7 +2387,7 @@ def virman_yapma(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             proje_tip_adi   = request.POST.get("yetkili_adi")
             z = "/accounting/superadmintransfer/"+kullanici_bilgisi
-            return redirect(z)
+            return redirect_with_language(z)
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -2405,9 +2410,9 @@ def virman_yapma(request):
                         Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
                         Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 gonderen = request.POST.get("gonderen")
                 alici = request.POST.get("alici")
@@ -2426,7 +2431,7 @@ def virman_yapma(request):
                 Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
                 Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
 
-    return redirect("accounting:kasa")
+    return redirect_with_language("accounting:kasa")
 #virman olayları
 def virman_yapma_2(request,hash):
     content = sozluk_yapisi()
@@ -2478,9 +2483,9 @@ def virman_yapma_2(request,hash):
                         Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
                         Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 gonderen = request.POST.get("gonderen")
                 alici = request.POST.get("alici")
@@ -2499,7 +2504,7 @@ def virman_yapma_2(request,hash):
                 Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
                 Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
 
-    return redirect("accounting:a_kasa_viev",hash)
+    return redirect_with_language("accounting:a_kasa_viev",hash)
 
 
 
@@ -2526,7 +2531,7 @@ def super_admin_virman(request,id):
             bakiye_yukseltme = bakiye_yukseltme + float(tutar)
             Kasa.objects.filter(id = gonderen).update(bakiye = bakiye_dusme)
             Kasa.objects.filter(id = alici).update(bakiye = bakiye_yukseltme)
-            return redirect("accounting:kasa")
+            return redirect_with_language("accounting:kasa")
     return render(request,"muhasebe_page/super_admin_virman.html",content)
 
 
@@ -2638,9 +2643,9 @@ def urun_viev(request):
                     profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db)
                     kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
             kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user)
@@ -2657,9 +2662,9 @@ def urun_viev(request):
                     if a.izinler.urun_gorme:
                         profile = urunler.objects.filter(Q(urun_ait_oldugu = request.user.kullanicilar_db) & Q(urun_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = urunler.objects.filter(Q(urun_ait_oldugu = request.user) & Q(urun_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -2773,9 +2778,9 @@ def urun_ekle(request):
                             ,urun_turu_secim =  urun_turu,stok_mu = stok ,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan )
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kasa_Adi   = request.POST.get("kasaadi")
                 bakiye = request.POST.get("bakiye")
@@ -2801,7 +2806,7 @@ def urun_ekle(request):
                     ,urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
 
-    return redirect("accounting:urun_viev")
+    return redirect_with_language("accounting:urun_viev")
 
 #ürün ekle
 #ürün_sil
@@ -2820,12 +2825,12 @@ def urun_sil(request):
                 if a.izinler.urun_silme:
                     urunler.objects.filter(urun_ait_oldugu = request.user.kullanicilar_db,id = id).update(silinme_bilgisi = True)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(silinme_bilgisi = True)
-    return redirect("accounting:urun_viev")
+    return redirect_with_language("accounting:urun_viev")
 
 
 #ürün Sil
@@ -2900,9 +2905,9 @@ def urun_duzenle(request):
                             ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori),urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("kasaadi")
             bakiye = request.POST.get("bakiye")
@@ -2926,7 +2931,7 @@ def urun_duzenle(request):
             urunler.objects.filter(urun_ait_oldugu = request.user,id = id).update(urun_adi = proje_tip_adi
                     ,urun_fiyati = bakiye,urun_kategorisi = get_object_or_404(urun_kategorileri,id =kategori),urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
-    return redirect("accounting:urun_viev")
+    return redirect_with_language("accounting:urun_viev")
 
 
 def urun_ekle_2(request,hash):
@@ -2964,7 +2969,7 @@ def urun_ekle_2(request,hash):
                                 maas_icin_kullan = maaslarda_kullan
                                 )
         
-    return redirect("accounting:urun_viev_2",hash)
+    return redirect_with_language("accounting:urun_viev_2",hash)
 
 #ürün ekle
 #ürün_sil
@@ -2981,7 +2986,7 @@ def urun_sil_2(request,hash):
         proje_tip_adi   = request.POST.get("yetkili_adi")
         urunler.objects.filter(id = id).update(silinme_bilgisi = True)
     
-    return redirect("accounting:urun_viev_2",hash)
+    return redirect_with_language("accounting:urun_viev_2",hash)
 
 
 #ürün Sil
@@ -3023,7 +3028,7 @@ def urun_duzenle_2(request,hash):
                                                    ,urun_turu_secim =  urun_turu,stok_mu = stok,avans_icin_kullan =avanslarda_kullan,
                                 maas_icin_kullan = maaslarda_kullan)
     
-    return redirect("accounting:urun_viev_2",hash)
+    return redirect_with_language("accounting:urun_viev_2",hash)
 
 #ürün Düzenle
 #ürünler olayları
@@ -3043,9 +3048,9 @@ def gelirler_sayfasi(request):
                     profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db,silinme_bilgisi = False).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False).order_by("-fatura_tarihi")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
@@ -3107,9 +3112,9 @@ def gelir_ekle(request):
                     kategori_bilgisi = gelir_kategorisi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
                     etiketler = gelir_etiketi.objects.filter(silinme_bilgisi = False,gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
             urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
@@ -3175,9 +3180,9 @@ def gelir_duzenle(request ,id):
                     gelir_bilgisi_ver =  get_object_or_none(Gelir_Bilgisi,id = id)
                     urunleri = gelir_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
             urunler_bilgisi = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user)
@@ -3205,9 +3210,9 @@ def search(request):
                 if a.izinler.gelir_faturasi_kesme_izni or a.izinler.gider_faturasi_kesme_izni:
                     user = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         user = request.user
     results = urunler.objects.filter(urun_adi__icontains=term, urun_ait_oldugu=user)
@@ -3222,9 +3227,9 @@ def cariler_bilgisi(request):
                 if a.izinler.gelir_faturasi_kesme_izni or a.izinler.gider_faturasi_kesme_izni:
                     user = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         user = request.user
     results = cari.objects.filter(cari_adi__icontains=term, cari_kart_ait_bilgisi=user)
@@ -3254,9 +3259,9 @@ def gelir_faturasi_kaydet(request):
                 if a.izinler.gelir_faturasi_kesme_izni:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
     if request.POST:
@@ -3366,7 +3371,7 @@ def gelir_faturasi_kaydet(request):
             u = Gelir_Bilgisi.objects.get(id = new_project.id )
             u.fatura_gorseli = profile
             u.save()
-    return redirect("accounting:gelirler_sayfasi")
+    return redirect_with_language("accounting:gelirler_sayfasi")
 
 def gelir_faturasi_kaydet_2(request,hash):
     content = sozluk_yapisi()
@@ -3479,7 +3484,7 @@ def gelir_faturasi_kaydet_2(request,hash):
             u = Gelir_Bilgisi.objects.get(id = new_project.id )
             u.fatura_gorseli = profile
             u.save()
-    return redirect("accounting:gelirler_sayfasi_2",hash)
+    return redirect_with_language("accounting:gelirler_sayfasi_2",hash)
 
 
 def gelir_odemesi_ekle(request):
@@ -3489,9 +3494,9 @@ def gelir_odemesi_ekle(request):
             if a.izinler.gelir_faturasi_makbuz_kesme_izni:
                 pass
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         pass
     if request.POST:
@@ -3513,7 +3518,7 @@ def gelir_odemesi_ekle(request):
         a = get_object_or_none(Gelir_Bilgisi, id = faturabilgisi)
         toplam_tutar = a.kalan_tutar-float(islemtutari)
         b = Gelir_Bilgisi.objects.filter(id =faturabilgisi ).update(kalan_tutar =toplam_tutar )
-    return redirect("accounting:gelirler_sayfasi")
+    return redirect_with_language("accounting:gelirler_sayfasi")
 def gider_duzenle(request ,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -3533,9 +3538,9 @@ def gider_duzenle(request ,id):
                     gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
                     urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
             urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
@@ -3564,9 +3569,9 @@ def makbuz_sil(request):
                     if a.izinler.gelir_faturasi_makbuz_silme_izni:
                         pass
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 pass
             gider = get_object_or_none(Gelir_odemesi,id = makbuz_bilgisi ).gelir_kime_ait_oldugu
@@ -3576,7 +3581,7 @@ def makbuz_sil(request):
             for i in gider_odemelrei:
                 toplam_deger -= i.tutar
             Gelir_Bilgisi.objects.filter(id = gider.id).update(kalan_tutar = toplam_deger)
-            return redirect("accounting:gelirler_sayfasi")
+            return redirect_with_language("accounting:gelirler_sayfasi")
         elif gelir_gider == "1":
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -3584,9 +3589,9 @@ def makbuz_sil(request):
                     if a.izinler.gider_faturasi_makbuz_silme_izni:
                         pass
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 pass
             gider = get_object_or_none(Gider_odemesi,id = makbuz_bilgisi ).gelir_kime_ait_oldugu
@@ -3596,7 +3601,7 @@ def makbuz_sil(request):
             for i in gider_odemelrei:
                 toplam_deger -= i.tutar
             Gider_Bilgisi.objects.filter(id = gider.id).update(kalan_tutar = toplam_deger)
-            return redirect("accounting:giderler_sayfasi")
+            return redirect_with_language("accounting:giderler_sayfasi")
 #Gider Sayfası
 def giderler_sayfasi(request):
     content = sozluk_yapisi()
@@ -3612,9 +3617,9 @@ def giderler_sayfasi(request):
                     profile = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
@@ -3635,9 +3640,9 @@ def giderler_sayfasi_borc(request):
                 if a.izinler.gider_faturasi_gorme_izni:
                     bilgi_ver = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             bilgi_ver = Gider_Bilgisi.objects.filter(silinme_bilgisi = False,gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
         sonuc = []
@@ -3786,9 +3791,9 @@ def gider_ekle(request):
                     kategori_bilgisi = gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db)
                     etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
             urunler_bilgisi = urunler.objects.filter(urun_ait_oldugu = request.user)
@@ -3839,9 +3844,9 @@ def gider_faturasi_kaydet(request):
                 if a.izinler.gider_faturasi_kesme_izni:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
     if request.POST:
@@ -3949,7 +3954,7 @@ def gider_faturasi_kaydet(request):
             u = Gider_Bilgisi.objects.get(id = new_project.id )
             u.fatura_gorseli = profile
             u.save()
-    return redirect("accounting:giderler_sayfasi")
+    return redirect_with_language("accounting:giderler_sayfasi")
 
 def gider_faturasi_kaydet_2(request,hash):
     #print("kayıt")
@@ -4062,7 +4067,7 @@ def gider_faturasi_kaydet_2(request,hash):
             u = Gider_Bilgisi.objects.get(id = new_project.id )
             u.fatura_gorseli = profile
             u.save()
-    return redirect("accounting:giderler_sayfasi")
+    return redirect_with_language("accounting:giderler_sayfasi")
 #
 def gider_odemesi_ekle(request):
     if request.user.kullanicilar_db:
@@ -4071,9 +4076,9 @@ def gider_odemesi_ekle(request):
                 if a.izinler.gider_faturasi_makbuz_kesme_izni:
                     pass
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:   
         pass        
     if request.POST:
@@ -4095,7 +4100,7 @@ def gider_odemesi_ekle(request):
         a = get_object_or_none(Gider_Bilgisi, id = faturabilgisi)
         toplam_tutar = a.kalan_tutar-float(islemtutari)
         b = Gider_Bilgisi.objects.filter(id =faturabilgisi ).update(kalan_tutar =toplam_tutar )
-    return redirect("accounting:giderler_sayfasi")
+    return redirect_with_language("accounting:giderler_sayfasi")
 
 
 def fatura_sil(request):
@@ -4110,14 +4115,14 @@ def fatura_sil(request):
                     if a.izinler.gelir_faturasi_silme_izni:
                         pass
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 pass
             Gelir_Bilgisi.objects.filter(id = id_bilgisi).update(silinme_bilgisi = True)
             Gelir_odemesi.objects.filter(gelir_kime_ait_oldugu =get_object_or_404(Gelir_Bilgisi,id =id_bilgisi )).update(silinme_bilgisi = True)
-            return redirect("accounting:gelirler_sayfasi")
+            return redirect_with_language("accounting:gelirler_sayfasi")
 
         elif gelir_gider == "1":
             if request.user.kullanicilar_db:
@@ -4126,14 +4131,14 @@ def fatura_sil(request):
                     if a.izinler.gider_faturasi_silme_izni:
                         pass
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 pass
             Gider_Bilgisi.objects.filter(id = id_bilgisi).update(silinme_bilgisi = True)
             Gider_odemesi.objects.filter(gelir_kime_ait_oldugu=get_object_or_404(Gider_Bilgisi,id =id_bilgisi )).update(silinme_bilgisi = True)
-            return redirect("accounting:giderler_sayfasi")
+            return redirect_with_language("accounting:giderler_sayfasi")
 #Gider Sayfası
 from django.shortcuts import get_object_or_404
 
@@ -4161,9 +4166,9 @@ def gelir_gider_duzelt(request):
                     if a.izinler.gelir_faturasi_duzenleme_izni:
                         kullanici = request.user.kullanicilar_db
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
             gelir_bilgisi = get_object_or_404(Gelir_Bilgisi, id=degisen)
@@ -4212,7 +4217,7 @@ def gelir_gider_duzelt(request):
                 kalan_bilgisi -= i.tutar
             Gelir_Bilgisi.objects.filter(id =degisen ).update(toplam_tutar =toplam_tutar,kalan_tutar =kalan_bilgisi )
         
-            return redirect("accounting:gelirler_sayfasi")
+            return redirect_with_language("accounting:gelirler_sayfasi")
 
         elif bilgi == "1":
             if request.user.kullanicilar_db:
@@ -4221,9 +4226,9 @@ def gelir_gider_duzelt(request):
                     if a.izinler.gider_faturasi_duzenleme_izni:
                         kullanici = request.user.kullanicilar_db
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
             gider_bilgisi = get_object_or_404(Gider_Bilgisi, id=degisen)
@@ -4273,9 +4278,9 @@ def gelir_gider_duzelt(request):
                 kalan_bilgisi -= i.tutar
             Gider_Bilgisi.objects.filter(id =degisen ).update(toplam_tutar =toplam_tutar,kalan_tutar =kalan_bilgisi )
         
-            return redirect("accounting:giderler_sayfasi")
+            return redirect_with_language("accounting:giderler_sayfasi")
 
-    return redirect("accounting:giderler_sayfasi")
+    return redirect_with_language("accounting:giderler_sayfasi")
 
 def gider_gelir_ekleme(request):
     if request.user.kullanicilar_db:
@@ -4284,9 +4289,9 @@ def gider_gelir_ekleme(request):
                 if a.izinler.gider_faturasi_kesme_izni or a.izinler.gelir_faturasi_kesme_izni:
                     user = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         user = request.user
     tur = request.POST.get("tur")
@@ -4301,7 +4306,7 @@ def gider_gelir_ekleme(request):
             gelir_kategorisi_renk = renk,
             aciklama = aciklama
         )
-        return redirect("accounting:gelir_ekle")
+        return redirect_with_language("accounting:gelir_ekle")
     elif tur == "1":
         gider_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             gider_kategoris_ait_bilgisi = user,
@@ -4309,7 +4314,7 @@ def gider_gelir_ekleme(request):
             gider_kategorisi_renk = renk,
             aciklama = aciklama
         )
-        return redirect("accounting:gider_ekle")
+        return redirect_with_language("accounting:gider_ekle")
 def gider_gelir_ekleme_2(request,hash):
     d = decode_id(hash)
     user = get_object_or_404(CustomUser,id = d)
@@ -4325,7 +4330,7 @@ def gider_gelir_ekleme_2(request,hash):
             gelir_kategorisi_renk = renk,
             aciklama = aciklama
         )
-        return redirect("accounting:gelir_ekle_2",hash)
+        return redirect_with_language("accounting:gelir_ekle_2",hash)
     elif tur == "1":
         gider_kategorisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             gider_kategoris_ait_bilgisi = user,
@@ -4333,7 +4338,7 @@ def gider_gelir_ekleme_2(request,hash):
             gider_kategorisi_renk = renk,
             aciklama = aciklama
         )
-        return redirect("accounting:gider_ekle_2",hash)
+        return redirect_with_language("accounting:gider_ekle_2",hash)
 
 from django.utils import timezone
 def gider_gelir_etiketekleme(request):
@@ -4343,9 +4348,9 @@ def gider_gelir_etiketekleme(request):
                 if a.izinler.gider_faturasi_kesme_izni or a.izinler.gelir_faturasi_kesme_izni:
                     user = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         user = request.user
     tur = request.POST.get("tur2")
@@ -4356,13 +4361,13 @@ def gider_gelir_etiketekleme(request):
             gelir_kategoris_ait_bilgisi = user,
             gelir_etiketi_adi = adi
         )
-        return redirect("accounting:gelir_ekle")
+        return redirect_with_language("accounting:gelir_ekle")
     elif tur == "1":
         gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             gider_kategoris_ait_bilgisi = user,
             gider_etiketi_adi = adi
         )
-        return redirect("accounting:gider_ekle")
+        return redirect_with_language("accounting:gider_ekle")
 
 def gider_gelir_etiketekleme_2(request,hash):
     d = decode_id(hash)
@@ -4376,13 +4381,13 @@ def gider_gelir_etiketekleme_2(request,hash):
             gelir_kategoris_ait_bilgisi = user,
             gelir_etiketi_adi = adi
         )
-        return redirect("accounting:gelir_ekle")
+        return redirect_with_language("accounting:gelir_ekle")
     elif tur == "1":
         gider_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             gider_kategoris_ait_bilgisi = user,
             gider_etiketi_adi = adi
         )
-        return redirect("accounting:gider_ekle")
+        return redirect_with_language("accounting:gider_ekle")
 
 
 #Gelirler özeti
@@ -4400,9 +4405,9 @@ def gelirler_ozeti(request):
                     profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
@@ -4430,9 +4435,9 @@ def gelirler_ozeti_2(request,hash):
                     profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
@@ -4455,9 +4460,9 @@ def giderler_ozeti(request):#gider_ozeti_gorme
                     profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
@@ -4486,9 +4491,9 @@ def giderler_ozeti_2(request,hash):#gider_ozeti_gorme
                     profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
             content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
@@ -4514,9 +4519,9 @@ def hesap_ekstra_durumu(request):
                     profile.sort(key=lambda x: x.kayit_tarihi)
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False))
             profile.sort(key=lambda x: x.kayit_tarihi)
@@ -4545,9 +4550,9 @@ def hesap_ekstra_durumu_2(request,hash):
                     profile.sort(key=lambda x: x.kayit_tarihi)
                     
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = list(Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))+list(Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user))
             profile.sort(key=lambda x: x.kayit_tarihi)
@@ -4564,9 +4569,9 @@ def muhasebe_ayarlari(request):
                     b = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = request.user.kullanicilar_db).last()
                     bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = request.user.kullanicilar_db).last()
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = request.user).last()
         b = faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = request.user).last()
@@ -4585,9 +4590,9 @@ def muhasebe_ayarlari(request):
                 if a.izinler.muhasabe_ayarlari_guncelleme:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         dark_logo = request.FILES.get("dark_logo")
@@ -4685,7 +4690,7 @@ def muhasebe_ayarlari(request):
                     
                     # Güncelleme
                     Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kullanici, id=i.id).update(fatura_no=yeni_fatura_no)
-        return redirect("accounting:muhasebe_ayarlari")
+        return redirect_with_language("accounting:muhasebe_ayarlari")
     return render(request,"muhasebe_page/muhasebe_ayarlari/muhasebe_ayarlari.html",content)
 def muhasebe_ayarlari_2(request,hash):
     content = sozluk_yapisi()
@@ -4798,7 +4803,7 @@ def muhasebe_ayarlari_2(request,hash):
                     
                     # Güncelleme
                     Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=users, id=i.id).update(fatura_no=yeni_fatura_no)
-        return redirect("accounting:muhasebe_ayarlari_2",hash)
+        return redirect_with_language("accounting:muhasebe_ayarlari_2",hash)
     return render(request,"muhasebe_page/muhasebe_ayarlari/muhasebe_ayarlari.html",content)
 
 def fatura_goster(request,id):
@@ -5048,7 +5053,7 @@ def download_pdf(request):
     elements.append(table)
     pdf.build(elements)
     return response
-    #return redirect("main:ana_sayfa")
+    #return redirect_with_language("main:ana_sayfa")
 def fatura_gosterqr(request,id):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -5096,9 +5101,9 @@ def urunler_kategorisi(request):
                 if a.izinler.urun_gorme:
                     profile = urun_kategorileri.objects.filter(silinme_bilgisi = False,kategrori_ait_oldugu = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urun_kategorileri.objects.filter(silinme_bilgisi = False,kategrori_ait_oldugu = request.user)
     if request.GET.get("search"):
@@ -5114,9 +5119,9 @@ def urunler_kategorisi(request):
                     if a.izinler.urun_gorme:
                         profile = urun_kategorileri.objects.filter(Q(kategrori_ait_oldugu = request.user.kullanicilar_db) & Q(kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = urun_kategorileri.objects.filter(Q(kategrori_ait_oldugu = request.user) & Q(kategori_adi__icontains = search)& Q(silinme_bilgisi = False))
     page_num = request.GET.get('page', 1)
@@ -5154,15 +5159,15 @@ def urunler_kategorisi_ekle(request):
                         urun_kategorileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategrori_ait_oldugu = request.user.kullanicilar_db
                             ,kategori_adi = kasa_Adi)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kasa_Adi   = request.POST.get("kasaadi")
                 urun_kategorileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategrori_ait_oldugu = request.user
                     ,kategori_adi = kasa_Adi)
 
-    return redirect("accounting:urunler_kategorisi")
+    return redirect_with_language("accounting:urunler_kategorisi")
 def urunler_kategorisi_sil(request):
     content = {}
     if request.POST:
@@ -5178,12 +5183,12 @@ def urunler_kategorisi_sil(request):
                 if a.izinler.urun_silme:
                     urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db,id = id).delete()
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user,id = id).delete()
-    return redirect("accounting:urunler_kategorisi")
+    return redirect_with_language("accounting:urunler_kategorisi")
 
 def urunler_kategorisi_duzenle(request):
     content = {}
@@ -5204,14 +5209,14 @@ def urunler_kategorisi_duzenle(request):
                     urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db,id = id).update(kategori_adi = proje_tip_adi
                             )
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             proje_tip_adi   = request.POST.get("kasaadi")
             urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user,id = id).update(kategori_adi = proje_tip_adi
                             )
-    return redirect("accounting:urunler_kategorisi")
+    return redirect_with_language("accounting:urunler_kategorisi")
 
 def satin_alma_talabi(request):
     content = sozluk_yapisi()
@@ -5227,9 +5232,9 @@ def satin_alma_talabi(request):
                     profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db)
                     urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2" )
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user)
             urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
@@ -5247,9 +5252,9 @@ def satin_alma_talabi(request):
                         profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False))
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False))
                 
@@ -5290,9 +5295,9 @@ def satin_alma_talabi_2(request,hash):
                     profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db)
                     urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2" )
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user)
             urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
@@ -5323,16 +5328,16 @@ def satin_alma_talebi_ekle(request):
                         miktar = float(miktar),fiyati = float(fiyat),
                         tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.now() )
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 urun_talepleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),talebin_ait_oldugu = request.user,
                         talebi_olusturan =request.user,urun = get_object_or_none(urunler,id =urun_bilgisi),
                         miktar = float(miktar),fiyati = float(fiyat),
                         tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.now()  )
 
-    return redirect("accounting:satin_alma_talabi")
+    return redirect_with_language("accounting:satin_alma_talabi")
 
 def satin_alma_talebi_sil(request,id):
     if True:
@@ -5347,17 +5352,17 @@ def satin_alma_talebi_sil(request,id):
                     if a.izinler.satin_alma_talebi_silme:
                         urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(silinme_bilgisi = True)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(silinme_bilgisi = True)
 
-    return redirect("accounting:satin_alma_talabi")
+    return redirect_with_language("accounting:satin_alma_talabi")
 
 
 def satin_alma_talabi_onaylama(request):
-    return redirect("accounting:satin_alma_talabi")
+    return redirect_with_language("accounting:satin_alma_talabi")
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         profile =urun_talepleri.objects.all()
@@ -5371,9 +5376,9 @@ def satin_alma_talabi_onaylama(request):
                     profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
                     urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2" )
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
             urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
@@ -5391,9 +5396,9 @@ def satin_alma_talabi_onaylama(request):
                         profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False)).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False)).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
                 
@@ -5428,13 +5433,13 @@ def satin_alma_talebi_onayla(request,id):
                     if a.izinler.satin_alma_talebi_silme:
                         urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
 
-    return redirect("accounting:satin_alma_talabi_onaylama")
+    return redirect_with_language("accounting:satin_alma_talabi_onaylama")
 
 def satin_alma_talebi_red(request,id):
     if True:
@@ -5449,13 +5454,13 @@ def satin_alma_talebi_red(request,id):
                     if a.izinler.satin_alma_talebi_silme:
                         urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
 
-    return redirect("accounting:satin_alma_talabi_onaylama")
+    return redirect_with_language("accounting:satin_alma_talabi_onaylama")
 
 def satin_alma_(request):
     content = sozluk_yapisi()
@@ -5471,9 +5476,9 @@ def satin_alma_(request):
                     profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db,talep_durumu = "2" )
                     urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user,talep_durumu = "2")
             urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
@@ -5491,9 +5496,9 @@ def satin_alma_(request):
                         profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False),talep_durumu = "2" ,satin_alinma_durumu = False)
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False),talep_durumu = "2" ,satin_alinma_durumu = False)
                 
@@ -5527,13 +5532,13 @@ def satin_alma_onayla(request,id):
                     if a.izinler.satin_alma_talebi_silme:
                         urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.now())
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.now())
 
-    return redirect("accounting:satin_alma_talabi_onaylama")
+    return redirect_with_language("accounting:satin_alma_talabi_onaylama")
 
 def satin_alma_kabuller(request):
     content = sozluk_yapisi()
@@ -5549,9 +5554,9 @@ def satin_alma_kabuller(request):
                     profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db,talep_durumu = "2" ,satin_alinma_durumu = True)
                     urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user,talep_durumu = "2",satin_alinma_durumu = True )
             urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
@@ -5569,9 +5574,9 @@ def satin_alma_kabuller(request):
                         profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False),talep_durumu = "2" ,satin_alinma_durumu = True)
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False),talep_durumu = "2" ,satin_alinma_durumu = True)
                 
@@ -5607,9 +5612,9 @@ def stok(request):
                     profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user.kullanicilar_db,urun_turu_secim = "2",stok_mu = True )
                     kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user.kullanicilar_db)
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user,urun_turu_secim = "2",stok_mu = True )
             kategori = urun_kategorileri.objects.filter(kategrori_ait_oldugu = request.user)
@@ -5628,9 +5633,9 @@ def stok_girisi_yap(request):
                 if a.izinler.stok_talebi_onaylama_gorme:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         urun = request.POST.get("urun")
@@ -5642,7 +5647,7 @@ def stok_girisi_yap(request):
             stok_durumu = transactionType,stok_adeti  = transactionAmount
         )
         #print("kaydedildi")
-    return redirect("accounting:stok")
+    return redirect_with_language("accounting:stok")
 def stok_sayisi(id):
     toplam = 0
     a = gider_urun_bilgisi.objects.filter(urun_bilgisi = id,gider_bilgis__silinme_bilgisi = False)
@@ -5696,9 +5701,9 @@ def zimmetler(request):
                     kategori = zimmet_olayi.objects.filter(zimmet_kime_ait = request.user.kullanicilar_db)
                     personeller = calisanlar.objects.filter(calisan_kime_ait =request.user.kullanicilar_db )
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user,urun_turu_secim = "2",stok_mu = True )
             kategori = zimmet_olayi.objects.filter(zimmet_kime_ait = request.user)
@@ -5718,9 +5723,9 @@ def zimmet_ekle(request):
                 if a.izinler.zimmet_olusturma:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         personel = request.POST.get("personel")
@@ -5734,7 +5739,7 @@ def zimmet_ekle(request):
             zimmet_durumu = "0",zimmet_miktari = miktar,
             zimmet_verilis_tarihi = teslimTarihi
         )
-    return redirect("accounting:zimmetler")
+    return redirect_with_language("accounting:zimmetler")
 def zimmeti_teslim_Al(request,id,iz):
     if True:
         if super_admin_kontrolu(request):
@@ -5745,9 +5750,9 @@ def zimmeti_teslim_Al(request,id,iz):
                 if a.izinler.zimmet_olusturma:
                     pass
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             pass
         
@@ -5755,7 +5760,7 @@ def zimmeti_teslim_Al(request,id,iz):
             zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "1",zimmet_teslim_edilme_tarihi = datetime.now())
         elif iz == 2:
             zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.now())
-    return redirect("accounting:zimmetler")
+    return redirect_with_language("accounting:zimmetler")
 
 def zimmet(request,id):
     if True:
@@ -5798,9 +5803,9 @@ def avans_maas(request):
                 if a.izinler.personeller_odeme_gorme:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
         maas_ve_avanslar_iptal_edilen_faturalar = calisanlar_calismalari_odemeleri.objects.filter(
@@ -5842,9 +5847,9 @@ def avans_maas_2(request,hash):
                 if a.izinler.personeller_odeme_gorme:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
     maas_ve_avanslar_iptal_edilen_faturalar = calisanlar_calismalari_odemeleri.objects.filter(
@@ -5901,9 +5906,9 @@ def personel_gider_faturasi_kesme_2(request,id,hash):
                 if a.izinler.gider_faturasi_kesme_izni:
                     kullanci = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanci = request.user
         if avans_mi_maas_mi.odeme_turu:
@@ -5944,9 +5949,9 @@ def personel_gider_faturasi_kesme(request,id):
                 if a.izinler.gider_faturasi_kesme_izni:
                     kullanci = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             kullanci = request.user
         if avans_mi_maas_mi.odeme_turu:
@@ -5976,9 +5981,9 @@ def gider_faturasi_kaydet_personel(request):
                 if a.izinler.gider_faturasi_kesme_izni:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
     if request.POST:
@@ -6117,7 +6122,7 @@ def gider_faturasi_kaydet_personel(request):
                 u = Gider_odemesi.objects.get(id = makbuzu.id )
                 u.gelir_makbuzu = fatura_gorsel.dosya
                 u.save()
-    return redirect("accounting:giderler_sayfasi")
+    return redirect_with_language("accounting:giderler_sayfasi")
 
 
 
@@ -6133,9 +6138,9 @@ def gider_faturasi_kaydet_personel_2(request,hash):
                 if a.izinler.gider_faturasi_kesme_izni:
                     kullanici = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         kullanici = users
     if request.POST:
@@ -6274,7 +6279,7 @@ def gider_faturasi_kaydet_personel_2(request,hash):
                 u = Gider_odemesi.objects.get(id = makbuzu.id )
                 u.gelir_makbuzu = fatura_gorsel.dosya
                 u.save()
-    return redirect("accounting:giderler_sayfasi_2",hash)
+    return redirect_with_language("accounting:giderler_sayfasi_2",hash)
 
 ##########################################################3
 
@@ -6299,7 +6304,7 @@ def satin_alma_talebi_ekle_2(request,hash):
                         tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.now()  )
        
 
-    return redirect("accounting:satin_alma_talabi_2",hash)
+    return redirect_with_language("accounting:satin_alma_talabi_2",hash)
 
 def satin_alma_talebi_sil_2(request,id,hash):
     if True:
@@ -6320,13 +6325,13 @@ def satin_alma_talebi_sil_2(request,id,hash):
                     if a.izinler.satin_alma_talebi_silme:
                         urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(silinme_bilgisi = True)
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(silinme_bilgisi = True)
 
-    return redirect("accounting:satin_alma_talabi_2",hash)
+    return redirect_with_language("accounting:satin_alma_talabi_2",hash)
 
 
 def satin_alma_talabi_onaylama_2(request,hash):
@@ -6335,7 +6340,7 @@ def satin_alma_talabi_onaylama_2(request,hash):
     content["hashler"] = hash
     users = get_object_or_404(CustomUser,id = d)
     content["hash_bilgi"] = users
-    return redirect("accounting:satin_alma_talabi_2",hash)
+    return redirect_with_language("accounting:satin_alma_talabi_2",hash)
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         profile =urun_talepleri.objects.all()
@@ -6349,9 +6354,9 @@ def satin_alma_talabi_onaylama_2(request,hash):
                     profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user.kullanicilar_db).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
                     urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user.kullanicilar_db,silinme_bilgisi = False,urun_turu_secim = "2" )
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urun_talepleri.objects.filter(silinme_bilgisi = False,talebin_ait_oldugu = request.user).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
             urunler_gonder = urunler.objects.filter(urun_ait_oldugu =request.user,silinme_bilgisi = False,urun_turu_secim = "2")
@@ -6369,9 +6374,9 @@ def satin_alma_talabi_onaylama_2(request,hash):
                         profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user.kullanicilar_db) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False)).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
                         
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 profile = urun_talepleri.objects.filter(Q(talebin_ait_oldugu = request.user) & Q(urun__urun_adi__icontains = search)& Q(silinme_bilgisi = False)).filter(Q(talep_durumu = "1" ) | Q(talep_durumu ="3"))
                 
@@ -6406,7 +6411,7 @@ def satin_alma_talebi_onayla_2(request,id,hash):
             urun_talepleri.objects.filter(id = id,talebi_olusturan = users).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
        
 
-    return redirect("accounting:satin_alma_talabi_onaylama_2",hash)
+    return redirect_with_language("accounting:satin_alma_talabi_onaylama_2",hash)
 
 def satin_alma_talebi_red_2(request,id,hash):
     if True:
@@ -6420,7 +6425,7 @@ def satin_alma_talebi_red_2(request,id,hash):
             urun_talepleri.objects.filter(id = id,talebi_olusturan =users).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
         
 
-    return redirect("accounting:satin_alma_talabi_onaylama_2",hash)
+    return redirect_with_language("accounting:satin_alma_talabi_onaylama_2",hash)
 
 def satin_alma_2(request,hash):
     content = sozluk_yapisi()
@@ -6450,7 +6455,7 @@ def satin_alma_onayla_2(request,id,hash):
             content["hash_bilgi"] = users
             urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.now())
         
-    return redirect("accounting:satin_alma_talabi_onaylama_2",hash)
+    return redirect_with_language("accounting:satin_alma_talabi_onaylama_2",hash)
 
 def satin_alma_kabuller_2(request,hash):
     content = sozluk_yapisi()
@@ -6502,9 +6507,9 @@ def stok_girisi_yap_2(request,hash):
                     if a.izinler.stok_talebi_onaylama_gorme:
                         kullanici = request.user.kullanicilar_db
                     else:
-                        return redirect("main:yetkisiz")
+                        return redirect_with_language("main:yetkisiz")
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
                 kullanici = request.user
         urun = request.POST.get("urun")
@@ -6516,7 +6521,7 @@ def stok_girisi_yap_2(request,hash):
             stok_durumu = transactionType,stok_adeti  = transactionAmount
         )
         #print("kaydedildi")
-    return redirect("accounting:stok_2",hash)
+    return redirect_with_language("accounting:stok_2",hash)
 
 
 def zimmetler_2(request,hash):
@@ -6541,9 +6546,9 @@ def zimmetler_2(request,hash):
                     kategori = zimmet_olayi.objects.filter(zimmet_kime_ait = request.user.kullanicilar_db)
                     personeller = calisanlar.objects.filter(calisan_kime_ait =request.user.kullanicilar_db )
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
             profile = urunler.objects.filter(silinme_bilgisi = False,urun_ait_oldugu = request.user,urun_turu_secim = "2",stok_mu = True )
             kategori = zimmet_olayi.objects.filter(zimmet_kime_ait = request.user)
@@ -6574,7 +6579,7 @@ def zimmet_ekle_2(request,hash):
             zimmet_durumu = "0",zimmet_miktari = miktar,
             zimmet_verilis_tarihi = teslimTarihi
         )
-    return redirect("accounting:zimmetler_2",hash)
+    return redirect_with_language("accounting:zimmetler_2",hash)
 def zimmeti_teslim_Al_2(request,id,iz,hash):
     if True:
         if super_admin_kontrolu(request):
@@ -6587,7 +6592,7 @@ def zimmeti_teslim_Al_2(request,id,iz,hash):
             zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "1",zimmet_teslim_edilme_tarihi = datetime.now())
         elif iz == 2:
             zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.now())
-    return redirect("accounting:zimmetler")
+    return redirect_with_language("accounting:zimmetler")
 
 ################################################
 
@@ -6620,7 +6625,7 @@ def urunler_kategorisi_ekle_2(request,hash):
             urun_kategorileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),kategrori_ait_oldugu = users
                     ,kategori_adi = kasa_Adi)
 
-    return redirect("accounting:urunler_kategorisi_2",hash)
+    return redirect_with_language("accounting:urunler_kategorisi_2",hash)
 def urunler_kategorisi_sil_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)
@@ -6633,7 +6638,7 @@ def urunler_kategorisi_sil_2(request,hash):
         kullanici_bilgisi  = request.POST.get("kullanici")
         proje_tip_adi   = request.POST.get("yetkili_adi")
         urun_kategorileri.objects.filter(kategrori_ait_oldugu = users,id = id).delete()
-    return redirect("accounting:urunler_kategorisi_2",hash)
+    return redirect_with_language("accounting:urunler_kategorisi_2",hash)
 
 def urunler_kategorisi_duzenle_2(request,hash):
     content = sozluk_yapisi()
@@ -6647,4 +6652,4 @@ def urunler_kategorisi_duzenle_2(request,hash):
         proje_tip_adi   = request.POST.get("kasaadi")
         urun_kategorileri.objects.filter(kategrori_ait_oldugu = users,id = id).update(kategori_adi = proje_tip_adi
                             )
-    return redirect("accounting:urunler_kategorisi_2",hash)
+    return redirect_with_language("accounting:urunler_kategorisi_2",hash)

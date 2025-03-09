@@ -332,7 +332,7 @@ def get_son_bir_hafta_icinde_degisenler(id):
         gun_gun_kalemlerfin[degisme_gunu].append(sonuc_finansal)
 
     # Gün adlarını tanımlıyoruz (Pazartesi'den başlayarak)
-    gun_adlari = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+    gun_adlari = [_("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday"), _("Sunday")]
     
     # Son bir haftadaki günlerin listesini oluşturuyoruz
     gunler = [now.date() - timedelta(days=i) for i in range(7)]
@@ -2197,24 +2197,27 @@ def remove_lang_from_url(context):
     
     # Tüm desteklenen dilleri settings.py'den al (örn: [('en', 'English'), ('tr', 'Türkçe'), ('ckb', 'Kurdî')])
     supported_languages = [lang[0] for lang in settings.LANGUAGES]
-
+    print(path,"path adı")
     # URL'yi / ile bölerek listeye çevir
     path_parts = path.strip('/').split('/')  # Örn: ['tr', 'generalreport']
-
+    y = 0
+    dondurme = ""
     # Eğer ilk kısım bir dil koduna eşitse (örn: "tr", "ckb"), onu kaldır
     if path_parts[0] in supported_languages:
         path_parts.pop(0)  # İlk elemanı sil
-
+    for i in path:
+        if i == "/" and y <2:
+            y = y+1
+            continue
+        if y >= 2: 
+            dondurme = dondurme + i
     # Yeni yolu oluştur ve başına / ekleyerek döndür
-    new_path = '/' + '/'.join(path_parts)
+    new_path = '/' + dondurme
     return new_path  # Örn: "/generalreport"
 
 
 
-"""
-    
 
-"""
 @register.simple_tag
 def onay_durumu(id):
     a = check_liste_onaylama_gruplari.objects.filter(imalat_kalemi_ait__daire_bilgisi__id = id).values("onaylayan").distinct()  # Tekrar edenleri atar

@@ -22,6 +22,13 @@ import operator
 import os
 from main.views import decode_id
 from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki,get_kayit_tarihi_from_request,get_time_zone_from_country,get_country
+from django.urls import reverse
+
+def redirect_with_language(view_name, *args, **kwargs):
+    lang = get_language()
+    url = reverse(view_name, args=args, kwargs=kwargs)
+    return redirect(f'/{lang}{url}')
+
 def musteri_bilgisi_views(request):
     term = request.GET.get('term', '')
     if request.user.kullanicilar_db:
@@ -30,9 +37,9 @@ def musteri_bilgisi_views(request):
                 if a.izinler.gelir_faturasi_kesme_izni or a.izinler.gider_faturasi_kesme_izni:
                     user = request.user.kullanicilar_db
                 else:
-                    return redirect("main:yetkisiz")
+                    return redirect_with_language("main:yetkisiz")
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
     else:
         user = request.user
     results = musteri_bilgisi.objects.filter(musteri_adi__icontains=term, musteri_kime_ait=user)
@@ -47,9 +54,9 @@ def crm_dashboard(request):
             if a.izinler.crm_musteri_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -88,9 +95,9 @@ def crm_dairedetayi(request, id):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -140,9 +147,9 @@ def crm_daireyonetimi(request):
             if a.izinler.crm_daire_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
     content["daireler"]  = daire_bilgisi.objects.filter(daire_kime_ait = request.user)
@@ -157,9 +164,9 @@ def daire_ekle(request):
             if a.izinler.crm_daire_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -173,7 +180,7 @@ def daire_ekle(request):
         daire_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),daire_kime_ait = kullanici,blog_bilgisi = get_object_or_none(bloglar,id = blok),kat =kat,
          daire_no = daire_no,oda_sayisi = oda_Sayisi,
         metre_kare_brut = metrekare )
-        return redirect("crm:crm_daireyonetimi")
+        return redirect_with_language("crm:crm_daireyonetimi")
 def crm_evr(request):
     content = sozluk_yapisi()
     return render(request,"crm/crm-evrak-ve-dokuman-detay.html",content)
@@ -185,9 +192,9 @@ def crm_evrak_dokuman(request):
             if a.izinler.crm_evrak_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -202,9 +209,9 @@ def crm_musteri_detayi(request, id):
             if a.izinler.crm_musteri_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -228,9 +235,9 @@ def daire_musteriye_ata(request):
             if a.izinler.crm_daire_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -248,7 +255,7 @@ def daire_musteriye_ata(request):
             else:
                 musteri_daire_baglama.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),baglama_kime_ait = kullanici,musterisi = musteri_sec,
                                                     daire = daire)
-    return redirect("crm:crm_musteri_detayi",musteri)
+    return redirect_with_language("crm:crm_musteri_detayi",musteri)
 def daire_musteriye_duzenle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -256,9 +263,9 @@ def daire_musteriye_duzenle(request):
             if a.izinler.crm_daire_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -277,7 +284,7 @@ def daire_musteriye_duzenle(request):
             else:
                 musteri_daire_baglama.objects.filter(id =duzenle ).update(baglama_kime_ait = kullanici,musterisi = musteri_sec,
                                                     daire = daire)
-    return redirect("crm:crm_musteri_detayi",musteri)
+    return redirect_with_language("crm:crm_musteri_detayi",musteri)
 def daire_musteriye_sil(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -285,9 +292,9 @@ def daire_musteriye_sil(request):
             if a.izinler.crm_daire_silme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -296,7 +303,7 @@ def daire_musteriye_sil(request):
         musteri = request.POST.get("musteri")
 
         musteri_daire_baglama.objects.filter(id =duzenle ).delete()
-    return redirect("crm:crm_musteri_detayi",musteri)
+    return redirect_with_language("crm:crm_musteri_detayi",musteri)
 def daire_musteriye_onayla(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -304,9 +311,9 @@ def daire_musteriye_onayla(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -318,7 +325,7 @@ def daire_musteriye_onayla(request):
         daire = get_object_or_404(musteri_daire_baglama,id = duzenle)
         musteri_daire_baglama.objects.filter(daire =daire.daire ).update(durum = "2")
         musteri_daire_baglama.objects.filter(id =duzenle ).update(durum = "1")
-    return redirect("crm:crm_musteri_detayi",musteri)
+    return redirect_with_language("crm:crm_musteri_detayi",musteri)
 def museri_notu_ekle(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -326,9 +333,9 @@ def museri_notu_ekle(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -346,7 +353,7 @@ def museri_notu_ekle(request):
             not_tarihi = tarih
         )
     
-        return redirect("crm:crm_musteri_detayi",musteri)
+        return redirect_with_language("crm:crm_musteri_detayi",musteri)
 
 def musteri_notu_sil(request):
     if request.user.kullanicilar_db:
@@ -355,9 +362,9 @@ def musteri_notu_sil(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -365,7 +372,7 @@ def musteri_notu_sil(request):
         not_id = request.POST.get("not_id")
         musteri = request.POST.get("musteri")
         musteri_notlari.objects.filter(id=not_id).delete()
-    return redirect("crm:crm_musteri_detayi", musteri)
+    return redirect_with_language("crm:crm_musteri_detayi", musteri)
 
 def musteri_notu_duzenle(request):
     if request.user.kullanicilar_db:
@@ -374,9 +381,9 @@ def musteri_notu_duzenle(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -391,7 +398,7 @@ def musteri_notu_duzenle(request):
             not_aciklamasi=aciklama,
             not_tarihi=tarih
         )
-    return redirect("crm:crm_musteri_detayi", musteri)
+    return redirect_with_language("crm:crm_musteri_detayi", musteri)
 
 def talep_veya_sikayet_duzenle_musteri_detayi(request):
     if request.user.kullanicilar_db:
@@ -400,9 +407,9 @@ def talep_veya_sikayet_duzenle_musteri_detayi(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -421,7 +428,7 @@ def talep_veya_sikayet_duzenle_musteri_detayi(request):
             daire = get_object_or_none(daire_bilgisi,id = daireler),
             musteri = get_object_or_none(musteri_bilgisi , id = musteri)
         )
-    return redirect("crm:crm_musteri_detayi",musteri)
+    return redirect_with_language("crm:crm_musteri_detayi",musteri)
 
 
 def talep_veya_sikayet_olustur_musteri_detayi(request):
@@ -431,9 +438,9 @@ def talep_veya_sikayet_olustur_musteri_detayi(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -451,7 +458,7 @@ def talep_veya_sikayet_olustur_musteri_detayi(request):
             daire = get_object_or_none(daire_bilgisi,id = daireler),
             musteri = get_object_or_none(musteri_bilgisi , id = musteri)
         )
-    return redirect("crm:crm_musteri_detayi",musteri)
+    return redirect_with_language("crm:crm_musteri_detayi",musteri)
 
 def musteri_sayfasi(request):
     content = sozluk_yapisi()
@@ -464,9 +471,9 @@ def musteri_ekleme(request):
             if a.izinler.crm_musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -476,7 +483,7 @@ def musteri_ekleme(request):
         musteri_telefon_numarasi = request.POST.get("musteri_telefon_numarasi")
         musteri_bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),musteri_kime_ait = kullanici,musteri_adi = musteri_adi , musteri_soyadi =musteri_soyadi ,
                                        musteri_telefon_numarasi = musteri_telefon_numarasi)
-    return redirect("crm:musteri_sayfasi")
+    return redirect_with_language("crm:musteri_sayfasi")
 def musteri_silme(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -484,9 +491,9 @@ def musteri_silme(request):
             if a.izinler.crm_musteri_silme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -494,7 +501,7 @@ def musteri_silme(request):
         buttonId = request.POST.get("buttonId")
         
         musteri_bilgisi.objects.filter(id =buttonId ).delete()
-    return redirect("crm:musteri_sayfasi")
+    return redirect_with_language("crm:musteri_sayfasi")
 def musteri_duzenleme(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -502,9 +509,9 @@ def musteri_duzenleme(request):
             if a.izinler.crm_musteri_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -513,7 +520,7 @@ def musteri_duzenleme(request):
         musteri_adi = request.POST.get("musteri_adi")
         musteri_soyadi = request.POST.get("musteri_soyadi")
         musteri_bilgisi.objects.filter(id = buttonId,musteri_kime_ait = kullanici).update(musteri_kime_ait = kullanici,musteri_adi = musteri_adi , musteri_soyadi =musteri_soyadi )
-    return redirect("crm:musteri_sayfasi")
+    return redirect_with_language("crm:musteri_sayfasi")
 def crm_talepler_sikayetler(request):
     content = sozluk_yapisi()
     if request.user.kullanicilar_db:
@@ -522,9 +529,9 @@ def crm_talepler_sikayetler(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -556,9 +563,9 @@ def talep_veya_sikayet_duzenle(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -573,7 +580,7 @@ def talep_veya_sikayet_duzenle(request):
             talep_sikayet_ayrimi = tur,
             sikayet_aciklamasi = aciklama
         )
-    return redirect("crm:crm_talepler_sikayetler")
+    return redirect_with_language("crm:crm_talepler_sikayetler")
 def talep_veya_sikayet_sil(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -581,9 +588,9 @@ def talep_veya_sikayet_sil(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -592,7 +599,7 @@ def talep_veya_sikayet_sil(request):
         talep_ve_sikayet.objects.filter(id = talep_id).update(
             silinme_bilgisi = True
         )
-    return redirect("crm:crm_talepler_sikayetler")
+    return redirect_with_language("crm:crm_talepler_sikayetler")
 def talep_veya_sikayet_olustur(request):
     if request.user.kullanicilar_db:
         a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -600,9 +607,9 @@ def talep_veya_sikayet_olustur(request):
             if a.izinler.musteri_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -617,7 +624,7 @@ def talep_veya_sikayet_olustur(request):
             talep_sikayet_ayrimi = tur,
             sikayet_aciklamasi = aciklama
         )
-    return redirect("crm:crm_talepler_sikayetler")
+    return redirect_with_language("crm:crm_talepler_sikayetler")
 def crm_teklif_olustur(request):
     content = sozluk_yapisi()
     return render(request,"crm/teklif-olustur.html",content)
@@ -630,9 +637,9 @@ def crm_teklif_yonetimi(request):
             if a.izinler.crm_teklif_gorme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -649,15 +656,15 @@ def teklif_silme(request):
             if a.izinler.crm_teklif_silme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else : 
         kullanici = request.user
     if request.POST:
         teklif_id = request.POST.get("buttonId")
         teklifler.objects.filter(id = teklif_id).delete()
-    return redirect("crm:crm_teklif_yonetimi")
+    return redirect_with_language("crm:crm_teklif_yonetimi")
 def teklif_duzenleme(request,id):
     content = sozluk_yapisi()
     if request.user.kullanicilar_db:
@@ -665,7 +672,7 @@ def teklif_duzenleme(request,id):
         if a:
             kullanici = request.user.kullanicilar_db
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else : 
         kullanici = request.user
     
@@ -681,9 +688,9 @@ def crm_teklif_olustur_gonder(request):
             if a.izinler.crm_teklif_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
         
     else : 
         kullanici = request.user
@@ -733,7 +740,7 @@ def crm_teklif_olustur_gonder(request):
         teklifler.objects.filter(id =tekliff.id ).update(
             toplam_tutar = toplam_tutar
         )
-    return redirect("crm:crm_teklif_yonetimi")
+    return redirect_with_language("crm:crm_teklif_yonetimi")
 
 def crm_teklif_duzenle_gonder(request):
     if request.user.kullanicilar_db:
@@ -742,9 +749,9 @@ def crm_teklif_duzenle_gonder(request):
             if a.izinler.crm_teklif_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -799,7 +806,7 @@ def crm_teklif_duzenle_gonder(request):
             teklif.toplam_tutar = toplam_tutar
             teklif.save()
 
-    return redirect("crm:crm_teklif_yonetimi")
+    return redirect_with_language("crm:crm_teklif_yonetimi")
 
 def daire_evrak_ekle(request):
     if request.user.kullanicilar_db:
@@ -808,9 +815,9 @@ def daire_evrak_ekle(request):
             if a.izinler.crm_evrak_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -827,9 +834,9 @@ def daire_evrak_ekle(request):
                 evrak_adi=evrak_adi,
                 evrak=evrak
             )
-        return redirect("crm:crm_dairedetayi", daire_id)
+        return redirect_with_language("crm:crm_dairedetayi", daire_id)
 
-    return redirect("crm:crm_dairedetayi", daire_id)
+    return redirect_with_language("crm:crm_dairedetayi", daire_id)
 
 def get_daire_evraklari(request):
     daire_id = request.GET.get('daire_id')
@@ -847,9 +854,9 @@ def musteri_evrak_ekle(request):
             if a.izinler.crm_evrak_olusturma:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -866,9 +873,9 @@ def musteri_evrak_ekle(request):
                 evrak_detayi=evrak_adi,
                 evrak=evrak
             )
-        return redirect("crm:crm_musteri_detayi", musteri_id)
+        return redirect_with_language("crm:crm_musteri_detayi", musteri_id)
 
-    return redirect("crm:crm_musteri_detayi", musteri_id)
+    return redirect_with_language("crm:crm_musteri_detayi", musteri_id)
 
 def musteri_evrak_duzenle(request):
     if request.user.kullanicilar_db:
@@ -877,9 +884,9 @@ def musteri_evrak_duzenle(request):
             if a.izinler.crm_evrak_duzenleme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -894,9 +901,9 @@ def musteri_evrak_duzenle(request):
             if evrak:
                 musteri_evrak.evrak = evrak
             musteri_evrak.save()
-        return redirect("crm:crm_musteri_detayi", musteri_evrak.musterisi.id)
+        return redirect_with_language("crm:crm_musteri_detayi", musteri_evrak.musterisi.id)
 
-    return redirect("crm:crm_musteri_detayi", musteri_evrak.musterisi.id)
+    return redirect_with_language("crm:crm_musteri_detayi", musteri_evrak.musterisi.id)
 
 def musteri_evrak_sil(request):
     if request.user.kullanicilar_db:
@@ -905,9 +912,9 @@ def musteri_evrak_sil(request):
             if a.izinler.crm_evrak_silme:
                 kullanici = request.user.kullanicilar_db
             else:
-                return redirect("main:yetkisiz")
+                return redirect_with_language("main:yetkisiz")
         else:
-            return redirect("main:yetkisiz")
+            return redirect_with_language("main:yetkisiz")
     else:
         kullanici = request.user
 
@@ -916,7 +923,7 @@ def musteri_evrak_sil(request):
         musteri_id = request.POST.get('musteri_id')
 
         musteri_evraklari.objects.filter(id=evrak_id, belge_kime_ait=kullanici).delete()
-        return redirect("crm:crm_musteri_detayi", musteri_id)
+        return redirect_with_language("crm:crm_musteri_detayi", musteri_id)
 
-    return redirect("crm:crm_musteri_detayi", musteri_id)
+    return redirect_with_language("crm:crm_musteri_detayi", musteri_id)
 
