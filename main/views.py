@@ -10292,9 +10292,19 @@ def daire_imalat_checklist(request):
         check = request.POST.getlist("check")
         aciklma = request.POST.get("aciklma")
         daire = request.POST.get("daire")
+        fileGeneral = request.FILES.get("fileGeneral")  
+        print(check)
         for i in check:
-            imalat_daire_balama.objects.filter(id = i).update(tamamlanma_bilgisi = True,tamamlamayi_yapan = request.user,tarih = datetime.now())
-        checkdaireleri.objects.filter(id = daire).update(genel_notlar = aciklma)
+            note = request.POST.get("note"+i)
+            file = request.FILES.get("file"+i)
+            if file:
+                imalat_daire_balama.objects.filter(id = i).update(tamamlanma_bilgisi = True,tamamlamayi_yapan = request.user,tarih = datetime.now(),genel_notlar = note,dosya = file)
+            else:
+                imalat_daire_balama.objects.filter(id = i).update(tamamlanma_bilgisi = True,tamamlamayi_yapan = request.user,tarih = datetime.now(),genel_notlar = note)
+        if fileGeneral:
+            checkdaireleri.objects.filter(id = daire).update(genel_notlar = aciklma,dosya = fileGeneral)
+        else:
+            checkdaireleri.objects.filter(id = daire).update(genel_notlar = aciklma)
     return redirect("main:santiyelerim")
     
 

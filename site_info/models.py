@@ -100,6 +100,7 @@ class checkdaireleri(models.Model):
     kat_daire_sayisi = models.IntegerField(default = 1,verbose_name="Kat Bilgisi")
     daire_no = models.CharField(max_length=200,verbose_name="Daire No", blank=True,null=True)
     genel_notlar = models.TextField()
+    dosya = models.FileField(upload_to='daire_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class imalat_daire_balama(models.Model):
@@ -110,6 +111,8 @@ class imalat_daire_balama(models.Model):
     imalat_detayi = models.ForeignKey(santiye_imalat_kalemleri,verbose_name="İmalat Detayı",blank=True,null=True,on_delete=models.SET_NULL)
     tamamlanma_bilgisi = models.BooleanField(default=False)
     tamamlamayi_yapan = models.ForeignKey(CustomUser,verbose_name="Tamamlamayı Yapan",blank=True,null=True,on_delete=models.SET_NULL,related_name="tamamlamayi_yapan")
+    genel_notlar = models.TextField()
+    dosya = models.FileField(upload_to='daire_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
     tarih = models.DateTimeField(default=datetime.now,null=True,blank=True)  # Updates automatically on save
     kayit_tarihi = models.DateTimeField(default=datetime.now,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

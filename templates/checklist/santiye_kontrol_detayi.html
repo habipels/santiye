@@ -17,12 +17,12 @@
 {% if hash_bilgi %}
 
 {% else %}
-<form action="/{{dil}}{% url 'main:daire_imalat_checklist' %}" method="post">
+<form action="/{{dil}}{% url 'main:daire_imalat_checklist' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <main>
         <div class="page-header">
             <div class="page-title">
-                <a href="santiye-kontrol.html" class="back-button">
+                <a href="#" onclick="history.back();" class="back-button">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
                 <div>
@@ -40,6 +40,9 @@
                 </button>
                 <button type="button" class="button button-primary" id="completeCheck">
                     <i class="fa-solid fa-check"></i> {% trans "Kontrolü Tamamla" %}
+                </button>
+                <button type="button" class="button button-secondary" id="sendNotes">
+                    <i class="fa-solid fa-paper-plane"></i> {% trans "Notları Gönder" %}
                 </button>
             </div>
         </div>
@@ -73,15 +76,31 @@
                             {% if i.id == j.imalat_detayi.detay.id %}
                             
                             
-                            <div class="control-item">
+                            <div class="control-item" data-id="{{j.id}}">
                                 <label class="checkbox-wrapper">
                                     <input type="checkbox" name="check" value="{{j.id}}" class="control-checkbox">
                                     <span>{{j.imalat_detayi.icerik}}</span>
                                 </label>
-                                <button type="button" class="button-note" data-action="add-note">
-                                    <i class="fa-solid fa-pen"></i>
-                                    <span>{% trans "Not Ekle" %}</span>
-                                </button>
+                                
+                                <div class="file-upload-area">
+                                    <div class="file-grid">
+                                        <!-- Yüklenen dosyalar buraya gelecek -->
+                                        <div class="file-upload">
+                                            <i class="fa-solid fa-file"></i>
+                                            <span>{% trans "Dosya Ekle" %}</span>
+                                            <input type="file" name="file{{j.id}}" accept="*/*" multiple>
+                                        </div>
+                                    </div>
+                                </div>
+                                <textarea class="form-control" name="note{{j.id}}" rows="3" placeholder="{% trans "Kontrol ile ilgili notunuzu yazın..." %}"></textarea>
+                            <hr>
+                            <br>
+                            {%  imalat_icerik_detaylari j.imalat_detayi.id as bilgi %}
+                            {% for k in bilgi %}
+                            <p>*  {{k.imalat_detayi}}</p>
+                            {% endfor %}
+                            
+                            
                             </div>
                             {% else %}
                             {% endif %}
@@ -108,14 +127,14 @@
                             <textarea name="aciklma" class="form-control" rows="4" placeholder="{% trans "Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..." %}"></textarea>
                         </div>
                         <div class="form-group">
-                            <label>{% trans "Fotoğraflar" %}</label>
-                            <div class="photo-upload-area">
-                                <div class="photo-grid">
-                                    <!-- Yüklenen fotoğraflar buraya gelecek -->
-                                    <div class="photo-upload" id="generalPhotosUpload">
-                                        <i class="fa-solid fa-camera"></i>
-                                        <span>{% trans "Fotoğraf Ekle" %}</span>
-                                        <input type="file" accept="image/*" multiple>
+                            <label>{% trans "Dosyalar" %}</label>
+                            <div class="file-upload-area">
+                                <div class="file-grid">
+                                    <!-- Yüklenen dosyalar buraya gelecek -->
+                                    <div class="file-upload" id="generalFilesUpload">
+                                        <i class="fa-solid fa-file"></i>
+                                        <span>{% trans "Dosya Ekle" %}</span>
+                                        <input type="file" name="fileGeneral" accept="*/*" multiple>
                                     </div>
                                 </div>
                             </div>
@@ -132,7 +151,7 @@
             <!-- Not Ekleme Paneli -->
             <div class="notes-panel" id="notesPanel">
                 <div class="notes-header">
-                    <h3>{% trans "Notlar ve Fotoğraflar" %}</h3>
+                    <h3>{% trans "Notlar ve Dosyalar" %}</h3>
                     <button type="button" class="button-icon" data-action="close-notes">
                         <i class="fa-solid fa-times"></i>
                     </button>
@@ -143,13 +162,13 @@
                         <textarea class="form-control" rows="3" placeholder="{% trans "Kontrol ile ilgili notunuzu yazın..." %}"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>{% trans "Fotoğraflar" %}</label>
-                        <div class="photo-upload-area">
-                            <div class="photo-grid">
-                                <div class="photo-upload">
-                                    <i class="fa-solid fa-camera"></i>
-                                    <span>{% trans "Fotoğraf Ekle" %}</span>
-                                    <input type="file" accept="image/*" multiple>
+                        <label>{% trans "Dosyalar" %}</label>
+                        <div class="file-upload-area">
+                            <div class="file-grid">
+                                <div class="file-upload">
+                                    <i class="fa-solid fa-file"></i>
+                                    <span>{% trans "Dosya Ekle" %}</span>
+                                    <input type="file" accept="*/*" multiple>
                                 </div>
                             </div>
                         </div>

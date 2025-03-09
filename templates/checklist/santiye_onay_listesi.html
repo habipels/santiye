@@ -129,9 +129,16 @@
                                     <button class="button-icon" title="{% trans "Detay" %}" onclick="location.href='/{{dil}}/viewsitedetail/{{ i.id }}/'">
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
-                                    <button class="button-icon" title="{% trans "Onay Ver Veya Reddet" %}" onclick="location.href='/{{dil}}/mansitedetail/{{ i.id }}/'">
+                                     {% if sonuc == 100 %}
+                                <button class="button-icon" title="{% trans "Onay Ver Veya Reddet" %}" onclick="location.href='/{{dil}}/mansitedetail/{{ i.id }}/'">
                                         <i class="fa-solid fa-check"></i>/<i class="fa-solid fa-xmark"></i>
                                     </button>
+                                {% elif sonuc > 0 %}
+                                <span class="status-badge in-progress">{% trans "Kontrolün Bitmesi Bekleniyor" %}</span>
+                                {% else %}
+                               
+                                {% endif %}
+                                    
                                 </div>
                             </td>
                         </tr>

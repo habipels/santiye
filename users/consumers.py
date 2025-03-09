@@ -72,18 +72,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'file_url': file_url,
             'user': username,
         }))
-
-class UserStatusConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.user = self.scope["user"]
-        if self.user.is_authenticated:
-            await self.accept()
-            await self.update_last_seen()
-
-    async def disconnect(self, close_code):
-        if self.user.is_authenticated:
-            await self.update_last_seen()
-
-    @database_sync_to_async
-    def update_last_seen(self):
-        self.user.update_last_seen()

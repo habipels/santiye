@@ -17,6 +17,9 @@ from django.db.models import Sum
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.core.files.storage import FileSystemStorage
 from main.views import decode_id
+from django.utils import timezone
+from datetime import timedelta
+
 def personel_bilgisi_axaj(request, id):
     bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()
     if True:
@@ -290,7 +293,7 @@ def kullanici_bilgileri_duzenle(request):
                 for images in file:
                     personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
             if izinler:
-                bagli_kullanicilar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
+                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
         return redirect("users:kullanicilarim")
 
 ######################3
@@ -1616,4 +1619,16 @@ def create_group_channel(user_ids, name):
     else:
         #print("Kanal oluşturulamadı:", response.json())
         return None
+
+def is_user_online(user):
+    last_login = user.last_login
+    if last_login:
+        now = timezone.now()
+        return now - last_login < timedelta(minutes=5)
+    return False
+
+@login_required
+def online_status(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return JsonResponse({'is_online': is_user_online(user)})
 

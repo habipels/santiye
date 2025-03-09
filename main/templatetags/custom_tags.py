@@ -2187,11 +2187,10 @@ from django.utils.translation import get_language
 
 @register.simple_tag(takes_context=True)
 def remove_lang_from_url(context):
-    """
-    Mevcut URL'den dili kaldırarak geri kalan kısmı döndürür.
-    Örn: /tr/generalreport → /generalreport
-         /ckb/generalreport → /generalreport
-    """
+    a = context
+    diller  = ["tr","en","ckb","ar","de","es","fr","it","ru"]
+    
+
     request = context['request']
     path = request.path  # Örn: "/tr/generalreport"
     current_lang = get_language()  # Django'nun aktif dilini al (örn: "tr", "en", "ckb")
@@ -2209,7 +2208,19 @@ def remove_lang_from_url(context):
     # Yeni yolu oluştur ve başına / ekleyerek döndür
     new_path = '/' + '/'.join(path_parts)
     return new_path  # Örn: "/generalreport"
+
+
+
+"""
+    
+
+"""
 @register.simple_tag
 def onay_durumu(id):
     a = check_liste_onaylama_gruplari.objects.filter(imalat_kalemi_ait__daire_bilgisi__id = id).values("onaylayan").distinct()  # Tekrar edenleri atar
+    return a
+
+@register.simple_tag
+def imalat_icerik_detaylari(id):
+    a = imalat_kalemleri_imalat_detaylari.objects.filter(icerik__id = id)
     return a

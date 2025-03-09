@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+from .views import online_status
 
 app_name = "user"
 
@@ -72,6 +73,7 @@ urlpatterns = [
     path('create_group/', views.create_group, name='create_group'),
     path('group/<int:group_id>/', views.group_chat, name='group_chat'),
     path('groups/', views.group_list, name='group_list'),  # Grup listeleme URL'si
+    path('online_status/<int:user_id>/', online_status, name='online_status'),
     
 ]
 #lock_screen

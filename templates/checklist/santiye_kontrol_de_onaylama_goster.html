@@ -20,7 +20,7 @@
     <main>
         <div class="page-header">
             <div class="page-title">
-                <a href="santiye-kontrol.html" class="back-button">
+                <a  class="back-button">
                      <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
                 </a>
                 <div>
@@ -68,13 +68,20 @@
                             
                             <div class="control-item">
                                 <label class="checkbox-wrapper">
-                                    <input checked type="checkbox" name="check" value="{{j.id}}" class="control-checkbox">
+                                    {% if j.tamamlanma_bilgisi %}
+                                        <input checked type="checkbox" name="check" value="{{j.id}}" class="control-checkbox">
+                                    {% else %}
+                                    <input  type="checkbox" name="check" value="{{j.id}}" class="control-checkbox">
+                                    {% endif %}
+                                    
                                     <span>{{j.imalat_detayi.icerik}}   {% if j.onaylayan.last_name %}- ({{j.onaylayan.last_name}}){% endif %} </span>
                                 </label>
-                                <button type="button" class="button-note" data-action="add-note">
-                                    <i class="fa-solid fa-pen"></i>
-                                    <span>{% trans "Not Ekle" %}</span>
-                                </button>
+                                <hr>
+                                <br>
+                                {%  imalat_icerik_detaylari j.imalat_detayi.id as bilgi %}
+                            {% for k in bilgi %}
+                            <p>*  {{k.imalat_detayi}}</p>
+                            {% endfor %}
                             </div>
                             {% else %}
                             {% endif %}
@@ -98,7 +105,8 @@
                     <div class="control-body">
                         <div class="form-group">
                             <label>{% trans "Genel Değerlendirme ve Notlar" %}</label>
-                            <textarea name="aciklma" class="form-control" rows="4" placeholder="{% trans "Daire ile ilgili genel notlarınızı buraya yazabilirsiniz..." %}"></textarea>
+                           
+                            {{santiye.genel_notlar}}
                         </div>
                      
                         
