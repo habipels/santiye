@@ -3650,16 +3650,20 @@ chart.render();
 {% endfor %}
 <script>
     function updateWeatherClock() {
-      // Dinamik long ve lat değerleri
-      var longitude = parseFloat("{{ weather_data.coord.lon|default:0 }}"); // Boylam değeri (float'a çevrilir)
-      var latitude = parseFloat("{{ weather_data.coord.lat|default:0 }}");  // Enlem değeri (float'a çevrilir)
-    
-      // Haftanın günleri
-      var days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+        var userLang = "{{ dil|default:'tr' }}";
+
+        var days = {
+            "tr": ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"],
+            "en": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "ar": ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"],
+            "ru": ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
+            "de": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+            "ckb": ["یەکشەممە", "دووشەممە", "سێشەممە", "چوارشەممە", "پەنجشەممە", "هەینی", "شەممە"]
+        };
       var now = new Date();
     
       // Gün, saat ve tarih bilgilerini al
-      var dayName = days[now.getDay()];
+      var dayName = days[userLang] ? days[userLang][now.getDay()] : days["tr"][now.getDay()];
       var hours = now.getHours();
       var minutes = now.getMinutes();
       var seconds = now.getSeconds();
