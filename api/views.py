@@ -2073,7 +2073,7 @@ def yapilacak_durumu_yenileme(request):
         yapan_kisi=request.user
     )
     new_project.save()
-
+    IsplaniPlanlari.objects.filter(id =yenilenecek_ekleme_id).update(status = durum)
     # Dosyaları al ve kaydet
     files = request.FILES.getlist('file')
     for file in files:
