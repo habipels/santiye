@@ -335,7 +335,7 @@ class calisanlar(models.Model):
     isim = models.CharField(max_length=200,null=True,verbose_name="İsim",blank = True)
     soyisim = models.CharField(max_length=200,null=True,verbose_name="Soyisim",blank = True)
     profile  = models.FileField(upload_to='calisanprofili/',verbose_name="Sayfaya Logo Light",blank=True,null=True)
-    dogum_tarihi = models.DateTimeField(null=True,verbose_name="Doğum Tarihi",blank = True)
+    dogum_tarihi = models.DateField(null=True,verbose_name="Doğum Tarihi",blank = True)
     telefon_numarasi = models.CharField(max_length=20,null=True,verbose_name="Telefon Numarasi",blank = True)
     status = models.CharField(max_length=100, choices=STATUS, default='0')
     silinme_bilgisi = models.BooleanField(default=False)

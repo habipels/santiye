@@ -71,8 +71,8 @@ def personel_bilgisi_axaj(request, id):
             'isim': calisan.isim,
             'soyisim': calisan.soyisim,
             'profile': calisan.profile.url if calisan.profile else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
-            'dogum_tarihi': str(calisan.dogum_tarihi.strftime("%d.%m.%Y")),
-            'telefon_numarasi': calisan.telefon_numarasi,
+            'dogum_tarihi': str(calisan.dogum_tarihi),
+            'telefon_numarasi': str(calisan.telefon_numarasi),
             'status': str(calisan.status),
             'maas': str(maasli.maas),
             'yevmiye': str(maasli.yevmiye),
@@ -97,7 +97,7 @@ def personel_bilgisi_axaj(request, id):
             ]
         }
         
-        #print(personel_detayi)
+        print(personel_detayi)
         return JsonResponse(personel_detayi)
 
 
