@@ -374,7 +374,7 @@ def homepage(request):
         pass
     else:
         #print("login")
-        return redirect_with_language("/users/login/")
+        return redirect_with_language("users:login")
     if request.user.is_authenticated:
         content = sozluk_yapisi()
         CustomUser.objects.filter(id = request.user.id).update(kullanici_tercih_dili =content["dil"])
