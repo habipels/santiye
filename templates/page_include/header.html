@@ -868,10 +868,13 @@
     </li>
       {% url 'users:group_list' as chat_url %}
     
-    <li class="{% if request.path == chat_url  %}active{% endif %}">
-        <a class="" href="/{{dil}}{{ chat_url }}"><i class="icon icon-chat"></i> <span>{% trans 'Chat' %}</span> </a>
-      
-    </li>
+    <li class="{% if request.path == chat_url %}active{% endif %}">
+    <a href="#" onclick="openChatPopup(event)">
+        <i class="icon icon-chat"></i> 
+        <span>{% trans 'Chat' %}</span> 
+    </a>
+</li>
+
     <hr>
 
     <ul class="sidebar-nav">
@@ -1389,9 +1392,17 @@ $(document).ready(function() {
         $(window).resize(updateMaxWidth);
         
     </script>
-    <script>
-    
-    </script>
+<script>
+function openChatPopup(event) {
+    event.preventDefault(); // Linkin sayfa yönlendirmesini engelle
+    var url = "/{{dil}}{{ chat_url }}"; // Django'dan gelen dil ile chat URL'sini oluştur
+    var popup = window.open(url, "ChatPopup", "width=1200,height=600,scrollbars=yes,resizable=yes");
+    if (!popup) {
+        alert("Lütfen popup engelleyiciyi kapatın.");
+    }
+}
+</script>
+
     </header>
 
 {% endif %}
