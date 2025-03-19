@@ -3,8 +3,30 @@
 {% load custom_tags %}
 {% load static %}
 {% block head %}
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'content/style/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <style>
         /* RFI Form Özel Stilleri */
         .rfi-form-container {
@@ -315,139 +337,25 @@
         }
     </style>
 {% endblock head %}
-{% block header %}
-    <div class="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-main-part"></div>
-            <div class="sidebar-logo-second-part"></div>
-            <div class="sidebar-logo-large-parts">
-                <img src="images/half-o.png" alt="">
-                <img src="images/half-o.png" alt="">
-            </div>
-        </div>
-        <div class="sidebar-toggle">
-            <i class="icon icon-sidebar-left"></i>
-            <i class="icon icon-sidebar-right"></i>
-        </div>
-        <div class="sidebar-navs">
-            <ul class="sidebar-nav">
-                <!-- Sidebar menü öğeleri -->
-                <li>
-                    <a href="dashboard.html">
-                        <i class="icon icon-dashboard"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="rfi-list.html">
-                        <i class="icon icon-clipboard"></i>
-                        <span>RFI Yönetimi</span>
-                    </a>
-                </li>
-                <!-- Diğer menü öğeleri -->
-            </ul>
-        </div>
-    </div>
 
-    <header>
-        <div class="header-search">
-            <input type="text" placeholder="Ara...">
-            <button>
-                <i class="icon icon-search"></i>
-            </button>
-        </div>
-        <div class="header-actions">
-            <a href="#">
-                <i class="icon icon-fullscreen"></i>
-            </a>
-            <a href="#">
-                <i class="icon icon-notification"></i>
-            </a>
-            <a href="#" class="dark-mode-toggle">
-                <i class="icon icon-moon"></i>
-                <i class="icon icon-sun"></i>
-            </a>
-        </div>
-        <div class="header-language-wrapper">
-            <div class="header-language">
-                <img src="images/tr.png" alt="Türkçe" width="24">
-                <span>Türkçe</span>
-                <i class="icon icon-chevron-bottom"></i>
-            </div>
-            <div class="header-language-dropdown">
-                <div class="language-selector">
-                    <label>
-                        <input type="radio" name="language" checked>
-                        <img src="images/tr.png" alt="Türkçe" width="24">
-                        Türkçe
-                    </label>
-                </div>
-                <div class="language-selector">
-                    <label>
-                        <input type="radio" name="language">
-                        <img src="images/en.png" alt="English" width="24">
-                        English
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="header-profile-wrapper">
-            <div class="header-profile">
-                <div class="profile-avatar">
-                    <img src="images/avatar.png" alt="Profil" width="40" height="40">
-                </div>
-                <div class="profile-info">
-                    <div class="profile-name">Ahmet Yılmaz</div>
-                    <div class="profile-role">Proje Müdürü</div>
-                </div>
-                <i class="icon icon-chevron-bottom"></i>
-            </div>
-            <div class="header-profile-dropdown">
-                <div class="profile-dropdown-header">
-                    <div class="profile-dropdown-avatar">
-                        <img src="images/avatar.png" alt="Profil" width="60" height="60">
-                    </div>
-                    <div class="profile-dropdown-info">
-                        <div class="profile-dropdown-name">Ahmet Yılmaz</div>
-                        <div class="profile-dropdown-role">Proje Müdürü</div>
-                    </div>
-                </div>
-                <div class="profile-dropdown-actions">
-                    <a href="#">
-                        <i class="icon icon-user"></i>
-                        Profil
-                    </a>
-                    <a href="#">
-                        <i class="icon icon-settings"></i>
-                        Ayarlar
-                    </a>
-                    <a href="#">
-                        <i class="icon icon-logout"></i>
-                        Çıkış
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-{% endblock header %}
 {% block sidebar %}
-    <main>
-        <form method="post">
-            {% csrf_token %}
-            <div class="page-header">
-                <div class="page-info">
-                    <div class="page-title">RFI Düzenleme</div>
-                    <ul class="page-breadcrumb">
-                        <li><a href="dashboard.html">Ana Sayfa</a></li>
-                        <li><a href="rfi-list.html">RFI Yönetimi</a></li>
-                        <li><a href="#">RFI Düzenleme</a></li>
-                    </ul>
+<main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'RFI' %}
                 </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'RFI Düzenle' %}</a></li>
+                </ul>
+            </div>
                 <div class="page-actions">
                     <button type="submit" class="page-primary-btn">
-                        <i class="icon icon-tick"></i>
-                        Kaydet
+                        <i class="icon icon-save"></i>
+                        {% trans 'Kaydet' %}
                     </button>
                 </div>
             </div>

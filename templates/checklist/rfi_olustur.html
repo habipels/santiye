@@ -3,8 +3,30 @@
 {% load custom_tags %}
 {% load static %}
 {% block head %}
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'content/style/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <style>
         /* RFI Form Özel Stilleri */
         .rfi-form-container {
@@ -265,141 +287,102 @@
         #formPreview {
             display: none;
         }
+
+        /* Buton Stilleri */
+        .page-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .page-secondary-btn, .page-primary-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .page-secondary-btn {
+            background-color: #f8f9fa;
+            color: #052941;
+            border-color: #e9ecef;
+        }
+
+        .page-secondary-btn:hover {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        .page-primary-btn {
+            background-color: #052941;
+            color: white;
+        }
+
+        .page-primary-btn:hover {
+            background-color: #041c2e;
+        }
+
+        .page-secondary-btn i, .page-primary-btn i {
+            font-size: 16px;
+        }
+
+        /* Buton Aktif Durumu */
+        .page-secondary-btn:active, .page-primary-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Buton Devre Dışı Durumu */
+        .page-secondary-btn:disabled, .page-primary-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        /* Gece Modu için Buton Stilleri */
+        body.dark-mode .page-secondary-btn {
+            background-color: #363636;
+            color: #ffffff;
+            border-color: #404040;
+        }
+
+        body.dark-mode .page-secondary-btn:hover {
+            background-color: #404040;
+            border-color: #4a4a4a;
+        }
+
+        body.dark-mode .page-primary-btn {
+            background-color: #1F9254;
+        }
+
+        body.dark-mode .page-primary-btn:hover {
+            background-color: #1a7a44;
+        }
     </style>
 {% endblock head %}
-{% block header %}
-    <div class="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-main-part"></div>
-            <div class="sidebar-logo-second-part"></div>
-            <div class="sidebar-logo-large-parts">
-                <img src="images/half-o.png" alt="">
-                <img src="images/half-o.png" alt="">
-            </div>
-        </div>
-        <div class="sidebar-toggle">
-            <i class="icon icon-sidebar-left"></i>
-            <i class="icon icon-sidebar-right"></i>
-        </div>
-        <div class="sidebar-navs">
-            <ul class="sidebar-nav">
-                <!-- Sidebar menü öğeleri -->
-                <li>
-                    <a href="dashboard.html">
-                        <i class="icon icon-dashboard"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="rfi-list.html">
-                        <i class="icon icon-clipboard"></i>
-                        <span>RFI Yönetimi</span>
-                    </a>
-                </li>
-                <!-- Diğer menü öğeleri -->
-            </ul>
-        </div>
-    </div>
 
-    <header>
-        <div class="header-search">
-            <input type="text" placeholder="Ara...">
-            <button>
-                <i class="icon icon-search"></i>
-            </button>
-        </div>
-        <div class="header-actions">
-            <a href="#">
-                <i class="icon icon-fullscreen"></i>
-            </a>
-            <a href="#">
-                <i class="icon icon-notification"></i>
-            </a>
-            <a href="#" class="dark-mode-toggle">
-                <i class="icon icon-moon"></i>
-                <i class="icon icon-sun"></i>
-            </a>
-        </div>
-        <div class="header-language-wrapper">
-            <div class="header-language">
-                <img src="images/tr.png" alt="Türkçe" width="24">
-                <span>Türkçe</span>
-                <i class="icon icon-chevron-bottom"></i>
-            </div>
-            <div class="header-language-dropdown">
-                <div class="language-selector">
-                    <label>
-                        <input type="radio" name="language" checked>
-                        <img src="images/tr.png" alt="Türkçe" width="24">
-                        Türkçe
-                    </label>
-                </div>
-                <div class="language-selector">
-                    <label>
-                        <input type="radio" name="language">
-                        <img src="images/en.png" alt="English" width="24">
-                        English
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="header-profile-wrapper">
-            <div class="header-profile">
-                <div class="profile-avatar">
-                    <img src="images/avatar.png" alt="Profil" width="40" height="40">
-                </div>
-                <div class="profile-info">
-                    <div class="profile-name">Ahmet Yılmaz</div>
-                    <div class="profile-role">Proje Müdürü</div>
-                </div>
-                <i class="icon icon-chevron-bottom"></i>
-            </div>
-            <div class="header-profile-dropdown">
-                <div class="profile-dropdown-header">
-                    <div class="profile-dropdown-avatar">
-                        <img src="images/avatar.png" alt="Profil" width="60" height="60">
-                    </div>
-                    <div class="profile-dropdown-info">
-                        <div class="profile-dropdown-name">Ahmet Yılmaz</div>
-                        <div class="profile-dropdown-role">Proje Müdürü</div>
-                    </div>
-                </div>
-                <div class="profile-dropdown-actions">
-                    <a href="#">
-                        <i class="icon icon-user"></i>
-                        Profil
-                    </a>
-                    <a href="#">
-                        <i class="icon icon-settings"></i>
-                        Ayarlar
-                    </a>
-                    <a href="#">
-                        <i class="icon icon-logout"></i>
-                        Çıkış
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-{% endblock header %}
 {% block sidebar %}
 
 
-    <main>
-    <form  method="post">
-                    {% csrf_token %}
-        <div id="formEditor">
-            <div class="page-header">
-                <div class="page-info">
-                    <div class="page-title">Yeni RFI Oluştur</div>
-                    <ul class="page-breadcrumb">
-                        <li><a href="dashboard.html">Ana Sayfa</a></li>
-                        <li><a href="rfi-list.html">RFI Yönetimi</a></li>
-                        <li><a href="#">Yeni RFI Oluştur</a></li>
-                    </ul>
+ <main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'RFI' %}
                 </div>
-                <div class="page-actions">
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'RFI Şablonu Oluştur' %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
                     <button type="button" class="page-secondary-btn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'">
                         <i class="icon icon-close"></i>
                         İptal
@@ -869,5 +852,166 @@
         document.addEventListener('DOMContentLoaded', function () {
             updateMaxWidth();
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form elementlerini seç
+            const form = document.querySelector('form');
+            const saveBtn = document.querySelector('button[type="submit"]');
+            const previewBtn = document.getElementById('previewBtn');
+            const cancelBtn = document.querySelector('button[type="button"]');
+
+            // Kaydet butonu işlevi
+            saveBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Form verilerini topla
+                const formData = new FormData();
+                formData.append('santiye_bilgisi', document.getElementById('projectSelect').value);
+                formData.append('rfi_adi', document.getElementById('rfiTitle').value);
+                formData.append('rfi_kategorisi', document.querySelector('input[name="rfi_kategorisi"]').value);
+                formData.append('rfi_aciklama', document.querySelector('input[name="rfi_aciklama"]').value);
+                
+                // Kontrol kalemlerini topla
+                const controlItems = [];
+                document.querySelectorAll('#controlItems input[type="text"]').forEach(input => {
+                    if (input.value.trim()) {
+                        controlItems.push(input.value);
+                    }
+                });
+                formData.append('kontrol_kalemleri', JSON.stringify(controlItems));
+
+                // Ana imalat adını ekle
+                const mainWorkItem = document.getElementById('mainWorkItemName');
+                if (mainWorkItem && mainWorkItem.value.trim()) {
+                    formData.append('ana_imalat_adi', mainWorkItem.value);
+                }
+
+                // Kaydet butonunu devre dışı bırak ve yükleniyor göster
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="icon icon-spinner"></i> Kaydediliyor...';
+
+                // Form verilerini gönder
+                fetch('/{{dil}}/rfi/kaydet/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('RFI başarıyla kaydedildi!');
+                        window.location.href = '/{{dil}}/rfi/listesi/';
+                    } else {
+                        alert('Kaydetme sırasında bir hata oluştu: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    alert('Bir hata oluştu: ' + error);
+                })
+                .finally(() => {
+                    // Kaydet butonunu tekrar aktif et
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="icon icon-tick"></i> Kaydet';
+                });
+            });
+
+            // Önizle butonu işlevi
+            previewBtn.addEventListener('click', function() {
+                // Bugünün tarihini al
+                const today = new Date();
+                const dateStr = today.toLocaleDateString('tr-TR');
+                document.getElementById('currentDate').textContent = dateStr;
+                
+                // Proje ve başlık bilgilerini al
+                const projectName = document.getElementById('projectSelect').options[document.getElementById('projectSelect').selectedIndex].text;
+                const rfiTitle = document.getElementById('rfiTitle').value;
+                
+                // Önizleme alanına bilgileri yerleştir
+                document.getElementById('previewProjectName').textContent = projectName;
+                document.getElementById('previewRfiTitle').textContent = rfiTitle;
+                
+                // Tablo gövdesini temizle
+                const tableBody = document.querySelector('#previewTable tbody');
+                tableBody.innerHTML = '';
+                
+                // Kontrol kalemi sayısını al
+                let count = document.getElementById('controlItemCount').value;
+                
+                // Özel sayı kontrolü
+                if (count === 'custom') {
+                    count = document.getElementById('customItemCount').value;
+                    if (isNaN(parseInt(count)) || parseInt(count) < 1) {
+                        alert('Lütfen geçerli bir kalem sayısı girin.');
+                        return;
+                    }
+                }
+                
+                count = parseInt(count);
+                
+                if (count === 0) {
+                    // Ana imalat adını al
+                    const mainWorkItemName = document.getElementById('mainWorkItemName').value;
+                    
+                    // Tek satır ekle
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${mainWorkItemName}</td>
+                        <td class="signature-cell"></td>
+                        <td></td>
+                    `;
+                    tableBody.appendChild(row);
+                } else {
+                    // Kontrol kalemlerini al
+                    const inputs = document.querySelectorAll('#controlItems input[type="text"]');
+                    
+                    // Tabloyu doldur
+                    inputs.forEach(input => {
+                        if (input.value.trim() !== '') {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${input.value}</td>
+                                <td class="signature-cell"></td>
+                                <td></td>
+                            `;
+                            tableBody.appendChild(row);
+                        }
+                    });
+                }
+                
+                // Düzenleme alanını gizle, önizleme alanını göster
+                document.getElementById('formEditor').style.display = 'none';
+                document.getElementById('formPreview').style.display = 'block';
+                
+                // Tablo yüksekliğini dinamik olarak ayarla
+                setTimeout(function() {
+                    adjustTableHeight();
+                }, 100);
+            });
+
+            // İptal butonu işlevi
+            cancelBtn.addEventListener('click', function() {
+                if (confirm('Değişiklikleriniz kaydedilmeyecek. Devam etmek istiyor musunuz?')) {
+                    window.location.href = '/{{dil}}/rfi/listesi/';
+                }
+            });
+        });
+
+        // CSRF token alma fonksiyonu
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
     </script>
 {% endblock sidebar %}

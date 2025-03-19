@@ -3,298 +3,93 @@
 {% load custom_tags %}
 {% load static %}
 {% block head %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
-    <style>
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            display: inline-block;
-        }
-        
-        .status-pending {
-            background-color: #FFF4DE;
-            color: #FFB100;
-        }
-        
-        .status-approved {
-            background-color: #E7F6E7;
-            color: #1F9254;
-        }
-        
-        .status-rejected {
-            background-color: #FFE5E5;
-            color: #FF4747;
-        }
-        
-        .status-delayed {
-            background-color: #FFE5E5;
-            color: #FF4747;
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Modal Stilleri - Düzeltilmiş */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            overflow-y: auto; /* Dikey kaydırma ekle */
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 5% auto; /* Üstten boşluğu azalttım */
-            padding: 20px;
-            border-radius: 8px;
-            width: 500px;
-            max-width: 90%;
-            max-height: 90vh; /* Maksimum yükseklik */
-            overflow-y: auto; /* İçerik fazlaysa kaydırma çubuğu ekle */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            position: sticky; /* Başlık sabit kalsın */
-            top: 0;
-            background-color: white;
-            z-index: 1;
-        }
-        
-        .modal-title {
-            font-weight: 600;
-            font-size: 18px;
-            color: #052941;
-        }
-        
-        .modal-close {
-            cursor: pointer;
-            font-size: 20px;
-            color: #666;
-        }
-        
-        .modal-body {
-            margin-bottom: 20px;
-        }
-        
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-            position: sticky; /* Alt kısım sabit kalsın */
-            bottom: 0;
-            background-color: white;
-            z-index: 1;
-        }
-        
-        .file-upload-container {
-            border: 2px dashed #ddd;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .file-upload-container:hover {
-            border-color: #052941;
-        }
-        
-        .file-upload-icon {
-            font-size: 40px;
-            color: #052941;
-            margin-bottom: 10px;
-        }
-        
-        .file-upload-text {
-            color: #666;
-            margin-bottom: 10px;
-        }
-        
-        .file-upload-input {
-            display: none;
-        }
-        
-        .file-preview {
-            display: none;
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-        }
-        
-        .file-preview-name {
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-        
-        .file-preview-size {
-            font-size: 12px;
-            color: #666;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'content/style/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 {% endblock head %}
 
 {% block sidebar %}
-   <div class="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-main-part"></div>
-            <div class="sidebar-logo-second-part"></div>
-            <div class="sidebar-logo-large-parts">
-                <img src="images/half-o.png" alt="">
-                <img src="images/half-o.png" alt="">
-            </div>
-        </div>
-        <div class="sidebar-toggle">
-            <i class="icon icon-sidebar-left"></i>
-            <i class="icon icon-sidebar-right"></i>
-        </div>
-        <div class="sidebar-navs">
-            <ul class="sidebar-nav">
-                <li>
-                    <a href="dashboard.html">
-                        <i class="icon icon-dashboard"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="rfi-list.html">
-                        <i class="icon icon-clipboard"></i>
-                        <span>RFI Yönetimi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="rfi-templates.html">
-                        <i class="icon icon-template"></i>
-                        <span>RFI Şablonları</span>
-                    </a>
-                </li>
-                <!-- Diğer menü öğeleri -->
-            </ul>
-        </div>
-    </div>
-
-    <header>
-        <div class="header-search">
-            <input type="text" placeholder="Ara...">
-            <button>
-                <i class="icon icon-search"></i>
-            </button>
-        </div>
-        <div class="header-actions">
-            <a href="#">
-                <i class="icon icon-fullscreen"></i>
-            </a>
-            <a href="#">
-                <i class="icon icon-notification"></i>
-            </a>
-            <a href="#" class="dark-mode-toggle">
-                <i class="icon icon-moon"></i>
-                <i class="icon icon-sun"></i>
-            </a>
-        </div>
-        <div class="header-language-wrapper">
-            <div class="header-language">
-                <img src="images/tr.png" alt="Türkçe" width="24">
-                <span>Türkçe</span>
-                <i class="icon icon-chevron-bottom"></i>
-            </div>
-        </div>
-        <div class="header-profile">
-            <div class="header-profile-image">
-                <img src="images/profile.jpg" alt="Profil">
-            </div>
-            <div class="header-profile-info">
-                <div class="header-profile-name">Ahmet Yılmaz</div>
-                <div class="header-profile-role">Proje Müdürü</div>
-            </div>
-            <i class="icon icon-chevron-bottom"></i>
-        </div>
-    </header>
-
+   
     <main>
         <div class="page-header">
-            <div class="page-header-content">
-                <div class="page-header-title">RFI Yönetimi</div>
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'RFI' %}
+                </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="dashboard.html">Ana Sayfa</a></li>
-                    <li><a href="rfi-list.html">RFI Yönetimi</a></li>
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'RFI' %}</a></li>
                 </ul>
             </div>
+
             <div class="page-actions">
-                <button class="page-secondary-btn" id="createRfiBtn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_template' %}'">
-                    <i class="icon icon-template"></i>
-                    Şablonlar
-                </button>
-                <button class="page-primary-btn" id="uploadRfiBtn">
-                    <i class="icon icon-upload"></i>
-                    RFI Yükle
-                </button>
+
+                <button class="page-primary-btn" id="uploadRfiBtn"><i class="icon icon-new"></i>
+                   {% trans 'RFI Yükle' %} </button>
             </div>
         </div>
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'RFI Listesi' %}</div>
+                <div class="stats-right">
+                    <div class="stats-search">
+                        <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                        <button><i class="icon icon-search"></i></button>
+                    </div>
+                </div>
+            </div>
+
 
         <div class="tab-navs">
-            <button class="tab-navs-btn active" data-tab="pending">Onay Bekleyenler <span class="badge badge-warning">{{rfi_listesi_onay_bekleyen_sayisi}}</span></button>
-            <button class="tab-navs-btn" data-tab="approved">Onaylananlar</button>
-            <button class="tab-navs-btn" data-tab="rejected">Reddedilenler</button>
-            <button class="tab-navs-btn" data-tab="archive">Arşiv</button>
+            <button class="tab-navs-btn active" data-tab="pending">{% trans 'Onay Bekleyenler' %} <span class="badge badge-warning">{{rfi_listesi_onay_bekleyen_sayisi}}</span></button>
+            <button class="tab-navs-btn" data-tab="approved">{% trans 'Onaylananlar' %}</button>
+            <button class="tab-navs-btn" data-tab="rejected">{% trans 'Reddedilenler' %}</button>
+            <button class="tab-navs-btn" data-tab="archive">{% trans 'Arşiv' %}</button>
         </div>
-
+<div class="tab-contents">
         <!-- Onay Bekleyenler Sekmesi -->
         <div class="tab-content active" id="pending">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Onay Bekleyen RFI'lar</div>
-                    <div class="card-actions">
-                        <button class="card-action-btn">
-                            <i class="icon icon-filter"></i>
-                            Filtrele
-                        </button>
-                    </div>
+                    <div class="card-title">{% trans 'Onay Bekleyen RFIlar' %}</div>
+
                 </div>
                 <div class="card-body">
-                    <table id="pendingTable" class="table table-striped" style="width:100%">
+                    <table id="pending" class="table table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th>RFI No</th>
-                                <th>Başlık</th>
-                                <th>Blok</th>
-                                <th>Kat</th>
-                                <th>Mahal</th>
-                                <th>Yükleme Tarihi</th>
-                                <th>Bekleme Süresi</th>
-                                <th>Durum</th>
-                                <th>İşlemler</th>
+                                <th>{% trans 'RFI No' %}</th>
+                                <th>{% trans 'Başlık' %}</th>
+                                <th>{% trans 'Blok' %}</th>
+                                <th>{% trans 'Kat' %}</th>
+                                <th>{% trans 'Mahal' %}</th>
+                                <th>{% trans 'Yükleme Tarihi' %}</th>
+                                <th>{% trans 'Bekleme Süresi' %}</th>
+                                <th>{% trans 'Durum' %}</th>
+                                <th>{% trans 'İşlemler' %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -304,20 +99,22 @@
                                 <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
                                 <td>{{i.blok.blog_adi}}</td>
                                 <td>{{i.kat_bilgisi}}</td>
-                                <td>Daire {{i.daire_no}}</td>
+                                <td>{% trans 'Daire' %} {{i.daire_no}}</td>
                                 <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
                                 <td>{{ i.kayit_tarihi|date:"U"|calculate_waiting_time }}</td>
-                                <td><span class="status-badge status-pending">Beklemede</span></td>
+                                <td><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></td>
                                 <td>
-                                    <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                <div class="td-actions">
+                                    <button class="status-view" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
                                         <i class="icon icon-eye"></i>
                                     </button>
-                                    <button class="btn-icon btn-approve">
-                                        <i class="icon icon-check"></i>
+                                    <button class="status-success">
+                                        <i class="icon icon-confirm"></i>
                                     </button>
-                                    <button class="btn-icon btn-reject">
-                                        <i class="icon icon-close"></i>
+                                    <button class="status-cancel">
+                                        <i class="icon icon-reject"></i>
                                     </button>
+                                </div>    
                                 </td>
                             </tr>
                         {% endfor %}
@@ -333,28 +130,23 @@
         <div class="tab-content" id="approved">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Onaylanan RFI'lar</div>
-                    <div class="card-actions">
-                        <button class="card-action-btn">
-                            <i class="icon icon-filter"></i>
-                            Filtrele
-                        </button>
-                    </div>
+                    <div class="card-title">{% trans 'Onaylanan RFIlar' %}</div>
+
                 </div>
                 <div class="card-body">
                     <table id="approvedTable" class="table table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th>RFI No</th>
-                                <th>Başlık</th>
-                                <th>Blok</th>
-                                <th>Kat</th>
-                                <th>Mahal</th>
-                                <th>Yükleme Tarihi</th>
-                                <th>Onay Tarihi</th>
-                                <th>Onay Süresi</th>
-                                <th>Onaylayan</th>
-                                <th>İşlemler</th>
+                                <th>{% trans 'RFI No' %}</th>
+                                <th>{% trans 'Başlık' %}</th>
+                                <th>{% trans 'Blok' %}</th>
+                                <th>{% trans 'Kat' %}</th>
+                                <th>{% trans 'Mahal' %}</th>
+                                <th>{% trans 'Yükleme Tarihi' %}</th>
+                                <th>{% trans 'Onay Tarihi' %}</th>
+                                <th>{% trans 'Onay Süresi' %}</th>
+                                <th>{% trans 'Onaylayan' %}</th>
+                                <th>{% trans 'İşlemler' %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -364,7 +156,7 @@
                                 <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
                                 <td>{{i.blok.blog_adi}}</td>
                                 <td>{{i.kat_bilgisi}}</td>
-                                <td>Daire {{i.daire_no}}</td>
+                                <td>{% trans 'Daire' %} {{i.daire_no}}</td>
                                 <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
                                 <td>{{ i.onaylayan_tarih|date:"d.m.Y H.s"}}</td>
                                 <td>{% calculate_waiting_time_onay_suresi i.kayit_tarihi|date:"U" i.onaylayan_tarih|date:"U" %}</td>
@@ -388,28 +180,22 @@
         <div class="tab-content" id="rejected">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Reddedilen RFI'lar</div>
-                    <div class="card-actions">
-                        <button class="card-action-btn">
-                            <i class="icon icon-filter"></i>
-                            Filtrele
-                        </button>
-                    </div>
+                    <div class="card-title">{% trans 'Reddedilen RFIlar' %}</div>
                 </div>
                 <div class="card-body">
                     <table id="rejectedTable" class="table table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th>RFI No</th>
-                                <th>Başlık</th>
-                                <th>Blok</th>
-                                <th>Kat</th>
-                                <th>Mahal</th>
-                                <th>Yükleme Tarihi</th>
-                                <th>Red Tarihi</th>
-                                <th>Reddeden</th>
-                                <th>Red Nedeni</th>
-                                <th>İşlemler</th>
+                                <th>{% trans 'RFI No' %}</th>
+                                <th>{% trans 'Başlık' %}</th>
+                                <th>{% trans 'Blok' %}</th>
+                                <th>{% trans 'Kat' %}</th>
+                                <th>{% trans 'Mahal' %}</th>
+                                <th>{% trans 'Yükleme Tarihi' %}</th>
+                                <th>{% trans 'Red Tarihi' %}</th>
+                                <th>{% trans 'Reddeden' %}</th>
+                                <th>{% trans 'Red Nedeni' %}</th>
+                                <th>{% trans 'İşlemler' %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -444,26 +230,21 @@
         <div class="tab-content" id="archive">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Arşivlenen RFI'lar</div>
-                    <div class="card-actions">
-                        <button class="card-action-btn">
-                            <i class="icon icon-filter"></i>
-                            Filtrele
-                        </button>
-                    </div>
+                    <div class="card-title">{% trans 'Arşivlenen RFIlar' %}</div>
+
                 </div>
                 <div class="card-body">
                     <table id="archiveTable" class="table table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th>RFI No</th>
-                                <th>Başlık</th>
-                                <th>Blok</th>
-                                <th>Kat</th>
-                                <th>Mahal</th>
-                                <th>Tarih</th>
-                                <th>Durum</th>
-                                <th>İşlemler</th>
+                                <th>{% trans 'RFI No' %}</th>
+                                <th>{% trans 'Başlık' %}</th>
+                                <th>{% trans 'Blok' %}</th>
+                                <th>{% trans 'Kat' %}</th>
+                                <th>{% trans 'Mahal' %}</th>
+                                <th>{% trans 'Tarih' %}</th>
+                                <th>{% trans 'Durum' %}</th>
+                                <th>{% trans 'İşlemler' %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -473,9 +254,9 @@
                                 <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
                                 <td>{{i.blok.blog_adi}}</td>
                                 <td>{{i.kat_bilgisi}}</td>
-                                <td>Daire {{i.daire_no}}</td>
+                                <td>{% trans 'Daire' %} {{i.daire_no}}</td>
                                 <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
-                                <td><span class="status-badge status-approved">Onaylandı</span></td>
+                                <td><span class="status-badge status-approved">{% trans 'Onaylandı' %}</span></td>
                                <td>
                                     <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
                                         <i class="icon icon-eye"></i>
@@ -495,16 +276,16 @@
     <div id="uploadRfiModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">RFI Yükle</div>
+                <div class="modal-title">{% trans 'RFI Yükle' %}</div>
                 <span class="modal-close">&times;</span>
             </div>
             <form enctype="multipart/form-data" method="post">
             {% csrf_token %}
             <div class="modal-body">
                 <div class="form-element">
-                    <label>RFI Şablonu</label>
+                    <label>{% trans 'RFI Şablonu' %}</label>
                     <select name="rfi_sablonu" id="katmanSelect"  data-trigger>
-                        <option value="">Şablon Seçin</option>
+                        <option value="">{% trans 'Şablon Seçin' %}</option>
                         {% for i in rfi_sablonlari %}
                         <option data-id="{{i.rfi_santiye.id}}" value="{{i.id}}">{{i.rfi_baslik}}</option>
                         {% endfor %}
@@ -529,43 +310,49 @@
                 
                 <div class="form-row">
                     <div class="form-element">
-                        <label>Daire No</label>
+                        <label>{% trans 'Daire No' %}</label>
                         <input type="text" name="apartmentNo" id="apartmentNo" placeholder="Örn: 5">
                     </div>
                     <div class="form-element">
-                        <label>Mahal</label>
+                        <label>{% trans 'Mahal' %}</label>
                         <input type="text" name="location" id="location" placeholder="Örn: Salon, Mutfak">
                     </div>
                 </div>
                 
                 <div class="form-element">
-                    <label>Taranmış RFI Belgesi</label>
+                    <label>{% trans 'Taranmış RFI Belgesi' %}</label>
                     <div class="file-upload-container" id="fileUploadContainer">
                         <div class="file-upload-icon">
                             <i class="icon icon-upload"></i>
                         </div>
-                        <div class="file-upload-text">
-                            Dosya yüklemek için tıklayın veya sürükleyin
-                        </div>
-                        <div class="file-upload-info">
-                            PDF, JPG veya PNG (Max: 10MB)
-                        </div>
-                        <input type="file" name="file" id="fileUpload" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png">
-                    </div>
-                    <div class="file-preview" id="filePreview">
-                        <div class="file-preview-name" id="filePreviewName"></div>
-                        <div class="file-preview-size" id="filePreviewSize"></div>
-                    </div>
+                        <div class="form-element">
+                                <label for="ekler">{% trans 'Ekler' %}</label>
+    
+                                <div class="file-input file-preview-input">
+                                    <ul class="fileList">
+    
+    
+    
+                                        <label for="ekler">
+                                            <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                        </label>
+                                    </ul>
+    
+                                    <input multiple type="file" name="file" id="ekler">
+                                </div>
+    
+    
+                            </div>
                 </div>
                 
                 <div class="form-element">
-                    <label>Notlar</label>
-                    <textarea id="notes" name="notlar" rows="3" placeholder="Varsa eklemek istediğiniz notlar..."></textarea>
+                    <label>{% trans 'Notlar' %}</label>
+                    <textarea id="notes" name="notlar" rows="3" placeholder="{% trans 'Varsa eklemek istediğiniz notlar...' %}"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" id="cancelUpload">İptal</button>
-                <button type="submit" class="btn-primary" id="submitUpload">Onaya Gönder</button>
+                <button type="button" class="form-action-secondary" id="cancelUpload">{% trans 'Vazgeç' %}</button>
+                <button type="submit" class="form-action-primary" id="submitUpload">{% trans 'Onaya Gönder' %}</button>
             </div>
         </form>
         </div>
@@ -700,10 +487,7 @@
     });
 </script>
     <script>
-        // Sidebar toggle işlevi
-        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
-        });
+       
 
         // Dark mode toggle işlevi
         document.querySelector('.dark-mode-toggle').addEventListener('click', function() {
@@ -852,6 +636,309 @@
             });
         });
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    function setupUploadButton() {
+        const uploadBtn = document.getElementById('uploadRfiBtn');
+        const modal = document.getElementById('uploadRfiModal');
+        const closeBtn = document.querySelector('.modal-close');
+        const cancelBtn = document.getElementById('cancelUpload');
+        const form = document.querySelector('#uploadRfiModal form');
+        const submitBtn = document.getElementById('submitUpload');
+
+        // Form elemanlarını seç
+        const rfiSablonu = document.getElementById('katmanSelect');
+        const yapiSelect = document.getElementById('yapiSelect');
+        const odaSelect = document.getElementById('odaSelect');
+        const apartmentNo = document.getElementById('apartmentNo');
+        const location = document.getElementById('location');
+        const fileInput = document.getElementById('ekler');
+        const notes = document.getElementById('notes');
+
+        // Hata mesajları için div oluştur
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'form-error-message';
+        form.insertBefore(errorDiv, form.firstChild);
+
+        // Form validasyonu
+        function validateForm() {
+            let isValid = true;
+            let errorMessage = '';
+
+            // RFI Şablonu kontrolü
+            if (!rfiSablonu.value) {
+                isValid = false;
+                errorMessage += 'Lütfen RFI şablonu seçiniz.<br>';
+                rfiSablonu.classList.add('error');
+            } else {
+                rfiSablonu.classList.remove('error');
+            }
+
+            // Yapı kontrolü
+            if (!yapiSelect.value) {
+                isValid = false;
+                errorMessage += 'Lütfen yapı seçiniz.<br>';
+                yapiSelect.classList.add('error');
+            } else {
+                yapiSelect.classList.remove('error');
+            }
+
+            // Kat kontrolü
+            if (!odaSelect.value) {
+                isValid = false;
+                errorMessage += 'Lütfen kat seçiniz.<br>';
+                odaSelect.classList.add('error');
+            } else {
+                odaSelect.classList.remove('error');
+            }
+
+            // Daire No kontrolü
+            if (!apartmentNo.value.trim()) {
+                isValid = false;
+                errorMessage += 'Lütfen daire numarası giriniz.<br>';
+                apartmentNo.classList.add('error');
+            } else {
+                apartmentNo.classList.remove('error');
+            }
+
+            // Mahal kontrolü
+            if (!location.value.trim()) {
+                isValid = false;
+                errorMessage += 'Lütfen mahal bilgisi giriniz.<br>';
+                location.classList.add('error');
+            } else {
+                location.classList.remove('error');
+            }
+
+            // Dosya kontrolü
+            if (!fileInput.files || fileInput.files.length === 0) {
+                isValid = false;
+                errorMessage += 'Lütfen en az bir dosya yükleyiniz.<br>';
+                fileInput.classList.add('error');
+            } else {
+                fileInput.classList.remove('error');
+            }
+
+            // Hata mesajını göster/gizle
+            errorDiv.innerHTML = errorMessage;
+            errorDiv.style.display = errorMessage ? 'block' : 'none';
+
+            return isValid;
+        }
+
+        // Form gönderimi
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (validateForm()) {
+                // Form verilerini oluştur
+                const formData = new FormData();
+                formData.append('rfi_sablonu', rfiSablonu.value);
+                formData.append('yapi_gonder', yapiSelect.value);
+                formData.append('kat', odaSelect.value);
+                formData.append('apartmentNo', apartmentNo.value);
+                formData.append('location', location.value);
+                formData.append('notlar', notes.value);
+                
+                // Dosyaları ekle
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('file', fileInput.files[i]);
+                }
+
+                // Submit butonunu devre dışı bırak
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="icon icon-spinner"></i> Gönderiliyor...';
+
+                // Formu gönder
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('RFI başarıyla yüklendi.');
+                        modal.style.display = 'none';
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Bir hata oluştu.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    alert('Bir hata oluştu.');
+                })
+                .finally(() => {
+                    // Submit butonunu tekrar aktif et
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Onaya Gönder';
+                });
+            }
+        });
+
+        // Modal açma/kapama işlemleri
+        if (uploadBtn) {
+            uploadBtn.addEventListener('click', function() {
+                modal.style.display = 'block';
+                // Formu sıfırla
+                form.reset();
+                errorDiv.innerHTML = '';
+                errorDiv.style.display = 'none';
+            });
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                form.reset();
+                errorDiv.innerHTML = '';
+                errorDiv.style.display = 'none';
+            });
+        }
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                form.reset();
+                errorDiv.innerHTML = '';
+                errorDiv.style.display = 'none';
+            });
+        }
+
+        // Input alanlarından hata sınıfını kaldır
+        [rfiSablonu, yapiSelect, odaSelect, apartmentNo, location, fileInput].forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                errorDiv.style.display = 'none';
+            });
+        });
+    }
+
+    setupUploadButton();
+});
+
+    </script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tab geçişleri için
+        const tabButtons = document.querySelectorAll('.tab-navs-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Aktif tab butonunu güncelle
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // İlgili içeriği göster
+                const tabId = this.getAttribute('data-tab');
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Onay ve red butonları için
+        document.querySelectorAll('.status-success').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
+                
+                if (confirm('Bu RFI\'ı onaylamak istediğinize emin misiniz?')) {
+                    // AJAX ile onaylama isteği gönder
+                    fetch(`/rfi_onayla/${rfiId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('RFI başarıyla onaylandı.');
+                            location.reload();
+                        } else {
+                            alert('Onaylama işlemi başarısız oldu.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Hata:', error);
+                        alert('Bir hata oluştu.');
+                    });
+                }
+            });
+        });
+
+        document.querySelectorAll('.status-cancel').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
+                
+                const redSebebi = prompt('Reddetme nedeninizi yazın:');
+                if (redSebebi) {
+                    // AJAX ile reddetme isteği gönder
+                    fetch(`/rfi_reddet/${rfiId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            red_sebebi: redSebebi
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('RFI başarıyla reddedildi.');
+                            location.reload();
+                        } else {
+                            alert('Reddetme işlemi başarısız oldu.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Hata:', error);
+                        alert('Bir hata oluştu.');
+                    });
+                }
+            });
+        });
+    });
+    </script>
 
 
 {% endblock sidebar %}
+
+<style>
+.form-error-message {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    display: none;
+}
+
+.error {
+    border-color: #dc3545 !important;
+}
+
+.form-element input.error,
+.form-element select.error {
+    border-color: #dc3545;
+}
+
+.form-element input.error:focus,
+.form-element select.error:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+</style>

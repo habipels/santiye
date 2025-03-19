@@ -3,7 +3,30 @@
 {% load custom_tags %}
 {% load static %}
 {% block head %}
-<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'content/style/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <style>
         /* RFI Form Özel Stilleri */
         .rfi-form-container {
@@ -637,104 +660,225 @@
                 visibility: hidden !important;
             }
         }
+
+        /* Aktif buton stilleri */
+        .btn-icon.active {
+            background-color: #052941;
+            color: white;
+        }
+
+        /* Tam ekran stilleri */
+        .rfi-document-content:fullscreen {
+            background-color: white;
+            padding: 20px;
+        }
+
+        .rfi-document-content:fullscreen .rfi-document-image-container {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .rfi-document-content:fullscreen .rfi-document-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Gece Modu Stilleri */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        body.dark-mode .rfi-form-container,
+        body.dark-mode .rfi-document,
+        body.dark-mode .rfi-info {
+            background-color: #2d2d2d;
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .rfi-header {
+            border-bottom-color: #404040;
+        }
+
+        body.dark-mode .rfi-title h1,
+        body.dark-mode .rfi-title h2,
+        body.dark-mode .rfi-info div,
+        body.dark-mode .rfi-details label,
+        body.dark-mode .rfi-document-title {
+            color: #ffffff;
+        }
+
+        body.dark-mode .rfi-details,
+        body.dark-mode .rfi-notes {
+            background-color: #363636;
+            border-color: #404040;
+        }
+
+        body.dark-mode .rfi-table th {
+            background-color: #404040;
+            color: #ffffff;
+        }
+
+        body.dark-mode .rfi-table td {
+            background-color: #2d2d2d;
+            color: #ffffff;
+            border-color: #404040;
+        }
+
+        body.dark-mode .signature-cell {
+            background-color: #363636;
+        }
+
+        body.dark-mode .rfi-notes div {
+            color: #ffffff;
+        }
+
+        body.dark-mode .signature-box {
+            border-top-color: #404040;
+            color: #ffffff;
+        }
+
+        body.dark-mode .signature-area {
+            border-bottom-color: #404040;
+        }
+
+        body.dark-mode .signature-name {
+            color: #b3b3b3;
+        }
+
+        body.dark-mode .rfi-document-header {
+            background-color: #363636;
+            border-bottom-color: #404040;
+        }
+
+        body.dark-mode .rfi-document-content {
+            background-color: #1a1a1a;
+        }
+
+        body.dark-mode .rfi-document-image-container {
+            background-color: #2d2d2d;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .rfi-info-title {
+            color: #ffffff;
+            border-bottom-color: #404040;
+        }
+
+        body.dark-mode .rfi-info-label {
+            color: #b3b3b3;
+        }
+
+        body.dark-mode .rfi-info-value {
+            color: #ffffff;
+        }
+
+        body.dark-mode .rfi-approval-info {
+            background-color: #1a3d1a;
+        }
+
+        body.dark-mode .rfi-approval-title {
+            color: #4CAF50;
+        }
+
+        body.dark-mode .rfi-approval-label,
+        body.dark-mode .rfi-approval-value {
+            color: #4CAF50;
+        }
+
+        body.dark-mode .rfi-timeline-item {
+            border-left-color: #404040;
+        }
+
+        body.dark-mode .rfi-timeline-dot {
+            background-color: #404040;
+        }
+
+        body.dark-mode .rfi-timeline-date {
+            color: #b3b3b3;
+        }
+
+        body.dark-mode .rfi-timeline-text {
+            color: #ffffff;
+        }
+
+        body.dark-mode .rfi-timeline-user {
+            color: #ffffff;
+        }
+
+        body.dark-mode .btn-icon {
+            background-color: #363636;
+            color: #ffffff;
+            border: 1px solid #404040;
+        }
+
+        body.dark-mode .btn-icon:hover {
+            background-color: #404040;
+        }
+
+        body.dark-mode .btn-icon.active {
+            background-color: #404040;
+            color: #ffffff;
+        }
+
+        body.dark-mode .page-primary-btn {
+            background-color: #404040;
+            color: #ffffff;
+        }
+
+        body.dark-mode .page-primary-btn:hover {
+            background-color: #4a4a4a;
+        }
+
+        /* Gece modunda yazdırma stilleri */
+        @media print {
+            body.dark-mode #printContainer {
+                background-color: white;
+            }
+
+            body.dark-mode .print-image {
+                filter: none;
+            }
+        }
+
+        /* Mühür sürükleme stilleri */
+        .approval-stamp {
+            cursor: move;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .approval-stamp.active {
+            border: 2px dashed #1F9254;
+        }
+
+        .btn-icon.active {
+            background-color: #1F9254;
+            color: white;
+        }
     </style>
 {% endblock head %}
 
 {% block sidebar %}
-       <div class="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-main-part"></div>
-            <div class="sidebar-logo-second-part"></div>
-            <div class="sidebar-logo-large-parts">
-                <img src="images/half-o.png" alt="">
-                <img src="images/half-o.png" alt="">
-            </div>
-        </div>
-        <div class="sidebar-toggle">
-            <i class="icon icon-sidebar-left"></i>
-            <i class="icon icon-sidebar-right"></i>
-        </div>
-        <div class="sidebar-navs">
-            <ul class="sidebar-nav">
-                <li>
-                    <a href="dashboard.html">
-                        <i class="icon icon-dashboard"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="rfi-list.html">
-                        <i class="icon icon-clipboard"></i>
-                        <span>RFI Yönetimi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="rfi-templates.html">
-                        <i class="icon icon-template"></i>
-                        <span>RFI Şablonları</span>
-                    </a>
-                </li>
-                <!-- Diğer menü öğeleri -->
-            </ul>
-        </div>
-    </div>
 
-    <header>
-        <div class="header-search">
-            <input type="text" placeholder="Ara...">
-            <button>
-                <i class="icon icon-search"></i>
-            </button>
-        </div>
-        <div class="header-actions">
-            <a href="#">
-                <i class="icon icon-fullscreen"></i>
-            </a>
-            <a href="#">
-                <i class="icon icon-notification"></i>
-            </a>
-            <a href="#" class="dark-mode-toggle">
-                <i class="icon icon-moon"></i>
-                <i class="icon icon-sun"></i>
-            </a>
-        </div>
-        <div class="header-language-wrapper">
-            <div class="header-language">
-                <img src="images/tr.png" alt="Türkçe" width="24">
-                <span>Türkçe</span>
-                <i class="icon icon-chevron-bottom"></i>
-            </div>
-        </div>
-        <div class="header-profile">
-            <div class="header-profile-image">
-                <img src="images/profile.jpg" alt="Profil">
-            </div>
-            <div class="header-profile-info">
-                <div class="header-profile-name">Ahmet Yılmaz</div>
-                <div class="header-profile-role">Proje Müdürü</div>
-            </div>
-            <i class="icon icon-chevron-bottom"></i>
-        </div>
-    </header>
-
-    <main>
+     <main>
         <div class="page-header">
-            <div class="page-header-content">
-                <div class="page-header-title">RFI Detayı</div>
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'RFI' %}
+                </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="dashboard.html">Ana Sayfa</a></li>
-                    <li><a href="rfi-list.html">RFI Yönetimi</a></li>
-                    <li><a href="rfi-detail.html">RFI Detayı</a></li>
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'RFI Detayı' %}</a></li>
                 </ul>
             </div>
+
             <div class="page-actions">
-                <button class="page-secondary-btn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi' %}'">
-                    <i class="icon icon-arrow-left"></i>
-                    Geri Dön
-                </button>
-                <button class="page-primary-btn" id="exportPdfBtn">
+                <button class="page-primary-btn" id="printBtn">
                     <i class="icon icon-download"></i>
-                    Yazdır
+                    {% trans 'Yazdır' %}
                 </button>
             </div>
         </div>
@@ -750,7 +894,7 @@
                         <button class="btn-icon">
                             <i class="icon icon-fullscreen"></i>
                         </button>
-                        <button class="btn-icon" id="exportPdfBtn">
+                        <button class="btn-icon" id="printDocumentBtn">
                             <i class="icon icon-download"></i>
                         </button>
                     </div>
@@ -878,82 +1022,108 @@
     <div id="printContainer" style="display: none;"></div>
 
     <script>
-        // Sidebar toggle işlevi
-        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
-        });
-
-        // Dark mode toggle işlevi
-        document.querySelector('.dark-mode-toggle').addEventListener('click', function() {
-            document.body.classList.toggle('dark-mode');
-        });
-        
-        // Sadece belge ve mühürü yazdırma fonksiyonu - A4 için optimize edildi
-        function printDocumentWithStamp() {
-            const printContainer = document.getElementById('printContainer');
-            
-            // Yazdırma konteynerini temizle
-            printContainer.innerHTML = '';
-            
-            // JPG belgesini ekle
-            const img = document.createElement('img');
-            img.src = '{{onayli.file.url}}';
-            img.className = 'print-image';
-            printContainer.appendChild(img);
-            
-            // Minimal Mührü ekle - Sağ Üst Köşe, Eğik
-            const stamp = document.createElement('div');
-            stamp.className = 'print-stamp';
-            stamp.innerHTML = `
-                {% if onayli.onaylama_bilgisi %}
-                        
-                        
-                        <div class="approval-stamp" id="approvalStamp">
-                            <div class="approval-stamp-inner">
-                                <div class="approval-stamp-text">ONAYLANDI</div>
-                                <div class="approval-stamp-line"></div>
-                                <div class="approval-stamp-by">Onaylayan</div>
-                                <div class="approval-stamp-name">{{onayli.onaylayan_bilgisi.last_name}}</div>
-                                <div class="approval-stamp-date">{{onayli.onaylayan_tarih | date:"d.m.Y H.s"}}</div>
-                            </div>
-                        </div>
-                        {% else %}
-                        {% endif %}
-            `;
-            printContainer.appendChild(stamp);
-            
-            // Yazdırma konteynerini göster
-            printContainer.style.display = 'block';
-            
-            // Yazdırma işlemini başlat
-            setTimeout(function() {
+        document.addEventListener("DOMContentLoaded", function() {
+            // Yazdırma fonksiyonu
+            function printDocument() {
+                const printContainer = document.getElementById('printContainer');
+                const rfiImage = document.getElementById('rfiImage');
+                const approvalStamp = document.getElementById('approvalStamp');
+                
+                // Yazdırma konteynerini temizle
+                printContainer.innerHTML = '';
+                
+                // Belge görüntüsünü ekle
+                const img = document.createElement('img');
+                img.src = rfiImage.src;
+                img.className = 'print-image';
+                printContainer.appendChild(img);
+                
+                // Onay mührünü ekle (eğer varsa ve görünürse)
+                if (approvalStamp && approvalStamp.style.display !== 'none') {
+                    const stamp = approvalStamp.cloneNode(true);
+                    stamp.className = 'print-stamp';
+                    printContainer.appendChild(stamp);
+                }
+                
+                // Yazdırma konteynerini göster
+                printContainer.style.display = 'block';
+                
+                // Yazdırma işlemini başlat
                 window.print();
                 
                 // Yazdırma sonrası konteynerı gizle
-                setTimeout(function() {
+                setTimeout(() => {
                     printContainer.style.display = 'none';
                 }, 1000);
-            }, 300);
-        }
-        
-        // Sayfa yüklendiğinde onay mührünü göster
-        window.addEventListener('load', function() {
-            const stamp = document.getElementById('approvalStamp');
-            stamp.style.display = 'flex';
-        });
-        
-        // PDF Export butonu
-        document.getElementById('exportPdfBtn').addEventListener('click', function() {
-            printDocumentWithStamp();
-        });
-        
-        // Onay mührü göster/gizle
-        document.getElementById('toggleStampBtn').addEventListener('click', function() {
-            const stamp = document.getElementById('approvalStamp');
-            if (stamp.style.display === 'none') {
-                stamp.style.display = 'flex';
-            } else {
-                stamp.style.display = 'none';
+            }
+
+            // Yazdırma butonları için event listener'lar
+            document.querySelectorAll('#printBtn, #printDocumentBtn').forEach(button => {
+                button.addEventListener('click', printDocument);
+            });
+
+            // Onay mührü göster/gizle
+            const toggleStampBtn = document.getElementById('toggleStampBtn');
+            const approvalStamp = document.getElementById('approvalStamp');
+            
+            if (toggleStampBtn && approvalStamp) {
+                // Mühür butonuna tıklandığında
+                toggleStampBtn.addEventListener('click', function() {
+                    const isVisible = approvalStamp.style.display === 'flex';
+                    approvalStamp.style.display = isVisible ? 'none' : 'flex';
+                    toggleStampBtn.classList.toggle('active');
+                });
+
+                // Mühürü sürüklenebilir yap
+                let isDragging = false;
+                let currentX;
+                let currentY;
+                let initialX;
+                let initialY;
+                let xOffset = 0;
+                let yOffset = 0;
+
+                approvalStamp.addEventListener('mousedown', dragStart);
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', dragEnd);
+            }
+
+            // Sürükleme fonksiyonları
+            function dragStart(e) {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+
+                if (e.target === approvalStamp) {
+                    isDragging = true;
+                }
+            }
+
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+
+                    xOffset = currentX;
+                    yOffset = currentY;
+
+                    setTranslate(currentX, currentY, approvalStamp);
+                }
+            }
+
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+            }
+
+            function setTranslate(xPos, yPos, el) {
+                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0) rotate(-15deg)`;
+            }
+
+            // Sayfa yüklendiğinde onay mührünü göster
+            if (approvalStamp) {
+                approvalStamp.style.display = 'flex';
             }
         });
     </script>

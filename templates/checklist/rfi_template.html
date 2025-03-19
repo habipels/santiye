@@ -76,120 +76,40 @@
 {% endblock head %}
 
 {% block sidebar %}
-   <div class="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-main-part"></div>
-            <div class="sidebar-logo-second-part"></div>
-            <div class="sidebar-logo-large-parts">
-                <img src="images/half-o.png" alt="">
-                <img src="images/half-o.png" alt="">
-            </div>
-        </div>
-        <div class="sidebar-toggle">
-            <i class="icon icon-sidebar-left"></i>
-            <i class="icon icon-sidebar-right"></i>
-        </div>
-        <div class="sidebar-navs">
-            <ul class="sidebar-nav">
-                <li>
-                    <a href="dashboard.html">
-                        <i class="icon icon-dashboard"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="rfi-list.html">
-                        <i class="icon icon-clipboard"></i>
-                        <span>RFI Yönetimi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="rfi-templates.html">
-                        <i class="icon icon-template"></i>
-                        <span>RFI Şablonları</span>
-                    </a>
-                </li>
-                <!-- Diğer menü öğeleri -->
-            </ul>
-        </div>
-    </div>
-
-    <header>
-        <div class="header-search">
-            <input type="text" placeholder="Ara...">
-            <button>
-                <i class="icon icon-search"></i>
-            </button>
-        </div>
-        <div class="header-actions">
-            <a href="#">
-                <i class="icon icon-fullscreen"></i>
-            </a>
-            <a href="#">
-                <i class="icon icon-notification"></i>
-            </a>
-            <a href="#" class="dark-mode-toggle">
-                <i class="icon icon-moon"></i>
-                <i class="icon icon-sun"></i>
-            </a>
-        </div>
-        <div class="header-language-wrapper">
-            <div class="header-language">
-                <img src="images/tr.png" alt="Türkçe" width="24">
-                <span>Türkçe</span>
-                <i class="icon icon-chevron-bottom"></i>
-            </div>
-        </div>
-        <div class="header-profile">
-            <div class="header-profile-image">
-                <img src="images/profile.jpg" alt="Profil">
-            </div>
-            <div class="header-profile-info">
-                <div class="header-profile-name">Ahmet Yılmaz</div>
-                <div class="header-profile-role">Proje Müdürü</div>
-            </div>
-            <i class="icon icon-chevron-bottom"></i>
-        </div>
-    </header>
 
     
     <main>
         <div class="page-header">
-            <div class="page-header-content">
-                <div class="page-header-title">RFI Şablonları</div>
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'RFI' %}
+                </div>
                 <ul class="page-breadcrumb">
-                    <li><a href="dashboard.html">Ana Sayfa</a></li>
-                    <li><a href="rfi-templates.html">RFI Şablonları</a></li>
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'RFI Şablonları' %}</a></li>
                 </ul>
             </div>
+
             <div class="page-actions">
+
                 <button class="page-primary-btn" id="createTemplateBtn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_Olustur' %}'">
                     <i class="icon icon-plus"></i>
-                    Yeni Şablon Oluştur
-                </button>
+                   {% trans 'Şablon Oluştur' %} </button>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Mevcut Şablonlar</div>
-                <div class="card-actions">
-                    <div class="card-filter">
-                        <select id="categoryFilter">
-                            <option value="">Tüm Kategoriler</option>
-                            {% for i in rfi_kategorileri %}
 
-                            <option value="{{i.rfi_kategorisi}}">{{i.rfi_kategorisi}}</option>
-                            {% endfor %}
-                        
-                        </select>
-                    </div>
-                    <div class="card-search">
-                        <input type="text" placeholder="Şablon ara..." id="templateSearch">
-                        <button><i class="icon icon-search"></i></button>
-                    </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Mevcut Şablonlar' %}</div>
+                <div class="stats-right">
+
                 </div>
             </div>
+            
             <div class="card-body">
                 <div class="template-grid">
                 {% for i in rfi_sablonlari %}
@@ -199,9 +119,9 @@
                         <div class="template-card-header">
                             <div>
                                 <div class="template-card-title">{{i.rfi_baslik}}</div>
-                                <div class="template-card-category">Kategori: {{i.rfi_kategorisi}}</div>
+                                <div class="template-card-category">{% trans 'Kategori' %}: {{i.rfi_kategorisi}}</div>
                             </div>
-                            <div class="badge badge-primary">Aktif</div>
+                            <div class="badge badge-primary">{% trans 'Aktif' %}</div>
                         </div>
                         <div class="template-card-description">
                             {{i.rfi_aciklama}}
@@ -209,21 +129,19 @@
                         <div class="template-card-stats">
                             <div class="template-card-stat">
                                 <i class="icon icon-calendar"></i>
-                                <span>Oluşturulma: {{i.kayit_tarihi | date:"d.m.Y H:s"}}</span>
+                                <span>{% trans 'Oluşturulma' %}: {{i.kayit_tarihi | date:"d.m.Y H:s"}}</span>
                             </div>
                             <div class="template-card-stat">
-                                <i class="icon icon-document"></i>
-                                <span>Kullanım: 24 kez</span>
                             </div>
                         </div>
                         <div class="template-card-actions">
-                            <button class="btn-secondary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_duzenleme' i.id %}'">
-                                <i class="icon icon-edit"></i>
-                                Düzenle
+                            <button class="form-action-secondary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_duzenleme' i.id %}'">
+                                <i class="icon icon-action-edit"></i>
+                                {% trans 'Düzenle' %}
                             </button>
-                            <button class="btn-primary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'">
+                            <button class="form-action-secondary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'">
                                 <i class="icon icon-document"></i>
-                                Kullan
+                                {% trans 'Kullan' %}
                             </button>
                         </div>
                     </div>
