@@ -1,0 +1,873 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* RFI Form Özel Stilleri */
+        .rfi-form-container {
+            background-color: white;
+            padding: 20px;
+            margin: 20px auto;
+            box-shadow: 0 4px 14px 0 var(--card-box-shadow-color);
+            border-radius: 8px;
+            width: 210mm; /* A4 genişliği */
+            height: 297mm; /* A4 yüksekliği */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .rfi-header {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #052941;
+            padding-bottom: 15px;
+            flex-shrink: 0;
+        }
+        
+        .rfi-header img {
+            max-width: 150px;
+            height: auto;
+        }
+        
+        .rfi-title {
+            text-align: center;
+        }
+        
+        .rfi-title h1 {
+            font-size: 18px;
+            margin: 0;
+            color: #052941;
+            font-weight: 700;
+        }
+        
+        .rfi-title h2 {
+            font-size: 16px;
+            margin: 8px 0 0 0;
+            color: #052941;
+            font-weight: 600;
+        }
+        
+        .rfi-info {
+            text-align: right;
+        }
+        
+        .rfi-info div {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #052941;
+            font-size: 14px;
+        }
+        
+        .rfi-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        
+        .rfi-details label {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #052941;
+            font-size: 14px;
+        }
+        
+        .rfi-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+        .rfi-table-container {
+            flex-grow: 1;
+            overflow: auto;
+            margin-bottom: 15px;
+        }
+        
+        .rfi-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .rfi-table th, .rfi-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        .rfi-table th {
+            background-color: #052941;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .signature-cell {
+            height: 30px;
+            background-color: #f8f9fa;
+        }
+        
+        .rfi-notes {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            flex-shrink: 0;
+            min-height: 100px;
+            max-height: 120px;
+            overflow: hidden;
+        }
+        
+        .rfi-notes div {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #052941;
+            font-size: 14px;
+        }
+        
+        .rfi-notes-content {
+            min-height: 80px;
+            font-style: italic;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .rfi-signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+            flex-shrink: 0;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            height: 180px; /* Sabit yükseklik */
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .signature-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .signature-item {
+            position: relative;
+        }
+        
+        .signature-title {
+            font-weight: bold;
+            color: #052941;
+            margin-bottom: 2px;
+            font-size: 13px;
+        }
+        
+        .signature-role {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+        
+        .signature-line {
+            height: 1px;
+            background-color: #ddd;
+            margin: 25px 0 3px 0;
+        }
+        
+        .signature-date {
+            font-size: 11px;
+            color: #666;
+            text-align: right;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Yazdırma için Özel Stiller - Düzeltilmiş */
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            
+            body {
+                background-color: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            header, .sidebar, .page-header, .action-buttons, .card, #formEditor {
+                display: none !important;
+            }
+            
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                overflow: visible !important;
+            }
+            
+            #formPreview {
+                display: block !important;
+                visibility: visible !important;
+                width: 100% !important;
+                height: 100% !important;
+                overflow: visible !important;
+            }
+            
+            .rfi-form-container {
+                box-shadow: none !important;
+                padding: 15mm !important;
+                margin: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                border-radius: 0 !important;
+                overflow: visible !important;
+            }
+            
+            /* Tablo başlık rengini yazdırmada koru */
+            .rfi-table th {
+                background-color: #052941 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            /* Tablo yüksekliğini yazdırmada düzelt */
+            .rfi-table-container {
+                max-height: none !important;
+                overflow: visible !important;
+            }
+        }
+        
+        #formEditor {
+            display: block;
+        }
+        
+        #formPreview {
+            display: none;
+        }
+    </style>
+{% endblock head %}
+{% block header %}
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-main-part"></div>
+            <div class="sidebar-logo-second-part"></div>
+            <div class="sidebar-logo-large-parts">
+                <img src="images/half-o.png" alt="">
+                <img src="images/half-o.png" alt="">
+            </div>
+        </div>
+        <div class="sidebar-toggle">
+            <i class="icon icon-sidebar-left"></i>
+            <i class="icon icon-sidebar-right"></i>
+        </div>
+        <div class="sidebar-navs">
+            <ul class="sidebar-nav">
+                <!-- Sidebar menü öğeleri -->
+                <li>
+                    <a href="dashboard.html">
+                        <i class="icon icon-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="rfi-list.html">
+                        <i class="icon icon-clipboard"></i>
+                        <span>RFI Yönetimi</span>
+                    </a>
+                </li>
+                <!-- Diğer menü öğeleri -->
+            </ul>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-search">
+            <input type="text" placeholder="Ara...">
+            <button>
+                <i class="icon icon-search"></i>
+            </button>
+        </div>
+        <div class="header-actions">
+            <a href="#">
+                <i class="icon icon-fullscreen"></i>
+            </a>
+            <a href="#">
+                <i class="icon icon-notification"></i>
+            </a>
+            <a href="#" class="dark-mode-toggle">
+                <i class="icon icon-moon"></i>
+                <i class="icon icon-sun"></i>
+            </a>
+        </div>
+        <div class="header-language-wrapper">
+            <div class="header-language">
+                <img src="images/tr.png" alt="Türkçe" width="24">
+                <span>Türkçe</span>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+            <div class="header-language-dropdown">
+                <div class="language-selector">
+                    <label>
+                        <input type="radio" name="language" checked>
+                        <img src="images/tr.png" alt="Türkçe" width="24">
+                        Türkçe
+                    </label>
+                </div>
+                <div class="language-selector">
+                    <label>
+                        <input type="radio" name="language">
+                        <img src="images/en.png" alt="English" width="24">
+                        English
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="header-profile-wrapper">
+            <div class="header-profile">
+                <div class="profile-avatar">
+                    <img src="images/avatar.png" alt="Profil" width="40" height="40">
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">Ahmet Yılmaz</div>
+                    <div class="profile-role">Proje Müdürü</div>
+                </div>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+            <div class="header-profile-dropdown">
+                <div class="profile-dropdown-header">
+                    <div class="profile-dropdown-avatar">
+                        <img src="images/avatar.png" alt="Profil" width="60" height="60">
+                    </div>
+                    <div class="profile-dropdown-info">
+                        <div class="profile-dropdown-name">Ahmet Yılmaz</div>
+                        <div class="profile-dropdown-role">Proje Müdürü</div>
+                    </div>
+                </div>
+                <div class="profile-dropdown-actions">
+                    <a href="#">
+                        <i class="icon icon-user"></i>
+                        Profil
+                    </a>
+                    <a href="#">
+                        <i class="icon icon-settings"></i>
+                        Ayarlar
+                    </a>
+                    <a href="#">
+                        <i class="icon icon-logout"></i>
+                        Çıkış
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+{% endblock header %}
+{% block sidebar %}
+
+
+    <main>
+    <form  method="post">
+                    {% csrf_token %}
+        <div id="formEditor">
+            <div class="page-header">
+                <div class="page-info">
+                    <div class="page-title">Yeni RFI Oluştur</div>
+                    <ul class="page-breadcrumb">
+                        <li><a href="dashboard.html">Ana Sayfa</a></li>
+                        <li><a href="rfi-list.html">RFI Yönetimi</a></li>
+                        <li><a href="#">Yeni RFI Oluştur</a></li>
+                    </ul>
+                </div>
+                <div class="page-actions">
+                    <button type="button" class="page-secondary-btn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'">
+                        <i class="icon icon-close"></i>
+                        İptal
+                    </button>
+                    <button type="submit" class="page-secondary-btn" >
+                        <i class="icon icon-tick"></i>
+                        Kaydet
+                    </button>
+                    <button type="button" class="page-primary-btn" id="previewBtn">
+                        <i class="icon icon-eye"></i>
+                        Önizle
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">RFI Bilgileri</div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label>Proje</label>
+                            <select name="santiye_bigisi" id="projectSelect">
+                            {% for i in santiyeler %}
+                            <option value="{{i.id}}">{{i.proje_adi}}</option>
+                            {% endfor %}
+                                
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label>RFI Başlığı</label>
+                            <input type="text" name="rfi_adi" id="rfiTitle" placeholder="Örn: Sıva İşleri Kontrol Formu" value="SIVA İŞLERİ KONTROL FORMU">
+                        </div>
+                        <div class="form-element">
+                            <label>RFI Kategorisi</label>
+                            <input type="text" name="rfi_kategorisi" id="rfiTitle" placeholder="Örn: Mekanik" value="Mekanik">
+                        </div>
+                         
+                    </div>
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label>Kontrol Kalemi Sayısı</label>
+                            <div class="form-row">
+                                <div class="form-element" style="width: 70%;">
+                                    <select id="controlItemCount">
+                                        <option value="0">Sadece Ana İmalat</option>
+                                        <option value="1">1 Kalem</option>
+                                        <option value="2">2 Kalem</option>
+                                        <option value="3">3 Kalem</option>
+                                        <option value="4">4 Kalem</option>
+                                        <option value="5">5 Kalem</option>
+                                        <option value="6">6 Kalem</option>
+                                        <option value="7">7 Kalem</option>
+                                        <option value="custom">Özel Sayı...</option>
+                                    </select>
+                                </div>
+                                <div class="form-element" id="customCountContainer" style="width: 30%; display: none;">
+                                    <input type="number" id="customItemCount" min="1" max="50" placeholder="Kalem sayısı">
+                                </div>
+                             
+                            </div>
+                               <div class="form-element">
+                            <label>RFI Açıklması</label>
+                            <input type="text" name="rfi_aciklama" id="rfiTitle" placeholder="RFI Açıklaması" >
+                        </div>
+                        </div>
+                    </div>
+                    
+                    <div id="mainWorkItem" style="display: none;">
+                        <div class="form-element">
+                            <label>Ana İmalat Adı</label>
+                            <input type="text" name="ana_imalat_adi" id="mainWorkItemName" placeholder="Ana imalat adını girin" value="Sıva İşleri">
+                            <p class="form-help">Formda tek bir imalat kalemi olarak gösterilecektir.</p>
+                        </div>
+                    </div>
+ 
+                    <div id="controlItems">
+                        <div class="form-element">
+                            <label>Kontrol Kalemleri</label>
+                            <p class="form-help">Bu kalemler formda listelenecek ve sahada kontrol edilecektir.</p>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-element">
+                                <input type="text" name="kontrol" placeholder="Kontrol Kalemi 1" value="Duvar yüzeyi temizliği">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-element">
+                                <input type="text" placeholder="Kontrol Kalemi 2" value="Kaba sıva uygulaması">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-element">
+                                <input type="text" placeholder="Kontrol Kalemi 3" value="İnce sıva uygulaması">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-element">
+                                <input type="text" placeholder="Kontrol Kalemi 4" value="Köşe ve kenar detayları">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-element">
+                                <input type="text" placeholder="Kontrol Kalemi 5" value="Son kontrol ve onay">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+    </form>
+        <div id="formPreview">
+            <div class="page-header">
+                <div class="page-info">
+                    <div class="page-title">
+                        <a href="#" id="backToEditor">
+                            <i class="icon icon-chevron-left"></i>
+                        </a>
+                        RFI Önizleme
+                    </div>
+                    <ul class="page-breadcrumb">
+                        <li><a href="dashboard.html">Ana Sayfa</a></li>
+                        <li><a href="rfi-list.html">RFI Yönetimi</a></li>
+                        <li><a href="rfi-create.html">Yeni RFI Oluştur</a></li>
+                        <li><a href="#">Önizleme</a></li>
+                    </ul>
+                </div>
+                <div class="page-actions">
+                    <button class="page-secondary-btn" id="editBtn">
+                        <i class="icon icon-edit"></i>
+                        Düzenle
+                    </button>
+                    <button class="page-primary-btn" id="printBtn">
+                        <i class="icon icon-print"></i>
+                        Yazdır
+                    </button>
+                </div>
+            </div>
+            
+            <div class="rfi-form-container" id="printContent">
+                <div class="rfi-header">
+                    <div>
+                        <img src="biada-logo-light.png" alt="BiadaGo Logo">
+                    </div>
+                    <div class="rfi-title">
+                        <h1 id="previewProjectName">ABASLY TOWERS REQUEST FOR INSPECTION</h1>
+                        <h2 id="previewRfiTitle">SIVA İŞLERİ KONTROL FORMU</h2>
+                    </div>
+                    <div class="rfi-info">
+                        <div>NO: #BRFI0001</div>
+                        <div id="currentDate"></div>
+                    </div>
+                </div>
+
+                <div class="rfi-details">
+                    <div>
+                        <label>BLOK:</label>
+                        <span>_________________</span>
+                    </div>
+                    <div>
+                        <label>MAHAL:</label>
+                        <span>_________________</span>
+                    </div>
+                    <div>
+                        <label>SONRAKİ İMALAT:</label>
+                        <span>_________________</span>
+                    </div>
+                </div>
+
+                <div class="rfi-content">
+                    <div class="rfi-table-container">
+                        <table class="rfi-table" id="previewTable">
+                            <thead>
+                                <tr>
+                                    <th>İMALAT</th>
+                                    <th>ONAY İMZASI</th>
+                                    <th>KONTROL TARİHİ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JavaScript ile doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="rfi-notes">
+                        <div>NOTLAR:</div>
+                        <div class="rfi-notes-content">
+                            İmalat ile ilgili özel durumlar ve açıklamalar burada belirtilecektir.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rfi-signatures">
+                    <div class="signature-column">
+                        <div class="signature-item">
+                            <div class="signature-title">ALT YÜKLENİCİ MÜHENDİSİ</div>
+                            <div class="signature-role">İmalat Sorumlusu</div>
+                            <div class="signature-date">Tarih: ___/___/______</div>
+                            <div class="signature-line"></div>
+                        </div>
+                        <div class="signature-item">
+                            <div class="signature-title">ALT YÜKLENİCİ MÜDÜRÜ</div>
+                            <div class="signature-role">Firma Yetkilisi</div>
+                            <div class="signature-date">Tarih: ___/___/______</div>
+                        </div>
+                    </div>
+                    <div class="signature-column">
+                        <div class="signature-item">
+                            <div class="signature-title">ANA FİRMA MÜHENDİSİ</div>
+                            <div class="signature-role">Kontrol Sorumlusu</div>
+                            <div class="signature-date">Tarih: ___/___/______</div>
+                            <div class="signature-line"></div>
+                        </div>
+                        <div class="signature-item">
+                            <div class="signature-title">ANA FİRMA MÜDÜRÜ</div>
+                            <div class="signature-role">Proje Yöneticisi</div>
+                            <div class="signature-date">Tarih: ___/___/______</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar toggle işlevi
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+        });
+
+        // Dark mode toggle işlevi
+        document.querySelector('.dark-mode-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        // Kontrol kalemleri sayısı değiştiğinde
+        document.getElementById('controlItemCount').addEventListener('change', function() {
+            const count = this.value;
+            const controlItems = document.getElementById('controlItems');
+            const mainWorkItem = document.getElementById('mainWorkItem');
+            const customCountContainer = document.getElementById('customCountContainer');
+            
+            // Özel sayı seçeneği için input göster/gizle
+            if (count === 'custom') {
+                customCountContainer.style.display = 'block';
+                return; // Diğer işlemleri yapma
+            } else {
+                customCountContainer.style.display = 'none';
+            }
+            
+            // Ana imalat veya kontrol kalemleri gösterme
+            if (count === '0') {
+                controlItems.style.display = 'none';
+                mainWorkItem.style.display = 'block';
+            } else {
+                controlItems.style.display = 'block';
+                mainWorkItem.style.display = 'none';
+                
+                // Mevcut kalemleri temizle
+                controlItems.innerHTML = '';
+                
+                // Başlık ekle
+                controlItems.innerHTML = `
+                    <div class="form-element">
+                        <label>Kontrol Kalemleri</label>
+                        <p class="form-help">Bu kalemler formda listelenecek ve sahada kontrol edilecektir.</p>
+                    </div>
+                `;
+                
+                // Kontrol kalemleri ekle
+                const itemCount = parseInt(count);
+                for (let i = 1; i <= itemCount; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'form-row';
+                    row.innerHTML = `
+                        <div class="form-element">
+                            <input type="text" name="kontrol" placeholder="Kontrol Kalemi ${i}">
+                        </div>
+                    `;
+                    controlItems.appendChild(row);
+                }
+            }
+        });
+        
+        // Özel sayı girişi değiştiğinde
+        document.getElementById('customItemCount').addEventListener('change', function() {
+            const count = parseInt(this.value);
+            const controlItems = document.getElementById('controlItems');
+            const mainWorkItem = document.getElementById('mainWorkItem');
+            
+            if (isNaN(count) || count < 1) {
+                return; // Geçersiz değer
+            }
+            
+            // Kontrol kalemleri göster
+            controlItems.style.display = 'block';
+            mainWorkItem.style.display = 'none';
+            
+            // Mevcut kalemleri temizle
+            controlItems.innerHTML = '';
+            
+            // Başlık ekle
+            controlItems.innerHTML = `
+                <div class="form-element">
+                    <label>Kontrol Kalemleri</label>
+                    <p class="form-help">Bu kalemler formda listelenecek ve sahada kontrol edilecektir.</p>
+                </div>
+            `;
+            
+            // Kontrol kalemleri ekle
+            for (let i = 1; i <= count; i++) {
+                const row = document.createElement('div');
+                row.className = 'form-row';
+                row.innerHTML = `
+                    <div class="form-element">
+                        <input type="text" placeholder="Kontrol Kalemi ${i}">
+                    </div>
+                `;
+                controlItems.appendChild(row);
+            }
+        });
+
+        // Önizleme butonu - Tablo yüksekliğini dinamik ayarlama eklendi
+        document.getElementById('previewBtn').addEventListener('click', function() {
+            // Bugünün tarihini al
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('tr-TR');
+            document.getElementById('currentDate').textContent = dateStr;
+            
+            // Proje ve başlık bilgilerini al
+            const projectName = document.getElementById('projectSelect').value;
+            const rfiTitle = document.getElementById('rfiTitle').value;
+            
+            // Önizleme alanına bilgileri yerleştir
+            document.getElementById('previewProjectName').textContent = projectName;
+            document.getElementById('previewRfiTitle').textContent = rfiTitle;
+            
+            // Tablo gövdesini temizle
+            const tableBody = document.querySelector('#previewTable tbody');
+            tableBody.innerHTML = '';
+            
+            // Kontrol kalemi sayısını al
+            let count = document.getElementById('controlItemCount').value;
+            
+            // Özel sayı kontrolü
+            if (count === 'custom') {
+                count = document.getElementById('customItemCount').value;
+                if (isNaN(parseInt(count)) || parseInt(count) < 1) {
+                    alert('Lütfen geçerli bir kalem sayısı girin.');
+                    return;
+                }
+            }
+            
+            count = parseInt(count);
+            
+            if (count === 0) {
+                // Ana imalat adını al
+                const mainWorkItemName = document.getElementById('mainWorkItemName').value;
+                
+                // Tek satır ekle
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${mainWorkItemName}</td>
+                    <td class="signature-cell"></td>
+                    <td></td>
+                `;
+                tableBody.appendChild(row);
+            } else {
+                // Kontrol kalemlerini al
+                const inputs = document.querySelectorAll('#controlItems input[type="text"]');
+                
+                // Tabloyu doldur
+                inputs.forEach(input => {
+                    if (input.value.trim() !== '') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${input.value}</td>
+                            <td class="signature-cell"></td>
+                            <td></td>
+                        `;
+                        tableBody.appendChild(row);
+                    }
+                });
+            }
+            
+            // Düzenleme alanını gizle, önizleme alanını göster
+            document.getElementById('formEditor').style.display = 'none';
+            document.getElementById('formPreview').style.display = 'block';
+            
+            // Tablo yüksekliğini dinamik olarak ayarla
+            setTimeout(function() {
+                adjustTableHeight();
+            }, 100);
+        });
+        
+        // Tablo yüksekliğini dinamik olarak ayarlama
+        function adjustTableHeight() {
+            const container = document.querySelector('.rfi-form-container');
+            const header = document.querySelector('.rfi-header');
+            const details = document.querySelector('.rfi-details');
+            const notes = document.querySelector('.rfi-notes');
+            const signatures = document.querySelector('.rfi-signatures');
+            
+            const availableHeight = container.offsetHeight - 
+                                   header.offsetHeight - 
+                                   details.offsetHeight - 
+                                   notes.offsetHeight - 
+                                   signatures.offsetHeight - 
+                                   60; // Ekstra boşluklar için
+            
+            document.querySelector('.rfi-table-container').style.maxHeight = availableHeight + 'px';
+        }
+        
+        // Düzenleme butonları
+        document.getElementById('backToEditor').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('formEditor').style.display = 'block';
+            document.getElementById('formPreview').style.display = 'none';
+        });
+        
+        document.getElementById('editBtn').addEventListener('click', function() {
+            document.getElementById('formEditor').style.display = 'block';
+            document.getElementById('formPreview').style.display = 'none';
+        });
+        
+        // Yazdırma butonu - Düzeltilmiş
+        document.getElementById('printBtn').addEventListener('click', function() {
+            // Önizleme görünür değilse, önce önizlemeyi göster
+            if (document.getElementById('formPreview').style.display === 'none') {
+                document.getElementById('previewBtn').click();
+                
+                // Önizleme yüklendikten sonra yazdır
+                setTimeout(function() {
+                    window.print();
+                }, 500);
+            } else {
+                window.print();
+            }
+        });
+        
+        // Sayfa yüklendiğinde kontrol kalemi sayısı kontrolü
+        window.addEventListener('load', function() {
+            const count = parseInt(document.getElementById('controlItemCount').value);
+            if (count === 0) {
+                document.getElementById('controlItems').style.display = 'none';
+                document.getElementById('mainWorkItem').style.display = 'block';
+            }
+        });
+
+        function updateMaxWidth() {
+            const element = document.querySelector('.rfi-form-container');
+            if (element) {
+                const maxWidth = element.clientWidth;
+                console.log('Max width:', maxWidth);
+                // ...existing logic...
+            } else {
+                console.warn('Element not found for updateMaxWidth. Retrying...');
+                setTimeout(updateMaxWidth, 100); // Retry after 100ms
+            }
+        }
+
+        // Ensure updateMaxWidth is called only after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            updateMaxWidth();
+        });
+    </script>
+{% endblock sidebar %}

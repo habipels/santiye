@@ -535,3 +535,39 @@ class daire_evraklari(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+
+class rfi_sablonlar(models.Model):
+    rfi_kime_ait = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
+    rfi_santiye = models.ForeignKey(santiye, verbose_name="Santiye", blank=True, null=True, on_delete=models.SET_NULL)
+    rfi_baslik = models.CharField(max_length=200, verbose_name="RFI Başlık", blank=True, null=True)
+    rfi_kategorisi= models.CharField(max_length=200, verbose_name="RFI Başlık", blank=True, null=True)
+    rfi_aciklama= models.TextField(verbose_name="RFI Açıklama", blank=True, null=True)
+    olusturan = models.ForeignKey(CustomUser, verbose_name="Oluşturan", blank=True, null=True, on_delete=models.SET_NULL,related_name="olusturan")
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+class rfi_sablon_kalemleri(models.Model):
+    sablon_bilgisi = models.ForeignKey(rfi_sablonlar, verbose_name="RFI Sablonu", blank=True, null=True, on_delete=models.SET_NULL)
+    kalem_baslik = models.CharField(max_length=200, verbose_name="Kalem Başlık", blank=True, null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+class rfi_kontrol(models.Model):
+    sablon_bilgisi = models.ForeignKey(rfi_sablonlar, verbose_name="RFI Sablonu", blank=True, null=True, on_delete=models.SET_NULL)
+    blok = models.ForeignKey(bloglar, verbose_name="Proje bloglari", blank=True, null=True, on_delete=models.SET_NULL)
+    kat_bilgisi = models.BigIntegerField(default=0,verbose_name="Kat Bİlgisi")
+    daire_no = models.BigIntegerField(default=0,verbose_name="Kat Bİlgisi")
+    mahal = models.CharField(verbose_name="Mahal",max_length=400)
+    file = models.FileField(upload_to='rfi_dosyalari/',verbose_name="Dosya Adı",blank=True,null=True)
+    notlar = models.TextField(verbose_name="Notlar",blank=True,null=True)
+    kontrol_ekleyen = models.ForeignKey(CustomUser, verbose_name="Onaylayan", blank=True, null=True, on_delete=models.SET_NULL,related_name="kontrol_ekleyen")
+    onaylayan_bilgisi = models.ForeignKey(CustomUser, verbose_name="Onaylayan", blank=True, null=True, on_delete=models.SET_NULL,related_name="onaylayan_bilgisi")
+    onaylayan_tarih = models.DateTimeField(default=datetime.now, null=True)
+    onaylama_bilgisi = models.BooleanField(default=False)
+    red_sebebi = models.CharField(max_length=400,verbose_name="Red Sebebi",blank=True,null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)

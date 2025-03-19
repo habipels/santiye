@@ -10467,3 +10467,167 @@ def santiye_kontrol_detayi_ust_yoneticii(request,id):
     print(content)
     return render(request,"checklist/santiye_kontrol_de_onaylama_goster.html",content)
 
+def rfi_Olustur(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+
+    content["santiyeler"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+    if request.POST:
+        santiye_bigisi = request.POST.get("santiye_bigisi")
+        rfi_adi = request.POST.get("rfi_adi")
+        rfi_kategorisi = request.POST.get("rfi_kategorisi")
+        rfi_aciklama = request.POST.get("rfi_aciklama")
+        ana_imalat_adi = request.POST.get("ana_imalat_adi")
+        kontrol = request.POST.getlist("kontrol")
+        sablon_bilgileri = rfi_sablonlar.objects.create(kayit_tarihi = get_kayit_tarihi_from_request(request),rfi_kime_ait = kullanici,
+        rfi_santiye = get_object_or_none(santiye,id = santiye_bigisi,proje_ait_bilgisi = kullanici),rfi_baslik = rfi_adi,rfi_kategorisi = rfi_kategorisi,rfi_aciklama = rfi_aciklama,olusturan = request.user)
+        if len(kontrol) > 0:
+            for i in kontrol:
+                rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi = get_kayit_tarihi_from_request(request),sablon_bilgisi = get_object_or_none(rfi_sablonlar,id = sablon_bilgileri.id),
+                kalem_baslik = i)
+        else:
+            for i in kontrol:
+                rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi = get_kayit_tarihi_from_request(request),sablon_bilgisi = get_object_or_none(rfi_sablonlar,id = sablon_bilgileri.id),
+                kalem_baslik = ana_imalat_adi)
+        return redirect_with_language("main:rfi_listesi")
+    return render(request,"checklist/rfi_olustur.html",content)
+def rfi_listesi(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+    if request.POST:
+        rfi_sablonu = request.POST.get("rfi_sablonu")
+        yapi_gonder = request.POST.get("yapi_gonder")
+        kat = request.POST.get("kat")
+        apartmentNo = request.POST.get("apartmentNo")
+        location = request.POST.get("location")
+        file = request.FILES.get("file")
+        notlar = request.POST.get("notlar")
+        rfi_kontrol.objects.create(
+            kayit_tarihi = get_kayit_tarihi_from_request(request),
+            sablon_bilgisi = get_object_or_none(rfi_sablonlar,id = rfi_sablonu),
+            blok = get_object_or_none(bloglar,id = yapi_gonder),
+            kat_bilgisi = kat,
+            daire_no = apartmentNo,
+            mahal = location,
+            file = file,
+            notlar = notlar,
+            kontrol_ekleyen = request.user
+        )
+        return redirect_with_language("main:rfi_listesi")
+    content["rfi_sablonlari"] = rfi_sablonlar.objects.filter(rfi_kime_ait = kullanici)
+    content["rfi_listesi_onay_bekleyen"] = rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi")
+    content["rfi_listesi_onay_bekleyen_sayisi"] = rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi").count()
+    content["rfi_listesi_red_yiyenler"] = rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False).exclude(onaylayan_bilgisi = None).order_by("kayit_tarihi")
+    content["rfi_listesi_onay_alanlar"] = rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = True).exclude(onaylayan_bilgisi = None).order_by("kayit_tarihi")
+    #content["rfi_kategorileri"] = rfi_sablonlar.objects.filter(rfi_kime_ait = kullanici).values("rfi_kategorisi").distinct() 
+    return render(request,"checklist/rfi_listesi.html",content)
+
+
+def rfi_template(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+    content["rfi_sablonlari"] = rfi_sablonlar.objects.filter(rfi_kime_ait = kullanici)
+    content["rfi_kategorileri"] = rfi_sablonlar.objects.filter(rfi_kime_ait = kullanici).values("rfi_kategorisi").distinct() 
+    return render(request,"checklist/rfi_template.html",content)
+
+
+def rfi_detail(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+        content["onayli"] = get_object_or_none(rfi_kontrol,sablon_bilgisi__rfi_kime_ait = kullanici,id = id)
+        
+        #rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi")
+    return render(request,"checklist/rfi_detail.html",content)
+
+def rfi_duzenleme(request, id):
+    content = sozluk_yapisi()
+
+    # Check if the user has super admin privileges
+    if not super_admin_kontrolu(request):
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+            if not a or not a.izinler.santiye_kontrol:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+
+    # Fetch the RFI template and its related controls
+    rfi_sablon = get_object_or_none(rfi_sablonlar, id=id)
+    if not rfi_sablon:
+        return redirect_with_language("main:yetkisiz")  # Redirect if the RFI template does not exist
+
+    content["rfi_sablonlari"] = rfi_sablon
+    content["rfi_kontrolleri"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi=rfi_sablon)
+    if request.POST:
+        # Update the RFI template
+        rfi_adi = request.POST.get("rfi_baslik")
+        rfi_kategorisi = request.POST.get("rfi_kategorisi")
+        rfi_aciklama = request.POST.get("rfi_aciklama")
+        ana_imalat_adi = request.POST.get("ana_imalat_adi")
+        kontrol = request.POST.getlist("kontroll")
+        rfi_sablonlar.objects.filter(id=id).update(rfi_baslik=rfi_adi, rfi_kategorisi=rfi_kategorisi, rfi_aciklama=rfi_aciklama)
+        rfi_sablon_kalemleri.objects.filter(sablon_bilgisi=rfi_sablon).delete()
+        
+        if len(kontrol) > 0:
+            for i in kontrol:
+                rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                                                    sablon_bilgisi=get_object_or_none(rfi_sablonlar, id=id),kalem_baslik = i)
+        else:
+            for i in kontrol:
+                rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                                                    sablon_bilgisi=get_object_or_none(rfi_sablonlar, id=id))
+        print(request.POST)
+        return redirect_with_language("main:rfi_template")
+    return render(request, "checklist/rfi_duzenleme.html", content)

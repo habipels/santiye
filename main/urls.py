@@ -261,6 +261,14 @@ path("check/", views.daire_imalat_checklist, name="daire_imalat_checklist"),
 path("myhouse/<int:id>", views.daireleri_gor, name="daireleri_gor"),
 path("level/<int:id>", views.katlara_gore_gor, name="katlara_gore_gor"),
 path("levelhouse/<int:id>/<int:kat>/", views.kat_daire_bilgisi, name="kat_daire_bilgisi"),
+
+
+#rfi
+path("rfi_create/", views.rfi_Olustur, name="rfi_Olustur"),
+path("rfi_list/", views.rfi_listesi, name="rfi_listesi"),
+path("rfi_template/", views.rfi_template, name="rfi_template"),
+path("rfi_detail/<int:id>", views.rfi_detail, name="rfi_detail"),
+path("rfi_duzenleme/<int:id>", views.rfi_duzenleme, name="rfi_duzenleme"),
 ]
 
 #

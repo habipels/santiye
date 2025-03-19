@@ -2227,3 +2227,47 @@ def onay_durumu(id):
 def imalat_icerik_detaylari(id):
     a = imalat_kalemleri_imalat_detaylari.objects.filter(icerik__id = id)
     return a
+
+
+
+from datetime import datetime, timedelta
+
+
+
+@register.filter
+def calculate_waiting_time(record_time):
+    try:
+        # Ensure record_time is an integer
+        record_time = int(record_time)
+        now = datetime.now()
+        record_time = datetime.fromtimestamp(record_time)
+        delta = now - record_time
+
+        days = delta.days
+        hours = delta.seconds // 3600
+
+        if days > 0:
+            return f"{days} gün {hours} saat"
+        return f"{hours} saat"
+    except (ValueError, TypeError):
+        return "Geçersiz tarih"
+
+
+@register.simple_tag
+def calculate_waiting_time_onay_suresi(record_time,record_time2):
+    try:
+        # Ensure record_time is an integer
+        record_time = int(record_time)
+        now = int(record_time2)
+        record_time = datetime.fromtimestamp(record_time)
+        now = datetime.fromtimestamp(now)
+        delta = now - record_time
+
+        days = delta.days
+        hours = delta.seconds // 3600
+
+        if days > 0:
+            return f"{days} gün {hours} saat"
+        return f"{hours} saat"
+    except (ValueError, TypeError):
+        return "Geçersiz tarih"

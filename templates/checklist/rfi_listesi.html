@@ -1,0 +1,857 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+    <style>
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background-color: #FFF4DE;
+            color: #FFB100;
+        }
+        
+        .status-approved {
+            background-color: #E7F6E7;
+            color: #1F9254;
+        }
+        
+        .status-rejected {
+            background-color: #FFE5E5;
+            color: #FF4747;
+        }
+        
+        .status-delayed {
+            background-color: #FFE5E5;
+            color: #FF4747;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Modal Stilleri - Düzeltilmiş */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto; /* Dikey kaydırma ekle */
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto; /* Üstten boşluğu azalttım */
+            padding: 20px;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh; /* Maksimum yükseklik */
+            overflow-y: auto; /* İçerik fazlaysa kaydırma çubuğu ekle */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            position: sticky; /* Başlık sabit kalsın */
+            top: 0;
+            background-color: white;
+            z-index: 1;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #052941;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: #666;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            position: sticky; /* Alt kısım sabit kalsın */
+            bottom: 0;
+            background-color: white;
+            z-index: 1;
+        }
+        
+        .file-upload-container {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-container:hover {
+            border-color: #052941;
+        }
+        
+        .file-upload-icon {
+            font-size: 40px;
+            color: #052941;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload-text {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload-input {
+            display: none;
+        }
+        
+        .file-preview {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .file-preview-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .file-preview-size {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+{% endblock head %}
+
+{% block sidebar %}
+   <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-main-part"></div>
+            <div class="sidebar-logo-second-part"></div>
+            <div class="sidebar-logo-large-parts">
+                <img src="images/half-o.png" alt="">
+                <img src="images/half-o.png" alt="">
+            </div>
+        </div>
+        <div class="sidebar-toggle">
+            <i class="icon icon-sidebar-left"></i>
+            <i class="icon icon-sidebar-right"></i>
+        </div>
+        <div class="sidebar-navs">
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="icon icon-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="rfi-list.html">
+                        <i class="icon icon-clipboard"></i>
+                        <span>RFI Yönetimi</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="rfi-templates.html">
+                        <i class="icon icon-template"></i>
+                        <span>RFI Şablonları</span>
+                    </a>
+                </li>
+                <!-- Diğer menü öğeleri -->
+            </ul>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-search">
+            <input type="text" placeholder="Ara...">
+            <button>
+                <i class="icon icon-search"></i>
+            </button>
+        </div>
+        <div class="header-actions">
+            <a href="#">
+                <i class="icon icon-fullscreen"></i>
+            </a>
+            <a href="#">
+                <i class="icon icon-notification"></i>
+            </a>
+            <a href="#" class="dark-mode-toggle">
+                <i class="icon icon-moon"></i>
+                <i class="icon icon-sun"></i>
+            </a>
+        </div>
+        <div class="header-language-wrapper">
+            <div class="header-language">
+                <img src="images/tr.png" alt="Türkçe" width="24">
+                <span>Türkçe</span>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+        </div>
+        <div class="header-profile">
+            <div class="header-profile-image">
+                <img src="images/profile.jpg" alt="Profil">
+            </div>
+            <div class="header-profile-info">
+                <div class="header-profile-name">Ahmet Yılmaz</div>
+                <div class="header-profile-role">Proje Müdürü</div>
+            </div>
+            <i class="icon icon-chevron-bottom"></i>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-header">
+            <div class="page-header-content">
+                <div class="page-header-title">RFI Yönetimi</div>
+                <ul class="page-breadcrumb">
+                    <li><a href="dashboard.html">Ana Sayfa</a></li>
+                    <li><a href="rfi-list.html">RFI Yönetimi</a></li>
+                </ul>
+            </div>
+            <div class="page-actions">
+                <button class="page-secondary-btn" id="createRfiBtn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_template' %}'">
+                    <i class="icon icon-template"></i>
+                    Şablonlar
+                </button>
+                <button class="page-primary-btn" id="uploadRfiBtn">
+                    <i class="icon icon-upload"></i>
+                    RFI Yükle
+                </button>
+            </div>
+        </div>
+
+        <div class="tab-navs">
+            <button class="tab-navs-btn active" data-tab="pending">Onay Bekleyenler <span class="badge badge-warning">{{rfi_listesi_onay_bekleyen_sayisi}}</span></button>
+            <button class="tab-navs-btn" data-tab="approved">Onaylananlar</button>
+            <button class="tab-navs-btn" data-tab="rejected">Reddedilenler</button>
+            <button class="tab-navs-btn" data-tab="archive">Arşiv</button>
+        </div>
+
+        <!-- Onay Bekleyenler Sekmesi -->
+        <div class="tab-content active" id="pending">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Onay Bekleyen RFI'lar</div>
+                    <div class="card-actions">
+                        <button class="card-action-btn">
+                            <i class="icon icon-filter"></i>
+                            Filtrele
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="pendingTable" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>RFI No</th>
+                                <th>Başlık</th>
+                                <th>Blok</th>
+                                <th>Kat</th>
+                                <th>Mahal</th>
+                                <th>Yükleme Tarihi</th>
+                                <th>Bekleme Süresi</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in rfi_listesi_onay_bekleyen  %}
+                        <tr>
+                                <td>#BRFI000{{i.id}}</td>
+                                <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
+                                <td>{{i.blok.blog_adi}}</td>
+                                <td>{{i.kat_bilgisi}}</td>
+                                <td>Daire {{i.daire_no}}</td>
+                                <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
+                                <td>{{ i.kayit_tarihi|date:"U"|calculate_waiting_time }}</td>
+                                <td><span class="status-badge status-pending">Beklemede</span></td>
+                                <td>
+                                    <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                        <i class="icon icon-eye"></i>
+                                    </button>
+                                    <button class="btn-icon btn-approve">
+                                        <i class="icon icon-check"></i>
+                                    </button>
+                                    <button class="btn-icon btn-reject">
+                                        <i class="icon icon-close"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                            
+                          
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onaylananlar Sekmesi -->
+        <div class="tab-content" id="approved">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Onaylanan RFI'lar</div>
+                    <div class="card-actions">
+                        <button class="card-action-btn">
+                            <i class="icon icon-filter"></i>
+                            Filtrele
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="approvedTable" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>RFI No</th>
+                                <th>Başlık</th>
+                                <th>Blok</th>
+                                <th>Kat</th>
+                                <th>Mahal</th>
+                                <th>Yükleme Tarihi</th>
+                                <th>Onay Tarihi</th>
+                                <th>Onay Süresi</th>
+                                <th>Onaylayan</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             {% for i in rfi_listesi_onay_alanlar  %}
+                        <tr>
+                                <td>#BRFI000{{i.id}}</td>
+                                <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
+                                <td>{{i.blok.blog_adi}}</td>
+                                <td>{{i.kat_bilgisi}}</td>
+                                <td>Daire {{i.daire_no}}</td>
+                                <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
+                                <td>{{ i.onaylayan_tarih|date:"d.m.Y H.s"}}</td>
+                                <td>{% calculate_waiting_time_onay_suresi i.kayit_tarihi|date:"U" i.onaylayan_tarih|date:"U" %}</td>
+                                <td>{{i.onaylayan_bilgisi.last_name}}</td>
+                               <td>
+                                    <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                        <i class="icon icon-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                         
+                   
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reddedilenler Sekmesi -->
+        <div class="tab-content" id="rejected">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Reddedilen RFI'lar</div>
+                    <div class="card-actions">
+                        <button class="card-action-btn">
+                            <i class="icon icon-filter"></i>
+                            Filtrele
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="rejectedTable" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>RFI No</th>
+                                <th>Başlık</th>
+                                <th>Blok</th>
+                                <th>Kat</th>
+                                <th>Mahal</th>
+                                <th>Yükleme Tarihi</th>
+                                <th>Red Tarihi</th>
+                                <th>Reddeden</th>
+                                <th>Red Nedeni</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                         {% for i in rfi_listesi_red_yiyenler  %}
+                        <tr>
+                                <td>#BRFI000{{i.id}}</td>
+                                <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
+                                <td>{{i.blok.blog_adi}}</td>
+                                <td>{{i.kat_bilgisi}}</td>
+                                <td>Daire {{i.daire_no}}</td>
+                                <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
+                                <td>{{ i.onaylayan_tarih|date:"d.m.Y H.s"}}</td>
+                                <td>{{i.onaylayan_bilgisi.last_name}}</td>
+                                <td>{% if i.red_sebebi %}
+                                    {{i.red_sebebi}}
+                                {% else %}
+                                {% endif %}</td>
+                               <td>
+                                    <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                        <i class="icon icon-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arşiv Sekmesi -->
+        <div class="tab-content" id="archive">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Arşivlenen RFI'lar</div>
+                    <div class="card-actions">
+                        <button class="card-action-btn">
+                            <i class="icon icon-filter"></i>
+                            Filtrele
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="archiveTable" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>RFI No</th>
+                                <th>Başlık</th>
+                                <th>Blok</th>
+                                <th>Kat</th>
+                                <th>Mahal</th>
+                                <th>Tarih</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% for i in rfi_listesi_onay_alanlar  %}
+                        <tr>
+                                <td>#BRFI000{{i.id}}</td>
+                                <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
+                                <td>{{i.blok.blog_adi}}</td>
+                                <td>{{i.kat_bilgisi}}</td>
+                                <td>Daire {{i.daire_no}}</td>
+                                <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
+                                <td><span class="status-badge status-approved">Onaylandı</span></td>
+                               <td>
+                                    <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                        <i class="icon icon-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                       
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- RFI Yükleme Modal - Düzeltilmiş -->
+    <div id="uploadRfiModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">RFI Yükle</div>
+                <span class="modal-close">&times;</span>
+            </div>
+            <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-element">
+                    <label>RFI Şablonu</label>
+                    <select name="rfi_sablonu" id="katmanSelect"  data-trigger>
+                        <option value="">Şablon Seçin</option>
+                        {% for i in rfi_sablonlari %}
+                        <option data-id="{{i.rfi_santiye.id}}" value="{{i.id}}">{{i.rfi_baslik}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-element">
+                     
+                         <label for="yapi_gonder">{% trans 'Yapı' %}</label>
+                                 <select name="yapi_gonder" id="yapiSelect"  data-trigger >
+                                
+                            </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="kat">{% trans 'kat' %}</label>
+                                 <select name="kat" id="odaSelect"  data-trigger >
+                               
+                            </select>  
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-element">
+                        <label>Daire No</label>
+                        <input type="text" name="apartmentNo" id="apartmentNo" placeholder="Örn: 5">
+                    </div>
+                    <div class="form-element">
+                        <label>Mahal</label>
+                        <input type="text" name="location" id="location" placeholder="Örn: Salon, Mutfak">
+                    </div>
+                </div>
+                
+                <div class="form-element">
+                    <label>Taranmış RFI Belgesi</label>
+                    <div class="file-upload-container" id="fileUploadContainer">
+                        <div class="file-upload-icon">
+                            <i class="icon icon-upload"></i>
+                        </div>
+                        <div class="file-upload-text">
+                            Dosya yüklemek için tıklayın veya sürükleyin
+                        </div>
+                        <div class="file-upload-info">
+                            PDF, JPG veya PNG (Max: 10MB)
+                        </div>
+                        <input type="file" name="file" id="fileUpload" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png">
+                    </div>
+                    <div class="file-preview" id="filePreview">
+                        <div class="file-preview-name" id="filePreviewName"></div>
+                        <div class="file-preview-size" id="filePreviewSize"></div>
+                    </div>
+                </div>
+                
+                <div class="form-element">
+                    <label>Notlar</label>
+                    <textarea id="notes" name="notlar" rows="3" placeholder="Varsa eklemek istediğiniz notlar..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancelUpload">İptal</button>
+                <button type="submit" class="btn-primary" id="submitUpload">Onaya Gönder</button>
+            </div>
+        </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('katmanSelect').addEventListener('change', function() {
+           
+            const katmanId = this.value;
+            const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
+            //loadPDF(file)
+            
+            
+            //alanpdf
+            // Tüm elementleri gizle
+
+            
+
+            fetch(`/get_yapi/${santiyeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const yapiSelect = document.getElementById('yapiSelect');
+                    const odaSelect = document.getElementById('odaSelect');
+                    // Hata kontrolü ekleyelim
+                    if (!yapiSelect || !odaSelect) {
+                        console.error("Yapı veya oda select öğesi bulunamadı.");
+                        return; // Hata varsa burada çıkalım
+                    }
+                    yapiSelect.innerHTML = '<option value="">{% trans "Lütfen Yapıyı seçin" %}</option>'; // Default option
+                    odaSelect.innerHTML = '';
+                    
+                    // Yapılar yapiSelect içine ekleniyor
+                    data.yapilar.forEach(yapi => {
+                        const option = document.createElement('option');
+                        option.value = yapi.id;
+                        option.setAttribute('data-kat-sayisi', yapi.kat_sayisi);
+                        option.textContent = yapi.blog_adi;
+                        yapiSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Fetch hatası:", error));
+        });
+
+        // Yapı seçildiğinde kat numaralarını odaSelect alanına ekleme
+        document.getElementById('yapiSelect').addEventListener('change', function() {
+            const selectedYapi = this.options[this.selectedIndex];
+            const katSayisi = selectedYapi.getAttribute('data-kat-sayisi');
+            const odaSelect = document.getElementById('odaSelect');
+            odaSelect.innerHTML = '';
+
+            // Kat numaralarını ekliyoruz
+            for (let i = 1; i <= katSayisi; i++) {
+                const odaOption = document.createElement('option');
+                odaOption.value = i;
+                odaOption.textContent = `Kat ${i}`;
+                odaSelect.appendChild(odaOption);
+            }
+        });
+        
+        document.getElementById('katmanSelectd').addEventListener('change', function() {
+            const katmanId = this.value;
+            const santiyeId = this.options[this.selectedIndex].getAttribute('data-id');
+            //loadPDF(file)
+            
+            
+            document.getElementById('gizled').style.display = "none";
+            //alanpdf
+            // Tüm elementleri gizle
+            // Dosya uzantısını al
+            const fileExtension = this.options[this.selectedIndex].getAttribute('data-img').split('.').pop().toLowerCase();
+
+            // Dosya türüne göre işlem yap
+            if (fileExtension === "jpg" || fileExtension === "jpeg" || fileExtension === "png" || fileExtension === "gif") {
+                const imgElement = document.getElementById('aland');
+                imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+                imgElement.style.display = "block";
+                document.getElementById('alanpdfd').style.display = "none";
+                loadImage(this.options[this.selectedIndex].getAttribute('data-img'));
+            } else if (fileExtension === "pdf") {
+                var url = this.options[this.selectedIndex].getAttribute('data-img');
+                const imgElement = document.getElementById('aland');
+                loadPDF(this.options[this.selectedIndex].getAttribute('data-img'));
+                //imgElement.src = this.options[this.selectedIndex].getAttribute('data-img');
+                imgElement.style.display = "none";
+                pdfjsLib.getDocument(url).promise.then(function(pdf) {
+                pdf.getPage(1).then(function(page) {
+                    var canvas = document.getElementById('alanpdfd');
+                    document.getElementById('alanpdfd').style.display = "block";
+                    var context = canvas.getContext('2d');
+                    var viewport = page.getViewport({ scale: 1.5 });
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                    });
+                });
+                }); // Yükleniyor mesajını gizle
+            }
+
+            fetch(`/get_yapi/${santiyeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const yapiSelectd = document.getElementById('yapiSelectd');
+                    const odaSelectd = document.getElementById('odaSelectd');
+                    // Hata kontrolü ekleyelim
+                    if (!yapiSelectd || !odaSelectd) {
+                        console.error("Yapı veya oda select öğesi bulunamadı.");
+                        return; // Hata varsa burada çıkalım
+                    }
+                    yapiSelectd.innerHTML = '<option value="">{% trans "Lütfen Yapıyı seçin" %}</option>'; // Default option
+                    odaSelectd.innerHTML = '';
+
+                    // Yapılar yapiSelect içine ekleniyor
+                    data.yapilar.forEach(yapi => {
+                        const option = document.createElement('option');
+                        option.value = yapi.id;
+                        option.setAttribute('data-kat-sayisi', yapi.kat_sayisi);
+                        option.textContent = yapi.blog_adi;
+                        yapiSelectd.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Fetch hatası:", error));
+        });
+
+    });
+</script>
+    <script>
+        // Sidebar toggle işlevi
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+        });
+
+        // Dark mode toggle işlevi
+        document.querySelector('.dark-mode-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        // Tab navigation
+        document.querySelectorAll('.tab-navs-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Aktif tab butonunu güncelle
+                document.querySelectorAll('.tab-navs-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Aktif içeriği göster
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Modal işlevleri
+        const modal = document.getElementById('uploadRfiModal');
+        const uploadBtn = document.getElementById('uploadRfiBtn');
+        const closeBtn = document.querySelector('.modal-close');
+        const cancelBtn = document.getElementById('cancelUpload');
+        
+        uploadBtn.addEventListener('click', function() {
+            modal.style.display = 'block';
+        });
+        
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        cancelBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Dosya yükleme işlevleri
+        const fileUpload = document.getElementById('fileUpload');
+        const fileUploadContainer = document.getElementById('fileUploadContainer');
+        const filePreview = document.getElementById('filePreview');
+        const filePreviewName = document.getElementById('filePreviewName');
+        const filePreviewSize = document.getElementById('filePreviewSize');
+        
+        fileUploadContainer.addEventListener('click', function() {
+            fileUpload.click();
+        });
+        
+        fileUpload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                filePreviewName.textContent = file.name;
+                filePreviewSize.textContent = formatFileSize(file.size);
+                filePreview.style.display = 'block';
+            }
+        });
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        
+        // Onaya gönderme işlevi
+        document.getElementById('submitUpload').addEventListener('click', function() {
+            // Form verilerini al
+            const template = document.getElementById('rfiTemplateSelect').value;
+            const block = document.getElementById('blockSelect').value;
+            const floor = document.getElementById('floorSelect').value;
+            const apartment = document.getElementById('apartmentNo').value;
+            const location = document.getElementById('location').value;
+            const file = document.getElementById('fileUpload').files[0];
+            const notes = document.getElementById('notes').value;
+            
+            // Validasyon
+            if (!template || !block || !floor || !apartment || !location || !file) {
+                alert('Lütfen tüm zorunlu alanları doldurun ve bir dosya yükleyin.');
+                return;
+            }
+            
+            // Normalde burada bir API çağrısı yapılır
+            // Şimdilik başarılı olduğunu varsayalım
+            alert('RFI başarıyla yüklendi ve onaya gönderildi.');
+            modal.style.display = 'none';
+            
+            // Formu sıfırla
+            document.getElementById('rfiTemplateSelect').value = '';
+            document.getElementById('blockSelect').value = '';
+            document.getElementById('floorSelect').value = '';
+            document.getElementById('apartmentNo').value = '';
+            document.getElementById('location').value = '';
+            document.getElementById('fileUpload').value = '';
+            document.getElementById('notes').value = '';
+            filePreview.style.display = 'none';
+        });
+
+        // DataTables başlat
+        $(document).ready(function() {
+            $('#pendingTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/tr.json'
+                }
+            });
+            
+            $('#approvedTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/tr.json'
+                }
+            });
+            
+            $('#rejectedTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/tr.json'
+                }
+            });
+            
+            $('#archiveTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/tr.json'
+                }
+            });
+            
+            // Onaylama ve reddetme butonları
+            $('.btn-approve').on('click', function() {
+                if (confirm('Bu RFI\'ı onaylamak istediğinize emin misiniz?')) {
+                    alert('RFI onaylandı.');
+                }
+            });
+            
+            $('.btn-reject').on('click', function() {
+                const reason = prompt('Reddetme nedeninizi yazın:');
+                if (reason) {
+                    alert('RFI reddedildi. Neden: ' + reason);
+                }
+            });
+        });
+    </script>
+
+
+{% endblock sidebar %}

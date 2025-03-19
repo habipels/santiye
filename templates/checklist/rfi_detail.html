@@ -1,0 +1,960 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* RFI Form Özel Stilleri */
+        .rfi-form-container {
+            background-color: white;
+            padding: 30px;
+            margin: 20px auto;
+            box-shadow: 0 4px 14px 0 var(--card-box-shadow-color);
+            border-radius: 8px;
+            max-width: 210mm; /* A4 genişliği */
+            min-height: 297mm; /* A4 yüksekliği */
+            position: relative;
+        }
+        
+        .rfi-header {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #052941;
+            padding-bottom: 20px;
+        }
+        
+        .rfi-header img {
+            max-width: 180px;
+            height: auto;
+        }
+        
+        .rfi-title {
+            text-align: center;
+        }
+        
+        .rfi-title h1 {
+            font-size: 20px;
+            margin: 0;
+            color: #052941;
+            font-weight: 700;
+        }
+        
+        .rfi-title h2 {
+            font-size: 18px;
+            margin: 10px 0 0 0;
+            color: #052941;
+            font-weight: 600;
+        }
+        
+        .rfi-info {
+            text-align: right;
+        }
+        
+        .rfi-info div {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #052941;
+        }
+        
+        .rfi-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .rfi-details label {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #052941;
+        }
+        
+        .rfi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        
+        .rfi-table th, .rfi-table td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .rfi-table th {
+            background-color: #052941;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .signature-cell {
+            height: 50px;
+            background-color: #f8f9fa;
+        }
+        
+        .rfi-notes {
+            margin-bottom: 40px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        .rfi-notes div {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #052941;
+            font-size: 16px;
+        }
+        
+        .rfi-signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .signature-box {
+            text-align: center;
+            margin-bottom: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            font-weight: bold;
+            color: #052941;
+        }
+        
+        .signature-area {
+            height: 80px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .signature-name {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Onay Mührü Stilleri - Daha Minimal Tasarım */
+        .approval-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            width: 150px; /* Daha küçük boyut */
+            height: 150px; /* Daha küçük boyut */
+            border-radius: 50%;
+            border: 3px solid #1F9254; /* Daha ince çerçeve */
+            background-color: rgba(31, 146, 84, 0.1); /* Daha şeffaf arka plan */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Daha hafif gölge */
+            z-index: 100;
+            color: #1F9254;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .approval-stamp-text {
+            font-size: 20px; /* Daha küçük yazı */
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .approval-stamp-by {
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+        
+        .approval-stamp-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .approval-stamp-date, .approval-stamp-time {
+            font-size: 10px;
+        }
+        
+        /* Yazdırma Stilleri - Düzeltilmiş */
+        @media print {
+            @page {
+                size: A4 portrait; /* A4 dikey format */
+                margin: 0;
+            }
+            
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            body * {
+                visibility: hidden;
+            }
+            
+            #printContainer, #printContainer * {
+                visibility: visible;
+            }
+            
+            #printContainer {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .print-image-container {
+                width: 210mm;
+                height: 297mm;
+                position: relative;
+            }
+            
+            .print-image {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+            
+            .print-stamp {
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) rotate(-15deg) !important;
+                z-index: 9999 !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                print-color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                border: 3px solid #1F9254;
+                background-color: rgba(31, 146, 84, 0.1);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                color: #1F9254;
+                font-weight: bold;
+                text-align: center;
+            }
+            
+            .print-stamp-text {
+                font-size: 20px;
+                margin-bottom: 5px;
+                letter-spacing: 1px;
+            }
+            
+            .print-stamp-by {
+                font-size: 10px;
+                margin-bottom: 3px;
+            }
+            
+            .print-stamp-name {
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+            
+            .print-stamp-date {
+                font-size: 10px;
+            }
+        }
+        
+        .rfi-detail-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        
+        .rfi-document {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 14px 0 var(--card-box-shadow-color);
+            overflow: hidden;
+            width: 210mm; /* A4 genişliği */
+            height: auto;
+            margin: 0 auto;
+        }
+        
+        .rfi-document-header {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .rfi-document-title {
+            font-weight: 600;
+            color: #052941;
+        }
+        
+        .rfi-document-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .rfi-document-content {
+            padding: 0;
+            height: calc(100vh - 250px);
+            overflow: auto; /* Kaydırma çubuğu ekle */
+            position: relative;
+            background-color: #f5f5f5; /* Belge arka planı */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 0;
+        }
+        
+        .rfi-document-image-container {
+            width: 210mm; /* A4 genişliği */
+            height: 297mm; /* A4 yüksekliği */
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .rfi-document-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Resmi orantılı olarak sığdır */
+        }
+        
+        .rfi-info {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 14px 0 var(--card-box-shadow-color);
+            padding: 20px;
+        }
+        
+        .rfi-info-section {
+            margin-bottom: 20px;
+        }
+        
+        .rfi-info-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .rfi-info-title {
+            font-weight: 600;
+            color: #052941;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .rfi-info-item {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .rfi-info-label {
+            width: 120px;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .rfi-info-value {
+            flex: 1;
+            color: #333;
+        }
+        
+        .rfi-approval-info {
+            background-color: #E7F6E7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .rfi-approval-title {
+            font-weight: 600;
+            color: #1F9254;
+            margin-bottom: 10px;
+        }
+        
+        .rfi-approval-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .rfi-approval-label {
+            width: 120px;
+            font-weight: 500;
+            color: #1F9254;
+        }
+        
+        .rfi-approval-value {
+            flex: 1;
+            color: #1F9254;
+        }
+        
+        .rfi-timeline {
+            margin-top: 20px;
+        }
+        
+        .rfi-timeline-item {
+            position: relative;
+            padding-left: 30px;
+            padding-bottom: 20px;
+            border-left: 2px solid #eee;
+        }
+        
+        .rfi-timeline-item:last-child {
+            border-left: none;
+        }
+        
+        .rfi-timeline-dot {
+            position: absolute;
+            left: -10px;
+            top: 0;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #052941;
+        }
+        
+        .rfi-timeline-content {
+            padding-left: 10px;
+        }
+        
+        .rfi-timeline-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .rfi-timeline-text {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .rfi-timeline-user {
+            font-size: 12px;
+            color: #052941;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+        
+        /* Minimal Onay Mührü Stilleri - Sağ Üst Köşe, Eğik */
+        .approval-stamp {
+            position: absolute;
+            top: 40px;
+            right: 60px; /* Daha sağa taşındı */
+            width: 150px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transform: rotate(-15deg); /* 15 derece eğik */
+            background-color: transparent; /* Arka planı tamamen şeffaf yap */
+            box-shadow: none; /* Gölgeyi kaldır */
+        }
+        
+        .approval-stamp-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid #1F9254; /* Daha ince çerçeve */
+            background-color: rgba(31, 146, 84, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .approval-stamp-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1F9254;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .approval-stamp-line {
+            width: 60%;
+            height: 2px;
+            background-color: #1F9254;
+            margin: 5px 0;
+        }
+        
+        .approval-stamp-by {
+            font-size: 10px;
+            color: #1F9254;
+            margin-bottom: 2px;
+        }
+        
+        .approval-stamp-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1F9254;
+            margin-bottom: 5px;
+        }
+        
+        .approval-stamp-date {
+            font-size: 10px;
+            color: #1F9254;
+        }
+        
+        /* Yazdırma için özel stiller - A4 için optimize edildi */
+        @media print {
+            @page {
+                size: 210mm 297mm; /* A4 boyutu */
+                margin: 0;
+            }
+            
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+            
+            body * {
+                visibility: hidden;
+            }
+            
+            #printContainer, #printContainer * {
+                visibility: visible;
+            }
+            
+            #printContainer {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: white;
+            }
+            
+            .print-image {
+                width: 210mm;
+                height: 297mm;
+                object-fit: fill; /* Resmi sayfaya tam sığdır */
+                display: block;
+            }
+            
+            /* Minimal Mühür Yazdırma Stilleri - Sağ Üst Köşe, Eğik */
+            .print-stamp {
+                position: absolute !important;
+                top: 40px !important;
+                right: 60px !important; /* Daha sağa taşındı */
+                width: 150px !important;
+                height: 150px !important;
+                z-index: 9999 !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                print-color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                transform: rotate(-15deg) !important; /* 15 derece eğik */
+                background-color: transparent !important; /* Arka planı tamamen şeffaf yap */
+                box-shadow: none !important; /* Gölgeyi kaldır */
+                border: none !important; /* Dış kenarlığı kaldır */
+            }
+            
+            .print-stamp-inner {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                border: 2px solid #1F9254; /* Daha ince çerçeve */
+                background-color: rgba(31, 146, 84, 0.1);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                box-shadow: none !important; /* Gölgeyi kaldır */
+            }
+            
+            .print-stamp-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #1F9254;
+                margin-bottom: 8px;
+                letter-spacing: 1px;
+            }
+            
+            .print-stamp-line {
+                width: 60%;
+                height: 2px;
+                background-color: #1F9254;
+                margin: 5px 0;
+            }
+            
+            .print-stamp-by {
+                font-size: 10px;
+                color: #1F9254;
+                margin-bottom: 2px;
+            }
+            
+            .print-stamp-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: #1F9254;
+                margin-bottom: 5px;
+            }
+            
+            .print-stamp-date {
+                font-size: 10px;
+                color: #1F9254;
+            }
+            
+            /* Eski mührü gizle */
+            .approval-stamp {
+                display: none !important;
+                visibility: hidden !important;
+            }
+        }
+    </style>
+{% endblock head %}
+
+{% block sidebar %}
+       <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-main-part"></div>
+            <div class="sidebar-logo-second-part"></div>
+            <div class="sidebar-logo-large-parts">
+                <img src="images/half-o.png" alt="">
+                <img src="images/half-o.png" alt="">
+            </div>
+        </div>
+        <div class="sidebar-toggle">
+            <i class="icon icon-sidebar-left"></i>
+            <i class="icon icon-sidebar-right"></i>
+        </div>
+        <div class="sidebar-navs">
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="icon icon-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="rfi-list.html">
+                        <i class="icon icon-clipboard"></i>
+                        <span>RFI Yönetimi</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="rfi-templates.html">
+                        <i class="icon icon-template"></i>
+                        <span>RFI Şablonları</span>
+                    </a>
+                </li>
+                <!-- Diğer menü öğeleri -->
+            </ul>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-search">
+            <input type="text" placeholder="Ara...">
+            <button>
+                <i class="icon icon-search"></i>
+            </button>
+        </div>
+        <div class="header-actions">
+            <a href="#">
+                <i class="icon icon-fullscreen"></i>
+            </a>
+            <a href="#">
+                <i class="icon icon-notification"></i>
+            </a>
+            <a href="#" class="dark-mode-toggle">
+                <i class="icon icon-moon"></i>
+                <i class="icon icon-sun"></i>
+            </a>
+        </div>
+        <div class="header-language-wrapper">
+            <div class="header-language">
+                <img src="images/tr.png" alt="Türkçe" width="24">
+                <span>Türkçe</span>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+        </div>
+        <div class="header-profile">
+            <div class="header-profile-image">
+                <img src="images/profile.jpg" alt="Profil">
+            </div>
+            <div class="header-profile-info">
+                <div class="header-profile-name">Ahmet Yılmaz</div>
+                <div class="header-profile-role">Proje Müdürü</div>
+            </div>
+            <i class="icon icon-chevron-bottom"></i>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-header">
+            <div class="page-header-content">
+                <div class="page-header-title">RFI Detayı</div>
+                <ul class="page-breadcrumb">
+                    <li><a href="dashboard.html">Ana Sayfa</a></li>
+                    <li><a href="rfi-list.html">RFI Yönetimi</a></li>
+                    <li><a href="rfi-detail.html">RFI Detayı</a></li>
+                </ul>
+            </div>
+            <div class="page-actions">
+                <button class="page-secondary-btn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi' %}'">
+                    <i class="icon icon-arrow-left"></i>
+                    Geri Dön
+                </button>
+                <button class="page-primary-btn" id="exportPdfBtn">
+                    <i class="icon icon-download"></i>
+                    Yazdır
+                </button>
+            </div>
+        </div>
+
+        <div class="rfi-detail-container">
+            <div class="rfi-document">
+                <div class="rfi-document-header">
+                    <div class="rfi-document-title">{{onayli.sablon_bilgisi.rfi_baslik}}</div>
+                    <div class="rfi-document-actions">
+                        <button class="btn-icon" id="toggleStampBtn">
+                            <i class="icon icon-stamp"></i>
+                        </button>
+                        <button class="btn-icon">
+                            <i class="icon icon-fullscreen"></i>
+                        </button>
+                        <button class="btn-icon" id="exportPdfBtn">
+                            <i class="icon icon-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="rfi-document-content" id="documentContent">
+                    <div class="rfi-document-image-container">
+                        <!-- Taranmış belge görüntüsü (JPG olarak) -->
+                        <img src="{{onayli.file.url}}" alt="Taranmış RFI Belgesi" class="rfi-document-image" id="rfiImage">
+                        
+                        <!-- Minimal Onay Mührü - Sağ Üst Köşe, Eğik -->
+                        {% if onayli.onaylama_bilgisi %}
+                        
+                        
+                        <div class="approval-stamp" id="approvalStamp">
+                            <div class="approval-stamp-inner">
+                                <div class="approval-stamp-text">ONAYLANDI</div>
+                                <div class="approval-stamp-line"></div>
+                                <div class="approval-stamp-by">Onaylayan</div>
+                                <div class="approval-stamp-name">{{onayli.onaylayan_bilgisi.last_name}}</div>
+                                <div class="approval-stamp-date">{{onayli.onaylayan_tarih | date:"d.m.Y H.s"}}</div>
+                            </div>
+                        </div>
+                        {% else %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="rfi-info">
+                <div class="rfi-info-section">
+                    <div class="rfi-info-title">RFI Bilgileri</div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">RFI No:</div>
+                        <div class="rfi-info-value">#BRFI000{{onayli.id}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">Başlık:</div>
+                        <div class="rfi-info-value">{{onayli.sablon_bilgisi.rfi_baslik}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">Proje:</div>
+                        <div class="rfi-info-value">{{onayli.sablon_bilgisi.rfi_santiye.proje_adi}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">Blok:</div>
+                        <div class="rfi-info-value">{{onayli.blok.blog_adi}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">Kat:</div>
+                        <div class="rfi-info-value">{{onayli.kat_bilgisi}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">Daire:</div>
+                        <div class="rfi-info-value">{{onayli.daire_no}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">Mahal:</div>
+                        <div class="rfi-info-value">{{onayli.mahal}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">Yükleme Tarihi:</div>
+                        <div class="rfi-info-value">{{onayli.kayit_tarihi |date:"d.m.Y H.s"}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">Yükleyen:</div>
+                        <div class="rfi-info-value">{{onayli.kontrol_ekleyen.last_name}}</div>
+                    </div>
+                </div>
+                {% if onayli.onaylama_bilgisi %}
+                <div class="rfi-approval-info">
+                    <div class="rfi-approval-title">Onay Bilgileri</div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">Durum:</div>
+                        <div class="rfi-approval-value">Onaylandı</div>
+                    </div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">Onaylayan:</div>
+                        <div class="rfi-approval-value">{{onayli.onaylayan_bilgisi.last_name}}</div>
+                    </div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">Onay Tarihi:</div>
+                        <div class="rfi-approval-value">{{onayli.onaylayan_tarih | date:"d.m.Y H.s"}}</div>
+                    </div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">Onay Süresi:</div>
+                        <div class="rfi-approval-value">{% calculate_waiting_time_onay_suresi onayli.kayit_tarihi|date:"U" onayli.onaylayan_tarih|date:"U" %}</div>
+                    </div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">Notlar:</div>
+                        <div class="rfi-approval-value">{% if onayli.red_sebebi %}
+                                    {{onayli.red_sebebi}}
+                                {% else %}
+                                {% endif %}</div>
+                    </div>
+                </div>
+                {% else %}
+                {% endif %}
+                <div class="rfi-info-section">
+                    <div class="rfi-info-title">Zaman Çizelgesi</div>
+                    <div class="rfi-timeline">
+                        <div class="rfi-timeline-item">
+                            <div class="rfi-timeline-dot"></div>
+                            <div class="rfi-timeline-content">
+                                <div class="rfi-timeline-date">{{onayli.kayit_tarihi |date:"d.m.Y H.s"}}</div>
+                                <div class="rfi-timeline-text">RFI yüklendi ve onaya gönderildi</div>
+                                <div class="rfi-timeline-user">{{onayli.kontrol_ekleyen.last_name}}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="rfi-timeline-item">
+                            <div class="rfi-timeline-dot"></div>
+                            <div class="rfi-timeline-content">
+                                <div class="rfi-timeline-date">{{onayli.onaylayan_tarih |date:"d.m.Y H.s"}}</div>
+                                <div class="rfi-timeline-text">RFI onaylandı</div>
+                                <div class="rfi-timeline-user">{{onayli.onaylayan_bilgisi.last_name}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Yazdırma için gizli konteyner -->
+    <div id="printContainer" style="display: none;"></div>
+
+    <script>
+        // Sidebar toggle işlevi
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+        });
+
+        // Dark mode toggle işlevi
+        document.querySelector('.dark-mode-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+        
+        // Sadece belge ve mühürü yazdırma fonksiyonu - A4 için optimize edildi
+        function printDocumentWithStamp() {
+            const printContainer = document.getElementById('printContainer');
+            
+            // Yazdırma konteynerini temizle
+            printContainer.innerHTML = '';
+            
+            // JPG belgesini ekle
+            const img = document.createElement('img');
+            img.src = '{{onayli.file.url}}';
+            img.className = 'print-image';
+            printContainer.appendChild(img);
+            
+            // Minimal Mührü ekle - Sağ Üst Köşe, Eğik
+            const stamp = document.createElement('div');
+            stamp.className = 'print-stamp';
+            stamp.innerHTML = `
+                {% if onayli.onaylama_bilgisi %}
+                        
+                        
+                        <div class="approval-stamp" id="approvalStamp">
+                            <div class="approval-stamp-inner">
+                                <div class="approval-stamp-text">ONAYLANDI</div>
+                                <div class="approval-stamp-line"></div>
+                                <div class="approval-stamp-by">Onaylayan</div>
+                                <div class="approval-stamp-name">{{onayli.onaylayan_bilgisi.last_name}}</div>
+                                <div class="approval-stamp-date">{{onayli.onaylayan_tarih | date:"d.m.Y H.s"}}</div>
+                            </div>
+                        </div>
+                        {% else %}
+                        {% endif %}
+            `;
+            printContainer.appendChild(stamp);
+            
+            // Yazdırma konteynerini göster
+            printContainer.style.display = 'block';
+            
+            // Yazdırma işlemini başlat
+            setTimeout(function() {
+                window.print();
+                
+                // Yazdırma sonrası konteynerı gizle
+                setTimeout(function() {
+                    printContainer.style.display = 'none';
+                }, 1000);
+            }, 300);
+        }
+        
+        // Sayfa yüklendiğinde onay mührünü göster
+        window.addEventListener('load', function() {
+            const stamp = document.getElementById('approvalStamp');
+            stamp.style.display = 'flex';
+        });
+        
+        // PDF Export butonu
+        document.getElementById('exportPdfBtn').addEventListener('click', function() {
+            printDocumentWithStamp();
+        });
+        
+        // Onay mührü göster/gizle
+        document.getElementById('toggleStampBtn').addEventListener('click', function() {
+            const stamp = document.getElementById('approvalStamp');
+            if (stamp.style.display === 'none') {
+                stamp.style.display = 'flex';
+            } else {
+                stamp.style.display = 'none';
+            }
+        });
+    </script>
+{% endblock sidebar %}

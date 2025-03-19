@@ -1,0 +1,288 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        .template-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .template-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .template-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .template-card-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #052941;
+        }
+        
+        .template-card-category {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .template-card-description {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .template-card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .template-card-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .template-card-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+    </style>
+{% endblock head %}
+
+{% block sidebar %}
+   <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-main-part"></div>
+            <div class="sidebar-logo-second-part"></div>
+            <div class="sidebar-logo-large-parts">
+                <img src="images/half-o.png" alt="">
+                <img src="images/half-o.png" alt="">
+            </div>
+        </div>
+        <div class="sidebar-toggle">
+            <i class="icon icon-sidebar-left"></i>
+            <i class="icon icon-sidebar-right"></i>
+        </div>
+        <div class="sidebar-navs">
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="icon icon-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="rfi-list.html">
+                        <i class="icon icon-clipboard"></i>
+                        <span>RFI Yönetimi</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="rfi-templates.html">
+                        <i class="icon icon-template"></i>
+                        <span>RFI Şablonları</span>
+                    </a>
+                </li>
+                <!-- Diğer menü öğeleri -->
+            </ul>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-search">
+            <input type="text" placeholder="Ara...">
+            <button>
+                <i class="icon icon-search"></i>
+            </button>
+        </div>
+        <div class="header-actions">
+            <a href="#">
+                <i class="icon icon-fullscreen"></i>
+            </a>
+            <a href="#">
+                <i class="icon icon-notification"></i>
+            </a>
+            <a href="#" class="dark-mode-toggle">
+                <i class="icon icon-moon"></i>
+                <i class="icon icon-sun"></i>
+            </a>
+        </div>
+        <div class="header-language-wrapper">
+            <div class="header-language">
+                <img src="images/tr.png" alt="Türkçe" width="24">
+                <span>Türkçe</span>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+        </div>
+        <div class="header-profile">
+            <div class="header-profile-image">
+                <img src="images/profile.jpg" alt="Profil">
+            </div>
+            <div class="header-profile-info">
+                <div class="header-profile-name">Ahmet Yılmaz</div>
+                <div class="header-profile-role">Proje Müdürü</div>
+            </div>
+            <i class="icon icon-chevron-bottom"></i>
+        </div>
+    </header>
+
+    
+    <main>
+        <div class="page-header">
+            <div class="page-header-content">
+                <div class="page-header-title">RFI Şablonları</div>
+                <ul class="page-breadcrumb">
+                    <li><a href="dashboard.html">Ana Sayfa</a></li>
+                    <li><a href="rfi-templates.html">RFI Şablonları</a></li>
+                </ul>
+            </div>
+            <div class="page-actions">
+                <button class="page-primary-btn" id="createTemplateBtn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_Olustur' %}'">
+                    <i class="icon icon-plus"></i>
+                    Yeni Şablon Oluştur
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Mevcut Şablonlar</div>
+                <div class="card-actions">
+                    <div class="card-filter">
+                        <select id="categoryFilter">
+                            <option value="">Tüm Kategoriler</option>
+                            {% for i in rfi_kategorileri %}
+
+                            <option value="{{i.rfi_kategorisi}}">{{i.rfi_kategorisi}}</option>
+                            {% endfor %}
+                        
+                        </select>
+                    </div>
+                    <div class="card-search">
+                        <input type="text" placeholder="Şablon ara..." id="templateSearch">
+                        <button><i class="icon icon-search"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="template-grid">
+                {% for i in rfi_sablonlari %}
+                
+                
+                    <div class="template-card">
+                        <div class="template-card-header">
+                            <div>
+                                <div class="template-card-title">{{i.rfi_baslik}}</div>
+                                <div class="template-card-category">Kategori: {{i.rfi_kategorisi}}</div>
+                            </div>
+                            <div class="badge badge-primary">Aktif</div>
+                        </div>
+                        <div class="template-card-description">
+                            {{i.rfi_aciklama}}
+                        </div>
+                        <div class="template-card-stats">
+                            <div class="template-card-stat">
+                                <i class="icon icon-calendar"></i>
+                                <span>Oluşturulma: {{i.kayit_tarihi | date:"d.m.Y H:s"}}</span>
+                            </div>
+                            <div class="template-card-stat">
+                                <i class="icon icon-document"></i>
+                                <span>Kullanım: 24 kez</span>
+                            </div>
+                        </div>
+                        <div class="template-card-actions">
+                            <button class="btn-secondary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_duzenleme' i.id %}'">
+                                <i class="icon icon-edit"></i>
+                                Düzenle
+                            </button>
+                            <button class="btn-primary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'">
+                                <i class="icon icon-document"></i>
+                                Kullan
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar toggle işlevi
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+        });
+
+        // Dark mode toggle işlevi
+        document.querySelector('.dark-mode-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        // Şablon arama işlevi
+        document.getElementById('templateSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.template-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.template-card-title').textContent.toLowerCase();
+                const description = card.querySelector('.template-card-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Kategori filtreleme işlevi
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            const category = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.template-card');
+            
+            if (category === '') {
+                cards.forEach(card => {
+                    card.style.display = 'block';
+                });
+                return;
+            }
+            
+            cards.forEach(card => {
+                const cardCategory = card.querySelector('.template-card-category').textContent.toLowerCase();
+                
+                if (cardCategory.includes(category)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock sidebar %}
