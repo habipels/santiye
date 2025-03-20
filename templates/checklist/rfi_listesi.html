@@ -853,7 +853,7 @@
                 
                 if (confirm('Bu RFI\'ı onaylamak istediğinize emin misiniz?')) {
                     // AJAX ile onaylama isteği gönder
-                    fetch(`/rfi_onayla/${rfiId}/`, {
+                    fetch(`/{{ dil }}{% url 'main:rfi_approve' %}?id=${rfiId}`, {
                         method: 'POST',
                         headers: {
                             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
@@ -885,7 +885,7 @@
                 const redSebebi = prompt('Reddetme nedeninizi yazın:');
                 if (redSebebi) {
                     // AJAX ile reddetme isteği gönder
-                    fetch(`/rfi_reddet/${rfiId}/`, {
+                    fetch(`/{{ dil }}{% url 'main:rfi_reject' %}?id=${rfiId}`, {
                         method: 'POST',
                         headers: {
                             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,

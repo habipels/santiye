@@ -10631,3 +10631,43 @@ def rfi_duzenleme(request, id):
         print(request.POST)
         return redirect_with_language("main:rfi_template")
     return render(request, "checklist/rfi_duzenleme.html", content)
+
+def rfi_approve(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")   
+        else:
+            kullanici =request.user 
+    id =  request.GET.get("id") 
+    rfi_kontrol.objects.filter(id = id).update(onaylama_bilgisi = True,onaylayan_bilgisi = request.user,onaylayan_tarih = datetime.now())
+    return redirect_with_language("main:rfi_listesi")
+
+def rfi_reject(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+    id =  request.GET.get("id") 
+    rfi_kontrol.objects.filter(id = id).update(onaylama_bilgisi = False,onaylayan_bilgisi = request.user,onaylayan_tarih = datetime.now())
+    return redirect_with_language("main:rfi_listesi")
