@@ -10504,23 +10504,25 @@ def rfi_Olustur(request):
                 kalem_baslik = ana_imalat_adi)
         return redirect_with_language("main:rfi_listesi")
     return render(request,"checklist/rfi_olustur.html",content)
+
 def rfi_listesi(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         pass
     else:
         if request.user.kullanicilar_db:
-            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
             if a:
                 if a.izinler.santiye_kontrol:
-                    kullanici =request.user.kullanicilar_db
+                    kullanici = request.user.kullanicilar_db
                 else:
                     return redirect_with_language("main:yetkisiz")
             else:
-                return redirect_with_language("main:yetkisiz")   
+                return redirect_with_language("main:yetkisiz")
         else:
-            kullanici =request.user  
-    if request.POST:
+            kullanici = request.user
+
+    if request.method == "POST":
         rfi_sablonu = request.POST.get("rfi_sablonu")
         yapi_gonder = request.POST.get("yapi_gonder")
         kat = request.POST.get("kat")
@@ -10528,26 +10530,78 @@ def rfi_listesi(request):
         location = request.POST.get("location")
         file = request.FILES.get("file")
         notlar = request.POST.get("notlar")
-        rfi_kontrol.objects.create(
-            kayit_tarihi = get_kayit_tarihi_from_request(request),
-            sablon_bilgisi = get_object_or_none(rfi_sablonlar,id = rfi_sablonu),
-            blok = get_object_or_none(bloglar,id = yapi_gonder),
-            kat_bilgisi = kat,
-            daire_no = apartmentNo,
-            mahal = location,
-            file = file,
-            notlar = notlar,
-            kontrol_ekleyen = request.user
-        )
-        return redirect_with_language("main:rfi_listesi")
-    content["rfi_sablonlari"] = rfi_sablonlar.objects.filter(rfi_kime_ait = kullanici)
-    content["rfi_listesi_onay_bekleyen"] = rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi")
-    content["rfi_listesi_onay_bekleyen_sayisi"] = rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi").count()
-    content["rfi_listesi_red_yiyenler"] = rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False).exclude(onaylayan_bilgisi = None).order_by("kayit_tarihi")
-    content["rfi_listesi_onay_alanlar"] = rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = True).exclude(onaylayan_bilgisi = None).order_by("kayit_tarihi")
-    #content["rfi_kategorileri"] = rfi_sablonlar.objects.filter(rfi_kime_ait = kullanici).values("rfi_kategorisi").distinct() 
-    return render(request,"checklist/rfi_listesi.html",content)
 
+        # Validate required fields
+        if not (rfi_sablonu and yapi_gonder and kat and apartmentNo and location and file):
+            return JsonResponse({"status": "error", "message": "Eksik bilgi gönderildi."}, status=400)
+
+        rfi_kontrol.objects.create(
+            kayit_tarihi=get_kayit_tarihi_from_request(request),
+            sablon_bilgisi=get_object_or_none(rfi_sablonlar, id=rfi_sablonu),
+            blok=get_object_or_none(bloglar, id=yapi_gonder),
+            kat_bilgisi=kat,
+            daire_no=apartmentNo,
+            mahal=location,
+            file=file,
+            notlar=notlar,
+            kontrol_ekleyen=request.user
+        )
+        return JsonResponse({"status": "success", "message": "RFI başarıyla oluşturuldu."})
+
+    content["rfi_sablonlari"] = rfi_sablonlar.objects.filter(rfi_kime_ait=kullanici)
+    content["rfi_listesi_onay_bekleyen"] = rfi_kontrol.objects.filter(
+        sablon_bilgisi__rfi_kime_ait=kullanici, onaylama_bilgisi=False, onaylayan_bilgisi=None
+    ).order_by("kayit_tarihi")
+    content["rfi_listesi_onay_bekleyen_sayisi"] = content["rfi_listesi_onay_bekleyen"].count()
+    content["rfi_listesi_red_yiyenler"] = rfi_kontrol.objects.filter(
+        sablon_bilgisi__rfi_kime_ait=kullanici, onaylama_bilgisi=False
+    ).exclude(onaylayan_bilgisi=None).order_by("kayit_tarihi")
+    content["rfi_listesi_onay_alanlar"] = rfi_kontrol.objects.filter(
+        sablon_bilgisi__rfi_kime_ait=kullanici, onaylama_bilgisi=True
+    ).exclude(onaylayan_bilgisi=None).order_by("kayit_tarihi")
+    return render(request, "checklist/rfi_listesi.html", content)
+
+
+def rfi_approve(request):
+    if True:
+        id = request.GET.get("id")
+        if not id:
+            return JsonResponse({"status": "error", "message": "RFI ID eksik."}, status=400)
+
+        rfi = rfi_kontrol.objects.filter(id=id).first()
+        if not rfi:
+            return JsonResponse({"status": "error", "message": "RFI bulunamadı."}, status=404)
+
+        rfi.onaylama_bilgisi = True
+        rfi.onaylayan_bilgisi = request.user
+        rfi.onaylayan_tarih = datetime.now()
+        rfi.save()
+
+        return JsonResponse({"status": "success", "message": "RFI başarıyla onaylandı."})
+    return JsonResponse({"status": "error", "message": "Geçersiz istek."}, status=405)
+
+
+def rfi_reject(request):
+    
+    if True:
+        id = request.GET.get("id")
+        red_sebebi = request.GET.get("red_sebebi")
+        
+        if not id or not red_sebebi:
+            return JsonResponse({"status": "error", "message": "Eksik bilgi gönderildi."}, status=400)
+
+        rfi = rfi_kontrol.objects.filter(id=id).first()
+        if not rfi:
+            return JsonResponse({"status": "error", "message": "RFI bulunamadı."}, status=404)
+
+        rfi.onaylama_bilgisi = False
+        rfi.onaylayan_bilgisi = request.user
+        rfi.onaylayan_tarih = datetime.now()
+        rfi.red_sebebi = red_sebebi
+        rfi.save()
+
+        return JsonResponse({"status": "success", "message": "RFI başarıyla reddedildi."})
+    return JsonResponse({"status": "error", "message": "Geçersiz istek."}, status=405)
 
 def rfi_template(request):
     content = sozluk_yapisi()
@@ -10631,43 +10685,3 @@ def rfi_duzenleme(request, id):
         print(request.POST)
         return redirect_with_language("main:rfi_template")
     return render(request, "checklist/rfi_duzenleme.html", content)
-
-def rfi_approve(request):
-    content = sozluk_yapisi()
-    if super_admin_kontrolu(request):
-        pass
-    else:
-        if request.user.kullanicilar_db:
-            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
-            if a:
-                if a.izinler.santiye_kontrol:
-                    kullanici =request.user.kullanicilar_db
-                else:
-                    return redirect_with_language("main:yetkisiz")
-            else:
-                return redirect_with_language("main:yetkisiz")   
-        else:
-            kullanici =request.user 
-    id =  request.GET.get("id") 
-    rfi_kontrol.objects.filter(id = id).update(onaylama_bilgisi = True,onaylayan_bilgisi = request.user,onaylayan_tarih = datetime.now())
-    return redirect_with_language("main:rfi_listesi")
-
-def rfi_reject(request):
-    content = sozluk_yapisi()
-    if super_admin_kontrolu(request):
-        pass
-    else:
-        if request.user.kullanicilar_db:
-            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
-            if a:
-                if a.izinler.santiye_kontrol:
-                    kullanici =request.user.kullanicilar_db
-                else:
-                    return redirect_with_language("main:yetkisiz")
-            else:
-                return redirect_with_language("main:yetkisiz")   
-        else:
-            kullanici =request.user  
-    id =  request.GET.get("id") 
-    rfi_kontrol.objects.filter(id = id).update(onaylama_bilgisi = False,onaylayan_bilgisi = request.user,onaylayan_tarih = datetime.now())
-    return redirect_with_language("main:rfi_listesi")
