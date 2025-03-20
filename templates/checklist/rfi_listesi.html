@@ -62,212 +62,195 @@
                 </div>
             </div>
 
+            <div class="tab-navs">
+                <button class="tab-navs-btn active" data-tab="pending">{% trans 'Onay Bekleyenler' %} <span class="badge badge-warning">{{rfi_listesi_onay_bekleyen_sayisi}}</span></button>
+                <button class="tab-navs-btn" data-tab="approved">{% trans 'Onaylananlar' %}</button>
+                <button class="tab-navs-btn" data-tab="rejected">{% trans 'Reddedilenler' %}</button>
+                <button class="tab-navs-btn" data-tab="archive">{% trans 'Arşiv' %}</button>
+            </div>
 
-        <div class="tab-navs">
-            <button class="tab-navs-btn active" data-tab="pending">{% trans 'Onay Bekleyenler' %} <span class="badge badge-warning">{{rfi_listesi_onay_bekleyen_sayisi}}</span></button>
-            <button class="tab-navs-btn" data-tab="approved">{% trans 'Onaylananlar' %}</button>
-            <button class="tab-navs-btn" data-tab="rejected">{% trans 'Reddedilenler' %}</button>
-            <button class="tab-navs-btn" data-tab="archive">{% trans 'Arşiv' %}</button>
-        </div>
-<div class="tab-contents">
-        <!-- Onay Bekleyenler Sekmesi -->
-        <div class="tab-content active" id="pending">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">{% trans 'Onay Bekleyen RFIlar' %}</div>
-
+            <div class="tab-contents">
+                <!-- Onay Bekleyenler Sekmesi -->
+                <div class="tab-content active" id="pending">
+                    <div class="table-wrapper">
+                        <table id="pendingTable" class="dataTable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'RFI No' %}</th>
+                                    <th>{% trans 'Başlık' %}</th>
+                                    <th>{% trans 'Blok' %}</th>
+                                    <th>{% trans 'Kat' %}</th>
+                                    <th>{% trans 'Mahal' %}</th>
+                                    <th>{% trans 'Yükleme Tarihi' %}</th>
+                                    <th>{% trans 'Bekleme Süresi' %}</th>
+                                    <th>{% trans 'Durum' %}</th>
+                                    <th>{% trans 'İşlemler' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in rfi_listesi_onay_bekleyen  %}
+                                <tr>
+                                    <td>#BRFI000{{i.id}}</td>
+                                    <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
+                                    <td>{{i.blok.blog_adi}}</td>
+                                    <td>{{i.kat_bilgisi}}</td>
+                                    <td>{% trans 'Daire' %} {{i.daire_no}}</td>
+                                    <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
+                                    <td>{{ i.kayit_tarihi|date:"U"|calculate_waiting_time }}</td>
+                                    <td><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <button class="status-view" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                                <i class="icon icon-eye"></i>
+                                            </button>
+                                            <button class="status-success">
+                                                <i class="icon icon-confirm"></i>
+                                            </button>
+                                            <button class="status-cancel">
+                                                <i class="icon icon-reject"></i>
+                                            </button>
+                                        </div>    
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <table id="pending" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'RFI No' %}</th>
-                                <th>{% trans 'Başlık' %}</th>
-                                <th>{% trans 'Blok' %}</th>
-                                <th>{% trans 'Kat' %}</th>
-                                <th>{% trans 'Mahal' %}</th>
-                                <th>{% trans 'Yükleme Tarihi' %}</th>
-                                <th>{% trans 'Bekleme Süresi' %}</th>
-                                <th>{% trans 'Durum' %}</th>
-                                <th>{% trans 'İşlemler' %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for i in rfi_listesi_onay_bekleyen  %}
-                        <tr>
-                                <td>#BRFI000{{i.id}}</td>
-                                <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
-                                <td>{{i.blok.blog_adi}}</td>
-                                <td>{{i.kat_bilgisi}}</td>
-                                <td>{% trans 'Daire' %} {{i.daire_no}}</td>
-                                <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
-                                <td>{{ i.kayit_tarihi|date:"U"|calculate_waiting_time }}</td>
-                                <td><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></td>
-                                <td>
-                                <div class="td-actions">
-                                    <button class="status-view" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
-                                        <i class="icon icon-eye"></i>
-                                    </button>
-                                    <button class="status-success">
-                                        <i class="icon icon-confirm"></i>
-                                    </button>
-                                    <button class="status-cancel">
-                                        <i class="icon icon-reject"></i>
-                                    </button>
-                                </div>    
-                                </td>
-                            </tr>
-                        {% endfor %}
-                            
-                          
-                        </tbody>
-                    </table>
+
+                <!-- Onaylananlar Sekmesi -->
+                <div class="tab-content" id="approved">
+                    <div class="table-wrapper">
+                        <table id="approvedTable" class="dataTable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'RFI No' %}</th>
+                                    <th>{% trans 'Başlık' %}</th>
+                                    <th>{% trans 'Blok' %}</th>
+                                    <th>{% trans 'Kat' %}</th>
+                                    <th>{% trans 'Mahal' %}</th>
+                                    <th>{% trans 'Yükleme Tarihi' %}</th>
+                                    <th>{% trans 'Onay Tarihi' %}</th>
+                                    <th>{% trans 'Onay Süresi' %}</th>
+                                    <th>{% trans 'Onaylayan' %}</th>
+                                    <th>{% trans 'İşlemler' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in rfi_listesi_onay_alanlar  %}
+                                <tr>
+                                    <td>#BRFI000{{i.id}}</td>
+                                    <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
+                                    <td>{{i.blok.blog_adi}}</td>
+                                    <td>{{i.kat_bilgisi}}</td>
+                                    <td>{% trans 'Daire' %} {{i.daire_no}}</td>
+                                    <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
+                                    <td>{{ i.onaylayan_tarih|date:"d.m.Y H.s"}}</td>
+                                    <td>{% calculate_waiting_time_onay_suresi i.kayit_tarihi|date:"U" i.onaylayan_tarih|date:"U" %}</td>
+                                    <td>{{i.onaylayan_bilgisi.last_name}}</td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <button class="status-view" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                                <i class="icon icon-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reddedilenler Sekmesi -->
+                <div class="tab-content" id="rejected">
+                    <div class="table-wrapper">
+                        <table id="rejectedTable" class="dataTable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'RFI No' %}</th>
+                                    <th>{% trans 'Başlık' %}</th>
+                                    <th>{% trans 'Blok' %}</th>
+                                    <th>{% trans 'Kat' %}</th>
+                                    <th>{% trans 'Mahal' %}</th>
+                                    <th>{% trans 'Yükleme Tarihi' %}</th>
+                                    <th>{% trans 'Red Tarihi' %}</th>
+                                    <th>{% trans 'Reddeden' %}</th>
+                                    <th>{% trans 'Red Nedeni' %}</th>
+                                    <th>{% trans 'İşlemler' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in rfi_listesi_red_yiyenler  %}
+                                <tr>
+                                    <td>#BRFI000{{i.id}}</td>
+                                    <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
+                                    <td>{{i.blok.blog_adi}}</td>
+                                    <td>{{i.kat_bilgisi}}</td>
+                                    <td>{% trans 'Daire' %} {{i.daire_no}}</td>
+                                    <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
+                                    <td>{{ i.onaylayan_tarih|date:"d.m.Y H.s"}}</td>
+                                    <td>{{i.onaylayan_bilgisi.last_name}}</td>
+                                    <td>{% if i.red_sebebi %}{{i.red_sebebi}}{% endif %}</td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <button class="status-view" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                                <i class="icon icon-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Arşiv Sekmesi -->
+                <div class="tab-content" id="archive">
+                    <div class="table-wrapper">
+                        <table id="archiveTable" class="dataTable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'RFI No' %}</th>
+                                    <th>{% trans 'Başlık' %}</th>
+                                    <th>{% trans 'Blok' %}</th>
+                                    <th>{% trans 'Kat' %}</th>
+                                    <th>{% trans 'Mahal' %}</th>
+                                    <th>{% trans 'Tarih' %}</th>
+                                    <th>{% trans 'Durum' %}</th>
+                                    <th>{% trans 'İşlemler' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in rfi_listesi_onay_alanlar  %}
+                                <tr>
+                                    <td>#BRFI000{{i.id}}</td>
+                                    <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
+                                    <td>{{i.blok.blog_adi}}</td>
+                                    <td>{{i.kat_bilgisi}}</td>
+                                    <td>{% trans 'Daire' %} {{i.daire_no}}</td>
+                                    <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
+                                    <td><span class="status-badge status-approved">{% trans 'Onaylandı' %}</span></td>
+                                    <td>
+                                        <div class="td-actions">
+                                            <button class="status-view" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
+                                                <i class="icon icon-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Onaylananlar Sekmesi -->
-        <div class="tab-content" id="approved">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">{% trans 'Onaylanan RFIlar' %}</div>
-
-                </div>
-                <div class="card-body">
-                    <table id="approvedTable" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'RFI No' %}</th>
-                                <th>{% trans 'Başlık' %}</th>
-                                <th>{% trans 'Blok' %}</th>
-                                <th>{% trans 'Kat' %}</th>
-                                <th>{% trans 'Mahal' %}</th>
-                                <th>{% trans 'Yükleme Tarihi' %}</th>
-                                <th>{% trans 'Onay Tarihi' %}</th>
-                                <th>{% trans 'Onay Süresi' %}</th>
-                                <th>{% trans 'Onaylayan' %}</th>
-                                <th>{% trans 'İşlemler' %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                             {% for i in rfi_listesi_onay_alanlar  %}
-                        <tr>
-                                <td>#BRFI000{{i.id}}</td>
-                                <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
-                                <td>{{i.blok.blog_adi}}</td>
-                                <td>{{i.kat_bilgisi}}</td>
-                                <td>{% trans 'Daire' %} {{i.daire_no}}</td>
-                                <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
-                                <td>{{ i.onaylayan_tarih|date:"d.m.Y H.s"}}</td>
-                                <td>{% calculate_waiting_time_onay_suresi i.kayit_tarihi|date:"U" i.onaylayan_tarih|date:"U" %}</td>
-                                <td>{{i.onaylayan_bilgisi.last_name}}</td>
-                               <td>
-                                    <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
-                                        <i class="icon icon-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                         
-                   
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reddedilenler Sekmesi -->
-        <div class="tab-content" id="rejected">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">{% trans 'Reddedilen RFIlar' %}</div>
-                </div>
-                <div class="card-body">
-                    <table id="rejectedTable" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'RFI No' %}</th>
-                                <th>{% trans 'Başlık' %}</th>
-                                <th>{% trans 'Blok' %}</th>
-                                <th>{% trans 'Kat' %}</th>
-                                <th>{% trans 'Mahal' %}</th>
-                                <th>{% trans 'Yükleme Tarihi' %}</th>
-                                <th>{% trans 'Red Tarihi' %}</th>
-                                <th>{% trans 'Reddeden' %}</th>
-                                <th>{% trans 'Red Nedeni' %}</th>
-                                <th>{% trans 'İşlemler' %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                         {% for i in rfi_listesi_red_yiyenler  %}
-                        <tr>
-                                <td>#BRFI000{{i.id}}</td>
-                                <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
-                                <td>{{i.blok.blog_adi}}</td>
-                                <td>{{i.kat_bilgisi}}</td>
-                                <td>Daire {{i.daire_no}}</td>
-                                <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
-                                <td>{{ i.onaylayan_tarih|date:"d.m.Y H.s"}}</td>
-                                <td>{{i.onaylayan_bilgisi.last_name}}</td>
-                                <td>{% if i.red_sebebi %}
-                                    {{i.red_sebebi}}
-                                {% else %}
-                                {% endif %}</td>
-                               <td>
-                                    <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
-                                        <i class="icon icon-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Arşiv Sekmesi -->
-        <div class="tab-content" id="archive">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">{% trans 'Arşivlenen RFIlar' %}</div>
-
-                </div>
-                <div class="card-body">
-                    <table id="archiveTable" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'RFI No' %}</th>
-                                <th>{% trans 'Başlık' %}</th>
-                                <th>{% trans 'Blok' %}</th>
-                                <th>{% trans 'Kat' %}</th>
-                                <th>{% trans 'Mahal' %}</th>
-                                <th>{% trans 'Tarih' %}</th>
-                                <th>{% trans 'Durum' %}</th>
-                                <th>{% trans 'İşlemler' %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          {% for i in rfi_listesi_onay_alanlar  %}
-                        <tr>
-                                <td>#BRFI000{{i.id}}</td>
-                                <td>{{i.sablon_bilgisi.rfi_baslik}}</td>
-                                <td>{{i.blok.blog_adi}}</td>
-                                <td>{{i.kat_bilgisi}}</td>
-                                <td>{% trans 'Daire' %} {{i.daire_no}}</td>
-                                <td>{{ i.kayit_tarihi|date:"d.m.Y H.s"}}</td>
-                                <td><span class="status-badge status-approved">{% trans 'Onaylandı' %}</span></td>
-                               <td>
-                                    <button class="btn-icon" onclick="window.location.href='/{{dil}}{% url 'main:rfi_detail' i.id %}'">
-                                        <i class="icon icon-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                       
-                        </tbody>
-                    </table>
-                </div>
+            <div class="large-stats-card-footer-actions">
+                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
             </div>
         </div>
     </main>
@@ -759,10 +742,9 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        alert('RFI başarıyla yüklendi.');
+                    if (data.status === 'success') {
                         modal.style.display = 'none';
-                        location.reload();
+                        window.location.reload();
                     } else {
                         alert(data.message || 'Bir hata oluştu.');
                     }
@@ -772,7 +754,6 @@
                     alert('Bir hata oluştu.');
                 })
                 .finally(() => {
-                    // Submit butonunu tekrar aktif et
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = 'Onaya Gönder';
                 });
@@ -830,11 +811,9 @@
 
         tabButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // Aktif tab butonunu güncelle
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
                 
-                // İlgili içeriği göster
                 const tabId = this.getAttribute('data-tab');
                 tabContents.forEach(content => {
                     content.classList.remove('active');
@@ -852,7 +831,6 @@
                 const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
                 
                 if (confirm('Bu RFI\'ı onaylamak istediğinize emin misiniz?')) {
-                    // AJAX ile onaylama isteği gönder
                     fetch(`/{{ dil }}{% url 'main:rfi_approve' %}?id=${rfiId}`, {
                         method: 'GET',
                         headers: {
@@ -860,18 +838,20 @@
                             'Content-Type': 'application/json',
                         },
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        if (data.success) {
-                            alert('RFI başarıyla onaylandı.');
-                            location.reload();
-                        } else {
-                            alert('Onaylama işlemi başarısız oldu.');
+                        console.log('Onaylama Response:', data);
+                        if (data.status === 'success') {
+                            window.location.reload();
                         }
                     })
                     .catch(error => {
-                        console.error('Hata:', error);
-                        alert('Bir hata oluştu.');
+                        console.error('Onaylama Hatası:', error);
                     });
                 }
             });
@@ -884,19 +864,125 @@
                 
                 const redSebebi = prompt('Reddetme nedeninizi yazın:');
                 if (redSebebi) {
-                    // AJAX ile reddetme isteği gönder
                     fetch(`/{{ dil }}{% url 'main:rfi_reject' %}?id=${rfiId}&red_sebebi=${redSebebi}`, {
                         method: 'GET',
-                       
-                       
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Reddetme Response:', data);
+                        if (data.status === 'success') {
+                            window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Reddetme Hatası:', error);
+                    });
+                }
+            });
+        });
+    });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Onay ve red butonları için
+        document.querySelectorAll('.status-success').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
+                
+                if (confirm('Bu RFI\'ı onaylamak istediğinize emin misiniz?')) {
+                    fetch(`/{{ dil }}{% url 'main:rfi_approve' %}?id=${rfiId}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Onaylama Response:', data);
+                        if (data.status === 'success') {
+                            window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Onaylama Hatası:', error);
+                    });
+                }
+            });
+        });
+
+        document.querySelectorAll('.status-cancel').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
+                
+                const redSebebi = prompt('Reddetme nedeninizi yazın:');
+                if (redSebebi) {
+                    fetch(`/{{ dil }}{% url 'main:rfi_reject' %}?id=${rfiId}&red_sebebi=${redSebebi}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Reddetme Response:', data);
+                        if (data.status === 'success') {
+                            window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Reddetme Hatası:', error);
+                    });
+                }
+            });
+        });
+
+        // Modal form gönderimi için
+        const form = document.querySelector('#uploadRfiModal form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (validateForm()) {
+                    const formData = new FormData(this);
+                    
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
                     })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                            alert('RFI başarıyla reddedildi.');
-                            location.reload();
+                        if (data.status === 'success') {
+                            document.getElementById('uploadRfiModal').style.display = 'none';
+                            window.location.reload();
                         } else {
-                            alert('Reddetme işlemi başarısız oldu.');
+                            alert(data.message || 'Bir hata oluştu.');
                         }
                     })
                     .catch(error => {
@@ -905,7 +991,101 @@
                     });
                 }
             });
+        }
+    });
+    </script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // DataTables başlat
+        let pendingTable = new DataTable('#pendingTable', {
+            paging: false,
+            searching: true,
+            info: false,
+            layout: {
+                topStart: {
+                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            }
         });
+
+        let approvedTable = new DataTable('#approvedTable', {
+            paging: false,
+            searching: true,
+            info: false,
+            layout: {
+                topStart: {
+                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            }
+        });
+
+        let rejectedTable = new DataTable('#rejectedTable', {
+            paging: false,
+            searching: true,
+            info: false,
+            layout: {
+                topStart: {
+                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            }
+        });
+
+        let archiveTable = new DataTable('#archiveTable', {
+            paging: false,
+            searching: true,
+            info: false,
+            layout: {
+                topStart: {
+                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            }
+        });
+
+        // Özel arama kutusu için event listener
+        $('#stats-search').keyup(function() {
+            const searchValue = $(this).val();
+            const activeTab = $('.tab-navs-btn.active').data('tab');
+            
+            switch(activeTab) {
+                case 'pending':
+                    pendingTable.search(searchValue).draw();
+                    break;
+                case 'approved':
+                    approvedTable.search(searchValue).draw();
+                    break;
+                case 'rejected':
+                    rejectedTable.search(searchValue).draw();
+                    break;
+                case 'archive':
+                    archiveTable.search(searchValue).draw();
+                    break;
+            }
+        });
+
+        // Tab değiştiğinde arama kutusunu sıfırla
+        $('.tab-navs-btn').click(function() {
+            $('#stats-search').val('');
+            const activeTab = $(this).data('tab');
+            
+            switch(activeTab) {
+                case 'pending':
+                    pendingTable.search('').draw();
+                    break;
+                case 'approved':
+                    approvedTable.search('').draw();
+                    break;
+                case 'rejected':
+                    rejectedTable.search('').draw();
+                    break;
+                case 'archive':
+                    archiveTable.search('').draw();
+                    break;
+            }
+        });
+
+        // DataTables'ın kendi arama kutucuklarını gizle
+        $('.dataTables_filter').hide();
     });
     </script>
 
