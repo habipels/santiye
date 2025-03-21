@@ -826,7 +826,8 @@
 
         // Onay ve red butonları için
         document.querySelectorAll('.status-success').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function(e) {
+                e.preventDefault(); // Event'in tekrarlanmasını engelle
                 const row = this.closest('tr');
                 const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
                 
@@ -858,7 +859,8 @@
         });
 
         document.querySelectorAll('.status-cancel').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function(e) {
+                e.preventDefault(); // Event'in tekrarlanmasını engelle
                 const row = this.closest('tr');
                 const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
                 
@@ -889,109 +891,6 @@
                 }
             });
         });
-    });
-    </script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Onay ve red butonları için
-        document.querySelectorAll('.status-success').forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
-                
-                if (confirm('Bu RFI\'ı onaylamak istediğinize emin misiniz?')) {
-                    fetch(`/{{ dil }}{% url 'main:rfi_approve' %}?id=${rfiId}`, {
-                        method: 'GET',
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                            'Content-Type': 'application/json',
-                        },
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Onaylama Response:', data);
-                        if (data.status === 'success') {
-                            window.location.reload();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Onaylama Hatası:', error);
-                    });
-                }
-            });
-        });
-
-        document.querySelectorAll('.status-cancel').forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
-                
-                const redSebebi = prompt('Reddetme nedeninizi yazın:');
-                if (redSebebi) {
-                    fetch(`/{{ dil }}{% url 'main:rfi_reject' %}?id=${rfiId}&red_sebebi=${redSebebi}`, {
-                        method: 'GET',
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                            'Content-Type': 'application/json',
-                        },
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Reddetme Response:', data);
-                        if (data.status === 'success') {
-                            window.location.reload();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Reddetme Hatası:', error);
-                    });
-                }
-            });
-        });
-
-        // Modal form gönderimi için
-        const form = document.querySelector('#uploadRfiModal form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                if (validateForm()) {
-                    const formData = new FormData(this);
-                    
-                    fetch(this.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            document.getElementById('uploadRfiModal').style.display = 'none';
-                            window.location.reload();
-                        } else {
-                            alert(data.message || 'Bir hata oluştu.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Hata:', error);
-                        alert('Bir hata oluştu.');
-                    });
-                }
-            });
-        }
     });
     </script>
 

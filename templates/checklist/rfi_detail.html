@@ -214,13 +214,13 @@
         /* Yazdırma Stilleri - Düzeltilmiş */
         @media print {
             @page {
-                size: A4 portrait; /* A4 dikey format */
+                size: 210mm 297mm;
                 margin: 0;
             }
             
             html, body {
-                width: 100%;
-                height: 100%;
+                width: 210mm;
+                height: 297mm;
                 margin: 0;
                 padding: 0;
             }
@@ -230,78 +230,95 @@
             }
             
             #printContainer, #printContainer * {
-                visibility: visible;
+                visibility: visible !important;
             }
             
             #printContainer {
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            
-            .print-image-container {
                 width: 210mm;
                 height: 297mm;
-                position: relative;
+                margin: 0;
+                padding: 0;
+                background-color: white;
             }
             
             .print-image {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
+                width: 210mm;
+                height: 297mm;
+                object-fit: cover;
             }
             
             .print-stamp {
                 position: absolute !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) rotate(-15deg) !important;
+                width: 150px !important;
+                height: 150px !important;
                 z-index: 9999 !important;
                 visibility: visible !important;
                 opacity: 1 !important;
                 print-color-adjust: exact !important;
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
-                width: 150px;
-                height: 150px;
-                border-radius: 50%;
-                border: 3px solid #1F9254;
-                background-color: rgba(31, 146, 84, 0.1);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                color: #1F9254;
-                font-weight: bold;
-                text-align: center;
+                background-color: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+                transform-origin: center center !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                pointer-events: none !important;
+                top: 40px !important;
+                right: 60px !important;
+                transform: rotate(-15deg) !important;
+            }
+            
+            .print-stamp-inner {
+                width: 100% !important;
+                height: 100% !important;
+                border-radius: 50% !important;
+                border: 2px solid #1F9254 !important;
+                background-color: rgba(31, 146, 84, 0.1) !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                position: relative !important;
+                box-shadow: none !important;
             }
             
             .print-stamp-text {
-                font-size: 20px;
-                margin-bottom: 5px;
-                letter-spacing: 1px;
+                font-size: 20px !important;
+                font-weight: 700 !important;
+                color: #1F9254 !important;
+                margin-bottom: 8px !important;
+                letter-spacing: 1px !important;
+            }
+            
+            .print-stamp-line {
+                width: 60% !important;
+                height: 2px !important;
+                background-color: #1F9254 !important;
+                margin: 5px 0 !important;
             }
             
             .print-stamp-by {
-                font-size: 10px;
-                margin-bottom: 3px;
+                font-size: 10px !important;
+                color: #1F9254 !important;
+                margin-bottom: 2px !important;
             }
             
             .print-stamp-name {
-                font-size: 14px;
-                margin-bottom: 5px;
+                font-size: 14px !important;
+                font-weight: 600 !important;
+                color: #1F9254 !important;
+                margin-bottom: 5px !important;
             }
             
             .print-stamp-date {
-                font-size: 10px;
+                font-size: 10px !important;
+                color: #1F9254 !important;
             }
         }
         
@@ -353,18 +370,19 @@
         }
         
         .rfi-document-image-container {
-            width: 210mm; /* A4 genişliği */
-            height: 297mm; /* A4 yüksekliği */
+            width: 210mm;
+            height: 297mm;
             background-color: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             position: relative;
             overflow: hidden;
+            margin: 0 auto;
         }
         
         .rfi-document-image {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Resmi orantılı olarak sığdır */
+            object-fit: contain;
         }
         
         .rfi-info {
@@ -546,19 +564,18 @@
             color: #1F9254;
         }
         
-        /* Yazdırma için özel stiller - A4 için optimize edildi */
+        /* Yazdırma için özel stiller */
         @media print {
             @page {
-                size: 210mm 297mm; /* A4 boyutu */
+                size: 210mm 297mm;
                 margin: 0;
             }
             
             html, body {
-                width: 100%;
-                height: 100%;
+                width: 210mm;
+                height: 297mm;
                 margin: 0;
                 padding: 0;
-                overflow: hidden;
             }
             
             body * {
@@ -566,7 +583,7 @@
             }
             
             #printContainer, #printContainer * {
-                visibility: visible;
+                visibility: visible !important;
             }
             
             #printContainer {
@@ -577,22 +594,20 @@
                 height: 297mm;
                 margin: 0;
                 padding: 0;
-                overflow: hidden;
                 background-color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
             
             .print-image {
                 width: 210mm;
                 height: 297mm;
-                object-fit: fill; /* Resmi sayfaya tam sığdır */
-                display: block;
+                object-fit: contain;
             }
             
-            /* Minimal Mühür Yazdırma Stilleri - Sağ Üst Köşe, Eğik */
             .print-stamp {
                 position: absolute !important;
-                top: 40px !important;
-                right: 60px !important; /* Daha sağa taşındı */
                 width: 150px !important;
                 height: 150px !important;
                 z-index: 9999 !important;
@@ -601,63 +616,62 @@
                 print-color-adjust: exact !important;
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
-                transform: rotate(-15deg) !important; /* 15 derece eğik */
-                background-color: transparent !important; /* Arka planı tamamen şeffaf yap */
-                box-shadow: none !important; /* Gölgeyi kaldır */
-                border: none !important; /* Dış kenarlığı kaldır */
+                background-color: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+                transform-origin: center center !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                pointer-events: none !important;
             }
             
             .print-stamp-inner {
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                border: 2px solid #1F9254; /* Daha ince çerçeve */
-                background-color: rgba(31, 146, 84, 0.1);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                position: relative;
-                box-shadow: none !important; /* Gölgeyi kaldır */
+                width: 100% !important;
+                height: 100% !important;
+                border-radius: 50% !important;
+                border: 2px solid #1F9254 !important;
+                background-color: rgba(31, 146, 84, 0.1) !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                position: relative !important;
+                box-shadow: none !important;
             }
             
             .print-stamp-text {
-                font-size: 20px;
-                font-weight: 700;
-                color: #1F9254;
-                margin-bottom: 8px;
-                letter-spacing: 1px;
+                font-size: 20px !important;
+                font-weight: 700 !important;
+                color: #1F9254 !important;
+                margin-bottom: 8px !important;
+                letter-spacing: 1px !important;
             }
             
             .print-stamp-line {
-                width: 60%;
-                height: 2px;
-                background-color: #1F9254;
-                margin: 5px 0;
+                width: 60% !important;
+                height: 2px !important;
+                background-color: #1F9254 !important;
+                margin: 5px 0 !important;
             }
             
             .print-stamp-by {
-                font-size: 10px;
-                color: #1F9254;
-                margin-bottom: 2px;
+                font-size: 10px !important;
+                color: #1F9254 !important;
+                margin-bottom: 2px !important;
             }
             
             .print-stamp-name {
-                font-size: 14px;
-                font-weight: 600;
-                color: #1F9254;
-                margin-bottom: 5px;
+                font-size: 14px !important;
+                font-weight: 600 !important;
+                color: #1F9254 !important;
+                margin-bottom: 5px !important;
             }
             
             .print-stamp-date {
-                font-size: 10px;
-                color: #1F9254;
-            }
-            
-            /* Eski mührü gizle */
-            .approval-stamp {
-                display: none !important;
-                visibility: hidden !important;
+                font-size: 10px !important;
+                color: #1F9254 !important;
             }
         }
 
@@ -846,15 +860,93 @@
             cursor: move;
             user-select: none;
             touch-action: none;
+            position: absolute;
+            z-index: 1000;
         }
 
         .approval-stamp.active {
             border: 2px dashed #1F9254;
         }
 
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .btn-icon:hover {
+            background-color: #e9ecef;
+        }
+
         .btn-icon.active {
             background-color: #1F9254;
             color: white;
+            border-color: #1F9254;
+        }
+
+        .btn-icon .toggle-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .rfi-document-image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Toggle Switch Stilleri */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-left: 10px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #1F9254;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
         }
     </style>
 {% endblock head %}
@@ -888,12 +980,13 @@
                 <div class="rfi-document-header">
                     <div class="rfi-document-title">{{onayli.sablon_bilgisi.rfi_baslik}}</div>
                     <div class="rfi-document-actions">
-                        <button class="btn-icon" id="toggleStampBtn">
-                            <i class="icon icon-stamp"></i>
-                        </button>
-                        <button class="btn-icon">
-                            <i class="icon icon-fullscreen"></i>
-                        </button>
+                        <div class="stamp-control">
+                            <span>{% trans 'Onay Damgası' %}</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggleStampBtn" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
                         <button class="btn-icon" id="printDocumentBtn">
                             <i class="icon icon-download"></i>
                         </button>
@@ -1026,78 +1119,39 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Yazdırma fonksiyonu
-            function printDocument() {
-                const printContainer = document.getElementById('printContainer');
-                const rfiImage = document.getElementById('rfiImage');
-                const approvalStamp = document.getElementById('approvalStamp');
-                
-                // Yazdırma konteynerini temizle
-                printContainer.innerHTML = '';
-                
-                // Belge görüntüsünü ekle
-                const img = document.createElement('img');
-                img.src = rfiImage.src;
-                img.className = 'print-image';
-                printContainer.appendChild(img);
-                
-                // Onay mührünü ekle (eğer varsa ve görünürse)
-                if (approvalStamp && approvalStamp.style.display !== 'none') {
-                    const stamp = approvalStamp.cloneNode(true);
-                    stamp.className = 'print-stamp';
-                    printContainer.appendChild(stamp);
+            // Mühür sürükleme işlevleri
+            const approvalStamp = document.getElementById('approvalStamp');
+            const imageContainer = document.querySelector('.rfi-document-image-container');
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+
+            // Kaydedilmiş pozisyonu yükle
+            if (approvalStamp) {
+                const savedPosition = localStorage.getItem('stampPosition');
+                if (savedPosition) {
+                    const position = JSON.parse(savedPosition);
+                    xOffset = position.x;
+                    yOffset = position.y;
+                    setTranslate(position.x, position.y, approvalStamp);
                 }
-                
-                // Yazdırma konteynerini göster
-                printContainer.style.display = 'block';
-                
-                // Yazdırma işlemini başlat
-                window.print();
-                
-                // Yazdırma sonrası konteynerı gizle
-                setTimeout(() => {
-                    printContainer.style.display = 'none';
-                }, 1000);
             }
 
-            // Yazdırma butonları için event listener'lar
-            document.querySelectorAll('#printBtn, #printDocumentBtn').forEach(button => {
-                button.addEventListener('click', printDocument);
-            });
-
-            // Onay mührü göster/gizle
-            const toggleStampBtn = document.getElementById('toggleStampBtn');
-            const approvalStamp = document.getElementById('approvalStamp');
-            
-            if (toggleStampBtn && approvalStamp) {
-                // Mühür butonuna tıklandığında
-                toggleStampBtn.addEventListener('click', function() {
-                    const isVisible = approvalStamp.style.display === 'flex';
-                    approvalStamp.style.display = isVisible ? 'none' : 'flex';
-                    toggleStampBtn.classList.toggle('active');
-                });
-
-                // Mühürü sürüklenebilir yap
-                let isDragging = false;
-                let currentX;
-                let currentY;
-                let initialX;
-                let initialY;
-                let xOffset = 0;
-                let yOffset = 0;
-
+            if (approvalStamp) {
                 approvalStamp.addEventListener('mousedown', dragStart);
                 document.addEventListener('mousemove', drag);
                 document.addEventListener('mouseup', dragEnd);
             }
 
-            // Sürükleme fonksiyonları
             function dragStart(e) {
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-
-                if (e.target === approvalStamp) {
+                if (e.target === approvalStamp || approvalStamp.contains(e.target)) {
                     isDragging = true;
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
                 }
             }
 
@@ -1111,6 +1165,12 @@
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, approvalStamp);
+                    
+                    // Pozisyonu kaydet
+                    localStorage.setItem('stampPosition', JSON.stringify({
+                        x: currentX,
+                        y: currentY
+                    }));
                 }
             }
 
@@ -1124,10 +1184,84 @@
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0) rotate(-15deg)`;
             }
 
-            // Sayfa yüklendiğinde onay mührünü göster
-            if (approvalStamp) {
+            // Mühür göster/gizle toggle
+            const toggleStampBtn = document.getElementById('toggleStampBtn');
+            if (toggleStampBtn && approvalStamp) {
                 approvalStamp.style.display = 'flex';
+                
+                toggleStampBtn.addEventListener('change', function() {
+                    approvalStamp.style.display = this.checked ? 'flex' : 'none';
+                });
             }
+
+            // Yazdırma işlevi
+            function printDocument() {
+                const printContainer = document.getElementById('printContainer');
+                const rfiImage = document.getElementById('rfiImage');
+                const approvalStamp = document.getElementById('approvalStamp');
+                
+                // Yazdırma konteynerini temizle
+                printContainer.innerHTML = '';
+                
+                // Görüntüyü ekle
+                const img = document.createElement('img');
+                img.src = rfiImage.src;
+                img.className = 'print-image';
+                printContainer.appendChild(img);
+                
+                // Mühürü ekle
+                if (approvalStamp && approvalStamp.style.display !== 'none') {
+                    const stamp = document.createElement('div');
+                    stamp.className = 'print-stamp';
+                    
+                    // Mühür içeriğini oluştur
+                    const stampInner = document.createElement('div');
+                    stampInner.className = 'print-stamp-inner';
+                    
+                    const text = document.createElement('div');
+                    text.className = 'print-stamp-text';
+                    text.textContent = 'ONAYLANDI';
+                    
+                    const line = document.createElement('div');
+                    line.className = 'print-stamp-line';
+                    
+                    const by = document.createElement('div');
+                    by.className = 'print-stamp-by';
+                    by.textContent = 'Onaylayan';
+                    
+                    const name = document.createElement('div');
+                    name.className = 'print-stamp-name';
+                    name.textContent = '{{onayli.onaylayan_bilgisi.last_name}}';
+                    
+                    const date = document.createElement('div');
+                    date.className = 'print-stamp-date';
+                    date.textContent = '{{onayli.onaylayan_tarih | date:"d.m.Y H.s"}}';
+                    
+                    stampInner.appendChild(text);
+                    stampInner.appendChild(line);
+                    stampInner.appendChild(by);
+                    stampInner.appendChild(name);
+                    stampInner.appendChild(date);
+                    
+                    stamp.appendChild(stampInner);
+                    printContainer.appendChild(stamp);
+                }
+                
+                // Yazdırma işlemini başlat
+                setTimeout(() => {
+                    printContainer.style.display = 'block';
+                    window.print();
+                    
+                    setTimeout(() => {
+                        printContainer.style.display = 'none';
+                    }, 1000);
+                }, 100);
+            }
+
+            // Yazdırma butonları için event listener'lar
+            document.querySelectorAll('#printBtn, #printDocumentBtn').forEach(button => {
+                button.addEventListener('click', printDocument);
+            });
         });
     </script>
 {% endblock sidebar %}
