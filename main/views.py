@@ -10503,6 +10503,7 @@ def rfi_Olustur(request):
                 rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi = get_kayit_tarihi_from_request(request),sablon_bilgisi = get_object_or_none(rfi_sablonlar,id = sablon_bilgileri.id),
                 kalem_baslik = ana_imalat_adi)
         return redirect_with_language("main:rfi_listesi")
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =kullanici).last()
     return render(request,"checklist/rfi_olustur.html",content)
 
 def rfi_listesi(request):
@@ -10706,6 +10707,7 @@ def rfi_show(request,id):
             kullanici =request.user  
         content["onayli"] = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id)
         content["kalemler"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id))
+        content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =kullanici).last()
         #rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi")
     return render(request,"checklist/rfi_onizle.html",content)
 def rapor_olusturma(request):
