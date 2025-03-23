@@ -46,7 +46,7 @@
             </div>
 
             <div class="page-actions">
-
+                <button class="page-primary-btn" id="templatesBtn" title="{% trans 'Şablonlar' %}">Şablonlar</i></button>
                 <button class="page-primary-btn" id="uploadRfiBtn"><i class="icon icon-new"></i>
                    {% trans 'RFI Yükle' %} </button>
             </div>
@@ -294,7 +294,7 @@
                 <div class="form-row">
                     <div class="form-element">
                         <label>{% trans 'Daire No' %}</label>
-                        <input type="text" name="apartmentNo" id="apartmentNo" placeholder="Örn: 5">
+                        <input type="number" min="1" name="apartmentNo" id="apartmentNo" placeholder="Örn: 5" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
                     <div class="form-element">
                         <label>{% trans 'Mahal' %}</label>
@@ -309,23 +309,18 @@
                             <i class="icon icon-upload"></i>
                         </div>
                         <div class="form-element">
-                                <label for="ekler">{% trans 'Ekler' %}</label>
-    
-                                <div class="file-input file-preview-input">
-                                    <ul class="fileList">
-    
-    
-    
-                                        <label for="ekler">
-                                            <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
-                                        </label>
-                                    </ul>
-    
-                                    <input multiple type="file" name="file" id="ekler">
-                                </div>
-    
-    
+                            <label for="ekler">{% trans 'Ekler' %}</label>
+                            <div class="file-input file-preview-input">
+                                <ul class="fileList">
+                                    <label for="ekler">
+                                        <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                    </label>
+                                </ul>
+                                <input multiple type="file" name="file" id="ekler" accept=".jpg,.jpeg,.png" onchange="validateFileType(this)">
                             </div>
+                            <small class="file-info">{% trans 'Sadece JPG ve PNG dosyaları yüklenebilir.' %}</small>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-element">
@@ -988,31 +983,58 @@
     });
     </script>
 
+    <script>
+    function validateFileType(input) {
+        const files = input.files;
+        const validTypes = ['image/jpeg', 'image/png'];
+        let isValid = true;
+        let errorMessage = '';
+
+        for (let i = 0; i < files.length; i++) {
+            if (!validTypes.includes(files[i].type)) {
+                isValid = false;
+                errorMessage += `${files[i].name} dosyası desteklenmeyen bir formatta. Sadece JPG ve PNG dosyaları yüklenebilir.\n`;
+            }
+        }
+
+        if (!isValid) {
+            alert(errorMessage);
+            input.value = ''; // Geçersiz dosyaları temizle
+        }
+    }
+    </script>
+
+    <style>
+    .form-error-message {
+        color: #dc3545;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        display: none;
+    }
+
+    .error {
+        border-color: #dc3545 !important;
+    }
+
+    .form-element input.error,
+    .form-element select.error {
+        border-color: #dc3545;
+    }
+
+    .form-element input.error:focus,
+    .form-element select.error:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .file-info {
+        display: block;
+        margin-top: 5px;
+        color: #666;
+        font-size: 12px;
+    }
+    </style>
 
 {% endblock sidebar %}
-
-<style>
-.form-error-message {
-    color: #dc3545;
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-    display: none;
-}
-
-.error {
-    border-color: #dc3545 !important;
-}
-
-.form-element input.error,
-.form-element select.error {
-    border-color: #dc3545;
-}
-
-.form-element input.error:focus,
-.form-element select.error:focus {
-    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-}
-</style>

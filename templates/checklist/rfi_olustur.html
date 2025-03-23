@@ -265,6 +265,42 @@
         #formPreview {
             display: none;
         }
+
+        .page-icon-btn {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            transition: color 0.2s;
+        }
+
+        .page-icon-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .page-icon-btn i {
+            font-size: 20px;
+        }
+
+        .page-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-primary-btn {
+            height: 40px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 {% endblock head %}
 
@@ -285,16 +321,14 @@
                     </ul>
                 </div>
                 <div class="page-actions">
-                    <button type="button" class="page-secondary-btn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'">
-                        <i class="icon icon-close"></i>
-                        İptal
+                    <button type="button" class="page-icon-btn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'" title="Vazgeç">
+                        <i class="icon icon-reject"></i>
                     </button>
-                    <button type="submit" class="page-secondary-btn" >
-                        <i class="icon icon-tick"></i>
-                        Kaydet
+                    <button type="submit" class="page-icon-btn" title="Kaydet">
+                        <i class="icon icon-confirm"></i>
                     </button>
                     <button type="button" class="page-primary-btn" id="previewBtn">
-                        <i class="icon icon-eye"></i>
+                        <i class="icon icon-view"></i>
                         Önizle
                     </button>
                 </div>
@@ -416,13 +450,11 @@
                     </ul>
                 </div>
                 <div class="page-actions">
-                    <button class="page-secondary-btn" id="editBtn">
-                        <i class="icon icon-edit"></i>
-                        Düzenle
+                    <button class="page-icon-btn" id="editBtn" title="Düzenle">
+                        <i class="icon icon-action-edit"></i>
                     </button>
-                    <button class="page-primary-btn" id="printBtn">
-                        <i class="icon icon-print"></i>
-                        Yazdır
+                    <button class="page-icon-btn" id="printBtn" title="Yazdır">
+                        <i class="icon icon-download"></i>
                     </button>
                 </div>
             </div>
@@ -451,10 +483,7 @@
                         <label>MAHAL:</label>
                         <span>_________________</span>
                     </div>
-                    <div>
-                        <label>SONRAKİ İMALAT:</label>
-                        <span>_________________</span>
-                    </div>
+
                 </div>
 
                 <div class="rfi-content">
@@ -514,176 +543,261 @@
     </main>
 
     <script>
-        // Sidebar toggle işlevi
-        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
-        });
+        document.addEventListener("DOMContentLoaded", function() {
+            // Sidebar toggle işlevi
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    const sidebar = document.querySelector('.sidebar');
+                    if (sidebar) {
+                        sidebar.classList.toggle('sidebar-collapsed');
+                    }
+                });
+            }
 
-        // Dark mode toggle işlevi
-        document.querySelector('.dark-mode-toggle').addEventListener('click', function() {
-            document.body.classList.toggle('dark-mode');
-        });
+            // Dark mode toggle işlevi
+            const darkModeToggle = document.querySelector('.dark-mode-toggle');
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('dark-mode');
+                });
+            }
 
-        // Kontrol kalemleri sayısı değiştiğinde
-        document.getElementById('controlItemCount').addEventListener('change', function() {
-            const count = this.value;
-            const controlItems = document.getElementById('controlItems');
-            const mainWorkItem = document.getElementById('mainWorkItem');
-            const customCountContainer = document.getElementById('customCountContainer');
-            
-            // Özel sayı seçeneği için input göster/gizle
-            if (count === 'custom') {
-                customCountContainer.style.display = 'block';
-                return; // Diğer işlemleri yapma
-            } else {
-                customCountContainer.style.display = 'none';
-            }
-            
-            // Ana imalat veya kontrol kalemleri gösterme
-            if (count === '0') {
-                controlItems.style.display = 'none';
-                mainWorkItem.style.display = 'block';
-            } else {
-                controlItems.style.display = 'block';
-                mainWorkItem.style.display = 'none';
-                
-                // Mevcut kalemleri temizle
-                controlItems.innerHTML = '';
-                
-                // Başlık ekle
-                controlItems.innerHTML = `
-                    <div class="form-element">
-                        <label>Kontrol Kalemleri</label>
-                        <p class="form-help">Bu kalemler formda listelenecek ve sahada kontrol edilecektir.</p>
-                    </div>
-                `;
-                
-                // Kontrol kalemleri ekle
-                const itemCount = parseInt(count);
-                for (let i = 1; i <= itemCount; i++) {
-                    const row = document.createElement('div');
-                    row.className = 'form-row';
-                    row.innerHTML = `
-                        <div class="form-element">
-                            <input type="text" name="kontrol" placeholder="Kontrol Kalemi ${i}">
-                        </div>
-                    `;
-                    controlItems.appendChild(row);
-                }
-            }
-        });
-        
-        // Özel sayı girişi değiştiğinde
-        document.getElementById('customItemCount').addEventListener('change', function() {
-            const count = parseInt(this.value);
-            const controlItems = document.getElementById('controlItems');
-            const mainWorkItem = document.getElementById('mainWorkItem');
-            
-            if (isNaN(count) || count < 1) {
-                return; // Geçersiz değer
-            }
-            
-            // Kontrol kalemleri göster
-            controlItems.style.display = 'block';
-            mainWorkItem.style.display = 'none';
-            
-            // Mevcut kalemleri temizle
-            controlItems.innerHTML = '';
-            
-            // Başlık ekle
-            controlItems.innerHTML = `
-                <div class="form-element">
-                    <label>Kontrol Kalemleri</label>
-                    <p class="form-help">Bu kalemler formda listelenecek ve sahada kontrol edilecektir.</p>
-                </div>
-            `;
-            
-            // Kontrol kalemleri ekle
-            for (let i = 1; i <= count; i++) {
-                const row = document.createElement('div');
-                row.className = 'form-row';
-                row.innerHTML = `
-                    <div class="form-element">
-                        <input type="text" placeholder="Kontrol Kalemi ${i}">
-                    </div>
-                `;
-                controlItems.appendChild(row);
-            }
-        });
-
-        // Önizleme butonu - Tablo yüksekliğini dinamik ayarlama eklendi
-        document.getElementById('previewBtn').addEventListener('click', function() {
-            // Bugünün tarihini al
-            const today = new Date();
-            const dateStr = today.toLocaleDateString('tr-TR');
-            document.getElementById('currentDate').textContent = dateStr;
-            
-            // Proje ve başlık bilgilerini al
-            const projectName = document.getElementById('projectSelect').value;
-            const rfiTitle = document.getElementById('rfiTitle').value;
-            
-            // Önizleme alanına bilgileri yerleştir
-            document.getElementById('previewProjectName').textContent = projectName;
-            document.getElementById('previewRfiTitle').textContent = rfiTitle;
-            
-            // Tablo gövdesini temizle
-            const tableBody = document.querySelector('#previewTable tbody');
-            tableBody.innerHTML = '';
-            
-            // Kontrol kalemi sayısını al
-            let count = document.getElementById('controlItemCount').value;
-            
-            // Özel sayı kontrolü
-            if (count === 'custom') {
-                count = document.getElementById('customItemCount').value;
-                if (isNaN(parseInt(count)) || parseInt(count) < 1) {
-                    alert('Lütfen geçerli bir kalem sayısı girin.');
-                    return;
-                }
-            }
-            
-            count = parseInt(count);
-            
-            if (count === 0) {
-                // Ana imalat adını al
-                const mainWorkItemName = document.getElementById('mainWorkItemName').value;
-                
-                // Tek satır ekle
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${mainWorkItemName}</td>
-                    <td class="signature-cell"></td>
-                    <td></td>
-                `;
-                tableBody.appendChild(row);
-            } else {
-                // Kontrol kalemlerini al
-                const inputs = document.querySelectorAll('#controlItems input[type="text"]');
-                
-                // Tabloyu doldur
-                inputs.forEach(input => {
-                    if (input.value.trim() !== '') {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${input.value}</td>
-                            <td class="signature-cell"></td>
-                            <td></td>
-                        `;
-                        tableBody.appendChild(row);
+            // Önizleme butonu
+            const previewBtn = document.getElementById('previewBtn');
+            if (previewBtn) {
+                previewBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Bugünün tarihini al
+                    const today = new Date();
+                    const dateStr = today.toLocaleDateString('tr-TR');
+                    const currentDateElement = document.getElementById('currentDate');
+                    if (currentDateElement) {
+                        currentDateElement.textContent = dateStr;
+                    }
+                    
+                    // Proje ve başlık bilgilerini al
+                    const projectSelect = document.getElementById('projectSelect');
+                    const rfiTitleInput = document.getElementById('rfiTitle');
+                    
+                    if (projectSelect && rfiTitleInput) {
+                        const projectName = projectSelect.options[projectSelect.selectedIndex].text;
+                        const rfiTitle = rfiTitleInput.value;
+                        
+                        // Önizleme alanına bilgileri yerleştir
+                        const previewProjectName = document.getElementById('previewProjectName');
+                        const previewRfiTitle = document.getElementById('previewRfiTitle');
+                        
+                        if (previewProjectName) previewProjectName.textContent = projectName;
+                        if (previewRfiTitle) previewRfiTitle.textContent = rfiTitle;
+                    }
+                    
+                    // Tablo gövdesini temizle
+                    const tableBody = document.querySelector('#previewTable tbody');
+                    if (tableBody) {
+                        tableBody.innerHTML = '';
+                        
+                        // Kontrol kalemi sayısını al
+                        const controlItemCount = document.getElementById('controlItemCount');
+                        if (!controlItemCount) return;
+                        
+                        let count = controlItemCount.value;
+                        
+                        // Özel sayı kontrolü
+                        if (count === 'custom') {
+                            const customItemCount = document.getElementById('customItemCount');
+                            if (!customItemCount) return;
+                            
+                            count = customItemCount.value;
+                            if (isNaN(parseInt(count)) || parseInt(count) < 1) {
+                                alert('Lütfen geçerli bir kalem sayısı girin.');
+                                return;
+                            }
+                        }
+                        
+                        count = parseInt(count);
+                        
+                        if (count === 0) {
+                            // Ana imalat adını al
+                            const mainWorkItemName = document.getElementById('mainWorkItemName');
+                            if (!mainWorkItemName) return;
+                            
+                            // Tek satır ekle
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${mainWorkItemName.value}</td>
+                                <td class="signature-cell"></td>
+                                <td></td>
+                            `;
+                            tableBody.appendChild(row);
+                        } else {
+                            // Kontrol kalemlerini al
+                            const inputs = document.querySelectorAll('#controlItems input[type="text"]');
+                            
+                            // Tabloyu doldur
+                            inputs.forEach(input => {
+                                if (input.value.trim() !== '') {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <td>${input.value}</td>
+                                        <td class="signature-cell"></td>
+                                        <td></td>
+                                    `;
+                                    tableBody.appendChild(row);
+                                }
+                            });
+                        }
+                    }
+                    
+                    // Düzenleme alanını gizle, önizleme alanını göster
+                    const formEditor = document.getElementById('formEditor');
+                    const formPreview = document.getElementById('formPreview');
+                    
+                    if (formEditor && formPreview) {
+                        formEditor.style.display = 'none';
+                        formPreview.style.display = 'block';
+                        
+                        // Tablo yüksekliğini dinamik olarak ayarla
+                        setTimeout(function() {
+                            adjustTableHeight();
+                        }, 100);
                     }
                 });
             }
             
-            // Düzenleme alanını gizle, önizleme alanını göster
-            document.getElementById('formEditor').style.display = 'none';
-            document.getElementById('formPreview').style.display = 'block';
+            // Düzenleme butonları
+            const backToEditor = document.getElementById('backToEditor');
+            if (backToEditor) {
+                backToEditor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const formEditor = document.getElementById('formEditor');
+                    const formPreview = document.getElementById('formPreview');
+                    if (formEditor && formPreview) {
+                        formEditor.style.display = 'block';
+                        formPreview.style.display = 'none';
+                    }
+                });
+            }
             
-            // Tablo yüksekliğini dinamik olarak ayarla
-            setTimeout(function() {
-                adjustTableHeight();
-            }, 100);
+            const editBtn = document.getElementById('editBtn');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    const formEditor = document.getElementById('formEditor');
+                    const formPreview = document.getElementById('formPreview');
+                    if (formEditor && formPreview) {
+                        formEditor.style.display = 'block';
+                        formPreview.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Yazdırma butonu
+            const printBtn = document.getElementById('printBtn');
+            if (printBtn) {
+                printBtn.addEventListener('click', function() {
+                    window.print();
+                });
+            }
+            
+            // Kontrol kalemleri sayısı değiştiğinde
+            const controlItemCount = document.getElementById('controlItemCount');
+            if (controlItemCount) {
+                controlItemCount.addEventListener('change', function() {
+                    const count = this.value;
+                    const controlItems = document.getElementById('controlItems');
+                    const mainWorkItem = document.getElementById('mainWorkItem');
+                    const customCountContainer = document.getElementById('customCountContainer');
+                    
+                    if (!controlItems || !mainWorkItem || !customCountContainer) return;
+                    
+                    // Özel sayı seçeneği için input göster/gizle
+                    if (count === 'custom') {
+                        customCountContainer.style.display = 'block';
+                        return;
+                    } else {
+                        customCountContainer.style.display = 'none';
+                    }
+                    
+                    // Ana imalat veya kontrol kalemleri gösterme
+                    if (count === '0') {
+                        controlItems.style.display = 'none';
+                        mainWorkItem.style.display = 'block';
+                    } else {
+                        controlItems.style.display = 'block';
+                        mainWorkItem.style.display = 'none';
+                        
+                        // Mevcut kalemleri temizle
+                        controlItems.innerHTML = '';
+                        
+                        // Başlık ekle
+                        controlItems.innerHTML = `
+                            <div class="form-element">
+                                <label>Kontrol Kalemleri</label>
+                                <p class="form-help">Bu kalemler formda listelenecek ve sahada kontrol edilecektir.</p>
+                            </div>
+                        `;
+                        
+                        // Kontrol kalemleri ekle
+                        const itemCount = parseInt(count);
+                        for (let i = 1; i <= itemCount; i++) {
+                            const row = document.createElement('div');
+                            row.className = 'form-row';
+                            row.innerHTML = `
+                                <div class="form-element">
+                                    <input type="text" name="kontrol" placeholder="Kontrol Kalemi ${i}">
+                                </div>
+                            `;
+                            controlItems.appendChild(row);
+                        }
+                    }
+                });
+            }
+            
+            // Özel sayı girişi değiştiğinde
+            const customItemCount = document.getElementById('customItemCount');
+            if (customItemCount) {
+                customItemCount.addEventListener('change', function() {
+                    const count = parseInt(this.value);
+                    const controlItems = document.getElementById('controlItems');
+                    const mainWorkItem = document.getElementById('mainWorkItem');
+                    
+                    if (!controlItems || !mainWorkItem) return;
+                    
+                    if (isNaN(count) || count < 1) {
+                        return;
+                    }
+                    
+                    // Kontrol kalemleri göster
+                    controlItems.style.display = 'block';
+                    mainWorkItem.style.display = 'none';
+                    
+                    // Mevcut kalemleri temizle
+                    controlItems.innerHTML = '';
+                    
+                    // Başlık ekle
+                    controlItems.innerHTML = `
+                        <div class="form-element">
+                            <label>Kontrol Kalemleri</label>
+                            <p class="form-help">Bu kalemler formda listelenecek ve sahada kontrol edilecektir.</p>
+                        </div>
+                    `;
+                    
+                    // Kontrol kalemleri ekle
+                    for (let i = 1; i <= count; i++) {
+                        const row = document.createElement('div');
+                        row.className = 'form-row';
+                        row.innerHTML = `
+                            <div class="form-element">
+                                <input type="text" placeholder="Kontrol Kalemi ${i}">
+                            </div>
+                        `;
+                        controlItems.appendChild(row);
+                    }
+                });
+            }
         });
-        
+
         // Tablo yüksekliğini dinamik olarak ayarlama
         function adjustTableHeight() {
             const container = document.querySelector('.rfi-form-container');
@@ -691,6 +805,9 @@
             const details = document.querySelector('.rfi-details');
             const notes = document.querySelector('.rfi-notes');
             const signatures = document.querySelector('.rfi-signatures');
+            const tableContainer = document.querySelector('.rfi-table-container');
+            
+            if (!container || !header || !details || !notes || !signatures || !tableContainer) return;
             
             const availableHeight = container.offsetHeight - 
                                    header.offsetHeight - 
@@ -699,57 +816,7 @@
                                    signatures.offsetHeight - 
                                    60; // Ekstra boşluklar için
             
-            document.querySelector('.rfi-table-container').style.maxHeight = availableHeight + 'px';
+            tableContainer.style.maxHeight = availableHeight + 'px';
         }
-        
-        // Düzenleme butonları
-        document.getElementById('backToEditor').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('formEditor').style.display = 'block';
-            document.getElementById('formPreview').style.display = 'none';
-        });
-        
-        document.getElementById('editBtn').addEventListener('click', function() {
-            document.getElementById('formEditor').style.display = 'block';
-            document.getElementById('formPreview').style.display = 'none';
-        });
-        
-        // Yazdırma butonu - Düzeltilmiş
-        document.getElementById('printBtn').addEventListener('click', function() {
-            // Önizleme görünür değilse, önce önizlemeyi göster
-            if (document.getElementById('formPreview').style.display === 'none') {
-                document.getElementById('previewBtn').click();
-                
-                // Önizleme yüklendikten sonra yazdır
-                setTimeout(function() {
-                    window.print();
-                }, 500);
-            } else {
-                window.print();
-            }
-        });
-        
-        // Sayfa yüklendiğinde kontrol kalemi sayısı kontrolü
-        window.addEventListener('load', function() {
-            const count = parseInt(document.getElementById('controlItemCount').value);
-            if (count === 0) {
-                document.getElementById('controlItems').style.display = 'none';
-                document.getElementById('mainWorkItem').style.display = 'block';
-            }
-        });
-
-        function updateMaxWidth() {
-            const element = document.querySelector('.rfi-form-container');
-            if (element) {
-                const maxWidth = element.clientWidth;
-                console.log('Max width:', maxWidth);
-                // ...existing logic...
-            } else {
-                console.warn('Element not found for updateMaxWidth. Retrying...');
-                setTimeout(updateMaxWidth, 100); // Retry after 100ms
-            }
-        }
-
-      
     </script>
 {% endblock sidebar %}
