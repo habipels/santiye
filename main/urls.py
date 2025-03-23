@@ -271,6 +271,8 @@ path("rfi_detail/<int:id>", views.rfi_detail, name="rfi_detail"),
 path("rfi_duzenleme/<int:id>", views.rfi_duzenleme, name="rfi_duzenleme"),
 path("rfi_reject/", views.rfi_reject, name="rfi_reject"),
 path("rfi_approve/", views.rfi_approve, name="rfi_approve"),
+
+path("create_report/", views.rapor_olusturma, name="rapor_olusturma"),
 ]
 
 #

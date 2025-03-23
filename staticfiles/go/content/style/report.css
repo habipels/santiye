@@ -1,0 +1,722 @@
+/* Ana container */
+.report-container {
+    display: flex;
+    background: #f5f5f5;
+    gap: 24px;
+    padding: 24px;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.report-sidebar {
+    width: 320px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Filtreler bölümü */
+.filters-section {
+    padding: 16px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.filter-group {
+    margin-bottom: 16px;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748B;
+    margin-bottom: 8px;
+}
+
+/* Input stilleri */
+#dateRange,
+#projectSelect {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #052941;
+    background: #F8FAFC;
+}
+
+/* Şablonlar bölümü */
+.templates-section {
+    padding: 16px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.template-item {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+/* Bileşenler bölümü */
+.components-section {
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.components-container {
+    padding: 16px;
+}
+
+.component-group {
+    margin-bottom: 24px;
+}
+
+.component-item {
+    padding: 12px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: move;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Ana içerik alanı */
+.report-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f5f5f5;
+    padding: 24px;
+    overflow: auto;
+}
+
+/* Önizleme alanı - A4 formatı */
+.preview-container {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Başlık bölümü */
+.preview-header {
+    margin-bottom: 20mm;
+    text-align: center;
+    border-bottom: 1px solid #E2E8F0;
+    padding-bottom: 10mm;
+}
+
+/* Drop zone stilleri */
+.drop-zone {
+    min-height: 100px;
+    border: 2px dashed #E2E8F0;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F8FAFC;
+}
+
+.drop-zone .drop-text {
+    color: #64748B;
+    font-size: 13px;
+}
+
+/* Grid yapısı */
+.preview-grid {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.preview-grid[data-layout="2-col"] {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.preview-grid[data-layout="3-col"] {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.preview-grid[data-layout="70-30"] {
+    grid-template-columns: 70fr 30fr;
+}
+
+/* Modal stilleri */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 80%;
+    max-width: 800px;
+}
+
+/* Yazdırma stilleri */
+@media print {
+    body {
+        background: #fff;
+    }
+
+    .report-sidebar,
+    .preview-actions {
+        display: none !important;
+    }
+
+    .report-container {
+        padding: 0;
+        height: auto;
+    }
+
+    .preview-container {
+        padding: 0;
+    }
+}
+
+/* Üst bar ve butonlar */
+.report-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+/* Sayfa sekmeleri */
+.page-tabs {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.page-tab {
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.page-tab.active {
+    border-color: #22D6B5;
+    color: #22D6B5;
+}
+
+.page-tab-close {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.page-tab-add {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid #E2E8F0;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Rapor aksiyonları */
+.report-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid #E2E8F0;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    border-color: #CBD5E1;
+    background: #F8FAFC;
+}
+
+.action-btn.primary {
+    background: #22D6B5;
+    border-color: #22D6B5;
+    color: #fff;
+}
+
+.action-btn.primary:hover {
+    background: #1fc1a3;
+}
+
+/* Rapor kartları */
+.report-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 16px;
+    border-bottom: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #052941;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+/* Kart boyutları */
+.report-card[data-size="small"] {
+    grid-column: span 4;
+}
+
+.report-card[data-size="medium"] {
+    grid-column: span 6;
+}
+
+.report-card[data-size="large"] {
+    grid-column: span 8;
+}
+
+.report-card[data-size="full"] {
+    grid-column: span 12;
+}
+
+/* Modal başlık ve içerik stilleri */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #052941;
+    margin: 0;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #E2E8F0;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body {
+    margin-bottom: 24px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #E2E8F0;
+}
+
+/* Sayfa ayarları modal içeriği */
+.settings-section {
+    margin-bottom: 24px;
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.settings-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #052941;
+    margin-bottom: 12px;
+}
+
+/* Kenar boşlukları ayarları */
+.margin-inputs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.margin-input {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.margin-input span {
+    font-size: 13px;
+    color: #64748B;
+}
+
+.margin-control {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #052941;
+}
+
+/* Kağıt boyutu ve yönlendirme */
+.orientation-options {
+    display: flex;
+    gap: 16px;
+}
+
+.orientation-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* PDF önizleme modalı */
+#pdfPreviewModal .modal-content {
+    width: 90%;
+    max-width: 1000px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#pdfPreviewModal .modal-body {
+    flex: 1;
+    overflow: hidden;
+    margin: 0;
+    padding: 16px 0;
+}
+
+#pdfPreviewFrame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #f8f8f8;
+}
+
+/* Loading göstergesi */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading {
+    padding: 16px 24px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #052941;
+    font-size: 14px;
+}
+
+.loading:before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid #E2E8F0;
+    border-top-color: #22D6B5;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Form kontrolleri */
+.form-control {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #052941;
+    background: #F8FAFC;
+    transition: all 0.2s;
+}
+
+.form-control:hover {
+    border-color: #CBD5E1;
+}
+
+.form-control:focus {
+    border-color: #22D6B5;
+    outline: none;
+    background: #fff;
+}
+
+/* Modal butonları */
+.button {
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    background: #fff;
+    color: #052941;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.button:hover {
+    background: #F8FAFC;
+    border-color: #CBD5E1;
+}
+
+.button-primary {
+    background: #22D6B5;
+    border-color: #22D6B5;
+    color: #fff;
+}
+
+.button-primary:hover {
+    background: #1fc1a3;
+}
+
+/* Onay modalı */
+.confirm-modal .modal-content {
+    max-width: 400px;
+}
+
+.confirm-modal .modal-body {
+    text-align: center;
+    color: #052941;
+}
+
+.confirm-modal .modal-footer {
+    justify-content: center;
+}
+
+/* Logo stilleri */
+.report-logo {
+    margin-bottom: 16px;
+}
+
+.report-logo img {
+    width: 140px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* PDF çıktısı için özel stiller */
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+    }
+    
+    .preview-container {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        padding: 20mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        background: #fff !important;
+    }
+
+    .card-actions, 
+    .component-controls,
+    .report-topbar,
+    .report-sidebar {
+        display: none !important;
+    }
+}
+
+/* Header içeriği */
+.header-content {
+    text-align: center;
+}
+
+.preview-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #052941;
+    margin: 16px 0;
+}
+
+.preview-subtitle {
+    font-size: 16px;
+    color: #64748B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.separator {
+    width: 4px;
+    height: 4px;
+    background: #CBD5E1;
+    border-radius: 50%;
+}
+
+/* Rapor içeriği grid yapısı */
+.report-content {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+}
+
+/* PDF stilleri */
+.pdf-wrapper {
+    width: 210mm;
+    background: #fff;
+    margin: 0 auto;
+}
+
+.pdf-wrapper .preview-container {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    padding: 20mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+}
+
+.pdf-wrapper .report-logo img {
+    width: 140px !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto 16px !important;
+}
+
+.pdf-wrapper .preview-header {
+    margin-bottom: 20mm !important;
+    text-align: center !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    padding-bottom: 10mm !important;
+}
+
+.pdf-wrapper .report-content {
+    display: grid !important;
+    grid-template-columns: repeat(12, 1fr) !important;
+    gap: 12px !important;
+}
+
+.pdf-wrapper .report-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 12px !important;
+}
+
+/* Kart boyutları */
+.pdf-wrapper .report-card[data-size="small"] {
+    grid-column: span 4 !important;
+}
+
+.pdf-wrapper .report-card[data-size="medium"] {
+    grid-column: span 6 !important;
+}
+
+.pdf-wrapper .report-card[data-size="large"] {
+    grid-column: span 8 !important;
+}
+
+.pdf-wrapper .report-card[data-size="full"] {
+    grid-column: span 12 !important;
+}
+
+/* Drop zone stilleri */
+.pdf-wrapper .drop-zone {
+    min-height: 100px !important;
+    border: 2px dashed #E2E8F0 !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    background: #F8FAFC !important;
+} 

@@ -30,18 +30,23 @@ class ChecklistDetail {
             this.saveNote();
         });
 
-        // Fotoğraf yükleme
-        $(document).on('change', '.photo-upload input[type="file"]', (e) => {
-            this.handlePhotoUpload(e.target.files);
+        // Dosya yükleme
+        $(document).on('change', '.file-upload input[type="file"]', (e) => {
+            this.handleFileUpload(e.target.files, $(e.currentTarget).closest('.control-item').data('id'));
         });
 
         // Genel notlar için event binding'ler
-        $('#generalPhotosUpload input[type="file"]').on('change', (e) => {
-            this.handlePhotoUpload(e.target.files, '#generalPhotosUpload');
+        $('#generalFilesUpload input[type="file"]').on('change', (e) => {
+            this.handleFileUpload(e.target.files, 'general');
         });
 
         $('#saveGeneralNotes').on('click', () => {
             this.saveGeneralNotes();
+        });
+
+        // Notları ve dosyaları gönderme
+        $('#sendNotes').on('click', () => {
+            this.sendNotes();
         });
     }
 
@@ -54,14 +59,15 @@ class ChecklistDetail {
         $('#notesPanel').removeClass('active');
         // Form temizleme
         $('#notesPanel textarea').val('');
-        $('.photo-grid').find('.photo-item').remove();
+        $('.file-grid').find('.file-item').remove();
     }
 
     saveNote() {
         const item = $('#notesPanel').data('item');
         const note = $('#notesPanel textarea').val();
+        const files = this.collectFiles('#notesPanel .file-grid');
         
-        if (note) {
+        if (note || files.length > 0) {
             // Not ikonunu değiştir
             item.find('.button-note')
                 .addClass('has-note')
@@ -72,19 +78,20 @@ class ChecklistDetail {
         this.closeNotesPanel();
     }
 
-    handlePhotoUpload(files) {
+    handleFileUpload(files, itemId) {
         Array.from(files).forEach(file => {
             const reader = new FileReader();
             reader.onload = (e) => {
-                const photoHtml = `
-                    <div class="photo-item">
-                        <img src="${e.target.result}" alt="Yüklenen fotoğraf">
-                        <button class="photo-remove" onclick="this.parentElement.remove()">
+                const fileHtml = `
+                    <div class="file-item">
+                        <a href="${e.target.result}" download="${file.name}">${file.name}</a>
+                        <input type="hidden" name="file${itemId}" value="${e.target.result}">
+                        <button class="file-remove" onclick="this.parentElement.remove()">
                             <i class="icon icon-trash"></i>
                         </button>
                     </div>
                 `;
-                $('.photo-upload').before(photoHtml);
+                $(`[data-id="${itemId}"] .file-grid`).before(fileHtml);
             };
             reader.readAsDataURL(file);
         });
@@ -94,7 +101,7 @@ class ChecklistDetail {
     saveGeneralNotes() {
         const notes = {
             text: $('.general-notes-section textarea').val(),
-            photos: this.collectPhotos('.general-notes-section .photo-grid')
+            files: this.collectFiles('.general-notes-section .file-grid')
         };
 
         // API'ye kaydetme işlemi burada yapılacak
@@ -104,13 +111,16 @@ class ChecklistDetail {
         alert('Genel notlar kaydedildi');
     }
 
-    // Fotoğrafları toplama
-    collectPhotos(selector) {
-        const photos = [];
-        $(selector).find('.photo-item img').each(function() {
-            photos.push($(this).attr('src'));
+    // Dosyaları toplama
+    collectFiles(selector) {
+        const files = [];
+        $(selector).find('.file-item a').each(function() {
+            files.push({
+                name: $(this).text(),
+                url: $(this).attr('href')
+            });
         });
-        return photos;
+        return files;
     }
 
     // Genel notları yükleme
@@ -119,28 +129,65 @@ class ChecklistDetail {
         // Örnek veri:
         const savedNotes = {
             text: 'Örnek genel not',
-            photos: []
+            files: []
         };
 
         // Verileri form'a doldurma
         $('.general-notes-section textarea').val(savedNotes.text);
         
-        // Fotoğrafları yükleme
-        savedNotes.photos.forEach(photoUrl => {
-            const photoHtml = `
-                <div class="photo-item">
-                    <img src="${photoUrl}" alt="Genel not fotoğrafı">
-                    <button class="photo-remove" onclick="this.parentElement.remove()">
+        // Dosyaları yükleme
+        savedNotes.files.forEach(file => {
+            const fileHtml = `
+                <div class="file-item">
+                    <a href="${file.url}" download="${file.name}">${file.name}</a>
+                    <button class="file-remove" onclick="this.parentElement.remove()">
                         <i class="icon icon-trash"></i>
                     </button>
                 </div>
             `;
-            $('#generalPhotosUpload').before(photoHtml);
+            $('#generalFilesUpload').before(fileHtml);
         });
+    }
+
+    // Notları ve dosyaları gönderme
+    sendNotes() {
+        const generalNotes = {
+            text: $('.general-notes-section textarea').val(),
+            files: this.collectFiles('.general-notes-section .file-grid')
+        };
+
+        const specificNotes = [];
+        $('.control-item').each(function() {
+            const noteText = $(this).find('textarea').val();
+            const noteFiles = $(this).find('.file-grid .file-item a').map(function() {
+                return {
+                    name: $(this).text(),
+                    url: $(this).attr('href')
+                };
+            }).get();
+
+            if (noteText || noteFiles.length > 0) {
+                specificNotes.push({
+                    text: noteText,
+                    files: noteFiles
+                });
+            }
+        });
+
+        const data = {
+            generalNotes: generalNotes,
+            specificNotes: specificNotes
+        };
+
+        // API'ye gönderme işlemi burada yapılacak
+        console.log('Notlar ve dosyalar gönderiliyor:', data);
+        
+        // Başarılı gönderim bildirimi
+        alert('Notlar ve dosyalar gönderildi');
     }
 }
 
 // Sayfa yüklendiğinde başlat
 $(document).ready(() => {
     window.checklistDetail = new ChecklistDetail();
-}); 
+});

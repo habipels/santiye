@@ -10685,3 +10685,30 @@ def rfi_duzenleme(request, id):
         print(request.POST)
         return redirect_with_language("main:rfi_template")
     return render(request, "checklist/rfi_duzenleme.html", content)
+
+
+
+def rapor_olusturma(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = kullanici)     
+        content["cariler"] = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = kullanici)
+        content["santiyeler"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        content["bloklar"] = bloglar.objects.filter(proje_santiye_Ait__silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        content["is_planlari"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici,status = "Completed")
+        content["is_planlarii"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        content["personeller_listesi"] = calisanlar.objects.filter(silinme_bilgisi = False,calisan_kime_ait = kullanici)
+    return render(request, "santiye_yonetimi/rapor_olusturucu.html", content)
