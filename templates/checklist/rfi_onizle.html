@@ -321,12 +321,7 @@
                     </ul>
                 </div>
                 <div class="page-actions">
-                    <button type="button" class="page-icon-btn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'" title="Vazgeç">
-                        <i class="icon icon-reject"></i>
-                    </button>
-                    <button type="submit" class="page-icon-btn" title="Kaydet">
-                        <i class="icon icon-confirm"></i>
-                    </button>
+                  
                     <button type="button" class="page-primary-btn" id="previewBtn">
                         <i class="icon icon-view"></i>
                         Önizle
@@ -344,19 +339,19 @@
                         <div class="form-element">
                             <label>Proje</label>
                             <select name="santiye_bigisi" id="projectSelect">
-                            {% for i in santiyeler %}
-                            <option value="{{i.id}}">{{i.proje_adi}}</option>
-                            {% endfor %}
+                            
+                            <option selected value="{{onayli.rfi_santiye.id}}">{{onayli.rfi_santiye.proje_adi}}</option>
+                           
                                 
                             </select>
                         </div>
                         <div class="form-element">
                             <label>RFI Başlığı</label>
-                            <input type="text" name="rfi_adi" id="rfiTitle" placeholder="Örn: Sıva İşleri Kontrol Formu" value="SIVA İŞLERİ KONTROL FORMU">
+                            <input type="text" name="rfi_adi" id="rfiTitle" placeholder="Örn: Sıva İşleri Kontrol Formu" value="{{onayli.rfi_baslik}}">
                         </div>
                         <div class="form-element">
                             <label>RFI Kategorisi</label>
-                            <input type="text" name="rfi_kategorisi" id="rfiTitle" placeholder="Örn: Mekanik" value="Mekanik">
+                            <input type="text" name="rfi_kategorisi" id="rfiTitle" placeholder="Örn: Mekanik" value="{{onayli.rfi_kategorisi}}">
                         </div>
                          
                     </div>
@@ -384,7 +379,7 @@
                             </div>
                                <div class="form-element">
                             <label>RFI Açıklması</label>
-                            <input type="text" name="rfi_aciklama" id="rfiTitle" placeholder="RFI Açıklaması" >
+                            <input type="text" name="rfi_aciklama" id="rfiTitle" placeholder="RFI Açıklaması" value="{{onayli.rfi_aciklama}}" >
                         </div>
                         </div>
                     </div>
@@ -402,31 +397,17 @@
                             <label>Kontrol Kalemleri</label>
                             <p class="form-help">Bu kalemler formda listelenecek ve sahada kontrol edilecektir.</p>
                         </div>
-                        <div class="form-row">
+                       
+                        
+                                {% for i in kalemler %}
+                                <div class="form-row">
                             <div class="form-element">
-                                <input type="text" name="kontrol" placeholder="Kontrol Kalemi 1" value="Duvar yüzeyi temizliği">
-                            </div>
+                                
+                                <input type="text" placeholder="Kontrol Kalemi 2"  value="{{i.kalem_baslik}}"> 
+                                </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-element">
-                                <input type="text" placeholder="Kontrol Kalemi 2" value="Kaba sıva uygulaması">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-element">
-                                <input type="text" placeholder="Kontrol Kalemi 3" value="İnce sıva uygulaması">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-element">
-                                <input type="text" placeholder="Kontrol Kalemi 4" value="Köşe ve kenar detayları">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-element">
-                                <input type="text" placeholder="Kontrol Kalemi 5" value="Son kontrol ve onay">
-                            </div>
-                        </div>
+                                {% endfor %}
+                      
                     </div>
                 </div>
             
@@ -566,8 +547,7 @@
             // Önizleme butonu
             const previewBtn = document.getElementById('previewBtn');
             if (previewBtn) {
-                
-                function name(){
+                previewBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     
                     // Bugünün tarihini al
@@ -819,6 +799,5 @@
             
             tableContainer.style.maxHeight = availableHeight + 'px';
         }
-        name();
     </script>
 {% endblock sidebar %}

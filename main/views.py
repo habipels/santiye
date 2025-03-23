@@ -10688,6 +10688,26 @@ def rfi_duzenleme(request, id):
 
 
 
+def rfi_show(request,id):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici =request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")   
+        else:
+            kullanici =request.user  
+        content["onayli"] = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id)
+        content["kalemler"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id))
+        #rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi")
+    return render(request,"checklist/rfi_onizle.html",content)
 def rapor_olusturma(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
