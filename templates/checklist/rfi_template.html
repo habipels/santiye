@@ -139,7 +139,7 @@
                                 <i class="icon icon-action-edit"></i>
                                 {% trans 'Düzenle' %}
                             </button>
-                            <button class="form-action-secondary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi'  %}'">
+                            <button class="form-action-secondary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_duzenleme' i.id %}'">
                                 <i class="icon icon-document"></i>
                                 {% trans 'Kullan' %}
                             </button>
@@ -201,6 +201,59 @@
                     card.style.display = 'none';
                 }
             });
+        });
+
+        // Şablon kullanma fonksiyonu
+        function useTemplate(templateId, title, category, description, controls) {
+            // Şablon verilerini localStorage'a kaydet
+            localStorage.setItem('templateData', JSON.stringify({
+                title: title,
+                category: category,
+                description: description,
+                controls: controls
+            }));
+            
+            // RFI oluşturma sayfasına yönlendir
+            window.location.href = '/{{dil}}{% url 'main:rfi_Olustur' %}';
+        }
+
+        // Sayfa yüklendiğinde şablon verilerini kontrol et
+        document.addEventListener('DOMContentLoaded', function() {
+            const templateData = localStorage.getItem('templateData');
+            if (templateData) {
+                const data = JSON.parse(templateData);
+                
+                // Form alanlarını doldur
+                const rfiTitleInput = document.querySelector('input[name="rfi_adi"]');
+                const rfiCategoryInput = document.querySelector('input[name="rfi_kategorisi"]');
+                const rfiDescriptionInput = document.querySelector('input[name="rfi_aciklama"]');
+                
+                if (rfiTitleInput) rfiTitleInput.value = data.title;
+                if (rfiCategoryInput) rfiCategoryInput.value = data.category;
+                if (rfiDescriptionInput) rfiDescriptionInput.value = data.description;
+                
+                // Kontrol kalemlerini ayarla
+                if (data.controls && data.controls.length > 0) {
+                    const controlItemCount = document.getElementById('controlItemCount');
+                    if (controlItemCount) {
+                        controlItemCount.value = data.controls.length;
+                        controlItemCount.dispatchEvent(new Event('change'));
+                        
+                        // Kontrol kalemlerini doldur
+                        setTimeout(() => {
+                            const inputs = document.querySelectorAll('#controlItems input[type="text"]');
+                            data.controls.forEach((control, index) => {
+                                if (inputs[index]) {
+                                    inputs[index].value = control.kalem_baslik;
+                                }
+                            });
+                        }, 100);
+                    }
+                }
+                
+                // Şablon verilerini temizle
+                localStorage.removeItem('templateData');
+            }
         });
     </script>
 {% endblock sidebar %}
