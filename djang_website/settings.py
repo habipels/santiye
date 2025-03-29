@@ -33,6 +33,15 @@ if DEPLOY__:
     DEBUG = True
 
     ALLOWED_HOSTS = ["*"]
+    """
+    # X-Frame-Options başlığını kapat (iframe kullanımı için)
+    X_FRAME_OPTIONS = 'ALLOWALL'  
+
+    # Content Security Policy'yi esnek hale getir
+    CSP_DEFAULT_SRC = ("'self'", "http://127.0.0.1:8000")
+    CSP_FRAME_ANCESTORS = ("'self'", "http://127.0.0.1:8000")
+
+    """
 
 
     CSRF_TRUSTED_ORIGINS = [
@@ -239,6 +248,13 @@ else:
     DEBUG = True
 
     ALLOWED_HOSTS = ["*"]
+    # X-Frame-Options başlığını kapat (iframe kullanımı için)
+    X_FRAME_OPTIONS = 'ALLOWALL'  
+    """
+    # Content Security Policy'yi esnek hale getir
+    CSP_DEFAULT_SRC = ("'self'", "http://127.0.0.1:8000")
+    CSP_FRAME_ANCESTORS = ("'self'", "http://127.0.0.1:8000")"""
+
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {

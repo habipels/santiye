@@ -84,6 +84,7 @@ urlpatterns = [#
     #
     #ilerleme takibi#
     path("santiyeraporu/<int:id>", views.santiye_raporu, name="santiye_raporu"),
+    path("santiyeraporuu/<int:id>", views.santiye_raporu_rapor_gonderme, name="santiye_raporu_rapor_gonderme"),
     path("control/santiyeraporu/<int:id>/<str:hash>", views.santiye_raporu_2, name="santiye_raporu_2"),
 #    #taşeron olayları#
     path("subcontractor", views.taseron_sayfasi, name="taseron_sayfasi"),

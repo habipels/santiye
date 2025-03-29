@@ -7309,7 +7309,21 @@ def santiye_raporu(request,id):
         profile =  get_object_or_404(bloglar,proje_ait_bilgisi = request.user,id = id )
     content["santiye"] = profile
     return render(request,"santiye_yonetimi/santiye_raporu.html",content)
-
+def santiye_raporu_rapor_gonderme(request,id):
+    content = sozluk_yapisi()
+    if request.user.kullanicilar_db:
+        a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+        if a:
+            if a.izinler.santiye_raporu_gorme:
+                profile =  get_object_or_404(bloglar,proje_ait_bilgisi = request.user.kullanicilar_db,id = id )
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            return redirect_with_language("main:yetkisiz")
+    else:
+        profile =  get_object_or_404(bloglar,proje_ait_bilgisi = request.user,id = id )
+    content["santiye"] = profile
+    return render(request,"santiye_yonetimi/santiye_raporu_2.html",content)
 def kullanici_yetkileri(request):
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
@@ -10733,4 +10747,5 @@ def rapor_olusturma(request):
         content["is_planlari"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici,status = "Completed")
         content["is_planlarii"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
         content["personeller_listesi"] = calisanlar.objects.filter(silinme_bilgisi = False,calisan_kime_ait = kullanici)
+
     return render(request, "santiye_yonetimi/rapor_olusturucu.html", content)

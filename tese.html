@@ -1,21 +1,1214 @@
-{% for i in cariler %}       
-                   {% cari_islemleri i as bilgi_veriyor %}
-                    {% if bilgi_veriyor.sonuc != 0 %}
+   
+<script>
+    
+    class ReportManager {
+    constructor() {
+        this.init();
+        this.bindEvents();
+    }
+    
+    init() {
+        // Tarih seçici
+        this.initDatePicker();
+        
+        // Sürükle-bırak
+        this.initDragAndDrop();
+        
+        // Şablon seçimi
+        this.initTemplates();
+    }
+    
+    initDatePicker() {
+        $('#dateRange').daterangepicker({
+            opens: 'left',
+            locale: {
+                format: 'DD.MM.YYYY',
+                separator: ' - ',
+                applyLabel: 'Uygula',
+                cancelLabel: 'İptal',
+                daysOfWeek: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
+                monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                firstDay: 1
+            },
+            startDate: moment().startOf('month'),
+            endDate: moment().endOf('month')
+        }, (start, end) => {
+            $('#reportDateRange').text(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
+        });
+    }
+    
+    initDragAndDrop() {
+        $('.component-item').draggable({
+            helper: 'clone',
+            appendTo: 'body',
+            zIndex: 1000,
+            cursor: 'move'
+        });
+    
+        this.initializeDropZones();
+    }
+    
+    initializeDropZones() {
+        $('.drop-zone').droppable({
+            accept: '.component-item',
+            hoverClass: 'drop-hover',
+            drop: (event, ui) => {
+                const type = $(ui.draggable).data('type');
+                const component = this.createComponent(type);
+                if (component) {
+                    $(event.target).replaceWith(component);
+                }
+            }
+        });
+    }
+    
+    initTemplates() {
+        $('.template-item').click((e) => {
+            const templateType = $(e.currentTarget).data('template');
+            
+            $('.template-item').removeClass('selected');
+            $(e.currentTarget).addClass('selected');
+            
+            this.loadTemplate(templateType);
+        });
+    }
+    
+    loadTemplate(type) {
+        let template = '';
+        
+        switch(type) {
+            case 'bos':
+                template = `
+                    <div class="report-card" data-size="full">
+                        <div class="drop-zone">
+                            <span class="drop-text">Bileşen eklemek için sürükleyin</span>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            case 'finansal':
+                template = `
+                    <div class="report-content">
+                        <div class="report-card" data-size="medium">
+                            <div class="drop-zone">
+                                <span class="drop-text">Gelir/Gider grafiği</span>
+                            </div>
+                        </div>
+                        <div class="report-card" data-size="medium">
+                            <div class="drop-zone">
+                                <span class="drop-text">Kasa durumu</span>
+                            </div>
+                        </div>
+                        <div class="report-card" data-size="medium">
+                            <div class="drop-zone">
+                                <span class="drop-text">Bütçe analizi</span>
+                            </div>
+                        </div>
+                        <div class="report-card" data-size="medium">
+                            <div class="drop-zone">
+                                <span class="drop-text">Tahsilat durumu</span>
+                            </div>
+                        </div>
+                        <div class="report-card" data-size="full">
+                            <div class="drop-zone">
+                                <span class="drop-text">Finansal tablo</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            case 'proje':
+                template = `
+                    <div class="report-content">
+                        <div class="report-card" data-size="large">
+                            <div class="drop-zone">
+                                <span class="drop-text">Proje durumu</span>
+                            </div>
+                        </div>
+                        <div class="report-card" data-size="small">
+                            <div class="drop-zone">
+                                <span class="drop-text">Görev dağılımı</span>
+                            </div>
+                        </div>
+                        <div class="report-card" data-size="medium">
+                            <div class="drop-zone">
+                                <span class="drop-text">Zaman çizelgesi</span>
+                            </div>
+                        </div>
+                        <div class="report-card" data-size="medium">
+                            <div class="drop-zone">
+                                <span class="drop-text">Kilometre taşları</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+        }
+        
+        $('#reportPreview').html(template);
+        this.initializeDropZones();
+    }
+    
+    showPdfPreview() {
+        const modal = document.getElementById('pdfPreviewModal');
+        const pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
+        modal.classList.add('active');
+    
+        // Loading göster
+        const loadingEl = $('<div class="loading">PDF oluşturuluyor...</div>');
+        $(pdfPreviewFrame).parent().append(loadingEl);
+    
+        // PDF ayarları
+        const opt = {
+            margin: 0,
+            filename: 'rapor.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { 
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                scrollY: 0
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4',
+                orientation: 'portrait'
+            }
+        };
+    
+        // Gereksiz elementleri gizle
+        $('.card-actions, .component-controls, .report-topbar, .report-sidebar').hide();
+    
+        // PDF oluştur
+        html2pdf()
+            .from(document.querySelector('.preview-container'))
+            .set(opt)
+            .outputPdf('datauristring')
+            .then(uri => {
+                // Gizlenen elementleri geri göster
+                $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
+                
+                pdfPreviewFrame.src = uri;
+                loadingEl.remove();
+            })
+            .catch(err => {
+                // Hata durumunda da gizlenen elementleri geri göster
+                $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
+                
+                console.error('PDF oluşturma hatası:', err);
+                loadingEl.text('PDF oluşturulurken bir hata oluştu');
+            });
+    }
+    
+    exportToPDF() {
+        const element = document.querySelector('.preview-container');
+        const paperSize = $('#paperSize').val() || 'a4';
+        const orientation = $('input[name="orientation"]:checked').val() || 'portrait';
+    
+        // PDF ayarları (showPdfPreview ile aynı ayarları kullan)
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: `${this.currentReport?.name || 'rapor'}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                onclone: function(clonedDoc) {
+                    // showPdfPreview'daki aynı DOM düzenlemeleri
+                    $(clonedDoc).find('.card-actions, .component-controls').remove();
                     
-                    
-                    
-                                                <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
-                                            
-                                                    <td class="cari">{{i.cari_adi}}</td>
-                                                    <td class="bakiye">
-                                                    
-                                                        {{ bilgi_veriyor.sonuc }}
+                    $(clonedDoc).find('.preview-header').css({
+                        'margin-bottom': '20mm',
+                        'text-align': 'center',
+                        'border-bottom': '1px solid #E2E8F0',
+                        'padding-bottom': '10mm'
+                    });
+    
+                    $(clonedDoc).find('.report-logo img').css({
+                        'height': '30mm',
+                        'width': 'auto'
+                    });
+    
+                    $(clonedDoc).find('.preview-title').css({
+                        'font-size': '24px',
+                        'font-weight': 'bold',
+                        'margin-bottom': '8px',
+                        'color': '#052941'
+                    });
+    
+                    $(clonedDoc).find('.preview-subtitle').css({
+                        'font-size': '14px',
+                        'color': '#64748B'
+                    });
+    
+                    $(clonedDoc).find('.report-card').css({
+                        'page-break-inside': 'avoid',
+                        'margin-bottom': '15mm'
+                    });
+                }
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: paperSize,
+                orientation: orientation
+            }
+        };
+    
+        // Loading göster
+        const loadingEl = $('<div class="loading-overlay"><div class="loading">PDF indiriliyor...</div></div>');
+        $('body').append(loadingEl);
+    
+        // PDF'yi oluştur ve indir
+        html2pdf().set(opt).from(element).save().then(() => {
+            loadingEl.remove();
+            this.showNotification('PDF başarıyla indirildi');
+            closePdfPreview();
+        }).catch(err => {
+            console.error('PDF indirme hatası:', err);
+            loadingEl.remove();
+            this.showNotification('PDF oluşturulurken bir hata oluştu', 'error');
+        });
+    }
+    
+    bindEvents() {
+        // PDF export
+        $('#exportPDFBtn').click(() => this.showPdfPreview());
+        
+        // Proje seçimi
+        $('#projectSelect').change(() => {
+            const projectName = $('#projectSelect option:selected').text();
+            $('#reportProject').text(projectName || 'Tüm Projeler');
+        });
+    
+        // Yeni event'ler
+        $('.action-btn[title="Temizle"]').click(() => this.showClearConfirm());
+        $('.action-btn[title="Kaydet"]').click(() => this.showSaveForm());
+    }
+    
+    showClearConfirm() {
+        const modal = $(`
+            <div class="modal confirm-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Raporu Temizle</h3>
+                        <button class="modal-close" onclick="$(this).closest('.modal').remove()">
+                            <i class="icon icon-close"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Raporu temizlemek istediğinize emin misiniz?</p>
+                        <p>Bu işlem geri alınamaz.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="button" onclick="$(this).closest('.modal').remove()">İptal</button>
+                        <button class="button button-primary" onclick="window.reportManager.clearReport()">Temizle</button>
+                    </div>
+                </div>
+            </div>
+        `);
+    
+        $('body').append(modal);
+        modal.addClass('active');
+    }
+    
+    clearReport() {
+        // Rapor içeriğini temizle
+        $('#reportPreview').html(`
+            <div class="drop-zone" data-size="full">
+                <span class="drop-text">Bileşen eklemek için sürükleyin</span>
+            </div>
+        `);
+    
+        // Drop zone'ları yeniden aktifleştir
+        this.initializeDropZones();
+    
+        // Modalı kapat
+        $('.confirm-modal').remove();
+    
+        // Bildirim göster
+        this.showNotification('Rapor temizlendi');
+    }
+    
+    showSaveForm() {
+        const modal = $(`
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Raporu Kaydet</h3>
+                        <button class="modal-close" onclick="$(this).closest('.modal').remove()">
+                            <i class="icon icon-close"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Rapor Adı</label>
+                            <input type="text" class="form-control" id="reportName" value="${this.currentReport?.name || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Açıklama</label>
+                            <textarea class="form-control" id="reportDescription">${this.currentReport?.description || ''}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="button" onclick="$(this).closest('.modal').remove()">İptal</button>
+                        <button class="button button-primary" onclick="window.reportManager.saveReport()">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        `);
+    
+        $('body').append(modal);
+        modal.addClass('active');
+    }
+    
+    async saveReport() {
+        const name = $('#reportName').val();
+        const description = $('#reportDescription').val();
+    
+        if (!name) {
+            alert('Lütfen rapor adı giriniz');
+            return;
+        }
+    
+        // Rapor verilerini hazırla
+        const reportData = {
+            name,
+            description,
+            content: $('#reportPreview').html(),
+            dateRange: {
+                start: $('#dateRange').data('daterangepicker').startDate.format('YYYY-MM-DD'),
+                end: $('#dateRange').data('daterangepicker').endDate.format('YYYY-MM-DD')
+            },
+            project: $('#projectSelect').val(),
+            updatedAt: new Date().toISOString()
+        };
+    
+        try {
+            // API'ye gönder (örnek)
+            // const response = await fetch('/api/reports', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(reportData)
+            // });
+    
+            // Başarılı
+            this.currentReport = reportData;
+            $('.modal').remove();
+            this.showNotification('Rapor başarıyla kaydedildi');
+    
+        } catch (error) {
+            console.error('Rapor kaydetme hatası:', error);
+            alert('Rapor kaydedilirken bir hata oluştu');
+        }
+    }
+    
+    showNotification(message) {
+        const notification = $(`
+            <div class="notification">
+                <i class="icon icon-check"></i>
+                <span>${message}</span>
+            </div>
+        `);
+    
+        $('body').append(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+    
+    createComponent(type) {
+        let component;
+        
+        switch(type) {
+            case 'gelir-gider':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="icon icon-chart"></i>
+                                Gelir/Gider Analizi
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="icon icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="gelirGiderChart"></div>
+                        </div>
+                    </div>
+                `);
+                
+                setTimeout(() => {
+                    new ApexCharts(component.find('#gelirGiderChart')[0], {
+                        series: [{
+                            name: 'Gelir',
+                            data: {{ozellikleri.gelir | safe }}
+                        }, {
+                            name: 'Gider',
+                            data: {{ozellikleri.gider | safe }}
+                        }],
+                        chart: {
+                            type: 'area',
+                            height: 250,
+                            toolbar: { show: false }
+                        },
+                        colors: ['#22D6B5', '#FF4560'],
+                        fill: {
+                            type: 'gradient',
+                            gradient: {
+                                shadeIntensity: 1,
+                                opacityFrom: 0.7,
+                                opacityTo: 0.2
+                            }
+                        },
+                        dataLabels: { enabled: false },
+                        stroke: { curve: 'smooth', width: 2 },
+                        xaxis: {
+                            categories: {{ozellikleri.aylar | safe }}
+                        }
+                    }).render();
+                }, 100);
+                break;
+    
+            case 'kasa-durumu':
+                component = $(`
+                    <div class="report-card" data-size="small">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="icon icon-wallet"></i>
+                                Kasa Durumu
+                            </div>
+                            <div class="register-card">
+                <div class="register-card-title">
+                    {% if kasa %}
+                        {{ kasa|length }}
+                    {% else %}
+                        0
+                    {% endif %}
+                    <span>{% trans 'Kasa' %}</span>
+                </div>
+                <div class="register-card-registers">
+                {% for i in kasa %}
+    
+                    <div class="register-card-register"><i class="icon icon-register"></i> {{i.kasa_adi}} <span>$
+                            {% kasa_toplam i %}</span></div>
+                {% endfor %}
+                </div>
+            </div>    
+                        </div>
+                        
+                        {% for kasabilgiis_getirme in kasa %}
+    
+                             <table class="table align-middle table-nowrap" id="customerTable">
+                                                <thead class="table-light">
+                                                    <tr>
                                                         
-                                                    <span>$</span></td>
-                                                    <td class="konum">{{i.aciklama}}</td>
-                                                    <td class="konum">{{i.telefon_numarasi}}</td>
-                                                    <td class="konum">{{i.kayit_tarihi}}</td>
+                                                     
+                                                        <th class="sort" data-sort="customer_name">{% trans 'Kasa' %}</th>
+    
+                                                        <th class="sort" data-sort="phone">{% trans 'Açıklama' %}</th>
+                                                        <th class="sort" data-sort="phone">{% trans 'Tarih' %}</th>
+                                                        <th class="sort" data-sort="date">{% trans 'Tutar' %}</th>
+                                                        <th class="sort" data-sort="date">{% trans 'Bakiye' %}</th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="list form-check-all">
+                                                    {% kasa_islemleri kasabilgiis_getirme as bilgiler %}
+                                                    {% sorgu kasabilgiis_getirme.bakiye as bakiye  %}
+                                                    {% for i in bilgiler %}
+                                                    <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                       
+                                                        {% if request.user.is_superuser %}
+                                                        <td class="kasa">{{i.kasa_bilgisi.kasa_kart_ait_bilgisi.first_name}}</td>
+                                                        {% endif %}
+                                                        <td class="kasa">{{i.kasa_bilgisi.kasa_adi}}</td>
+    
+                                                        <td class="konum">{{i.aciklama}}</td>
+                                                        <td class="konum">{{i.tarihi | date:'Y-m-d'}}</td>
+                                                        <td class="konum">
+                                                            {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                            {% if bilgisicek == 0 %}
+                                                            <span style="color:blue;" > + ${{i.tutar}}</span>
+                                                            {% else %}
+                                                            <span style="color:orange;" > - ${{i.tutar}}</span>
+                                                            {% endif %}
+    
+                                                        </td>
+                                                        <td class="konum">
+                                                            {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                            {% if bilgisicek == 0 %}
+                                                           <span  > {% basit_toplama bakiye i.tutar %}
+                                                           {% basit_toplama bakiye i.tutar  as bakiye%}</span>
+                                                            {% else %}
+                                                            
+                                                             <span > {% basit_cikarma bakiye i.tutar %}
+                                                             {% basit_cikarma bakiye i.tutar as bakiye %}</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                {% endfor %}
+                    </div>
+                `);
+                break;
+    
+            case 'borc-alacak':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="icon icon-money"></i>
+                                Borç/Alacak
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="icon icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="datatable">
+                    <thead>
+                        <tr>
+                            <th class="sort" data-sort="customer_name">{% trans "Cari" %}</th>
+                                                        <th class="sort" data-sort="phone">{% trans "Bakiye" %}</th>
+                                                        <th class="sort" data-sort="phone">{% trans "Açıklama" %}</th>
+                                                        <th class="sort" data-sort="phone">{% trans "Telefon" %}</th>
+                                                        <th class="sort" data-sort="date">{% trans "Kayıt Tarihi" %}</th>
+    
+                        </tr>
+                    </thead>
+                    <tbody>
+                       {% for i in cariler %}       
+                       {% cari_islemleri i as bilgi_veriyor %}
+                        {% if bilgi_veriyor.sonuc != 0 %}
+                        
+                        
+                        
+                                                    <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                
+                                                        <td class="cari">{{i.cari_adi}}</td>
+                                                        <td class="bakiye">
+                                                        
+                                                            {{ bilgi_veriyor.sonuc }}
+                                                            
+                                                        <span>$</span></td>
+                                                        <td class="konum">{{i.aciklama}}</td>
+                                                        <td class="konum">{{i.telefon_numarasi}}</td>
+                                                        <td class="konum">{{i.kayit_tarihi}}</td>
+                                                        
+                                                    </tr>
+                                                    {% endif %}
+                                                    {% endfor %}
+                    </tbody>
+                </table>
+                        </div>
+                    </div>
+                `);
+                break;
+    
+           case 'proje-ozeti':
+        component = $(`
+            <div class="report-card" data-size="large">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="icon icon-project"></i>
+                        Proje Özeti
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-action-btn size-down" title="Küçült">
+                            <i class="icon icon-minus"></i>
+                        </button>
+                        <button class="card-action-btn size-up" title="Büyült">
+                            <i class="icon icon-plus"></i>
+                        </button>
+                        <button class="card-action-btn remove" title="Sil">
+                            <i class="icon icon-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% for santiye in bloklar %}
+                    {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
+                    {%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+                    {% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
+                    {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
+                    {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
+                        {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
+                        {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
+                        {% to_int santiye.kat_sayisi as kat_bilgisi %}
+                        
+                    <div id="ilerleme" class="report-charts">
+    
+                <div class="report-card">
+                    <div class="report-header">
+                        <div class="report-title">{% trans 'İlerleme' %}</div>
+                        <div class="report-stats-info">
+                            <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
+                            <span><i class="icon icon-yellow-circle"></i> {% trans 'Finansal' %}</span>
+                        </div>
+                    </div>
+    
+                    <div class="report-body">
+                        <div id="ilerleme-chart{{santiye.id}}}"></div>
+    
+                    </div>
+                </div>
+                    {% endfor %}
+                </div>
+            </div>
+        `);
+    
+        setTimeout(() => {
+            
+            {% for santiye in bloklar %}
+                    {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
+                    {%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+                    {% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
+                    {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
+                    {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
+                        {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
+                        {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
+                        {% to_int santiye.kat_sayisi as kat_bilgisi %}
+                        
+                        var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
+        var roundedData2 = {{ gun_kalem_sayilari.degerler2 | safe }}.map(x => parseFloat(x.toFixed(2)));
+        var roundedCategories = {{ gun_kalem_sayilari.gunler | safe }};
+        var options = {
+            series: [
+                {
+                    name: "{% trans 'Finansal' %} ",
+                    data: roundedData2,
+                }, 
+                {
+                    name: "{% trans 'Fiziksel' %} ",
+                    data: roundedData1
+                }
+            ],
+            chart: {
+                type: 'bar',
+                height: 350,
+                stacked: true,
+                toolbar: {
+                    show: false
+                },
+                zoom: {
+                    enabled: false
+                }
+            },
+            colors: ['#F9B035', '#6149CD'],
+            responsive: [
+                {
+                    breakpoint: 480,
+                    options: {
+                        legend: {
+                            position: 'bottom',
+                            offsetX: -10,
+                            offsetY: 0
+                        }
+                    }
+                }
+            ],
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    borderRadius: 10,
+                    borderRadiusApplication: 'end', // 'around', 'end'
+                    borderRadiusWhenStacked: 'last', // 'all', 'last'
+                    dataLabels: {
+                        total: {
+                            enabled: true,
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 900
+                            }
+                        }
+                    }
+                },
+            },
+            xaxis: {
+                type: 'text',
+                categories: roundedCategories,
+            },
+            legend: {
+                show: false
+            },
+            fill: {
+                opacity: 1
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function(val) {
+                    return val.toFixed(2); // Değerleri 2 basamağa yuvarla
+                }
+            }
+        };
+    
+        var chart = new ApexCharts(document.querySelector("#ilerleme-chart{{santiye.id}}}"), options);
+        chart.render();
+                    {% endfor %}
+    
+                }, 100);
+                
+    
+     
+    
+                break;
+    
+            case 'ilerleme-grafik':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="icon icon-progress"></i>
+                                İlerleme Grafiği
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="icon icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="tumu-table">
+                                <thead>
+                                    <tr>
+                                              <th scope="col">{% trans 'İş Emri Adı' %}</th>
+                                                <th scope="col">{% trans 'Açıklama' %}</th>
+                                                <th scope="col">{% trans 'Blok' %}</th>
+                                                <th scope="col">{% trans 'Kat' %}</th>
+                                          
+                                                <th scope="col">{% trans 'Kullanıcılar' %}</th>
+                                                <th scope="col">{% trans 'Başlangıç' %}</th>
+                                                <th scope="col">{% trans 'Hedef Tarih' %}</th>
+                                                <th scope="col">{% trans 'Durum' %}</th>
+                                                <th scope="col">{% trans 'Öncelik' %}</th>
+                                                
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in is_planlari %}
+                                <tr>
+                                        <td>
+                                            <div class="task-check">
+                                                
+                                                {{i.title}}
+                                            </div>
+                                        </td>
+                                        <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
+                                        <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                        {% if i.blok %}
+                                            {{i.blok.blog_adi}}
+                                        {% else %}
+                                        {% endif %}
+                                        </td>
+                                        <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                            {{i.kat}}
+                                        {% else %}
+                                        {% endif %}</td>
+                                        <td>
+                                            <div class="td-assigned-people">
+                                                <div class="td-assigned-people-profiles">
+                                                     {% for yazar in i.yapacaklar.all %}
+                                                           <a href="javascript: void(0);"
+                                                            class="avatar-group-item"
+                                                            data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'go/content/images/profile.png' %}{% endif %}"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            data-bs-title="{{yazar.last_name}}"> <img
+                                                                src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'go/content/images/profile.png' %}{% endif %}" alt="" title="{{yazar.last_name}}"
+                                                                class="rounded-circle avatar-xxs"> </a>
+                                                    {% endfor %}
+                                                    <span>+{{i.yapacaklar.all | length}}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
+                                        <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                        <td>
+                                        {% isplani_durumu_kontrol i.id as b %}
                                                     
-                                                </tr>
+                                                    {% if i.status == "Inprogress" %}
+                                                        <span
+                                                        class="status-inprogress stats-lg">{{i.status}}</span>
+                                                    {% elif i.status == "New" %}
+                                                    <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
+                                                    {% elif i.status == "Pending" %}
+                                                    <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
+                                                     {% elif i.status == "Completed" %}
+                                                    <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
+                                                        {% endif %}
+                                                    
+                                            
+                                        </td>
+                                        <td>
+                                             {% if i.oncelik_durumu == "High" %}
+                                        <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+                            
+                                                {% elif i.oncelik_durumu == "Medium" %}
+                                                <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                                {% elif i.oncelik_durumu == "Low" %}
+                                                <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
                                                 {% endif %}
-                                                {% endfor %}
+                                        </td>
+                                       
+                                   
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `);
+    
+                setTimeout(() => {
+                    new ApexCharts(component.find('#progressChart')[0], {
+                        series: [75],
+                        chart: {
+                            type: 'radialBar',
+                            height: 250
+                        },
+                        plotOptions: {
+                            radialBar: {
+                                hollow: { size: '70%' },
+                                dataLabels: {
+                                    value: { fontSize: '22px' }
+                                }
+                            }
+                        },
+                        labels: ['Tamamlanma']
+                    }).render();
+                }, 100);
+                break;
+    
+            case 'gorev-tablosu':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="icon icon-task"></i>
+                                Görev Tablosu
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="icon icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="tumu-table">
+                                <thead>
+                                    <tr>
+                                              <th scope="col">{% trans 'İş Emri Adı' %}</th>
+                                                <th scope="col">{% trans 'Açıklama' %}</th>
+                                                <th scope="col">{% trans 'Blok' %}</th>
+                                                <th scope="col">{% trans 'Kat' %}</th>
+                                          
+                                                <th scope="col">{% trans 'Kullanıcılar' %}</th>
+                                                <th scope="col">{% trans 'Başlangıç' %}</th>
+                                                <th scope="col">{% trans 'Hedef Tarih' %}</th>
+                                                <th scope="col">{% trans 'Durum' %}</th>
+                                                <th scope="col">{% trans 'Öncelik' %}</th>
+                                                
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in is_planlarii %}
+                                <tr>
+                                        <td>
+                                            <div class="task-check">
+                                                
+                                                {{i.title}}
+                                            </div>
+                                        </td>
+                                        <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
+                                        <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                        {% if i.blok %}
+                                            {{i.blok.blog_adi}}
+                                        {% else %}
+                                        {% endif %}
+                                        </td>
+                                        <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                            {{i.kat}}
+                                        {% else %}
+                                        {% endif %}</td>
+                                        <td>
+                                            <div class="td-assigned-people">
+                                                <div class="td-assigned-people-profiles">
+                                                     {% for yazar in i.yapacaklar.all %}
+                                                           <a href="javascript: void(0);"
+                                                            class="avatar-group-item"
+                                                            data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'go/content/images/profile.png' %}{% endif %}"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            data-bs-title="{{yazar.last_name}}"> <img
+                                                                src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'go/content/images/profile.png' %}{% endif %}" alt="" title="{{yazar.last_name}}"
+                                                                class="rounded-circle avatar-xxs"> </a>
+                                                    {% endfor %}
+                                                    <span>+{{i.yapacaklar.all | length}}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
+                                        <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                        <td>
+                                        {% isplani_durumu_kontrol i.id as b %}
+                                                    
+                                                    {% if i.status == "Inprogress" %}
+                                                        <span
+                                                        class="status-inprogress stats-lg">{{i.status}}</span>
+                                                    {% elif i.status == "New" %}
+                                                    <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
+                                                    {% elif i.status == "Pending" %}
+                                                    <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
+                                                     {% elif i.status == "Completed" %}
+                                                    <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
+                                                        {% endif %}
+                                                    
+                                            
+                                        </td>
+                                        <td>
+                                             {% if i.oncelik_durumu == "High" %}
+                                        <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
+                            
+                                                {% elif i.oncelik_durumu == "Medium" %}
+                                                <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
+                                                {% elif i.oncelik_durumu == "Low" %}
+                                                <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
+                                                {% endif %}
+                                        </td>
+                                       
+                                   
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `);
+                break;
+    
+            case 'personel-listesi':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="icon icon-users"></i>
+                                Personel Listesi
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="icon icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>Ali Yılmaz</li>
+                                <li>Ayşe Demir</li>
+                                <li>Mehmet Çelik</li>
+                            </ul>
+                        </div>
+                    </div>
+                `);
+                break;
+    
+            case 'puantaj':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="icon icon-time"></i>
+                                Puantaj
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="icon icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Ad</th>
+                                        <th>Çalışma Süresi</th>
+                                        <th>Mesai</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Ali Yılmaz</td>
+                                        <td>160 saat</td>
+                                        <td>10 saat</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ayşe Demir</td>
+                                        <td>150 saat</td>
+                                        <td>5 saat</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `);
+                break;
+    
+            case 'izin-takip':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="icon icon-calendar"></i>
+                                İzin Takibi
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="icon icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Ad</th>
+                                        <th>Kullanılan İzin</th>
+                                        <th>Kalan İzin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Ali Yılmaz</td>
+                                        <td>5 gün</td>
+                                        <td>10 gün</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ayşe Demir</td>
+                                        <td>3 gün</td>
+                                        <td>12 gün</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `);
+                break;
+        }
+        
+        if (component) {
+            // Boyutlandırma işlevselliği
+            component.find('.size-up, .size-down').click(function() {
+                const card = $(this).closest('.report-card');
+                const sizes = ['small', 'medium', 'large', 'full'];
+                const currentSize = card.attr('data-size') || 'medium';
+                const currentIndex = sizes.indexOf(currentSize);
+                
+                if ($(this).hasClass('size-up') && currentIndex < sizes.length - 1) {
+                    card.attr('data-size', sizes[currentIndex + 1]);
+                } else if ($(this).hasClass('size-down') && currentIndex > 0) {
+                    card.attr('data-size', sizes[currentIndex - 1]);
+                }
+            });
+    
+            // Silme işlevselliği
+            component.find('.remove').click(function() {
+                const card = $(this).closest('.report-card');
+                card.remove();
+            });
+        }
+        
+        return component;
+    }
+    }
+    
+    // Sayfa yüklendiğinde başlat
+    $(document).ready(() => {
+    window.reportManager = new ReportManager();
+    });
+    
+    // Modal fonksiyonları
+    function closePdfPreview() {
+    document.getElementById('pdfPreviewModal').classList.remove('active');
+    }
+    
+    function openPageSettings() {
+    document.getElementById('pageSettingsModal').classList.add('active');
+    }
+    
+    function closePageSettings() {
+    document.getElementById('pageSettingsModal').classList.remove('active');
+    }
+    
+    function savePageSettings() {
+    // Kenar boşlukları
+    const margins = {
+        top: $('.margin-control[data-margin="top"]').val(),
+        right: $('.margin-control[data-margin="right"]').val(),
+        bottom: $('.margin-control[data-margin="bottom"]').val(),
+        left: $('.margin-control[data-margin="left"]').val()
+    };
+    
+    // Kağıt ayarları
+    const paperSize = $('#paperSize').val();
+    const orientation = $('input[name="orientation"]:checked').val();
+    
+    // Ayarları uygula
+    Object.entries(margins).forEach(([margin, value]) => {
+        $('.preview-container').css(`padding-${margin}`, value + 'mm');
+    });
+    
+    closePageSettings();
+    }
+    
+    
+    </script>
+    

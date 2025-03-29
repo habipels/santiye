@@ -25,7 +25,26 @@
 <!-- Add missing static references -->
 <link rel="stylesheet" href="{% static 'go/content/style/custom.css' %}">
 <script src="{% static 'go/content/script/custom.js' %}"></script>
-  <style>
+<style>
+
+    
+table {
+    border-collapse: collapse;
+    background-color: #fff;
+  }
+  table tr,
+  table td,
+  table th {
+    border: 1px solid #bbb;
+    padding: 10px 20px;
+  }
+  table th {
+    background-color: #d1084b;
+    color: #fff;
+    font-weight: 600;
+  }
+                              
+                        
         .report-container {
             display: flex;
             height: calc(100vh - 60px);
@@ -1321,6 +1340,61 @@ createComponent(type) {
         </div>    
                     </div>
                     
+                    {% for kasabilgiis_getirme in kasa %}
+
+                         <table class="table align-middle table-nowrap" id="customerTable">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    
+                                                 
+                                                    <th class="sort" data-sort="customer_name">{% trans 'Kasa' %}</th>
+
+                                                    <th class="sort" data-sort="phone">{% trans 'Açıklama' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Tarih' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Tutar' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Bakiye' %}</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody class="list form-check-all">
+                                                {% kasa_islemleri kasabilgiis_getirme as bilgiler %}
+                                                {% sorgu kasabilgiis_getirme.bakiye as bakiye  %}
+                                                {% for i in bilgiler %}
+                                                <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                   
+                                                    {% if request.user.is_superuser %}
+                                                    <td class="kasa">{{i.kasa_bilgisi.kasa_kart_ait_bilgisi.first_name}}</td>
+                                                    {% endif %}
+                                                    <td class="kasa">{{i.kasa_bilgisi.kasa_adi}}</td>
+
+                                                    <td class="konum">{{i.aciklama}}</td>
+                                                    <td class="konum">{{i.tarihi | date:'Y-m-d'}}</td>
+                                                    <td class="konum">
+                                                        {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                        {% if bilgisicek == 0 %}
+                                                        <span style="color:blue;" > + ${{i.tutar}}</span>
+                                                        {% else %}
+                                                        <span style="color:orange;" > - ${{i.tutar}}</span>
+                                                        {% endif %}
+
+                                                    </td>
+                                                    <td class="konum">
+                                                        {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                        {% if bilgisicek == 0 %}
+                                                       <span  > {% basit_toplama bakiye i.tutar %}
+                                                       {% basit_toplama bakiye i.tutar  as bakiye%}</span>
+                                                        {% else %}
+                                                        
+                                                         <span > {% basit_cikarma bakiye i.tutar %}
+                                                         {% basit_cikarma bakiye i.tutar as bakiye %}</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+            {% endfor %}
                 </div>
             `);
             break;
@@ -1386,43 +1460,152 @@ createComponent(type) {
             `);
             break;
 
-        case 'proje-ozeti':
-            component = $(`
-                <div class="report-card" data-size="large">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="icon icon-project"></i>
-                            Proje Özeti
-                        </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn size-down" title="Küçült">
-                                <i class="icon icon-minus"></i>
-                            </button>
-                            <button class="card-action-btn size-up" title="Büyült">
-                                <i class="icon icon-plus"></i>
-                            </button>
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="icon icon-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        {% for santiye in bloklar %}
-                            {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
-{%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
-{% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
-{% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
-{% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
-    {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
-     {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
-     {% to_int santiye.kat_sayisi as kat_bilgisi %}
-     
-                        {% endfor %}
+       case 'proje-ozeti':
+    component = $(`
+        <div class="report-card" data-size="large">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="icon icon-project"></i>
+                    Proje Özeti
+                </div>
+                <div class="card-actions">
+                    <button class="card-action-btn size-down" title="Küçült">
+                        <i class="icon icon-minus"></i>
+                    </button>
+                    <button class="card-action-btn size-up" title="Büyült">
+                        <i class="icon icon-plus"></i>
+                    </button>
+                    <button class="card-action-btn remove" title="Sil">
+                        <i class="icon icon-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                {% for santiye in bloklar %}
+                {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
+                {%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+                {% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
+                {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
+                {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
+                    {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
+                    {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
+                    {% to_int santiye.kat_sayisi as kat_bilgisi %}
+                    
+                <div id="ilerleme" class="report-charts">
 
-                        
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-title">{% trans 'İlerleme' %}</div>
+                    <div class="report-stats-info">
+                        <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
+                        <span><i class="icon icon-yellow-circle"></i> {% trans 'Finansal' %}</span>
                     </div>
                 </div>
-            `);
+
+                <div class="report-body">
+                    <div id="ilerleme-chart{{santiye.id}}}"></div>
+
+                </div>
+            </div>
+                {% endfor %}
+            </div>
+        </div>
+    `);
+
+    setTimeout(() => {
+        
+        {% for santiye in bloklar %}
+                {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
+                {%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+                {% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
+                {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
+                {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
+                    {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
+                    {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
+                    {% to_int santiye.kat_sayisi as kat_bilgisi %}
+                    
+                    var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
+    var roundedData2 = {{ gun_kalem_sayilari.degerler2 | safe }}.map(x => parseFloat(x.toFixed(2)));
+    var roundedCategories = {{ gun_kalem_sayilari.gunler | safe }};
+    var options = {
+        series: [
+            {
+                name: "{% trans 'Finansal' %} ",
+                data: roundedData2,
+            }, 
+            {
+                name: "{% trans 'Fiziksel' %} ",
+                data: roundedData1
+            }
+        ],
+        chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        colors: ['#F9B035', '#6149CD'],
+        responsive: [
+            {
+                breakpoint: 480,
+                options: {
+                    legend: {
+                        position: 'bottom',
+                        offsetX: -10,
+                        offsetY: 0
+                    }
+                }
+            }
+        ],
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 10,
+                borderRadiusApplication: 'end', // 'around', 'end'
+                borderRadiusWhenStacked: 'last', // 'all', 'last'
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 900
+                        }
+                    }
+                }
+            },
+        },
+        xaxis: {
+            type: 'text',
+            categories: roundedCategories,
+        },
+        legend: {
+            show: false
+        },
+        fill: {
+            opacity: 1
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function(val) {
+                return val.toFixed(2); // Değerleri 2 basamağa yuvarla
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#ilerleme-chart{{santiye.id}}}"), options);
+    chart.render();
+                {% endfor %}
+
+            }, 100);
+            
+
+ 
+
             break;
 
         case 'ilerleme-grafik':
