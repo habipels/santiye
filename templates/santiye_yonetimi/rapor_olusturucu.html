@@ -504,7 +504,7 @@ table {
                     </div>
                     <div class="filter-group">
                         <label>Tarih Aralığı</label>
-                        <input type="text" id="dateRange" class="form-control" />
+                        <input type="text" id="dateRange" class="form-control " />
                     </div>
                     <div class="filter-group">
                         <label>Proje</label>
@@ -833,7 +833,7 @@ table {
     
     
 <script>
-    
+var tarih = "01.03.2024 - 31.03.2024";
 class ReportManager {
 constructor() {
     this.init();
@@ -867,6 +867,7 @@ initDatePicker() {
         startDate: moment().startOf('month'),
         endDate: moment().endOf('month')
     }, (start, end) => {
+        tarih = start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY');
         $('#reportDateRange').text(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
     });
 }
@@ -1587,7 +1588,7 @@ createComponent(type) {
                     {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
                     {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
                     {% to_int santiye.kat_sayisi as kat_bilgisi %}
-                    alert("{{santiye.id}}");
+                    
                     var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
     var roundedData2 = {{ gun_kalem_sayilari.degerler2 | safe }}.map(x => parseFloat(x.toFixed(2)));
     var roundedCategories = {{ gun_kalem_sayilari.gunler | safe }};
@@ -1767,16 +1768,16 @@ createComponent(type) {
                         <table id="tumu-table">
                             <thead>
                                 <tr>
-                                          <th scope="col">{% trans 'İş Emri Adı' %}</th>
-                                            <th scope="col">{% trans 'Açıklama' %}</th>
-                                            <th scope="col">{% trans 'Blok' %}</th>
-                                            <th scope="col">{% trans 'Kat' %}</th>
+                                          <th >{% trans 'İş Emri Adı' %}</th>
+                                            <th >{% trans 'Açıklama' %}</th>
+                                            <th >{% trans 'Blok' %}</th>
+                                            <th >{% trans 'Kat' %}</th>
                                       
-                                            <th scope="col">{% trans 'Kullanıcılar' %}</th>
-                                            <th scope="col">{% trans 'Başlangıç' %}</th>
-                                            <th scope="col">{% trans 'Hedef Tarih' %}</th>
-                                            <th scope="col">{% trans 'Durum' %}</th>
-                                            <th scope="col">{% trans 'Öncelik' %}</th>
+                                            <th >{% trans 'Kullanıcılar' %}</th>
+                                            <th >{% trans 'Başlangıç' %}</th>
+                                            <th >{% trans 'Hedef Tarih' %}</th>
+                                            <th >{% trans 'Durum' %}</th>
+                                            <th >{% trans 'Öncelik' %}</th>
                                             
                                 </tr>
                             </thead>
@@ -1789,14 +1790,14 @@ createComponent(type) {
                                             {{i.title}}
                                         </div>
                                     </td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    <td >{{ i.aciklama }}</td>
+                                    <td >
                                     {% if i.blok %}
                                         {{i.blok.blog_adi}}
                                     {% else %}
                                     {% endif %}
                                     </td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                    <td >{% if i.blok %}
                                         {{i.kat}}
                                     {% else %}
                                     {% endif %}</td>
@@ -1898,16 +1899,16 @@ createComponent(type) {
                         <table id="tumu-table">
                             <thead>
                                 <tr>
-                                          <th scope="col">{% trans 'İş Emri Adı' %}</th>
-                                            <th scope="col">{% trans 'Açıklama' %}</th>
-                                            <th scope="col">{% trans 'Blok' %}</th>
-                                            <th scope="col">{% trans 'Kat' %}</th>
+                                          <th >{% trans 'İş Emri Adı' %}</th>
+                                            <th >{% trans 'Açıklama' %}</th>
+                                            <th >{% trans 'Blok' %}</th>
+                                            <th >{% trans 'Kat' %}</th>
                                       
-                                            <th scope="col">{% trans 'Kullanıcılar' %}</th>
-                                            <th scope="col">{% trans 'Başlangıç' %}</th>
-                                            <th scope="col">{% trans 'Hedef Tarih' %}</th>
-                                            <th scope="col">{% trans 'Durum' %}</th>
-                                            <th scope="col">{% trans 'Öncelik' %}</th>
+                                            <th >{% trans 'Kullanıcılar' %}</th>
+                                            <th >{% trans 'Başlangıç' %}</th>
+                                            <th >{% trans 'Hedef Tarih' %}</th>
+                                            <th >{% trans 'Durum' %}</th>
+                                            <th >{% trans 'Öncelik' %}</th>
                                             
                                 </tr>
                             </thead>
@@ -1920,14 +1921,14 @@ createComponent(type) {
                                             {{i.title}}
                                         </div>
                                     </td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{{ i.aciklama }}</td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">
+                                    <td >{{ i.aciklama }}</td>
+                                    <td >
                                     {% if i.blok %}
                                         {{i.blok.blog_adi}}
                                     {% else %}
                                     {% endif %}
                                     </td>
-                                    <td style="text-transform: capitalize; text-align: left; padding-left: 10px;">{% if i.blok %}
+                                    <td >{% if i.blok %}
                                         {{i.kat}}
                                     {% else %}
                                     {% endif %}</td>
@@ -2007,62 +2008,107 @@ createComponent(type) {
                         </div>
                     </div>
                     <div class="card-body">
-                        <ul>
-                            <li>Ali Yılmaz</li>
-                            <li>Ayşe Demir</li>
-                            <li>Mehmet Çelik</li>
-                        </ul>
-                    </div>
-                </div>
-            `);
-            break;
-
-        case 'puantaj':
-            component = $(`
-                <div class="report-card" data-size="medium">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="icon icon-time"></i>
-                            Puantaj
-                        </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn size-down" title="Küçült">
-                                <i class="icon icon-minus"></i>
-                            </button>
-                            <button class="card-action-btn size-up" title="Büyült">
-                                <i class="icon icon-plus"></i>
-                            </button>
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="icon icon-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
+                      <table id="tumu-table">
                             <thead>
                                 <tr>
-                                    <th>Ad</th>
-                                    <th>Çalışma Süresi</th>
-                                    <th>Mesai</th>
+                                          <th >{% trans 'Adı Soyadı' %}</th>
+                                            <th >{% trans 'İşe Giriş Tarihi' %}</th>
+                                            <th >{% trans 'Pozisyon' %}</th>
+                                            <th >{% trans 'Departman' %}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Ali Yılmaz</td>
-                                    <td>160 saat</td>
-                                    <td>10 saat</td>
+                            {% for i in personeller_listesi %}
+                            <tr>
+                                    
+                                    <td >{{ i.isim }} {{ i.soyisim }}</td>
+                                    <td>
+                                    {{ i.kayit_tarihi |date:'d.m.Y'}} 
+                                    </td>
+                                    <td >{{ i.calisan_pozisyonu.kategori_isimi }}</td>
+                                    <td >{{ i.calisan_kategori.kategori_isimi }}</td>               
                                 </tr>
-                                <tr>
-                                    <td>Ayşe Demir</td>
-                                    <td>150 saat</td>
-                                    <td>5 saat</td>
-                                </tr>
-                            </tbody>
+                                {% endfor %}
+                                </tbody>
                         </table>
                     </div>
                 </div>
             `);
             break;
+
+            case 'puantaj':
+    component = $(`
+        <div class="report-card" data-size="medium">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="icon icon-time"></i>
+                    Puantaj
+                </div>
+                <div class="card-actions">
+                    <button class="card-action-btn size-down" title="Küçült">
+                        <i class="icon icon-minus"></i>
+                    </button>
+                    <button class="card-action-btn size-up" title="Büyült">
+                        <i class="icon icon-plus"></i>
+                    </button>
+                    <button class="card-action-btn remove" title="Sil">
+                        <i class="icon icon-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tumu-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Adı Soyadı' %}</th>
+                            <th>{% trans 'İşe Giriş Tarihi' %}</th>
+                            <th>{% trans 'Pozisyon' %}</th>
+                            <th>{% trans 'Çalışma Süresi' %}</th>
+                            <th>{% trans 'Ek Mesai Süresi' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in personeller_listesi %}
+                        <tr>
+                            <td>{{ i.isim }} {{ i.soyisim }}</td>
+                            <td>{{ i.kayit_tarihi |date:'d.m.Y' }}</td>
+                            <td>{{ i.calisan_pozisyonu.kategori_isimi }}</td>
+                            <td class="normal_calisma_suresi{{i.id}}">0 saat</td>
+                            <td class="mesai_calisma_suresi{{i.id}}">0 saat</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `);
+
+    setTimeout(() => {
+        console.log("Puantaj component initialized");
+        alert(tarih);
+        const [tarih_baslangic, tarih_bitis] = tarih.split(" - ");
+
+        console.log("Selected Date Range:", tarih);
+
+        {% for i in personeller_listesi %}
+        console.log("Fetching data for personel ID:", "{{i.id}}");
+        fetch(`/users/calisma/{{i.id}}?baslangic=${tarih_baslangic}&bitis=${tarih_bitis}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data for personel ID {{i.id}}:", data);
+                console.log("Response for personel ID {{i.id}}:", data);
+                document.querySelector(`.normal_calisma_suresi{{i.id}}`).textContent = `${data.normal_saat} saat`;
+                document.querySelector(`.mesai_calisma_suresi{{i.id}}`).textContent = `${data.mesai_saati} saat`;
+            })
+            .catch(err => console.error("Error fetching data for personel ID {{i.id}}:", err));
+        {% endfor %}
+    }, 100);
+    break;
 
         case 'izin-takip':
             component = $(`

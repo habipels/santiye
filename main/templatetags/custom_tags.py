@@ -1601,6 +1601,23 @@ def calismalari_cek(personel, gun, tarih):
         return { 'normal_saat': sonuc.normal_calisma_saati, 'mesai_saati': sonuc.mesai_calisma_saati}
     else:
         return { 'normal_saat': 0, 'mesai_saati': 0}
+
+@register.simple_tag
+def calismalari_cek_2(personel, tarih_baslangic, tarih_bitis):
+    tarih_baslangic = datetime.strptime(tarih_baslangic, "%Y-%m-%d")
+    tarih_bitis = datetime.strptime(tarih_bitis, "%Y-%m-%d")
+    
+    calismalar = calisanlar_calismalari.objects.filter(
+        calisan=get_object_or_404(calisanlar, id=personel),
+        tarihi__range=[tarih_baslangic, tarih_bitis]
+    )
+    
+    if calismalar.exists():
+        normal_saat_toplam = sum(c.normal_calisma_saati for c in calismalar)
+        mesai_saat_toplam = sum(c.mesai_calisma_saati for c in calismalar)
+        return { 'normal_saat': normal_saat_toplam, 'mesai_saati': mesai_saat_toplam }
+    else:
+        return { 'normal_saat': 0, 'mesai_saati': 0 }
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth, ExtractYear
 @register.simple_tag

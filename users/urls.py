@@ -38,6 +38,7 @@ urlpatterns = [
     path('buyemployee/',views.personeller_odenmeye_maaslar,name = "personeller_odenmeye_maaslar"),
     path('control/buyemployee/<str:hash>',views.personeller_odenmeye_maaslar_2,name = "personeller_odenmeye_maaslar_2"),
     path('payroll/<str:tarih>/<int:id>/',views.bodro,name = "bodro"),
+    path('calisma/<int:id>',views.calismalari_cek_2,name = "calismalari_cek_2"),
     #
     path('givesalaryoradvance/',views.calisan_odemeleri_kaydet,name = "calisan_odemeleri_kaydet"),
     path('control/givesalaryoradvance/<str:hash>',views.calisan_odemeleri_kaydet_2,name = "calisan_odemeleri_kaydet_2"),

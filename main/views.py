@@ -10745,7 +10745,6 @@ def rapor_olusturma(request):
         content["santiyeler"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
         content["bloklar"] = bloglar.objects.filter(proje_santiye_Ait__silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
         content["is_planlari"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici,status = "Completed")
-        content["is_planlarii"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
-        content["personeller_listesi"] = calisanlar.objects.filter(silinme_bilgisi = False,calisan_kime_ait = kullanici)
-
+        content["is_planlarii"] = IsplaniPlanlari.objects.filter(status = "0",silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        content["personeller_listesi"] = calisanlar.objects.filter(status = "0",silinme_bilgisi = False,calisan_kime_ait = kullanici)
     return render(request, "santiye_yonetimi/rapor_olusturucu.html", content)
