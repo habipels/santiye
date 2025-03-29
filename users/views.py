@@ -97,27 +97,28 @@ def personel_bilgisi_axaj(request, id):
             ]
         }
         
-        print(personel_detayi)
         return JsonResponse(personel_detayi)
 
 def calismalari_cek_2(request,id):
     personel = id
     baslangic = request.GET.get("baslangic")
     bitis = request.GET.get("bitis")
-    print(bitis,baslangic)
     tarih_baslangic = datetime.strptime(baslangic, "%d.%m.%Y")
     tarih_bitis = datetime.strptime(bitis, "%d.%m.%Y")
     calismalar = calisanlar_calismalari.objects.filter(
         calisan=get_object_or_404(calisanlar, id=personel),
         tarihi__range=[tarih_baslangic, tarih_bitis]
     )
-    print("users çalıştı")
+    izin_gunleri = 0
+    for i in calismalar:
+        if i.normal_calisma_saati <=0:
+            izin_gunleri = +1
     if calismalar.exists():
         normal_saat_toplam = sum(c.normal_calisma_saati for c in calismalar)
         mesai_saat_toplam = sum(c.mesai_calisma_saati for c in calismalar)
-        return JsonResponse({ 'normal_saat': normal_saat_toplam, 'mesai_saati': mesai_saat_toplam })
+        return JsonResponse({ 'normal_saat': normal_saat_toplam, 'mesai_saati': mesai_saat_toplam ,"izin_gunleri":izin_gunleri})
     else:
-        return JsonResponse({ 'normal_saat': 0, 'mesai_saati': 0 })
+        return JsonResponse({ 'normal_saat': 0, 'mesai_saati': 0,"izin_gunleri" :izin_gunleri })
 def get_object_or_none(model, *args, **kwargs):
     try:
         return model.objects.get(*args, **kwargs)

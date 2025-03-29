@@ -1200,9 +1200,10 @@ showSaveForm() {
 }
 
 async saveReport() {
+    
     const name = $('#reportName').val();
     const description = $('#reportDescription').val();
-
+    alert(name);
     if (!name) {
         alert('Lütfen rapor adı giriniz');
         return;
@@ -2111,51 +2112,81 @@ createComponent(type) {
     break;
 
         case 'izin-takip':
-            component = $(`
-                <div class="report-card" data-size="medium">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="icon icon-calendar"></i>
-                            İzin Takibi
-                        </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn size-down" title="Küçült">
-                                <i class="icon icon-minus"></i>
-                            </button>
-                            <button class="card-action-btn size-up" title="Büyült">
-                                <i class="icon icon-plus"></i>
-                            </button>
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="icon icon-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Ad</th>
-                                    <th>Kullanılan İzin</th>
-                                    <th>Kalan İzin</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Ali Yılmaz</td>
-                                    <td>5 gün</td>
-                                    <td>10 gün</td>
-                                </tr>
-                                <tr>
-                                    <td>Ayşe Demir</td>
-                                    <td>3 gün</td>
-                                    <td>12 gün</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        component = $(`
+        <div class="report-card" data-size="medium">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="icon icon-time"></i>
+                    Puantaj
                 </div>
-            `);
-            break;
+                <div class="card-actions">
+                    <button class="card-action-btn size-down" title="Küçült">
+                        <i class="icon icon-minus"></i>
+                    </button>
+                    <button class="card-action-btn size-up" title="Büyült">
+                        <i class="icon icon-plus"></i>
+                    </button>
+                    <button class="card-action-btn remove" title="Sil">
+                        <i class="icon icon-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tumu-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Adı Soyadı' %}</th>
+                            <th>{% trans 'Pozisyon' %}</th>
+                            <th>{% trans 'Çalışma Süresi' %}</th>
+                            <th>{% trans 'Ek Mesai Süresi' %}</th>
+                            <th>{% trans 'İzin Gün Süresi' %}</th>
+                     
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in personeller_listesi %}
+                        <tr>
+                            <td>{{ i.isim }} {{ i.soyisim }}</td>
+                            <td>{{ i.calisan_pozisyonu.kategori_isimi }}</td>
+                            <td class="normal_calisma_suresi{{i.id}}">0 saat</td>
+                            <td class="mesai_calisma_suresi{{i.id}}">0 saat</td>
+                            <td class="izin_gun_sureleri{{i.id}}">0 Gün</td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `);
+
+    setTimeout(() => {
+        console.log("Puantaj component initialized");
+        alert(tarih);
+        const [tarih_baslangic, tarih_bitis] = tarih.split(" - ");
+
+        console.log("Selected Date Range:", tarih);
+
+        {% for i in personeller_listesi %}
+        console.log("Fetching data for personel ID:", "{{i.id}}");
+        fetch(`/users/calisma/{{i.id}}?baslangic=${tarih_baslangic}&bitis=${tarih_bitis}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data for personel ID {{i.id}}:", data);
+                console.log("Response for personel ID {{i.id}}:", data);
+                document.querySelector(`.izin_gun_sureleri{{i.id}}`).textContent = `${data.izin_gunleri} Gün`;
+                document.querySelector(`.normal_calisma_suresi{{i.id}}`).textContent = `${data.normal_saat} saat`;
+                document.querySelector(`.mesai_calisma_suresi{{i.id}}`).textContent = `${data.mesai_saati} saat`;
+            })
+            .catch(err => console.error("Error fetching data for personel ID {{i.id}}:", err));
+        {% endfor %}
+    }, 100);
+    break;
     }
     
     if (component) {

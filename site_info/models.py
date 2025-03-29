@@ -571,3 +571,14 @@ class rfi_kontrol(models.Model):
     kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
     silinme_bilgisi = models.BooleanField(default=False)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
+
+
+class rapor_bilgisi(models.Model):
+    rapor_kime_ait = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
+    rapor_basligi = models.CharField(max_length=200, verbose_name="Rapor Başlığı", blank=True, null=True)
+    rapor_aciklama = models.TextField(verbose_name="Rapor Açıklama", blank=True, null=True)
+    rapor_icerigi = models.TextField(verbose_name="Rapor İçerik", blank=True, null=True)
+    olusturan = models.ForeignKey(CustomUser, verbose_name="Oluşturan", blank=True, null=True, on_delete=models.SET_NULL,related_name="rapor_olusturan")
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
