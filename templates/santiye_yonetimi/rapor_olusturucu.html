@@ -1503,10 +1503,74 @@ createComponent(type) {
                 </div>
 
                 <div class="report-body">
-                    <div id="ilerleme-chart{{santiye.id}}}"></div>
+                    <div id="ilerleme-chart{{santiye.id}}"></div>
 
                 </div>
             </div>
+            </div>
+              <div id="ay_ilerleme" class="report-card">
+                <div class="report-header">
+                    <div class="report-title">{% trans 'İlerleme Tablosu' %}</div>
+                    <div class="report-stats-info">
+                        <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
+                        <span><i class="icon icon-yellow-circle"></i>  {% trans 'Finansal' %}</span>
+                    </div>
+                </div>
+                <div class="report-body">
+
+                    <div id="ilerleme-tablosu-chart{{santiye.id}}"></div>
+
+
+                </div>
+            </div>
+            <div id="bina_ilerleme" class="report-card">
+            <div class="report-header">
+                <div class="report-details">
+                    <div class="report-title"><i class="icon icon-yellow-circle"></i>  {{santiye.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</div>
+                    <div class="report-infos">
+                        <div class="report-info">{% trans 'Proje Adı:' %}  <b>{{santiye.proje_santiye_Ait.proje_adi}}</b></div>
+                        <div class="report-info">{% trans 'Yapı Adı:' %} <b>{{santiye.blog_adi}}</b></div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="report-building-body">
+                <div class="report-bb-preview">
+                        <div class="building-container-report">
+                            <div class="building-report" id="building-report">
+                                <div class="face-report" id="face1"></div>
+                                <div class="face-report" id="face2"></div>
+                                <div class="face-report" id="face3"></div>
+                                <div class="face-report" id="face4"></div>
+                            </div>
+                        </div>
+                </div>
+                <div class="report-bb-chart">
+
+                    
+
+
+                    <div id="report-bb-chart{{santiye.id}}"></div>
+
+                    <div class="report-bb-stats">
+                        <div class="report-bb-stat">
+                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i>{% trans 'Tamamlanan' %} </div>
+                            <div class="report-bb-stat-value" id="fiziksel" >%{{fiziksel_ilerlemei |safe }}</div>
+                        </div>
+                        <div class="report-bb-stat">
+                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i>{% trans 'Devam Eden' %} </div>
+                            <div class="report-bb-stat-value" id="finansal" >%{% basit_cikarma_duzenli 100 fiziksel_ilerlemei  %} </div>
+                        </div>
+                        
+                        <!-- <div class="report-bb-stat">
+                            <div class="report-bb-stat-title"><i class="icon icon-red-circle"></i> Duran</div>
+                            <div class="report-bb-stat-value">%1</div>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        </hr>
                 {% endfor %}
             </div>
         </div>
@@ -1523,7 +1587,7 @@ createComponent(type) {
                     {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
                     {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
                     {% to_int santiye.kat_sayisi as kat_bilgisi %}
-                    
+                    alert("{{santiye.id}}");
                     var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
     var roundedData2 = {{ gun_kalem_sayilari.degerler2 | safe }}.map(x => parseFloat(x.toFixed(2)));
     var roundedCategories = {{ gun_kalem_sayilari.gunler | safe }};
@@ -1597,8 +1661,79 @@ createComponent(type) {
         }
     };
 
-    var chart = new ApexCharts(document.querySelector("#ilerleme-chart{{santiye.id}}}"), options);
-    chart.render();
+    var charts = new ApexCharts(document.querySelector("#ilerleme-chart{{santiye.id}}"), options);
+    charts.render();
+    var optionss = {
+                            series: [{
+                                name: "{% trans 'Finansal' %} ",
+                                data: {{ay_kalem_sayilari.degerler2 |safe}}
+                            }, {
+                                name:"{% trans 'Fiziksel' %} " ,
+                                data:  {{ay_kalem_sayilari.degerler |safe}}
+                            }],
+                            chart: {
+                                height: 350,
+                                type: 'area',
+                                zoom: {
+                                    enabled: false
+                                }
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth'
+                            },
+                            xaxis: {
+                                type: 'category',
+                                categories: {{ay_kalem_sayilari.aylar |safe}}
+                            },
+                            legend: {
+                                show: false
+                            },
+                            colors: ['#F9B035', '#6149CD'],
+                            tooltip: {
+                                x: {
+                                    format: 'MMM'
+                                }
+                            }
+                        };
+
+                        var charts = new ApexCharts(document.querySelector("#ilerleme-tablosu-chart{{santiye.id}}"), optionss);
+                        charts.render();
+                        var optionsbb = {
+                            series:  [{{fiziksel_ilerlemei |safe }}, {% basit_cikarma_duzenli 100 fiziksel_ilerlemei  %} ],
+                            chart: {
+                                height: 500,
+                                type: 'radialBar',
+                            },
+                            plotOptions: {
+                                radialBar: {
+                                    dataLabels: {
+                                        name: {
+                                            fontSize: '22px',
+                                        },
+                                        value: {
+                                            fontSize: '16px',
+                                        },
+                                        total: {
+                                            show: true,
+                                            label: '{% trans 'Toplam' %}',
+                                            formatter: function (w) {
+                                                return "%100"
+                                            }
+                                        }
+                                    },
+
+                                },
+                            },
+                            labels: ['{% trans 'Tamamlanan' %}', '{% trans 'Devam Eden' %}'],
+                            colors: ['#00A76F', '#DCDCDE']
+                        };
+
+                        var chartbb = new ApexCharts(document.querySelector("#report-bb-chart{{santiye.id}}"), optionsbb);
+                        chartbb.render();
+                        
                 {% endfor %}
 
             }, 100);
