@@ -508,8 +508,8 @@ table {
                     </div>
                     <div class="filter-group">
                         <label>Proje</label>
-                        <select id="projectSelect" class="form-control">
-                            <option value="">Tüm Projeler</option>
+                        <select id="projectSelect" onchange="getValue()" class="form-control">
+                            <option value="0">Tüm Projeler</option>
                             {% for i in santiyeler %}
                                 <option value="{{i.id}}">{{i.proje_adi}}</option>
                             {% endfor %}
@@ -833,6 +833,11 @@ table {
     
     
 <script>
+    var santiye = "0";
+    function getValue() {
+        let selectedValue = document.getElementById("projectSelect").value;
+        santiye = selectedValue;
+    }
 var tarih = "01.03.2024 - 31.03.2024";
 class ReportManager {
 constructor() {
@@ -1589,6 +1594,11 @@ createComponent(type) {
                     {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
                     {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
                     {% to_int santiye.kat_sayisi as kat_bilgisi %}
+                    var deger = "{{santiye.proje_santiye_Ait.id}}";
+                   
+                    if (santiye == deger) {
+                      alert("eşittir")
+                        
                     
                     var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
     var roundedData2 = {{ gun_kalem_sayilari.degerler2 | safe }}.map(x => parseFloat(x.toFixed(2)));
@@ -1735,7 +1745,7 @@ createComponent(type) {
 
                         var chartbb = new ApexCharts(document.querySelector("#report-bb-chart{{santiye.id}}"), optionsbb);
                         chartbb.render();
-                        
+                    }
                 {% endfor %}
 
             }, 100);
