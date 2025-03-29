@@ -1206,6 +1206,17 @@ def basit_cikarma_duzenli(a,b):
     y = float(a)-float(b)
 
     return str(round(y,2))
+
+@register.simple_tag
+def basit_cikarma_duzenli_2(a,b):
+    a = str(a).replace('.', '')
+    a = a.replace(',', '.')
+    b = str(b).replace('.', '')
+    b = b.replace(',', '.')
+    a = a.replace(' ', '')
+    y = float(a)-float(b)
+
+    return str(round(y,2))
 @register.simple_tag
 def sorgu(a):
     y = float(a)
@@ -1213,6 +1224,15 @@ def sorgu(a):
 
 @register.simple_tag
 def basit_toplama(a,b):
+    y = float(a)+float(b)
+    return str(round(y,2))
+@register.simple_tag
+def basit_toplama_2(a,b):
+    a= str(a).replace('.', '')
+    a = a.replace(',', '.')
+    b = str(b).replace('.', '')
+    b = b.replace(',', '.')
+    
     y = float(a)+float(b)
     return str(round(y,2))
 @register.simple_tag
