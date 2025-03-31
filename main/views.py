@@ -10748,3 +10748,42 @@ def rapor_olusturma(request):
         content["is_planlarii"] = IsplaniPlanlari.objects.filter(status = "0",silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
         content["personeller_listesi"] = calisanlar.objects.filter(status = "0",silinme_bilgisi = False,calisan_kime_ait = kullanici)
     return render(request, "santiye_yonetimi/rapor_olusturucu.html", content)
+
+def raporlari_gor_sayfasi(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+    #content["raporlar"] = raporlar.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+    return render(request, "santiye_yonetimi/raporlari_goster.html", content)
+
+def rapor_kaydedici(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+    if request.POST:
+        print(request.POST)
+    return redirect_with_language("main:rapor_olusturma")

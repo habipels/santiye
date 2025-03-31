@@ -716,22 +716,7 @@ table {
             </div>
         </div>
     </div>
-<!-- Rapor Kaydetme Formu -->
-    <div class="save-report-form" style="display: none;">
-        <div class="form-title">Raporu Kaydet</div>
-        <div class="form-element">
-            <label>Rapor Adı</label>
-            <input type="text" id="reportName" class="form-control">
-        </div>
-        <div class="form-element">
-            <label>Açıklama</label>
-            <textarea id="reportDescription" class="form-control"></textarea>
-        </div>
-        <div class="form-actions">
-            <button class="button" onclick="cancelSave()">İptal</button>
-            <button class="button button-primary" onclick="saveReportConfirm()">Kaydet</button>
-        </div>
-    </div>
+
 
     <!-- Sayfa Ayarları Modal -->
     <div id="pageSettingsModal" class="modal">
@@ -1185,16 +1170,16 @@ showSaveForm() {
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Rapor Adı</label>
-                        <input type="text" class="form-control" id="reportName" value="${this.currentReport?.name || ''}">
+                        <input type="text" class="form-control" id="reportNames" >
                     </div>
                     <div class="form-group">
                         <label>Açıklama</label>
-                        <textarea class="form-control" id="reportDescription">${this.currentReport?.description || ''}</textarea>
+                        <textarea class="form-control" id="reportDescriptions"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="button" onclick="$(this).closest('.modal').remove()">İptal</button>
-                    <button class="button button-primary" onclick="window.reportManager.saveReport()">Kaydet</button>
+                    <button class="button button-primary" onclick="saveReport()">Kaydet</button>
                 </div>
             </div>
         </div>
@@ -1204,47 +1189,6 @@ showSaveForm() {
     modal.addClass('active');
 }
 
-async saveReport() {
-    
-    const name = $('#reportName').val();
-    const description = $('#reportDescription').val();
-    alert(name);
-    if (!name) {
-        alert('Lütfen rapor adı giriniz');
-        return;
-    }
-
-    // Rapor verilerini hazırla
-    const reportData = {
-        name,
-        description,
-        content: $('#reportPreview').html(),
-        dateRange: {
-            start: $('#dateRange').data('daterangepicker').startDate.format('YYYY-MM-DD'),
-            end: $('#dateRange').data('daterangepicker').endDate.format('YYYY-MM-DD')
-        },
-        project: $('#projectSelect').val(),
-        updatedAt: new Date().toISOString()
-    };
-
-    try {
-        // API'ye gönder (örnek)
-        // const response = await fetch('/api/reports', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(reportData)
-        // });
-
-        // Başarılı
-        this.currentReport = reportData;
-        $('.modal').remove();
-        this.showNotification('Rapor başarıyla kaydedildi');
-
-    } catch (error) {
-        console.error('Rapor kaydetme hatası:', error);
-        alert('Rapor kaydedilirken bir hata oluştu');
-    }
-}
 
 showNotification(message) {
     const notification = $(`
@@ -1487,7 +1431,7 @@ createComponent(type) {
                     </button>
                 </div>
             </div>
-            <div class="card-body">
+            
                 {% for santiye in bloklar %}
                 {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
                 {%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
@@ -1497,25 +1441,25 @@ createComponent(type) {
                     {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
                     {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
                     {% to_int santiye.kat_sayisi as kat_bilgisi %}
-                    
-                <div id="ilerleme" class="report-charts">
+                    <div class="card-body" id="ilerleme_isleri{{santiye.id}}" style="display:none;">
+                <div id="ilerleme{{santiye.id}}" class="report-charts" style="display: none;">
 
-            <div class="report-card">
-                <div class="report-header">
-                    <div class="report-title">{% trans 'İlerleme' %}</div>
-                    <div class="report-stats-info">
-                        <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
-                        <span><i class="icon icon-yellow-circle"></i> {% trans 'Finansal' %}</span>
+                    <div class="report-card">
+                        <div class="report-header">
+                            <div class="report-title">{% trans 'İlerleme' %}</div>
+                            <div class="report-stats-info">
+                                <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
+                                <span><i class="icon icon-yellow-circle"></i> {% trans 'Finansal' %}</span>
+                            </div>
+                        </div>
+
+                        <div class="report-body">
+                            <div id="ilerleme-chart{{santiye.id}}"></div>
+
+                        </div>
                     </div>
                 </div>
-
-                <div class="report-body">
-                    <div id="ilerleme-chart{{santiye.id}}"></div>
-
-                </div>
-            </div>
-            </div>
-              <div id="ay_ilerleme" class="report-card">
+              <div id="ay_ilerleme{{santiye.id}}" class="report-card" >
                 <div class="report-header">
                     <div class="report-title">{% trans 'İlerleme Tablosu' %}</div>
                     <div class="report-stats-info">
@@ -1530,16 +1474,16 @@ createComponent(type) {
 
                 </div>
             </div>
-            <div id="bina_ilerleme" class="report-card">
-            <div class="report-header">
-                <div class="report-details">
-                    <div class="report-title"><i class="icon icon-yellow-circle"></i>  {{santiye.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</div>
-                    <div class="report-infos">
-                        <div class="report-info">{% trans 'Proje Adı:' %}  <b>{{santiye.proje_santiye_Ait.proje_adi}}</b></div>
-                        <div class="report-info">{% trans 'Yapı Adı:' %} <b>{{santiye.blog_adi}}</b></div>
+            <div id="genel_ilerleme{{santiye.id}}" class="report-card" >
+                <div class="report-header">
+                    <div class="report-details">
+                        <div class="report-title"><i class="icon icon-yellow-circle"></i>  {{santiye.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</div>
+                        <div class="report-infos">
+                            <div class="report-info">{% trans 'Proje Adı:' %}  <b>{{santiye.proje_santiye_Ait.proje_adi}}</b></div>
+                            <div class="report-info">{% trans 'Yapı Adı:' %} <b>{{santiye.blog_adi}}</b></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
              <div class="report-building-body">
                 <div class="report-bb-preview">
@@ -1552,7 +1496,7 @@ createComponent(type) {
                             </div>
                         </div>
                 </div>
-                <div class="report-bb-chart">
+                <div class="report-bb-chart" >
 
                     
 
@@ -1578,8 +1522,9 @@ createComponent(type) {
             </div>
         </div>
         </hr>
+        </div>
                 {% endfor %}
-            </div>
+            
         </div>
     `);
 
@@ -1596,8 +1541,8 @@ createComponent(type) {
                     {% to_int santiye.kat_sayisi as kat_bilgisi %}
                     var deger = "{{santiye.proje_santiye_Ait.id}}";
                    
-                    if (santiye == deger) {
-                      alert("eşittir")
+                    if (santiye == deger || santiye == "0") {
+                      
                         
                     
                     var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
@@ -1745,7 +1690,9 @@ createComponent(type) {
 
                         var chartbb = new ApexCharts(document.querySelector("#report-bb-chart{{santiye.id}}"), optionsbb);
                         chartbb.render();
-                    }
+                   
+                    document.getElementById('ilerleme_isleri{{santiye.id}}').style.display = "block";
+                }
                 {% endfor %}
 
             }, 100);
@@ -2267,6 +2214,73 @@ closePageSettings();
 
 </script>
 
+<script>
+function saveReport() {
+    const name = $('#reportNames').val();
+    const description = $('#reportDescriptions').val();
 
+    if (!name) {
+        alert('Lütfen rapor adı giriniz');
+        return;
+    }
+
+    // PDF oluşturma ayarları
+    const pdfOptions = {
+        margin: [10, 10, 10, 10],
+        filename: `${name}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // PDF oluştur ve değişken olarak kaydet
+    html2pdf()
+        .from(document.querySelector('#reportPreview'))
+        .set(pdfOptions)
+        .outputPdf('datauristring')
+        .then((pdfDataUri) => {
+            const pdfBase64 = pdfDataUri.split(',')[1]; // Base64 formatında PDF verisi
+
+            // Rapor verilerini hazırla
+            const reportData = {
+                name,
+                description,
+                content: $('#reportPreview').html(),
+                dateRange: {
+                    start: $('#dateRange').data('daterangepicker').startDate.format('YYYY-MM-DD'),
+                    end: $('#dateRange').data('daterangepicker').endDate.format('YYYY-MM-DD')
+                },
+                project: $('#projectSelect').val(),
+                pdf: pdfBase64
+            };
+
+            // CSRF token al
+            const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
+            // AJAX ile API'ye gönder
+            $.ajax({
+                url: '/{{dil}}{% url "main:rapor_kaydedici" %}', // API endpoint
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': csrfToken // CSRF token ekle
+                },
+                data: JSON.stringify(reportData),
+                success: function (response) {
+                    alert('Rapor başarıyla kaydedildi');
+                    console.log('API yanıtı:', response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Rapor kaydetme hatası:', error);
+                    alert('Rapor kaydedilirken bir hata oluştu');
+                }
+            });
+        })
+        .catch((error) => {
+            console.error('PDF oluşturma hatası:', error);
+            alert('PDF oluşturulurken bir hata oluştu');
+        });
+}
+</script>
 {% endblock sidebar %}
 

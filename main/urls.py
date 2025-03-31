@@ -274,6 +274,8 @@ path("rfi_reject/", views.rfi_reject, name="rfi_reject"),
 path("rfi_approve/", views.rfi_approve, name="rfi_approve"),
 path("rfi_show/<int:id>", views.rfi_show, name="rfi_show"),
 path("create_report/", views.rapor_olusturma, name="rapor_olusturma"),
+path("report_list/", views.raporlari_gor_sayfasi, name="raporlari_gor_sayfasi"),
+path("rapor_kaydedici/", views.rapor_kaydedici, name="rapor_kaydedici"),
 ]
 
 #
