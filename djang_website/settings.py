@@ -160,10 +160,7 @@ if DEPLOY__:
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
     # Password validation
@@ -258,10 +255,7 @@ else:
     ASGI_APPLICATION = 'djang_website.asgi.application'
     CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
 
