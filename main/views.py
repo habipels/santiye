@@ -10765,11 +10765,18 @@ def raporlari_gor_sayfasi(request):
                 return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
-    #content["raporlar"] = raporlar.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+    content["raporlar"] = rapor_bilgisi.objects.filter(silinme_bilgisi = False,rapor_kime_ait = kullanici)
     return render(request, "santiye_yonetimi/raporlari_goster.html", content)
 
+import json
+import base64
+import os
+import uuid
+from django.http import JsonResponse
+from django.conf import settings
+from django.shortcuts import redirect
+
 def rapor_kaydedici(request):
-    content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         pass
     else:
@@ -10784,6 +10791,51 @@ def rapor_kaydedici(request):
                 return redirect_with_language("main:yetkisiz")
         else:
             kullanici = request.user
-    if request.POST:
-        print(request.POST)
-    return redirect_with_language("main:rapor_olusturma")
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = data["name"]
+        description = data["description"]
+        tarih_baslangic = data["dateRange"]["start"]
+        tarih_bitis = data["dateRange"]["end"]
+        veri = data["content"]
+        proje_getir = data["project"]
+        pdf = data["pdf"] 
+
+        # PDF'yi kaydet
+        try:
+            pdf_base64 = pdf # "data:application/pdf;base64," kısmını at
+            pdf_icerik = base64.b64decode(pdf_base64)
+
+            # Dosya adını oluştur
+            dosya_adi = f"{uuid.uuid4().hex}.pdf"
+            klasor_yolu = os.path.join(settings.MEDIA_ROOT, "rapor_dosyalari")
+            os.makedirs(klasor_yolu, exist_ok=True)
+            pdf_yolu = os.path.join(klasor_yolu, dosya_adi)
+
+            # Dosyayı kaydet
+            with open(pdf_yolu, "wb") as f:
+                f.write(pdf_icerik)
+
+            pdf_url = f"/media/raporlar/{dosya_adi}"
+            c = f"raporlar/{dosya_adi}"
+            rapor_bilgisi.objects.create(
+                rapor_kime_ait = kullanici,
+                rapor_basligi = name,
+                rapor_aciklama = description,
+                rapor_icerigi = veri,
+                olusturan = request.user,
+                baslangic_tarihi = tarih_baslangic,
+                bitis_tarihi = tarih_bitis,
+                rapor_dosyalari = c)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": f"PDF kaydedilirken hata oluştu: {str(e)}"
+            })
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Rapor başarıyla kaydedildi.",
+            "pdf_url": pdf_url
+        })

@@ -3564,26 +3564,27 @@ function saveReport() {
             const reportData = {
                 name,
                 description,
-                content: $('#reportPreview').html(),
                 dateRange: {
                     start: $('#dateRange').data('daterangepicker').startDate.format('YYYY-MM-DD'),
                     end: $('#dateRange').data('daterangepicker').endDate.format('YYYY-MM-DD')
                 },
+                content: $('#reportPreview').html(),
+                
                 project: $('#projectSelect').val(),
                 pdf: pdfBase64
             };
 
             // CSRF token al
-            const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-
+            //const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+            console.log(reportData);
             // AJAX ile API'ye gönder
             $.ajax({
-                url: '/{{dil}}{% url "main:rapor_kaydedici" %}', // API endpoint
+                url: '/rapor_kaydedici/', // API endpoint
                 method: 'POST',
                 contentType: 'application/json',
-                headers: {
-                    'X-CSRFToken': csrfToken // CSRF token ekle
-                },
+                 headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
                 data: JSON.stringify(reportData),
                 success: function (response) {
                     alert('Rapor başarıyla kaydedildi');
