@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from .models import Group, Message
 from channels.db import database_sync_to_async
+from datetime import datetime
 
 User = get_user_model()
 
@@ -41,14 +42,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             group = await database_sync_to_async(Group.objects.get)(id=self.group_id)
             # Eğer mesaj varsa kaydet
             if message or file_url:
-                await database_sync_to_async(Message.objects.create)(
+                new_message = await database_sync_to_async(Message.objects.create)(
                     sender=user,
                     group=group,
                     content=message,
                     file=file_url  # Dosya URL'si varsa kaydet
                 )
+                timestamp = new_message.timestamp.isoformat()
+            else:
+                timestamp = datetime.now().isoformat()
         except Exception as e:
             print(f"Veritabanına mesaj kaydedilemedi: {e}")
+            timestamp = datetime.now().isoformat()
 
         # Mesajı grup içinde yayınla
         await self.channel_layer.group_send(
@@ -58,6 +63,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': message,
                 'file_url': file_url,
                 'username': user.username,
+                'timestamp': timestamp
             }
         )
 
@@ -65,10 +71,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event.get('message', None)
         file_url = event.get('file_url', None)
         username = event['username']
+        timestamp = event['timestamp']
 
         # Mesajı WebSocket'ten gönder
         await self.send(text_data=json.dumps({
             'message': message,
             'file_url': file_url,
             'user': username,
+            'timestamp': timestamp
         }))
