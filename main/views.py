@@ -10817,8 +10817,8 @@ def rapor_kaydedici(request):
             with open(pdf_yolu, "wb") as f:
                 f.write(pdf_icerik)
 
-            pdf_url = f"/media/raporlar/{dosya_adi}"
-            c = f"raporlar/{dosya_adi}"
+            pdf_url = f"/media/rapor_dosyalari/{dosya_adi}"
+            c = f"rapor_dosyalari/{dosya_adi}"
             rapor_bilgisi.objects.create(
                 rapor_kime_ait = kullanici,
                 rapor_basligi = name,
