@@ -1235,7 +1235,7 @@ table {
                 <div class="preview-header">
                     <div class="header-content">
                         <div class="report-logo">
-                            <img src="{% static 'go/content/images/biada-logo-light.svg' %}" alt="Biada Logo">
+                            <img src="{{logo_islemi.gelir_makbuzu.url}}" alt="Biada Logo">
                         </div>
                         <div class="report-info">
                             <div class="preview-title" contenteditable="true" data-placeholder="Rapor Başlığı">Proje Raporu</div>
@@ -2309,7 +2309,7 @@ createComponent(type) {
                 if (!kasaId) return;
 
                 // Seçilen kasanın bilgilerini getir
-                $.get(`/tr/kasa/bilgi/${kasaId}`, function(data) {
+                $.get(`/tr/accounting/kasa_bilgileri/${kasaId}`, function(data) {
                     component.find('.bakiye-value').text(data.bakiye);
                     component.find('.son-islem-text').text(data.son_islem || '-');
 
@@ -2411,24 +2411,7 @@ createComponent(type) {
                                     </tr>
                                 </thead>
                                 <tbody class="cari-data-tbody">
-                                    {% for i in cariler %}       
-                                    {% cari_islemleri i as bilgi_veriyor %}
-                                    {% if bilgi_veriyor.sonuc != 0 %}
-                                    <tr class="{% if bilgi_veriyor.sonuc < 0 %}borc-row{% else %}alacak-row{% endif %} {% if request.user.is_superuser %}{% if i.silinme_bilgisi %}deleted-row{% endif %}{% endif %}">
-                                        <td>{{i.kayit_tarihi|date:'d.m.Y'}}</td>
-                                        <td>{{i.cari_adi}}</td>
-                                        <td>{{i.aciklama}}</td>
-                                        <td class="amount-col">{{bilgi_veriyor.sonuc}} ₺</td>
-                                        <td>
-                                            {% if bilgi_veriyor.sonuc < 0 %}
-                                                <span class="status-badge borc">Borç</span>
-                                            {% else %}
-                                                <span class="status-badge alacak">Alacak</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endif %}
-                                    {% endfor %}
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -2483,7 +2466,7 @@ createComponent(type) {
                 
                 // AJAX isteği
                 $.ajax({
-                    url: '/tr/santiye/get_cari_data/',
+                    url: '/tr/accounting/cari_bilgileri_alma/',
                     type: 'GET',
                     data: {
                         date_range: dateRange,

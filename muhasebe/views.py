@@ -6653,3 +6653,155 @@ def urunler_kategorisi_duzenle_2(request,hash):
         urun_kategorileri.objects.filter(kategrori_ait_oldugu = users,id = id).update(kategori_adi = proje_tip_adi
                             )
     return redirect_with_language("accounting:urunler_kategorisi_2",hash)
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Kasa, Gider_odemesi, Gelir_odemesi  # modellerini kendi yapına göre güncelle
+from django.utils.timezone import localtime
+
+def kasa_detayi_json_gonderme(request, id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Giriş yapılmamış.'}, status=401)
+
+    # Yetki kontrolü
+    if not super_admin_kontrolu(request):
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+            if a and a.izinler.santiye_kontrol:
+                pass
+            else:
+                return JsonResponse({'error': 'Yetkisiz erişim.'}, status=403)
+
+    kasa = get_object_or_404(Kasa, id=id)
+    kasa_bakiyesi = kasa.bakiye
+    # Kasa bakiyesi ve son işlem
+    gelirler = list(Gelir_odemesi.objects.filter(silinme_bilgisi=False, kasa_bilgisi=kasa).order_by('-id'))
+    giderler = list(Gider_odemesi.objects.filter(silinme_bilgisi=False, kasa_bilgisi=kasa).order_by('-id'))
+    for i in gelirler:
+        kasa_bakiyesi = kasa_bakiyesi + i.tutar
+    for i in giderler:
+        kasa_bakiyesi = kasa_bakiyesi - i.tutar
+    # Hareketleri birleştir, tarihe göre sırala
+    tum_hareketler = [
+        {
+            'aciklama': g.aciklama,
+            'tutar': g.tutar,
+            'tip': 'gelir',
+            'tarih': g.olusturma_tarihi if hasattr(g, 'olusturma_tarihi') else None
+        } for g in gelirler
+    ] + [
+        {
+            'aciklama': g.aciklama,
+            'tutar': g.tutar,
+            'tip': 'gider',
+            'tarih': g.olusturma_tarihi if hasattr(g, 'olusturma_tarihi') else None
+        } for g in giderler
+    ]
+
+    # Tarihe göre sırala
+    tum_hareketler.sort(key=lambda x: x['tarih'] or 0, reverse=True)
+
+    # Son işlem
+    son_islem = tum_hareketler[0]['aciklama'] if tum_hareketler else None
+
+    # Response verisi
+    response_data = {
+        'bakiye': round(kasa_bakiyesi,2),  # decimal varsa float'a çevir
+        'son_islem': son_islem,
+        'hareketler': tum_hareketler[:10]# sadece ilk 5 hareket
+    }
+    print(response_data)
+    return JsonResponse(response_data)
+
+from django.http import JsonResponse
+from django.http import JsonResponse
+from django.utils.dateparse import parse_date
+import datetime
+
+def cari_detayi_json_gonderme(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Giriş yapılmamış.'}, status=401)
+
+    # Yetki kontrolü
+    if not super_admin_kontrolu(request):
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+            if not (a and a.izinler.santiye_kontrol):
+                return JsonResponse({'error': 'Yetkisiz erişim.'}, status=403)
+            else:
+                kullanici = request.user.kullanicilar_db
+        else:
+            kullanici = request.user
+    else:
+        kullanici = request.user
+
+    # GET parametreleri
+    date_range = request.GET.get("date_range")
+    record_count = int(request.GET.get("record_count", 100))
+    typee = request.GET.get("type", "all")  # 'gelir', 'gider', 'all'
+
+    # Tarih filtresi ayrıştırma
+    start_date = end_date = None
+    if date_range:
+        try:
+            start_str, end_str = date_range.split(" - ")
+            start_date = datetime.datetime.strptime(start_str.strip(), "%d.%m.%Y")
+            end_date = datetime.datetime.strptime(end_str.strip(), "%d.%m.%Y")
+        except ValueError:
+            return JsonResponse({'error': 'Tarih aralığı formatı geçersiz.'}, status=400)
+
+    tum_cariler = cari.objects.filter(cari_kart_ait_bilgisi=kullanici)
+    cariler_json = []
+
+    for bilgi in tum_cariler:
+        gider_toplami = gider_odemesi = gelir_toplami = gelir_odemesi = 0
+
+        # Gider
+        if typee in ["gider", "all"]:
+            gider_faturalar = Gider_Bilgisi.objects.filter(silinme_bilgisi=False, cari_bilgisi=bilgi)
+            if start_date and end_date:
+                gider_faturalar = gider_faturalar.filter(fatura_tarihi__range=(start_date, end_date))
+            gider_faturalar = gider_faturalar.order_by("-fatura_tarihi")[:record_count]
+
+            for gider in gider_faturalar:
+                urunler = gider_urun_bilgisi.objects.filter(gider_bilgis=gider)
+                for urun in urunler:
+                    gider_toplami += (urun.urun_fiyati * urun.urun_adeti) - urun.urun_indirimi
+                odemeler = Gider_odemesi.objects.filter(silinme_bilgisi=False, gelir_kime_ait_oldugu=gider)
+                for odeme in odemeler:
+                    gider_odemesi += odeme.tutar
+
+        # Gelir
+        if typee in ["gelir", "all"]:
+            gelir_faturalar = Gelir_Bilgisi.objects.filter(silinme_bilgisi=False, cari_bilgisi=bilgi)
+            if start_date and end_date:
+                gelir_faturalar = gelir_faturalar.filter(fatura_tarihi__range=(start_date, end_date))
+            gelir_faturalar = gelir_faturalar.order_by("-fatura_tarihi")[:record_count]
+
+            for gelir in gelir_faturalar:
+                urunler = gelir_urun_bilgisi.objects.filter(gider_bilgis=gelir)
+                for urun in urunler:
+                    gelir_toplami += (urun.urun_fiyati * urun.urun_adeti) - urun.urun_indirimi
+                odemeler = Gelir_odemesi.objects.filter(silinme_bilgisi=False, gelir_kime_ait_oldugu=gelir)
+                for odeme in odemeler:
+                    gelir_odemesi += odeme.tutar
+
+        # Sonuçlar
+        gelir_bilgisi = gelir_toplami - gelir_odemesi
+        gider_bilgisi = gider_toplami - gider_odemesi
+        sonuc = gelir_bilgisi - gider_bilgisi
+
+        cariler_json.append({
+            'cari_id': bilgi.id,
+            'cari_adi': bilgi.cari_adi,
+            'gelir_toplami': round(gelir_toplami, 2),
+            'gelir_odemesi': round(gelir_odemesi, 2),
+            'total_borc': round(gelir_bilgisi, 2),
+            'gider_toplami': round(gider_toplami, 2),
+            'gider_odemesi': round(gider_odemesi, 2),
+            'total_alacak': round(gider_bilgisi, 2),
+            'net_durum': round(sonuc, 2),
+        })
+        print(cariler_json)
+
+    return JsonResponse({'cariler': cariler_json})

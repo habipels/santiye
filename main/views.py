@@ -10747,6 +10747,7 @@ def rapor_olusturma(request):
         content["is_planlari"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici,status = "Completed")
         content["is_planlarii"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
         content["personeller_listesi"] = calisanlar.objects.filter(status = "0",silinme_bilgisi = False,calisan_kime_ait = kullanici)
+        content["logo_islemi"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu = kullanici).last()
     return render(request, "santiye_yonetimi/rapor_olusturucu.html", content)
 
 def raporlari_gor_sayfasi(request):

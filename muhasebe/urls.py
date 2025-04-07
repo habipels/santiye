@@ -201,6 +201,8 @@ urlpatterns = [
     path('control/debit/<str:hash>', views.zimmetler_2, name='zimmetler_2'),
     path('control/adddebit/<str:hash>', views.zimmet_ekle_2, name='zimmet_ekle_2'),
     path('control/teslim/<int:id>/<int:iz>/<str:hash>', views.zimmeti_teslim_Al_2, name='zimmeti_teslim_Al_2'),
+    path('kasa_bilgileri/<int:id>', views.kasa_detayi_json_gonderme, name='kasa_detayi_json_gonderme'),
+    path('cari_bilgileri_alma/', views.cari_detayi_json_gonderme, name='cari_detayi_json_gonderme'),
 ]
 #zimmeti_teslim_Al_1
 #accounting
