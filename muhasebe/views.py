@@ -6799,9 +6799,9 @@ def cari_detayi_json_gonderme(request):
 
         rows_html += f"""
             <tr class="{row_class}">
-                <td>-</td>
+                
                 <td>{bilgi.cari_adi}</td>
-                <td>Otomatik Hesap</td>
+                <td>{bilgi.aciklama}</td>
                 <td class="amount-col">{abs(net_durum):.2f} ₺</td>
                 <td>{durum_text}</td>
             </tr>
