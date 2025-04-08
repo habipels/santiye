@@ -3253,6 +3253,7 @@ def cariler_bilgisi_2(request,hash):
     return JsonResponse(suggestions, safe=False)
 
 def gelir_faturasi_kaydet(request):
+    from datetime import datetime
     if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
@@ -3770,6 +3771,7 @@ def giderler_sayfasi_2(request,hash):
     return render(request,"muhasebe_page/gider_sayfasi/gider_sayfasi.html",content)
 
 def gider_ekle(request):
+    
     content = sozluk_yapisi()
     if super_admin_kontrolu(request):
         profile =Kasa.objects.all()
@@ -3836,8 +3838,9 @@ def gider_ekle_2(request,hash):
     content["urunler"]  = urunler_bilgisi
     content["cari_bilgileri"] = cari_bilgileri
     return render(request,"muhasebe_page/gelir_gider_faturasi_olusturma/gider_faturasi.html",content)
-#
+
 def gider_faturasi_kaydet(request):
+    from datetime import datetime
     if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
@@ -6717,7 +6720,6 @@ from django.http import JsonResponse
 from django.http import JsonResponse
 from django.utils.dateparse import parse_date
 import datetime
-
 def cari_detayi_json_gonderme(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Giriş yapılmamış.'}, status=401)
@@ -6738,9 +6740,9 @@ def cari_detayi_json_gonderme(request):
     # GET parametreleri
     date_range = request.GET.get("date_range")
     record_count = int(request.GET.get("record_count", 100))
-    typee = request.GET.get("type", "all")  # 'gelir', 'gider', 'all'
+    typee = request.GET.get("type", "all")
 
-    # Tarih filtresi ayrıştırma
+    # Tarih filtresi
     start_date = end_date = None
     if date_range:
         try:
@@ -6751,57 +6753,65 @@ def cari_detayi_json_gonderme(request):
             return JsonResponse({'error': 'Tarih aralığı formatı geçersiz.'}, status=400)
 
     tum_cariler = cari.objects.filter(cari_kart_ait_bilgisi=kullanici)
-    cariler_json = []
+    rows_html = ""
+    total_borc = 0
+    total_alacak = 0
 
     for bilgi in tum_cariler:
         gider_toplami = gider_odemesi = gelir_toplami = gelir_odemesi = 0
-
+        
         # Gider
-        if typee in ["gider", "all"]:
+        if typee in ["borc", "all"]:
             gider_faturalar = Gider_Bilgisi.objects.filter(silinme_bilgisi=False, cari_bilgisi=bilgi)
+            
             if start_date and end_date:
                 gider_faturalar = gider_faturalar.filter(fatura_tarihi__range=(start_date, end_date))
-            gider_faturalar = gider_faturalar.order_by("-fatura_tarihi")[:record_count]
-
+            gider_faturalar = gider_faturalar.order_by("-fatura_tarihi")
             for gider in gider_faturalar:
-                urunler = gider_urun_bilgisi.objects.filter(gider_bilgis=gider)
-                for urun in urunler:
-                    gider_toplami += (urun.urun_fiyati * urun.urun_adeti) - urun.urun_indirimi
-                odemeler = Gider_odemesi.objects.filter(silinme_bilgisi=False, gelir_kime_ait_oldugu=gider)
-                for odeme in odemeler:
-                    gider_odemesi += odeme.tutar
+                gider_odemesi += gider.kalan_tutar 
 
         # Gelir
-        if typee in ["gelir", "all"]:
+        if typee in ["alacak", "all"]:
             gelir_faturalar = Gelir_Bilgisi.objects.filter(silinme_bilgisi=False, cari_bilgisi=bilgi)
             if start_date and end_date:
                 gelir_faturalar = gelir_faturalar.filter(fatura_tarihi__range=(start_date, end_date))
-            gelir_faturalar = gelir_faturalar.order_by("-fatura_tarihi")[:record_count]
+            gelir_faturalar = gelir_faturalar.order_by("-fatura_tarihi")
 
             for gelir in gelir_faturalar:
-                urunler = gelir_urun_bilgisi.objects.filter(gider_bilgis=gelir)
-                for urun in urunler:
-                    gelir_toplami += (urun.urun_fiyati * urun.urun_adeti) - urun.urun_indirimi
-                odemeler = Gelir_odemesi.objects.filter(silinme_bilgisi=False, gelir_kime_ait_oldugu=gelir)
-                for odeme in odemeler:
-                    gelir_odemesi += odeme.tutar
+                gelir_odemesi += gelir.kalan_tutar 
+        # Hesaplamalar
+        borc = gelir_toplami - gelir_odemesi
+        alacak = gider_toplami - gider_odemesi
+        net_durum = borc - alacak
 
-        # Sonuçlar
-        gelir_bilgisi = gelir_toplami - gelir_odemesi
-        gider_bilgisi = gider_toplami - gider_odemesi
-        sonuc = gelir_bilgisi - gider_bilgisi
+        total_borc += borc
+        total_alacak += alacak
+        durum_text = ""
+        row_class = ""
+        if net_durum > 0:
+            durum_text = "Borç"
+            row_class = "borc-row"
+        elif net_durum < 0:
+            durum_text = "Alacak"
+            row_class = "alacak-row"
+        else:
+            durum_text = "Nötr"
 
-        cariler_json.append({
-            'cari_id': bilgi.id,
-            'cari_adi': bilgi.cari_adi,
-            'gelir_toplami': round(gelir_toplami, 2),
-            'gelir_odemesi': round(gelir_odemesi, 2),
-            'total_borc': round(gelir_bilgisi, 2),
-            'gider_toplami': round(gider_toplami, 2),
-            'gider_odemesi': round(gider_odemesi, 2),
-            'total_alacak': round(gider_bilgisi, 2),
-            'net_durum': round(sonuc, 2),
-        })
-        print(cariler_json)
+        rows_html += f"""
+            <tr class="{row_class}">
+                <td>-</td>
+                <td>{bilgi.cari_adi}</td>
+                <td>Otomatik Hesap</td>
+                <td class="amount-col">{abs(net_durum):.2f} ₺</td>
+                <td>{durum_text}</td>
+            </tr>
+        """
 
-    return JsonResponse({'cariler': cariler_json})
+    net_total = total_borc - total_alacak
+
+    return JsonResponse({
+        'html': rows_html,
+        'total_borc': round(total_alacak, 2),
+        'total_alacak': round(total_borc, 2),
+        'net_durum': round(net_total, 2),
+    })
