@@ -64,7 +64,7 @@
                                 <tr>
                                     <td>{{i.tarihi| date:'d.m.Y'}}</td>
                                     <td>{{i.aciklama}}</td>
-                                    {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                    {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  i.gelir_kime_ait_oldugu.gelir_kime_ait_oldugu as bilgisicek %}
                                     <td style="color: {% if bilgisicek == 0 %}blue{% else %}orange{% endif %};">
                                         {% if bilgisicek == 0 %}
                                         + ${{i.tutar}}
@@ -75,10 +75,10 @@
                                     <td>
                                         {% if bilgisicek == 0 %}
                                         $ {% basit_toplama bakiye i.tutar %}
-                                        {% basit_toplama bakiye i.tutar as bakiye%}
+                                        {% basit_toplama_2 bakiye i.tutar as bakiye%}
                                         {% else %}
-                                        $ {% basit_cikarma bakiye i.tutar %}
-                                        {% basit_cikarma bakiye i.tutar as bakiye %}
+                                        $ {% basit_toplama bakiye i.tutar %}
+                                        {% basit_toplama_2 bakiye i.tutar as bakiye %}
                                         {% endif %}
                                     </td>
                                     <td>

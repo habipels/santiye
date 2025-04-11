@@ -1381,12 +1381,16 @@ def kasa_islemleri(bilgi):
     a = list(Gider_odemesi.objects.filter(silinme_bilgisi = False,kasa_bilgisi__id = bilgi.id))+list(Gelir_odemesi.objects.filter(silinme_bilgisi = False,kasa_bilgisi__id = bilgi.id))
     return a
 @register.simple_tag
-def fatura_durumu(k):
+def fatura_durumu(k,d):
     print(k)
-    bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
+    bilgi =  faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = d).last()
+    print(bilgi.gelir_etiketi)
+    print(bilgi.gider_etiketi)
     if bilgi.gelir_etiketi in k:
+        print("0")
         return 0
     else:
+        print("1")
         return 1
 from django.db.models import Sum
 from django.utils.timezone import now

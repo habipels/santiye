@@ -5,7 +5,7 @@ from simple_history.models import HistoricalRecords
 from django.conf import settings
 from django.db import models
 from simple_history.models import HistoricalRecords
-
+from users.models import CustomUser
 # Create your models here.
 # Create your models here.
 from PIL import Image
@@ -15,6 +15,7 @@ class sayfa_logosu(models.Model):
     dark_image  = models.ImageField(upload_to='logo/',verbose_name="Sayfaya Logo Light",blank = True,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 class faturalardaki_gelir_gider_etiketi(models.Model):
+    kime_ait = models.ForeignKey(CustomUser, verbose_name="Proje Ait Olduğu", blank=True, null=True, on_delete=models.SET_NULL)
     gelir_etiketi = models.CharField(max_length=10,verbose_name  ="Gelir Etiketi",blank = True,null=True)
     gider_etiketi = models.CharField(max_length=10,verbose_name  ="Gider Etiketi",blank = True,null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
