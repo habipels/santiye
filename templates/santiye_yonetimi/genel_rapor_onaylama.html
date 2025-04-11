@@ -204,16 +204,16 @@
         <div class="report-container">
 
         <div class="report-info">
-            <p><strong>Rapor Başlangıç Tarihi:</strong> {{santiyeler.tarih |date:'d.mY'}}</p>
-            <p><strong>Rapor Bitiş Tarihi:</strong> {{santiyeler.bitis_tarih |date:'d.mY'}}</p>
-            <p><strong>Kayıp Gün Sayısı:</strong> {{santiyeler.kayip_gun_sayisi}}</p>
-            <p><strong>Kayıp Gün Açıklaması:</strong> {{santiyeler.kayip_gun_aciklamasi}}</p>
-            <p><strong>Şantiye:</strong> {{santiyeler.proje_santiye_Ait.proje_adi}}</p>
+            <p><strong>{% trans 'Rapor Başlangıç Tarihi:' %}</strong> {{santiyeler.tarih |date:'d.mY'}}</p>
+            <p><strong>{% trans 'Rapor Bitiş Tarihi:' %}</strong> {{santiyeler.bitis_tarih |date:'d.mY'}}</p>
+            <p><strong>{% trans 'Kayıp Gün Sayısı:' %}</strong> {{santiyeler.kayip_gun_sayisi}}</p>
+            <p><strong>{% trans 'Kayıp Gün Açıklaması:' %}</strong> {{santiyeler.kayip_gun_aciklamasi}}</p>
+            <p><strong>{% trans 'Şantiye:' %}</strong> {{santiyeler.proje_santiye_Ait.proje_adi}}</p>
         </div>
 
 
     <section>
-        <h2>Çalışan Personel</h2>
+        <h2>{% trans 'Çalışan Personel' %}</h2>
         <ul id="personelBilgisi">
         {% for i in genel_personel %}
             <li>{{i.personel_departmani.kategori_isimi}} - {{i.personel_sayisi | stringformat:'.F' }} kişi</li>
@@ -223,12 +223,12 @@
     </section>
 
     <section>
-        <h2>Hava Durumu</h2>
-        <p id="havaDurumu">Güneşli, {{genel_hava_durumu.hava_durumu_sicaklik}}°C, Rüzgar: {{genel_hava_durumu.hava_durumu_ruzgar}} km/h</p>
+        <h2>{% trans 'Hava Durumu' %}</h2>
+        <p id="havaDurumu">{% trans 'Güneşli' %}, {{genel_hava_durumu.hava_durumu_sicaklik}}°C, {% trans 'Rüzgar:' %} {{genel_hava_durumu.hava_durumu_ruzgar}} km/h</p>
     </section>
 
     <section>
-        <h2>Şantiyeye Gelen Malzemeler</h2>
+        <h2>{% trans 'Şantiyeye Gelen Malzemeler' %}</h2>
         <ul id="malzemelerListesi">
             {% for i in gelen_malzeme %}
             <li>{{i.urun.urun_adi}} - {{i.urun_adeti  }} </li>
@@ -238,7 +238,7 @@
     </section>
 
     <section>
-        <h2>İmalat Durumu</h2>
+        <h2>{% trans 'İmalat Durumu' %}</h2>
         <div id="imalatDurumu">
             <div class="imalat-item">
                 {% for i in genel_imalat %}
@@ -250,7 +250,7 @@
     </section>
 
     <section>
-        <h2>Genel Durum</h2>
+        <h2>{% trans 'Genel Durum' %}</h2>
         {% for i in genel_aciklamalar %}
            <p id="genelDurum">{{i.genel_aciklama}}</p>
         {% endfor %}
@@ -262,17 +262,17 @@
         {% if santiyeler.raporu_onaylayan %}
         
         <div class="onay-bilgisi" id="onayBilgisi">
-            <p><strong>Onaylayan:</strong> <span id="onaylayanKisi">{{santiyeler.raporu_onaylayan.last_name}}</span></p>
-            <p><strong>Tarih ve Saat:</strong> <span id="onayTarihiSaati">{{santiyeler.onaylama_tarihi}}</span></p>
+            <p><strong>{% trans 'Onaylayan:' %}</strong> <span id="onaylayanKisi">{{santiyeler.raporu_onaylayan.last_name}}</span></p>
+            <p><strong>{% trans 'Tarih ve Saat:' %}</strong> <span id="onayTarihiSaati">{{santiyeler.onaylama_tarihi}}</span></p>
         </div>
-        <button id="yazdirButonu" onclick="yazdirBolge()">Yazdır</button>
+        <button id="yazdirButonu" onclick="yazdirBolge()">{% trans 'Yazdır' %}</button>
         {% else %}
         <div id="onaySecimi">
-            <p><strong>Onay için sorumlu kişiyi seçin ve PIN kodunuzu girin:</strong></p>
+            <p><strong>{% trans 'Onay için sorumlu kişiyi seçin ve PIN kodunuzu girin:' %}</strong></p>
             <input type="text" hidden name="buttonId" value="{{santiyeler.id}}">
-            <label for="sorumluSecimi">Sorumlu Kişi:</label>
+            <label for="sorumluSecimi">{% trans 'Sorumlu Kişi:' %}</label>
             <select id="sorumluSecimi" name="kullanici_bilgisi" class="form-control">
-                <option value="" disabled selected>Seçiniz</option>
+                <option value="" disabled selected>{% trans 'Seçiniz' %}</option>
                 {% for i in perseonel_iznleri_gonder %}               
                 <option value="{{i.kullanicilar.id}}">{{i.kullanicilar.last_name}} -  {% if i.kullanicilar.gorevi %}
                 {{i.kullanicilar.gorevi}}
@@ -280,7 +280,7 @@
                 {% endif %}</option>
                 {% endfor %}
             </select>
-            <button class="onayla-btn" type="button" onclick="sorumluSecildi()">Onayla</button>
+            <button class="onayla-btn" type="button" onclick="sorumluSecildi()">{% trans 'Onayla' %}</button>
         </div>
         {% endif %}
         
@@ -291,15 +291,15 @@
 <div class="modal" id="pinOnayModal">
     <div class="modal-inner">
         <div class="modal-header">
-            <h2>Rapor Onayı</h2>
+            <h2>{% trans 'Rapor Onayı' %}</h2>
             <button class="modal-close-btn" onclick="closeModal()">✖</button>
         </div>
         <div class="modal-body">
-            <p>Raporu onaylamak için PIN kodunuzu girin:</p>
-            <input type="password" id="pinKodu" name="sifre_bilgisi" placeholder="PIN Kodu" maxlength="4" class="form-control">
+            <p>{% trans 'Raporu onaylamak için PIN kodunuzu girin:' %}</p>
+            <input type="password" id="pinKodu" name="sifre_bilgisi" placeholder="{% trans 'PIN Kodu' %}" maxlength="4" class="form-control">
             <div class="form-actions">
-                <button class="form-action-secondary" onclick="closeModal()">İptal</button>
-                <button class="form-action-primary" type="submit">Onayla</button>
+                <button class="form-action-secondary" onclick="closeModal()">{% trans 'İptal' %}</button>
+                <button class="form-action-primary" type="submit">{% trans 'Onayla' %}</button>
             </div>
         </div>
     </div>
@@ -316,7 +316,7 @@
         if (seciliKullanici) {
             openModal();
         } else {
-            alert('Lütfen bir sorumlu kişi seçin.');
+            alert('{% trans "Lütfen bir sorumlu kişi seçin." %}');
         }
     }
 

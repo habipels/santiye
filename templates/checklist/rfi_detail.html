@@ -989,13 +989,14 @@
                         </div>
                         <button class="btn-icon" id="printDocumentBtn">
                             <i class="icon icon-download"></i>
+                            {% trans 'Yazdır' %}
                         </button>
                     </div>
                 </div>
                 <div class="rfi-document-content" id="documentContent">
                     <div class="rfi-document-image-container">
                         <!-- Taranmış belge görüntüsü (JPG olarak) -->
-                        <img src="{{onayli.file.url}}" alt="Taranmış RFI Belgesi" class="rfi-document-image" id="rfiImage">
+                        <img src="{{onayli.file.url}}" alt="{% trans 'Taranmış RFI Belgesi' %}" class="rfi-document-image" id="rfiImage">
                         
                         <!-- Minimal Onay Mührü - Sağ Üst Köşe, Eğik -->
                         {% if onayli.onaylama_bilgisi %}
@@ -1003,9 +1004,9 @@
                         
                         <div class="approval-stamp" id="approvalStamp">
                             <div class="approval-stamp-inner">
-                                <div class="approval-stamp-text">ONAYLANDI</div>
+                                <div class="approval-stamp-text">{% trans 'ONAYLANDI' %}</div>
                                 <div class="approval-stamp-line"></div>
-                                <div class="approval-stamp-by">Onaylayan</div>
+                                <div class="approval-stamp-by">{% trans 'Onaylayan' %}</div>
                                 <div class="approval-stamp-name">{{onayli.onaylayan_bilgisi.last_name}}</div>
                                 <div class="approval-stamp-date">{{onayli.onaylayan_tarih | date:"d.m.Y H.s"}}</div>
                             </div>
@@ -1232,14 +1233,14 @@
                     
                     const text = document.createElement('div');
                     text.className = 'print-stamp-text';
-                    text.textContent = 'ONAYLANDI';
+                    text.textContent = '{% trans "ONAYLANDI" %}';
                     
                     const line = document.createElement('div');
                     line.className = 'print-stamp-line';
                     
                     const by = document.createElement('div');
                     by.className = 'print-stamp-by';
-                    by.textContent = 'Onaylayan';
+                    by.textContent = '{% trans "Onaylayan" %}';
                     
                     const name = document.createElement('div');
                     name.className = 'print-stamp-name';
