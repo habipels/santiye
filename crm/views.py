@@ -80,7 +80,7 @@ def crm_dashboard(request):
     content["image_documents"] = image_files.count()
     content["media_documents"] = media_files.count()
     content["other_documents"] = other_files.count()
-
+    
     content["image_size"] = sum([file.evrak.size for file in image_files]) / (1024 * 1024)  # size in MB
     content["media_size"] = sum([file.evrak.size for file in media_files]) / (1024 * 1024)  # size in MB
     content["other_size"] = sum([file.evrak.size for file in other_files]) / (1024 * 1024)  # size in MB
