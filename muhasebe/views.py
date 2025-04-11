@@ -6796,16 +6796,16 @@ def cari_detayi_json_gonderme(request):
             row_class = "alacak-row"
         else:
             durum_text = "Nötr"
-
-        rows_html += f"""
-            <tr class="{row_class}">
-                
-                <td>{bilgi.cari_adi}</td>
-                <td>{bilgi.aciklama}</td>
-                <td class="amount-col">{abs(net_durum):.2f} ₺</td>
-                <td>{durum_text}</td>
-            </tr>
-        """
+        if net_durum != 0 :
+            rows_html += f"""
+                <tr class="{row_class}">
+                    
+                    <td>{bilgi.cari_adi}</td>
+                    <td>{bilgi.aciklama}</td>
+                    <td class="amount-col">{abs(net_durum):.2f} ₺</td>
+                    <td>{durum_text}</td>
+                </tr>
+            """
 
     net_total = total_borc - total_alacak
 
