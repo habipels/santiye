@@ -34,7 +34,6 @@
 .hidden {
     display: none !important;
 }
-
 </style>
 <main>
     <div class="page-header">
@@ -64,8 +63,8 @@
             <table id="datatable">
                 <thead>
                     <tr>
-                    <th >{% trans 'Departman' %}</th>
-                    <th >{% trans 'Pozisyon' %}</th>
+                        <th>{% trans 'Departman' %}</th>
+                        <th>{% trans 'Pozisyon' %}</th>
                         <th>{% trans 'Personel' %}</th>
                         <th>{% trans 'Ay' %}</th>
                         <th>{% trans 'Toplam Tutar' %}</th>
@@ -74,72 +73,45 @@
                         <th>{% trans 'Avans Öde' %}</th>
                         <th>{% trans 'Maaş Öde' %}</th>
                         <th>{% trans 'Bordro' %}</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
                     {% for i in personeller %}
                         {% personel_maas_bilgisi i.id as maaslar %}
-                        
                         {% for j in maaslar %}
-                        {% if  j.hakedis_tutari > j.odenen %}
-                        
-                        
+                        {% if j.hakedis_tutari > j.odenen %}
                         <tr style="{% if request.user.is_superuser and i.silinme_bilgisi %}background-color: grey;color: white;{% endif %}">
-                            <td>{{ i.calisan_kategori.kategori_isimi }} </td>
-                            <td>{{ i.calisan_pozisyonu.kategori_isimi }} </td>
+                            <td>{{ i.calisan_kategori.kategori_isimi }}</td>
+                            <td>{{ i.calisan_pozisyonu.kategori_isimi }}</td>
                             <td>{{ i.isim }} {{ i.soyisim }}</td>
-                            <td>{{j.tarih}}</td>
-                            <td>{{ j.hakedis_tutari }} {% if j.parabirimi %}
-                                {% trans "$" %}
-                            {% else %}
-                            {% trans "IQD" %}
-                            {% endif %} </td>
-                            <td>{{ j.odenen }}{% if j.parabirimi %}
-                                {% trans "$" %}
-                            {% else %}
-                            {% trans "IQD" %}
-                            {% endif %}</td>
-                            <td>{{ j.kalan }}{% if j.parabirimi %}
-                                {% trans "$" %}
-                            {% else %}
-                            {% trans "IQD" %}
-                            {% endif %}</td>
-                           <td><button class="status-primary stats-lg" type="button"
-                                onclick="avans_ode({{i.id}},'{{j.tarih}}','{{ j.kalan }}')">{% trans 'Kesinti' %} </button></td>
-                            <td><button class="status-primary stats-lg" type="button"
-                                onclick="maas_ode({{i.id}},'{{j.tarih}}','{{ j.kalan }}')">{% trans 'Maaş Öde' %} </button></td>
-                            <td><button class="status-primary stats-lg" type="button"
-                                        onclick="window.location.href='/{{dil}}/users/payroll/{{j.tarih}}/{{i.id}}/'">
-                                    {% trans 'Bordro' %}
-                                </button></td>
-                            
+                            <td>{{ j.tarih }}</td>
+                            <td>{{ j.hakedis_tutari }} {% if j.parabirimi %}{% trans '$' %}{% else %}{% trans 'IQD' %}{% endif %}</td>
+                            <td>{{ j.odenen }}{% if j.parabirimi %}{% trans '$' %}{% else %}{% trans 'IQD' %}{% endif %}</td>
+                            <td>{{ j.kalan }}{% if j.parabirimi %}{% trans '$' %}{% else %}{% trans 'IQD' %}{% endif %}</td>
+                            <td><button class="status-primary stats-lg" type="button" onclick="avans_ode({{i.id}},'{{j.tarih}}','{{ j.kalan }}')">{% trans 'Kesinti' %}</button></td>
+                            <td><button class="status-primary stats-lg" type="button" onclick="maas_ode({{i.id}},'{{j.tarih}}','{{ j.kalan }}')">{% trans 'Maaş Öde' %}</button></td>
+                            <td><button class="status-primary stats-lg" type="button" onclick="window.location.href='/{{dil}}/users/payroll/{{j.tarih}}/{{i.id}}/'">{% trans 'Bordro' %}</button></td>
                         </tr>
-                        {% else %}
                         {% endif %}
                         {% endfor %}
-                        
                     {% endfor %}
                 </tbody>
             </table>
-             <style>
-                            .dt-buttons {
-                                opacity: 0;
-                                height: 0;
-                                position: fixed;
-                                top: 10000px;
-                                left: 10000px;
-                            } 
-                            </style>
-                            <div class="large-stats-card-footer-actions">
-                                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
-                                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
-                                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
-                            </div>
-            
+            <style>
+                .dt-buttons {
+                    opacity: 0;
+                    height: 0;
+                    position: fixed;
+                    top: 10000px;
+                    left: 10000px;
+                } 
+            </style>
+            <div class="large-stats-card-footer-actions">
+                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+            </div>
         </div>
-
-        
     </div>
 
     <script>
@@ -149,58 +121,53 @@
                 searching: true,
                 info: false,
                 ordering: true,
-            dom: 'Btip', // Butonları etkinleştirir
-            buttons: [
-                {
-                    extend: 'pdfHtml5',
-                    className: 'hidden', // DataTables butonunu gizlemek için
-                    orientation: 'landscape',
-                    pageSize: 'A4',
-                    exportOptions: { columns: ':visible' },
-                    customize: function (doc) {
-                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('18%'); 
-                        doc.pageMargins = [15, 20, 15, 20];
-                        doc.defaultStyle = { fontSize: 8 };
-                        doc.styles.tableHeader = {
-                            fillColor: '#f2f2f2',
-                            color: '#333',
-                            alignment: 'center'
-                        };
-                    }
-                },
-                {
+                dom: 'Btip',
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        className: 'hidden',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        exportOptions: { columns: ':visible' },
+                        customize: function (doc) {
+                            doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('18%'); 
+                            doc.pageMargins = [15, 20, 15, 20];
+                            doc.defaultStyle = { fontSize: 8 };
+                            doc.styles.tableHeader = {
+                                fillColor: '#f2f2f2',
+                                color: '#333',
+                                alignment: 'center'
+                            };
+                        }
+                    },
+                    {
                         extend: 'excelHtml5',
                         className: 'hidden',
                         exportOptions: { columns: ':visible' },
                         customize: function (xlsx) {
                             var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                            
-                            // Para birimlerinin olduğu sütunları belirleyin (örneğin, 5 ve 6. sütunlar)
                             $('row c[r^="E"], row c[r^="F"]', sheet).each(function () {
-                                $(this).attr('s', '2'); // 2 numaralı hücre stiline ayarlanarak sayısal veri olarak işlenecek
+                                $(this).attr('s', '2');
                             });
-
-                            // Tarihlerin olduğu sütunları belirleyin (örneğin, 4. sütun)
                             $('row c[r^="D"]', sheet).each(function () {
-                                $(this).attr('s', '3'); // 3 numaralı hücre stiline ayarlanarak tarih olarak işlenecek
+                                $(this).attr('s', '3');
                             });
                         }
                     },
-                {
-                    extend: 'print',
-                    className: 'hidden',
-                    exportOptions: { columns: ':visible' },
-                    customize: function (win) {
-                        $(win.document.body).css('font-size', '10pt').css('width', '95%').css('margin', 'auto');
-                        $(win.document.body).find('table')
-                            .addClass('compact')
-                            .css('font-size', 'inherit')
-                            .css('width', '100%')
-                            .css('margin', 'auto');
+                    {
+                        extend: 'print',
+                        className: 'hidden',
+                        exportOptions: { columns: ':visible' },
+                        customize: function (win) {
+                            $(win.document.body).css('font-size', '10pt').css('width', '95%').css('margin', 'auto');
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit')
+                                .css('width', '100%')
+                                .css('margin', 'auto');
+                        }
                     }
-                }
-            ]
-                
+                ]
             });
 
             $('#stats-search').keyup(function () {
@@ -217,30 +184,27 @@
         $(window).resize(updateMaxWidth);
     </script>
 
-
-<div class="modal" id="maasOdeModal">
+    <div class="modal" id="maasOdeModal">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
                 {% trans 'Maaş Öde' %}
             </div>
             <div class="modal-body">
                 <form enctype="multipart/form-data" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
-                    {% csrf_token %} 
-                    <div id="odemeturuu" ><input type="text" hidden id="users_id_maas"  name="users_id"></div>
+                    {% csrf_token %}
+                    <div id="odemeturuu"><input type="text" hidden id="users_id_maas" name="users_id"></div>
                     <div class="form-element">
                         <label for="maas-ayi">{% trans 'Hakediş Ayı' %}</label>
-
-                        <span id="maasAyspan" ></span>
+                        <span id="maasAyspan"></span>
                         <input type="text" hidden id="maasAy" name="maas_ayi">
-                        
                     </div>
                     <div class="form-element">
                         <label for="kalan-bakiye">{% trans 'Kalan Bakiye' %}</label>
-                        <input required type="number" step="0.01" placeholder="{{ j.kalan}}" name="tutar" id="maasBakiye"  >
+                        <input required type="number" step="0.01" placeholder="{{ j.kalan }}" name="tutar" id="maasBakiye">
                     </div>
                     <div class="form-element">
                         <label for="kur">{% trans 'Kur' %}</label>
-                        <input required type="number" step="0.01" name="kur"  class="form-control" placeholder="Kur">
+                        <input required type="number" step="0.01" name="kur" class="form-control" placeholder="{% trans 'Kur' %}">
                     </div>
                     <div class="form-element">
                         <label for="odeme-tarihi">{% trans 'Ödeme Tarihi' %}</label>
@@ -252,92 +216,76 @@
                     </div>
                     <div class="form-element">
                         <label for="ekler">{% trans 'Dosya Yükle' %}</label>
-
                         <div class="file-input">
                             <label for="ekler">
                                 <img src="./content/images/illustration-upload.png">
-
                                 <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
                             </label>
-
                             <input type="file" name="file" id="avansDosya">
                         </div>
-
-                        <ul class="fileList">
-                        </ul>
+                        <ul class="fileList"></ul>
                     </div>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button"
-                            onclick="closeModal('maasOdeModal')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal('maasOdeModal')">{% trans 'Vazgeç' %}</button>
                         <button class="form-action-primary" type="submit">{% trans 'Kesinti Yap' %}</button>
                     </div>
                 </form>
             </div>
         </div>
-</div>
+    </div>
 
-<div class="modal" id="avansOdeModal">
+    <div class="modal" id="avansOdeModal">
         <div class="modal-inner" style="width: 500px">
             <div class="modal-header">
                 {% trans 'Avans Öde' %}
-                
             </div>
             <div class="modal-body">
-                
                 <form id="avansOdeForm" method="POST" action="/{{dil}}{% url 'users:calisan_odemeleri_kaydet' %}">
-                    {% csrf_token %} 
+                    {% csrf_token %}
                     <input type="text" hidden value="1" name="odeme_turu">
-                    <div id="odemeturu" ><input type="text" hidden id="users_id_avans" value="{{i.id}}" name="users_id"></div>
+                    <div id="odemeturu"><input type="text" hidden id="users_id_avans" value="{{i.id}}" name="users_id"></div>
                     <div class="form-element">
                         <label for="ay-secimi">{% trans 'Hakediş Ayı' %}</label>
-                        <span id="avansAyspan" ></span>
+                        <span id="avansAyspan"></span>
                         <input type="text" hidden id="avansmaasAy" name="maas_ayi">
                     </div>
                     <div class="form-element">
                         <label for="avansTutar">{% trans 'Ödeme Tarihi' %}</label>
-                        <input required type="date" name="odeme_tarihi"  >
+                        <input required type="date" name="odeme_tarihi">
                     </div>
                     <div class="form-element">
-                        <label for="tutar">Tutar</label>
+                        <label for="tutar">{% trans 'Tutar' %}</label>
                         <input required type="number" step="0.01" id="avansTutar" name="tutar">
                     </div>
                     <div class="form-element">
-                        <label for="kur">Kur</label>
-                        <input required type="number" step="0.01" name="kur" >
+                        <label for="kur">{% trans 'Kur' %}</label>
+                        <input required type="number" step="0.01" name="kur">
                     </div>
-                    
                     <div class="form-element">
                         <label for="aciklama">{% trans 'Açıklama' %}</label>
                         <textarea id="avansAciklama" name="aciklama"></textarea>
                     </div>
                     <div class="form-element">
-                        <label for="ekler">Dosya Yükle</label>
-
+                        <label for="ekler">{% trans 'Dosya Yükle' %}</label>
                         <div class="file-input">
                             <label for="ekler">
                                 <img src="./content/images/illustration-upload.png">
-
                                 <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
                             </label>
-
-                            <input  type="file" name="file" id="avansDosya">
+                            <input type="file" name="file" id="avansDosya">
                         </div>
-
-                        <ul class="fileList">
-                        </ul>
+                        <ul class="fileList"></ul>
                     </div>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button"
-                            onclick="closeModal('avansOdeModal')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal('avansOdeModal')">{% trans 'Vazgeç' %}</button>
                         <button class="form-action-primary" type="submit">{% trans 'Avans Öde' %}</button>
                     </div>
                 </form>
             </div>
         </div>
-</div>
+    </div>
 
-
-<script>
+    <script>
         function openModal(modalID, close = true) {
             if (close) {
                 closeModal();
@@ -346,7 +294,6 @@
         }
 
         function closeModal(modalID = "") {
-            console.log(modalID.length);
             if (modalID.length === 0) {
                 $(".modal").fadeOut();
             } else {
@@ -370,37 +317,27 @@
                 fileList.append('<li>' + files[i].name + '</li>');
             }
         });
-
     </script>
 
-<script>
-function maas_ode(id_bilgisi, maas_ayi, kalan_odeme) {
-    // Kalan ödeme bilgisini uygun formata çevirme
-    kalan_odeme = kalan_odeme.replace(/\./g, '').replace(',', '.');
-    
-    // Değerleri atama
-    document.getElementById("users_id_maas").value = id_bilgisi;
-    document.getElementById("maasBakiye").value = kalan_odeme;
-    document.getElementById("maasAy").value = maas_ayi;
-    document.getElementById("maasAyspan").textContent = maas_ayi;
-    
-    // Modalı açma
-    openModal("maasOdeModal");
-}
-</script>
-<script>
-function avans_ode(id_bilgisi, maas_ayi, kalan_odeme) {
-    // Kalan ödeme bilgisini uygun formata çevirme
-    kalan_odeme = kalan_odeme.replace(/\./g, '').replace(',', '.');
-    
-    // Değerleri atama
-    document.getElementById("users_id_avans").value = id_bilgisi;
-    document.getElementById("avansTutar").value = kalan_odeme;
-    document.getElementById("avansmaasAy").value = maas_ayi;
-    document.getElementById("avansAyspan").textContent = maas_ayi;
-    
-    // Modalı açma
-    openModal("avansOdeModal");
-}
-</script>
+    <script>
+        function maas_ode(id_bilgisi, maas_ayi, kalan_odeme) {
+            kalan_odeme = kalan_odeme.replace(/\./g, '').replace(',', '.');
+            document.getElementById("users_id_maas").value = id_bilgisi;
+            document.getElementById("maasBakiye").value = kalan_odeme;
+            document.getElementById("maasAy").value = maas_ayi;
+            document.getElementById("maasAyspan").textContent = maas_ayi;
+            openModal("maasOdeModal");
+        }
+    </script>
+    <script>
+        function avans_ode(id_bilgisi, maas_ayi, kalan_odeme) {
+            kalan_odeme = kalan_odeme.replace(/\./g, '').replace(',', '.');
+            document.getElementById("users_id_avans").value = id_bilgisi;
+            document.getElementById("avansTutar").value = kalan_odeme;
+            document.getElementById("avansmaasAy").value = maas_ayi;
+            document.getElementById("avansAyspan").textContent = maas_ayi;
+            openModal("avansOdeModal");
+        }
+    </script>
+</main>
 {% endblock sidebar %}

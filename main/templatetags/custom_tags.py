@@ -1382,6 +1382,7 @@ def kasa_islemleri(bilgi):
     return a
 @register.simple_tag
 def fatura_durumu(k):
+    print(k)
     bilgi =  faturalardaki_gelir_gider_etiketi.objects.last()
     if bilgi.gelir_etiketi in k:
         return 0

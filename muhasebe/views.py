@@ -4845,9 +4845,10 @@ def fatura_goster2(request,id):
         kategori_bilgisi = gider_kategorisi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
         etiketler = gider_etiketi.objects.filter(gider_kategoris_ait_bilgisi = request.user)
         gelir_bilgisi_ver =  get_object_or_none(Gider_Bilgisi,id = id)
+        kulla = gelir_bilgisi_ver.gelir_kime_ait_oldugu
         urunleri = gider_urun_bilgisi.objects.filter(gider_bilgis = gelir_bilgisi_ver)
-    content["fatura_bilgi"] = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
-    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =gelir_bilgisi_ver.gelir_kime_ait_oldugu).last()
+    content["fatura_bilgi"] = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu =kulla).last()
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =kulla).last()
     content["bilgi"] = gelir_bilgisi_ver
     content["urunler"] = urunleri
     return render(request,"muhasebe_page/faturalari_goster/gider_faturasi_goster.html",content)
