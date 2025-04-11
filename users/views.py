@@ -510,7 +510,7 @@ def lock_screen(request):
             # Parola doğru, kullanıcıyı kilidi aç
             lock_status.is_locked = False
             lock_status.save()
-            return redirect_with_language('/')   # Yönlendireceğiniz sayfayı belirtin
+            return redirect_with_language('main:homepage')   # Yönlendireceğiniz sayfayı belirtin
         else:
             # Parola doğru değilse hata mesajını gösterin
             error_message = "Parola yanlış. Tekrar deneyin."
