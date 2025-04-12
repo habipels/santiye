@@ -1,6 +1,10 @@
 class ControlManager {
     constructor() {
         this.init();
+        
+        // PDF oluşturma için özel proje özeti stil fonksiyonunu global olarak erişilebilir yap
+        window.html2pdf = window.html2pdf || {};
+        window.html2pdf.styleProjeOzeti = this.styleProjeOzetiForPDF;
     }
 
     init() {
@@ -698,10 +702,315 @@ class ControlManager {
         chart.render();
     }
 
+    /**
+     * Proje özeti komponentini PDF için özel olarak stillendirir
+     * PDF oluşturma fonksiyonlarındaki onclone callback'inden çağrılır
+     * @param {Document} clonedDoc - HTML2PDF tarafından klonlanan döküman
+     */
+    styleProjeOzetiForPDF(clonedDoc) {
+        // JQuery varsa kullan, yoksa document API'sini kullan
+        const $ = window.jQuery || null;
+        
+        if ($) {
+            // Proje özeti kartlarını bul ve optimize et
+            $(clonedDoc).find('.report-card[data-type="proje-ozeti"]').each(function() {
+                // Proje özeti kartını daha küçük ve minimal hale getir
+                const projeOzeti = $(this);
+                
+                // İç grid yapısını düzenle
+                projeOzeti.find('.report-charts, .card-body[data-columns]').css({
+                    'display': 'grid',
+                    'grid-template-columns': 'repeat(12, 1fr)',
+                    'gap': '10px', // Daha dar boşluk
+                    'padding': '5px', // Daha küçük padding
+                    'margin-bottom': '10px'
+                });
+                
+                // Chart kartlarını ölçeklendir ve düzenle
+                projeOzeti.find('.report-card').css({
+                    'grid-column': 'span 4', // Tüm kartları 3 sütunda (12/3 = 4) göster
+                    'padding': '5px',
+                    'margin-bottom': '5px',
+                    'box-shadow': 'none',
+                    'border': '1px solid #eaeaea'
+                });
+                
+                // Chart başlıklarını daha küçük ve öz hale getir
+                projeOzeti.find('.card-header').css({
+                    'padding': '5px',
+                    'font-size': '10px',
+                    'font-weight': 'bold',
+                    'border-bottom': '1px solid #eaeaea'
+                });
+                
+                // Chart ölçeklerini düşür, boyutları küçült
+                projeOzeti.find('.chart-container, .apexcharts-canvas').css({
+                    'max-height': '150px', // Daha küçük grafikler
+                    'overflow': 'hidden'
+                });
+                
+                // ApexCharts küçültme
+                projeOzeti.find('.apexcharts-title-text').css('font-size', '10px');
+                projeOzeti.find('.apexcharts-legend-text').css('font-size', '8px');
+                projeOzeti.find('.apexcharts-yaxis-label, .apexcharts-xaxis-label').css('font-size', '8px');
+                
+                // Gereksiz bölümleri kaldır
+                projeOzeti.find('.apexcharts-toolbar, .apexcharts-menu-icon').hide();
+            });
+        } else {
+            // JQuery yoksa vanilla JavaScript kullan
+            const projeOzetiCards = clonedDoc.querySelectorAll('.report-card[data-type="proje-ozeti"]');
+            projeOzetiCards.forEach(function(card) {
+                // Grid yapılarını düzenle
+                const gridContainers = card.querySelectorAll('.report-charts, .card-body[data-columns]');
+                gridContainers.forEach(function(container) {
+                    container.style.display = 'grid';
+                    container.style.gridTemplateColumns = 'repeat(12, 1fr)';
+                    container.style.gap = '10px';
+                    container.style.padding = '5px';
+                    container.style.marginBottom = '10px';
+                });
+                
+                // İç kartları düzenle
+                const childCards = card.querySelectorAll('.report-card');
+                childCards.forEach(function(childCard) {
+                    childCard.style.gridColumn = 'span 4';
+                    childCard.style.padding = '5px';
+                    childCard.style.marginBottom = '5px';
+                    childCard.style.boxShadow = 'none';
+                    childCard.style.border = '1px solid #eaeaea';
+                });
+                
+                // Card başlıklarını düzenle
+                const headers = card.querySelectorAll('.card-header');
+                headers.forEach(function(header) {
+                    header.style.padding = '5px';
+                    header.style.fontSize = '10px';
+                    header.style.fontWeight = 'bold';
+                    header.style.borderBottom = '1px solid #eaeaea';
+                });
+                
+                // Chart konteynerlerini düzenle
+                const chartContainers = card.querySelectorAll('.chart-container, .apexcharts-canvas');
+                chartContainers.forEach(function(chart) {
+                    chart.style.maxHeight = '150px';
+                    chart.style.overflow = 'hidden';
+                });
+                
+                // ApexCharts elemanlarını düzenle
+                const titleTexts = card.querySelectorAll('.apexcharts-title-text');
+                titleTexts.forEach(function(text) {
+                    text.style.fontSize = '10px';
+                });
+                
+                const legendTexts = card.querySelectorAll('.apexcharts-legend-text');
+                legendTexts.forEach(function(text) {
+                    text.style.fontSize = '8px';
+                });
+                
+                const axisLabels = card.querySelectorAll('.apexcharts-yaxis-label, .apexcharts-xaxis-label');
+                axisLabels.forEach(function(label) {
+                    label.style.fontSize = '8px';
+                });
+                
+                // Toolbar elemanlarını gizle
+                const toolbars = card.querySelectorAll('.apexcharts-toolbar, .apexcharts-menu-icon');
+                toolbars.forEach(function(toolbar) {
+                    toolbar.style.display = 'none';
+                });
+            });
+        }
+    }
+
     loadTemplate(templateId) {
         // Şablon yükleme işlemleri
         console.log('Şablon yükleniyor:', templateId);
-        // Burada şablon verilerini yükle ve sayfaya uygula
+        
+        // Tüm şablonları temizle ve seçilen şablonu işaretle
+        $('.template-item').removeClass('active selected');
+        $(`.template-item[data-template="${templateId}"]`).addClass('active selected');
+        
+        let templateHTML = '';
+        
+        // Şablon türüne göre HTML oluştur
+        switch(templateId) {
+            case 'bos':
+            case 'empty':
+                // Boş şablon - minimal içerik
+                templateHTML = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-component">
+                                <h1 class="editable" contenteditable="true">Yeni Rapor</h1>
+                                <p class="editable" contenteditable="true">Raporunuzun içeriğini buraya ekleyin.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            case 'proje':
+            case 'project':
+                // Proje raporu şablonu - A4 formatına uygun minimal tasarım
+                templateHTML = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-card" data-type="proje-ozeti" data-size="full">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <i class="fas fa-project-diagram"></i>
+                                        Proje Özeti
+                                    </div>
+                                    <div class="card-actions">
+                                        <button class="card-action-btn remove" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body" data-columns="3">
+                                    <!-- Proje durumu -->
+                                    <div class="report-card" data-size="medium">
+                                        <div class="card-header">
+                                            <div class="card-title">Proje Durumu</div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container" style="height: 150px;"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Görev dağılımı -->
+                                    <div class="report-card" data-size="medium">
+                                        <div class="card-header">
+                                            <div class="card-title">Görev Dağılımı</div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container" style="height: 150px;"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Zaman planı -->
+                                    <div class="report-card" data-size="medium">
+                                        <div class="card-header">
+                                            <div class="card-title">Zaman Planı</div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container" style="height: 150px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-component">
+                                <table class="minimal-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%;">#</th>
+                                            <th style="width: 25%;">İş Paketi</th>
+                                            <th style="width: 15%;">Sorumlu</th>
+                                            <th style="width: 10%;">Başlangıç</th>
+                                            <th style="width: 10%;">Bitiş</th>
+                                            <th style="width: 10%;">Durum</th>
+                                            <th style="width: 25%;">Not</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Temel İş Paketi</td>
+                                            <td>Ahmet Yılmaz</td>
+                                            <td>01.06.2023</td>
+                                            <td>15.06.2023</td>
+                                            <td>Tamamlandı</td>
+                                            <td>İş paketi zamanında tamamlandı</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>İkinci İş Paketi</td>
+                                            <td>Mehmet Demir</td>
+                                            <td>16.06.2023</td>
+                                            <td>30.06.2023</td>
+                                            <td>Devam Ediyor</td>
+                                            <td>İş paketi üzerinde çalışılıyor</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            case 'finansal':
+            case 'financial':
+                // Finansal rapor şablonu
+                templateHTML = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-component">
+                                <h1 class="editable" contenteditable="true">Finansal Rapor</h1>
+                                <p class="editable" contenteditable="true">Finansal durum özeti</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-card" data-size="medium">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <i class="fas fa-chart-line"></i>
+                                        Gelir/Gider Analizi
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container" style="height: 200px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="report-column">
+                            <div class="report-card" data-size="medium">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Harcama Dağılımı
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container" style="height: 200px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            default:
+                console.error(`Bilinmeyen şablon: ${templateId}`);
+                return;
+        }
+        
+        // Şablonu sayfaya uygula
+        $('#reportPreview').html(templateHTML);
+        
+        // Özel olay tetikle
+        document.dispatchEvent(new CustomEvent('templateLoaded', { 
+            detail: { templateId: templateId } 
+        }));
+        
+        // Kartları yeniden düzenle
+        if (typeof organizeReportCards === 'function') {
+            setTimeout(organizeReportCards, 200);
+        }
+        
+        // Proje özeti kartlarını kontrol et
+        if (typeof showProjeOzetiCards === 'function') {
+            setTimeout(function() {
+                const projeOzetiCards = document.querySelectorAll('.report-card[data-type="proje-ozeti"]');
+                projeOzetiCards.forEach(showProjeOzetiCards);
+            }, 300);
+        }
     }
 }
 
