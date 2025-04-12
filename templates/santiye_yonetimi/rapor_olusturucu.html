@@ -13,12 +13,14 @@
 <script src="https://momentjs.com/downloads/moment.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <!-- Add missing static references -->
+<script src="{% static 'go/content/script/report-card-layout.js' %}"></script>
+
 <style>
 
     
@@ -30,7 +32,7 @@ table {
   table td,
   table th {
     border: 1px solid #bbb;
-    padding: 10px 20px;
+    padding: 2px 0px;
   }
   table th {
     background-color: #d1084b;
@@ -199,7 +201,7 @@ table {
 
         .preview-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(12, 1fr);
             gap: 15mm;
         }
 
@@ -315,19 +317,19 @@ table {
 
         /* Boyut sınıfları */
         .report-card[data-size="small"] {
-            grid-column: span 1;
+            grid-column: span 4;
         }
 
         .report-card[data-size="medium"] {
-            grid-column: span 2;
+            grid-column: span 4;
         }
 
         .report-card[data-size="large"] {
-            grid-column: span 3;
+            grid-column: span 8;
         }
 
         .report-card[data-size="full"] {
-            grid-column: 1 / -1;
+            grid-column: span 12;
         }
 
         @media print {
@@ -1053,6 +1055,993 @@ table {
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .page-tabs-container {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .page-tabs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            overflow-x: auto;
+        }
+
+        .page-tab {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .page-tab.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .page-tab .remove-page-tab {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .add-page-tab {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pages-container {
+            position: relative;
+        }
+
+        .page-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* Şablon Seçici Stilleri */
+        .template-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .template-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .template-item {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .template-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0,123,255,0.2);
+        }
+
+        .template-item img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        /* Bileşen Paneli Stilleri */
+        .components-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #fff;
+            border-left: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .components-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .component-item {
+            cursor: move;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .component-item:hover {
+            background: #f8f9fa;
+            border-color: #007bff;
+        }
+
+        .component-item i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        /* Sayfa İçeriği Stilleri */
+        .page-content {
+            min-height: 500px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        /* Sürükle-Bırak Alanı */
+        .drop-zone {
+            min-height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #007bff;
+            background: rgba(0,123,255,0.1);
+        }
+
+        /* Bileşen Boyutlandırma */
+        .component-resize {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #007bff;
+            border-radius: 50%;
+        }
+
+        .component-resize.nw { top: -5px; left: -5px; cursor: nw-resize; }
+        .component-resize.ne { top: -5px; right: -5px; cursor: ne-resize; }
+        .component-resize.sw { bottom: -5px; left: -5px; cursor: sw-resize; }
+        .component-resize.se { bottom: -5px; right: -5px; cursor: se-resize; }
+
+        /* Tablo Stilleri */
+        .table-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .table {
+            width: 100%;
+            margin-bottom: 0;
+            border-collapse: collapse;
+            font-size: 12px;
+            table-layout: fixed;
+        }
+
+        .table th,
+        .table td {
+            padding: 3px;
+            border: 1px solid #e9ecef;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+            min-width: 100px;
+        }
+
+        .table th {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: var(--light-color);
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        /* İlerleme Grafiği */
+        .progress-chart {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        /* Görev Tablosu */
+        .task-table .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .task-table .status.completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .task-table .status.in-progress {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .task-table .status.pending {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Personel Listesi */
+        .staff-table .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .staff-table .department {
+            font-size: 11px;
+            color: #6c757d;
+        }
+
+        /* Puantaj Tablosu */
+        .time-sheet-table .date {
+            min-width: 100px;
+        }
+
+        .time-sheet-table .hours {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        /* İzin Takibi */
+        .leave-table .leave-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .leave-table .leave-type.annual {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .leave-table .leave-type.sick {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .leave-table .leave-type.other {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Yazdırma Stilleri */
+        @media print {
+            /* UI Elementlerini Gizle */
+            .row-controls,
+            .column-controls,
+            .row-resize-handle,
+            .component-resize,
+            .ui-draggable-handle,
+            .ui-droppable,
+            .drop-zone,
+            .drop-text,
+            .remove-page-tab,
+            .add-page-tab,
+            .action-btn,
+            .grid-settings,
+            .report-sidebar {
+                display: none !important;
+            }
+
+            /* Sürükle-Bırak Göstergelerini Temizle */
+            .ui-draggable,
+            .ui-droppable {
+                cursor: default !important;
+            }
+
+            /* Tablo Stillerini Düzenle */
+            .table-container {
+                page-break-inside: avoid;
+                width: 100% !important;
+                max-width: 100% !important;
+                border: none !important;
+            }
+            
+            .table {
+                font-size: 10px;
+                width: 100% !important;
+                border-collapse: collapse;
+            }
+            
+            .table th,
+            .table td {
+                padding: 3px;
+                max-width: none !important;
+                border: 1px solid #000 !important;
+            }
+
+            /* Rapor Container Stillerini Düzenle */
+            .report-container {
+                display: block !important;
+                height: auto !important;
+                padding: 0 !important;
+                background: none !important;
+            }
+
+            .report-main {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+            }
+
+            /* Bileşen Stillerini Düzenle */
+            .component {
+                page-break-inside: avoid;
+                border: none !important;
+                box-shadow: none !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* Grid Yapısını Düzenle */
+            .report-row {
+                page-break-inside: avoid;
+                display: flex !important;
+                margin-bottom: 20px !important;
+            }
+
+            .report-column {
+                flex: 1 !important;
+                page-break-inside: avoid;
+            }
+
+            /* Logo ve Başlık Stillerini Düzenle */
+            .preview-header {
+                margin-bottom: 20px !important;
+            }
+
+            .report-logo img {
+                max-width: 200px !important;
+            }
+
+            .preview-title {
+                font-size: 24px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .preview-subtitle {
+                font-size: 14px !important;
+                color: #000 !important;
+            }
+        }
+
+        /* Header Stillerini Düzenle */
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .report-logo {
+            flex: 0 0 25%;
+            text-align: left;
+        }
+
+        .report-logo img {
+            max-height: 60px;
+            max-width: 100%;
+        }
+
+        .report-info {
+            flex: 0 0 50%;
+            text-align: center;
+        }
+
+        .preview-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #052941;
+            margin-bottom: 5px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .report-date-project {
+            flex: 0 0 25%;
+            text-align: right;
+            font-size: 9px;
+            color: #6c757d;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .date-info, .project-info {
+            margin-bottom: 3px;
+        }
+
+        /* Yazdırma Stillerini Düzenle */
+        @media print {
+            .preview-header {
+                padding-bottom: 5mm;
+                margin-bottom: 10mm;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            }
+            
+            .report-logo {
+                flex: 0 0 25% !important;
+                text-align: left !important;
+            }
+            
+            .report-logo img {
+                max-height: 15mm !important;
+                max-width: 100% !important;
+            }
+            
+            .report-info {
+                flex: 0 0 50% !important;
+                text-align: center !important;
+            }
+            
+            .preview-title {
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                color: #000 !important;
+            }
+            
+            .report-date-project {
+                flex: 0 0 25% !important;
+                text-align: right !important;
+                font-size: 9px !important;
+                color: #000 !important;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+        }
+
+        .sidebar-section {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .section-header {
+            margin-bottom: 15px;
+        }
+
+        .section-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #052941;
+            margin: 0;
+        }
+
+        /* Düzenlenebilir Metin Stili */
+        .editable-text {
+            width: 100%;
+            min-height: 30px;
+            padding: 10px;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #333;
+            outline: none;
+            border: none;
+            background: transparent;
+        }
+
+        .editable-text:focus {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .editable-text:empty:before {
+            content: attr(data-placeholder);
+            color: #999;
+        }
+
+        /* Minimal Tablo Stili */
+        .minimal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            margin-bottom: 0;
+            table-layout: fixed; /* Tablo genişliğini düzenli tutar */
+        }
+
+        /* Resizable sütun özellikleri */
+        .minimal-table th {
+            position: relative;
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            user-select: none; /* Metin seçimini engeller */
+        }
+
+        .minimal-table th .resizer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background-color: transparent;
+            cursor: col-resize;
+            z-index: 10;
+        }
+
+        .minimal-table th .resizer:hover,
+        .minimal-table th .resizing {
+            background-color: #007bff;
+        }
+
+        /* div olarak kullanılan minimal-table */
+        div.minimal-table {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            font-size: 11px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            background: #fff;
+        }
+
+        .minimal-table th,
+        .minimal-table td {
+            padding: 6px 8px;
+            text-align: left;
+            border: 1px solid #e9ecef;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%; /* Hücre genişliğini sınırlar */
+        }
+
+        .minimal-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .minimal-table tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        /* Metni Komponenti Stil Düzenlemeleri */
+        .editable-text-container {
+            padding: 8px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .editable-text {
+            width: 100%;
+            min-height: 30px;
+            padding: 0;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #333;
+            outline: none;
+            border: none;
+            background: transparent;
+        }
+
+        .editable-text:focus {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .editable-text:empty:before {
+            content: attr(data-placeholder);
+            color: #999;
+        }
+
+        .text-component {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+        }
+
+        /* Tablo container stili */
+        .table-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto; /* İçerik taşarsa yatay kaydırma çubuğu ekler */
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        /* Şablon seçici için stiller */
+        .template-item {
+            cursor: pointer;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            transition: all 0.3s ease;
+            border: 1px solid #ddd;
+        }
+
+        .template-item:hover {
+            background-color: #e9e9e9;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .template-item.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #0069d9;
+        }
+
+        /* Resizer için stiller */
+        .resizer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            cursor: col-resize;
+            z-index: 10;
+        }
+
+        .resizer.resizing {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        th {
+            position: relative;
+            min-width: 50px;
+        }
+
+        .template-selector-container {
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .template-selector-container h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .template-selector {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .template-item {
+            width: 120px;
+            border: 2px solid #eee;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .template-item:hover {
+            border-color: #007bff;
+        }
+
+        .template-item.selected {
+            border-color: #007bff;
+            background-color: #e9f5ff;
+        }
+
+        .template-preview {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .template-preview i {
+            font-size: 32px;
+            color: #666;
+        }
+
+        .template-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Report-charts stili */
+        .report-charts {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .report-charts .report-card {
+            grid-column: span 4; /* Her satırda 3 kart olacak şekilde */
+        }
+        
+        /* İç içe kartlar için ek stil */
+        .report-card .report-card {
+            grid-column: span 4; /* İç içe kartlarda da 3 sütunlu düzen */
+            width: 100%;
+            margin: 0;
+        }
+        
+        /* 2 ve 3 sütun seçenekleri için stiller */
+        .report-charts[data-columns="2"] .report-card {
+            grid-column: span 6 !important; /* 2 sütunlu düzen için */
+        }
+        
+        .report-charts[data-columns="3"] .report-card {
+            grid-column: span 4 !important; /* 3 sütunlu düzen için */
+        }
+        
+        .card-body[data-columns="2"] > .report-card {
+            grid-column: span 6 !important; /* 2 sütunlu düzen için */
+        }
+        
+        .card-body[data-columns="3"] > .report-card {
+            grid-column: span 4 !important; /* 3 sütunlu düzen için */
+        }
+        
+        /* Sütun butonları için stil */
+        .column-selector {
+            display: flex;
+            margin-right: 10px;
+        }
+        
+        .column-btn {
+            position: relative;
+        }
+        
+        .column-btn span {
+            font-size: 10px;
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+        }
+        
+        .two-col {
+            margin-right: 5px;
+        }
+        
+        /* Kart boyutlandırma için stiller */
+        .report-card {
+            position: relative;
+            transition: box-shadow 0.2s ease;
+            min-height: 100px;
+        }
+        
+        .report-card.resizing {
+            box-shadow: 0 0 15px rgba(34, 214, 181, 0.5);
+            z-index: 100;
+        }
+        
+        .card-resize-handle {
+            position: absolute;
+            background-color: rgba(34, 214, 181, 0.1);
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+            opacity: 0;
+            z-index: 10;
+        }
+        
+        .report-card:hover .card-resize-handle {
+            opacity: 1;
+        }
+        
+        .card-resize-right {
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 100%;
+            cursor: ew-resize;
+        }
+        
+        .card-resize-left {
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            cursor: ew-resize;
+        }
+        
+        .card-resize-bottom {
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 8px;
+            cursor: ns-resize;
+        }
+        
+        .card-resize-corner {
+            right: 0;
+            bottom: 0;
+            width: 16px;
+            height: 16px;
+            cursor: nwse-resize;
+            background-color: rgba(34, 214, 181, 0.2);
+            border-radius: 0 0 4px 0;
+        }
+        
+        .card-resize-handle:hover {
+            background-color: rgba(34, 214, 181, 0.3);
+        }
+        
+        .card-resize-corner:hover {
+            background-color: rgba(34, 214, 181, 0.5);
+        }
+        
+        /* Masonry Grid Stilleri */
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-rows: 1px; /* Otomatik satır boyutlandırma için */
+            grid-auto-flow: dense; /* Boşlukları doldur */
+        }
+        
+        /* Masonry grid içindeki kartların yüksekliği için */
+        .masonry-grid .report-card {
+            overflow: hidden;
+            min-height: 100px;
+            /* Kartın kenar boşluklarıyla birlikte yüksekliğini ayarla */
+            margin-bottom: 15px;
+        }
+        
+        /* Hide-in-pdf sınıfı için stil */
+        .report-card.hide-in-pdf {
+            opacity: 0.6;
+            border: 1px dashed #ccc;
+        }
+        
+        /* PDF çıktısı için gizleme */
+        @media print {
+            .hide-in-pdf {
+                display: none !important;
+            }
+            
+            .card-resize-handle, 
+            .visibility-toggle {
+                display: none !important;
+            }
+        }
+
+        /* Kart boyutlandırma için stiller */
+        .card-resize-handle {
+            position: absolute;
+            background-color: rgba(0, 123, 255, 0.2);
+            z-index: 100;
+        }
+        
+        .card-resize-right {
+            cursor: ew-resize;
+            width: 8px;
+            height: calc(100% - 16px);
+            right: 0;
+            top: 8px;
+        }
+        
+        .card-resize-bottom {
+            cursor: ns-resize;
+            height: 8px;
+            width: calc(100% - 16px);
+            bottom: 0;
+            left: 8px;
+        }
+        
+        .card-resize-corner {
+            cursor: nwse-resize;
+            width: 14px;
+            height: 14px;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 123, 255, 0.4);
+            border-radius: 0 0 4px 0;
+        }
+        
+        .report-card {
+            position: relative;
+            min-height: 100px;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .report-card.resizing {
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            z-index: 200;
+        }
+        
+        /* Masonry grid için stiller */
+        .report-charts, .preview-grid, .card-body[data-columns] {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+        
+        /* Şablon seçici için stiller */
+        .template-item {
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .template-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+        
+        .template-item.selected, .template-item.active {
+            border-color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+        }
+        
+        .template-preview {
+            min-height: 100px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .template-name {
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
     </style>
 {% endblock head %}
 {% block sidebar %}
@@ -1085,6 +2074,40 @@ table {
                     <div class="section-header">
                         <h3>Bileşenler</h3>
                     </div>
+                    
+                    <!-- Şablon Seçici -->
+                    <div class="sidebar-section template-selector">
+                        <div class="section-header">
+                            <h3>Şablon Seçici</h3>
+                        </div>
+                        <div id="template-list" class="template-grid">
+                            <div class="template-item" data-template="bos">
+                                <div class="template-preview">
+                                    <i class="fas fa-file"></i>
+                                </div>
+                                <div class="template-name">Boş Şablon</div>
+                            </div>
+                            <div class="template-item" data-template="finansal">
+                                <div class="template-preview">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div class="template-name">Finansal Rapor</div>
+                            </div>
+                            <div class="template-item" data-template="proje">
+                                <div class="template-preview">
+                                    <i class="fas fa-project-diagram"></i>
+                                </div>
+                                <div class="template-name">Proje Raporu</div>
+                            </div>
+                            <div class="template-item" data-template="personel">
+                                <div class="template-preview">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="template-name">Personel Raporu</div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="components-container">
                         <!-- Finansal Bileşenler -->
                         <div class="component-group">
@@ -1201,18 +2224,16 @@ table {
         <div class="report-main">
             <!-- Üst Bar -->
             <div class="report-topbar">
-                <!-- Sayfa Sekmeleri -->
-                <div class="page-tabs">
-                    <div class="page-tab active" data-page="1">
-                        <span>Sayfa 1</span>
-                        <button class="page-tab-close">
-                            <i class="fas fa-times"></i>
-                        </button>
+                <!-- Sayfa Sekmeleri
+                <div class="page-tabs-container">
+                    <div class="page-tabs">
+                        <div class="page-tab active" data-page="page-1">
+                            <span>Sayfa 1</span>
+                            <button class="remove-page-tab"><i class="fas fa-times"></i></button>
+                        </div>
+                        <button class="add-page-tab"><i class="fas fa-plus"></i></button>
                     </div>
-                    <button class="page-tab-add">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
+                </div> -->
                 
                 <div class="report-actions">
                     <button class="action-btn" title="Temizle">
@@ -1233,18 +2254,15 @@ table {
             <!-- Önizleme -->
             <div class="preview-container">
                 <div class="preview-header">
-                    <div class="header-content">
-                        <div class="report-logo">
-                            <img src="{{logo_islemi.gelir_makbuzu.url}}" alt="Biada Logo">
-                        </div>
-                        <div class="report-info">
-                            <div class="preview-title" contenteditable="true" data-placeholder="Rapor Başlığı">Proje Raporu</div>
-                            <div class="preview-subtitle">
-                                <span id="reportDateRange">01.03.2024 - 31.03.2024</span>
-                                <span class="separator"></span>
-                                <span id="reportProject">Tüm Projeler</span>
-                            </div>
-                        </div>
+                    <div class="report-logo">
+                        <img src="{% static 'go/content/images/biadalogo.png' %}" alt="Logo" class="logo">
+                    </div>
+                    <div class="report-info">
+                        <div class="preview-title" contenteditable="true" data-placeholder="Rapor Başlığı">Proje Raporu</div>
+                    </div>
+                    <div class="report-date-project">
+                        <div class="date-info">Tarih: <span id="reportDateRange">01.03.2024 - 31.03.2024</span></div>
+                        <div class="project-info">Proje: <span id="reportProject">Tüm Projeler</span></div>
                     </div>
                 </div>
 
@@ -1278,19 +2296,19 @@ table {
                     <div class="margin-inputs">
                         <div class="margin-input">
                             <span>Üst</span>
-                            <input type="number" class="margin-control" data-margin="top" value="20" min="0" max="100">
+                            <input type="number" class="margin-control" data-margin="top" value="5" min="0" max="100">
                         </div>
                         <div class="margin-input">
                             <span>Alt</span>
-                            <input type="number" class="margin-control" data-margin="bottom" value="20" min="0" max="100">
+                            <input type="number" class="margin-control" data-margin="bottom" value="5" min="0" max="100">
                         </div>
                         <div class="margin-input">
                             <span>Sol</span>
-                            <input type="number" class="margin-control" data-margin="left" value="20" min="0" max="100">
+                            <input type="number" class="margin-control" data-margin="left" value="4" min="0" max="100">
                         </div>
                         <div class="margin-input">
                             <span>Sağ</span>
-                            <input type="number" class="margin-control" data-margin="right" value="20" min="0" max="100">
+                            <input type="number" class="margin-control" data-margin="right" value="4" min="0" max="100">
                         </div>
                     </div>
                 </div>
@@ -1337,7 +2355,7 @@ table {
             </div>
             <div class="modal-footer">
                 <button class="button" onclick="closePdfPreview()">Kapat</button>
-                <button class="button button-primary" onclick="exportToPDF()">PDF İndir</button>
+                <button class="button button-primary" onclick="window.reportManager.exportToPDF()">PDF İndir</button>
             </div>
         </div>
     </div>
@@ -1368,14 +2386,16 @@ table {
     }
 var tarih = "01.03.2024 - 31.03.2024";
 class ReportManager {
-constructor() {
-    this.init();
-    this.bindEvents();
-}
+    constructor() {
+        this.currentReport = null;
+        this.pdfMargins = [5, 4, 5, 4]; // Varsayılan değerler: Üst, Sağ, Alt, Sol
+        this.init();
+        this.bindEvents();
+    }
 
-init() {
-    this.initDatePicker();
-    this.initDragAndDrop();
+    init() {
+        this.initDatePicker();
+        this.initDragAndDrop();
         this.initGridSystem();
     }
 
@@ -1703,848 +2723,1084 @@ init() {
 
         // Bildirim göster
         this.showNotification('Grid ayarları güncellendi');
-}
-
-initDatePicker() {
-    $('#dateRange').daterangepicker({
-        opens: 'left',
-        locale: {
-            format: 'DD.MM.YYYY',
-            separator: ' - ',
-            applyLabel: 'Uygula',
-            cancelLabel: 'İptal',
-            daysOfWeek: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
-            monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-            firstDay: 1
-        },
-        startDate: moment().startOf('month'),
-        endDate: moment().endOf('month')
-    }, (start, end) => {
-        tarih = start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY');
-        $('#reportDateRange').text(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
-    });
-}
-
-initDragAndDrop() {
-    $('.component-item').draggable({
-        helper: 'clone',
-        appendTo: 'body',
-        zIndex: 1000,
-        cursor: 'move'
-    });
-
-    this.initializeDropZones();
-}
-
-initializeDropZones() {
-    $('.drop-zone').droppable({
-        accept: '.component-item',
-        hoverClass: 'drop-hover',
-        drop: (event, ui) => {
-            const type = $(ui.draggable).data('type');
-            const component = this.createComponent(type);
-            if (component) {
-                $(event.target).replaceWith(component);
-            }
-        }
-    });
-}
-
-initTemplates() {
-    $('.template-item').click((e) => {
-        const templateType = $(e.currentTarget).data('template');
-        
-        $('.template-item').removeClass('selected');
-        $(e.currentTarget).addClass('selected');
-        
-        this.loadTemplate(templateType);
-    });
-}
-
-loadTemplate(type) {
-    let template = '';
-    
-    switch(type) {
-        case 'bos':
-            template = `
-                <div class="report-card" data-size="full">
-                    <div class="drop-zone">
-                        <span class="drop-text">Bileşen eklemek için sürükleyin</span>
-                    </div>
-                </div>
-            `;
-            break;
-            
-        case 'finansal':
-            template = `
-                <div class="report-content">
-                    <div class="report-card" data-size="medium">
-                        <div class="drop-zone">
-                            <span class="drop-text">Gelir/Gider grafiği</span>
-                        </div>
-                    </div>
-                    <div class="report-card" data-size="medium">
-                        <div class="drop-zone">
-                            <span class="drop-text">Kasa durumu</span>
-                        </div>
-                    </div>
-                    <div class="report-card" data-size="medium">
-                        <div class="drop-zone">
-                            <span class="drop-text">Bütçe analizi</span>
-                        </div>
-                    </div>
-                    <div class="report-card" data-size="medium">
-                        <div class="drop-zone">
-                            <span class="drop-text">Tahsilat durumu</span>
-                        </div>
-                    </div>
-                    <div class="report-card" data-size="full">
-                        <div class="drop-zone">
-                            <span class="drop-text">Finansal tablo</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            break;
-            
-        case 'proje':
-            template = `
-                <div class="report-content">
-                    <div class="report-card" data-size="large">
-                        <div class="drop-zone">
-                            <span class="drop-text">Proje durumu</span>
-                        </div>
-                    </div>
-                    <div class="report-card" data-size="small">
-                        <div class="drop-zone">
-                            <span class="drop-text">Görev dağılımı</span>
-                        </div>
-                    </div>
-                    <div class="report-card" data-size="medium">
-                        <div class="drop-zone">
-                            <span class="drop-text">Zaman çizelgesi</span>
-                        </div>
-                    </div>
-                    <div class="report-card" data-size="medium">
-                        <div class="drop-zone">
-                            <span class="drop-text">Kilometre taşları</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            break;
     }
-    
-    $('#reportPreview').html(template);
-    this.initializeDropZones();
-}
 
-showPdfPreview() {
-    const modal = document.getElementById('pdfPreviewModal');
-    const pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
-    modal.classList.add('active');
-
-    // Loading göster
-    const loadingEl = $('<div class="loading">PDF oluşturuluyor...</div>');
-    $(pdfPreviewFrame).parent().append(loadingEl);
-
-    // PDF ayarları
-    const opt = {
-        margin: 0,
-        filename: 'rapor.pdf',
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { 
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            scrollY: 0
-        },
-        jsPDF: { 
-            unit: 'mm', 
-            format: 'a4',
-            orientation: 'portrait'
-        }
-    };
-
-    // Gereksiz elementleri gizle
-    $('.card-actions, .component-controls, .report-topbar, .report-sidebar').hide();
-
-    // PDF oluştur
-    html2pdf()
-        .from(document.querySelector('.preview-container'))
-        .set(opt)
-        .outputPdf('datauristring')
-        .then(uri => {
-            // Gizlenen elementleri geri göster
-            $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
-            
-            pdfPreviewFrame.src = uri;
-            loadingEl.remove();
-        })
-        .catch(err => {
-            // Hata durumunda da gizlenen elementleri geri göster
-            $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
-            
-            console.error('PDF oluşturma hatası:', err);
-            loadingEl.text('PDF oluşturulurken bir hata oluştu');
+    initDatePicker() {
+        $('#dateRange').daterangepicker({
+            opens: 'left',
+            locale: {
+                format: 'DD.MM.YYYY',
+                separator: ' - ',
+                applyLabel: 'Uygula',
+                cancelLabel: 'İptal',
+                daysOfWeek: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
+                monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                firstDay: 1
+            },
+            startDate: moment().startOf('month'),
+            endDate: moment().endOf('month')
+        }, (start, end) => {
+            tarih = start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY');
+            $('#reportDateRange').text(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
         });
-}
+    }
 
-exportToPDF() {
-    const element = document.querySelector('.preview-container');
-    const paperSize = $('#paperSize').val() || 'a4';
-    const orientation = $('input[name="orientation"]:checked').val() || 'portrait';
+    initDragAndDrop() {
+        $('.component-item').draggable({
+            helper: 'clone',
+            appendTo: 'body',
+            zIndex: 1000,
+            cursor: 'move'
+        });
 
-    // PDF ayarları
-    const opt = {
-        margin: [10, 10, 10, 10],
-        filename: `${this.currentReport?.name || 'rapor'}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            onclone: function(clonedDoc) {
-                // Metin bileşenlerini düzenle
-                $(clonedDoc).find('.report-card[data-type="metin"]').each(function() {
-                    const cardBody = $(this).find('.card-body');
-                    const textContent = cardBody.find('.text-content').html();
-                    
-                    // Kartı sadece içerik ile değiştir
-                    $(this).replaceWith(`<div class="text-content">${textContent}</div>`);
-                });
+        this.initializeDropZones();
+    }
 
-                // Tüm kartlardan card-header'ları kaldır
-                $(clonedDoc).find('.card-header').remove();
-
-                // Diğer düzenlemeler
-                $(clonedDoc).find('.card-actions, .component-controls').remove();
-                
-                $(clonedDoc).find('.preview-header').css({
-                    'margin-bottom': '20mm',
-                    'text-align': 'center',
-                    'border-bottom': '1px solid #E2E8F0',
-                    'padding-bottom': '10mm'
-                });
-
-                $(clonedDoc).find('.report-logo img').css({
-                    'height': '30mm',
-                    'width': 'auto'
-                });
-
-                $(clonedDoc).find('.preview-title').css({
-                    'font-size': '24px',
-                    'font-weight': 'bold',
-                    'margin-bottom': '8px',
-                    'color': '#052941'
-                });
-
-                $(clonedDoc).find('.preview-subtitle').css({
-                    'font-size': '14px',
-                    'color': '#64748B'
-                });
-
-                $(clonedDoc).find('.report-card').css({
-                    'page-break-inside': 'avoid',
-                    'margin-bottom': '15mm'
-                });
+    initializeDropZones() {
+        $('.drop-zone').droppable({
+            accept: '.component-item',
+            hoverClass: 'drop-hover',
+            drop: (event, ui) => {
+                const type = $(ui.draggable).data('type');
+                const component = this.createComponent(type);
+                if (component) {
+                    $(event.target).replaceWith(component);
+                }
             }
-        },
-        jsPDF: { 
-            unit: 'mm', 
-            format: paperSize,
-            orientation: orientation
-        }
-    };
+        });
+    }
 
-    // Loading göster
-    const loadingEl = $('<div class="loading-overlay"><div class="loading">PDF indiriliyor...</div></div>');
-    $('body').append(loadingEl);
-
-    // PDF'yi oluştur ve indir
-    html2pdf().set(opt).from(element).save().then(() => {
-        loadingEl.remove();
-        this.showNotification('PDF başarıyla indirildi');
-        closePdfPreview();
-    }).catch(err => {
-        console.error('PDF indirme hatası:', err);
-        loadingEl.remove();
-        this.showNotification('PDF oluşturulurken bir hata oluştu', 'error');
-    });
-}
-
-bindEvents() {
-    // PDF export
-    $('#exportPDFBtn').click(() => this.showPdfPreview());
-    
-    // Proje seçimi
-    $('#projectSelect').change(() => {
-        const projectName = $('#projectSelect option:selected').text();
-        $('#reportProject').text(projectName || 'Tüm Projeler');
-    });
-
-    // Yeni event'ler
-    $('.action-btn[title="Temizle"]').click(() => this.showClearConfirm());
-    $('.action-btn[title="Kaydet"]').click(() => this.showSaveForm());
-}
-
-showClearConfirm() {
-    const modal = $(`
-        <div class="modal confirm-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Raporu Temizle</h3>
-                    <button class="modal-close" onclick="$(this).closest('.modal').remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Raporu temizlemek istediğinize emin misiniz?</p>
-                    <p>Bu işlem geri alınamaz.</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="button" onclick="$(this).closest('.modal').remove()">İptal</button>
-                    <button class="button button-primary" onclick="window.reportManager.clearReport()">Temizle</button>
-                </div>
-            </div>
-        </div>
-    `);
-
-    $('body').append(modal);
-    modal.addClass('active');
-}
-
-clearReport() {
-    // Rapor içeriğini temizle
-    $('#reportPreview').html(`
-        <div class="drop-zone" data-size="full">
-            <span class="drop-text">Bileşen eklemek için sürükleyin</span>
-        </div>
-    `);
-
-    // Drop zone'ları yeniden aktifleştir
-    this.initializeDropZones();
-
-    // Modalı kapat
-    $('.confirm-modal').remove();
-
-    // Bildirim göster
-    this.showNotification('Rapor temizlendi');
-}
-
-showSaveForm() {
-    const modal = $(`
-        <div class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Raporu Kaydet</h3>
-                    <button class="modal-close" onclick="$(this).closest('.modal').remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Rapor Adı</label>
-                        <input type="text" class="form-control" id="reportNames" >
-                    </div>
-                    <div class="form-group">
-                        <label>Açıklama</label>
-                        <textarea class="form-control" id="reportDescriptions"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="button" onclick="$(this).closest('.modal').remove()">İptal</button>
-                    <button class="button button-primary" onclick="saveReport()">Kaydet</button>
-                </div>
-            </div>
-        </div>
-    `);
-
-    $('body').append(modal);
-    modal.addClass('active');
-}
-
-
-showNotification(message) {
-    const notification = $(`
-        <div class="notification">
-            <i class="icon icon-check"></i>
-            <span>${message}</span>
-        </div>
-    `);
-
-    $('body').append(notification);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-createComponent(type) {
-    let component;
-    
-    switch(type) {
-        case 'gelir-gider':
-            component = $(`
-                <div class="report-card" data-size="medium">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-chart-line"></i>
-                            Gelir/Gider Analizi
-                        </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="gelirGiderChart"></div>
-                    </div>
-                    <div class="resize-handle resize-handle-e"></div>
-                    <div class="resize-handle resize-handle-s"></div>
-                    <div class="resize-handle resize-handle-se"></div>
-                </div>
-            `);
-                setTimeout(() => {
-                new ApexCharts(component.find('#gelirGiderChart')[0], {
-                    series: [{
-                        name: 'Gelir',
-                        data: {{ozellikleri.gelir | safe }}
-                    }, {
-                        name: 'Gider',
-                        data: {{ozellikleri.gider | safe }}
-                    }],
-                    chart: {
-                        type: 'area',
-                        height: 250,
-                        toolbar: { show: false }
-                    },
-                    colors: ['#22D6B5', '#FF4560'],
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.7,
-                            opacityTo: 0.2
-                        }
-                    },
-                    dataLabels: { enabled: false },
-                    stroke: { curve: 'smooth', width: 2 },
-                    xaxis: {
-                        categories: {{ozellikleri.aylar | safe }}
-                    }
-                }).render();
-            }, 100);
-
-            // Boyutlandırma işlevselliği
-            this.initializeResizeHandles(component);
+    initTemplates() {
+        $('.template-item').click((e) => {
+            const templateType = $(e.currentTarget).data('template');
             
-            // ... rest of the component code ...
-            break;
+            $('.template-item').removeClass('selected');
+            $(e.currentTarget).addClass('selected');
+            
+            this.loadTemplate(templateType);
+        });
+    }
 
-        case 'kasa-durumu':
-            component = $(`
-                <div class="report-card" data-size="small">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-wallet"></i>
-                            Kasa Durumu
-                        </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="fas fa-trash"></i>
-                            </button>
+    loadTemplate(type) {
+        let template = '';
+        
+        switch(type) {
+            case 'bos':
+                template = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-card" data-size="full">
+                                <div class="editable-text" contenteditable="true">
+                                    <h2>Yeni Rapor</h2>
+                                    <p>Rapor içeriğini düzenlemek için tıklayın. Sol menüden bileşenler ekleyebilirsiniz.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="kasa-select-wrapper">
-                            <select class="kasa-select form-control">
-                                <option value="">Kasa Seçin</option>
-                                {% for i in kasa %}
-                                    <option value="{{i.id}}">{{i.kasa_adi}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="kasa-info-box">
-                            <div class="info-box-content">
-                                <div class="info-box-title">Bakiye</div>
-                                <div class="info-box-value">$ <span class="bakiye-value">0</span></div>
-                            </div>
-                            <div class="info-box-footer">
-                                <div class="son-islem">
-                                    <small>Son İşlem: <span class="son-islem-text">-</span></small>
+                `;
+                break;
+                
+            case 'finansal':
+                template = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-card" data-size="full">
+                                <div class="editable-text" contenteditable="true">
+                                    <h2>Finansal Durum Raporu</h2>
+                                    <p>${$('#reportDateRange').text() || 'Tarih aralığı seçilmedi'}</p>
                                 </div>
-                                <button class="info-box-btn toggle-movements" title="Hareketleri Göster">
-                                    <i class="fas fa-eye"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-card" data-size="medium">
+                                <div class="editable-text" contenteditable="true">
+                                    <h3>Gelir/Gider Özeti</h3>
+                                </div>
+                                <div class="drop-zone">
+                                    <span class="drop-text">Gelir/gider grafiği eklemek için sürükleyin</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="report-column">
+                            <div class="report-card" data-size="medium">
+                                <div class="editable-text" contenteditable="true">
+                                    <h3>Kasa Durumu</h3>
+                                </div>
+                                <div class="drop-zone">
+                                    <span class="drop-text">Kasa durumu tablosu eklemek için sürükleyin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-card" data-size="full">
+                                <div class="editable-text" contenteditable="true">
+                                    <h3>Finansal Tablo</h3>
+                                </div>
+                                <div class="drop-zone">
+                                    <span class="drop-text">Finansal tablo eklemek için sürükleyin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            case 'proje':
+                template = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-card" data-size="full">
+                                <div class="editable-text" contenteditable="true">
+                                    <h2>Proje İlerleme Raporu</h2>
+                                    <p>${$('#reportDateRange').text() || 'Tarih aralığı seçilmedi'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-card" data-size="large">
+                                <div class="editable-text" contenteditable="true">
+                                    <h3>Proje Durumu</h3>
+                                </div>
+                                <div class="drop-zone">
+                                    <span class="drop-text">Proje durum grafiği eklemek için sürükleyin</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="report-column">
+                            <div class="report-card" data-size="small">
+                                <div class="editable-text" contenteditable="true">
+                                    <h3>Görev Dağılımı</h3>
+                                </div>
+                                <div class="drop-zone">
+                                    <span class="drop-text">Görev grafiği eklemek için sürükleyin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+        }
+        
+        $('#reportPreview').html(template);
+        this.initializeDropZones();
+        this.setupComponentControls();
+    }
+
+    updatePdfMargins(margins) {
+        this.pdfMargins = margins;
+        console.log('PDF kenar boşlukları güncellendi:', this.pdfMargins);
+    }
+
+    showPdfPreview() {
+        const modal = document.getElementById('pdfPreviewModal');
+        const pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
+        modal.classList.add('active');
+
+        // Loading göster
+        const loadingEl = $('<div class="loading">PDF oluşturuluyor...</div>');
+        $(pdfPreviewFrame).parent().append(loadingEl);
+
+        // PDF ayarları
+        const opt = {
+            margin: this.pdfMargins, // Güncellenmiş kenar boşluklarını kullan
+            filename: 'rapor.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { 
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                scrollY: 0,
+                onclone: function(clonedDoc) {
+                    // Hide-in-pdf sınıfına sahip kartları gizle
+                    $(clonedDoc).find('.report-card.hide-in-pdf').css('display', 'none');
+                    
+                    // UI Elementlerini Gizle
+                    $(clonedDoc).find('.row-controls, .column-controls, .row-resize-handle, .component-resize, .ui-draggable-handle, .drop-zone, .drop-text, .remove-page-tab, .add-page-tab, .action-btn, .grid-settings, .report-sidebar, .card-resize-handle, .card-visibility-toggle').hide();
+                    
+                    // Sürükle bırak sınıflarını kaldır
+                    $(clonedDoc).find('.ui-draggable, .ui-droppable, .ui-resizable').removeClass('ui-draggable ui-droppable ui-resizable ui-draggable-handle');
+                    
+                    // Satır ve sütun çizgilerini kaldır
+                    $(clonedDoc).find('.report-row').css({
+                        'border': 'none',
+                        'box-shadow': 'none',
+                        'background': 'none',
+                        'margin-bottom': '10px'
+                    });
+                    
+                    $(clonedDoc).find('.report-column').css({
+                        'border': 'none',
+                        'box-shadow': 'none',
+                        'background': 'none'
+                    });
+                    
+                    // Bileşen stillerini düzenle
+                    $(clonedDoc).find('.component').css({
+                        'border': 'none',
+                        'box-shadow': 'none',
+                        'margin-bottom': '10px'
+                    });
+                    
+                    // Düzenlenebilir metin bileşenlerini düzenle
+                    $(clonedDoc).find('.editable-text').css({
+                        'font-size': '11px',
+                        'line-height': '1.5',
+                        'color': '#000',
+                        'padding': '0',
+                        'background': 'none'
+                    }).attr('contenteditable', 'false');
+                    
+                    
+                    // Minimal tablo stillerini uygula
+                    $(clonedDoc).find('.minimal-table').css({
+                        'width': '100%',
+                        'border-collapse': 'collapse',
+                        'font-size': '10px',
+                        'table-layout': 'fixed'
+                    });
+                    
+                    $(clonedDoc).find('.minimal-table th').css({
+                        'background-color': '#f5f5f5',
+                        'padding': '5px',
+                        'text-align': 'left',
+                        'font-weight': 'bold',
+                        'border-bottom': '1px solid #ddd',
+                        'overflow': 'hidden',
+                        'text-overflow': 'ellipsis',
+                        'white-space': 'nowrap'
+                    });
+                    
+                    $(clonedDoc).find('.minimal-table td').css({
+                        'padding': '4px',
+                        'border-bottom': '1px solid #eee',
+                        'overflow': 'hidden',
+                        'text-overflow': 'ellipsis',
+                        'white-space': 'nowrap'
+                    });
+                    
+                    // Card elementlerini düzenle
+                    $(clonedDoc).find('.card-actions, .component-controls, .card-header').remove();
+                    
+                    // Header stillerini düzenle
+                    $(clonedDoc).find('.preview-header').css({
+                        'display': 'flex',
+                        'align-items': 'center',
+                        'justify-content': 'space-between',
+                        'margin-bottom': '20mm',
+                        'padding-bottom': '5mm',
+                        'border-bottom': '1px solid #000'
+                    });
+
+                    $(clonedDoc).find('.report-logo').css({
+                        'flex': '0 0 25%',
+                        'text-align': 'left'
+                    });
+
+                    $(clonedDoc).find('.report-logo img').css({
+                        'max-height': '15mm',
+                        'max-width': '100%'
+                    });
+
+                    $(clonedDoc).find('.report-info').css({
+                        'flex': '0 0 50%',
+                        'text-align': 'center'
+                    });
+
+                    $(clonedDoc).find('.preview-title').css({
+                        'font-size': '11px',
+                        'font-weight': 'bold',
+                        'color': '#000',
+                        'margin-bottom': '0',
+                        'text-align': 'center',
+                        'width': '100%'
+                    });
+
+                    $(clonedDoc).find('.report-date-project').css({
+                        'flex': '0 0 25%',
+                        'text-align': 'right',
+                        'font-size': '9px',
+                        'color': '#000',
+                        'display': 'flex',
+                        'flex-direction': 'column'
+                    });
+                }
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4',
+                orientation: 'portrait'
+            }
+        };
+
+        // Gereksiz elementleri gizle
+        $('.card-actions, .component-controls, .report-topbar, .report-sidebar').hide();
+
+        // PDF oluştur
+        html2pdf()
+            .from(document.querySelector('.preview-container'))
+            .set(opt)
+            .outputPdf('datauristring')
+            .then(uri => {
+                // Gizlenen elementleri geri göster
+                $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
+                
+                pdfPreviewFrame.src = uri;
+                loadingEl.remove();
+            })
+            .catch(err => {
+                // Hata durumunda da gizlenen elementleri geri göster
+                $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
+                
+                console.error('PDF oluşturma hatası:', err);
+                loadingEl.text('PDF oluşturulurken bir hata oluştu');
+            });
+    }
+
+    exportToPDF() {
+        const element = document.querySelector('.preview-container');
+        const paperSize = $('#paperSize').val() || 'a4';
+        const orientation = $('input[name="orientation"]:checked').val() || 'portrait';
+
+        // PDF ayarları
+        const opt = {
+            margin: this.pdfMargins, // Güncellenmiş kenar boşluklarını kullan
+            filename: `${this.currentReport?.name || 'rapor'}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                onclone: function(clonedDoc) {
+                    // Hide-in-pdf sınıfına sahip kartları gizle
+                    $(clonedDoc).find('.report-card.hide-in-pdf').css('display', 'none');
+                    
+                    // UI Elementlerini Gizle
+                    $(clonedDoc).find('.row-controls, .column-controls, .row-resize-handle, .component-resize, .ui-draggable-handle, .drop-zone, .drop-text, .remove-page-tab, .add-page-tab, .action-btn, .grid-settings, .report-sidebar, .card-resize-handle, .card-visibility-toggle').hide();
+                    
+                    // Sürükle bırak sınıflarını kaldır
+                    $(clonedDoc).find('.ui-draggable, .ui-droppable, .ui-resizable').removeClass('ui-draggable ui-droppable ui-resizable ui-draggable-handle');
+                    
+                    // Satır ve sütun çizgilerini kaldır
+                    $(clonedDoc).find('.report-row').css({
+                        'border': 'none',
+                        'box-shadow': 'none',
+                        'background': 'none',
+                        'margin-bottom': '10px'
+                    });
+                    
+                    $(clonedDoc).find('.report-column').css({
+                        'border': 'none',
+                        'box-shadow': 'none',
+                        'background': 'none'
+                    });
+                    
+                    // Bileşen stillerini düzenle
+                    $(clonedDoc).find('.component').css({
+                        'border': 'none',
+                        'box-shadow': 'none',
+                        'margin-bottom': '10px'
+                    });
+                    
+                    // Düzenlenebilir metin bileşenlerini düzenle
+                    $(clonedDoc).find('.editable-text').css({
+                        'font-size': '11px',
+                        'line-height': '1.5',
+                        'color': '#000',
+                        'padding': '0',
+                        'background': 'none'
+                    }).attr('contenteditable', 'false');
+
+                    // Minimal tablo stillerini uygula
+                    $(clonedDoc).find('.minimal-table').css({
+                        'width': '100%',
+                        'border-collapse': 'collapse',
+                        'font-size': '10px',
+                        'table-layout': 'fixed'
+                    });
+                    
+                    $(clonedDoc).find('.minimal-table th').css({
+                        'background-color': '#f5f5f5',
+                        'padding': '5px',
+                        'text-align': 'left',
+                        'font-weight': 'bold',
+                        'border-bottom': '1px solid #ddd',
+                        'overflow': 'hidden',
+                        'text-overflow': 'ellipsis',
+                        'white-space': 'nowrap'
+                    });
+                    
+                    $(clonedDoc).find('.minimal-table td').css({
+                        'padding': '4px',
+                        'border-bottom': '1px solid #eee',
+                        'overflow': 'hidden',
+                        'text-overflow': 'ellipsis',
+                        'white-space': 'nowrap'
+                    });
+
+                    // Metin bileşenlerini düzenle
+                    $(clonedDoc).find('.report-card[data-type="metin"]').each(function() {
+                        const cardBody = $(this).find('.card-body');
+                        const textContent = cardBody.find('.text-content').html();
+                        
+                        // Kartı sadece içerik ile değiştir
+                        $(this).replaceWith(`<div class="text-content">${textContent}</div>`);
+                    });
+
+                    // Tüm kartlardan card-header'ları kaldır
+                    $(clonedDoc).find('.card-header, .card-actions, .component-controls').remove();
+                    
+                    // Header stillerini düzenle
+                    $(clonedDoc).find('.preview-header').css({
+                        'display': 'flex',
+                        'align-items': 'center',
+                        'justify-content': 'space-between',
+                        'margin-bottom': '20mm',
+                        'padding-bottom': '5mm',
+                        'border-bottom': '1px solid #000'
+                    });
+
+                    $(clonedDoc).find('.report-logo').css({
+                        'flex': '0 0 25%',
+                        'text-align': 'left'
+                    });
+
+                    $(clonedDoc).find('.report-logo img').css({
+                        'max-height': '15mm',
+                        'max-width': '100%'
+                    });
+
+                    $(clonedDoc).find('.report-info').css({
+                        'flex': '0 0 50%',
+                        'text-align': 'center'
+                    });
+
+                    $(clonedDoc).find('.preview-title').css({
+                        'font-size': '11px',
+                        'font-weight': 'bold',
+                        'color': '#000',
+                        'margin-bottom': '0',
+                        'text-align': 'center',
+                        'width': '100%'
+                    });
+
+                    $(clonedDoc).find('.report-date-project').css({
+                        'flex': '0 0 25%',
+                        'text-align': 'right',
+                        'font-size': '9px',
+                        'color': '#000',
+                        'display': 'flex',
+                        'flex-direction': 'column'
+                    });
+
+                    $(clonedDoc).find('.report-card').css({
+                        'page-break-inside': 'avoid',
+                        'margin-bottom': '15mm',
+                        'border': 'none',
+                        'box-shadow': 'none'
+                    });
+                }
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: paperSize,
+                orientation: orientation
+            }
+        };
+
+        // Loading göster
+        const loadingEl = $('<div class="loading-overlay"><div class="loading">PDF indiriliyor...</div></div>');
+        $('body').append(loadingEl);
+
+        // PDF'yi oluştur ve indir
+        html2pdf().set(opt).from(element).save().then(() => {
+            loadingEl.remove();
+            this.showNotification('PDF başarıyla indirildi');
+            closePdfPreview();
+        }).catch(err => {
+            console.error('PDF indirme hatası:', err);
+            loadingEl.remove();
+            this.showNotification('PDF oluşturulurken bir hata oluştu', 'error');
+        });
+    }
+
+    bindEvents() {
+        // PDF export
+        $('#exportPDFBtn').click(() => this.showPdfPreview());
+        
+        // Proje seçimi
+        $('#projectSelect').change(() => {
+            const projectName = $('#projectSelect option:selected').text();
+            $('#reportProject').text(projectName || 'Tüm Projeler');
+        });
+
+        // Yeni event'ler
+        $('.action-btn[title="Temizle"]').click(() => this.showClearConfirm());
+        $('.action-btn[title="Kaydet"]').click(() => this.showSaveForm());
+    }
+
+    showClearConfirm() {
+        const modal = $(`
+            <div class="modal confirm-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Raporu Temizle</h3>
+                        <button class="modal-close" onclick="$(this).closest('.modal').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Raporu temizlemek istediğinize emin misiniz?</p>
+                        <p>Bu işlem geri alınamaz.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="button" onclick="$(this).closest('.modal').remove()">İptal</button>
+                        <button class="button button-primary" onclick="window.reportManager.clearReport()">Temizle</button>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        $('body').append(modal);
+        modal.addClass('active');
+    }
+
+    clearReport() {
+        // Rapor içeriğini temizle
+        $('#reportPreview').html(`
+            <div class="drop-zone" data-size="full">
+                <span class="drop-text">Bileşen eklemek için sürükleyin</span>
+            </div>
+        `);
+
+        // Drop zone'ları yeniden aktifleştir
+        this.initializeDropZones();
+
+        // Modalı kapat
+        $('.confirm-modal').remove();
+
+        // Bildirim göster
+        this.showNotification('Rapor temizlendi');
+    }
+
+    showSaveForm() {
+        const modal = $(`
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Raporu Kaydet</h3>
+                        <button class="modal-close" onclick="$(this).closest('.modal').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Rapor Adı</label>
+                            <input type="text" class="form-control" id="reportNames" >
+                        </div>
+                        <div class="form-group">
+                            <label>Açıklama</label>
+                            <textarea class="form-control" id="reportDescriptions"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="button" onclick="$(this).closest('.modal').remove()">İptal</button>
+                        <button class="button button-primary" onclick="saveReport()">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        $('body').append(modal);
+        modal.addClass('active');
+    }
+
+
+    showNotification(message) {
+        const notification = $(`
+            <div class="notification">
+                <i class="icon icon-check"></i>
+                <span>${message}</span>
+            </div>
+        `);
+
+        $('body').append(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    createComponent(type) {
+        let component;
+        
+        switch(type) {
+            case 'gelir-gider':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-chart-line"></i>
+                                Gelir/Gider Analizi
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
-
-                        <div class="kasa-hareketleri" style="display: none;">
-                            <div class="hareketler-header">
-                                <h5>Son Hareketler</h5>
-                            </div>
-                            <div class="hareketler-list"></div>
+                        <div class="card-body">
+                            <div id="gelirGiderChart"></div>
                         </div>
+                        <div class="resize-handle resize-handle-e"></div>
+                        <div class="resize-handle resize-handle-s"></div>
+                        <div class="resize-handle resize-handle-se"></div>
                     </div>
+                `);
+                    setTimeout(() => {
+                    new ApexCharts(component.find('#gelirGiderChart')[0], {
+                        series: [{
+                            name: 'Gelir',
+                            data: {{ozellikleri.gelir | safe }}
+                        }, {
+                            name: 'Gider',
+                            data: {{ozellikleri.gider | safe }}
+                        }],
+                        chart: {
+                            type: 'area',
+                            height: 250,
+                            toolbar: { show: false }
+                        },
+                        colors: ['#22D6B5', '#FF4560'],
+                        fill: {
+                            type: 'gradient',
+                            gradient: {
+                                shadeIntensity: 1,
+                                opacityFrom: 0.7,
+                                opacityTo: 0.2
+                            }
+                        },
+                        dataLabels: { enabled: false },
+                        stroke: { curve: 'smooth', width: 2 },
+                        xaxis: {
+                            categories: {{ozellikleri.aylar | safe }}
+                        }
+                    }).render();
+                }, 100);
 
-                    <style>
-                        .kasa-select-wrapper {
-                            margin-bottom: 15px;
-                        }
-                        .kasa-info-box {
-                            background: #fff;
-                            border: 1px solid #e0e0e0;
-                            border-radius: 8px;
-                            padding: 15px;
-                            transition: all 0.3s ease;
-                        }
-                        .kasa-info-box:hover {
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                        }
-                        .info-box-title {
-                            color: #666;
-                            font-size: 14px;
-                            margin-bottom: 5px;
-                        }
-                        .info-box-value {
-                            color: #052941;
-                            font-size: 24px;
-                            font-weight: 600;
-                        }
-                        .info-box-footer {
-                            margin-top: 10px;
-                            padding-top: 10px;
-                            border-top: 1px solid #e0e0e0;
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                        }
-                        .son-islem {
-                            color: #666;
-                            font-size: 12px;
-                        }
-                        .info-box-btn {
-                            background: none;
-                            border: none;
-                            color: #666;
-                            cursor: pointer;
-                            padding: 5px;
-                            border-radius: 4px;
-                            transition: all 0.2s ease;
-                        }
-                        .info-box-btn:hover {
-                            background: #f0f0f0;
-                            color: #052941;
-                        }
-                        .kasa-hareketleri {
-                            margin-top: 15px;
-                            padding: 15px;
-                            border: 1px solid #e0e0e0;
-                            border-radius: 8px;
-                        }
-                        .hareketler-header {
-                            margin-bottom: 10px;
-                        }
-                        .hareketler-header h5 {
-                            color: #052941;
-                            font-size: 14px;
-                            margin: 0;
-                        }
-                        .hareket-item {
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            padding: 8px 0;
-                            border-bottom: 1px solid #e0e0e0;
-                        }
-                        .hareket-item:last-child {
-                            border-bottom: none;
-                        }
-                        .hareket-aciklama {
-                            flex: 1;
-                            font-size: 13px;
-                            color: #333;
-                        }
-                        .hareket-tutar {
-                            font-weight: 500;
-                            margin-left: 15px;
-                        }
-                        .hareket-tutar.gelir {
-                            color: #22D6B5;
-                        }
-                        .hareket-tutar.gider {
-                            color: #FF4560;
-                        }
-                    </style>
-                    
-                    <div class="component-controls">
-                        <div class="resize-handle-e"></div>
-                        <div class="resize-handle-s"></div>
-                        <div class="resize-handle-se"></div>
-                     </div>
-                </div>
-            `);
+                // Boyutlandırma işlevselliği
+                this.initializeResizeHandles(component);
+                
+                // ... rest of the component code ...
+                break;
 
-            // Tarih seçici başlat
-            component.find('.date-filter').daterangepicker({
-                opens: 'left',
-                locale: {
-                    format: 'DD.MM.YYYY',
-                    separator: ' - ',
-                    applyLabel: 'Uygula',
-                    cancelLabel: 'İptal',
-                    daysOfWeek: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
-                    monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-                    firstDay: 1
-                },
-                startDate: moment().startOf('month'),
-                endDate: moment().endOf('month')
-            });
-
-            // Kasa seçimi değiştiğinde
-            component.find('.kasa-select').change(function() {
-                const kasaId = $(this).val();
-                if (!kasaId) return;
-
-                // Seçilen kasanın bilgilerini getir
-                $.get(`/tr/accounting/kasa_bilgileri/${kasaId}`, function(data) {
-                    component.find('.bakiye-value').text(data.bakiye);
-                    component.find('.son-islem-text').text(data.son_islem || '-');
-
-                    // Hareketleri güncelle
-                    const hareketlerList = component.find('.hareketler-list');
-                    hareketlerList.empty();
-
-                    data.hareketler.slice(0, 5).forEach(hareket => {
-                        const hareketItem = $(`
-                            <div class="hareket-item">
-                                <div class="hareket-aciklama">${hareket.aciklama}</div>
-                                <div class="hareket-tutar ${hareket.tip === 'gelir' ? 'gelir' : 'gider'}">
-                                    ${hareket.tip === 'gelir' ? '+' : '-'} $${hareket.tutar}
+            case 'kasa-durumu':
+                component = $(`
+                    <div class="report-card" data-size="small">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-wallet"></i>
+                                Kasa Durumu
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="kasa-select-wrapper">
+                                <select class="kasa-select form-control">
+                                    <option value="">Kasa Seçin</option>
+                                    {% for i in kasa %}
+                                        <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="kasa-info-box">
+                                <div class="info-box-content">
+                                    <div class="info-box-title">Bakiye</div>
+                                    <div class="info-box-value">$ <span class="bakiye-value">0</span></div>
+                                </div>
+                                <div class="info-box-footer">
+                                    <div class="son-islem">
+                                        <small>Son İşlem: <span class="son-islem-text">-</span></small>
+                                    </div>
+                                    <button class="info-box-btn toggle-movements" title="Hareketleri Göster">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
                             </div>
-                        `);
-                        hareketlerList.append(hareketItem);
+
+                            <div class="kasa-hareketleri" style="display: none;">
+                                <div class="hareketler-header">
+                                    <h5>Son Hareketler</h5>
+                                </div>
+                                <div class="hareketler-list"></div>
+                            </div>
+                        </div>
+
+                        <style>
+                            .kasa-select-wrapper {
+                                margin-bottom: 15px;
+                            }
+                            .kasa-info-box {
+                                background: #fff;
+                                border: 1px solid #e0e0e0;
+                                border-radius: 8px;
+                                padding: 15px;
+                                transition: all 0.3s ease;
+                            }
+                            .kasa-info-box:hover {
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                            }
+                            .info-box-title {
+                                color: #666;
+                                font-size: 14px;
+                                margin-bottom: 5px;
+                            }
+                            .info-box-value {
+                                color: #052941;
+                                font-size: 24px;
+                                font-weight: 600;
+                            }
+                            .info-box-footer {
+                                margin-top: 10px;
+                                padding-top: 10px;
+                                border-top: 1px solid #e0e0e0;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            }
+                            .son-islem {
+                                color: #666;
+                                font-size: 12px;
+                            }
+                            .info-box-btn {
+                                background: none;
+                                border: none;
+                                color: #666;
+                                cursor: pointer;
+                                padding: 5px;
+                                border-radius: 4px;
+                                transition: all 0.2s ease;
+                            }
+                            .info-box-btn:hover {
+                                background: #f0f0f0;
+                                color: #052941;
+                            }
+                            .kasa-hareketleri {
+                                margin-top: 15px;
+                                padding: 15px;
+                                border: 1px solid #e0e0e0;
+                                border-radius: 8px;
+                            }
+                            .hareketler-header {
+                                margin-bottom: 10px;
+                            }
+                            .hareketler-header h5 {
+                                color: #052941;
+                                font-size: 14px;
+                                margin: 0;
+                            }
+                            .hareket-item {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                padding: 8px 0;
+                                border-bottom: 1px solid #e0e0e0;
+                            }
+                            .hareket-item:last-child {
+                                border-bottom: none;
+                            }
+                            .hareket-aciklama {
+                                flex: 1;
+                                font-size: 13px;
+                                color: #333;
+                            }
+                            .hareket-tutar {
+                                font-weight: 500;
+                                margin-left: 15px;
+                            }
+                            .hareket-tutar.gelir {
+                                color: #22D6B5;
+                            }
+                            .hareket-tutar.gider {
+                                color: #FF4560;
+                            }
+                        </style>
+                        
+                        <div class="component-controls">
+                            <div class="resize-handle-e"></div>
+                            <div class="resize-handle-s"></div>
+                            <div class="resize-handle-se"></div>
+                         </div>
+                    </div>
+                `);
+
+                // Tarih seçici başlat
+                component.find('.date-filter').daterangepicker({
+                    opens: 'left',
+                    locale: {
+                        format: 'DD.MM.YYYY',
+                        separator: ' - ',
+                        applyLabel: 'Uygula',
+                        cancelLabel: 'İptal',
+                        daysOfWeek: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
+                        monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                            'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                        firstDay: 1
+                    },
+                    startDate: moment().startOf('month'),
+                    endDate: moment().endOf('month')
+                });
+
+                // Kasa seçimi değiştiğinde
+                component.find('.kasa-select').change(function() {
+                    const kasaId = $(this).val();
+                    if (!kasaId) return;
+
+                    // Seçilen kasanın bilgilerini getir
+                    $.get(`/tr/accounting/kasa_bilgileri/${kasaId}`, function(data) {
+                        component.find('.bakiye-value').text(data.bakiye);
+                        component.find('.son-islem-text').text(data.son_islem || '-');
+
+                        // Hareketleri güncelle
+                        const hareketlerList = component.find('.hareketler-list');
+                        hareketlerList.empty();
+
+                        data.hareketler.slice(0, 5).forEach(hareket => {
+                            const hareketItem = $(`
+                                <div class="hareket-item">
+                                    <div class="hareket-aciklama">${hareket.aciklama}</div>
+                                    <div class="hareket-tutar ${hareket.tip === 'gelir' ? 'gelir' : 'gider'}">
+                                        ${hareket.tip === 'gelir' ? '+' : '-'} $${hareket.tutar}
+                                    </div>
+                                </div>
+                            `);
+                            hareketlerList.append(hareketItem);
+                        });
+                    }).fail(function() {
+                        alert('Kasa bilgileri alınırken bir hata oluştu.');
                     });
-                }).fail(function() {
-                    alert('Kasa bilgileri alınırken bir hata oluştu.');
                 });
-            });
 
-            // Hareketleri göster/gizle
-            component.find('.toggle-movements').click(function() {
-                const hareketler = component.find('.kasa-hareketleri');
-                const icon = $(this).find('i');
-                
-                if (hareketler.is(':visible')) {
-                    hareketler.slideUp();
-                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
-                    $(this).attr('title', 'Hareketleri Göster');
-                } else {
-                    hareketler.slideDown();
-                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
-                    $(this).attr('title', 'Hareketleri Gizle');
-                }
-            });
-
-            break;
-
-        case 'borc-alacak':
-            component = $(`
-                <div class="report-card" data-size="medium">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-hand-holding-usd"></i>
-                            Borç/Alacak
-                        </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn refresh" title="Yenile">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="borc-alacak-filters">
-                            <div class="filter-row">
-                                <div class="filter-group">
-                                    <label>Tarih Aralığı</label>
-                                    <input type="text" class="form-control date-filter" />
-                                </div>
-                                <div class="filter-group">
-                                    <label>Kayıt Sayısı</label>
-                                    <select class="form-control record-count">
-                                        <option value="5">5 Kayıt</option>
-                                        <option value="10" selected>10 Kayıt</option>
-                                        <option value="20">20 Kayıt</option>
-                                        <option value="50">50 Kayıt</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="filter-row">
-                                <div class="filter-group">
-                                    <label>Tür</label>
-                                    <select class="form-control type-filter">
-                                        <option value="all">Tümü</option>
-                                        <option value="borc">Borçlar</option>
-                                        <option value="alacak">Alacaklar</option>
-                                    </select>
-                                </div>
-                                <div class="filter-group">
-                                    <button class="apply-filters-btn">Uygula</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="borc-alacak-content">
-                            <table class="minimal-table">
-                                <thead>
-                                    <tr>
-                                        
-                                        <th>Cari</th>
-                                        <th>Açıklama</th>
-                                        <th>Bakiye</th>
-                                        <th>Durum</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="cari-data-tbody">
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="borc-alacak-summary">
-                            <div class="summary-row">
-                                <div class="summary-label">Toplam Borç:</div>
-                                <div class="summary-value borc" id="total-borc">0 ₺</div>
-                            </div>
-                            <div class="summary-row">
-                                <div class="summary-label">Toplam Alacak:</div>
-                                <div class="summary-value alacak" id="total-alacak">0 ₺</div>
-                            </div>
-                            <div class="summary-row total">
-                                <div class="summary-label">Net Durum:</div>
-                                <div class="summary-value" id="net-durum">0 ₺</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="component-controls">
-                        <div class="resize-handle-e"></div>
-                        <div class="resize-handle-s"></div>
-                        <div class="resize-handle-se"></div>
-                    </div>
-                </div>
-            `);
-            
-            // Tarih seçici başlat
-            component.find('.date-filter').daterangepicker({
-                opens: 'left',
-                locale: {
-                    format: 'DD.MM.YYYY',
-                    separator: ' - ',
-                    applyLabel: 'Uygula',
-                    cancelLabel: 'İptal',
-                    daysOfWeek: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
-                    monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-                    firstDay: 1
-                },
-                startDate: moment().startOf('month'),
-                endDate: moment().endOf('month')
-            });
-            
-            // Filtre uygulama butonu olayı
-            component.find('.apply-filters-btn').click(function() {
-                // AJAX ile verileri filtrele
-                const dateRange = component.find('.date-filter').val();
-                const recordCount = component.find('.record-count').val();
-                const type = component.find('.type-filter').val();
-                
-                component.find('.card-title').append('<span class="loading-spinner"></span>');
-                
-                // AJAX isteği
-                $.ajax({
-                    url: '/tr/accounting/cari_bilgileri_alma/',
-                    type: 'GET',
-                    data: {
-                        date_range: dateRange,
-                        record_count: recordCount,
-                        type: type,
-                        santiye: santiye
-                    },
-                    success: function(response) {
-                        console.log(response);
-                        // Başarılı olursa tabloyu güncelle
-                        component.find('.cari-data-tbody').html(response.html);
-                        console.log(response.html);
-                        // Toplam değerleri güncelle
-                        $('#total-borc').text(response.total_borc + ' ₺');
-                        $('#total-alacak').text(response.total_alacak + ' ₺');
-                        
-                        const netDurum = response.net_durum;
-                        const netDurumEl = $('#net-durum');
-                        
-                        netDurumEl.text((netDurum >= 0 ? '+' : '') + netDurum + ' ₺');
-                        
-                        if (netDurum >= 0) {
-                            netDurumEl.removeClass('net-negative').addClass('net-positive');
-                        } else {
-                            netDurumEl.removeClass('net-positive').addClass('net-negative');
-                        }
-                        
-                        component.find('.loading-spinner').remove();
-                    },
-                    error: function(error) {
-                        console.error('Veri yükleme hatası:', error);
-                        component.find('.loading-spinner').remove();
-                        alert('Veriler yüklenirken bir hata oluştu');
-                    }
-                });
-            });
-            
-            // Yenile butonu olayı
-            component.find('.refresh').click(function() {
-                component.find('.apply-filters-btn').click();
-            });
-            
-            // Sayfa yüklendiğinde özet bilgileri hesapla
-            setTimeout(function() {
-                let totalBorc = 0;
-                let totalAlacak = 0;
-                
-                component.find('.cari-data-tbody tr').each(function() {
-                    const amountText = $(this).find('.amount-col').text();
-                    const amount = parseFloat(amountText.replace('₺', '').trim());
+                // Hareketleri göster/gizle
+                component.find('.toggle-movements').click(function() {
+                    const hareketler = component.find('.kasa-hareketleri');
+                    const icon = $(this).find('i');
                     
-                    if ($(this).hasClass('borc-row')) {
-                        totalBorc += Math.abs(amount);
-                    } else if ($(this).hasClass('alacak-row')) {
-                        totalAlacak += amount;
+                    if (hareketler.is(':visible')) {
+                        hareketler.slideUp();
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                        $(this).attr('title', 'Hareketleri Göster');
+                    } else {
+                        hareketler.slideDown();
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                        $(this).attr('title', 'Hareketleri Gizle');
                     }
                 });
-                
-                $('#total-borc').text(totalBorc.toFixed(2) + ' ₺');
-                $('#total-alacak').text(totalAlacak.toFixed(2) + ' ₺');
-                
-                const netDurum = totalAlacak - totalBorc;
-                const netDurumEl = $('#net-durum');
-                
-                netDurumEl.text((netDurum >= 0 ? '+' : '') + netDurum.toFixed(2) + ' ₺');
-                
-                if (netDurum >= 0) {
-                    netDurumEl.removeClass('net-negative').addClass('net-positive');
-                } else {
-                    netDurumEl.removeClass('net-positive').addClass('net-negative');
-                }
-            }, 500);
-            
-            break;
 
-        case 'proje-ozeti':
+                break;
+
+            case 'borc-alacak':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                Borç/Alacak
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn refresh" title="Yenile">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="borc-alacak-filters">
+                                <div class="filter-row">
+                                    <div class="filter-group">
+                                        <label>Tarih Aralığı</label>
+                                        <input type="text" class="form-control date-filter" />
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>Kayıt Sayısı</label>
+                                        <select class="form-control record-count">
+                                            <option value="5">5 Kayıt</option>
+                                            <option value="10" selected>10 Kayıt</option>
+                                            <option value="20">20 Kayıt</option>
+                                            <option value="50">50 Kayıt</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="filter-row">
+                                    <div class="filter-group">
+                                        <label>Tür</label>
+                                        <select class="form-control type-filter">
+                                            <option value="all">Tümü</option>
+                                            <option value="borc">Borçlar</option>
+                                            <option value="alacak">Alacaklar</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <button class="apply-filters-btn">Uygula</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="borc-alacak-content">
+                                <table class="minimal-table">
+                                    <thead>
+                                        <tr>
+                                            
+                                            <th>Cari</th>
+                                            <th>Açıklama</th>
+                                            <th>Bakiye</th>
+                                            <th>Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="cari-data-tbody">
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="borc-alacak-summary">
+                                <div class="summary-row">
+                                    <div class="summary-label">Toplam Borç:</div>
+                                    <div class="summary-value borc" id="total-borc">0 ₺</div>
+                                </div>
+                                <div class="summary-row">
+                                    <div class="summary-label">Toplam Alacak:</div>
+                                    <div class="summary-value alacak" id="total-alacak">0 ₺</div>
+                                </div>
+                                <div class="summary-row total">
+                                    <div class="summary-label">Net Durum:</div>
+                                    <div class="summary-value" id="net-durum">0 ₺</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="component-controls">
+                            <div class="resize-handle-e"></div>
+                            <div class="resize-handle-s"></div>
+                            <div class="resize-handle-se"></div>
+                        </div>
+                    </div>
+                `);
+                
+                // Tarih seçici başlat
+                component.find('.date-filter').daterangepicker({
+                    opens: 'left',
+                    locale: {
+                        format: 'DD.MM.YYYY',
+                        separator: ' - ',
+                        applyLabel: 'Uygula',
+                        cancelLabel: 'İptal',
+                        daysOfWeek: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
+                        monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                            'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                        firstDay: 1
+                    },
+                    startDate: moment().startOf('month'),
+                    endDate: moment().endOf('month')
+                });
+                
+                // Filtre uygulama butonu olayı
+                component.find('.apply-filters-btn').click(function() {
+                    // AJAX ile verileri filtrele
+                    const dateRange = component.find('.date-filter').val();
+                    const recordCount = component.find('.record-count').val();
+                    const type = component.find('.type-filter').val();
+                    
+                    component.find('.card-title').append('<span class="loading-spinner"></span>');
+                    
+                    // AJAX isteği
+                    $.ajax({
+                        url: '/tr/accounting/cari_bilgileri_alma/',
+                        type: 'GET',
+                        data: {
+                            date_range: dateRange,
+                            record_count: recordCount,
+                            type: type,
+                            santiye: santiye
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            // Başarılı olursa tabloyu güncelle
+                            component.find('.cari-data-tbody').html(response.html);
+                            console.log(response.html);
+                            // Toplam değerleri güncelle
+                            $('#total-borc').text(response.total_borc + ' ₺');
+                            $('#total-alacak').text(response.total_alacak + ' ₺');
+                            
+                            const netDurum = response.net_durum;
+                            const netDurumEl = $('#net-durum');
+                            
+                            netDurumEl.text((netDurum >= 0 ? '+' : '') + netDurum + ' ₺');
+                            
+                            if (netDurum >= 0) {
+                                netDurumEl.removeClass('net-negative').addClass('net-positive');
+                            } else {
+                                netDurumEl.removeClass('net-positive').addClass('net-negative');
+                            }
+                            
+                            component.find('.loading-spinner').remove();
+                        },
+                        error: function(error) {
+                            console.error('Veri yükleme hatası:', error);
+                            component.find('.loading-spinner').remove();
+                            alert('Veriler yüklenirken bir hata oluştu');
+                        }
+                    });
+                });
+                
+                // Yenile butonu olayı
+                component.find('.refresh').click(function() {
+                    component.find('.apply-filters-btn').click();
+                });
+                
+                // Sayfa yüklendiğinde özet bilgileri hesapla
+                setTimeout(function() {
+                    let totalBorc = 0;
+                    let totalAlacak = 0;
+                    
+                    component.find('.cari-data-tbody tr').each(function() {
+                        const amountText = $(this).find('.amount-col').text();
+                        const amount = parseFloat(amountText.replace('₺', '').trim());
+                        
+                        if ($(this).hasClass('borc-row')) {
+                            totalBorc += Math.abs(amount);
+                        } else if ($(this).hasClass('alacak-row')) {
+                            totalAlacak += amount;
+                        }
+                    });
+                    
+                    $('#total-borc').text(totalBorc.toFixed(2) + ' ₺');
+                    $('#total-alacak').text(totalAlacak.toFixed(2) + ' ₺');
+                    
+                    const netDurum = totalAlacak - totalBorc;
+                    const netDurumEl = $('#net-durum');
+                    
+                    netDurumEl.text((netDurum >= 0 ? '+' : '') + netDurum.toFixed(2) + ' ₺');
+                    
+                    if (netDurum >= 0) {
+                        netDurumEl.removeClass('net-negative').addClass('net-positive');
+                    } else {
+                        netDurumEl.removeClass('net-positive').addClass('net-negative');
+                    }
+                }, 500);
+                
+                break;
+
+            case 'proje-ozeti':
     component = $(`
-        <div class="report-card" data-size="large">
+        <div class="report-card" data-size="large" data-type="proje-ozeti">
             <div class="card-header">
                 <div class="card-title">
                     <i class="fas fa-clipboard-list"></i>
@@ -2833,299 +4089,246 @@ createComponent(type) {
 
             break;
 
-        case 'ilerleme-grafik':
-            component = $(`
-                <div class="report-card" data-size="medium">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-chart-bar"></i>
-                            İlerleme Grafiği
+            case 'ilerleme-grafik':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-chart-bar"></i>
+                                İlerleme Grafiği
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn size-down" title="Küçült">
-                                <i class="icon icon-minus"></i>
-                            </button>
-                            <button class="card-action-btn size-up" title="Büyült">
-                                <i class="icon icon-plus"></i>
-                            </button>
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <table id="tumu-table">
-                            <thead>
-                                <tr>
+                        <div class="minimal-table">
+                            <table id="tumu-table">
+                                <thead>
+                                    <tr>
                                           <th >{% trans 'İş Emri Adı' %}</th>
                                             <th >{% trans 'Açıklama' %}</th>
                                             <th >{% trans 'Blok' %}</th>
                                             <th >{% trans 'Kat' %}</th>
-                                      
-                                            <th >{% trans 'Kullanıcılar' %}</th>
                                             <th >{% trans 'Başlangıç' %}</th>
                                             <th >{% trans 'Hedef Tarih' %}</th>
                                             <th >{% trans 'Durum' %}</th>
-                                            <th >{% trans 'Öncelik' %}</th>
                                             
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for i in is_planlari %}
-                            <tr>
-                                    <td>
-                                        <div class="task-check">
-                                            
-                                            {{i.title}}
-                                        </div>
-                                    </td>
-                                    <td >{{ i.aciklama }}</td>
-                                    <td >
-                                    {% if i.blok %}
-                                        {{i.blok.blog_adi}}
-                                    {% else %}
-                                    {% endif %}
-                                    </td>
-                                    <td >{% if i.blok %}
-                                        {{i.kat}}
-                                    {% else %}
-                                    {% endif %}</td>
-                                    <td>
-                                        <div class="td-assigned-people">
-                                            <div class="td-assigned-people-profiles">
-                                                 {% for yazar in i.yapacaklar.all %}
-                                                       <a href="javascript: void(0);"
-                                                        class="avatar-group-item"
-                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'go/content/images/profile.png' %}{% endif %}"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'go/content/images/profile.png' %}{% endif %}" alt="" title="{{yazar.last_name}}"
-                                                            class="rounded-circle avatar-xxs"> </a>
-                                                {% endfor %}
-                                                <span>+{{i.yapacaklar.all | length}}</span>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in is_planlari %}
+                                <tr>
+                                        <td>
+                                            <div class="task-check">
+                                                
+                                                {{i.title}}
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
-                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
-                                    <td>
-                                    {% isplani_durumu_kontrol i.id as b %}
-                                                
-                                                {% if i.status == "Inprogress" %}
-                                                    <span
-                                                    class="status-inprogress stats-lg">{{i.status}}</span>
-                                                {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
-                                                {% elif i.status == "Pending" %}
-                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
-                                                 {% elif i.status == "Completed" %}
-                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
-                                                    {% endif %}
-                                                
-                                        
-                                    </td>
-                                    <td>
-                                         {% if i.oncelik_durumu == "High" %}
-                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
-                        
-                                            {% elif i.oncelik_durumu == "Medium" %}
-                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
-                                            {% elif i.oncelik_durumu == "Low" %}
-                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
-                                            {% endif %}
-                                    </td>
-                                   
-                               
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            `);
+                                        </td>
+                                        <td >{{ i.aciklama }}</td>
+                                        <td >
+                                        {% if i.blok %}
+                                            {{i.blok.blog_adi}}
+                                        {% else %}
+                                        {% endif %}
+                                        </td>
+                                        <td >{% if i.blok %}
+                                            {{i.kat}}
+                                        {% else %}
+                                        {% endif %}</td>
 
-            setTimeout(() => {
-                new ApexCharts(component.find('#progressChart')[0], {
-                    series: [75],
-                    chart: {
-                        type: 'radialBar',
-                        height: 250
-                    },
-                    plotOptions: {
-                        radialBar: {
-                            hollow: { size: '70%' },
-                            dataLabels: {
-                                value: { fontSize: '22px' }
+                                        <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
+                                        <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                        <td>
+                                        {% isplani_durumu_kontrol i.id as b %}
+                                            
+                                            {% if i.status == "Inprogress" %}
+                                                <span
+                                                class="status-inprogress stats-lg">{{i.status}}</span>
+                                            {% elif i.status == "New" %}
+                                            <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
+                                            {% elif i.status == "Pending" %}
+                                            <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
+                                             {% elif i.status == "Completed" %}
+                                            <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
+                                                {% endif %}
+                                            
+                                    
+                                        </td>
+                                       
+                                       
+                                   
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `);
+
+                setTimeout(() => {
+                    new ApexCharts(component.find('#progressChart')[0], {
+                        series: [75],
+                        chart: {
+                            type: 'radialBar',
+                            height: 250
+                        },
+                        plotOptions: {
+                            radialBar: {
+                                hollow: { size: '70%' },
+                                dataLabels: {
+                                    value: { fontSize: '22px' }
+                                }
                             }
-                        }
-                    },
-                    labels: ['Tamamlanma']
-                }).render();
-            }, 100);
-            break;
+                        },
+                        labels: ['Tamamlanma']
+                    }).render();
+                }, 100);
+                break;
 
-        case 'gorev-tablosu':
-            component = $(`
-                <div class="report-card" data-size="medium">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-tasks"></i>
-                            Görev Tablosu
+            case 'gorev-tablosu':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-tasks"></i>
+                                Görev Tablosu
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn size-down" title="Küçült">
-                                <i class="icon icon-minus"></i>
-                            </button>
-                            <button class="card-action-btn size-up" title="Büyült">
-                                <i class="icon icon-plus"></i>
-                            </button>
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <table id="tumu-table">
-                            <thead>
-                                <tr>
+                        <div class="minimal-table">
+                            <table id="tumu-table">
+                                <thead>
+                                    <tr>
                                           <th >{% trans 'İş Emri Adı' %}</th>
                                             <th >{% trans 'Açıklama' %}</th>
                                             <th >{% trans 'Blok' %}</th>
                                             <th >{% trans 'Kat' %}</th>
                                       
-                                            <th >{% trans 'Kullanıcılar' %}</th>
                                             <th >{% trans 'Başlangıç' %}</th>
                                             <th >{% trans 'Hedef Tarih' %}</th>
                                             <th >{% trans 'Durum' %}</th>
-                                            <th >{% trans 'Öncelik' %}</th>
                                             
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for i in is_planlarii %}
-                            <tr>
-                                    <td>
-                                        <div class="task-check">
-                                            
-                                            {{i.title}}
-                                        </div>
-                                    </td>
-                                    <td >{{ i.aciklama }}</td>
-                                    <td >
-                                    {% if i.blok %}
-                                        {{i.blok.blog_adi}}
-                                    {% else %}
-                                    {% endif %}
-                                    </td>
-                                    <td >{% if i.blok %}
-                                        {{i.kat}}
-                                    {% else %}
-                                    {% endif %}</td>
-                                    <td>
-                                        <div class="td-assigned-people">
-                                            <div class="td-assigned-people-profiles">
-                                                 {% for yazar in i.yapacaklar.all %}
-                                                       <a href="javascript: void(0);"
-                                                        class="avatar-group-item"
-                                                        data-img="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'go/content/images/profile.png' %}{% endif %}"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        data-bs-title="{{yazar.last_name}}"> <img
-                                                            src="{% if yazar.image %}{{yazar.image.url}}{% else %}{% static 'go/content/images/profile.png' %}{% endif %}" alt="" title="{{yazar.last_name}}"
-                                                            class="rounded-circle avatar-xxs"> </a>
-                                                {% endfor %}
-                                                <span>+{{i.yapacaklar.all | length}}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
-                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
-                                    <td>
-                                    {% isplani_durumu_kontrol i.id as b %}
-                                                
-                                                {% if i.status == "Inprogress" %}
-                                                    <span
-                                                    class="status-inprogress stats-lg">{{i.status}}</span>
-                                                {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
-                                                {% elif i.status == "Pending" %}
-                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
-                                                 {% elif i.status == "Completed" %}
-                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
-                                                    {% endif %}
-                                                
-                                        
-                                    </td>
-                                    <td>
-                                         {% if i.oncelik_durumu == "High" %}
-                                    <div class="td-info"><span class="status-cancel stats-lg">{{i.oncelik_durumu}}</span></div>
-                        
-                                            {% elif i.oncelik_durumu == "Medium" %}
-                                            <div class="td-info"><span class="status-orange stats-lg">{{i.oncelik_durumu}}</span></div>
-                                            {% elif i.oncelik_durumu == "Low" %}
-                                            <div class="td-info"><span class="status-dark stats-lg">{{i.oncelik_durumu}}</span></div>
-                                            {% endif %}
-                                    </td>
-                                   
-                               
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            `);
-            break;
-
-        case 'personel-listesi':
-            component = $(`
-                <div class="report-card" data-size="medium">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-users"></i>
-                            Personel Listesi
-                        </div>
-                        <div class="card-actions">
-                            <button class="card-action-btn size-down" title="Küçült">
-                                <i class="icon icon-minus"></i>
-                            </button>
-                            <button class="card-action-btn size-up" title="Büyült">
-                                <i class="icon icon-plus"></i>
-                            </button>
-                            <button class="card-action-btn remove" title="Sil">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                      <table id="tumu-table">
-                            <thead>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in is_planlarii %}
                                 <tr>
+                                        <td>
+                                            <div class="task-check">
+                                                
+                                                {{i.title}}
+                                            </div>
+                                        </td>
+                                        <td >{{ i.aciklama }}</td>
+                                        <td >
+                                        {% if i.blok %}
+                                            {{i.blok.blog_adi}}
+                                        {% else %}
+                                        {% endif %}
+                                        </td>
+                                        <td >{% if i.blok %}
+                                            {{i.kat}}
+                                        {% else %}
+                                        {% endif %}</td>
+                                        
+                                        <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
+                                        <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                        <td>
+                                        {% isplani_durumu_kontrol i.id as b %}
+                                            
+                                            {% if i.status == "Inprogress" %}
+                                                <span
+                                                class="status-inprogress stats-lg">{{i.status}}</span>
+                                            {% elif i.status == "New" %}
+                                            <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
+                                            {% elif i.status == "Pending" %}
+                                            <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
+                                             {% elif i.status == "Completed" %}
+                                            <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
+                                                {% endif %}
+                                            
+                                    
+                                        </td>
+                                        
+                                       
+                                   
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `);
+                break;
+
+            case 'personel-listesi':
+                component = $(`
+                    <div class="report-card" data-size="medium">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-users"></i>
+                                Personel Listesi
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-action-btn size-down" title="Küçült">
+                                    <i class="icon icon-minus"></i>
+                                </button>
+                                <button class="card-action-btn size-up" title="Büyült">
+                                    <i class="icon icon-plus"></i>
+                                </button>
+                                <button class="card-action-btn remove" title="Sil">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="minimal-table">
+                          <table id="tumu-table">
+                                <thead>
+                                    <tr>
                                           <th >{% trans 'Adı Soyadı' %}</th>
                                             <th >{% trans 'İşe Giriş Tarihi' %}</th>
                                             <th >{% trans 'Pozisyon' %}</th>
                                             <th >{% trans 'Departman' %}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for i in personeller_listesi %}
-                            <tr>
-                                    
-                                    <td >{{ i.isim }} {{ i.soyisim }}</td>
-                                    <td>
-                                    {{ i.kayit_tarihi |date:'d.m.Y'}} 
-                                    </td>
-                                    <td >{{ i.calisan_pozisyonu.kategori_isimi }}</td>
-                                    <td >{{ i.calisan_kategori.kategori_isimi }}</td>               
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                        </table>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in personeller_listesi %}
+                                <tr>
+                                        
+                                        <td >{{ i.isim }} {{ i.soyisim }}</td>
+                                        <td>
+                                        {{ i.kayit_tarihi |date:'d.m.Y'}} 
+                                        </td>
+                                        <td >{{ i.calisan_pozisyonu.kategori_isimi }}</td>
+                                        <td >{{ i.calisan_kategori.kategori_isimi }}</td>               
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            `);
-            break;
+                `);
+                break;
 
-            case 'puantaj':
+                case 'puantaj':
     component = $(`
         <div class="report-card" data-size="medium">
             <div class="card-header">
@@ -3145,7 +4348,7 @@ createComponent(type) {
                     </button>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="minimal-table">
                 <table id="tumu-table">
                     <thead>
                         <tr>
@@ -3219,7 +4422,7 @@ createComponent(type) {
                     </button>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="minimal-table">
                 <table id="tumu-table">
                     <thead>
                         <tr>
@@ -3503,6 +4706,83 @@ initializeResizeHandles(component) {
         }
     });
 }
+
+initResizeHandles() {
+    $(document).on('mousedown', '.component-resize', (e) => {
+        e.preventDefault();
+        const component = $(e.target).closest('.component');
+        const startX = e.pageX;
+        const startY = e.pageY;
+        const startWidth = component.outerWidth();
+        const startHeight = component.outerHeight();
+        const direction = $(e.target).data('direction');
+        const minWidth = 200;
+        const minHeight = 100;
+
+        const handleMouseMove = (e) => {
+            e.preventDefault();
+            const deltaX = e.pageX - startX;
+            const deltaY = e.pageY - startY;
+            let newWidth = startWidth;
+            let newHeight = startHeight;
+
+            switch(direction) {
+                case 'nw':
+                    newWidth = Math.max(minWidth, startWidth - deltaX);
+                    newHeight = Math.max(minHeight, startHeight - deltaY);
+                    component.css({
+                        width: newWidth,
+                        height: newHeight,
+                        left: startX - e.pageX + component.offset().left,
+                        top: startY - e.pageY + component.offset().top
+                    });
+                    break;
+                case 'ne':
+                    newWidth = Math.max(minWidth, startWidth + deltaX);
+                    newHeight = Math.max(minHeight, startHeight - deltaY);
+                    component.css({
+                        width: newWidth,
+                        height: newHeight,
+                        top: startY - e.pageY + component.offset().top
+                    });
+                    break;
+                case 'sw':
+                    newWidth = Math.max(minWidth, startWidth - deltaX);
+                    newHeight = Math.max(minHeight, startHeight + deltaY);
+                    component.css({
+                        width: newWidth,
+                        height: newHeight,
+                        left: startX - e.pageX + component.offset().left
+                    });
+                    break;
+                case 'se':
+                    newWidth = Math.max(minWidth, startWidth + deltaX);
+                    newHeight = Math.max(minHeight, startHeight + deltaY);
+                    component.css({
+                        width: newWidth,
+                        height: newHeight
+                    });
+                    break;
+            }
+
+            const tableContainer = component.find('.table-container');
+            if (tableContainer.length) {
+                tableContainer.css({
+                    width: '100%',
+                    maxWidth: '100%'
+                });
+            }
+        };
+
+        const handleMouseUp = () => {
+            $(document).off('mousemove', handleMouseMove);
+            $(document).off('mouseup', handleMouseUp);
+        };
+
+        $(document).on('mousemove', handleMouseMove);
+        $(document).on('mouseup', handleMouseUp);
+    });
+}
 }
 
 // Sayfa yüklendiğinde başlat
@@ -3524,24 +4804,32 @@ document.getElementById('pageSettingsModal').classList.remove('active');
 }
 
 function savePageSettings() {
-// Kenar boşlukları
-const margins = {
-    top: $('.margin-control[data-margin="top"]').val(),
-    right: $('.margin-control[data-margin="right"]').val(),
-    bottom: $('.margin-control[data-margin="bottom"]').val(),
-    left: $('.margin-control[data-margin="left"]').val()
-};
+    // Kenar boşlukları
+    const margins = {
+        top: $('.margin-control[data-margin="top"]').val(),
+        right: $('.margin-control[data-margin="right"]').val(),
+        bottom: $('.margin-control[data-margin="bottom"]').val(),
+        left: $('.margin-control[data-margin="left"]').val()
+    };
 
-// Kağıt ayarları
-const paperSize = $('#paperSize').val();
-const orientation = $('input[name="orientation"]:checked').val();
+    // Kağıt ayarları
+    const paperSize = $('#paperSize').val();
+    const orientation = $('input[name="orientation"]:checked').val();
 
-// Ayarları uygula
-Object.entries(margins).forEach(([margin, value]) => {
-    $('.preview-container').css(`padding-${margin}`, value + 'mm');
-});
+    // Ayarları uygula
+    Object.entries(margins).forEach(([margin, value]) => {
+        $('.preview-container').css(`padding-${margin}`, value + 'mm');
+    });
 
-closePageSettings();
+    // Ayrıca PDF oluşturma fonksiyonlarının kenar boşluklarını güncelle
+    window.reportManager.updatePdfMargins([
+        parseInt(margins.top), 
+        parseInt(margins.right), 
+        parseInt(margins.bottom), 
+        parseInt(margins.left)
+    ]);
+
+    closePageSettings();
 }
 
 
@@ -3615,6 +4903,959 @@ function saveReport() {
             alert('PDF oluşturulurken bir hata oluştu');
         });
 }
+
+/**
+ * Tablo sütunlarının genişliklerini ayarlamak için fonksiyon
+ */
+function initTableResizing() {
+    // Tüm minimal-table sınıfına sahip tablolardaki th elementleri için
+    const tables = document.querySelectorAll('table.minimal-table');
+    
+    tables.forEach(table => {
+        const headers = table.querySelectorAll('th');
+        
+        // Her başlık için resizer elementi ekleyelim
+        headers.forEach(header => {
+            // Eğer zaten resizer varsa eklemiyoruz
+            if (!header.querySelector('.resizer')) {
+                const resizer = document.createElement('div');
+                resizer.classList.add('resizer');
+                header.appendChild(resizer);
+                
+                let startX, startWidth;
+                
+                // Resize işlemini başlat
+                resizer.addEventListener('mousedown', function(e) {
+                    startX = e.pageX;
+                    startWidth = header.offsetWidth;
+                    resizer.classList.add('resizing');
+                    
+                    // MouseMove ve MouseUp eventlerini document'a ekle
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                    
+                    // Event yayılımını durdur
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                
+                // Resize işlemi
+                function resize(e) {
+                    const width = startWidth + (e.pageX - startX);
+                    if (width > 50) { // Minimum genişlik
+                        header.style.width = width + 'px';
+                        // Tüm satırlardaki aynı indexteki hücrelere de genişlik ayarla
+                        const colIndex = Array.from(header.parentNode.children).indexOf(header);
+                        const rows = table.querySelectorAll('tbody tr');
+                        rows.forEach(row => {
+                            const cell = row.children[colIndex];
+                            if (cell) {
+                                cell.style.width = width + 'px';
+                            }
+                        });
+                    }
+                }
+                
+                // Resize işlemini sonlandır
+                function stopResize() {
+                    resizer.classList.remove('resizing');
+                    document.removeEventListener('mousemove', resize);
+                    document.removeEventListener('mouseup', stopResize);
+                }
+            }
+        });
+    });
+}
+
+// Manuel olarak tüm tabloları hazırla
+function prepareAllTables() {
+    // Tüm mevcut tabloları bul
+    const allTables = document.querySelectorAll('table');
+    
+    allTables.forEach(table => {
+        // Eğer minimal-table sınıfına sahip değilse ekle
+        if (!table.classList.contains('minimal-table')) {
+            table.classList.add('minimal-table');
+        }
+        
+        // Tablo henüz hazır değilse işaretle
+        if (!table.hasAttribute('data-resizable')) {
+            table.setAttribute('data-resizable', 'true');
+        }
+    });
+    
+    // Resizing fonksiyonunu başlat
+    initTableResizing();
+    
+    console.log(`Toplam ${allTables.length} tablo hazırlandı.`);
+}
+
+// DOM içindeki tüm tabloları işaretleme ve resizing işlemini çalıştırma
+jQuery(document).ready(function($) {
+    // Şablon Seçicileri düzeltme
+    $('.template-item').off('click').on('click', function(e) {
+        e.preventDefault();
+        const templateId = $(this).data('template');
+        console.log('Şablon seçildi:', templateId);
+        
+        // Tüm şablonlardan active/selected sınıflarını kaldır
+        $('.template-item').removeClass('active').removeClass('selected');
+        
+        // Seçilen şablona active/selected sınıfı ekle
+        $(this).addClass('active').addClass('selected');
+        
+        // Şablonu yükle
+        if (window.reportManager && typeof window.reportManager.loadTemplate === 'function') {
+            window.reportManager.loadTemplate(templateId);
+        } else if (typeof loadTemplate === 'function') {
+            loadTemplate(templateId);
+        } else {
+            console.error('loadTemplate fonksiyonu bulunamadı');
+        }
+        
+        // Masonry grid düzenini güncelle
+        setTimeout(function() {
+            if (typeof initializeMasonryLayout === 'function') {
+                initializeMasonryLayout();
+            }
+            organizeReportCards();
+        }, 500);
+    });
+    
+    // Sayfa yüklendikten 500ms sonra tabloları hazırla
+    setTimeout(function() {
+        prepareAllTables();
+        
+        // Masonry grid düzenini uygula
+        if (typeof initializeMasonryLayout === 'function') {
+            initializeMasonryLayout();
+        }
+        organizeReportCards();
+        
+        // 2 saniye daha sonra bir kez daha kontrol et
+        setTimeout(function() {
+            prepareAllTables();
+            
+            // Masonry grid düzenini tekrar uygula
+            if (typeof initializeMasonryLayout === 'function') {
+                initializeMasonryLayout();
+            }
+            organizeReportCards();
+        }, 2000);
+    }, 500);
+    
+    // MutationObserver ile DOM değişikliklerini takip et
+    const observer = new MutationObserver(function(mutations) {
+        let shouldPrepare = false;
+        
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                // DOM'a yeni bir element eklendiğinde
+                shouldPrepare = true;
+            }
+        });
+        
+        if (shouldPrepare) {
+            // Değişiklik olduğunda tabloları tekrar hazırla
+            setTimeout(prepareAllTables, 200);
+        }
+    });
+    
+    // Tüm document'ı gözlemle
+    observer.observe(document.body, { childList: true, subtree: true });
+});
+
+/**
+ * Component Manager'da onclone fonksiyonlarında sütun genişliklerini koru
+ */
+$(document).ready(function() {
+    // PDF oluşturma fonksiyonlarında minimal-table stillerini güncelle
+    const originalShowPdfPreview = window.reportManager?.showPdfPreview;
+    if (originalShowPdfPreview) {
+        window.reportManager.showPdfPreview = function() {
+            // Orijinal fonksiyonu çalıştır
+            originalShowPdfPreview.call(this);
+            
+            // Tablo genişliklerini koru
+            const tables = document.querySelectorAll('table.minimal-table');
+            tables.forEach(table => {
+                const headers = table.querySelectorAll('th');
+                headers.forEach(header => {
+                    const width = header.style.width;
+                    if (width) {
+                        const colIndex = Array.from(header.parentNode.children).indexOf(header);
+                        const rows = table.querySelectorAll('tbody tr');
+                        rows.forEach(row => {
+                            const cell = row.children[colIndex];
+                            if (cell) {
+                                cell.style.width = width;
+                            }
+                        });
+                    }
+                });
+            });
+        };
+    }
+});
 </script>
 {% endblock sidebar %}
+
+<!-- Şablon Seçici -->
+<div class="sidebar-section template-selector">
+    <div class="section-header">
+        <h3>Şablon Seçici</h3>
+    </div>
+    <div id="template-list" class="template-grid">
+        <!-- Şablonlar buraya yüklenecek -->
+        <div class="template-item" data-template="bos">
+            <div class="template-preview">Boş Şablon</div>
+            <div class="template-name">Boş Şablon</div>
+        </div>
+        <div class="template-item" data-template="finansal">
+            <div class="template-preview">Finansal Şablon</div>
+            <div class="template-name">Finansal Rapor</div>
+        </div>
+    </div>
+</div>
+
+<!-- Şablon Seçici için JavaScript dosyasını ekle -->
+<script src="{% static 'src/js/pages/template-selector.js' %}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Şablon seçici işlevselliği
+    const templateItems = document.querySelectorAll('.template-item');
+    console.log('Şablon öğeleri bulundu:', templateItems.length);
+    
+    templateItems.forEach(item => {
+        console.log('Şablon öğesi:', item);
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Şablon tıklandı:', this.getAttribute('data-template'));
+            
+            // Aktif şablonu işaretle
+            document.querySelectorAll('.template-item').forEach(el => {
+                el.classList.remove('selected');
+                el.classList.remove('active');
+            });
+            this.classList.add('selected');
+            this.classList.add('active');
+            
+            // Şablonu yükle
+            const templateType = this.getAttribute('data-template');
+            loadTemplate(templateType);
+            
+            // Masonry grid düzenini güncelle
+            setTimeout(function() {
+                if (typeof initializeMasonryLayout === 'function') {
+                    initializeMasonryLayout();
+                }
+                organizeReportCards();
+            }, 500);
+            
+            // Özel olay tetikle
+            document.dispatchEvent(new CustomEvent('templateSelected', { 
+                detail: { templateId: templateType } 
+            }));
+        });
+    });
+
+    // Report-card'ları düzenle
+    organizeReportCards();
+    
+    // Yeni bir kart eklendiğinde ya da bir kart silindiğinde kartları yeniden düzenle
+    // Event delegation kullanarak bu olayları dinle
+    document.addEventListener('componentAdded', function() {
+        setTimeout(function() {
+            organizeReportCards();
+            if (typeof initializeMasonryLayout === 'function') {
+                initializeMasonryLayout();
+            }
+        }, 300);
+    });
+    
+    document.addEventListener('componentRemoved', function() {
+        setTimeout(function() {
+            organizeReportCards();
+            if (typeof initializeMasonryLayout === 'function') {
+                initializeMasonryLayout();
+            }
+        }, 300);
+    });
+});
+
+// ... existing code ...
+</script>
+
+<script>
+$(document).ready(function() {
+    // ControlManager'ı başlat
+    window.controlManager = new ControlManager();
+    
+    // TinyMCE'yi başlat
+    if (typeof tinymce !== 'undefined') {
+        tinymce.init({
+            selector: '.tinymce-editor',
+            height: 300,
+            menubar: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | ' +
+                'bold italic backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+        });
+    }
+});
+</script>
+
+// Tabloları düzenleyin
+function prepareMinimalTables() {
+    // div.minimal-table içindeki tabloları düzenle
+    $('div.minimal-table').each(function() {
+        const div = $(this);
+        const table = div.find('table');
+        
+        // Tabloyu minimal-table sınıfı ile işaretle
+        if (table.length && !table.hasClass('minimal-table')) {
+            table.addClass('minimal-table');
+        }
+        
+        // Tabloyu table-container ile sar
+        if (table.length && !table.parent('.table-container').length) {
+            table.wrap('<div class="table-container"></div>');
+            
+            // Table container stillerini ayarla
+            div.find('.table-container').css({
+                'width': '100%',
+                'max-width': '100%',
+                'overflow-x': 'auto',
+                'border': '1px solid #e9ecef',
+                'border-radius': '4px'
+            });
+        }
+    });
+    
+    // Yeni hazırlanan tablolara resize işlevselliği ekle
+    initTableResizing();
+}
+
+// Sayfa yüklendiğinde veya DOM güncellendiğinde tabloları hazırla
+$(document).ready(function() {
+    prepareMinimalTables();
+    
+    // MutationObserver ile DOM değişikliklerini takip et
+    const observer = new MutationObserver(function(mutations) {
+        let shouldPrepare = false;
+        
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                mutation.addedNodes.forEach(function(node) {
+                    // Eğer eklenen node bir div.minimal-table veya onun içinde bir şey ise
+                    if (node.classList && node.classList.contains('minimal-table') || 
+                        $(node).find('.minimal-table').length) {
+                        shouldPrepare = true;
+                    }
+                });
+            }
+        });
+        
+        if (shouldPrepare) {
+            prepareMinimalTables();
+        }
+    });
+    
+    // Tüm document'ı gözlemle
+    observer.observe(document.body, { childList: true, subtree: true });
+});
+
+// PDF oluşturma fonksiyonlarına tablo genişliği kopyalama kodu ekleyin
+$(document).ready(function() {
+    // Orijinal showPdfPreview fonksiyonunu sakla
+    const originalShowPdfPreview = window.reportManager && window.reportManager.showPdfPreview;
+    
+    if (originalShowPdfPreview) {
+        window.reportManager.showPdfPreview = function() {
+            // Önce orijinal fonksiyonu çağır
+            const result = originalShowPdfPreview.apply(this, arguments);
+            
+            // PDF oluşturulduktan sonra sütun genişliklerini kopyala
+            setTimeout(() => {
+                const iframe = document.getElementById('pdfPreviewFrame');
+                if (iframe && iframe.contentDocument) {
+                    const clonedDoc = iframe.contentDocument;
+                    
+                    // Orijinal tablodan stil kopyalama
+                    const originalTables = document.querySelectorAll('table.minimal-table');
+                    originalTables.forEach(originalTable => {
+                        const originalId = originalTable.id || '';
+                        const clonedTables = clonedDoc.querySelectorAll('table.minimal-table');
+                        
+                        clonedTables.forEach(clonedTable => {
+                            if (clonedTable.id === originalId || !originalId) {
+                                // Tüm sütun genişliklerini kopyala
+                                const originalHeaders = originalTable.querySelectorAll('th');
+                                const clonedHeaders = clonedTable.querySelectorAll('th');
+                                
+                                for (let i = 0; i < originalHeaders.length && i < clonedHeaders.length; i++) {
+                                    const originalWidth = originalHeaders[i].style.width;
+                                    if (originalWidth) {
+                                        clonedHeaders[i].style.width = originalWidth;
+                                        
+                                        // Aynı indeksteki tüm hücreleri de güncelle
+                                        const clonedRows = clonedTable.querySelectorAll('tbody tr');
+                                        clonedRows.forEach(row => {
+                                            const cell = row.children[i];
+                                            if (cell) {
+                                                cell.style.width = originalWidth;
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                    });
+                }
+            }, 1000); // İframe yüklendikten sonra
+            
+            return result;
+        };
+    }
+    
+    // Orijinal exportToPDF fonksiyonunu da güncelle
+    const originalExportToPDF = window.reportManager && window.reportManager.exportToPDF;
+    
+    if (originalExportToPDF) {
+        window.reportManager.exportToPDF = function() {
+            // Önce tüm tabloların genişlik bilgisini inline stil olarak ekle
+            const tables = document.querySelectorAll('table.minimal-table');
+            tables.forEach(table => {
+                const headers = table.querySelectorAll('th');
+                headers.forEach((header, index) => {
+                    if (header.style.width) {
+                        // Aynı indeksteki tüm hücreleri de güncelle
+                        const rows = table.querySelectorAll('tbody tr');
+                        rows.forEach(row => {
+                            const cell = row.children[index];
+                            if (cell) {
+                                cell.style.width = header.style.width;
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // Orijinal fonksiyonu çağır
+            return originalExportToPDF.apply(this, arguments);
+        };
+    }
+});
+
+/**
+ * Şablon yüklemek için fonksiyon 
+ */
+function loadTemplate(templateId) {
+    console.log(`Şablon yükleniyor: ${templateId}`);
+    
+    // Aktif şablon stilini temizle
+    $('.template-item').removeClass('active');
+    
+    // Seçilen şablonu aktif olarak işaretle
+    $(`.template-item[data-template="${templateId}"]`).addClass('active');
+    
+    // Şablon içeriğini temizle ve yeniden yükle
+    const reportContainer = document.querySelector('#report-container');
+    
+    if (reportContainer) {
+        // Şablona göre içeriği temizle veya hazırla
+        
+        switch(templateId) {
+            case 'empty':
+                // Boş şablon - sadece bir başlık içerir
+                reportContainer.innerHTML = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-component">
+                                <h1 class="editable" contenteditable="true">Yeni Rapor</h1>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            case 'invoice':
+                // Fatura şablonu
+                reportContainer.innerHTML = `
+                    <div class="report-row">
+                        <div class="report-column" style="width: 60%;">
+                            <div class="report-component">
+                                <h1 class="editable" contenteditable="true">FATURA</h1>
+                                <p class="editable" contenteditable="true">Tarih: ${new Date().toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <div class="report-column" style="width: 40%;">
+                            <div class="report-component">
+                                <div class="logo-container">
+                                    <img src="/static/go/images/logo.png" alt="Logo" class="logo-image">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-component">
+                                <table class="minimal-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ürün/Hizmet</th>
+                                            <th>Miktar</th>
+                                            <th>Birim Fiyat</th>
+                                            <th>Toplam</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td contenteditable="true">Ürün Adı</td>
+                                            <td contenteditable="true">1</td>
+                                            <td contenteditable="true">₺100.00</td>
+                                            <td contenteditable="true">₺100.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            case 'report':
+                // Standart rapor şablonu
+                reportContainer.innerHTML = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-component">
+                                <h1 class="editable" contenteditable="true">Proje Raporu</h1>
+                                <h3 class="editable" contenteditable="true">Özet</h3>
+                                <p class="editable" contenteditable="true">Bu rapor, projenin mevcut durumunu ve geleceğe yönelik planları içermektedir.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-component">
+                                <h3 class="editable" contenteditable="true">Proje Detayları</h3>
+                                <table class="minimal-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Başlık</th>
+                                            <th>Açıklama</th>
+                                            <th>Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td contenteditable="true">İş Paketi 1</td>
+                                            <td contenteditable="true">Detaylı açıklama</td>
+                                            <td contenteditable="true">Tamamlandı</td>
+                                        </tr>
+                                        <tr>
+                                            <td contenteditable="true">İş Paketi 2</td>
+                                            <td contenteditable="true">Detaylı açıklama</td>
+                                            <td contenteditable="true">Devam Ediyor</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            case 'checklist':
+                // Kontrol listesi şablonu
+                reportContainer.innerHTML = `
+                    <div class="report-row">
+                        <div class="report-column">
+                            <div class="report-component">
+                                <h1 class="editable" contenteditable="true">Kontrol Listesi</h1>
+                                <table class="minimal-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Kontrol Maddesi</th>
+                                            <th style="width: 100px;">Durum</th>
+                                            <th style="width: 150px;">Sorumlu</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td contenteditable="true">1</td>
+                                            <td contenteditable="true">Temel güvenlik kontrolü</td>
+                                            <td contenteditable="true">Tamamlandı</td>
+                                            <td contenteditable="true">Ahmet Yılmaz</td>
+                                        </tr>
+                                        <tr>
+                                            <td contenteditable="true">2</td>
+                                            <td contenteditable="true">Elektrik tesisatı kontrolü</td>
+                                            <td contenteditable="true">Beklemede</td>
+                                            <td contenteditable="true">Mehmet Demir</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                break;
+                
+            default:
+                console.error(`Bilinmeyen şablon: ${templateId}`);
+                return;
+        }
+        
+        // Yeni eklenen tabloları hazırla
+        setTimeout(prepareAllTables, 100);
+    } else {
+        console.error('Report container bulunamadı');
+    }
+}
+
+// Masonry yapısını ölçülendirme için gerekli yardımcı fonksiyonlar
+function updateMasonryLayout() {
+    console.log('Masonry düzeni güncelleniyor...');
+    
+    // Tüm report-charts ve card-body konteynerlerini bul
+    const gridContainers = document.querySelectorAll('.report-charts, .card-body[data-columns], .preview-grid');
+    
+    if (gridContainers.length === 0) {
+        console.log('Masonry düzeni için konteyner bulunamadı');
+        return;
+    }
+    
+    console.log('Masonry düzeni için konteyner sayısı:', gridContainers.length);
+    
+    gridContainers.forEach(function(grid) {
+        const cardElements = grid.querySelectorAll('.report-card');
+        
+        if (cardElements.length === 0) {
+            console.log('Grid içinde card bulunamadı:', grid);
+            return;
+        }
+        
+        console.log('Grid içindeki card sayısı:', cardElements.length);
+        
+        // Masonry düzenini temizle
+        cardElements.forEach(function(card) {
+            // Grid column ve row değerlerini sakla
+            const gridCol = card.style.gridColumn;
+            const gridRow = card.style.gridRow;
+            
+            // Eğer pozisyon absolute ise geri al
+            if (card.style.position === 'absolute') {
+                card.style.position = 'relative';
+            }
+            
+            // Boyutunu hesapla
+            const cardSize = card.getAttribute('data-size') || 'medium';
+            
+            // Grid sütun değerini ayarla
+            if (cardSize === 'small') {
+                card.style.gridColumn = 'span 4';
+            } else if (cardSize === 'medium') {
+                card.style.gridColumn = 'span 4';
+            } else if (cardSize === 'large') {
+                card.style.gridColumn = 'span 8';
+            } else if (cardSize === 'full') {
+                card.style.gridColumn = 'span 12';
+            } else if (!card.style.gridColumn) {
+                card.style.gridColumn = 'span 4'; // Varsayılan değer
+            }
+        });
+        
+        // CSS grid'i düzeltme
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(12, 1fr)';
+        grid.style.gap = '20px';
+    });
+    
+    console.log('Masonry düzeni güncellendi');
+}
+
+// Yeniden boyutlandırma işlevselliği
+function enableCardResizing() {
+    console.log('Kart boyutlandırma etkinleştiriliyor...');
+    
+    // Tüm kartları bul
+    const cards = document.querySelectorAll('.report-card:not(.resizable-initialized)');
+    
+    if (cards.length === 0) {
+        console.log('Boyutlandırılacak kart bulunamadı');
+        return;
+    }
+    
+    console.log('Boyutlandırılacak kart sayısı:', cards.length);
+    
+    cards.forEach(function(card) {
+        // Kartın zaten boyutlandırılabilir olup olmadığını kontrol et
+        if (card.classList.contains('resizable-initialized')) {
+            return;
+        }
+        
+        // Kenar tutamaçlarını ekle
+        const rightHandle = document.createElement('div');
+        rightHandle.className = 'card-resize-handle card-resize-right';
+        rightHandle.title = 'Genişliği değiştirmek için sürükleyin';
+        
+        const bottomHandle = document.createElement('div');
+        bottomHandle.className = 'card-resize-handle card-resize-bottom';
+        bottomHandle.title = 'Yüksekliği değiştirmek için sürükleyin';
+        
+        const cornerHandle = document.createElement('div');
+        cornerHandle.className = 'card-resize-handle card-resize-corner';
+        cornerHandle.title = 'Boyutu değiştirmek için sürükleyin';
+        
+        // Tutamaçları karta ekle
+        card.appendChild(rightHandle);
+        card.appendChild(bottomHandle);
+        card.appendChild(cornerHandle);
+        
+        // jQuery ile boyutlandırma işlemleri
+        
+        // Sağ kenar boyutlandırma
+        $(rightHandle).on('mousedown', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const startX = e.pageX;
+            const startWidth = $(card).width();
+            const parent = $(card).parent();
+            const parentWidth = parent.width();
+            
+            // Grid uyumu için
+            const minWidth = Math.floor(parentWidth / 12);
+            
+            // Taşıma işlemi
+            $(document).on('mousemove.resize', function(e) {
+                const newWidth = startWidth + (e.pageX - startX);
+                
+                // Genişliği güncelle
+                if (newWidth >= minWidth) {
+                    $(card).width(newWidth + 'px');
+                    
+                    // Span değerini hesapla
+                    const span = Math.max(1, Math.min(12, Math.round((newWidth / parentWidth) * 12)));
+                    card.style.gridColumn = `span ${span}`;
+                    
+                    // data-size özniteliğini güncelle
+                    if (span <= 3) {
+                        card.setAttribute('data-size', 'small');
+                    } else if (span <= 6) {
+                        card.setAttribute('data-size', 'medium');
+                    } else if (span <= 9) {
+                        card.setAttribute('data-size', 'large');
+                    } else {
+                        card.setAttribute('data-size', 'full');
+                    }
+                }
+            });
+            
+            // Taşıma bitti
+            $(document).on('mouseup.resize', function() {
+                $(document).off('mousemove.resize mouseup.resize');
+                
+                // Masonry düzenini güncelle
+                setTimeout(function() {
+                    updateMasonryLayout();
+                    if (typeof initializeMasonryLayout === 'function') {
+                        initializeMasonryLayout();
+                    }
+                    if (typeof organizeReportCards === 'function') {
+                        organizeReportCards();
+                    }
+                }, 100);
+            });
+            
+            $(card).addClass('resizing');
+            $('body').css('cursor', 'ew-resize');
+        });
+        
+        // Alt kenar boyutlandırma
+        $(bottomHandle).on('mousedown', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const startY = e.pageY;
+            const startHeight = $(card).height();
+            
+            // Taşıma işlemi
+            $(document).on('mousemove.resize', function(e) {
+                const newHeight = startHeight + (e.pageY - startY);
+                
+                // Yüksekliği güncelle
+                if (newHeight >= 100) {
+                    $(card).height(newHeight + 'px');
+                }
+            });
+            
+            // Taşıma bitti
+            $(document).on('mouseup.resize', function() {
+                $(document).off('mousemove.resize mouseup.resize');
+                
+                // Masonry düzenini güncelle
+                setTimeout(function() {
+                    updateMasonryLayout();
+                    if (typeof initializeMasonryLayout === 'function') {
+                        initializeMasonryLayout();
+                    }
+                    if (typeof organizeReportCards === 'function') {
+                        organizeReportCards();
+                    }
+                }, 100);
+            });
+            
+            $(card).addClass('resizing');
+            $('body').css('cursor', 'ns-resize');
+        });
+        
+        // Köşe boyutlandırma
+        $(cornerHandle).on('mousedown', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const startX = e.pageX;
+            const startY = e.pageY;
+            const startWidth = $(card).width();
+            const startHeight = $(card).height();
+            const parent = $(card).parent();
+            const parentWidth = parent.width();
+            
+            // Grid uyumu için
+            const minWidth = Math.floor(parentWidth / 12);
+            
+            // Taşıma işlemi
+            $(document).on('mousemove.resize', function(e) {
+                const newWidth = startWidth + (e.pageX - startX);
+                const newHeight = startHeight + (e.pageY - startY);
+                
+                // Genişlik ve yüksekliği güncelle
+                if (newWidth >= minWidth) {
+                    $(card).width(newWidth + 'px');
+                    
+                    // Span değerini hesapla
+                    const span = Math.max(1, Math.min(12, Math.round((newWidth / parentWidth) * 12)));
+                    card.style.gridColumn = `span ${span}`;
+                    
+                    // data-size özniteliğini güncelle
+                    if (span <= 3) {
+                        card.setAttribute('data-size', 'small');
+                    } else if (span <= 6) {
+                        card.setAttribute('data-size', 'medium');
+                    } else if (span <= 9) {
+                        card.setAttribute('data-size', 'large');
+                    } else {
+                        card.setAttribute('data-size', 'full');
+                    }
+                }
+                
+                if (newHeight >= 100) {
+                    $(card).height(newHeight + 'px');
+                }
+            });
+            
+            // Taşıma bitti
+            $(document).on('mouseup.resize', function() {
+                $(document).off('mousemove.resize mouseup.resize');
+                
+                // Masonry düzenini güncelle
+                setTimeout(function() {
+                    updateMasonryLayout();
+                    if (typeof initializeMasonryLayout === 'function') {
+                        initializeMasonryLayout();
+                    }
+                    if (typeof organizeReportCards === 'function') {
+                        organizeReportCards();
+                    }
+                }, 100);
+            });
+            
+            $(card).addClass('resizing');
+            $('body').css('cursor', 'nwse-resize');
+        });
+        
+        // Boyutlandırma tamamlandığında resizing sınıfını kaldır
+        $(document).on('mouseup', function() {
+            $(card).removeClass('resizing');
+            $('body').css('cursor', '');
+        });
+        
+        // Kartı başlatıldı olarak işaretle
+        card.classList.add('resizable-initialized');
+        
+        // Konum için relative ekle
+        if (getComputedStyle(card).position === 'static') {
+            card.style.position = 'relative';
+        }
+    });
+    
+    console.log('Kart boyutlandırma etkinleştirildi');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+// ... existing code ...
+
+    // Sayfa yüklendikten sonra düzenleri uygula
+    setTimeout(function() {
+        // Kartları ölçülendirilebilir yap
+        enableCardResizing();
+        
+        // Masonry düzenini uygula
+        updateMasonryLayout();
+        
+        // Global fonksiyonları çağır
+        if (typeof initializeMasonryLayout === 'function') {
+            initializeMasonryLayout();
+        }
+        
+        if (typeof organizeReportCards === 'function') {
+            organizeReportCards();
+        }
+    }, 1000);
+    
+    // Pencere boyutu değiştiğinde masonry düzenini güncelle
+    window.addEventListener('resize', function() {
+        updateMasonryLayout();
+        
+        if (typeof initializeMasonryLayout === 'function') {
+            initializeMasonryLayout();
+        }
+    });
+    
+    // Şablon değiştiğinde kartları yeniden düzenle
+    document.addEventListener('templateSelected', function(e) {
+        console.log('Şablon değişti, kartlar yeniden düzenleniyor:', e.detail.templateId);
+        setTimeout(function() {
+            // Kartları ölçülendirilebilir yap
+            enableCardResizing();
+            
+            // Masonry düzenini uygula
+            updateMasonryLayout();
+            
+            // Global fonksiyonları çağır
+            if (typeof initializeMasonryLayout === 'function') {
+                initializeMasonryLayout();
+            }
+            
+            if (typeof organizeReportCards === 'function') {
+                organizeReportCards();
+            }
+        }, 500);
+    });
+});
+// ... existing code ...
+</script>
+
 
