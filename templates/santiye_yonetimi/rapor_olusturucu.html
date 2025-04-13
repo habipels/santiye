@@ -2503,7 +2503,7 @@ table {
             <div class="preview-container">
                 <div class="preview-header">
                     <div class="report-logo">
-                        <img src="{% static 'go/content/images/biadalogo.png' %}" alt="Logo" class="logo">
+                        <img src="{{logo_islemi.gelir_makbuzu.url}}" alt="Logo" class="logo">
                     </div>
                     <div class="report-info">
                         <div class="preview-title" contenteditable="true" data-placeholder="Rapor Başlığı">{% trans 'Proje Raporu' %}</div>
@@ -3350,7 +3350,7 @@ class ReportManager {
                 $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
                 
                 console.error('PDF oluşturma hatası:', err);
-                loadingEl.text('PDF oluşturulurken bir hata oluştu');
+                loadingEl.text('{% trans "PDF oluşturulurken bir hata oluştu" %}');
             });
     }
 
@@ -3528,12 +3528,12 @@ class ReportManager {
         // Proje seçimi
         $('#projectSelect').change(() => {
             const projectName = $('#projectSelect option:selected').text();
-            $('#reportProject').text(projectName || 'Tüm Projeler');
+            $('#reportProject').text(projectName || '{% trans "Tüm Projeler" %}');
         });
 
         // Yeni event'ler
-        $('.action-btn[title="Temizle"]').click(() => this.showClearConfirm());
-        $('.action-btn[title="Kaydet"]').click(() => this.showSaveForm());
+        $('.action-btn[title="{% trans "Temizle" %}"]').click(() => this.showClearConfirm());
+        $('.action-btn[title="{% trans "Kaydet" %}"]').click(() => this.showSaveForm());
     }
 
     showClearConfirm() {
