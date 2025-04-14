@@ -8,7 +8,7 @@ import os
 
 from django.contrib.gis.geoip2 import GeoIP2
 
-
+register = template.Library()
 
 """
 # İşletim sistemi kontrolü ile locale ayarı
@@ -47,15 +47,16 @@ def fiyat_duzelt_html(deger):
     return locale.format_string("%.2f", deger, grouping=True)
 
 """
-
+@register.simple_tag
 def fiyat_duzelt(deger, i=0):
+    deger = float(deger)
     if deger < 0:
         deger = abs(deger)
         y = f"-{deger:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         return y
     else:
         return f"{deger:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-register = template.Library()
+
 @register.simple_tag
 def personel_maas_bilgisi(id):
     bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()
@@ -286,7 +287,7 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgilerii(id):
             genel_toplam = ((toplam_yapilan_kalem*100)/(toplam_yapilmayan_kalem+toplam_yapilan_kalem))+genel_toplam
         except:
             genel_toplam = genel_toplam
-    print(genel_toplam,"genel toplam",(toplam_yapilmayan_kalem+toplam_yapilan_kalem),toplam_yapilan_kalem)
+    
     return round(genel_toplam,2)
 
 from collections import defaultdict
@@ -1382,15 +1383,12 @@ def kasa_islemleri(bilgi):
     return a
 @register.simple_tag
 def fatura_durumu(k,d):
-    print(k)
+
     bilgi =  faturalardaki_gelir_gider_etiketi_ozel.objects.filter(kullanici = d).last()
-    print(bilgi.gelir_etiketi)
-    print(bilgi.gider_etiketi)
     if bilgi.gelir_etiketi in k:
-        print("0")
+
         return 0
     else:
-        print("1")
         return 1
 from django.db.models import Sum
 from django.utils.timezone import now
@@ -2098,7 +2096,6 @@ def bina_3d2(veri):
     
     try:
         blok = get_object_or_404(bloglar,id = veri)
-        print(blok)
         katlar = []
         katlar_modasl = []
         bina_kat_sayisi = blok.kat_sayisi
@@ -2239,7 +2236,7 @@ def remove_lang_from_url(context):
     
     # Tüm desteklenen dilleri settings.py'den al (örn: [('en', 'English'), ('tr', 'Türkçe'), ('ckb', 'Kurdî')])
     supported_languages = [lang[0] for lang in settings.LANGUAGES]
-    print(path,"path adı")
+
     # URL'yi / ile bölerek listeye çevir
     path_parts = path.strip('/').split('/')  # Örn: ['tr', 'generalreport']
     y = 0

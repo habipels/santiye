@@ -60,11 +60,7 @@
                                         <table class="table align-middle table-nowrap" id="customerTable">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th scope="col" style="width: 50px;">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="checkAll" value="option">
-                                                        </div>
-                                                    </th>
+                                                   
                                                     {% if request.user.is_superuser %}
                                                     <th class="sort" data-sort="customer_name">{% trans 'Kasa Kime Ait' %}</th>
                                                     {% endif %}
@@ -82,11 +78,7 @@
                                                 {% sorgu kasabilgiis_getirme.bakiye as bakiye  %}
                                                 {% for i in bilgiler %}
                                                 <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
-                                                    <th scope="row">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
-                                                        </div>
-                                                    </th>
+                                                   
                                                     {% if request.user.is_superuser %}
                                                     <td class="kasa">{{i.kasa_bilgisi.kasa_kart_ait_bilgisi.first_name}}</td>
                                                     {% endif %}
@@ -95,7 +87,12 @@
                                                     <td class="konum">{{i.aciklama}}</td>
                                                     <td class="konum">{{i.tarihi | date:'Y-m-d'}}</td>
                                                     <td class="konum">
-                                                        {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                    {% if request.user.kullanicilar_db %}
+                                                        {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user.kullanicilar_db as bilgisicek %}
+                                                    {% else %}
+                                                    {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user as bilgisicek %}
+                                                    {% endif %}
+                                                        
                                                         {% if bilgisicek == 0 %}
                                                         <span style="color:blue;" > + ${{i.tutar}}</span>
                                                         {% else %}
@@ -104,14 +101,20 @@
 
                                                     </td>
                                                     <td class="konum">
-                                                        {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no as bilgisicek %}
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user.kullanicilar_db as bilgisicek %}
+                                                    {% else %}
+                                                    {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user as bilgisicek %}
+                                                    {% endif %}
                                                         {% if bilgisicek == 0 %}
-                                                       <span  > {% basit_toplama bakiye i.tutar %}
-                                                       {% basit_toplama bakiye i.tutar  as bakiye%}</span>
+                                                       <span  >  {% basit_toplama bakiye i.tutar as bakiye %}
+                                                         {% fiyat_duzelt bakiye %}
+                                                       </span>
                                                         {% else %}
                                                         
-                                                         <span > {% basit_cikarma bakiye i.tutar %}
-                                                         {% basit_cikarma bakiye i.tutar as bakiye %}</span>
+                                                         <span > {% basit_cikarma_duzenli bakiye i.tutar as bakiye %}
+                                                         {% fiyat_duzelt bakiye %}
+                                                         </span>
                                                         {% endif %}
                                                     </td>
                                                     
