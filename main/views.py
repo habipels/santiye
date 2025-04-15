@@ -6428,10 +6428,10 @@ def yapilacalar_ekle(request):
                         #print(images)
                         isim = 1
                         for images in images:
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                         if base64_image !="" :
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
@@ -6478,13 +6478,13 @@ def yapilacalar_ekle(request):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !=""  :
                     image_data = base64.b64decode(base64_image)
                     image_file = ContentFile(image_data, name=f'image.{file_extension}')
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect_with_language("main:yapilacaklar")
 #
 def yapilacalar_ekle_2(request,hash):
@@ -6537,13 +6537,13 @@ def yapilacalar_ekle_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !=""  :
                     image_data = base64.b64decode(base64_image)
                     image_file = ContentFile(image_data, name=f'image.{file_extension}')
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -6594,10 +6594,10 @@ def yapilacalar_ekle_2(request,hash):
                         #print(images)
                         isim = 1
                         for images in images:
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                         if base64_image !="" :
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
@@ -6644,13 +6644,13 @@ def yapilacalar_ekle_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !=""  :
                     image_data = base64.b64decode(base64_image)
                     image_file = ContentFile(image_data, name=f'image.{file_extension}')
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect_with_language("main:yapilacaklar_2",hash)
 #
 def yapilacalar_ekle_duzenleme(request):
@@ -6707,10 +6707,10 @@ def yapilacalar_ekle_duzenleme(request):
                         #print(images)
                         isim = 1
                         for images in images:
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                         if base64_image !="" :
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
@@ -6761,10 +6761,10 @@ def yapilacalar_ekle_duzenleme(request):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect_with_language("main:yapilacaklar")
 #
 def yapilacalar_ekle_duzenleme_2(request,hash):
@@ -6821,10 +6821,10 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = users,dosya=image_file,pin="pin")
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -6875,10 +6875,10 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                         #print(images)
                         isim = 1
                         for images in images:
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
                         if base64_image !="" :
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
@@ -6929,10 +6929,10 @@ def yapilacalar_ekle_duzenleme_2(request,hash):
                 #print(images)
                 isim = 1
                 for images in images:
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                     isim = isim+1
                 if base64_image !="" :
-                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
     return redirect_with_language("main:yapilacaklar_2",hash)
 #
 def yapilacalar_ekle_toplu(request):
@@ -6969,7 +6969,7 @@ def yapilacalar_ekle_toplu(request):
                                 isim = 1
                                 #print(images,"resim geldi")
                                 for images in images:
-                                    IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                                     isim = isim+1
                     else:
                         return redirect_with_language("main:yetkisiz")
@@ -7001,7 +7001,7 @@ def yapilacalar_ekle_toplu(request):
                         isim = 1
                         #print(images,"resim geldi")
                         for images in images:
-                            IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                             isim = isim+1
     return redirect_with_language("main:yapilacaklar")
 
@@ -7096,7 +7096,7 @@ def yapilacalar_duzenle(request):
             images = request.FILES.getlist('file')
             isim = 1
             for images in images:
-                IsplaniDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
+                IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
                 isim = isim+1
     return redirect_with_language("main:yapilacaklar")
 

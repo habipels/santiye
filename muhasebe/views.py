@@ -12,6 +12,10 @@ from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,
 from .models import *
 from hashids import Hashids
 from asgiref.sync import sync_to_async, async_to_sync
+from django.http import JsonResponse
+from django.http import JsonResponse
+from django.utils.dateparse import parse_date
+import datetime
 # Salt değeri ve minimum hash uzunluğu belirleyin
 HASHIDS_SALT = "habip_elis_12345"
 HASHIDS_MIN_LENGTH = 32
@@ -3400,8 +3404,8 @@ def gelir_faturasi_kaydet_2(request,hash):
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             new_project =Gelir_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = users,
             cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = users),
@@ -3443,8 +3447,8 @@ def gelir_faturasi_kaydet_2(request,hash):
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             new_project =Gelir_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = users,
             cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
@@ -3987,8 +3991,8 @@ def gider_faturasi_kaydet_2(request,hash):
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = users,
             cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = users),
@@ -4026,8 +4030,8 @@ def gider_faturasi_kaydet_2(request,hash):
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = users,
             cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
@@ -4181,8 +4185,8 @@ def gelir_gider_duzelt(request):
                 cari_bilgisi = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_adi=musteri_bilgisi, cari_kart_ait_bilgisi=kullanici, aciklama=cari_aciklma)
             date_range_parts = daterange.split(' - ')
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
             if profile:
                 gelir_bilgisi.fatura_gorseli = profile
             
@@ -4241,8 +4245,8 @@ def gelir_gider_duzelt(request):
                 cari_bilgisi = cari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),cari_adi=musteri_bilgisi, cari_kart_ait_bilgisi=kullanici, aciklama=cari_aciklma)
             date_range_parts = daterange.split(' - ')
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             gider_bilgisi.fatura_tarihi = fatura_tarihi
             gider_bilgisi.vade_tarihi = vade_tarihi
@@ -5330,7 +5334,7 @@ def satin_alma_talebi_ekle(request):
                         urun_talepleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),talebin_ait_oldugu = request.user.kullanicilar_db,
                         talebi_olusturan =request.user,urun = get_object_or_none(urunler,id =urun_bilgisi),
                         miktar = float(miktar),fiyati = float(fiyat),
-                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.now() )
+                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.datetime.now() )
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
@@ -5339,7 +5343,7 @@ def satin_alma_talebi_ekle(request):
                 urun_talepleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),talebin_ait_oldugu = request.user,
                         talebi_olusturan =request.user,urun = get_object_or_none(urunler,id =urun_bilgisi),
                         miktar = float(miktar),fiyati = float(fiyat),
-                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.now()  )
+                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.datetime.now()  )
 
     return redirect_with_language("accounting:satin_alma_talabi")
 
@@ -5435,13 +5439,13 @@ def satin_alma_talebi_onayla(request,id):
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
                     if a.izinler.satin_alma_talebi_silme:
-                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.datetime.now())
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
                     return redirect_with_language("main:yetkisiz")
             else:
-                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.datetime.now())
 
     return redirect_with_language("accounting:satin_alma_talabi_onaylama")
 
@@ -5456,13 +5460,13 @@ def satin_alma_talebi_red(request,id):
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
                     if a.izinler.satin_alma_talebi_silme:
-                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.datetime.now())
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
                     return redirect_with_language("main:yetkisiz")
             else:
-                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.datetime.now())
 
     return redirect_with_language("accounting:satin_alma_talabi_onaylama")
 
@@ -5534,13 +5538,13 @@ def satin_alma_onayla(request,id):
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
                     if a.izinler.satin_alma_talebi_silme:
-                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.now())
+                        urun_talepleri.objects.filter(id = id,talebi_olusturan = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.datetime.now())
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
                     return redirect_with_language("main:yetkisiz")
             else:
-                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.now())
+                urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.datetime.now())
 
     return redirect_with_language("accounting:satin_alma_talabi_onaylama")
 
@@ -5761,9 +5765,9 @@ def zimmeti_teslim_Al(request,id,iz):
             pass
         
         if iz == 1:
-            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "1",zimmet_teslim_edilme_tarihi = datetime.now())
+            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "1",zimmet_teslim_edilme_tarihi = datetime.datetime.now())
         elif iz == 2:
-            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.now())
+            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.datetime.now())
     return redirect_with_language("accounting:zimmetler")
 
 def zimmet(request,id):
@@ -6013,8 +6017,8 @@ def gider_faturasi_kaydet_personel(request):
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = kullanici,
             cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici),
@@ -6052,8 +6056,8 @@ def gider_faturasi_kaydet_personel(request):
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = kullanici,
             cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
@@ -6170,8 +6174,8 @@ def gider_faturasi_kaydet_personel_2(request,hash):
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = kullanici,
             cari_bilgisi = get_object_or_none(cari,cari_adi = musteri_bilgisi,cari_kart_ait_bilgisi = kullanici),
@@ -6209,8 +6213,8 @@ def gider_faturasi_kaydet_personel_2(request,hash):
 
             # Tarihleri ayrı ayrı alma ve uygun formata dönüştürme
             fatura_tarihi_str, vade_tarihi_str = date_range_parts
-            fatura_tarihi = datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
-            vade_tarihi = datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
+            fatura_tarihi = datetime.datetime.strptime(fatura_tarihi_str, '%m/%d/%Y')
+            vade_tarihi = datetime.datetime.strptime(vade_tarihi_str, '%m/%d/%Y')
 
             new_project =Gider_Bilgisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kime_ait_oldugu = kullanici,
             cari_bilgisi = get_object_or_none(cari,id = cari_bilgisi.id),
@@ -6305,7 +6309,7 @@ def satin_alma_talebi_ekle_2(request,hash):
             urun_talepleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),talebin_ait_oldugu = kullanici_bilgisi,
                         talebi_olusturan =request.user,urun = get_object_or_none(urunler,id =urun_bilgisi),
                         miktar = float(miktar),fiyati = float(fiyat),
-                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.now()  )
+                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.datetime.now()  )
        
 
     return redirect_with_language("accounting:satin_alma_talabi_2",hash)
@@ -6412,7 +6416,7 @@ def satin_alma_talebi_onayla_2(request,id,hash):
             users = get_object_or_404(CustomUser,id = d)
             content["hash_bilgi"] = users
             kullanici_bilgisi  = request.POST.get("kullanici")
-            urun_talepleri.objects.filter(id = id,talebi_olusturan = users).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+            urun_talepleri.objects.filter(id = id,talebi_olusturan = users).update(talep_durumu = "2",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.datetime.now())
        
 
     return redirect_with_language("accounting:satin_alma_talabi_onaylama_2",hash)
@@ -6426,7 +6430,7 @@ def satin_alma_talebi_red_2(request,id,hash):
             content["hashler"] = hash
             users = get_object_or_404(CustomUser,id = d)
             content["hash_bilgi"] = users
-            urun_talepleri.objects.filter(id = id,talebi_olusturan =users).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.now())
+            urun_talepleri.objects.filter(id = id,talebi_olusturan =users).update(talep_durumu = "3",talebi_onaylayan = request.user,talep_durum_tarihi=datetime.datetime.now())
         
 
     return redirect_with_language("accounting:satin_alma_talabi_onaylama_2",hash)
@@ -6457,7 +6461,7 @@ def satin_alma_onayla_2(request,id,hash):
             content["hashler"] = hash
             users = get_object_or_404(CustomUser,id = d)
             content["hash_bilgi"] = users
-            urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.now())
+            urun_talepleri.objects.filter(id = id,talebin_ait_oldugu = request.user).update(satin_alinma_durumu = True,satin_almayi_onaylayan = request.user,satin_alinma_tarihi=datetime.datetime.now())
         
     return redirect_with_language("accounting:satin_alma_talabi_onaylama_2",hash)
 
@@ -6593,9 +6597,9 @@ def zimmeti_teslim_Al_2(request,id,iz,hash):
             users = get_object_or_404(CustomUser,id = d)
             content["hash_bilgi"] = users
         if iz == 1:
-            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "1",zimmet_teslim_edilme_tarihi = datetime.now())
+            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "1",zimmet_teslim_edilme_tarihi = datetime.datetime.now())
         elif iz == 2:
-            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.now())
+            zimmet_olayi.objects.filter(id = id).update(zimmet_durumu = "2",zimmet_teslim_edilme_tarihi = datetime.datetime.now())
     return redirect_with_language("accounting:zimmetler")
 
 ################################################
@@ -6717,10 +6721,7 @@ def kasa_detayi_json_gonderme(request, id):
     print(response_data)
     return JsonResponse(response_data)
 
-from django.http import JsonResponse
-from django.http import JsonResponse
-from django.utils.dateparse import parse_date
-import datetime
+
 def cari_detayi_json_gonderme(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Giriş yapılmamış.'}, status=401)
