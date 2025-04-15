@@ -2474,13 +2474,13 @@ table {
             <div class="report-topbar">
                 <!-- Sayfa Sekmeleri
                 <div class="page-tabs-container">
-                    <div class="page-tabs">
+                <div class="page-tabs">
                         <div class="page-tab active" data-page="page-1">
-                            <span>Sayfa 1</span>
+                        <span>Sayfa 1</span>
                             <button class="remove-page-tab"><i class="fas fa-times"></i></button>
-                        </div>
-                        <button class="add-page-tab"><i class="fas fa-plus"></i></button>
                     </div>
+                        <button class="add-page-tab"><i class="fas fa-plus"></i></button>
+                </div>
                 </div> -->
                 
                 <div class="report-actions">
@@ -2502,12 +2502,12 @@ table {
             <!-- Önizleme -->
             <div class="preview-container">
                 <div class="preview-header">
-                    <div class="report-logo">
+                        <div class="report-logo">
                         <img src="{{logo_islemi.gelir_makbuzu.url}}" alt="Logo" class="logo">
-                    </div>
-                    <div class="report-info">
+                        </div>
+                        <div class="report-info">
                         <div class="preview-title" contenteditable="true" data-placeholder="Rapor Başlığı">{% trans 'Proje Raporu' %}</div>
-                    </div>
+                            </div>
                     <div class="report-date-project">
                         <div class="date-info">{% trans 'Tarih:' %} <span id="reportDateRange">{% trans '01.03.2024 - 31.03.2024' %}</span></div>
                         <div class="project-info">{% trans 'Proje:' %} <span id="reportProject">{% trans 'Tüm Projeler' %}</span></div>
@@ -2634,16 +2634,16 @@ table {
     }
 var tarih = "01.03.2024 - 31.03.2024";
 class ReportManager {
-    constructor() {
+constructor() {
         this.currentReport = null;
         this.pdfMargins = [5, 4, 5, 4]; // Varsayılan değerler: Üst, Sağ, Alt, Sol
-        this.init();
-        this.bindEvents();
-    }
+    this.init();
+    this.bindEvents();
+}
 
-    init() {
-        this.initDatePicker();
-        this.initDragAndDrop();
+init() {
+    this.initDatePicker();
+    this.initDragAndDrop();
         this.initGridSystem();
     }
 
@@ -2971,138 +2971,138 @@ class ReportManager {
 
         // Bildirim göster
         this.showNotification('{% trans 'Grid ayarları güncellendi' %}');
-    }
+}
 
-    initDatePicker() {
-        $('#dateRange').daterangepicker({
-            opens: 'left',
-            locale: {
-                format: 'DD.MM.YYYY',
-                separator: ' - ',
+initDatePicker() {
+    $('#dateRange').daterangepicker({
+        opens: 'left',
+        locale: {
+            format: 'DD.MM.YYYY',
+            separator: ' - ',
                 applyLabel: '{% trans 'Uygula' %}',
                 cancelLabel: '{% trans 'İptal' %}',
                 daysOfWeek: ['{% trans 'Pz' %}', '{% trans 'Pt' %}', '{% trans 'Sa' %}', '{% trans 'Ça' %}', '{% trans 'Pe' %}', '{% trans 'Cu' %}', '{% trans 'Ct' %}'],
                 monthNames: ['{% trans 'Ocak' %}', '{% trans 'Şubat' %}', '{% trans 'Mart' %}', '{% trans 'Nisan' %}', '{% trans 'Mayıs' %}', '{% trans 'Haziran' %}',
                     '{% trans 'Temmuz' %}', '{% trans 'Ağustos' %}', '{% trans 'Eylül' %}', '{% trans 'Ekim' %}', '{% trans 'Kasım' %}', '{% trans 'Aralık' %}'],
-                firstDay: 1
-            },
-            startDate: moment().startOf('month'),
-            endDate: moment().endOf('month')
-        }, (start, end) => {
-            tarih = start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY');
-            $('#reportDateRange').text(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
-        });
-    }
+            firstDay: 1
+        },
+        startDate: moment().startOf('month'),
+        endDate: moment().endOf('month')
+    }, (start, end) => {
+        tarih = start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY');
+        $('#reportDateRange').text(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
+    });
+}
 
-    initDragAndDrop() {
-        $('.component-item').draggable({
-            helper: 'clone',
-            appendTo: 'body',
-            zIndex: 1000,
-            cursor: 'move'
-        });
+initDragAndDrop() {
+    $('.component-item').draggable({
+        helper: 'clone',
+        appendTo: 'body',
+        zIndex: 1000,
+        cursor: 'move'
+    });
 
-        this.initializeDropZones();
-    }
+    this.initializeDropZones();
+}
 
-    initializeDropZones() {
-        $('.drop-zone').droppable({
-            accept: '.component-item',
-            hoverClass: 'drop-hover',
-            drop: (event, ui) => {
-                const type = $(ui.draggable).data('type');
-                const component = this.createComponent(type);
-                if (component) {
-                    $(event.target).replaceWith(component);
-                }
+initializeDropZones() {
+    $('.drop-zone').droppable({
+        accept: '.component-item',
+        hoverClass: 'drop-hover',
+        drop: (event, ui) => {
+            const type = $(ui.draggable).data('type');
+            const component = this.createComponent(type);
+            if (component) {
+                $(event.target).replaceWith(component);
             }
-        });
-    }
+        }
+    });
+}
 
-    initTemplates() {
+initTemplates() {
         // İptal edildi - şablon olayları başka bir yerde yönetiliyor
         console.log('Template olayları ana jQuery bloğunda yönetiliyor');
         // Buradaki eski event listener kaldırıldı
-    }
+}
 
-    loadTemplate(type) {
-        let template = '';
-        
-        switch(type) {
-            case 'bos':
-                template = `
+loadTemplate(type) {
+    let template = '';
+    
+    switch(type) {
+        case 'bos':
+            template = `
                     <div class="report-row">
                         <div class="report-column">
-                            <div class="report-card" data-size="full">
+                <div class="report-card" data-size="full">
                                 <div class="editable-text" contenteditable="true">
                                     <h2>{% trans 'Yeni Rapor' %}</h2>
                                     <p>{% trans 'Rapor içeriğini düzenlemek için tıklayın. Sol menüden bileşenler ekleyebilirsiniz.' %}</p>
                                 </div>
                             </div>
-                        </div>
                     </div>
-                `;
-                break;
-                
-            case 'finansal':
-                template = `
+                </div>
+            `;
+            break;
+            
+        case 'finansal':
+            template = `
                     <div class="report-row">
                         <div class="report-column">
                             <div class="report-card" data-size="full">
                                 <div class="editable-text" contenteditable="true">
                                     <h2>{% trans 'Finansal Durum Raporu' %}</h2>
                                     <p>${$('#reportDateRange').text() || '{% trans 'Tarih aralığı seçilmedi' %}'}</p>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                         </div>
                     </div>
                     <div class="report-row">
                         <div class="report-column">
-                            <div class="report-card" data-size="medium">
+                    <div class="report-card" data-size="medium">
                                 <div class="editable-text" contenteditable="true">
                                     <h3>{% trans 'Gelir/Gider Özeti' %}</h3>
                                 </div>
-                                <div class="drop-zone">
+                        <div class="drop-zone">
                                     <span class="drop-text">{% trans 'Gelir/gider grafiği eklemek için sürükleyin' %}</span>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                         </div>
                         <div class="report-column">
-                            <div class="report-card" data-size="medium">
+                    <div class="report-card" data-size="medium">
                                 <div class="editable-text" contenteditable="true">
                                     <h3>{% trans 'Kasa Durumu' %}</h3>
                                 </div>
-                                <div class="drop-zone">
+                        <div class="drop-zone">
                                     <span class="drop-text">{% trans 'Kasa durumu tablosu eklemek için sürükleyin' %}</span>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                         </div>
                     </div>
                     <div class="report-row">
                         <div class="report-column">
-                            <div class="report-card" data-size="full">
+                    <div class="report-card" data-size="full">
                                 <div class="editable-text" contenteditable="true">
                                     <h3>{% trans 'Finansal Tablo' %}</h3>
                                 </div>
-                                <div class="drop-zone">
+                        <div class="drop-zone">
                                     <span class="drop-text">{% trans 'Finansal tablo eklemek için sürükleyin' %}</span>
                                 </div>
-                            </div>
                         </div>
                     </div>
-                `;
-                break;
-                
-            case 'proje':
-                template = `
+                </div>
+            `;
+            break;
+            
+        case 'proje':
+            template = `
                     <div class="report-row">
                         <div class="report-column">
                             <div class="report-card" data-size="full">
                                 <div class="editable-text" contenteditable="true">
                                     <h2>{% trans 'Proje İlerleme Raporu' %}</h2>
                                     <p>${$('#reportDateRange').text() || '{% trans 'Tarih aralığı seçilmedi' %}'}</p>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                         </div>
                     </div>
                     <div class="report-row">
@@ -3111,54 +3111,54 @@ class ReportManager {
                                 <div class="editable-text" contenteditable="true">
                                     <h3>{% trans 'Proje Durumu' %}</h3>
                                 </div>
-                                <div class="drop-zone">
+                        <div class="drop-zone">
                                     <span class="drop-text">{% trans 'Proje durum grafiği eklemek için sürükleyin' %}</span>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                         </div>
                         <div class="report-column">
                             <div class="report-card" data-size="small">
                                 <div class="editable-text" contenteditable="true">
                                     <h3>{% trans 'Görev Dağılımı' %}</h3>
                                 </div>
-                                <div class="drop-zone">
+                        <div class="drop-zone">
                                     <span class="drop-text">{% trans 'Görev grafiği eklemek için sürükleyin' %}</span>
                                 </div>
-                            </div>
                         </div>
                     </div>
-                `;
-                break;
-        }
-        
-        $('#reportPreview').html(template);
-        this.initializeDropZones();
+                </div>
+            `;
+            break;
+    }
+    
+    $('#reportPreview').html(template);
+    this.initializeDropZones();
         this.setupComponentControls();
     }
 
     updatePdfMargins(margins) {
         this.pdfMargins = margins;
         console.log('{% trans 'PDF kenar boşlukları güncellendi:' %}', this.pdfMargins);
-    }
+}
 
-    showPdfPreview() {
-        const modal = document.getElementById('pdfPreviewModal');
-        const pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
-        modal.classList.add('active');
+showPdfPreview() {
+    const modal = document.getElementById('pdfPreviewModal');
+    const pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
+    modal.classList.add('active');
 
-        // Loading göster
-        const loadingEl = $('<div class="loading">PDF oluşturuluyor...</div>');
-        $(pdfPreviewFrame).parent().append(loadingEl);
+    // Loading göster
+    const loadingEl = $('<div class="loading">PDF oluşturuluyor...</div>');
+    $(pdfPreviewFrame).parent().append(loadingEl);
 
-        // PDF ayarları
-        const opt = {
+    // PDF ayarları
+    const opt = {
             margin: this.pdfMargins, // Güncellenmiş kenar boşluklarını kullan
-            filename: 'rapor.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { 
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
+        filename: 'rapor.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { 
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
                 scrollY: 0,
                 onclone: function(clonedDoc) {
                     // Hide-in-pdf sınıfına sahip kartları gizle
@@ -3322,53 +3322,53 @@ class ReportManager {
                     
                     // Minimal tablo stillerini uygula
                 }
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4',
-                orientation: 'portrait'
-            }
-        };
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4',
+            orientation: 'portrait'
+        }
+    };
 
-        // Gereksiz elementleri gizle
-        $('.card-actions, .component-controls, .report-topbar, .report-sidebar').hide();
+    // Gereksiz elementleri gizle
+    $('.card-actions, .component-controls, .report-topbar, .report-sidebar').hide();
 
-        // PDF oluştur
-        html2pdf()
-            .from(document.querySelector('.preview-container'))
-            .set(opt)
-            .outputPdf('datauristring')
-            .then(uri => {
-                // Gizlenen elementleri geri göster
-                $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
-                
-                pdfPreviewFrame.src = uri;
-                loadingEl.remove();
-            })
-            .catch(err => {
-                // Hata durumunda da gizlenen elementleri geri göster
-                $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
-                
-                console.error('PDF oluşturma hatası:', err);
+    // PDF oluştur
+    html2pdf()
+        .from(document.querySelector('.preview-container'))
+        .set(opt)
+        .outputPdf('datauristring')
+        .then(uri => {
+            // Gizlenen elementleri geri göster
+            $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
+            
+            pdfPreviewFrame.src = uri;
+            loadingEl.remove();
+        })
+        .catch(err => {
+            // Hata durumunda da gizlenen elementleri geri göster
+            $('.card-actions, .component-controls, .report-topbar, .report-sidebar').show();
+            
+            console.error('PDF oluşturma hatası:', err);
                 loadingEl.text('{% trans "PDF oluşturulurken bir hata oluştu" %}');
-            });
-    }
+        });
+}
 
-    exportToPDF() {
-        const element = document.querySelector('.preview-container');
-        const paperSize = $('#paperSize').val() || 'a4';
-        const orientation = $('input[name="orientation"]:checked').val() || 'portrait';
+exportToPDF() {
+    const element = document.querySelector('.preview-container');
+    const paperSize = $('#paperSize').val() || 'a4';
+    const orientation = $('input[name="orientation"]:checked').val() || 'portrait';
 
-        // PDF ayarları
-        const opt = {
+    // PDF ayarları
+    const opt = {
             margin: this.pdfMargins, // Güncellenmiş kenar boşluklarını kullan
             filename: `${this.currentReport?.name || 'report'}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                onclone: function(clonedDoc) {
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            onclone: function(clonedDoc) {
                     // Hide-in-pdf sınıfına sahip kartları gizle
                     $(clonedDoc).find('.report-card.hide-in-pdf').css('display', 'none');
                     
@@ -3435,24 +3435,24 @@ class ReportManager {
                         'white-space': 'nowrap'
                     });
 
-                    // Metin bileşenlerini düzenle
-                    $(clonedDoc).find('.report-card[data-type="metin"]').each(function() {
-                        const cardBody = $(this).find('.card-body');
-                        const textContent = cardBody.find('.text-content').html();
-                        
-                        // Kartı sadece içerik ile değiştir
-                        $(this).replaceWith(`<div class="text-content">${textContent}</div>`);
-                    });
-
-                    // Tüm kartlardan card-header'ları kaldır
-                    $(clonedDoc).find('.card-header, .card-actions, .component-controls').remove();
+                // Metin bileşenlerini düzenle
+                $(clonedDoc).find('.report-card[data-type="metin"]').each(function() {
+                    const cardBody = $(this).find('.card-body');
+                    const textContent = cardBody.find('.text-content').html();
                     
+                    // Kartı sadece içerik ile değiştir
+                    $(this).replaceWith(`<div class="text-content">${textContent}</div>`);
+                });
+
+                // Tüm kartlardan card-header'ları kaldır
+                    $(clonedDoc).find('.card-header, .card-actions, .component-controls').remove();
+
                     // Header stillerini düzenle
-                    $(clonedDoc).find('.preview-header').css({
+                $(clonedDoc).find('.preview-header').css({
                         'display': 'flex',
                         'align-items': 'center',
                         'justify-content': 'space-between',
-                        'margin-bottom': '20mm',
+                    'margin-bottom': '20mm',
                         'padding-bottom': '5mm',
                         'border-bottom': '1px solid #000'
                     });
@@ -3460,9 +3460,9 @@ class ReportManager {
                     $(clonedDoc).find('.report-logo').css({
                         'flex': '0 0 25%',
                         'text-align': 'left'
-                    });
+                });
 
-                    $(clonedDoc).find('.report-logo img').css({
+                $(clonedDoc).find('.report-logo img').css({
                         'max-height': '15mm',
                         'max-width': '100%'
                     });
@@ -3470,11 +3470,11 @@ class ReportManager {
                     $(clonedDoc).find('.report-info').css({
                         'flex': '0 0 50%',
                         'text-align': 'center'
-                    });
+                });
 
-                    $(clonedDoc).find('.preview-title').css({
+                $(clonedDoc).find('.preview-title').css({
                         'font-size': '11px',
-                        'font-weight': 'bold',
+                    'font-weight': 'bold',
                         'color': '#000',
                         'margin-bottom': '0',
                         'text-align': 'center',
@@ -3488,600 +3488,600 @@ class ReportManager {
                         'color': '#000',
                         'display': 'flex',
                         'flex-direction': 'column'
-                    });
+                });
 
-                    $(clonedDoc).find('.report-card').css({
-                        'page-break-inside': 'avoid',
+                $(clonedDoc).find('.report-card').css({
+                    'page-break-inside': 'avoid',
                         'margin-bottom': '15mm',
                         'border': 'none',
                         'box-shadow': 'none'
-                    });
-                }
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: paperSize,
-                orientation: orientation
+                });
             }
-        };
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: paperSize,
+            orientation: orientation
+        }
+    };
 
-        // Loading göster
+    // Loading göster
         const loadingEl = $('<div class="loading-overlay"><div class="loading">{% trans 'PDF indiriliyor...' %}</div></div>');
-        $('body').append(loadingEl);
+    $('body').append(loadingEl);
 
-        // PDF'yi oluştur ve indir
-        html2pdf().set(opt).from(element).save().then(() => {
-            loadingEl.remove();
+    // PDF'yi oluştur ve indir
+    html2pdf().set(opt).from(element).save().then(() => {
+        loadingEl.remove();
             this.showNotification('{% trans 'PDF başarıyla indirildi' %}');
-            closePdfPreview();
-        }).catch(err => {
+        closePdfPreview();
+    }).catch(err => {
             console.error('{% trans 'PDF indirme hatası:' %}', err);
-            loadingEl.remove();
+        loadingEl.remove();
             this.showNotification('{% trans 'PDF oluşturulurken bir hata oluştu' %}', 'error');
-        });
-    }
+    });
+}
 
-    bindEvents() {
-        // PDF export
-        $('#exportPDFBtn').click(() => this.showPdfPreview());
-        
-        // Proje seçimi
-        $('#projectSelect').change(() => {
-            const projectName = $('#projectSelect option:selected').text();
+bindEvents() {
+    // PDF export
+    $('#exportPDFBtn').click(() => this.showPdfPreview());
+    
+    // Proje seçimi
+    $('#projectSelect').change(() => {
+        const projectName = $('#projectSelect option:selected').text();
             $('#reportProject').text(projectName || '{% trans "Tüm Projeler" %}');
-        });
+    });
 
-        // Yeni event'ler
+    // Yeni event'ler
         $('.action-btn[title="{% trans "Temizle" %}"]').click(() => this.showClearConfirm());
         $('.action-btn[title="{% trans "Kaydet" %}"]').click(() => this.showSaveForm());
-    }
+}
 
-    showClearConfirm() {
-        const modal = $(`
-            <div class="modal confirm-modal">
-                <div class="modal-content">
-                    <div class="modal-header">
+showClearConfirm() {
+    const modal = $(`
+        <div class="modal confirm-modal">
+            <div class="modal-content">
+                <div class="modal-header">
                         <h3>{% trans 'Raporu Temizle' %}</h3>
-                        <button class="modal-close" onclick="$(this).closest('.modal').remove()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
+                    <button class="modal-close" onclick="$(this).closest('.modal').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
                         <p>{% trans 'Raporu temizlemek istediğinize emin misiniz?' %}</p>
                         <p>{% trans 'Bu işlem geri alınamaz.' %}</p>
-                    </div>
-                    <div class="modal-footer">
+                </div>
+                <div class="modal-footer">
                         <button class="button" onclick="$(this).closest('.modal').remove()">{% trans 'İptal' %}</button>
                         <button class="button button-primary" onclick="window.reportManager.clearReport()">{% trans 'Temizle' %}</button>
-                    </div>
                 </div>
             </div>
-        `);
+        </div>
+    `);
 
-        $('body').append(modal);
-        modal.addClass('active');
-    }
+    $('body').append(modal);
+    modal.addClass('active');
+}
 
-    clearReport() {
-        // Rapor içeriğini temizle
-        $('#reportPreview').html(`
-            <div class="drop-zone" data-size="full">
+clearReport() {
+    // Rapor içeriğini temizle
+    $('#reportPreview').html(`
+        <div class="drop-zone" data-size="full">
                 <span class="drop-text">{% trans 'Bileşen eklemek için sürükleyin' %}</span>
-            </div>
-        `);
+        </div>
+    `);
 
-        // Drop zone'ları yeniden aktifleştir
-        this.initializeDropZones();
+    // Drop zone'ları yeniden aktifleştir
+    this.initializeDropZones();
 
-        // Modalı kapat
-        $('.confirm-modal').remove();
+    // Modalı kapat
+    $('.confirm-modal').remove();
 
-        // Bildirim göster
+    // Bildirim göster
         this.showNotification('{% trans 'Rapor temizlendi' %}');
-    }
+}
 
-    showSaveForm() {
-        const modal = $(`
-            <div class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
+showSaveForm() {
+    const modal = $(`
+        <div class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
                         <h3>{% trans 'Raporu Kaydet' %}</h3>
-                        <button class="modal-close" onclick="$(this).closest('.modal').remove()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
+                    <button class="modal-close" onclick="$(this).closest('.modal').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
                             <label>{% trans 'Rapor Adı' %}</label>
-                            <input type="text" class="form-control" id="reportNames" >
-                        </div>
-                        <div class="form-group">
-                            <label>{% trans 'Açıklama' %}</label>
-                            <textarea class="form-control" id="reportDescriptions"></textarea>
-                        </div>
+                        <input type="text" class="form-control" id="reportNames" >
                     </div>
-                    <div class="modal-footer">
+                    <div class="form-group">
+                            <label>{% trans 'Açıklama' %}</label>
+                        <textarea class="form-control" id="reportDescriptions"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
                         <button class="button" onclick="$(this).closest('.modal').remove()">{% trans 'İptal' %}</button>
                         <button class="button button-primary" onclick="saveReport()">{% trans 'Kaydet' %}</button>
-                    </div>
                 </div>
             </div>
-        `);
+        </div>
+    `);
 
-        $('body').append(modal);
-        modal.addClass('active');
-    }
+    $('body').append(modal);
+    modal.addClass('active');
+}
 
 
-    showNotification(message) {
-        const notification = $(`
-            <div class="notification">
-                <i class="icon icon-check"></i>
-                <span>${message}</span>
-            </div>
-        `);
+showNotification(message) {
+    const notification = $(`
+        <div class="notification">
+            <i class="icon icon-check"></i>
+            <span>${message}</span>
+        </div>
+    `);
 
-        $('body').append(notification);
-        setTimeout(() => notification.remove(), 3000);
-    }
+    $('body').append(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
 
-    createComponent(type) {
-        let component;
-        
-        switch(type) {
-            case 'gelir-gider':
-                component = $(`
-                    <div class="report-card" data-size="medium">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <i class="fas fa-chart-line"></i>
+createComponent(type) {
+    let component;
+    
+    switch(type) {
+        case 'gelir-gider':
+            component = $(`
+                <div class="report-card" data-size="medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-line"></i>
                                 {% trans 'Gelir/Gider Analizi' %}
-                            </div>
-                            <div class="card-actions">
+                        </div>
+                        <div class="card-actions">
                                 <button class="card-action-btn remove" title="{% trans 'Sil' %}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
-                        <div class="card-body">
-                            <div id="gelirGiderChart"></div>
-                        </div>
-                        <div class="resize-handle resize-handle-e"></div>
-                        <div class="resize-handle resize-handle-s"></div>
-                        <div class="resize-handle resize-handle-se"></div>
                     </div>
-                `);
-                    setTimeout(() => {
-                    new ApexCharts(component.find('#gelirGiderChart')[0], {
-                        series: [{
-                            name: 'Gelir',
-                            data: {{ozellikleri.gelir | safe }}
-                        }, {
-                            name: 'Gider',
-                            data: {{ozellikleri.gider | safe }}
-                        }],
-                        chart: {
-                            type: 'area',
-                            height: 250,
-                            toolbar: { show: false }
-                        },
-                        colors: ['#22D6B5', '#FF4560'],
-                        fill: {
-                            type: 'gradient',
-                            gradient: {
-                                shadeIntensity: 1,
-                                opacityFrom: 0.7,
-                                opacityTo: 0.2
-                            }
-                        },
-                        dataLabels: { enabled: false },
-                        stroke: { curve: 'smooth', width: 2 },
-                        xaxis: {
-                            categories: {{ozellikleri.aylar | safe }}
+                    <div class="card-body">
+                        <div id="gelirGiderChart"></div>
+                    </div>
+                    <div class="resize-handle resize-handle-e"></div>
+                    <div class="resize-handle resize-handle-s"></div>
+                    <div class="resize-handle resize-handle-se"></div>
+                </div>
+            `);
+                setTimeout(() => {
+                new ApexCharts(component.find('#gelirGiderChart')[0], {
+                    series: [{
+                        name: 'Gelir',
+                        data: {{ozellikleri.gelir | safe }}
+                    }, {
+                        name: 'Gider',
+                        data: {{ozellikleri.gider | safe }}
+                    }],
+                    chart: {
+                        type: 'area',
+                        height: 250,
+                        toolbar: { show: false }
+                    },
+                    colors: ['#22D6B5', '#FF4560'],
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.7,
+                            opacityTo: 0.2
                         }
-                    }).render();
-                }, 100);
+                    },
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'smooth', width: 2 },
+                    xaxis: {
+                        categories: {{ozellikleri.aylar | safe }}
+                    }
+                }).render();
+            }, 100);
 
-                // Boyutlandırma işlevselliği
-                this.initializeResizeHandles(component);
-                
-                // ... rest of the component code ...
-                break;
+            // Boyutlandırma işlevselliği
+            this.initializeResizeHandles(component);
+            
+            // ... rest of the component code ...
+            break;
 
-            case 'kasa-durumu':
-                component = $(`
-                    <div class="report-card" data-size="small">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <i class="fas fa-wallet"></i>
+        case 'kasa-durumu':
+            component = $(`
+                <div class="report-card" data-size="small">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-wallet"></i>
                                 {% trans 'Kasa Durumu' %}
-                            </div>
-                            <div class="card-actions">
+                        </div>
+                        <div class="card-actions">
                                 <button class="card-action-btn remove" title="{% trans 'Sil' %}">
-                                    <i class="fas fa-trash"></i>
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="kasa-select-wrapper">
+                            <select class="kasa-select form-control">
+                                    <option value="">{% trans 'Kasa Seçin' %}</option>
+                                {% for i in kasa %}
+                                    <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="kasa-info-box">
+                            <div class="info-box-content">
+                                    <div class="info-box-title">{% trans 'Bakiye' %}</div>
+                                <div class="info-box-value">$ <span class="bakiye-value">0</span></div>
+                            </div>
+                            <div class="info-box-footer">
+                                <div class="son-islem">
+                                        <small>{% trans 'Son İşlem:' %} <span class="son-islem-text">-</span></small>
+                                </div>
+                                    <button class="info-box-btn toggle-movements" title="{% trans 'Hareketleri Göster' %}">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="kasa-select-wrapper">
-                                <select class="kasa-select form-control">
-                                    <option value="">{% trans 'Kasa Seçin' %}</option>
-                                    {% for i in kasa %}
-                                        <option value="{{i.id}}">{{i.kasa_adi}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            
-                            <div class="kasa-info-box">
-                                <div class="info-box-content">
-                                    <div class="info-box-title">{% trans 'Bakiye' %}</div>
-                                    <div class="info-box-value">$ <span class="bakiye-value">0</span></div>
-                                </div>
-                                <div class="info-box-footer">
-                                    <div class="son-islem">
-                                        <small>{% trans 'Son İşlem:' %} <span class="son-islem-text">-</span></small>
-                                    </div>
-                                    <button class="info-box-btn toggle-movements" title="{% trans 'Hareketleri Göster' %}">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
 
-                            <div class="kasa-hareketleri" style="display: none;">
-                                <div class="hareketler-header">
+                        <div class="kasa-hareketleri" style="display: none;">
+                            <div class="hareketler-header">
                                     <h5>{% trans 'Son Hareketler' %}</h5>
-                                </div>
-                                <div class="hareketler-list"></div>
                             </div>
+                            <div class="hareketler-list"></div>
                         </div>
-
-                        <style>
-                            .kasa-select-wrapper {
-                                margin-bottom: 15px;
-                            }
-                            .kasa-info-box {
-                                background: #fff;
-                                border: 1px solid #e0e0e0;
-                                border-radius: 8px;
-                                padding: 15px;
-                                transition: all 0.3s ease;
-                            }
-                            .kasa-info-box:hover {
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                            }
-                            .info-box-title {
-                                color: #666;
-                                font-size: 14px;
-                                margin-bottom: 5px;
-                            }
-                            .info-box-value {
-                                color: #052941;
-                                font-size: 24px;
-                                font-weight: 600;
-                            }
-                            .info-box-footer {
-                                margin-top: 10px;
-                                padding-top: 10px;
-                                border-top: 1px solid #e0e0e0;
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                            }
-                            .son-islem {
-                                color: #666;
-                                font-size: 12px;
-                            }
-                            .info-box-btn {
-                                background: none;
-                                border: none;
-                                color: #666;
-                                cursor: pointer;
-                                padding: 5px;
-                                border-radius: 4px;
-                                transition: all 0.2s ease;
-                            }
-                            .info-box-btn:hover {
-                                background: #f0f0f0;
-                                color: #052941;
-                            }
-                            .kasa-hareketleri {
-                                margin-top: 15px;
-                                padding: 15px;
-                                border: 1px solid #e0e0e0;
-                                border-radius: 8px;
-                            }
-                            .hareketler-header {
-                                margin-bottom: 10px;
-                            }
-                            .hareketler-header h5 {
-                                color: #052941;
-                                font-size: 14px;
-                                margin: 0;
-                            }
-                            .hareket-item {
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                                padding: 8px 0;
-                                border-bottom: 1px solid #e0e0e0;
-                            }
-                            .hareket-item:last-child {
-                                border-bottom: none;
-                            }
-                            .hareket-aciklama {
-                                flex: 1;
-                                font-size: 13px;
-                                color: #333;
-                            }
-                            .hareket-tutar {
-                                font-weight: 500;
-                                margin-left: 15px;
-                            }
-                            .hareket-tutar.gelir {
-                                color: #22D6B5;
-                            }
-                            .hareket-tutar.gider {
-                                color: #FF4560;
-                            }
-                        </style>
-                        
-                        <div class="component-controls">
-                            <div class="resize-handle-e"></div>
-                            <div class="resize-handle-s"></div>
-                            <div class="resize-handle-se"></div>
-                         </div>
                     </div>
-                `);
 
-                // Tarih seçici başlat
-                component.find('.date-filter').daterangepicker({
-                    opens: 'left',
-                    locale: {
-                        format: 'DD.MM.YYYY',
-                        separator: ' - ',
+                    <style>
+                        .kasa-select-wrapper {
+                            margin-bottom: 15px;
+                        }
+                        .kasa-info-box {
+                            background: #fff;
+                            border: 1px solid #e0e0e0;
+                            border-radius: 8px;
+                            padding: 15px;
+                            transition: all 0.3s ease;
+                        }
+                        .kasa-info-box:hover {
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                        }
+                        .info-box-title {
+                            color: #666;
+                            font-size: 14px;
+                            margin-bottom: 5px;
+                        }
+                        .info-box-value {
+                            color: #052941;
+                            font-size: 24px;
+                            font-weight: 600;
+                        }
+                        .info-box-footer {
+                            margin-top: 10px;
+                            padding-top: 10px;
+                            border-top: 1px solid #e0e0e0;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .son-islem {
+                            color: #666;
+                            font-size: 12px;
+                        }
+                        .info-box-btn {
+                            background: none;
+                            border: none;
+                            color: #666;
+                            cursor: pointer;
+                            padding: 5px;
+                            border-radius: 4px;
+                            transition: all 0.2s ease;
+                        }
+                        .info-box-btn:hover {
+                            background: #f0f0f0;
+                            color: #052941;
+                        }
+                        .kasa-hareketleri {
+                            margin-top: 15px;
+                            padding: 15px;
+                            border: 1px solid #e0e0e0;
+                            border-radius: 8px;
+                        }
+                        .hareketler-header {
+                            margin-bottom: 10px;
+                        }
+                        .hareketler-header h5 {
+                            color: #052941;
+                            font-size: 14px;
+                            margin: 0;
+                        }
+                        .hareket-item {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 8px 0;
+                            border-bottom: 1px solid #e0e0e0;
+                        }
+                        .hareket-item:last-child {
+                            border-bottom: none;
+                        }
+                        .hareket-aciklama {
+                            flex: 1;
+                            font-size: 13px;
+                            color: #333;
+                        }
+                        .hareket-tutar {
+                            font-weight: 500;
+                            margin-left: 15px;
+                        }
+                        .hareket-tutar.gelir {
+                            color: #22D6B5;
+                        }
+                        .hareket-tutar.gider {
+                            color: #FF4560;
+                        }
+                    </style>
+                    
+                    <div class="component-controls">
+                        <div class="resize-handle-e"></div>
+                        <div class="resize-handle-s"></div>
+                        <div class="resize-handle-se"></div>
+                     </div>
+                </div>
+            `);
+
+            // Tarih seçici başlat
+            component.find('.date-filter').daterangepicker({
+                opens: 'left',
+                locale: {
+                    format: 'DD.MM.YYYY',
+                    separator: ' - ',
                         applyLabel: '{% trans 'Uygula' %}',
                         cancelLabel: '{% trans 'İptal' %}',
                         daysOfWeek: ['Pz', '{% trans 'Pt' %}', '{% trans 'Sa' %}', '{% trans 'Ça' %}', '{% trans 'Pe' %}', '{% trans 'Cu' %}', '{% trans 'Ct' %}'],
                         monthNames: ['{% trans 'Ocak' %}', '{% trans 'Şubat' %}', '{% trans 'Mart' %}', '{% trans 'Nisan' %}', '{% trans 'Mayıs' %}', '{% trans 'Haziran' %}',
                             '{% trans 'Temmuz' %}', '{% trans 'Ağustos' %}', '{% trans 'Eylül' %}', '{% trans 'Ekim' %}', '{% trans 'Kasım' %}', '{% trans 'Aralık' %}'],
-                        firstDay: 1
-                    },
-                    startDate: moment().startOf('month'),
-                    endDate: moment().endOf('month')
-                });
+                    firstDay: 1
+                },
+                startDate: moment().startOf('month'),
+                endDate: moment().endOf('month')
+            });
 
-                // Kasa seçimi değiştiğinde
-                component.find('.kasa-select').change(function() {
-                    const kasaId = $(this).val();
-                    if (!kasaId) return;
+            // Kasa seçimi değiştiğinde
+            component.find('.kasa-select').change(function() {
+                const kasaId = $(this).val();
+                if (!kasaId) return;
 
-                    // Seçilen kasanın bilgilerini getir
-                    $.get(`/tr/accounting/kasa_bilgileri/${kasaId}`, function(data) {
-                        component.find('.bakiye-value').text(data.bakiye);
-                        component.find('.son-islem-text').text(data.son_islem || '-');
+                // Seçilen kasanın bilgilerini getir
+                $.get(`/tr/accounting/kasa_bilgileri/${kasaId}`, function(data) {
+                    component.find('.bakiye-value').text(data.bakiye);
+                    component.find('.son-islem-text').text(data.son_islem || '-');
 
-                        // Hareketleri güncelle
-                        const hareketlerList = component.find('.hareketler-list');
-                        hareketlerList.empty();
+                    // Hareketleri güncelle
+                    const hareketlerList = component.find('.hareketler-list');
+                    hareketlerList.empty();
 
-                        data.hareketler.slice(0, 5).forEach(hareket => {
-                            const hareketItem = $(`
-                                <div class="hareket-item">
-                                    <div class="hareket-aciklama">${hareket.aciklama}</div>
-                                    <div class="hareket-tutar ${hareket.tip === 'gelir' ? 'gelir' : 'gider'}">
-                                        ${hareket.tip === 'gelir' ? '+' : '-'} $${hareket.tutar}
-                                    </div>
+                    data.hareketler.slice(0, 5).forEach(hareket => {
+                        const hareketItem = $(`
+                            <div class="hareket-item">
+                                <div class="hareket-aciklama">${hareket.aciklama}</div>
+                                <div class="hareket-tutar ${hareket.tip === 'gelir' ? 'gelir' : 'gider'}">
+                                    ${hareket.tip === 'gelir' ? '+' : '-'} $${hareket.tutar}
                                 </div>
-                            `);
-                            hareketlerList.append(hareketItem);
-                        });
-                    }).fail(function() {
-                        alert('{% trans 'Kasa bilgileri alınırken bir hata oluştu.' %}');
+                            </div>
+                        `);
+                        hareketlerList.append(hareketItem);
                     });
+                }).fail(function() {
+                        alert('{% trans 'Kasa bilgileri alınırken bir hata oluştu.' %}');
                 });
+            });
 
-                // Hareketleri göster/gizle
-                component.find('.toggle-movements').click(function() {
-                    const hareketler = component.find('.kasa-hareketleri');
-                    const icon = $(this).find('i');
-                    
-                    if (hareketler.is(':visible')) {
-                        hareketler.slideUp();
-                        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            // Hareketleri göster/gizle
+            component.find('.toggle-movements').click(function() {
+                const hareketler = component.find('.kasa-hareketleri');
+                const icon = $(this).find('i');
+                
+                if (hareketler.is(':visible')) {
+                    hareketler.slideUp();
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
                         $(this).attr('title', '{% trans 'Hareketleri Göster' %}');
-                    } else {
-                        hareketler.slideDown();
-                        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    hareketler.slideDown();
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
                         $(this).attr('title', '{% trans 'Hareketleri Gizle' %}');
-                    }
-                });
+                }
+            });
 
-                break;
+            break;
 
-            case 'borc-alacak':
-                component = $(`
-                    <div class="report-card" data-size="medium">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <i class="fas fa-hand-holding-usd"></i>
+        case 'borc-alacak':
+            component = $(`
+                <div class="report-card" data-size="medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-hand-holding-usd"></i>
                                 {% trans 'Borç/Alacak' %}
-                            </div>
-                            <div class="card-actions">
-                                <button class="card-action-btn refresh" title="{% trans 'Yenile' %}">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                                <button class="card-action-btn remove" title="{% trans 'Sil' %}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="borc-alacak-filters">
-                                <div class="filter-row">
-                                    <div class="filter-group">
+                        <div class="card-actions">
+                                <button class="card-action-btn refresh" title="{% trans 'Yenile' %}">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                                <button class="card-action-btn remove" title="{% trans 'Sil' %}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="borc-alacak-filters">
+                            <div class="filter-row">
+                                <div class="filter-group">
                                         <label>{% trans 'Tarih Aralığı' %}</label>
-                                        <input type="text" class="form-control date-filter" />
-                                    </div>
-
+                                    <input type="text" class="form-control date-filter" />
                                 </div>
-                                <div class="filter-row">
-                                    <div class="filter-group">
+
+                            </div>
+                            <div class="filter-row">
+                                <div class="filter-group">
                                         <label>{% trans 'Tür' %}</label>
-                                        <select class="form-control type-filter">
+                                    <select class="form-control type-filter">
                                             <option value="all">{% trans 'Tümü' %}</option>
                                             <option value="borc">{% trans 'Borçlar' %}</option>
                                             <option value="alacak">{% trans 'Alacaklar' %}</option>
-                                        </select>
-                                    </div>
-                                    <div class="filter-group">
+                                    </select>
+                                </div>
+                                <div class="filter-group">
                                         <button class="apply-filters-btn">{% trans 'Uygula' %}</button>
-                                    </div>
                                 </div>
                             </div>
-                            <div class="borc-alacak-content">
-                                <table class="minimal-table">
-                                    <thead>
-                                        <tr>
-                                            
+                        </div>
+                        <div class="borc-alacak-content">
+                            <table class="minimal-table">
+                                <thead>
+                                    <tr>
+                                        
                                             <th>{% trans 'Cari' %}</th>
                                             <th>{% trans 'Açıklama' %}</th>
                                             <th>{% trans 'Bakiye' %}</th>
                                             <th>{% trans 'Durum' %}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="cari-data-tbody">
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="borc-alacak-summary">
-                                <div class="summary-row">
-                                    <div class="summary-label">{% trans 'Toplam Borç:' %}</div>
-                                    <div class="summary-value borc" id="total-borc">0 ₺</div>
-                                </div>
-                                <div class="summary-row">
-                                    <div class="summary-label">Toplam Alacak:</div>
-                                    <div class="summary-value alacak" id="total-alacak">0 ₺</div>
-                                </div>
-                                <div class="summary-row total">
-                                    <div class="summary-label">{% trans 'Net Durum:' %}</div>
-                                    <div class="summary-value" id="net-durum">0 ₺</div>
-                                </div>
-                            </div>
+                                    </tr>
+                                </thead>
+                                <tbody class="cari-data-tbody">
+                                    
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="component-controls">
-                            <div class="resize-handle-e"></div>
-                            <div class="resize-handle-s"></div>
-                            <div class="resize-handle-se"></div>
+                        <div class="borc-alacak-summary">
+                            <div class="summary-row">
+                                    <div class="summary-label">{% trans 'Toplam Borç:' %}</div>
+                                <div class="summary-value borc" id="total-borc">0 ₺</div>
+                            </div>
+                            <div class="summary-row">
+                                <div class="summary-label">Toplam Alacak:</div>
+                                <div class="summary-value alacak" id="total-alacak">0 ₺</div>
+                            </div>
+                            <div class="summary-row total">
+                                    <div class="summary-label">{% trans 'Net Durum:' %}</div>
+                                <div class="summary-value" id="net-durum">0 ₺</div>
+                            </div>
                         </div>
                     </div>
-                `);
-                
-                // Tarih seçici başlat
-                component.find('.date-filter').daterangepicker({
-                    opens: 'left',
-                    locale: {
-                        format: 'DD.MM.YYYY',
-                        separator: ' - ',
+                    <div class="component-controls">
+                        <div class="resize-handle-e"></div>
+                        <div class="resize-handle-s"></div>
+                        <div class="resize-handle-se"></div>
+                    </div>
+                </div>
+            `);
+            
+            // Tarih seçici başlat
+            component.find('.date-filter').daterangepicker({
+                opens: 'left',
+                locale: {
+                    format: 'DD.MM.YYYY',
+                    separator: ' - ',
                         applyLabel: '{% trans 'Uygula' %}',
                         cancelLabel: '{% trans 'İptal' %}',
                         daysOfWeek: ['{% trans 'Pz' %}', '{% trans 'Pt' %}', '{% trans 'Sa' %}', '{% trans 'Ça' %}', '{% trans 'Pe' %}', '{% trans 'Cu' %}', '{% trans 'Ct' %}'],
                         monthNames: ['{% trans 'Ocak' %}', '{% trans 'Şubat' %}', '{% trans 'Mart' %}', '{% trans 'Nisan' %}', '{% trans 'Mayıs' %}', '{% trans 'Haziran' %}',
                             '{% trans 'Temmuz' %}', '{% trans 'Ağustos' %}', '{% trans 'Eylül' %}', '{% trans 'Ekim' %}', '{% trans 'Kasım' %}', '{% trans 'Aralık' %}'],
-                        firstDay: 1
+                    firstDay: 1
+                },
+                startDate: moment().startOf('month'),
+                endDate: moment().endOf('month')
+            });
+            
+            // Filtre uygulama butonu olayı
+            component.find('.apply-filters-btn').click(function() {
+                // AJAX ile verileri filtrele
+                const dateRange = component.find('.date-filter').val();
+                const recordCount = component.find('.record-count').val();
+                const type = component.find('.type-filter').val();
+                
+                component.find('.card-title').append('<span class="loading-spinner"></span>');
+                
+                // AJAX isteği
+                $.ajax({
+                    url: '/tr/accounting/cari_bilgileri_alma/',
+                    type: 'GET',
+                    data: {
+                        date_range: dateRange,
+                        record_count: recordCount,
+                        type: type,
+                        santiye: santiye
                     },
-                    startDate: moment().startOf('month'),
-                    endDate: moment().endOf('month')
-                });
-                
-                // Filtre uygulama butonu olayı
-                component.find('.apply-filters-btn').click(function() {
-                    // AJAX ile verileri filtrele
-                    const dateRange = component.find('.date-filter').val();
-                    const recordCount = component.find('.record-count').val();
-                    const type = component.find('.type-filter').val();
-                    
-                    component.find('.card-title').append('<span class="loading-spinner"></span>');
-                    
-                    // AJAX isteği
-                    $.ajax({
-                        url: '/tr/accounting/cari_bilgileri_alma/',
-                        type: 'GET',
-                        data: {
-                            date_range: dateRange,
-                            record_count: recordCount,
-                            type: type,
-                            santiye: santiye
-                        },
-                        success: function(response) {
-                            console.log(response);
-                            // Başarılı olursa tabloyu güncelle
-                            component.find('.cari-data-tbody').html(response.html);
-                            console.log(response.html);
-                            // Toplam değerleri güncelle
-                            $('#total-borc').text(response.total_borc + ' ₺');
-                            $('#total-alacak').text(response.total_alacak + ' ₺');
-                            
-                            const netDurum = response.net_durum;
-                            const netDurumEl = $('#net-durum');
-                            
-                            netDurumEl.text((netDurum >= 0 ? '+' : '') + netDurum + ' ₺');
-                            
-                            if (netDurum >= 0) {
-                                netDurumEl.removeClass('net-negative').addClass('net-positive');
-                            } else {
-                                netDurumEl.removeClass('net-positive').addClass('net-negative');
-                            }
-                            
-                            component.find('.loading-spinner').remove();
-                        },
-                        error: function(error) {
-                            console.error('Veri yükleme hatası:', error);
-                            component.find('.loading-spinner').remove();
-                            alert('{% trans 'Veriler yüklenirken bir hata oluştu' %}');
-                        }
-                    });
-                });
-                
-                // Yenile butonu olayı
-                component.find('.refresh').click(function() {
-                    component.find('.apply-filters-btn').click();
-                });
-                
-                // Sayfa yüklendiğinde özet bilgileri hesapla
-                setTimeout(function() {
-                    let totalBorc = 0;
-                    let totalAlacak = 0;
-                    
-                    component.find('.cari-data-tbody tr').each(function() {
-                        const amountText = $(this).find('.amount-col').text();
-                        const amount = parseFloat(amountText.replace('₺', '').trim());
+                    success: function(response) {
+                        console.log(response);
+                        // Başarılı olursa tabloyu güncelle
+                        component.find('.cari-data-tbody').html(response.html);
+                        console.log(response.html);
+                        // Toplam değerleri güncelle
+                        $('#total-borc').text(response.total_borc + ' ₺');
+                        $('#total-alacak').text(response.total_alacak + ' ₺');
                         
-                        if ($(this).hasClass('borc-row')) {
-                            totalBorc += Math.abs(amount);
-                        } else if ($(this).hasClass('alacak-row')) {
-                            totalAlacak += amount;
+                        const netDurum = response.net_durum;
+                        const netDurumEl = $('#net-durum');
+                        
+                        netDurumEl.text((netDurum >= 0 ? '+' : '') + netDurum + ' ₺');
+                        
+                        if (netDurum >= 0) {
+                            netDurumEl.removeClass('net-negative').addClass('net-positive');
+                        } else {
+                            netDurumEl.removeClass('net-positive').addClass('net-negative');
                         }
-                    });
-                    
-                    $('#total-borc').text(totalBorc.toFixed(2) + ' ₺');
-                    $('#total-alacak').text(totalAlacak.toFixed(2) + ' ₺');
-                    
-                    const netDurum = totalAlacak - totalBorc;
-                    const netDurumEl = $('#net-durum');
-                    
-                    netDurumEl.text((netDurum >= 0 ? '+' : '') + netDurum.toFixed(2) + ' ₺');
-                    
-                    if (netDurum >= 0) {
-                        netDurumEl.removeClass('net-negative').addClass('net-positive');
-                    } else {
-                        netDurumEl.removeClass('net-positive').addClass('net-negative');
+                        
+                        component.find('.loading-spinner').remove();
+                    },
+                    error: function(error) {
+                        console.error('Veri yükleme hatası:', error);
+                        component.find('.loading-spinner').remove();
+                            alert('{% trans 'Veriler yüklenirken bir hata oluştu' %}');
                     }
-                }, 500);
+                });
+            });
+            
+            // Yenile butonu olayı
+            component.find('.refresh').click(function() {
+                component.find('.apply-filters-btn').click();
+            });
+            
+            // Sayfa yüklendiğinde özet bilgileri hesapla
+            setTimeout(function() {
+                let totalBorc = 0;
+                let totalAlacak = 0;
                 
-                break;
+                component.find('.cari-data-tbody tr').each(function() {
+                    const amountText = $(this).find('.amount-col').text();
+                    const amount = parseFloat(amountText.replace('₺', '').trim());
+                    
+                    if ($(this).hasClass('borc-row')) {
+                        totalBorc += Math.abs(amount);
+                    } else if ($(this).hasClass('alacak-row')) {
+                        totalAlacak += amount;
+                    }
+                });
+                
+                $('#total-borc').text(totalBorc.toFixed(2) + ' ₺');
+                $('#total-alacak').text(totalAlacak.toFixed(2) + ' ₺');
+                
+                const netDurum = totalAlacak - totalBorc;
+                const netDurumEl = $('#net-durum');
+                
+                netDurumEl.text((netDurum >= 0 ? '+' : '') + netDurum.toFixed(2) + ' ₺');
+                
+                if (netDurum >= 0) {
+                    netDurumEl.removeClass('net-negative').addClass('net-positive');
+                } else {
+                    netDurumEl.removeClass('net-positive').addClass('net-negative');
+                }
+            }, 500);
+            
+            break;
 
-            case 'proje-ozeti':
+        case 'proje-ozeti':
     component = $(`
         <div class="report-card" data-size="large" data-type="proje-ozeti">
             <div class="card-header">
@@ -4372,30 +4372,30 @@ class ReportManager {
 
             break;
 
-            case 'ilerleme-grafik':
-                component = $(`
-                    <div class="report-card" data-size="medium">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <i class="fas fa-chart-bar"></i>
-                                İlerleme Grafiği
-                            </div>
-                            <div class="card-actions">
-                                <button class="card-action-btn size-down" title="Küçült">
-                                    <i class="icon icon-minus"></i>
-                                </button>
-                                <button class="card-action-btn size-up" title="Büyült">
-                                    <i class="icon icon-plus"></i>
-                                </button>
-                                <button class="card-action-btn remove" title="Sil">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+        case 'ilerleme-grafik':
+            component = $(`
+                <div class="report-card" data-size="medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-bar"></i>
+                            İlerleme Grafiği
                         </div>
+                        <div class="card-actions">
+                            <button class="card-action-btn size-down" title="Küçült">
+                                <i class="icon icon-minus"></i>
+                            </button>
+                            <button class="card-action-btn size-up" title="Büyült">
+                                <i class="icon icon-plus"></i>
+                            </button>
+                            <button class="card-action-btn remove" title="Sil">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                         <div class="minimal-table">
-                            <table id="tumu-table">
-                                <thead>
-                                    <tr>
+                        <table id="tumu-table">
+                            <thead>
+                                <tr>
                                           <th >{% trans 'İş Emri Adı' %}</th>
                                             <th >{% trans 'Açıklama' %}</th>
                                             <th >{% trans 'Blok' %}</th>
@@ -4404,102 +4404,102 @@ class ReportManager {
                                             <th >{% trans 'Hedef Tarih' %}</th>
                                             <th >{% trans 'Durum' %}</th>
                                             
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for i in is_planlari %}
-                                <tr>
-                                        <td>
-                                            <div class="task-check">
-                                                
-                                                {{i.title}}
-                                            </div>
-                                        </td>
-                                        <td >{{ i.aciklama }}</td>
-                                        <td >
-                                        {% if i.blok %}
-                                            {{i.blok.blog_adi}}
-                                        {% else %}
-                                        {% endif %}
-                                        </td>
-                                        <td >{% if i.blok %}
-                                            {{i.kat}}
-                                        {% else %}
-                                        {% endif %}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in is_planlari %}
+                            <tr>
+                                    <td>
+                                        <div class="task-check">
+                                            
+                                            {{i.title}}
+                                        </div>
+                                    </td>
+                                    <td >{{ i.aciklama }}</td>
+                                    <td >
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td >{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
 
-                                        <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
-                                        <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
-                                        <td>
-                                        {% isplani_durumu_kontrol i.id as b %}
-                                            
-                                            {% if i.status == "Inprogress" %}
-                                                <span
-                                                class="status-inprogress stats-lg">{{i.status}}</span>
-                                            {% elif i.status == "New" %}
-                                            <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
-                                            {% elif i.status == "Pending" %}
-                                            <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
-                                             {% elif i.status == "Completed" %}
-                                            <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
-                                                {% endif %}
-                                            
-                                    
-                                        </td>
-                                       
+                                    <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
+                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                    <td>
+                                    {% isplani_durumu_kontrol i.id as b %}
+                                                
+                                                {% if i.status == "Inprogress" %}
+                                                    <span
+                                                    class="status-inprogress stats-lg">{{i.status}}</span>
+                                                {% elif i.status == "New" %}
+                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
+                                                {% elif i.status == "Pending" %}
+                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
+                                                 {% elif i.status == "Completed" %}
+                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
+                                                    {% endif %}
+                                                
+                                        
+                                    </td>
                                        
                                    
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                            </table>
+                               
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            `);
+
+            setTimeout(() => {
+                new ApexCharts(component.find('#progressChart')[0], {
+                    series: [75],
+                    chart: {
+                        type: 'radialBar',
+                        height: 250
+                    },
+                    plotOptions: {
+                        radialBar: {
+                            hollow: { size: '70%' },
+                            dataLabels: {
+                                value: { fontSize: '22px' }
+                            }
+                        }
+                    },
+                    labels: ['Tamamlanma']
+                }).render();
+            }, 100);
+            break;
+
+        case 'gorev-tablosu':
+            component = $(`
+                <div class="report-card" data-size="medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-tasks"></i>
+                            Görev Tablosu
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-action-btn size-down" title="Küçült">
+                                <i class="icon icon-minus"></i>
+                            </button>
+                            <button class="card-action-btn size-up" title="Büyült">
+                                <i class="icon icon-plus"></i>
+                            </button>
+                            <button class="card-action-btn remove" title="Sil">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
-                `);
-
-                setTimeout(() => {
-                    new ApexCharts(component.find('#progressChart')[0], {
-                        series: [75],
-                        chart: {
-                            type: 'radialBar',
-                            height: 250
-                        },
-                        plotOptions: {
-                            radialBar: {
-                                hollow: { size: '70%' },
-                                dataLabels: {
-                                    value: { fontSize: '22px' }
-                                }
-                            }
-                        },
-                        labels: ['Tamamlanma']
-                    }).render();
-                }, 100);
-                break;
-
-            case 'gorev-tablosu':
-                component = $(`
-                    <div class="report-card" data-size="medium">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <i class="fas fa-tasks"></i>
-                                Görev Tablosu
-                            </div>
-                            <div class="card-actions">
-                                <button class="card-action-btn size-down" title="Küçült">
-                                    <i class="icon icon-minus"></i>
-                                </button>
-                                <button class="card-action-btn size-up" title="Büyült">
-                                    <i class="icon icon-plus"></i>
-                                </button>
-                                <button class="card-action-btn remove" title="Sil">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
                         <div class="minimal-table">
-                            <table id="tumu-table">
-                                <thead>
-                                    <tr>
+                        <table id="tumu-table">
+                            <thead>
+                                <tr>
                                           <th >{% trans 'İş Emri Adı' %}</th>
                                             <th >{% trans 'Açıklama' %}</th>
                                             <th >{% trans 'Blok' %}</th>
@@ -4509,109 +4509,109 @@ class ReportManager {
                                             <th >{% trans 'Hedef Tarih' %}</th>
                                             <th >{% trans 'Durum' %}</th>
                                             
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for i in is_planlarii %}
-                                <tr>
-                                        <td>
-                                            <div class="task-check">
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in is_planlarii %}
+                            <tr>
+                                    <td>
+                                        <div class="task-check">
+                                            
+                                            {{i.title}}
+                                        </div>
+                                    </td>
+                                    <td >{{ i.aciklama }}</td>
+                                    <td >
+                                    {% if i.blok %}
+                                        {{i.blok.blog_adi}}
+                                    {% else %}
+                                    {% endif %}
+                                    </td>
+                                    <td >{% if i.blok %}
+                                        {{i.kat}}
+                                    {% else %}
+                                    {% endif %}</td>
+                                        
+                                    <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
+                                    <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
+                                    <td>
+                                    {% isplani_durumu_kontrol i.id as b %}
                                                 
-                                                {{i.title}}
-                                            </div>
-                                        </td>
-                                        <td >{{ i.aciklama }}</td>
-                                        <td >
-                                        {% if i.blok %}
-                                            {{i.blok.blog_adi}}
-                                        {% else %}
-                                        {% endif %}
-                                        </td>
-                                        <td >{% if i.blok %}
-                                            {{i.kat}}
-                                        {% else %}
-                                        {% endif %}</td>
+                                                {% if i.status == "Inprogress" %}
+                                                    <span
+                                                    class="status-inprogress stats-lg">{{i.status}}</span>
+                                                {% elif i.status == "New" %}
+                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
+                                                {% elif i.status == "Pending" %}
+                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
+                                                 {% elif i.status == "Completed" %}
+                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
+                                                    {% endif %}
+                                                
                                         
-                                        <td>{{i.kayit_tarihi |date:'d.m.Y'}}</td>
-                                        <td>{{i.teslim_tarihi|date:'d.m.Y'}}</td>
-                                        <td>
-                                        {% isplani_durumu_kontrol i.id as b %}
-                                            
-                                            {% if i.status == "Inprogress" %}
-                                                <span
-                                                class="status-inprogress stats-lg">{{i.status}}</span>
-                                            {% elif i.status == "New" %}
-                                            <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
-                                            {% elif i.status == "Pending" %}
-                                            <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
-                                             {% elif i.status == "Completed" %}
-                                            <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
-                                                {% endif %}
-                                            
-                                    
-                                        </td>
+                                    </td>
                                         
-                                       
                                    
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                            </table>
+                               
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            `);
+            break;
+
+        case 'personel-listesi':
+            component = $(`
+                <div class="report-card" data-size="medium">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-users"></i>
+                                {% trans 'Personel Listesi' %}
+                        </div>
+                        <div class="card-actions">
+                                <button class="card-action-btn size-down" title="{% trans 'Küçült' %}">
+                                <i class="icon icon-minus"></i>
+                            </button>
+                                <button class="card-action-btn size-up" title="{% trans 'Büyült' %}">
+                                <i class="icon icon-plus"></i>
+                            </button>
+                                <button class="card-action-btn remove" title="{% trans 'Sil' %}">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
-                `);
-                break;
-
-            case 'personel-listesi':
-                component = $(`
-                    <div class="report-card" data-size="medium">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <i class="fas fa-users"></i>
-                                {% trans 'Personel Listesi' %}
-                            </div>
-                            <div class="card-actions">
-                                <button class="card-action-btn size-down" title="{% trans 'Küçült' %}">
-                                    <i class="icon icon-minus"></i>
-                                </button>
-                                <button class="card-action-btn size-up" title="{% trans 'Büyült' %}">
-                                    <i class="icon icon-plus"></i>
-                                </button>
-                                <button class="card-action-btn remove" title="{% trans 'Sil' %}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
                         <div class="minimal-table">
-                          <table id="tumu-table">
-                                <thead>
-                                    <tr>
+                      <table id="tumu-table">
+                            <thead>
+                                <tr>
                                           <th >{% trans 'Adı Soyadı' %}</th>
                                             <th >{% trans 'İşe Giriş Tarihi' %}</th>
                                             <th >{% trans 'Pozisyon' %}</th>
                                             <th >{% trans 'Departman' %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for i in personeller_listesi %}
-                                <tr>
-                                        
-                                        <td >{{ i.isim }} {{ i.soyisim }}</td>
-                                        <td>
-                                        {{ i.kayit_tarihi |date:'d.m.Y'}} 
-                                        </td>
-                                        <td >{{ i.calisan_pozisyonu.kategori_isimi }}</td>
-                                        <td >{{ i.calisan_kategori.kategori_isimi }}</td>               
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                            </table>
-                        </div>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in personeller_listesi %}
+                            <tr>
+                                    
+                                    <td >{{ i.isim }} {{ i.soyisim }}</td>
+                                    <td>
+                                    {{ i.kayit_tarihi |date:'d.m.Y'}} 
+                                    </td>
+                                    <td >{{ i.calisan_pozisyonu.kategori_isimi }}</td>
+                                    <td >{{ i.calisan_kategori.kategori_isimi }}</td>               
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                        </table>
                     </div>
-                `);
-                break;
+                </div>
+            `);
+            break;
 
-                case 'puantaj':
+            case 'puantaj':
     component = $(`
         <div class="report-card" data-size="medium">
             <div class="card-header">
@@ -5085,22 +5085,22 @@ document.getElementById('pageSettingsModal').classList.remove('active');
 }
 
 function savePageSettings() {
-    // Kenar boşlukları
-    const margins = {
-        top: $('.margin-control[data-margin="top"]').val(),
-        right: $('.margin-control[data-margin="right"]').val(),
-        bottom: $('.margin-control[data-margin="bottom"]').val(),
-        left: $('.margin-control[data-margin="left"]').val()
-    };
+// Kenar boşlukları
+const margins = {
+    top: $('.margin-control[data-margin="top"]').val(),
+    right: $('.margin-control[data-margin="right"]').val(),
+    bottom: $('.margin-control[data-margin="bottom"]').val(),
+    left: $('.margin-control[data-margin="left"]').val()
+};
 
-    // Kağıt ayarları
-    const paperSize = $('#paperSize').val();
-    const orientation = $('input[name="orientation"]:checked').val();
+// Kağıt ayarları
+const paperSize = $('#paperSize').val();
+const orientation = $('input[name="orientation"]:checked').val();
 
-    // Ayarları uygula
-    Object.entries(margins).forEach(([margin, value]) => {
-        $('.preview-container').css(`padding-${margin}`, value + 'mm');
-    });
+// Ayarları uygula
+Object.entries(margins).forEach(([margin, value]) => {
+    $('.preview-container').css(`padding-${margin}`, value + 'mm');
+});
 
     // Ayrıca PDF oluşturma fonksiyonlarının kenar boşluklarını güncelle
     window.reportManager.updatePdfMargins([
@@ -5110,7 +5110,7 @@ function savePageSettings() {
         parseInt(margins.left)
     ]);
 
-    closePageSettings();
+closePageSettings();
 }
 
 
