@@ -3,7 +3,7 @@ import websockets
 import json
 
 async def listen_to_group_chat(group_id):
-    websocket_url = f"ws://cloud.biadago.com/ws/chat/{group_id}/"  # Replace with your WebSocket URL
+    websocket_url = f"wss://cloud.biadago.com/ws/chat/{group_id}/"  # Replace with your WebSocket URL
 
     async with websockets.connect(websocket_url) as websocket:
         print(f"Connected to WebSocket for group {group_id}")
