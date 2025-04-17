@@ -36,6 +36,11 @@ from django.utils.translation import gettext as _
 from django.db.models import Sum
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+def get_object_or_none(model, *args, **kwargs):
+    try:
+        return model.objects.get(*args, **kwargs)
+    except :
+        return None
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -377,9 +382,20 @@ def homepage_api(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
         content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
     else:
-        gelir_profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")
+        if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.gelir_faturasi_gorme_izni:
+                        kullanici = request.user.kullanicilar_db
+                    else:
+                        return Response(content)
+                else:
+                    return Response(content)
+        else:
+            kullanici = request.user
+        gelir_profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kullanici).order_by("-id")
         # Kasa bilgilerini al
-        kasa_queryset = Kasa.objects.filter(silinme_bilgisi=False, kasa_kart_ait_bilgisi=request.user)
+        kasa_queryset = Kasa.objects.filter(silinme_bilgisi=False, kasa_kart_ait_bilgisi=kullanici)
         kasa_serialized = KasaSerializer(kasa_queryset, many=True).data
 
         # Her kasanın id'sini fonksiyona gönder ve sonucu ekle
@@ -398,9 +414,9 @@ def homepage_api(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
         content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
     else:
-        gider_profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")
+        gider_profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kullanici).order_by("-id")
 
-    bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-fatura_tarihi")
+    bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kullanici).order_by("-fatura_tarihi")
     sonuc = []
     for i in bilgi_ver:
         urun_tutari = sum(float(j.urun_adeti) * float(j.urun_fiyati) for j in gider_urun_bilgisi.objects.filter(gider_bilgis=i))
@@ -412,21 +428,21 @@ def homepage_api(request):
 
     content["gider"] = GiderBilgisiSerializer(sonuc, many=True).data
     content["bilgi"] = GiderBilgisiSerializer(
-        Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=request.user).order_by("-id")[:5],
+        Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=kullanici).order_by("-id")[:5],
         many=True
     ).data
-    content["gelir_yuzde_farki"] = gelir_yuzde_farki(request.user)
-    content["gider_yuzde_farki"] = gider_yuzde_farki(request.user)
-    content["son_dort_ay_tutar_gelir"] = son_dort_ay_tutar(request.user)
-    content["son_dort_ay_tutar_gider"] = son_dort_ay_tutar_gider(request.user)
-    content["gelir_tutari"] = gelirler_tutari(request.user)
-    content["gider_tutari"] = giderler_tutari(request.user)
-    borc_bilgisi_gelir = gelirler_tutari(request.user)["tutar"] - gelirler_tutari(request.user)["genel_odeme"]
-    borc_bilgisi_gider= giderler_tutari(request.user)["tutar"] - giderler_tutari(request.user)["genel_odeme"]
+    content["gelir_yuzde_farki"] = gelir_yuzde_farki(kullanici)
+    content["gider_yuzde_farki"] = gider_yuzde_farki(kullanici)
+    content["son_dort_ay_tutar_gelir"] = son_dort_ay_tutar(kullanici)
+    content["son_dort_ay_tutar_gider"] = son_dort_ay_tutar_gider(kullanici)
+    content["gelir_tutari"] = gelirler_tutari(kullanici)
+    content["gider_tutari"] = giderler_tutari(kullanici)
+    borc_bilgisi_gelir = gelirler_tutari(kullanici)["tutar"] - gelirler_tutari(kullanici)["genel_odeme"]
+    borc_bilgisi_gider= giderler_tutari(kullanici)["tutar"] - giderler_tutari(kullanici)["genel_odeme"]
     borc_bilgisi = borc_bilgisi_gelir - borc_bilgisi_gider
     content["borc_bilgisi"] = borc_bilgisi
-    content["borc_yuzde_farki"] = borc_yuzde_farki(request.user)
-    content["son_dort_ay_tutar_borc"] = borc_son_dort_ay_tutar(request.user)
+    content["borc_yuzde_farki"] = borc_yuzde_farki(kullanici)
+    content["son_dort_ay_tutar_borc"] = borc_son_dort_ay_tutar(kullanici)
     return Response(content)
 
 import requests
@@ -511,7 +527,18 @@ def proje_tipi_api(request):
         kullanicilar = CustomUser.objects.filter(kullanicilar_db=None, is_superuser=False).order_by("-id")
         content["kullanicilar"] = CustomUserSerializer(kullanicilar, many=True).data
     else:
-        profile = proje_tipi.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.proje_tipi_gorme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return Response(content)
+            else:
+                return Response(content)
+        else:
+            kullanici = request.user
+        profile = proje_tipi.objects.filter(silinme_bilgisi=False, proje_ait_bilgisi=kullanici)
     
     # Arama işlemi
     if request.GET.get("search"):
@@ -553,8 +580,19 @@ def proje_ekleme_api(request):
             proje_tip_adi = request.data.get("yetkili_adi")
             proje_tipi.objects.create(proje_ait_bilgisi=kullanici, Proje_tipi_adi=proje_tip_adi)
         else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                if a:
+                    if a.izinler.proje_tipi_olusturma:
+                        kullanici = request.user.kullanicilar_db
+                    else:
+                        return Response({'error': 'Yetki yok'}, status=status.HTTP_403_FORBIDDEN)
+                else:
+                    return Response({'error': 'Yetki yok'}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                kullanici = request.user
             proje_tip_adi = request.data.get("yetkili_adi")
-            proje_tipi.objects.create(proje_ait_bilgisi=request.user, Proje_tipi_adi=proje_tip_adi)
+            proje_tipi.objects.create(proje_ait_bilgisi=kullanici, Proje_tipi_adi=proje_tip_adi)
     
     return Response({'success': 'Proje tipi başarıyla oluşturuldu'}, status=status.HTTP_201_CREATED)
 @authentication_classes([TokenAuthentication])
