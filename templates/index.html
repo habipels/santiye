@@ -843,180 +843,187 @@ chart.render();
     <div class="large-cards">
         {% if request.user.kullanicilar_db %}
 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-{% if yetki.gelir_ozeti_gorme %}      
+{% if yetki %}      
 <div class="large-cards-main-row">
+          {% if yetki.gelir_ozeti_gorme %}
             <div class="large-stats-card table-card">
-                <div class="stats-header">
-                    <div class="stats-title">{% trans 'Faturalar' %}</div>
-                    <div class="stats-period-dropdown">
-                        <div class="stats-period">{% trans 'Aylık' %}</div>
-                        <div class="stats-period-content">
-                            <a href="#">{% trans 'Aylık' %}</a>
-                            <a href="#">{% trans 'Yıllık' %}</a>
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'Faturalar' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Aylık' %}</div>
+                            <div class="stats-period-content">
+                                <a href="#">{% trans 'Aylık' %}</a>
+                                <a href="#">{% trans 'Yıllık' %}</a>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="table-wrapper">
+                        <table id="faturalar">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Fatura No' %}</th>
+                                    <th>{% trans 'Ünvan' %}</th>
+                                    <th> {% trans 'Açıklama' %}</th>
+                                    <th>{% trans 'Fatura Tarihi' %}</th>
+                                    <th>{% trans 'Fatura Tutarı' %}</th>
+                                    <th>{% trans 'Kalan Tutarı' %}</th>
+                                    <th>{% trans 'Durum' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in  bilgi %}
+                                <tr>
+                                    {% toplam_odenme_tutari i as odeme %}
+                                    {% toplam_tutar_cikarmai i as tutar %}
+                                    <td><h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"  class="faturano-link">{{i.fatura_no}}</a>
+                                    </h5></td>
+                                    <td>{{i.cari_bilgisi.cari_adi}}</td>
+                                    <td>{{i.aciklama}}</td>
+                                    <td>{{i.fatura_tarihi| date:'d.m.Y'}} <span class="time"></span></td>
+                                    <td> {% toplam_tutar_cikarmai i as fiyat %} $ {% fiyat_duzelt_html fiyat %}</td>
+                                    <td>
+                                        {% kalan_tutuari i as fiyat %}$ {% fiyat_duzelt_html fiyat %}
+                                    </td>
+                                    {% if  odeme == tutar %}
+                                    <td><span class="status-success">{% trans "Ödendi" %}</span></td>
+                                    {% elif odeme > 0 %}
+                                    <td><span class="status-pending">{% trans "Beklemede" %}</span></td>
+                                    {% elif odeme == 0 %}
+                                    <td><span class="status-cancel">{% trans "Ödenmedi" %}</span></td>
+                                    {% endif %}
+                                    
+                                    </tr>
+                                    {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi'  %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a>
+                    </div>
+
                 </div>
 
-                <div class="table-wrapper">
-                    <table id="faturalar">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'Fatura No' %}</th>
-                                <th>{% trans 'Ünvan' %}</th>
-                                <th> {% trans 'Açıklama' %}</th>
-                                <th>{% trans 'Fatura Tarihi' %}</th>
-                                <th>{% trans 'Fatura Tutarı' %}</th>
-                                <th>{% trans 'Kalan Tutarı' %}</th>
-                                <th>{% trans 'Durum' %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in  bilgi %}
-                            <tr>
-                                {% toplam_odenme_tutari i as odeme %}
-                                {% toplam_tutar_cikarmai i as tutar %}
-                                <td><h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"  class="faturano-link">{{i.fatura_no}}</a>
-                                </h5></td>
-                                <td>{{i.cari_bilgisi.cari_adi}}</td>
-                                <td>{{i.aciklama}}</td>
-                                <td>{{i.fatura_tarihi| date:'d.m.Y'}} <span class="time"></span></td>
-                                <td> {% toplam_tutar_cikarmai i as fiyat %} $ {% fiyat_duzelt_html fiyat %}</td>
-                                <td>
-                                    {% kalan_tutuari i as fiyat %}$ {% fiyat_duzelt_html fiyat %}
-                                </td>
-                                {% if  odeme == tutar %}
-                                <td><span class="status-success">{% trans "Ödendi" %}</span></td>
-                                {% elif odeme > 0 %}
-                                <td><span class="status-pending">{% trans "Beklemede" %}</span></td>
-                                {% elif odeme == 0 %}
-                                <td><span class="status-cancel">{% trans "Ödenmedi" %}</span></td>
-                                {% endif %}
+                <div class="large-stats-card table-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'Borç Faturaları' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Aylık' %}</div>
+                            <div class="stats-period-content">
+                                <a href="#">{% trans 'Aylık' %}</a>
+                                <a href="#">{% trans 'Yıllık' %}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="borc-faturalar">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Fatura No' %}</th>
+                                    <th>{% trans 'Ünvan' %}</th>
+                                    <th> {% trans 'Açıklama' %}</th>
+                                    <th>{% trans 'Fatura Tarihi' %}</th>
+                                    <th>{% trans 'Fatura Tutarı' %}</th>
+                                    <th>{% trans 'Kalan Tutarı' %}</th>
+                                    <th>{% trans 'Durum' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in  gider  %}
+                                <tr>
+                                    {% toplam_odenme_tutari i as odeme %}
+                                    {% toplam_tutar_cikarmai i as tutar %}
+                                    <td><h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"  class="faturano-link">{{i.fatura_no}}</a>
+                                    </h5></td>
+                                    <td>{{i.cari_bilgisi.cari_adi}}</td>
+                                    <td>{{i.aciklama}}</td>
+                                    <td>{{i.fatura_tarihi| date:'d.m.Y'}} <span class="time"></span></td>
+                                    <td>{% toplam_tutar_cikarmai i as fiyat %} ${% fiyat_duzelt_html fiyat %}</td>
+                                    <td>
+                                        {% kalan_tutuari i as fiyat %} ${% fiyat_duzelt_html fiyat %}
+                                    </td>
+                                    {% if  odeme == tutar %}
+                                    <td><span class="status-success">{% trans "Ödendi" %}</span></td>
+                                    {% elif odeme > 0 %}
+                                    <td><span class="status-pending">{% trans "Beklemede" %}</span></td>
+                                    {% elif odeme == 0 %}
+                                    <td><span class="status-cancel">{% trans "Ödenmedi" %}</span></td>
+                                    {% endif %}
+                                    
+                                    </tr>
+                                    {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                    <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a>
+                        
+                    </div>
+
+                </div>
+            {% else %}
+            #denemee
+            {% endif %}
+                
+                {% if yetki.yapilacaklar_gorme %}
+                    <div class="large-stats-card table-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans 'İş Emirleri' %}</div>
+                        <div class="stats-period-dropdown">
+                            <div class="stats-period">{% trans 'Tüm İş Emirleri' %}</div>
+                            <div class="stats-period-content">
+                                <a href="/{{dil}}{% url 'main:yapilacaklar' %}">{% trans 'Tüm İş Emirleri' %}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="gorevler">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'İş Emri Adı' %}</th>
+                                    <th>{% trans 'Açıklama' %}</th>
+                                    
+                                    <th>{% trans 'Bitiş Tarihi' %}</th>
+                                    <th>{% trans 'Öncelik' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in son_gorevler %}
+                                <tr>
+                                    <td>{{i.title}}</td>
+                                    <td>{{i.aciklama}}</td>
                                 
+                                    <td>{{i.teslim_tarihi|date:"d.m.Y"}}</td>
+                                    <td>
+                                    {% if i.oncelik_durumu == "High" %}
+                                        <span class="status-danger">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Medium" %}
+                                            
+                                             <span class="status-warning">{{i.oncelik_durumu}}</span>
+                                            {% elif i.oncelik_durumu == "Low" %}
+                                            <span class="status-success">{{i.oncelik_durumu}}</span>
+                                            {% endif %}</td>
                                 </tr>
                                 {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="table-footer">
-                    <a href="/{{dil}}{% url 'accounting:giderler_sayfasi'  %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a>
-                </div>
-
-            </div>
-
-            <div class="large-stats-card table-card">
-                <div class="stats-header">
-                    <div class="stats-title">{% trans 'Borç Faturaları' %}</div>
-                    <div class="stats-period-dropdown">
-                        <div class="stats-period">{% trans 'Aylık' %}</div>
-                        <div class="stats-period-content">
-                            <a href="#">{% trans 'Aylık' %}</a>
-                            <a href="#">{% trans 'Yıllık' %}</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table id="borc-faturalar">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'Fatura No' %}</th>
-                                <th>{% trans 'Ünvan' %}</th>
-                                <th> {% trans 'Açıklama' %}</th>
-                                <th>{% trans 'Fatura Tarihi' %}</th>
-                                <th>{% trans 'Fatura Tutarı' %}</th>
-                                <th>{% trans 'Kalan Tutarı' %}</th>
-                                <th>{% trans 'Durum' %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in  gider  %}
-                            <tr>
-                                {% toplam_odenme_tutari i as odeme %}
-                                {% toplam_tutar_cikarmai i as tutar %}
-                                <td><h5 class="fs-13 my-1"><a  href="/{{dil}}{% url 'accounting:fatura_goster2' i.id %}"  class="faturano-link">{{i.fatura_no}}</a>
-                                </h5></td>
-                                <td>{{i.cari_bilgisi.cari_adi}}</td>
-                                <td>{{i.aciklama}}</td>
-                                <td>{{i.fatura_tarihi| date:'d.m.Y'}} <span class="time"></span></td>
-                                <td>{% toplam_tutar_cikarmai i as fiyat %} ${% fiyat_duzelt_html fiyat %}</td>
-                                <td>
-                                    {% kalan_tutuari i as fiyat %} ${% fiyat_duzelt_html fiyat %}
-                                </td>
-                                {% if  odeme == tutar %}
-                                <td><span class="status-success">{% trans "Ödendi" %}</span></td>
-                                {% elif odeme > 0 %}
-                                <td><span class="status-pending">{% trans "Beklemede" %}</span></td>
-                                {% elif odeme == 0 %}
-                                <td><span class="status-cancel">{% trans "Ödenmedi" %}</span></td>
-                                {% endif %}
                                 
-                                </tr>
-                                {% endfor %}
 
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="table-footer">
-                <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_borc'  %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a>
-                    
-                </div>
-
-            </div>
-
-            <div class="large-stats-card table-card">
-                <div class="stats-header">
-                    <div class="stats-title">{% trans 'İş Emirleri' %}</div>
-                    <div class="stats-period-dropdown">
-                        <div class="stats-period">{% trans 'Tüm İş Emirleri' %}</div>
-                        <div class="stats-period-content">
-                            <a href="/{{dil}}{% url 'main:yapilacaklar' %}">{% trans 'Tüm İş Emirleri' %}</a>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
+
+
+                    <div class="table-footer">
+                       <a href="/{{dil}}{% url 'main:yapilacaklar' %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a> 
+                    </div>
+
                 </div>
-
-                <div class="table-wrapper">
-                    <table id="gorevler">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'İş Emri Adı' %}</th>
-                                <th>{% trans 'Açıklama' %}</th>
-                                
-                                <th>{% trans 'Bitiş Tarihi' %}</th>
-                                <th>{% trans 'Öncelik' %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for i in son_gorevler %}
-                            <tr>
-                                <td>{{i.title}}</td>
-                                <td>{{i.aciklama}}</td>
-                            
-                                <td>{{i.teslim_tarihi|date:"d.m.Y"}}</td>
-                                <td>
-                                {% if i.oncelik_durumu == "High" %}
-                                    <span class="status-danger">{{i.oncelik_durumu}}</span>
-                                        {% elif i.oncelik_durumu == "Medium" %}
-                                        
-                                         <span class="status-warning">{{i.oncelik_durumu}}</span>
-                                        {% elif i.oncelik_durumu == "Low" %}
-                                        <span class="status-success">{{i.oncelik_durumu}}</span>
-                                        {% endif %}</td>
-                            </tr>
-                            {% endfor %}
-                            
-
-                        </tbody>
-                    </table>
-                </div>
-
-
-                <div class="table-footer">
-                   <a href="/{{dil}}{% url 'main:yapilacaklar' %}">{% trans 'Tümünü Gör <i class="icon icon-chevron-right"></i>' %}</a> 
-                </div>
-
-            </div>
+                {% else %}
+                {% endif %}
         </div>
 
         <script>
@@ -2662,9 +2669,10 @@ chart.render();
         <div class="large-cards">
             {% if request.user.kullanicilar_db %}
 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-{% if yetki.gelir_ozeti_gorme %}      
+{% if yetki %}      
 <div class="large-cards-main-row">
-                <div class="large-stats-card table-card">
+            {% if yetki.gelir_ozeti_gorme %}
+            <div class="large-stats-card table-card">
                     <div class="stats-header">
                         <div class="stats-title">{% trans 'Faturalar' %}</div>
                         <div class="stats-period-dropdown">
@@ -2783,8 +2791,12 @@ chart.render();
                     </div>
 
                 </div>
-
-                <div class="large-stats-card table-card">
+            {% else %}
+        
+            {% endif %}
+                
+                {% if yetki.yapilacaklar_gorme %}
+                    <div class="large-stats-card table-card">
                     <div class="stats-header">
                         <div class="stats-title">{% trans 'İş Emirleri' %}</div>
                         <div class="stats-period-dropdown">
@@ -2836,6 +2848,9 @@ chart.render();
                     </div>
 
                 </div>
+                {% else %}
+                {% endif %}
+                
             </div>
 
             <script>
