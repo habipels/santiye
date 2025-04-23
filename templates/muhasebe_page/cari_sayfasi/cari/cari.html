@@ -255,8 +255,16 @@
                                     </div>
                                     <div class="form-element">
                                         <label for="customername-field"  >{% trans "Cari Telefon" %}</label>
-                                        <input name="bakiye" value="+" type="number" id="customername-field"  placeholder='{% trans "Cari Telefon Numarası" %}' required />
-                                         
+                                      <input
+                                        name="bakiye"
+                                        type="tel"
+                                        pattern="[0-9]{10,15}"
+                                        inputmode="numeric"
+                                        placeholder="{% trans 'Cari Telefon Numarası' %}"
+                                        id="customername-field"
+                                        required
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                        />
                                     </div>
                                     <div class="form-element">
                                         <label for="customername-field"  >{% trans "Açıklama" %}</label>
