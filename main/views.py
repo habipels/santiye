@@ -5356,8 +5356,10 @@ def dosya_ekle(request):
                     tarih=tarih,
                     aciklama=aciklama
                 )
-    z = "/storage/mydir/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
-    return redirect_with_language(z)
+                #storage/mydir/files/34/yeni/
+
+    #z = "storage/mydir/files/"+str(ust_klasor)+"/"+str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi)+"/"
+    return redirect_with_language("main:klasore_gir",str(ust_klasor),str(get_object_or_404(klasorler,id = ust_klasor).klasor_adi))
 #klasore Dosya Ekle
 
 def dosya_ekle_2(request,hash):
