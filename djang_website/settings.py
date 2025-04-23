@@ -437,3 +437,8 @@ PWA_APP_ICONS = [
     }
 ]
 PWA_APP_OFFLINE_PAGE = '/offline/'
+# 15 dakika
+SESSION_COOKIE_AGE = 60 * 60  
+
+# Her istekte session süresi sıfırlansın
+SESSION_SAVE_EVERY_REQUEST = True
