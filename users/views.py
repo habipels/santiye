@@ -1390,6 +1390,10 @@ def calisan_odemeleri_kaydet(request):
         aciklama = request.POST.get("aciklama")
         file = request.FILES.get("file")
         kur = request.POST.get("kur")
+        if kur:
+            pass
+        else:
+            kur = 0
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
@@ -1435,6 +1439,10 @@ def calisan_odemeleri_kaydet_2(request,hash):
         aciklama = request.POST.get("aciklama")
         file = request.FILES.get("file")
         kur = request.POST.get("kur")
+        if kur:
+            pass
+        else:
+            kur = 0
         if request.user.is_superuser:
             kullanici = users
         year, month = map(int, maas_ayi.split('-'))

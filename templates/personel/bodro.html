@@ -43,7 +43,12 @@
     </div>
 
     <div class="large-stats-card table-card table-detail-card">
-        <div class="stats-header">{% bodro_cek personel.id istenen_tarih_araligi as bilgi %}
+        <div class="stats-header">
+        {% if istenen_tarih_araligi %}
+            {% bodro_cek personel.id istenen_tarih_araligi as bilgi %}
+        {% else %}
+        {% endif %}
+        
             <div class="stats-title">{% trans "Personel : " %}{{personel.isim}} {{personel.soyisim}} {% trans "Tarih : " %} {{istenen_tarih_araligi}} {% trans "Toplam Tutar : " %} {{bilgi.odenecek_tutar}}</div>
             <div class="stats-search">
                 <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
@@ -71,7 +76,12 @@
                             <td>{{ i.tarihi |date:'d.m.Y' }} </td>
                             <td>{{ i.kayit_tarihi |date:'d.m.Y' }} </td>
                             <td>{% if i.odeme_turu %}
+                            {% if i.tutar <= 0 %}
+                                 {% trans 'Kesinti' %}
+                                {% else %}
                                 {% trans 'Avans' %}
+                                {% endif %}
+                                
                             {% else %}
                             {% trans 'Maaş' %}
                             {% endif %} </td>
