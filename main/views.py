@@ -394,7 +394,7 @@ def homepage(request):
                 else:
                     return redirect_with_language("main:yetkisiz")
             else:
-                profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
+                profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False).order_by("-id")
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 5) # 6 employees per page
@@ -418,14 +418,14 @@ def homepage(request):
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
                     if a.izinler.dashboard_gorme:
-                        profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")
+                        profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db,silinme_bilgisi = False).order_by("-id")
                         content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
                     return redirect_with_language("main:yetkisiz")
             else:
-                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")
+                profile = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False).order_by("-id")
                 content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
         page_num = request.GET.get('page', 1)
         paginator = Paginator(profile, 5) # 6 employees per page
@@ -442,14 +442,14 @@ def homepage(request):
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
                     if a.izinler.dashboard_gorme:
-                        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
+                        bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db,silinme_bilgisi = False).order_by("-fatura_tarihi")
                         sonuc = []
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
                     return redirect_with_language("main:yetkisiz")
         else:
-            bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-fatura_tarihi")
+            bilgi_ver = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False).order_by("-fatura_tarihi")
             sonuc = []
         for i in bilgi_ver:
             y =  gider_urun_bilgisi.objects.filter(gider_bilgis = i)
@@ -469,7 +469,7 @@ def homepage(request):
             if a:
                 if a.izinler.dashboard_gorme:
                     content["gider"] = sonuc
-                    content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-id")[:5]
+                    content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db,silinme_bilgisi = False).order_by("-id")[:5]
                     content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:5]
                     content["son_gorevler_bina"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).exclude(blok = None).last()
                     konum = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).exclude(blok = None).last()
@@ -481,7 +481,7 @@ def homepage(request):
                 return redirect_with_language("main:yetkisiz")
         else:
             content["gider"] = sonuc
-            content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user).order_by("-id")[:5]
+            content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False).order_by("-id")[:5]
             content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:5]
             content["son_gorevler_bina"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).exclude(blok = None).last()
             konum = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).exclude(blok = None).last()
