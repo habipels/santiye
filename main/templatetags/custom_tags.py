@@ -2310,3 +2310,13 @@ def calculate_waiting_time_onay_suresi(record_time,record_time2):
         return f"{hours} saat"
     except (ValueError, TypeError):
         return "Geçersiz tarih"
+
+@register.simple_tag
+def kalem_max_fiziksel_max_finansal(bilgi):
+    max_fiziksel = 100
+    max_finansal = 100
+    a = santiye_kalemleri.objects.filter(proje_santiye_Ait = bilgi)
+    for i in a:
+        max_finansal = max_finansal - i.santiye_finansal_agirligi
+        max_fiziksel = max_fiziksel - i.santiye_agirligi
+    return {"max_fiziksel":int(max_fiziksel),"max_finansal":int(max_finansal)}
