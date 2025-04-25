@@ -3,6 +3,120 @@
 {% load static %}
 {% load custom_tags %}
 {% block sidebar %}
+
+<style>
+    .dashboard-title {
+        margin-bottom: 15px;
+    }
+    
+    .dashboard-title h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+    
+    .blok-kart {
+        position: relative;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        padding: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .blok-kart:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .blok-baslik {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .blok-baslik h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    .blok-ikon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .ilerleme-container {
+        position: relative;
+        margin-bottom: 10px;
+    }
+    
+    .ilerleme-bar-arka {
+        height: 15px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    .ilerleme-bar-on {
+        height: 100%;
+        border-radius: 8px;
+        transition: width 1.5s ease;
+        position: relative;
+        width: 0%; /* Başlangıçta genişliği 0 olacak */
+    }
+    
+    .yuzde-gosterge {
+        font-size: 20px;
+        font-weight: 700;
+        margin-top: 8px;
+        color: #333;
+    }
+    
+    .blok-detay {
+        color: #777;
+        font-size: 13px;
+    }
+    
+    /* Grafik kartı stilleri */
+    .chart-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .chart-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .chart-card .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid #f1f1f1;
+        padding: 15px 20px;
+    }
+    
+    .chart-card .card-header h5 {
+        font-size: 16px;
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    .chart-card .card-body {
+        padding: 20px;
+    }
+</style>
+
 {% if hash_bilgi %}
 <style>@media (max-width: 768px) {
     .building-container {
@@ -578,6 +692,67 @@
         </div>                                     
 
       
+    </div>
+    <div class="large-cards">
+           <!-- Proje Blokları Kartları -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="dashboard-title">
+            <h4>Proje Blokları Durumu</h4>
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <div class="row">
+            <!-- Dinamik Blok Kartları -->
+            {% if request.user.kullanicilar_db %}
+                {% blok_bilgileri request.user.kullanicilar_db as blok_olusturma %}
+            {% else %}
+                {% blok_bilgileri request.user as blok_olusturma %}
+            {% endif %}
+            
+            {% for i in blok_olusturma %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3">
+                <div class="blok-kart">
+                    <div class="blok-baslik">
+                        <h5>{{ i.yapi }}</h5>
+                        {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii i.id as fiziksel_ilerlemei  %}
+                        <div class="blok-ikon" data-id="{{ i.id }}">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    <div class="ilerleme-container">
+                        <div class="ilerleme-bar-arka">
+                            <div class="ilerleme-bar-on" data-width="{{fiziksel_ilerlemei |safe }}" data-id="{{ i.id }}"></div>
+                        </div>
+                        <div class="yuzde-gosterge">%{{fiziksel_ilerlemei |safe }}</div>
+                    </div>
+                    <div class="blok-detay">
+                        <span>Tamamlandı</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Grafik Görselleştirmesi -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card chart-card">
+            <div class="card-header">
+                <h5>Blok Tamamlanma Durumları</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:300px; width:100%">
+                    <canvas id="doughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     </div>
     {% if request.user.kullanicilar_db %}
      {% ozellikler request.user.kullanicilar_db as ozellikleri %}      
@@ -2048,9 +2223,104 @@ chart.render();
                             {% kasa_toplam i %}</span></div>
                 {% endfor %}
                 </div>
-            </div>                                                                                                                                             
+            </div>   
+            <div class="large-cards">
+           <!-- Proje Blokları Kartları -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="dashboard-title">
+            <h4>Proje Blokları Durumu</h4>
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <div class="row">
+            <!-- Dinamik Blok Kartları -->
+            {% if request.user.kullanicilar_db %}
+                {% blok_bilgileri request.user.kullanicilar_db as blok_olusturma %}
+            {% else %}
+                {% blok_bilgileri request.user as blok_olusturma %}
+            {% endif %}
+            
+            {% for i in blok_olusturma %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3">
+                <div class="blok-kart">
+                    <div class="blok-baslik">
+                        <h5>{{ i.yapi }}</h5>
+                        {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii i.id as fiziksel_ilerlemei  %}
+                        <div class="blok-ikon" data-id="{{ i.id }}">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    <div class="ilerleme-container">
+                        <div class="ilerleme-bar-arka">
+                            <div class="ilerleme-bar-on" data-width="{{fiziksel_ilerlemei |safe }}" data-id="{{ i.id }}"></div>
+                        </div>
+                        <div class="yuzde-gosterge">%{{fiziksel_ilerlemei |safe }}</div>
+                    </div>
+                    <div class="blok-detay">
+                        <span>Tamamlandı</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Grafik Görselleştirmesi -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card chart-card">
+            <div class="card-header">
+                <h5>Blok Tamamlanma Durumları</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:300px; width:100%">
+                    <canvas id="doughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>                                                                                                                                          
 {% endif %}
-                                    
+<div class="large-cards">
+    <div class="large-stats-card">
+        <div class="stats-header">
+            <div class="stats-title">{% trans 'Gelir - Gider Grafiği' %}</div>
+            <div class="stats-period-dropdown">
+                <div class="stats-period">{% trans 'Aylık' %}</div>
+                <div class="stats-period-content">
+                    <a href="#">{% trans 'Aylık' %}</a>
+                    <a href="#">{% trans 'Yıllık' %}</a>
+                </div>
+            </div>
+        </div>
+        <div id="gelirgider"></div>
+    </div>
+    <div class="large-stats-card expenses-by-category">
+        <div class="stats-header">
+<div class="stats-title">{% trans 'Kategorilere Göre Giderler' %}</div>
+
+</div>
+        <div id="expenses-by-category"></div>
+        <span>
+            {% trans 'En yüksek değere sahip 10 kategori listelenmiştir.' %}
+        </span>
+        <div class="stats-footer">
+            <div class="stats-footer-part">
+                <span>{% trans 'Kategori Sayısı' %}</span>
+                {{bilgi_cagir.isimleri | length}}
+            </div>
+            <div class="stats-footer-part">
+                <span>{% trans 'Toplam Gider' %}</span>
+                ${{bilgi_cagir.tutar}}
+            </div>
+        </div>
+    </div>
+</div>                                  
 {% else %}
         <div class="stats-card">
                 <div class="stats-title">{% trans 'GELİR' %}</div>
@@ -2404,6 +2674,67 @@ chart.render();
 {% endif %}
           
         </div>
+        <div class="large-cards">
+           <!-- Proje Blokları Kartları -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="dashboard-title">
+            <h4>Proje Blokları Durumu</h4>
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <div class="row">
+            <!-- Dinamik Blok Kartları -->
+            {% if request.user.kullanicilar_db %}
+                {% blok_bilgileri request.user.kullanicilar_db as blok_olusturma %}
+            {% else %}
+                {% blok_bilgileri request.user as blok_olusturma %}
+            {% endif %}
+            
+            {% for i in blok_olusturma %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3">
+                <div class="blok-kart">
+                    <div class="blok-baslik">
+                        <h5>{{ i.yapi }}</h5>
+                        {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii i.id as fiziksel_ilerlemei  %}
+                        <div class="blok-ikon" data-id="{{ i.id }}">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    <div class="ilerleme-container">
+                        <div class="ilerleme-bar-arka">
+                            <div class="ilerleme-bar-on" data-width="{{fiziksel_ilerlemei |safe }}" data-id="{{ i.id }}"></div>
+                        </div>
+                        <div class="yuzde-gosterge">%{{fiziksel_ilerlemei |safe }}</div>
+                    </div>
+                    <div class="blok-detay">
+                        <span>Tamamlandı</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Grafik Görselleştirmesi -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card chart-card">
+            <div class="card-header">
+                <h5>Blok Tamamlanma Durumları</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:300px; width:100%">
+                    <canvas id="doughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
         {% if request.user.kullanicilar_db %}
          {% ozellikler request.user.kullanicilar_db as ozellikleri %}      
         {% else %}
@@ -2535,7 +2866,6 @@ var options = {
 
 var chart = new ApexCharts(document.querySelector("#expenses-by-category"), options);
 chart.render();
-
 
 
 
@@ -4039,3 +4369,109 @@ createBuilding();
 
 
 {% endblock sidebar %}
+
+{% block javascriptcode %}
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+<script>
+// Sayfa yüklendiğinde çalışacak kodlar
+document.addEventListener('DOMContentLoaded', function() {
+    // Rastgele renk oluşturma fonksiyonu
+    function getRandomColor() {
+        return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+    }
+
+    // Blok ikonlarına ve ilerleme çubuklarına rastgele renk atama
+    const blokIkonlar = document.querySelectorAll('.blok-ikon');
+    blokIkonlar.forEach(ikon => {
+        const randomColor = getRandomColor(); // Rastgele renk oluştur
+        ikon.style.backgroundColor = randomColor; // İkona rengi uygula
+
+        // İlgili ilerleme çubuğuna da aynı rengi uygula
+        const id = ikon.getAttribute('data-id');
+        const progressBar = document.querySelector(`.ilerleme-bar-on[data-id="${id}"]`);
+        if (progressBar) {
+            progressBar.style.backgroundColor = randomColor;
+        }
+    });
+
+    // İlerleme çubuklarını animasyon ile göster
+    const progressBars = document.querySelectorAll('.ilerleme-bar-on');
+    progressBars.forEach(bar => {
+        const targetWidth = bar.getAttribute('data-width');
+        setTimeout(() => {
+            bar.style.width = targetWidth + '%';
+        }, 300);
+    });
+
+    // Sayaç animasyonu
+    const counters = document.querySelectorAll('.yuzde-gosterge');
+    counters.forEach((counter, index) => {
+        const progressBar = progressBars[index];
+        const targetValue = parseInt(progressBar.getAttribute('data-width'));
+        let count = 0;
+        const updateCount = () => {
+            if (count < targetValue) {
+                const increment = Math.max(1, Math.floor(targetValue / 50));
+                count += increment;
+                if (count > targetValue) count = targetValue;
+                counter.textContent = '%' + count;
+                setTimeout(updateCount, 30);
+            }
+        };
+        setTimeout(updateCount, 300);
+    });
+
+    // Grafik için veriler dinamik olarak alınır
+    const bloklar = Array.from(document.querySelectorAll('.blok-baslik h5')).map(el => el.textContent);
+    const tamamlanmaYuzdeleri = Array.from(document.querySelectorAll('.ilerleme-bar-on')).map(bar => parseInt(bar.getAttribute('data-width')));
+    const colors = Array.from(document.querySelectorAll('.blok-ikon')).map(ikon => ikon.style.backgroundColor); // İkon renklerini al
+    const borderColors = colors.map(color => color); // Kenar renkleri aynı olsun
+
+    // Doughnut Chart - Pasta Grafik
+    const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+    const doughnutChart = new Chart(ctxDoughnut, {
+        type: 'doughnut',
+        data: {
+            labels: bloklar,
+            datasets: [{
+                data: tamamlanmaYuzdeleri,
+                backgroundColor: colors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': %' + context.raw;
+                        }
+                    }
+                },
+                title: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: true,
+                    animateScale: true
+                }
+            }
+        }
+    });
+});
+</script>
+
+{% endblock javascriptcode %}

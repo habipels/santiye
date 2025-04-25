@@ -10797,7 +10797,6 @@ def rapor_kaydedici(request):
 
     if request.method == 'POST':
         data = json.loads(request.body)
-        name = data["name"]
         description = data["description"]
         tarih_baslangic = data["dateRange"]["start"]
         tarih_bitis = data["dateRange"]["end"]
