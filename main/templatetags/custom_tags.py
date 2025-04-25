@@ -2060,7 +2060,7 @@ def blok_bilgileri(users):
             gorsel = i.proje_santiye_Ait.bina_goruntuleri_aitlik.id
         except:
             gorsel = ""
-        bilgi.append({"id":i.id,"yapi":i.blog_adi,"kat":int(i.kat_sayisi),"gorseli":gorsel})
+        bilgi.append({"id":i.id,"yapi":i.blog_adi,"kat":int(i.kat_sayisi),"gorseli":gorsel,"proje_santiye_Ait":i.proje_santiye_Ait})
     return bilgi
 @register.simple_tag
 def blok_bilgilerii(users):
