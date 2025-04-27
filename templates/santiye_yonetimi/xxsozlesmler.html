@@ -83,7 +83,7 @@
                             
                             {% for i in santiyeler %}
                                 <tr>
-                                <td>{{i.proje_ait_bilgisi.taseron_adi}}</td>
+                                <td>{{i.proje_ait_bilgisi.taseron_adi}} ({{i.proje_ait_bilgisi.kayit_tarihi | date:'d.m.Y'}})</td>
                                  <td>{{i.proje_ait_bilgisi.telefon_numarasi}}</td>
                                   <td>{{i.proje_ait_bilgisi.email}}</td>
                                     <td>{% if i.tarih %}
@@ -92,12 +92,14 @@
                                                     {{ i.kayit_tarihi | date:'d.m.Y'}}
                                                     {% endif %}</td>
                                      <td>{{i.aciklama}}</td>
-                                <td>{% if i.durum %}Aktif{% else %}Pasif{% endif %}</td>
+                                <td>{% if i.durum %}
+                                {% trans 'Aktif' %}
+                                {% else %}{% trans 'Pasif' %}{% endif %}</td>
                                     
                                     <td>
                                         <div class="td-actions">
                                             {% if i.dosya %}
-                                                <a title="{{i.dosya.name}}" onclick="openModal('sozlesme-indir{{i.id}}')" class="status-info"><i class="icon icon-action-file"></i></a>
+                                                <a title='{{ i.dosya.name|split:"/" }}' onclick="openModal('sozlesme-indir{{i.id}}')" class="status-info"><i class="icon icon-action-file"></i></a>
                                             {% else %}
                                             {% endif %}
                                             
@@ -270,7 +272,7 @@
                     <div class="form-element">
 
                         <label for="dosya-adi">{% trans 'Dosya Adı' %}</label>
-                        <input type="tel" value="{{i.dosya_adi}}" name="dosyaadi" id="dosya-adi">
+                        <input type="tel" value='{{ i.dosya.name|split:"/" }}' name="dosyaadi" id="dosya-adi">
                     </div>
                     <div class="form-element">
                         <label for="tarih">{% trans 'Tarih' %}</label>
@@ -540,7 +542,7 @@
                             
                             {% for i in santiyeler %}
                                 <tr>
-                                <td>{{i.proje_ait_bilgisi.taseron_adi}}</td>
+                                <td>{{i.proje_ait_bilgisi.taseron_adi}} ({{i.proje_ait_bilgisi.kayit_tarihi | date:'d.m.Y'}})</td>
                                  <td>{{i.proje_ait_bilgisi.telefon_numarasi}}</td>
                                   <td>{{i.proje_ait_bilgisi.email}}</td>
                                     <td>{% if i.tarih %}
@@ -554,7 +556,7 @@
                                     <td>
                                         <div class="td-actions">
                                             {% if i.dosya %}
-                                                <a title="{{i.dosya.name}}" onclick="openModal('sozlesme-indir{{i.id}}')" class="status-info"><i class="icon icon-action-file"></i></a>
+                                                <a title='{{ i.dosya.name|split:"/" }}' onclick="openModal('sozlesme-indir{{i.id}}')" class="status-info"><i class="icon icon-action-file"></i></a>
                                             {% else %}
                                             {% endif %}
                                             
@@ -727,7 +729,7 @@
                     <div class="form-element">
 
                         <label for="dosya-adi">{% trans 'Dosya Adı' %}</label>
-                        <input type="tel" value="{{i.dosya_adi}}" name="dosyaadi" id="dosya-adi">
+                        <input type="tel" value='{{ i.dosya.name|split:"/" }}' name="dosyaadi" id="dosya-adi">
                     </div>
                     <div class="form-element">
                         <label for="tarih">{% trans 'Tarih' %}</label>

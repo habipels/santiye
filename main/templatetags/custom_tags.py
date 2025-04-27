@@ -686,7 +686,7 @@ def kalemler_sadece(id):
                 a.append(j.blog_bilgisi)
         for j in a:
             #/delbuldingsites/{}/{}
-            form = form+ """<option selected value="{},{}">{}&#8594;{}&#8594;{}</option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(j.blog_adi),str(i.kalem_adi))
+            form = form+ """<option  value="{},{}">{}&#8594;{}&#8594;{}</option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(j.blog_adi),str(i.kalem_adi))
 
     return mark_safe(form)
 @register.simple_tag
@@ -2320,3 +2320,10 @@ def kalem_max_fiziksel_max_finansal(bilgi):
         max_finansal = max_finansal - i.santiye_finansal_agirligi
         max_fiziksel = max_fiziksel - i.santiye_agirligi
     return {"max_fiziksel":int(max_fiziksel),"max_finansal":int(max_finansal)}
+
+@register.filter
+def split(value, arg):
+    """Splits a string by the given separator and returns the last element."""
+    if value:
+        return value.split(arg)[-1]
+    return value
