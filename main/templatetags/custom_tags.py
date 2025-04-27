@@ -1646,7 +1646,7 @@ from django.db.models.functions import ExtractMonth, ExtractYear
 @register.simple_tag
 def dashboard_bilgisi(kisi):
     content = {}
-    cali = calisanlar.objects.filter(calisan_kime_ait = kisi,status = "0")
+    cali = calisanlar.objects.filter(calisan_kime_ait = kisi,status = "0",silinme_bilgisi = False)
     content["personel_sayisi"] = cali.count()
     try:
         cali = cali.order_by("-id")[:2]
@@ -2099,7 +2099,7 @@ def bina_3d2(veri):
         katlar = []
         katlar_modasl = []
         bina_kat_sayisi = blok.kat_sayisi
-        gor_olan_katlar = IsplaniPlanlari.objects.filter(blok= get_object_or_404(bloglar,id = veri) ).exclude(status = "Completed",blok = None )
+        gor_olan_katlar = IsplaniPlanlari.objects.filter(blok= get_object_or_404(bloglar,id = veri),silinme_bilgisi = False).filter(Q(status = "New") | Q(status = "Pending") | Q(status = "Inprogress") ).exclude(blok = None )
         for i in gor_olan_katlar:
             a = "Kat " + str(i.kat)+"-"+str(blok.id)
             katlar.append(a)

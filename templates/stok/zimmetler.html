@@ -162,10 +162,11 @@
             </p></div>
                 </div>
 
-                <div class="form-actions">
-                    <button class="form-action-secondary" type="button" onclick="closeModal('zimmet-detay')">Vazgeç</button>
-                    <button class="form-action-primary" type="button">Hasarlı Teslim Alındı</button>
-                    <button class="form-action-highlight" type="button">Teslim Alındı</button>
+                <div class="teslim_al form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal('zimmet-detay')">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-primary" type="button">
+                    {% trans 'Hasarlı Teslim Alındı' %}</button>
+                    <button class="form-action-highlight" type="button">{% trans 'Teslim Alındı' %}</button>
                 </div>
             </div>
         </div>
@@ -223,7 +224,7 @@
                         <label for="malzeme">{% trans 'Malzeme' %}:</label>
                         <select id="malzeme" required name="malzeme">
                             {% for i in santiyeler %}
-                                <option value="{{i.id}}">{{i.urun_adi}}</option>
+                                <option data-miktar-max = "{% stok_sayisi i %}" value="{{i.id}}">{{i.urun_adi}}({% trans "Stok Miktari" %} : {% stok_sayisi i %})  </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -728,7 +729,7 @@ function getFormattedDateTime() {
                         <label for="malzeme">{% trans 'Malzeme' %}:</label>
                         <select id="malzeme" required name="malzeme">
                             {% for i in santiyeler %}
-                                <option value="{{i.id}}">{{i.urun_adi}}</option>
+                                <option data-miktar-max = "{% stok_sayisi i %}" value="{{i.id}}">{{i.urun_adi}}({% trans "Stok Miktari" %} : {% stok_sayisi i %})  </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -1014,5 +1015,21 @@ function getFormattedDateTime() {
     }
 </script>
 {% endif %}
+<script>
+function setMaxMiktar() {
+    var select = document.getElementById('malzeme');
+    var selectedOption = select.options[select.selectedIndex];
+    var maxMiktar = selectedOption.getAttribute('data-miktar-max');
+    if (maxMiktar) {
+        maxMiktar = maxMiktar.replace(',', '.'); // Virgülü noktaya çevir
+        document.getElementById('miktar').setAttribute('max', maxMiktar);
+    }
+}
+
+document.getElementById('malzeme').addEventListener('change', setMaxMiktar);
+window.addEventListener('DOMContentLoaded', setMaxMiktar);
+</script>
+
+
 {% endblock sidebar %}
 

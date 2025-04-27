@@ -470,9 +470,9 @@ def homepage(request):
                 if a.izinler.dashboard_gorme:
                     content["gider"] = sonuc
                     content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db,silinme_bilgisi = False).order_by("-id")[:5]
-                    content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).order_by("-id")[:5]
-                    content["son_gorevler_bina"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).exclude(blok = None).last()
-                    konum = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ).exclude(blok = None).last()
+                    content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db,silinme_bilgisi = False ).order_by("-id")[:5]
+                    content["son_gorevler_bina"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db ,silinme_bilgisi = False).exclude(blok = None).last()
+                    konum = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user.kullanicilar_db,silinme_bilgisi = False ).exclude(blok = None).last()
                     kul = request.user.kullanicilar_db
                 else:
                     return redirect_with_language("main:yetkisiz")
@@ -482,9 +482,9 @@ def homepage(request):
         else:
             content["gider"] = sonuc
             content["bilgi"] = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user,silinme_bilgisi = False).order_by("-id")[:5]
-            content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).order_by("-id")[:5]
-            content["son_gorevler_bina"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).exclude(blok = None).last()
-            konum = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ).exclude(blok = None).last()
+            content["son_gorevler"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ,silinme_bilgisi = False).order_by("-id")[:5]
+            content["son_gorevler_bina"] = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user ,silinme_bilgisi = False).exclude(blok = None).last()
+            konum = IsplaniPlanlari.objects.filter(proje_ait_bilgisi =request.user,silinme_bilgisi = False ).exclude(blok = None).last()
             kul = request.user
     try: 
         weather_data = None

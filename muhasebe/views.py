@@ -1671,15 +1671,16 @@ def cari_duzenle_2(request,hash):
         kullanici_bilgisi  = request.POST.get("kullanici")
         proje_tip_adi   = request.POST.get("yetkili_adi")
         silinmedurumu = request.POST.get("silinmedurumu")
+        bakiye = request.POST.get("bakiye")
         konumu = request.POST.get("konumu")
         if silinmedurumu == "1":
             silinmedurumu = False
-            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = users ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = users ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu,telefon_numarasi = bakiye)
         elif silinmedurumu == "2":
             silinmedurumu = True
-            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = users ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = users ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu,telefon_numarasi = bakiye)
         else:
-            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = users ,cari_adi = proje_tip_adi,aciklama = konumu)
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = users ,cari_adi = proje_tip_adi,aciklama = konumu,telefon_numarasi = bakiye)
     else:
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -1826,16 +1827,17 @@ def cari_duzenle(request):
     if super_admin_kontrolu(request):
         kullanici_bilgisi  = request.POST.get("kullanici")
         proje_tip_adi   = request.POST.get("yetkili_adi")
+        bakiye = request.POST.get("bakiye")
         silinmedurumu = request.POST.get("silinmedurumu")
         konumu = request.POST.get("konumu")
         if silinmedurumu == "1":
             silinmedurumu = False
-            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu,telefon_numarasi = bakiye)
         elif silinmedurumu == "2":
             silinmedurumu = True
-            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu)
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu,silinme_bilgisi = silinmedurumu,telefon_numarasi = bakiye)
         else:
-            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu)
+            cari.objects.filter(id = id).update(cari_kart_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,cari_adi = proje_tip_adi,aciklama = konumu,telefon_numarasi = bakiye)
     else:
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
@@ -1852,8 +1854,9 @@ def cari_duzenle(request):
         else:
             proje_tip_adi   = request.POST.get("yetkili_adi")
             konumu = request.POST.get("konumu")
+            bakiye = request.POST.get("bakiye")
             cari.objects.filter(cari_kart_ait_bilgisi = request.user,id = id).update(cari_adi = proje_tip_adi
-                    ,aciklama = konumu)
+                    ,aciklama = konumu,telefon_numarasi = bakiye)
     return redirect_with_language("accounting:cari")
 #cari işlemler
 
@@ -5678,6 +5681,7 @@ def urun_bilgisi(request,id):
     if True:
         urun = get_object_or_none(urunler , id = id)
         zimmetler = zimmet_olayi.objects.filter(zimmet_verilen_urun = urun)
+        stok_giris_cikis_getir = stok_giris_cikis.objects.filter(stok_giren_urun = urun)
         fatura_data = {
             'isim':urun.urun_adi,
         'kategori': urun.urun_kategorisi.kategori_adi,
@@ -5689,7 +5693,20 @@ def urun_bilgisi(request,id):
                 "alis": kalem.zimmet_verilis_tarihi.strftime("%d.%m.%Y"),
     "veris":kalem.zimmet_teslim_edilme_tarihi.strftime("%d.%m.%Y") if kalem.zimmet_teslim_edilme_tarihi else "" ,
             } for kalem in zimmetler
+        ],
+        "veriler": [
+            {
+                "islem": {
+                    "0": _("Giriş"),
+                    "1": _("Çıkış"),
+                }.get(veri.stok_durumu, _("Yok")),
+                "adet": str(veri.stok_adeti),
+                "islemi_yapan": veri.stok_giren.last_name,
+                "islem_tarihi": veri.kayit_tarihi.strftime("%d.%m.%Y"),
+            }
+            for veri in stok_giris_cikis_getir
         ]
+
         }
         #print(fatura_data)
         return JsonResponse(fatura_data)

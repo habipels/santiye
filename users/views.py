@@ -79,6 +79,7 @@ def personel_bilgisi_axaj(request, id):
             'faza_mesai_orani': str(maasli.fazla_mesai_orani),
             'durum': "1" if maasli.durum else "0",
             'para_birimi': "1" if maasli.para_birimi else "0",
+            "gunluk_saatlik_ucret": str(maasli.maas/ bilgi.gunluk_calisma_saati),
             'belgeler': [
                 {
                     'id': belge.id,
@@ -769,7 +770,7 @@ def personeller_odenmeye_maaslar(request):
             kullanici = request.user
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
-        content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
+        content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici)
     return render(request,"personel/odenmeyen_maaslar.html",content)
 
 def personeller_odenmeye_maaslar_2(request,hash):
@@ -818,7 +819,7 @@ def bodro(request,tarih,id):
             kullanici = request.user
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
-        content["personel"] = get_object_or_404(calisanlar,status = "0",calisan_kime_ait = kullanici,id = id,silinme_bilgisi = False) 
+        content["personel"] = get_object_or_404(calisanlar,status = "0",calisan_kime_ait = kullanici,id = id) 
         content["istenen_tarih_araligi"] =tarih
     return render(request,"personel/bodro.html",content)
 def personeller_sil(request):

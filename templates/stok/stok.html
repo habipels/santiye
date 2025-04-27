@@ -224,6 +224,10 @@
             <p><strong>{% trans 'Ürün Adı' %}:</strong> <span id="urun_bilgisi"></span> </p>
             <p><strong>{% trans 'Kategori' %}:</strong> <span id="kategori_bilgisi"></span> </p>
             <p><strong>{% trans 'Stok Durumu' %}:</strong> <span id="adet"></span> </p>
+             <p><strong>{% trans 'Stok Geçmişi' %}:</strong></p>
+              <ul id="stok_gecmisi">
+             
+            </ul>
             <p><strong>{% trans 'Zimmet Geçmişi' %}:</strong></p>
             <ul id="zimet">
              
@@ -276,7 +280,12 @@
                     <li>${kalem.Personel} - ${kalem.adet} - ${kalem.alis} - ${kalem.veris}</li>
                 `).join('');
 
-                document.getElementById("zimet").innerHTML = zimmet;   
+                document.getElementById("zimet").innerHTML = zimmet; 
+                let stoklari_cekme = data.veriler.map(veri => `
+                    <li>${veri.islem} - ${islem.adet} - ${veri.islemi_yapan} - ${veri.islem_tarihi}</li>
+                `).join('');
+
+                document.getElementById("stok_gecmisi").innerHTML = stoklari_cekme;   
                 document.getElementById("goruntule").style.display = 'flex';
             })}
             function stok_ekle(id) {
@@ -481,6 +490,10 @@
             <p><strong>{% trans 'Ürün Adı' %}:</strong> <span id="urun_bilgisi"></span> </p>
             <p><strong>{% trans 'Kategori' %}:</strong> <span id="kategori_bilgisi"></span> </p>
             <p><strong>{% trans 'Stok Durumu' %}:</strong> <span id="adet"></span> </p>
+            <p><strong>{% trans 'Stok Geçmişi' %}:</strong></p>
+              <ul id="stok_gecmisi">
+             
+            </ul>
             <p><strong>{% trans 'Zimmet Geçmişi' %}:</strong></p>
             <ul id="zimet">
              
@@ -530,7 +543,7 @@
         fetch(`/accounting/zimmetbilgisi/${faturaId}/`)
             .then(response => response.json())
             .then(data => {
-                 
+                 console.log(data);
                 document.getElementById("urun_bilgisi").textContent = data.isim;
                 document.getElementById("kategori_bilgisi").textContent = data.kategori;
                 document.getElementById("adet").textContent = data.stok;
@@ -539,6 +552,12 @@
                 `).join('');
 
                 document.getElementById("zimet").innerHTML = zimmet;   
+                let stoklari_cekme = data.veriler.map(veri => `
+                    <li>${veri.islem} - ${veri.adet} - ${veri.islemi_yapan} - ${veri.islem_tarihi}</li>
+                `).join('');
+
+                document.getElementById("stok_gecmisi").innerHTML = stoklari_cekme;   
+                
                 document.getElementById("goruntule").style.display = 'flex';
             })}
             function stok_ekle(id) {
