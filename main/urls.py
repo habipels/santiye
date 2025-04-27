@@ -265,6 +265,7 @@ path("levelhouse/<int:id>/<int:kat>/", views.kat_daire_bilgisi, name="kat_daire_
 
 
 #rfi
+path("saat/", views.get_kayit_tarihi_from_request, name="get_kayit_tarihi_from_request"),
 path("rfi_create/", views.rfi_Olustur, name="rfi_Olustur"),
 path("rfi_list/", views.rfi_listesi, name="rfi_listesi"),
 path("rfi_template/", views.rfi_template, name="rfi_template"),

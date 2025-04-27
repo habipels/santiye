@@ -240,6 +240,14 @@ def get_time_zone_from_country(country):
         # Diğer ülkeler için zaman dilimlerini burada ekleyebilirsiniz
     }
     return time_zones.get(country, 'UTC')  # Varsayılan olarak UTC döner
+from django.utils.timezone import make_naive
+
+from django.utils.timezone import make_aware
+import pytz
+
+import pytz
+from django.utils import timezone
+
 def get_kayit_tarihi_from_request(request):
     ip_address = request.META.get('REMOTE_ADDR', None)
     if ip_address == '127.0.0.1':
@@ -250,16 +258,24 @@ def get_kayit_tarihi_from_request(request):
             response = reader.country(ip_address)
             country = response.country.iso_code
             country_time_zone = get_time_zone_from_country(country)
-            # Yerel zaman dilimi
             tz = pytz.timezone(country_time_zone)
-            
-            # Zamanı UTC'den yerel zaman dilimine dönüştürme
-            utc_time = timezone.now()  # UTC zamanı alıyoruz
-            local_time = utc_time.astimezone(tz)  #
-            print(local_time,pytz.timezone(country_time_zone))
-            return local_time
+
+            utc_time = timezone.now()  # BU ZATEN UTC
+            local_time = utc_time.astimezone(tz)
+
+            # saniye ve mikrosaniyeyi sıfırlıyoruz
+            local_time = local_time.replace(second=0, microsecond=0)
+
+            # ŞİMDİ: tekrar UTC'ye dönüyoruz
+            final_utc_time = local_time.astimezone(pytz.UTC)
+
+            print("Kayıt zamanı UTC olarak:", final_utc_time)
+            return final_utc_time
     except Exception:
-        return timezone.now()  # Hata durumunda UTC döndür
+        utc_time = timezone.now().replace(second=0, microsecond=0)
+        return utc_time
+
+
 def get_csrf_token(request):
     token = get_token(request)
     #print(token)
@@ -10551,7 +10567,7 @@ def rfi_listesi(request):
         # Validate required fields
         if not (rfi_sablonu and yapi_gonder and kat and apartmentNo and location and file):
             return JsonResponse({"status": "error", "message": "Eksik bilgi gönderildi."}, status=400)
-
+        print(get_kayit_tarihi_from_request(request),"saat")
         rfi_kontrol.objects.create(
             kayit_tarihi=get_kayit_tarihi_from_request(request),
             sablon_bilgisi=get_object_or_none(rfi_sablonlar, id=rfi_sablonu),
