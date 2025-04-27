@@ -1956,22 +1956,30 @@ def gelir_etiketi_ekleme(request):
         if super_admin_kontrolu(request):
             kullanici_bilgisi  = request.POST.get("kullanici")
             proje_tip_adi   = request.POST.get("yetkili_adi")
-
-            gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi)
+            if gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi),gelir_etiketi_adi = proje_tip_adi).exists():
+                pass
+            else:
+                gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = get_object_or_404(CustomUser,id = kullanici_bilgisi ) ,gelir_etiketi_adi = proje_tip_adi)
         else:
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
                     if a.izinler.gelir_etiketi_olusturma:
                         proje_tip_adi   = request.POST.get("yetkili_adi")
-                        gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,gelir_etiketi_adi = proje_tip_adi)
+                        if gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,gelir_etiketi_adi = proje_tip_adi).exists():
+                            pass
+                        else:
+                            gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = request.user.kullanicilar_db,gelir_etiketi_adi = proje_tip_adi)
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
                     return redirect_with_language("main:yetkisiz")
             else:
                 proje_tip_adi   = request.POST.get("yetkili_adi")
-                gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = request.user,gelir_etiketi_adi = proje_tip_adi)
+                if gelir_etiketi.objects.filter(gelir_kategoris_ait_bilgisi = request.user,gelir_etiketi_adi = proje_tip_adi).exists():
+                    pass
+                else:
+                    gelir_etiketi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),gelir_kategoris_ait_bilgisi = request.user,gelir_etiketi_adi = proje_tip_adi)
     return redirect_with_language("accounting:gelir_etiketi_tipleri")
 
 def gelir_etiketi_sil(request):
