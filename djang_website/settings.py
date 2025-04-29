@@ -110,6 +110,7 @@ if DEPLOY__:
                     'django.template.context_processors.request',
                     'django.contrib.auth.context_processors.auth',
                     'django.contrib.messages.context_processors.messages',
+                    'django.template.context_processors.i18n',
                 ],
                 'libraries': {
                 'custom_tags': 'main.templatetags.custom_tags',
@@ -318,6 +319,7 @@ else:
                     'django.template.context_processors.request',
                     'django.contrib.auth.context_processors.auth',
                     'django.contrib.messages.context_processors.messages',
+                    'django.template.context_processors.i18n',
                 ],
                 'libraries': {
                 'custom_tags': 'main.templatetags.custom_tags',
@@ -387,6 +389,9 @@ else:
     USE_L10N = True
 
     USE_TZ = True
+
+    # Eksik çeviriler için fallback dil ayarı
+    LANGUAGE_FALLBACK = 'en'  # Eksik çeviriler için İngilizce'yi kullan
 
     from django.utils.translation import gettext_lazy as _
     LANGUAGES = (
