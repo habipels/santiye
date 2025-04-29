@@ -30,9 +30,8 @@
         <div class="employees-page">
             <!-- First employee card -->
             {% for i in personeller %}
-            
-            
-            <div class="employeep" onclick="openPersonelDetails('{{i.id}}')">
+            {% if i.silinme_bilgisi %}
+                 <div class="employeep" style="background-color: black !important;" >
                 <div class="employeep-image">
                 <img src="{% if i.profile %}{{i.profile.url}}{% else %}{% static 'go/content/images/default-profile.png' %}{% endif %}" alt="{% trans 'employee' %}">
                     
@@ -57,6 +56,35 @@
                     </div>
                 </div>
             </div>
+            {% else %}
+             <div class="employeep" onclick="openPersonelDetails('{{i.id}}')">
+                <div class="employeep-image">
+                <img src="{% if i.profile %}{{i.profile.url}}{% else %}{% static 'go/content/images/default-profile.png' %}{% endif %}" alt="{% trans 'employee' %}">
+                    
+                </div>
+                <div class="employeep-name">{{i.isim}} {{i.soyisim}}</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">{{i.calisan_pozisyonu.kategori_isimi}}</div>{% calisan_maasi i.id as maasi %}
+                    <div class="employeep-tag-salary"><span>{{maasi.maas}}</span><span>{% if maasli.para_birimi %}</span>
+                        $
+                    {% else %}
+                    IQD
+                    {% endif %}  </div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans "Departman" %}</span>
+                        {{i.calisan_kategori.kategori_isimi}}
+                    </div>
+                    <div class="employeep-detail">
+                        <span>{% trans "İşe Giriş Tarihi" %}</span>
+                       {{i.kayit_tarihi | date:'d.m.Y'}}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+           
             {% endfor %}
            
 
@@ -935,9 +963,8 @@ function openPersonelDetails(id) {
         <div class="employees-page">
             <!-- First employee card -->
             {% for i in personeller %}
-            
-            
-            <div class="employeep" onclick="openPersonelDetails('{{i.id}}')">
+            {% if i.silinme_bilgisi %}
+                 <div class="employeep"  >
                 <div class="employeep-image">
                 <img src="{% if i.profile %}{{i.profile.url}}{% else %}{% static 'go/content/images/default-profile.png' %}{% endif %}" alt="{% trans 'employee' %}">
                     
@@ -945,11 +972,37 @@ function openPersonelDetails(id) {
                 <div class="employeep-name">{{i.isim}} {{i.soyisim}}</div>
                 <div class="employeep-tags">
                     <div class="employeep-tag-job">{{i.calisan_pozisyonu.kategori_isimi}}</div>{% calisan_maasi i.id as maasi %}
-                    <div class="employeep-tag-salary">{{maasi.maas}}{% odeme_para_birimii  i as para_birimi %}  {% if para_birimi == "1" %}
+                    <div class="employeep-tag-salary"><span>{{maasi.maas}}</span><span>{% if maasli.para_birimi %}</span>
                         $
                     {% else %}
                     IQD
-                    {% endif %}</div>
+                    {% endif %}  </div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans "Departman" %}</span>
+                        {{i.calisan_kategori.kategori_isimi}}
+                    </div>
+                    <div class="employeep-detail">
+                        <span>{% trans "İşten Ayrıldı" %}</span>
+                       
+                    </div>
+                </div>
+            </div>
+            {% else %}
+             <div class="employeep" onclick="openPersonelDetails('{{i.id}}')">
+                <div class="employeep-image">
+                <img src="{% if i.profile %}{{i.profile.url}}{% else %}{% static 'go/content/images/default-profile.png' %}{% endif %}" alt="{% trans 'employee' %}">
+                    
+                </div>
+                <div class="employeep-name">{{i.isim}} {{i.soyisim}}</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">{{i.calisan_pozisyonu.kategori_isimi}}</div>{% calisan_maasi i.id as maasi %}
+                    <div class="employeep-tag-salary"><span>{{maasi.maas}}</span><span>{% if maasli.para_birimi %}</span>
+                        $
+                    {% else %}
+                    IQD
+                    {% endif %}  </div>
                 </div>
                 <div class="employeep-details">
                     <div class="employeep-detail">
@@ -962,7 +1015,11 @@ function openPersonelDetails(id) {
                     </div>
                 </div>
             </div>
+            {% endif %}
+            
+           
             {% endfor %}
+           
            
 
         </div>

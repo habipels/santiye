@@ -590,7 +590,7 @@ def personeller_sayfasi(request):
             kullanici = request.user
         content["departmanlar"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici)
         content["pozisyonlari"] = calisanlar_pozisyonu.objects.filter(kategori_kime_ait = kullanici)
-        content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici,silinme_bilgisi = False)
+        content["personeller"] = calisanlar.objects.filter(status = "0",calisan_kime_ait = kullanici)
         bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = kullanici).last()
         if bilgi:
             pass

@@ -446,7 +446,7 @@
                         {% bildirimler request.user as bildirim %}
                         {% endif %}
                         Bildirimler
-                        <span>{{bildirim | length }} {% trans 'adet yeni bildiriminiz var.' %}</span>
+                        
                     </div>
                     <div class="notifications-tabs">
                         <button onclick="notificationTab(event, 'notification-all')"
@@ -521,22 +521,6 @@
                        
                     </div>
 
-                    <div class="notifications" id="notification-unread" style="display: none;">
-                        <div class="notification">
-                            <div class="notification-avatar">
-                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
-                            </div>
-                            <div class="notification-content notification-unread">
-                                <div class="notification-title">tolga_info@biadagroup.com</div>
-                                <div class="notification-subtitle">site_info - klasörler</div>
-                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
-                                <div class="notification-actions">
-                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
-                                    <button class="notification-confirm-button">Onayla</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
 
                     <script>
@@ -886,7 +870,7 @@
     <hr>
 
     <ul class="sidebar-nav">
-        <li><a href="#"><i class="icon icon-notifications"></i> <span>{% trans 'Bildirimler' %}</span></a></li>
+        <li><a href="/{{dil}}{% url 'main:bildirimler' %}"><i class="icon icon-notifications"></i> <span>{% trans 'Bildirimler' %}</span></a></li>
         <li><a class="sidebar-sub-toggle" href="#"><i class="icon icon-settings"></i> <span>{% trans 'Ayarlar' %}</span> <i class="icon icon-caret"></i></a>
             <ul class="sidebar-sub-menu">
                 {% url 'users:kullanicilarim' as kullanicilarim_url %}
@@ -1186,7 +1170,7 @@ $(document).ready(function() {
                         {% bildirimler request.user as bildirim %}
                         {% endif %}
                         Bildirimler
-                        <span>{{bildirim | length }} {% trans 'adet yeni bildiriminiz var.' %}</span>
+                        
                     </div>
                     <div class="notifications-tabs">
                         <button onclick="notificationTab(event, 'notification-all')"
