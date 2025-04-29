@@ -803,6 +803,20 @@ document.getElementById('maasOdeForm').addEventListener('submit', function(e) {
 
     
 });
+function formatDate(dateStr) {
+    if (!dateStr) return ''; // Handle undefined or null values
+    const parts = dateStr.split(/[-.]/); // Split by '.' or '-' depending on the format
+    if (parts.length === 3) {
+        // Check if the format is 'yyyy-mm-dd'
+        if (parts[0].length === 4) {
+            return `${parts[0]}-${parts[1]}-${parts[2]}`; // Already in correct format
+        }
+        // Assume 'dd.mm.yyyy' format
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return ''; // Return empty string if format is invalid
+}
+
 function openPersonelDetails(id) {
     fetch(`/users/detailemployee/${id}/`)
             .then(response => response.json())
@@ -820,6 +834,8 @@ function openPersonelDetails(id) {
                 document.getElementById('detailuygugu').innerText  = data.uyrugu;
                 document.getElementById('detaildogumtarihi').innerText  = data.dogum_tarihi;
                 document.getElementById('detailtelefon').innerText = data.telefon_numarasi;
+                document.getElementById('dateduzeltme').value = formatDate(data.dogum_tarihi);
+                console.log(formatDate(data.dogum_tarihi));
                 if (data.durum == "1") {
                     document.getElementById('detailucrettipi').innerText  = "Maaşlı";
                 }
@@ -1691,8 +1707,17 @@ document.getElementById('maasOdeForm').addEventListener('submit', function(e) {
     
 });
 function formatDate(dateStr) {
-  var parts = dateStr.split('.'); // Tarihi '.' ile ayır
-  return parts[2] + '-' + parts[1] + '-' + parts[0]; // 'yyyy-mm-dd' formatına dönüştür
+    if (!dateStr) return ''; // Handle undefined or null values
+    const parts = dateStr.split(/[-.]/); // Split by '.' or '-' depending on the format
+    if (parts.length === 3) {
+        // Check if the format is 'yyyy-mm-dd'
+        if (parts[0].length === 4) {
+            return `${parts[0]}-${parts[1]}-${parts[2]}`; // Already in correct format
+        }
+        // Assume 'dd.mm.yyyy' format
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return ''; // Return empty string if format is invalid
 }
 function openPersonelDetails(id) {
     fetch(`/users/detailemployee/${id}/`)
@@ -1716,8 +1741,8 @@ function openPersonelDetails(id) {
                 document.getElementById('detailuygugu').innerText  = data.uyrugu;
                 document.getElementById('detaildogumtarihi').innerText  = data.dogum_tarihi;
                 document.getElementById('detailtelefon').innerText = data.telefon_numarasi;
-                document.getElementById('dateduzeltme').value  =  formatDate(data.dogum_tarihi);
-
+                document.getElementById('dateduzeltme').value = formatDate(data.dogum_tarihi);
+                console.log(formatDate(data.dogum_tarihi));
                 document.getElementById('gunluk-ucretduzelt').value  = data.maas;
                 document.getElementById('fazla_mesai_oraniduzelt').value  = data.faza_mesai_orani;
                 document.getElementById('saatlik-ucretduzelt').value  = data.yevmiye;
@@ -1844,7 +1869,7 @@ function personel_duzenle(id) {
     function calculateDailyWage() {
         const hourlyWage = parseFloat(document.getElementById("saatlik-ucret").value) || 0;
         const rate = parseFloat(document.getElementById("fazla_mesai_orani").value) || 0;
-        const dailyWage = hourlyWage / rate*  {% saatlik_ucret_hesabi hash_bilgi %};
+        const dailyWage = hourlyWage / rate* {% saatlik_ucret_hesabi hash_bilgi %};
         document.getElementById("gunluk-ucret").value = dailyWage.toFixed(4);
     }
 </script>

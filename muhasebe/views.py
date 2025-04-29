@@ -5338,6 +5338,7 @@ def satin_alma_talebi_ekle(request):
             fiyat = request.POST.get("fiyat")
             tedarikci = request.POST.get("tedarikci")
             aciklama = request.POST.get("aciklama")
+            talep_tarihi = request.POST.get("talep_tarihi")
             if request.user.kullanicilar_db:
                 a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
                 if a:
@@ -5345,7 +5346,7 @@ def satin_alma_talebi_ekle(request):
                         urun_talepleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),talebin_ait_oldugu = request.user.kullanicilar_db,
                         talebi_olusturan =request.user,urun = get_object_or_none(urunler,id =urun_bilgisi),
                         miktar = float(miktar),fiyati = float(fiyat),
-                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.datetime.now() )
+                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = talep_tarihi )
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
@@ -5354,7 +5355,7 @@ def satin_alma_talebi_ekle(request):
                 urun_talepleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),talebin_ait_oldugu = request.user,
                         talebi_olusturan =request.user,urun = get_object_or_none(urunler,id =urun_bilgisi),
                         miktar = float(miktar),fiyati = float(fiyat),
-                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = datetime.datetime.now()  )
+                        tedarikci =tedarikci,aciklama = aciklama,talep_Olusturma_tarihi = talep_tarihi )
 
     return redirect_with_language("accounting:satin_alma_talabi")
 
