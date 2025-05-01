@@ -10857,3 +10857,73 @@ def rapor_kaydedici(request):
             "message": "Rapor başarıyla kaydedildi.",
             "pdf_url": pdf_url
         })
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db import transaction
+from django.utils import timezone
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+@transaction.atomic
+def kullanici_verilerini_klonla_view(request, kaynak_kullanici_id, hedef_kullanici_id):
+    kaynak_kullanici = get_object_or_404(CustomUser, pk=kaynak_kullanici_id)
+    hedef_kullanici = get_object_or_404(CustomUser, pk=hedef_kullanici_id)
+
+    try:
+        eski_yeni_proje_tipleri = {}
+        for pt in proje_tipi.objects.filter(proje_ait_bilgisi=kaynak_kullanici, silinme_bilgisi=False):
+            eski_id = pt.pk
+            pt.pk = None
+            pt.proje_ait_bilgisi = hedef_kullanici
+            pt.kayit_tarihi = timezone.now()
+            pt.save()
+            eski_yeni_proje_tipleri[eski_id] = pt
+
+        eski_yeni_santiyeler = {}
+        for s in santiye.objects.filter(proje_ait_bilgisi=kaynak_kullanici, silinme_bilgisi=False):
+            eski_id = s.pk
+            s.pk = None
+            s.proje_ait_bilgisi = hedef_kullanici
+            s.proje_tipi = eski_yeni_proje_tipleri.get(s.proje_tipi.pk) if s.proje_tipi else None
+            s.kayit_tarihi = timezone.now()
+            s.save()
+            eski_yeni_santiyeler[eski_id] = s
+
+        eski_yeni_bloglar = {}
+        for b in bloglar.objects.filter(proje_ait_bilgisi=kaynak_kullanici):
+            eski_id = b.pk
+            b.pk = None
+            b.proje_ait_bilgisi = hedef_kullanici
+            b.proje_santiye_Ait = eski_yeni_santiyeler.get(b.proje_santiye_Ait.pk) if b.proje_santiye_Ait else None
+            b.kayit_tarihi = timezone.now()
+            b.save()
+            eski_yeni_bloglar[eski_id] = b
+
+        eski_yeni_kalemler = {}
+        for k in santiye_kalemleri.objects.filter(proje_ait_bilgisi=kaynak_kullanici):
+            eski_id = k.pk
+            k.pk = None
+            k.proje_ait_bilgisi = hedef_kullanici
+            k.proje_santiye_Ait = eski_yeni_santiyeler.get(k.proje_santiye_Ait.pk) if k.proje_santiye_Ait else None
+            k.kayit_tarihi = timezone.now()
+            k.save()
+            eski_yeni_kalemler[eski_id] = k
+
+        for d in santiye_kalemlerin_dagilisi.objects.filter(proje_ait_bilgisi=kaynak_kullanici):
+            d.pk = None
+            d.proje_ait_bilgisi = hedef_kullanici
+            d.proje_santiye_Ait = eski_yeni_santiyeler.get(d.proje_santiye_Ait.pk) if d.proje_santiye_Ait else None
+            d.kalem_bilgisi = eski_yeni_kalemler.get(d.kalem_bilgisi.pk) if d.kalem_bilgisi else None
+            d.blog_bilgisi = eski_yeni_bloglar.get(d.blog_bilgisi.pk) if d.blog_bilgisi else None
+            d.kayit_tarihi = timezone.now()
+            d.save()
+
+        messages.success(request, "Veriler başarıyla kopyalandı.")
+    except Exception as e:
+        messages.error(request, f"Hata oluştu: {str(e)}")
+        raise
+
+    return redirect("admin:index")

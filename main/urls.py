@@ -277,6 +277,7 @@ path("rfi_show/<int:id>", views.rfi_show, name="rfi_show"),
 path("create_report/", views.rapor_olusturma, name="rapor_olusturma"),
 path("report_list/", views.raporlari_gor_sayfasi, name="raporlari_gor_sayfasi"),
 path("rapor_kaydedici/", views.rapor_kaydedici, name="rapor_kaydedici"),
+path("veri-klonla/<int:kaynak_kullanici_id>/<int:hedef_kullanici_id>/", views.kullanici_verilerini_klonla_view, name="veri_klonla"),
 ]
 
 #

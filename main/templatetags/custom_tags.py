@@ -1482,7 +1482,7 @@ def toplam_kalem_orani_toplami(veri):
     for i in veri:
         a = a + i.santiye_agirligi
         b = b + i.santiye_finansal_agirligi
-    return {"a":a,"b":b}
+    return {"a":round(a,2),"b":round(b,2)}
 from hashids import Hashids
 
 # Salt değeri ve minimum hash uzunluğu belirleyin
@@ -2315,11 +2315,11 @@ def calculate_waiting_time_onay_suresi(record_time,record_time2):
 def kalem_max_fiziksel_max_finansal(bilgi):
     max_fiziksel = 100
     max_finansal = 100
-    a = santiye_kalemleri.objects.filter(proje_santiye_Ait = bilgi)
+    a = santiye_kalemleri.objects.filter(proje_santiye_Ait = bilgi,silinme_bilgisi = False)
     for i in a:
         max_finansal = max_finansal - i.santiye_finansal_agirligi
         max_fiziksel = max_fiziksel - i.santiye_agirligi
-    return {"max_fiziksel":int(max_fiziksel),"max_finansal":int(max_finansal)}
+    return {"max_fiziksel":round (float(max_fiziksel),2),"max_finansal":round (float(max_finansal),2)}
 
 @register.filter
 def split(value, arg):
