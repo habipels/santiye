@@ -660,6 +660,7 @@ def kalem_blog(id):
 @register.simple_tag
 def calisan_maasi(id):
     maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
+    print(maasli.para_birimi)
     return maasli
 @register.simple_tag
 def secililer_yapi_kalem(id):
