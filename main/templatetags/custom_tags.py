@@ -707,7 +707,7 @@ def kalemler_sadece_duzeltmeli(id,z):
             if z.filter(kalem_bilgisi__id = i.id ,blog_bilgisi__id = j.id):
                 form = form+ """<option selected value="{},{}">{}&#8594;{}&#8594;{}</option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(j.blog_adi),str(i.kalem_adi))
             else:
-                form = form+ """<option selected value="{},{}">{}&#8594;{}&#8594;{}</option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(j.blog_adi),str(i.kalem_adi))
+                form = form+ """<option  value="{},{}">{}&#8594;{}&#8594;{}</option>""".format(str(i.id ),str(j.id),str(i.proje_santiye_Ait.proje_adi),str(j.blog_adi),str(i.kalem_adi))
     return mark_safe(form)
 @register.simple_tag
 
