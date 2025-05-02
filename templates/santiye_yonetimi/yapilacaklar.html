@@ -142,11 +142,11 @@
                                                     <span
                                                     class="status-pending stats-lg">{% trans 'Devam Eden' %}</span>
                                                 {% elif i.status == "New" %}
-                                                <div class="td-info"><span class="status-highlight stats-lg">Yeni</span></div>
+                                                <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %} </span></div>
                                                 {% elif i.status == "Pending" %}
-                                                <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                                <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %} </span></div>
                                                  {% elif i.status == "Completed" %}
-                                                <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                                <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %} </span></div>
                                                     {% endif %}
                                                 
                                         
@@ -786,7 +786,15 @@
                         <div class="ilerleme-durumu-content">
                            {% trans 'Personel ' %} {{k.yapan_kisi.last_name}} <br>
                            {% trans 'Açıklama ' %}{{k.aciklama}}<br>
-                            {% trans 'Durum ' %}{{k.status}} <br>
+                            {% trans 'Durum ' %}{% if k.status == "Inprogress" %}
+                                                    {% trans 'Devam Eden' %}
+                                                {% elif k.status == "New" %}
+                                                 {% trans 'Yeni' %}
+                                                {% elif k.status == "Pending" %}
+                                            {% trans 'Beklemede' %}
+                                                 {% elif k.status == "Completed" %}
+                                                {% trans 'Tamamlandı' %}
+                                                    {% endif %} <br>
                             {% trans 'Hedef Tarih ' %}{{k.teslim_tarihi}}<br>
                             
                         </div>
@@ -837,7 +845,9 @@
                         <input type="date" value="{{i.teslim_tarihi | date:'Y-m-d'}}" name="teslim_tarihi"  id="tarih">
                     </div>
                     <div class="form-element">
-                        <label for="belge-yukle">Belge Yükle</label>
+                        <label for="belge-yukle">
+                        {% trans'Belge Yükle' %}
+                       </label>
 
                         <div class="file-input">
                             <label for="belge-yukle">
@@ -2451,7 +2461,15 @@ openModal("is-emri-duzenle");
                             <div class="ilerleme-durumu-content" style="margin-top: 10px;">
                                 <p><strong>{% trans 'İşlemi Yapan:' %}</strong> {{ k.yapan_kisi.last_name }}</p>
                                 <p><strong>{% trans 'Açıklama:' %}</strong> {{ k.aciklama }}</p>
-                                <p><strong>{% trans 'Durum:' %}</strong> {{ k.status }}</p>
+                                <p><strong>{% trans 'Durum:' %}</strong> {% if k.status == "Inprogress" %}
+                                                    {% trans 'Devam Eden' %}
+                                                {% elif k.status == "New" %}
+                                                 {% trans 'Yeni' %}
+                                                {% elif k.status == "Pending" %}
+                                            {% trans 'Beklemede' %}
+                                                 {% elif k.status == "Completed" %}
+                                                {% trans 'Tamamlandı' %}
+                                                    {% endif %} </p>
                                 <p><strong>{% trans 'Teslim Tarihi:' %}</strong> {{ k.teslim_tarihi }}</p>
                             </div>
                             <div class="ilerleme-durumu-dosyalar" style="margin-top: 10px;">
