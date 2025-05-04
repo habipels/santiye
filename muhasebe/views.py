@@ -2558,8 +2558,19 @@ def virman_gondermeler(request):
         content["kullanicilar"] =kullanicilar
         content["kasalar"]  = Kasa.objects.filter(silinme_bilgisi = False)
     else:
-        profile = virman.objects.filter(silinme_bilgisi = False,virman_ait_oldugu = request.user)
-        content["kasalar"]  = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.kasa_virman_gorme_izni:
+                    profile = virman.objects.filter(silinme_bilgisi = False,virman_ait_oldugu = request.user.kullanicilar_db)
+                    content["kasalar"]  = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            profile = virman.objects.filter(silinme_bilgisi = False,virman_ait_oldugu = request.user)
+            content["kasalar"]  = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user)
     if request.GET:
         gonderen_kasa = request.GET.get("gonderen_kasa")
         alici_kasa = request.GET.get("alici_kasa")

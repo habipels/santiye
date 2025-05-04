@@ -7573,6 +7573,25 @@ def kullanici_yetki_alma(request):
         izinler.genel_rapor_duzenleme = False
         izinler.genel_rapor_silme = False
         izinler.genel_rapor_onaylama = False
+        izinler.satin_alma_talebi_olusturma = False
+        izinler.satin_alma_talebi_silme = False
+        izinler.satin_alma_talebi_gorme = False
+        izinler.satin_alma_talebi_duzenleme = False
+
+        izinler.satin_alma_talebi_onaylama_olusturma = False
+        izinler.satin_alma_talebi_onaylama_silme = False
+        izinler.satin_alma_talebi_onaylama_gorme = False
+        izinler.satin_alma_talebi_onaylama_duzenleme = False
+
+        izinler.stok_olusturma = False
+
+        izinler.stok_talebi_onaylama_silme = False
+        izinler.stok_talebi_onaylama_gorme = False
+        izinler.stok_talebi_onaylama_duzenleme = False
+
+        izinler.zimmet_olusturma = False
+        izinler.zimmet_silme = False
+        izinler.zimmet_gorme = False
 
         izinler.save()
         ##
@@ -8035,6 +8054,67 @@ def kullanici_yetki_alma(request):
         genel_rapor_onaylama = request.POST.get("genel_rapor_onaylama")
         if genel_rapor_onaylama : 
             izinler.genel_rapor_onaylama = True
+        #stok satın alma 
+        satin_alma_talebi_olusturma = request.POST.get("satin_alma_talebi_olusturma")
+        if satin_alma_talebi_olusturma:
+            izinler.satin_alma_talebi_olusturma = True
+
+        satin_alma_talebi_silme = request.POST.get("satin_alma_talebi_silme")
+        if satin_alma_talebi_silme:
+            izinler.satin_alma_talebi_silme = True
+
+        satin_alma_talebi_gorme = request.POST.get("satin_alma_talebi_gorme")
+        if satin_alma_talebi_gorme:
+            izinler.satin_alma_talebi_gorme = True
+
+        satin_alma_talebi_duzenleme = request.POST.get("satin_alma_talebi_duzenleme")
+        if satin_alma_talebi_duzenleme:
+            izinler.satin_alma_talebi_duzenleme = True
+
+        satin_alma_talebi_onaylama_olusturma = request.POST.get("satin_alma_talebi_onaylama_olusturma")
+        if satin_alma_talebi_onaylama_olusturma:
+            izinler.satin_alma_talebi_onaylama_olusturma = True
+
+        satin_alma_talebi_onaylama_silme = request.POST.get("satin_alma_talebi_onaylama_silme")
+        if satin_alma_talebi_onaylama_silme:
+            izinler.satin_alma_talebi_onaylama_silme = True
+
+        satin_alma_talebi_onaylama_gorme = request.POST.get("satin_alma_talebi_onaylama_gorme")
+        if satin_alma_talebi_onaylama_gorme:
+            izinler.satin_alma_talebi_onaylama_gorme = True
+
+        satin_alma_talebi_onaylama_duzenleme = request.POST.get("satin_alma_talebi_onaylama_duzenleme")
+        if satin_alma_talebi_onaylama_duzenleme:
+            izinler.satin_alma_talebi_onaylama_duzenleme = True
+
+        stok_olusturma = request.POST.get("stok_olusturma")
+        if stok_olusturma:
+            izinler.stok_olusturma = True
+
+        stok_talebi_onaylama_silme = request.POST.get("stok_talebi_onaylama_silme")
+        if stok_talebi_onaylama_silme:
+            izinler.stok_talebi_onaylama_silme = True
+
+        stok_talebi_onaylama_gorme = request.POST.get("stok_talebi_onaylama_gorme")
+        if stok_talebi_onaylama_gorme:
+            izinler.stok_talebi_onaylama_gorme = True
+
+        stok_talebi_onaylama_duzenleme = request.POST.get("stok_talebi_onaylama_duzenleme")
+        if stok_talebi_onaylama_duzenleme:
+            izinler.stok_talebi_onaylama_duzenleme = True
+
+        zimmet_olusturma = request.POST.get("zimmet_olusturma")
+        if zimmet_olusturma:
+            izinler.zimmet_olusturma = True
+
+        zimmet_silme = request.POST.get("zimmet_silme")
+        if zimmet_silme:
+            izinler.zimmet_silme = True
+
+        zimmet_gorme = request.POST.get("zimmet_gorme")
+        if zimmet_gorme:
+            izinler.zimmet_gorme = True
+
         
         izinler.save()
     return redirect_with_language("main:kullanici_yetkileri")

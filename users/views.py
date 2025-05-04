@@ -1665,3 +1665,12 @@ def online_status(request, user_id):
     user = get_object_or_404(User, id=user_id)
     return JsonResponse({'is_online': is_user_online(user)})
 
+from django.contrib.sessions.models import Session
+from django.utils import timezone
+
+def logout_other_sessions(user, current_session_key):
+    sessions = Session.objects.filter(expire_date__gte=timezone.now())
+    for session in sessions:
+        data = session.get_decoded()
+        if data.get('_auth_user_id') == str(user.id) and session.session_key != current_session_key:
+            session.delete()
