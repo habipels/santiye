@@ -1349,7 +1349,12 @@ $(document).ready(function() {
             <div class="header-profile-dropdown">
                 <div class="profile-dropdown-title">
                     {{request.user.last_name}}
+                    {% if request.user.kullanicilar_db %}
+                        <span>{{request.user.email}}</span>
+                    {% else %}
                     <span>{{request.user.first_name}}</span>
+                    {% endif %}
+                    
                 </div>
                 <div class="profile-dropdown-actions">
                    <a href="/{{dil}}{% url 'user:profil_bilgisi' %}"><i class="icon icon-profile"></i> {% trans 'Profil' %}</a>

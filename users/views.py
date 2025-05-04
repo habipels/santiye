@@ -176,6 +176,7 @@ def loginUser(request):
             return render(request,"account/login.html",context)
         messages.success(request,"Başarıyla Giriş Yaptınız")
         login(request,user)
+        logout_other_sessions(user, request.session.session_key)
         try:
             lock_status = LockScreenStatus.objects.get(user=request.user)
             lock_status.is_locked=False
