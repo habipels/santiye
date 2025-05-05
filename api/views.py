@@ -2522,6 +2522,9 @@ def group_chat(request, group_id):
     context["group_id"] = group_id  # Add group_id to context
     if request.data:
         content = request.data.get('content')
-        Message.objects.create(sender=request.user, group=group, content=content)
-    
+        dosya = request.FILES.get('file')
+        if dosya:
+            Message.objects.create(sender=request.user, group=group, content=content,file = dosya)
+        else:
+            Message.objects.create(sender=request.user, group=group, content=content)
     return Response(context)
