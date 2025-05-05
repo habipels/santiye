@@ -2,6 +2,99 @@
 {% load custom_tags %}
 {% load static %}
  {% if hash_bilgi %}
+    <style>
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table.display.nowrap {
+            width: 100% !important;
+            table-layout: auto;
+        }
+        
+        /* DataTables responsive ayarları */
+        .dataTables_wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        /* Tablo sütun genişlikleri */
+        table.dataTable th,
+        table.dataTable td {
+            white-space: nowrap;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Cari adı sütunu için özel stil */
+        table.dataTable td:nth-child(3) {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Açıklama sütunu için özel stil */
+        table.dataTable td:nth-child(4) {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* İlk sütun (İncele) için sabit genişlik */
+        table.dataTable th:first-child,
+        table.dataTable td:first-child {
+            width: 60px;
+            max-width: 60px;
+            min-width: 60px;
+        }
+        
+        /* Fatura No için sabit genişlik */
+        table.dataTable th:nth-child(2),
+        table.dataTable td:nth-child(2) {
+            width: 100px;
+            max-width: 100px;
+        }
+        
+        /* Durum sütunu için */
+        table.dataTable th:last-child,
+        table.dataTable td:last-child {
+            width: 80px;
+            max-width: 80px;
+        }
+        
+        /* Dark Mode stili - invoice-detail-modal için */
+
+   
+        
+
+        /* Scrollbar stillendirme */
+        .dark-mode .invoice-detail-modal::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .dark-mode .invoice-detail-modal::-webkit-scrollbar-track {
+            background: #232c42;
+        }
+        
+        .dark-mode .invoice-detail-modal::-webkit-scrollbar-thumb {
+            background: #3a4662;
+            border-radius: 5px;
+        }
+        
+        /* Z-index ile modal'ı üstte tutma */
+        body.dark-mode {
+            position: relative;
+        }
+        
+        .dark-mode .invoice-detail-modal {
+            z-index: 9999;
+        }
+    </style>
     <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
       <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
@@ -122,6 +215,7 @@
 
 </main>
     {% else %}
+
     <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
       <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">

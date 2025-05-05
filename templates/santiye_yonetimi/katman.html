@@ -138,7 +138,7 @@
                     <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
                    
                     <div class="form-element">
-                        <label for="taseron-adi">{% trans 'katman Adı' %}</label>
+                        <label for="taseron-adi">{% trans 'Katman Adı' %}</label>
                         <input type="text" name="taseron_adi" value="{{i.katman_adi}}" required id="taseron-adi">
                     </div>
                     <div class="form-element">
@@ -207,7 +207,7 @@
                                 {% csrf_token %}
               
                     <div class="form-element">
-                        <label for="taseron-adi">{% trans 'katman Adı' %}</label>
+                        <label for="taseron-adi">{% trans 'Katman Adı' %}</label>
                         <input type="text" name="taseron_adi" required id="taseron-adi">
                     </div>
                     <div class="form-element">
@@ -293,6 +293,40 @@
         }
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
+    </script>
+
+    <script>
+        // Tüm dosya inputlarını izle
+        document.querySelectorAll('input[type="file"]').forEach(function(input) {
+            input.addEventListener('change', function() {
+                const fileInput = this;
+                const fileList = fileInput.closest('.form-element').querySelector('.fileList');
+                const fileInputLabel = fileInput.closest('.file-input').querySelector('label');
+                const fileButton = fileInputLabel.querySelector('button');
+                
+                // Dosya listeleri ve loading state'i temizle
+                fileList.innerHTML = '';
+                
+                // Eğer dosya seçildiyse
+                if (fileInput.files.length > 0) {
+                    // Seçilen dosya isimlerini göster
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = fileInput.files[i].name;
+                        fileList.appendChild(listItem);
+                    }
+                    
+                    // Loading state göster
+                    const originalButtonText = fileButton.innerHTML;
+                    fileButton.innerHTML = '<i class="icon icon-loading"></i> {% trans "Dosya Seçildi" %}';
+                    
+                    // 1 saniye sonra normal haline döndür (gerçek yükleme işlemi tamamlanınca form submit edilecek)
+                    setTimeout(function() {
+                        fileButton.innerHTML = originalButtonText;
+                    }, 1000);
+                }
+            });
+        });
     </script>
 {% else %}
 
@@ -440,7 +474,7 @@
                                     </div>
                                     {% else %}
                     <div class="form-element">
-                        <label for="taseron-adi">{% trans 'katman Adı' %}</label>
+                        <label for="taseron-adi">{% trans 'Katman Adı' %}</label>
                         <input type="text" name="taseron_adi" value="{{i.katman_adi}}" required id="taseron-adi">
                     </div>
                     <div class="form-element">
@@ -607,6 +641,83 @@
         }
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
+    </script>
+
+    <style>
+        /* Dosya yükleme loading animasyonu için CSS */
+        .icon-loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #333;
+            border-radius: 50%;
+            animation: rotate 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        /* Dark mode uyumlu */
+        .dark-mode .icon-loading {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #fff;
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Dosya listesi stillemesi */
+        .fileList {
+            margin-top: 10px;
+            padding-left: 10px;
+        }
+
+        .fileList li {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .dark-mode .fileList li {
+            color: #ddd;
+        }
+    </style>
+    
+    <script>
+        // Tüm dosya inputlarını izle
+        document.querySelectorAll('input[type="file"]').forEach(function(input) {
+            input.addEventListener('change', function() {
+                const fileInput = this;
+                const fileList = fileInput.closest('.form-element').querySelector('.fileList');
+                const fileInputLabel = fileInput.closest('.file-input').querySelector('label');
+                const fileButton = fileInputLabel.querySelector('button');
+                
+                // Dosya listeleri ve loading state'i temizle
+                fileList.innerHTML = '';
+                
+                // Eğer dosya seçildiyse
+                if (fileInput.files.length > 0) {
+                    // Seçilen dosya isimlerini göster
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = fileInput.files[i].name;
+                        fileList.appendChild(listItem);
+                    }
+                    
+                    // Loading state göster
+                    const originalButtonText = fileButton.innerHTML;
+                    fileButton.innerHTML = '<i class="icon icon-loading"></i> {% trans "Dosya Seçildi" %}';
+                    
+                    // 1 saniye sonra normal haline döndür (gerçek yükleme işlemi tamamlanınca form submit edilecek)
+                    setTimeout(function() {
+                        fileButton.innerHTML = originalButtonText;
+                    }, 1000);
+                }
+            });
+        });
     </script>
 {% endif %}
 {% endblock sidebar %}
