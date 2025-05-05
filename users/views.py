@@ -198,6 +198,7 @@ def logoutUser(request):
         # Kullanıcının LockScreenStatus objesi henüz oluşturulmamışsa, oluşturun.
         lock_status = LockScreenStatus.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),user=request.user, is_locked=False)
     logout(request)
+    request.session.flush()
     messages.success(request,"Başarıyla Çıkış Yaptınız")
     return redirect_with_language("users:yonlendir")
 def yonlendir(request):
