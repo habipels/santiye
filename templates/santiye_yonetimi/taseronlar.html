@@ -155,27 +155,26 @@
             <div class="modal-body">
                 <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:taseron_ekle_2' hashler %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
-                   
                     <div class="form-element">
                         <label for="taseron-adi">{% trans 'Taşeron Adı' %}</label>
                         <input type="text" name="taseron_adi" required id="taseron-adi">
                     </div>
                     <div class="form-element">
                         <label for="telefon-numarasi">{% trans 'Telefon Numarası' %}</label>
-                        <input type="tel" name="telefonnumarasi" id="telefon-numarasi">
+                        <input type="tel" name="telefonnumarasi" required id="telefon-numarasi">
                     </div>
                     <div class="form-element">
                         <label for="email">{% trans 'Email' %}</label>
-                        <input type="email" name="email_adresi" id="email">
+                        <input type="email" name="email_adresi" required id="email">
                     </div>
                     <div class="form-element">
                         <label for="aciklama">{% trans 'Açıklama' %}</label>
-                        <textarea name="aciklama" id="aciklama"></textarea>
+                        <textarea name="aciklama" required id="aciklama"></textarea>
                     </div>
                     <div class="form-element">
                         <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye > Kalem > Blok' %}</label>
                         <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
-                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" style="height: 27vh;">
+                        <select name="blogbilgisi"  class="form-control" data-trigger multiple required id="cokluetiket" style="height: 27vh;">
                                             {% for blog in blog_bilgisi %}
                                             {% kalemler_sadece blog %}
                                             {% endfor %}
@@ -192,7 +191,7 @@
                                 <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
                             </label>
 
-                            <input type="file" name="file" multiple id="sozlesme-yukle">
+                            <input type="file" name="file" multiple required id="sozlesme-yukle">
                         </div>
 
                         <ul class="fileList">
