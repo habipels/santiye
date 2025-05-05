@@ -93,6 +93,7 @@ if DEPLOY__:
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'users.middleware.LockScreenMiddleware',
+        'users.middleware.NoCacheMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ]
@@ -301,7 +302,8 @@ else:
         #
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
-        #'users.middleware.LockScreenMiddleware',
+        'users.middleware.LockScreenMiddleware',
+        'users.middleware.NoCacheMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ]
