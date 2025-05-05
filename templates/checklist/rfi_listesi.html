@@ -32,6 +32,7 @@
 {% block sidebar %}
    
     <main>
+    
         <div class="page-header">
             <div class="page-info">
                 <div class="page-title">
@@ -116,6 +117,20 @@
                             </tbody>
                         </table>
                     </div>
+                                <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a class="lsc-footer-action"><i class="icon icon-print"></i></a>
+                            </div>
                 </div>
 
                 <!-- Onaylananlar Sekmesi -->
@@ -160,6 +175,20 @@
                             </tbody>
                         </table>
                     </div>
+                                <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a class="lsc-footer-action"><i class="icon icon-print"></i></a>
+                            </div>
                 </div>
 
                 <!-- Reddedilenler Sekmesi -->
@@ -204,6 +233,20 @@
                             </tbody>
                         </table>
                     </div>
+                                <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a class="lsc-footer-action"><i class="icon icon-print"></i></a>
+                            </div>
                 </div>
 
                 <!-- Arşiv Sekmesi -->
@@ -244,14 +287,23 @@
                             </tbody>
                         </table>
                     </div>
+                                <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a class="lsc-footer-action"><i class="icon icon-print"></i></a>
+                            </div>
                 </div>
             </div>
 
-            <div class="large-stats-card-footer-actions">
-                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i> {% trans 'PDF İndir' %}</a>
-                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i> {% trans 'Excel İndir' %}</a>
-                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i> {% trans 'Yazdır' %}</a>
-            </div>
         </div>
     </main>
 
@@ -285,7 +337,7 @@
                                     </select>
                             </div>
                             <div class="form-element">
-                                <label for="kat">{% trans 'kat' %}</label>
+                                <label for="kat">{% trans 'Kat' %}</label>
                                          <select name="kat" id="odaSelect"  data-trigger >
                                        
                                     </select>  
@@ -295,11 +347,11 @@
                         <div class="form-row">
                             <div class="form-element">
                                 <label>{% trans 'Daire No' %}</label>
-                                <input type="number" min="1" name="apartmentNo" id="apartmentNo" placeholder="Örn: 5" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <input type="number" min="1" name="apartmentNo" id="apartmentNo" placeholder="{% trans 'Örn: 5' %}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             <div class="form-element">
                                 <label>{% trans 'Mahal' %}</label>
-                                <input type="text" name="location" id="location" placeholder="Örn: Salon, Mutfak">
+                                <input type="text" name="location" id="location" placeholder="{% trans 'Örn: Salon, Mutfak' %}">
                             </div>
                         </div>
                         
@@ -338,9 +390,7 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('katmanSelect').addEventListener('change', function() {
@@ -575,31 +625,6 @@
             filePreview.style.display = 'none';
         });
 
-        // DataTables başlat
-        $(document).ready(function() {
-            $('#pendingTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/tr.json'
-                }
-            });
-            
-            $('#approvedTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/tr.json'
-                }
-            });
-            
-            $('#rejectedTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/tr.json'
-                }
-            });
-            
-            $('#archiveTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/tr.json'
-                }
-            });
             
             // Onaylama ve reddetme butonları
             $('.btn-approve').on('click', function() {
@@ -614,7 +639,7 @@
                     alert('RFI reddedildi. Neden: ' + reason);
                 }
             });
-        });
+        
     </script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -648,7 +673,7 @@
             // RFI Şablonu kontrolü
             if (!rfiSablonu.value) {
                 isValid = false;
-                errorMessage += 'Lütfen RFI şablonu seçiniz.<br>';
+                errorMessage += '{% trans 'Lütfen RFI şablonu seçiniz.<br>' %}';
                 rfiSablonu.classList.add('error');
             } else {
                 rfiSablonu.classList.remove('error');
@@ -657,7 +682,7 @@
             // Yapı kontrolü
             if (!yapiSelect.value) {
                 isValid = false;
-                errorMessage += 'Lütfen yapı seçiniz.<br>';
+                errorMessage += '{% trans 'Lütfen yapı seçiniz.<br>' %}';
                 yapiSelect.classList.add('error');
             } else {
                 yapiSelect.classList.remove('error');
@@ -666,7 +691,7 @@
             // Kat kontrolü
             if (!odaSelect.value) {
                 isValid = false;
-                errorMessage += 'Lütfen kat seçiniz.<br>';
+                errorMessage += '{% trans 'Lütfen kat seçiniz.<br>' %}';
                 odaSelect.classList.add('error');
             } else {
                 odaSelect.classList.remove('error');
@@ -675,7 +700,7 @@
             // Daire No kontrolü
             if (!apartmentNo.value.trim()) {
                 isValid = false;
-                errorMessage += 'Lütfen daire numarası giriniz.<br>';
+                errorMessage += '{% trans 'Lütfen daire numarası giriniz.<br>' %}';
                 apartmentNo.classList.add('error');
             } else {
                 apartmentNo.classList.remove('error');
@@ -684,7 +709,7 @@
             // Mahal kontrolü
             if (!location.value.trim()) {
                 isValid = false;
-                errorMessage += 'Lütfen mahal bilgisi giriniz.<br>';
+                errorMessage += '{% trans 'Lütfen mahal bilgisi giriniz.<br>' %}';
                 location.classList.add('error');
             } else {
                 location.classList.remove('error');
@@ -693,7 +718,7 @@
             // Dosya kontrolü
             if (!fileInput.files || fileInput.files.length === 0) {
                 isValid = false;
-                errorMessage += 'Lütfen en az bir dosya yükleyiniz.<br>';
+                errorMessage += '{% trans 'Lütfen en az bir dosya yükleyiniz.<br>' %}';
                 fileInput.classList.add('error');
             } else {
                 fileInput.classList.remove('error');
@@ -752,7 +777,7 @@
                 })
                 .finally(() => {
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Onaya Gönder';
+                    submitBtn.innerHTML = '{% trans 'Onaya Gönder' %}';
                 });
             }
         });
@@ -861,7 +886,7 @@
                 const row = this.closest('tr');
                 const rfiId = row.querySelector('td:first-child').textContent.replace('#BRFI000', '');
                 
-                const redSebebi = prompt('Reddetme nedeninizi yazın:');
+                const redSebebi = prompt('{% trans 'Reddetme nedeninizi yazın:' %}');
                 if (redSebebi) {
                     fetch(`/{{ dil }}{% url 'main:rfi_reject' %}?id=${rfiId}&red_sebebi=${redSebebi}`, {
                         method: 'GET',
@@ -877,13 +902,13 @@
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Reddetme Response:', data);
+                        console.log('{% trans 'Reddetme Response:' %}', data);
                         if (data.status === 'success') {
                             window.location.reload();
                         }
                     })
                     .catch(error => {
-                        console.error('Reddetme Hatası:', error);
+                        console.error('{% trans 'Reddetme Hatası:' %}', error);
                     });
                 }
             });
@@ -893,49 +918,21 @@
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // DataTables başlat
-        let pendingTable = new DataTable('#pendingTable', {
-            paging: false,
-            searching: true,
-            info: false,
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+        // DataTables başlat - Her tabloyu buton containerlarına ekle
+        const tableIds = ['pendingTable', 'approvedTable', 'rejectedTable', 'archiveTable'];
+        const dataTables = {};
+        tableIds.forEach(function(id) {
+            dataTables[id] = new DataTable('#' + id, {
+                dom: 'Bfrtip',
+                paging: false,
+                searching: true,
+                info: false,
+                layout: {
+                    topStart: {
+                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    }
                 }
-            }
-        });
-
-        let approvedTable = new DataTable('#approvedTable', {
-            paging: false,
-            searching: true,
-            info: false,
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                }
-            }
-        });
-
-        let rejectedTable = new DataTable('#rejectedTable', {
-            paging: false,
-            searching: true,
-            info: false,
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                }
-            }
-        });
-
-        let archiveTable = new DataTable('#archiveTable', {
-            paging: false,
-            searching: true,
-            info: false,
-            layout: {
-                topStart: {
-                    buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                }
-            }
+            });
         });
 
         // Özel arama kutusu için event listener
@@ -945,16 +942,16 @@
             
             switch(activeTab) {
                 case 'pending':
-                    pendingTable.search(searchValue).draw();
+                    dataTables['pendingTable'].search(searchValue).draw();
                     break;
                 case 'approved':
-                    approvedTable.search(searchValue).draw();
+                    dataTables['approvedTable'].search(searchValue).draw();
                     break;
                 case 'rejected':
-                    rejectedTable.search(searchValue).draw();
+                    dataTables['rejectedTable'].search(searchValue).draw();
                     break;
                 case 'archive':
-                    archiveTable.search(searchValue).draw();
+                    dataTables['archiveTable'].search(searchValue).draw();
                     break;
             }
         });
@@ -966,16 +963,16 @@
             
             switch(activeTab) {
                 case 'pending':
-                    pendingTable.search('').draw();
+                    dataTables['pendingTable'].search('').draw();
                     break;
                 case 'approved':
-                    approvedTable.search('').draw();
+                    dataTables['approvedTable'].search('').draw();
                     break;
                 case 'rejected':
-                    rejectedTable.search('').draw();
+                    dataTables['rejectedTable'].search('').draw();
                     break;
                 case 'archive':
-                    archiveTable.search('').draw();
+                    dataTables['archiveTable'].search('').draw();
                     break;
             }
         });
@@ -995,7 +992,7 @@
         for (let i = 0; i < files.length; i++) {
             if (!validTypes.includes(files[i].type)) {
                 isValid = false;
-                errorMessage += `${files[i].name} dosyası desteklenmeyen bir formatta. Sadece JPG ve PNG dosyaları yüklenebilir.\n`;
+                errorMessage += `${files[i].name} {% trans 'dosyası desteklenmeyen bir formatta. Sadece JPG ve PNG dosyaları yüklenebilir.' %}\n`;
             }
         }
 
@@ -1168,5 +1165,22 @@
         z-index: 9999 !important; /* Menünün önünde görünmesini sağlar */
     }
     </style>
+
+    <script>
+    // DataTables başlat - Her tabloyu buton containerlarına ekle
+    $(document).ready(function() {
+        // DataTable başlatmaları burada...
+        
+        // Export butonları için event listener ekle
+        $('.lsc-footer-action').on('click', function() {
+            const activeTab = $('.tab-navs-btn.active').data('tab');
+            const buttonType = $(this).find('i').attr('class').includes('pdf') ? 'pdf' : 
+                              $(this).find('i').attr('class').includes('xlsx') ? 'excel' : 'print';
+            
+            // Sadece aktif tablonun butonunu tetikle
+            $('#' + activeTab + 'Table_wrapper .buttons-' + buttonType).click();
+        });
+    });
+    </script>
 
 {% endblock sidebar %}

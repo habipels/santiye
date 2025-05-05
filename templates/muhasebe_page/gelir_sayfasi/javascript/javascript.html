@@ -224,7 +224,30 @@ $(document).ready(function () {
             className: 'no-export',  // Bu sütunları no-export sınıfıyla işaretliyoruz
             searchable: false,
             orderable: false
-        }
+        },
+        // Sütun genişliği ayarları
+        { width: '60px', targets: 0 },                // İncele
+        { width: '100px', targets: 1 },               // Fatura No
+        { 
+            width: '120px', 
+            targets: 2,                               // Cari adı 
+            render: function(data, type, row) {
+                if (type === 'display' && data && data.length > 15) {
+                    return '<span title="'+data+'">'+data.substr(0, 15)+'...</span>';
+                }
+                return data;
+            }
+        },
+        {
+            width: '150px', 
+            targets: 3,                               // Açıklama
+            // Açıklama zaten span içinde title attribute ile geldiği için render eklemiyoruz
+        },
+        { width: '100px', targets: 4 },               // Kategori
+        { width: '80px', targets: [5, 6, 7] },        // Etiketler
+        { width: '100px', targets: [8, 9] },          // Tarihler
+        { width: '100px', targets: [10, 11] },        // Tutarlar
+        { width: '90px', targets: 12 }                // Durum
     ],
         
     });

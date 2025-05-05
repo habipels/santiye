@@ -353,6 +353,23 @@
                 $("#santiyeler-table tr").removeClass("selected");
                 $(this).addClass("selected");
             });
+            
+            // Sayfa yüklendiğinde, localStorage'dan seçili satır ID'sini kontrol et
+            const selectedRowId = localStorage.getItem('selectedRowId');
+            if (selectedRowId) {
+                // Seçili satırı bul ve stil uygula
+                const selectedRow = document.querySelector(`#santiyeler-table tr[id="${selectedRowId}"]`);
+                if (selectedRow) {
+                    // Önce tüm satırlardan selected sınıfını kaldır
+                    $("#santiyeler-table tr").removeClass("selected");
+                    // Seçili satıra selected sınıfını ekle
+                    $(selectedRow).addClass("selected");
+                    // Tab'ları aktif et
+                    $(".tab-navs-btn:not(.active)").attr("disabled", false);
+                    // guncelleVeri fonksiyonunu çağır
+                    guncelleVeri(selectedRow);
+                }
+            }
         });
          // Fonksiyon tanımlaması
     // Tablo satırına tıklandığında çağrılacak fonksiyon
@@ -381,6 +398,9 @@ function guncelleVeri(row) {
             r.style.display = ''; // Eşleşen satırı göster
         }
     });
+    
+    // Seçilen satırın ID'sini localStorage'a kaydedin
+    localStorage.setItem('selectedRowId', santiyeId);
 }
 
 // Tüm satırlara tıklama olayı ekle
@@ -812,13 +832,30 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
         }
 
         $(".modal").on("click", function (e) {
-            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
-                closeModal();
-            }
+            // Modal dışı tıklamalarda artık otomatik kapanmayacak
+            // Sadece kapatma butonlarına tıklandığında kapanacak
         });
 
-
     </script>
+
+
+    <script>
+
+// ... existing code ...
+
+    $('#yeni-santiye').on('shown.bs.modal', function () {
+        setTimeout(function() {
+            initializeMap();
+            map.invalidateSize();
+        }, 500);
+    });
+
+    window.addEventListener('resize', function() {
+        if (map) {
+            map.invalidateSize();
+        }
+    });
+</script>
 
 
     <script>
@@ -882,19 +919,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
             });
         }
     }
-
-    $('#yeni-santiye').on('shown.bs.modal', function () {
-        setTimeout(function() {
-            initializeMap();
-            map.invalidateSize();
-        }, 500);
-    });
-
-    window.addEventListener('resize', function() {
-        if (map) {
-            map.invalidateSize();
-        }
-    });
+    
 </script>
 
 {% else %}
@@ -1246,6 +1271,23 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                 $("#santiyeler-table tr").removeClass("selected");
                 $(this).addClass("selected");
             });
+            
+            // Sayfa yüklendiğinde, localStorage'dan seçili satır ID'sini kontrol et
+            const selectedRowId = localStorage.getItem('selectedRowId');
+            if (selectedRowId) {
+                // Seçili satırı bul ve stil uygula
+                const selectedRow = document.querySelector(`#santiyeler-table tr[id="${selectedRowId}"]`);
+                if (selectedRow) {
+                    // Önce tüm satırlardan selected sınıfını kaldır
+                    $("#santiyeler-table tr").removeClass("selected");
+                    // Seçili satıra selected sınıfını ekle
+                    $(selectedRow).addClass("selected");
+                    // Tab'ları aktif et
+                    $(".tab-navs-btn:not(.active)").attr("disabled", false);
+                    // guncelleVeri fonksiyonunu çağır
+                    guncelleVeri(selectedRow);
+                }
+            }
         });
          // Fonksiyon tanımlaması
     // Tablo satırına tıklandığında çağrılacak fonksiyon
@@ -1274,6 +1316,9 @@ function guncelleVeri(row) {
             r.style.display = ''; // Eşleşen satırı göster
         }
     });
+    
+    // Seçilen satırın ID'sini localStorage'a kaydedin
+    localStorage.setItem('selectedRowId', santiyeId);
 }
 
 // Tüm satırlara tıklama olayı ekle
@@ -1665,7 +1710,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                     </div>
                                     <div class="form-element">
                                         <label for="date-field"  >{% trans 'Kat Sayısı' %}</label>
-                                        <input type="number" required value="{{i.kat_sayisi |stringformat:'.f'}}" min="1"  name="kat_sayisi" required id="date-field"    />
+                                        <input type="number" required value="{{i.kat_sayisi |stringformat:'.f'}}" min="1" name="kat_sayisi" required id="date-field"    />
                                     </div>
                                     <div class="form-element">
                                             <label for="date-field"  >{% trans 'Başlangıç Tarihi' %}</label>
@@ -1725,11 +1770,9 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
         }
 
         $(".modal").on("click", function (e) {
-            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
-                closeModal();
-            }
+            // Modal dışı tıklamalarda artık otomatik kapanmayacak
+            // Sadece kapatma butonlarına tıklandığında kapanacak
         });
-
 
     </script>
 

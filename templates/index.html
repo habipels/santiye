@@ -38,11 +38,10 @@
         align-items: center;
         margin-bottom: 15px;
     }
-    
-    .blok-baslik h5 {
-        margin: 0;
-        font-weight: 600;
-        font-size: 16px;
+    /* Hızlı Menü kapalıyken görünümü */
+    .quick-actions-body.close {
+        height: 0;
+        overflow: hidden;
     }
     
     .blok-ikon {
@@ -285,7 +284,10 @@
         }
 
         function showHiddenActions() {
-            $(".quick-action-modal").css("display", "flex").hide().fadeIn();
+            // Sadece quick-actions-body açıkken çalışmalı
+            if (!quickActionsBody.classList.contains("close")) {
+                $(".quick-action-modal").css("display", "flex").hide().fadeIn();
+            }
         }
 
         function hideHiddenActions() {
@@ -303,7 +305,29 @@
         let quickActionsBody = document.querySelector(".quick-actions-body");
 
         quickActionsToggle.addEventListener("click", function () {
+            // Menünün durumunu değiştir (açık/kapalı)
             quickActionsBody.classList.toggle("open");
+            quickActionsBody.classList.toggle("close");
+            
+            // Menünün durumuna göre Gizli Öğeler butonunu devre dışı bırak veya etkinleştir
+            const quickActionsAddBtn = document.querySelector('.quick-actions-add');
+            if (quickActionsBody.classList.contains("close")) {
+                // Menü kapalıysa butonu devre dışı bırak
+                quickActionsAddBtn.classList.add('disabled-button');
+            } else {
+                // Menü açıksa butonu etkinleştir
+                quickActionsAddBtn.classList.remove('disabled-button');
+            }
+        });
+        
+        // Sayfa yüklendiğinde butonun durumunu belirle
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickActionsAddBtn = document.querySelector('.quick-actions-add');
+            if (quickActionsBody.classList.contains("close")) {
+                quickActionsAddBtn.classList.add('disabled-button');
+            } else {
+                quickActionsAddBtn.classList.remove('disabled-button');
+            }
         });
 
 
@@ -1596,6 +1620,20 @@ chart.render();
 </main>
 {% else %} 
 
+<style>
+    /* Gizli Öğeler butonunun her zaman tıklanabilir olması için */
+    .quick-actions-add {
+        position: relative;
+        z-index: 1000;
+    }
+    
+    /* close durumunda quick-actions-body'nin görünümü */
+    .quick-actions-body.close {
+        height: 0;
+        overflow: hidden;
+    }
+</style>
+
     <main>
 
         <div class="quick-actions">
@@ -1755,7 +1793,10 @@ chart.render();
             }
 
             function showHiddenActions() {
-                $(".quick-action-modal").css("display", "flex").hide().fadeIn();
+                // Sadece quick-actions-body açıkken çalışmalı
+                if (!quickActionsBody.classList.contains("close")) {
+                    $(".quick-action-modal").css("display", "flex").hide().fadeIn();
+                }
             }
 
             function hideHiddenActions() {
@@ -1773,7 +1814,29 @@ chart.render();
             let quickActionsBody = document.querySelector(".quick-actions-body");
 
             quickActionsToggle.addEventListener("click", function () {
+                // Menünün durumunu değiştir (açık/kapalı)
                 quickActionsBody.classList.toggle("open");
+                quickActionsBody.classList.toggle("close");
+                
+                // Menünün durumuna göre Gizli Öğeler butonunu devre dışı bırak veya etkinleştir
+                const quickActionsAddBtn = document.querySelector('.quick-actions-add');
+                if (quickActionsBody.classList.contains("close")) {
+                    // Menü kapalıysa butonu devre dışı bırak
+                    quickActionsAddBtn.classList.add('disabled-button');
+                } else {
+                    // Menü açıksa butonu etkinleştir
+                    quickActionsAddBtn.classList.remove('disabled-button');
+                }
+            });
+            
+            // Sayfa yüklendiğinde butonun durumunu belirle
+            document.addEventListener('DOMContentLoaded', function() {
+                const quickActionsAddBtn = document.querySelector('.quick-actions-add');
+                if (quickActionsBody.classList.contains("close")) {
+                    quickActionsAddBtn.classList.add('disabled-button');
+                } else {
+                    quickActionsAddBtn.classList.remove('disabled-button');
+                }
             });
 
 
