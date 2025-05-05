@@ -2474,7 +2474,7 @@ def user_list(request):
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_group(request):
     if True:
