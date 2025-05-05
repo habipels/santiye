@@ -27,61 +27,63 @@
                 <div class="row">
                     
 
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Fatura Logosu' %}</label>
+                        {% if faturalar_bilgisi.dark_logo %}
+                        <p><a href="{{ faturalar_bilgisi.dark_logo.url }}" target="_blank">{% trans 'Mevcut Logoyu Görüntüle' %}</a></p>
+                        {% endif %}
                         <input type="file" accept="image/*" class="form-control" id="inputGroupFile03" name="dark_logo"
-                            aria-describedby="inputGroupFileAddon03" aria-label="Upload">
+                            aria-describedby="inputGroupFileAddon03" aria-label="Upload" required>
                     </div>
                     
                     {% if faturalar_bilgisi != "0" %}
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Şirket Adresi' %}</label>
-                        <input type="text" value="{{faturalar_bilgisi.adress}}" class="form-control" id="inputGroupFile03" maxlength="200" name="adres">
+                        <input type="text" value="{{faturalar_bilgisi.adress}}" class="form-control" id="inputGroupFile03" maxlength="200" name="adres" required>
                     </div>
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Email Adresi' %}</label>
-                        <input type="text" value="{{faturalar_bilgisi.email}}" class="form-control" id="inputGroupFile03" name="emailadresi">
+                        <input type="text" value="{{faturalar_bilgisi.email}}" class="form-control" id="inputGroupFile03" name="emailadresi" required>
                     </div>
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Telefon' %}</label>
-                        <input type="text" value="{{faturalar_bilgisi.telefon}}" class="form-control" id="inputGroupFile03" name="telefonadresi">
+                        <input type="text" value="{{faturalar_bilgisi.telefon}}" class="form-control" id="inputGroupFile03" name="telefonadresi" required>
                     </div>
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Günlük Çalışma Saati' %}</label>
-                        <input value="{{faturalar_bilgisi.gunluk_calisma_saati | stringformat:'.2F'}}" step="0.00" type="text" class="form-control" required min="1" id="gunluk_calisma_saati" name="gunluk_calisma_saati">
+                        <input value="{{faturalar_bilgisi.gunluk_calisma_saati | stringformat:'.2F'}}" step="0.00" type="text" class="form-control" required min="1" id="gunluk_calisma_saati" name="gunluk_calisma_saati" required>
                     </div>
                     {% else %}
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Şirket Adresi' %}</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" maxlength="200" name="adres">
+                        <input type="text" class="form-control" id="inputGroupFile03" maxlength="200" name="adres" required>
                     </div>
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Email Adresi' %}</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="emailadresi">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="emailadresi" required>
                     </div>
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Telefon' %}</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="telefonadresi">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="telefonadresi" required>
                     </div>
-                    <div  class="col-sm-12" >
+                    <div class="col-sm-12">
                         <label>{% trans 'Günlük Çalışma Saati' %}</label>
-                        <input value="9" required min="1" type="text" class="form-control" id="gunluk_calisma_saati" name="gunluk_calisma_saati">
+                        <input value="9" required min="1" type="text" class="form-control" id="gunluk_calisma_saati" name="gunluk_calisma_saati" required>
                     </div>
                     {% endif %}
                     
-                    <div  class="col-sm-12 mb-5 ">
+                    <div class="col-sm-12 mb-5">
                         {% if fatura_icerigi == "0" %}
                         <label>{% trans 'Fatura Gider Etiketi' %}</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="gideretiketi" value="E">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gideretiketi" value="E" required>
                         <label>{% trans 'Fatura Gelir Etiketi' %}</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="gelir_etiketi" value="I">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gelir_etiketi" value="I" required>
                         {% else %}
                         <label>{% trans 'Fatura Gider Etiketi' %}</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="gideretiketi" value="{{fatura_icerigi.gider_etiketi}}">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gideretiketi" value="{{fatura_icerigi.gider_etiketi}}" required>
                         <label>{% trans 'Fatura Gelir Etiketi' %}</label>
-                        <input type="text" class="form-control" id="inputGroupFile03" name="gelir_etiketi" value="{{fatura_icerigi.gelir_etiketi}}">
+                        <input type="text" class="form-control" id="inputGroupFile03" name="gelir_etiketi" value="{{fatura_icerigi.gelir_etiketi}}" required>
                         {% endif %}
-                        
                     </div>
                     <input type="submit" class="btn btn-success waves-effect waves-light" value="{% trans 'Kaydet' %}">
 

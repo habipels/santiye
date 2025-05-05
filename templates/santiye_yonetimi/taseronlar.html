@@ -124,23 +124,25 @@
                       {% endfor %}
                       </tbody>
                 </table>
+                <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+                            </div>
             </div>
 
         </div>
 
-        <script>
-            let datatable = new DataTable('#datatable', {
-                paging: false,
-                searching: true,
-                info: false
-            });
 
-
-            $('#stats-search').keyup(function () {
-                console.log($(this).val());
-                datatable.search($(this).val()).draw();
-            })
-        </script>
 
 
     </main>
@@ -153,27 +155,26 @@
             <div class="modal-body">
                 <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:taseron_ekle_2' hashler %}" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
-                   
                     <div class="form-element">
                         <label for="taseron-adi">{% trans 'Taşeron Adı' %}</label>
                         <input type="text" name="taseron_adi" required id="taseron-adi">
                     </div>
                     <div class="form-element">
                         <label for="telefon-numarasi">{% trans 'Telefon Numarası' %}</label>
-                        <input type="tel" name="telefonnumarasi" id="telefon-numarasi">
+                        <input type="tel" name="telefonnumarasi" required id="telefon-numarasi">
                     </div>
                     <div class="form-element">
                         <label for="email">{% trans 'Email' %}</label>
-                        <input type="email" name="email_adresi" id="email">
+                        <input type="email" name="email_adresi" required id="email">
                     </div>
                     <div class="form-element">
                         <label for="aciklama">{% trans 'Açıklama' %}</label>
-                        <textarea name="aciklama" id="aciklama"></textarea>
+                        <textarea name="aciklama" required id="aciklama"></textarea>
                     </div>
                     <div class="form-element">
                         <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye > Kalem > Blok' %}</label>
                         <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
-                        <select name="blogbilgisi"  class="form-control" data-trigger multiple  id="cokluetiket" style="height: 27vh;">
+                        <select name="blogbilgisi"  class="form-control" data-trigger multiple required id="cokluetiket" style="height: 27vh;">
                                             {% for blog in blog_bilgisi %}
                                             {% kalemler_sadece blog %}
                                             {% endfor %}
@@ -190,7 +191,7 @@
                                 <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
                             </label>
 
-                            <input type="file" name="file" multiple id="sozlesme-yukle">
+                            <input type="file" name="file" multiple required id="sozlesme-yukle">
                         </div>
 
                         <ul class="fileList">
@@ -471,23 +472,23 @@
                       {% endfor %}
                       </tbody>
                 </table>
+                <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+                            </div>
             </div>
 
         </div>
-
-        <script>
-            let datatable = new DataTable('#datatable', {
-                paging: false,
-                searching: true,
-                info: false
-            });
-
-
-            $('#stats-search').keyup(function () {
-                console.log($(this).val());
-                datatable.search($(this).val()).draw();
-            })
-        </script>
 
 
     </main>
@@ -716,5 +717,78 @@
     </script>
  
 {% endif %}
-   
+       <script>
+        $(document).ready(function() {
+            let datatable = $('#datatable').DataTable({
+                paging: true,
+                searching: true,
+                info: false,
+                ordering: true,
+            dom: 'Btip', // Butonları etkinleştirir
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    className: 'hidden', // DataTables butonunu gizlemek için
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: { columns: ':visible' },
+                    customize: function (doc) {
+                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('18%'); 
+                        doc.pageMargins = [15, 20, 15, 20];
+                        doc.defaultStyle = { fontSize: 8 };
+                        doc.styles.tableHeader = {
+                            fillColor: '#f2f2f2',
+                            color: '#333',
+                            alignment: 'center'
+                        };
+                    }
+                },
+                {
+                        extend: 'excelHtml5',
+                        className: 'hidden',
+                        exportOptions: { columns: ':visible' },
+                        customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            
+                            // Para birimlerinin olduğu sütunları belirleyin (örneğin, 5 ve 6. sütunlar)
+                            $('row c[r^="E"], row c[r^="F"]', sheet).each(function () {
+                                $(this).attr('s', '2'); // 2 numaralı hücre stiline ayarlanarak sayısal veri olarak işlenecek
+                            });
+
+                            // Tarihlerin olduğu sütunları belirleyin (örneğin, 4. sütun)
+                            $('row c[r^="D"]', sheet).each(function () {
+                                $(this).attr('s', '3'); // 3 numaralı hücre stiline ayarlanarak tarih olarak işlenecek
+                            });
+                        }
+                    },
+                {
+                    extend: 'print',
+                    className: 'hidden',
+                    exportOptions: { columns: ':visible' },
+                    customize: function (win) {
+                        $(win.document.body).css('font-size', '10pt').css('width', '95%').css('margin', 'auto');
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit')
+                            .css('width', '100%')
+                            .css('margin', 'auto');
+                    }
+                }
+            ]
+                
+            });
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            });
+        });
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 {% endblock sidebar %}
