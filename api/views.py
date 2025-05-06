@@ -2497,6 +2497,8 @@ def create_group(request):
         
         return Response({"detail": "Grup Başarılı Bir Şekilde OLuşturuldu."}, status=status.HTTP_201_CREATED)
 from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki,get_kayit_tarihi_from_request,get_time_zone_from_country,get_country
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
@@ -2504,25 +2506,43 @@ from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,
 def group_chat(request, group_id):
     context = {}
     group = get_object_or_404(Group, id=group_id)
-    messages = Message.objects.filter(group=group)
-    messages = messages.order_by('timestamp')[:100]
+    
+    messages = Message.objects.filter(group=group).order_by('timestamp')[:100]
     for message in messages:
         if message.sender != request.user:
             message.read = True
             message.save()
+
     if request.user.kullanicilar_db:
-        users = User.objects.filter(kullanicilar_db = request.user.kullanicilar_db ).exclude(id=request.user.id)
+        users = User.objects.filter(kullanicilar_db=request.user.kullanicilar_db).exclude(id=request.user.id)
     else:
-        users = User.objects.filter(kullanicilar_db = request.user ).exclude(id=request.user.id)
+        users = User.objects.filter(kullanicilar_db=request.user).exclude(id=request.user.id)
+
     groups = Group.objects.filter(members=request.user)
 
     if request.data:
         content = request.data.get('content')
         dosya = request.FILES.get('file')
+        message = None
+
         if dosya:
-            Message.objects.create(sender=request.user, group=group, content=content,file = dosya)
+            message = Message.objects.create(sender=request.user, group=group, content=content, file=dosya)
         else:
-            Message.objects.create(sender=request.user, group=group, content=content)
+            message = Message.objects.create(sender=request.user, group=group, content=content)
+
+        # WebSocket'e mesajı yayınla
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'chat_{group.id}',
+            {
+                'type': 'chat_message',
+                'message': message.content,
+                'file_url': message.file.url if message.file else None,
+                'username': message.sender.username,
+                'timestamp': message.timestamp.isoformat(),
+            }
+        )
+
     return Response(context)
 
 @authentication_classes([TokenAuthentication])
