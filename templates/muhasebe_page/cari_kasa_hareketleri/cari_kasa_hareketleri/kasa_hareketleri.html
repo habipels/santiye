@@ -90,7 +90,12 @@
                                                     {% if request.user.kullanicilar_db %}
                                                         {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user.kullanicilar_db as bilgisicek %}
                                                     {% else %}
-                                                    {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user as bilgisicek %}
+                                                    
+                                                        {% if hash_bilgi %}
+                                                             {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  hash_bilgi as bilgisicek %}
+                                                        {% else %}
+                                                            {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user as bilgisicek %}
+                                                        {% endif %}
                                                     {% endif %}
                                                         
                                                         {% if bilgisicek == 0 %}
@@ -104,7 +109,12 @@
                                                         {% if request.user.kullanicilar_db %}
                                                         {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user.kullanicilar_db as bilgisicek %}
                                                     {% else %}
-                                                    {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user as bilgisicek %}
+                                                    {% if hash_bilgi %}
+                                                            {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  hash_bilgi as bilgisicek %}
+                                                        {% else %}
+                                                            {% fatura_durumu i.gelir_kime_ait_oldugu.fatura_no  request.user as bilgisicek %}
+                                                        {% endif %}
+                                                    
                                                     {% endif %}
                                                         {% if bilgisicek == 0 %}
                                                        <span  >  {% basit_toplama bakiye i.tutar as bakiye %}
