@@ -11428,6 +11428,58 @@ def rapor_kaydedici(request):
             "message": "Rapor başarıyla kaydedildi.",
             "pdf_url": pdf_url
         })
+def rapor_kaydedici_2(request,hash):
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        description = data["description"]
+        tarih_baslangic = data["dateRange"]["start"]
+        tarih_bitis = data["dateRange"]["end"]
+        veri = data["content"]
+        proje_getir = data["project"]
+        pdf = data["pdf"] 
+
+        # PDF'yi kaydet
+        try:
+            pdf_base64 = pdf # "data:application/pdf;base64," kısmını at
+            pdf_icerik = base64.b64decode(pdf_base64)
+
+            # Dosya adını oluştur
+            dosya_adi = f"{uuid.uuid4().hex}.pdf"
+            klasor_yolu = os.path.join(settings.MEDIA_ROOT, "rapor_dosyalari")
+            os.makedirs(klasor_yolu, exist_ok=True)
+            pdf_yolu = os.path.join(klasor_yolu, dosya_adi)
+
+            # Dosyayı kaydet
+            with open(pdf_yolu, "wb") as f:
+                f.write(pdf_icerik)
+
+            pdf_url = f"/media/rapor_dosyalari/{dosya_adi}"
+            c = f"rapor_dosyalari/{dosya_adi}"
+            rapor_bilgisi.objects.create(
+                rapor_kime_ait = kullanici,
+                rapor_basligi = name,
+                rapor_aciklama = description,
+                rapor_icerigi = veri,
+                olusturan = request.user,
+                baslangic_tarihi = tarih_baslangic,
+                bitis_tarihi = tarih_bitis,
+                rapor_dosyalari = c)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": f"PDF kaydedilirken hata oluştu: {str(e)}"
+            })
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Rapor başarıyla kaydedildi.",
+            "pdf_url": pdf_url
+        })
 
 ####################### RFİ
 from django.shortcuts import redirect, get_object_or_404

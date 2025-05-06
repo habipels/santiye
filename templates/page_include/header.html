@@ -51,11 +51,15 @@
     
     {% url 'main:santiye_kalem_ve_blog_2' hashler as santiye_kalem_ve_blog_url %}
     {% url 'main:genel_rapor_sayfasi_2' hashler as genel_rapor_sayfasi_url_2 %}
+     {% url 'main:raporlari_gor_sayfasi_2' hashler as rapor_olusturma_url %}
     <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
         <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>{% trans 'Raporlar' %}</span> <i class="icon icon-caret"></i></a>
         <ul class="sidebar-sub-menu">
             <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
                 <a href="/{{dil}}{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Şantiye Raporları' %}</a>
+            </li>
+            <li class="{% if request.path == rapor_olusturma_url %}active{% endif %}">
+                <a href="/{{dil}}{{ rapor_olusturma_url }}" class="sidebar-sub-item">{% trans 'Rapor Oluşturucu ' %}</a>
             </li>
             <li class="{% if request.path == genel_rapor_sayfasi_url_2 %}active{% endif %}">
                 <a href="/{{dil}}{{ genel_rapor_sayfasi_url_2 }}" class="sidebar-sub-item">{% trans 'Şantiye Günlüğü' %}</a>
@@ -90,13 +94,17 @@
     {% url 'main:ust_yuklenici_sayfasi_2' hashler as ust_yuklenici_sayfasi_url %}
     {% url 'main:hakedis_sayfasi_2' hashler as hakedis_sayfasi_url %}
     {% url 'main:sozlesmler_sayfasi_2' hashler as sozlesmler_sayfasi_url %}
-
+    {% url 'main:rfi_listesi_2'  hashler as santiyelerim_url %}
     <li class="{% if request.path == santiye_kalem_ve_blog_url or request.path == yapilacaklar_url or request.path == depolama_sistemim_url or request.path == taseron_sayfasi_url or request.path == ust_yuklenici_sayfasi_url or request.path == hakedis_sayfasi_url or request.path == sozlesmler_sayfasi_url %}active{% endif %}">
         <a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>{% trans 'Şantiye Yönetimi' %}</span> <i class="icon icon-caret"></i></a>
         <ul class="sidebar-sub-menu">
             <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
                 <a href="/{{dil}}{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Proje Yönetimi' %}</a>
             </li>
+            <li class="{% if request.path == santiyelerim_url %}active{% endif %}">
+                            <a href="/{{dil}}{{ santiyelerim_url }}" class="sidebar-sub-item">{% trans 'RFI' %}</a>
+                        </li>
+
             <li class="{% if request.path == '/gantt' %}active{% endif %}">
                 <a href="/{{dil}}{% url 'main:takvim_olaylari' %}" class="sidebar-sub-item">{% trans 'Stratejik İş Planı' %}</a>
             </li>

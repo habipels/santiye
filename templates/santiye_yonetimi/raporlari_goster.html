@@ -31,7 +31,192 @@
 
 {% block sidebar %}
 {% if hash_bilgi %}
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans 'Raporlar' %}
+            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                <li><a href="#">{% trans "Şantiye Ayarlar" %}</a></li>
+                <li><a href="#">{% trans "Raporlar" %}</a></li>
+            </ul>
+        </div>
+        <div class="page-actions">
+        <a href="/{{dil}}{% url 'main:rapor_olusturma_2' hashler
+          %}" class="page-primary-btn" ><i class="icon icon-new"></i>{% trans 'Rapor Oluştur' %}</a>  
+                                               
+                                            
+            
+        </div>
+    </div>
 
+    <div class="large-stats-card table-card table-detail-card">
+        <div class="stats-header">
+            <div class="stats-title">{% trans 'Raporlar' %}</div>
+            <div class="stats-search">
+                <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                <button><i class="icon icon-search"></i></button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="datatable">
+                <thead>
+                    <tr>
+                         <!-- Gizli ID sütunu -->
+                        <th>{% trans 'Rapor Başlığı' %}</th>
+                        <th>{% trans 'Rapor Açıklaması' %}</th>
+                        <th>{% trans 'Rapor Tarihi' %}</th>
+                        <th>{% trans 'Oluşturma Tarihi' %}</th>
+                        <th>{% trans 'Oluşturan' %}</th>
+                        <th>{% trans 'Aksiyon' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in raporlar %}
+                        <tr >
+                            <td class="kasa">{{ i.rapor_basligi }}</td>
+                           
+                            <td class="konum">{{ i.rapor_aciklama }}</td>
+                            <td class="kasa">
+                               {{i.baslangic_tarihi | date:"d.m.Y"}} - {{i.bitis_tarihi| date:"d.m.Y"}}
+                            </td>
+                            <td class="kasa">
+                               {{i.kayit_tarihi | date:"d.m.Y H:i"}}
+                            </td>
+                            <td class="konum">{{ i.olusturan.last_name }}</td>
+                            <td>
+                                <div class="td-actions">
+                                    <a href="{{i.rapor_dosyalari.url}}" download class="lsc-action"><i class="icon icon-eye"></i></a>
+
+                                    
+                               </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
+                            <div class="large-stats-card-footer-actions">
+                                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+                                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+                                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+                            </div>
+        </div>
+    </div>
+
+</main>
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+
+
+    <script>
+        $(document).ready(function() {
+            let datatable = $('#datatable').DataTable({
+                paging: true,
+                searching: true,
+                info: false,
+                ordering: true,
+            dom: 'Btip', // Butonları etkinleştirir
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    className: 'hidden', // DataTables butonunu gizlemek için
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: { columns: ':visible' },
+                    customize: function (doc) {
+                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('18%'); 
+                        doc.pageMargins = [15, 20, 15, 20];
+                        doc.defaultStyle = { fontSize: 8 };
+                        doc.styles.tableHeader = {
+                            fillColor: '#f2f2f2',
+                            color: '#333',
+                            alignment: 'center'
+                        };
+                    }
+                },
+                {
+                        extend: 'excelHtml5',
+                        className: 'hidden',
+                        exportOptions: { columns: ':visible' },
+                        customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            
+                            // Para birimlerinin olduğu sütunları belirleyin (örneğin, 5 ve 6. sütunlar)
+                            $('row c[r^="E"], row c[r^="F"]', sheet).each(function () {
+                                $(this).attr('s', '2'); // 2 numaralı hücre stiline ayarlanarak sayısal veri olarak işlenecek
+                            });
+
+                            // Tarihlerin olduğu sütunları belirleyin (örneğin, 4. sütun)
+                            $('row c[r^="D"]', sheet).each(function () {
+                                $(this).attr('s', '3'); // 3 numaralı hücre stiline ayarlanarak tarih olarak işlenecek
+                            });
+                        }
+                    },
+                {
+                    extend: 'print',
+                    className: 'hidden',
+                    exportOptions: { columns: ':visible' },
+                    customize: function (win) {
+                        $(win.document.body).css('font-size', '10pt').css('width', '95%').css('margin', 'auto');
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit')
+                            .css('width', '100%')
+                            .css('margin', 'auto');
+                    }
+                }
+            ]
+                
+            });
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            });
+        });
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
 {% else %}
 <main>
     <div class="page-header">

@@ -294,6 +294,11 @@ path("control/rfi_show/<int:id>/<str:hash>", views.rfi_show_2, name="rfi_show_2"
 path("create_report/", views.rapor_olusturma, name="rapor_olusturma"),
 path("report_list/", views.raporlari_gor_sayfasi, name="raporlari_gor_sayfasi"),
 path("rapor_kaydedici/", views.rapor_kaydedici, name="rapor_kaydedici"),
+
+
+path("control/create_report/<str:hash>", views.rapor_olusturma_2, name="rapor_olusturma_2"),
+path("control/report_list/<str:hash>", views.raporlari_gor_sayfasi_2, name="raporlari_gor_sayfasi_2"),
+path("control/rapor_kaydedici/<str:hash>", views.rapor_kaydedici_2, name="rapor_kaydedici_2"),
 path("veri-klonla/<int:kaynak_kullanici_id>/<int:hedef_kullanici_id>/", views.kullanici_verilerini_klonla_view, name="veri_klonla"),
 ]
 
