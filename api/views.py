@@ -2515,11 +2515,7 @@ def group_chat(request, group_id):
     else:
         users = User.objects.filter(kullanicilar_db = request.user ).exclude(id=request.user.id)
     groups = Group.objects.filter(members=request.user)
-    context["messages"] = MessageSerializer(messages, many=True).data
-    context["users"] = CustomUserSerializer(users, many=True).data
-    context["groups"] = GroupSerializer(groups, many=True).data
-    #context["group"] = GroupSerializer(group, many=True).data
-    context["group_id"] = group_id  # Add group_id to context
+
     if request.data:
         content = request.data.get('content')
         dosya = request.FILES.get('file')
@@ -2527,4 +2523,30 @@ def group_chat(request, group_id):
             Message.objects.create(sender=request.user, group=group, content=content,file = dosya)
         else:
             Message.objects.create(sender=request.user, group=group, content=content)
+    return Response(context)
+
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def group_chat_messages(request, group_id):
+    context = {}
+    group = get_object_or_404(Group, id=group_id)
+    messages = Message.objects.filter(group=group)
+    messages = messages.order_by('timestamp')[:100]
+    for message in messages:
+        if message.sender != request.user:
+            message.read = True
+            message.save()
+    if request.user.kullanicilar_db:
+        users = User.objects.filter(kullanicilar_db = request.user.kullanicilar_db ).exclude(id=request.user.id)
+    else:
+        users = User.objects.filter(kullanicilar_db = request.user ).exclude(id=request.user.id)
+    groups = Group.objects.filter(members=request.user)
+    context["messages"] = MessageSerializer(messages, many=True).data
+    context["users"] = CustomUserSerializer(users, many=True).data
+    context["groups"] = GroupSerializer(groups, many=True).data
+    #context["group"] = GroupSerializer(group, many=True).data
+    context["group_id"] = group_id  # Add group_id to context
+
     return Response(context)
