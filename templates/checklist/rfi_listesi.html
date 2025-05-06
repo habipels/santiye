@@ -47,7 +47,7 @@
             </div>
 
             <div class="page-actions">
-                <a href="/{{dil}}{% url 'main:rfi_template' %}" class="page-primary-btn" id="templatesBtn" title="{% trans 'Şablonlar' %}">Şablonlar</i></a>
+                <a href="/{{dil}}{% url 'main:rfi_template' %}" class="page-primary-btn" id="templatesBtn" title="{% trans 'Şablonlar' %}">{% trans 'Şablonlar' %}</i></a>
                 <button class="page-primary-btn" id="uploadRfiBtn"><i class="icon icon-new"></i>
                    {% trans 'RFI Yükle' %} </button>
             </div>
@@ -628,15 +628,15 @@
             
             // Onaylama ve reddetme butonları
             $('.btn-approve').on('click', function() {
-                if (confirm('Bu RFI\'ı onaylamak istediğinize emin misiniz?')) {
-                    alert('RFI onaylandı.');
+                if (confirm('{% trans "Bu RFI\'ı onaylamak istediğinize emin misiniz?" %} ')) {
+                    alert('{% trans "RFI onaylandı." %}');
                 }
             });
             
             $('.btn-reject').on('click', function() {
-                const reason = prompt('Reddetme nedeninizi yazın:');
+                const reason = prompt('{% trans "Reddetme nedeninizi yazın:" %}');
                 if (reason) {
-                    alert('RFI reddedildi. Neden: ' + reason);
+                    alert('{% trans "RFI reddedildi. Neden:" %} ' + reason);
                 }
             });
         
