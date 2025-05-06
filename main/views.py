@@ -1054,10 +1054,16 @@ def dil_duzelt(request):
             else:
                 dil_aktiflik_durumu = False
             dil_ayarla.objects.filter(id =buttonId ).delete()
-            dil =dil_ayarla(dil_adi =yetkili_adi,dil_kisaltması =  dilkisitlamasi,dil_bayragi_icon =santiyeadi,
-                                      dil_aktiflik_durumu = dil_aktiflik_durumu )
+            if santiyeadi:
+                dil =dil_ayarla(dil_adi =yetkili_adi,dil_kisaltması =  dilkisitlamasi,dil_bayragi_icon =santiyeadi,
+                                        dil_aktiflik_durumu = dil_aktiflik_durumu )
 
-            dil.save()
+                dil.save()
+            else:
+                dil =dil_ayarla(dil_adi =yetkili_adi,dil_kisaltması =  dilkisitlamasi,
+                                        dil_aktiflik_durumu = dil_aktiflik_durumu )
+
+                dil.save()
 
             return redirect_with_language("main:dil_ayari_listele")
 
