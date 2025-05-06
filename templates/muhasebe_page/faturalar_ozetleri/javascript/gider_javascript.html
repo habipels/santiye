@@ -30,6 +30,39 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script>
+var translations = {
+        add: "{% trans 'Gelişmiş Filtre' %}",
+        clearAll: "{% trans 'Tümünü Temizle' %}",
+        condition: "{% trans 'Koşul' %}",
+        data: "{% trans 'Veri' %}",
+        deleteTitle: "{% trans 'Sil' %}",
+        logicAnd: "{% trans 'Ve' %}",
+        logicOr: "{% trans 'Veya' %}",
+        title: {
+            _: "{% trans 'Şu anda %d adet filtre aktif.' %}",
+            0: "{% trans 'Hiç filtre aktif değil' %}"
+        },
+        value: "{% trans 'Değer' %}",
+        column: "{% trans 'Kolon' %}",
+        condition: "{% trans 'Koşul' %}",
+        operator: "{% trans 'Operatör' %}",
+        conditions: {
+            string: {
+                contains: "{% trans 'İçerir' %}",
+                not: "{% trans 'İçermez' %}",
+                empty: "{% trans 'Boş' %}",
+                equals: "{% trans 'Eşittir' %}",
+                notEquals: "{% trans 'Eşit Değil' %}",
+                startsWith: "{% trans 'İle Başlar' %}",
+                notStartsWith: "{% trans 'İle Başlamaz' %}",
+                notContains: "{% trans 'İçermez' %}",
+                endsWith: "{% trans 'İle Biter' %}",
+                notEndsWith: "{% trans 'İle Bitmez' %}",
+                notEmpty: "{% trans 'Boş Değil' %}"
+            },
+            // ... diğer çeviriler
+        }
+    };
 $(document).ready(function () {
     var table = $('#example').DataTable({
         data: [
@@ -65,7 +98,7 @@ $(document).ready(function () {
             { data: 'kalan_tutar' },
             { data: 'durum' }
         ],
-        language: { 
+       language: { 
 
      
         lengthMenu: "_MENU_ {% trans 'kayıt göster' %}",
@@ -82,69 +115,21 @@ $(document).ready(function () {
     },
     
     searchBuilder: {
-        add: '{% trans "Gelişmiş Filitre" %}',
-        clearAll: '{% trans "Tümünü Temizle" %}',
-        condition: '{% trans "Koşul" %}',
-        data: '{% trans "Veri" %}',
-        deleteTitle: '{% trans "Sil" %}',
-        logicAnd: '{% trans "Ve" %}',
-        logicOr: '{% trans "Veya" %}',
-        title: {
-            _: '{% trans "Şu anda %d adet filitre aktif." %}',
-            0: '{% trans "" %}'
-        },
-        value: '{% trans "Değer" %}',
-        column: '{% trans "Kolon" %}',
-        condition: '{% trans "Koşul" %}',
-        operator: '{% trans "Operatör" %}',
-        conditions: {
-            string: {
-                contains: '{% trans "İçerir" %}',
-                not: '{% trans "İçermez" %}',
-                empty: '{% trans "Boş" %}',
-                equals: '{% trans "Eşittir" %}',
-                notEquals: '{% trans "Eşit Değil" %}',
-                startsWith: '{% trans "İle Başlar" %}',
-                notStartsWith: '{% trans "İle Başlamaz" %}',
-                notContains: '{% trans "İçermez" %}',
-                endsWith: '{% trans "İle Biter" %}',
-                notEndsWith: '{% trans "İle Bitmez" %}',
-                notEmpty: '{% trans "Boş Değil" %}'
-            },
-            date: {
-                before: '{% trans "Önce" %}',
-                after: '{% trans "Sonra" %}',
-                between: '{% trans "Arasında" %}',
-                empty: '{% trans "Boş" %}',
-                equals: '{% trans "Eşittir" %}',
-                notBetween: '{% trans "Arasında Değil" %}'
-            },
-            number: {
-                lessThan: '{% trans "Daha Az" %}',
-                lessThanEqual: '{% trans "Daha Az veya Eşit" %}',
-                greaterThan: '{% trans "Daha Fazla" %}',
-                greaterThanEqual: '{% trans "Daha Fazla veya Eşit" %}',
-                between: '{% trans "Arasında" %}',
-                empty: '{% trans "Boş" %}',
-                equals: '{% trans "Eşittir" %}',
-                notBetween: '{% trans "Arasında Değil" %}'
-            },
-            array: {
-                contains: '{% trans "İçerir" %}',
-                not: '{% trans "İçermez" %}',
-                empty: '{% trans "Boş" %}',
-                equals: '{% trans "Eşittir" %}',
-                notEquals: '{% trans "Eşit Değil" %}',
-                startsWith: '{% trans "İle Başlar" %}',
-                notStartsWith: '{% trans "İle Başlamaz" %}',
-                notContains: '{% trans "İçermez" %}',
-                endsWith: '{% trans "İle Biter" %}',
-                notEndsWith: '{% trans "İle Bitmez" %}',
-                notEmpty: '{% trans "Boş Değil" %}'
-            }
-            
-        }
+        add: translations.add,
+        clearAll: translations.clearAll,
+        condition: translations.condition,
+        data: translations.data,
+        deleteTitle: translations.deleteTitle,
+        logicAnd: translations.logicAnd,
+        logicOr: translations.logicOr,
+        title: translations.title,
+        value: translations.value,
+        column: translations.column,
+        condition: translations.condition,
+        operator: translations.operator,
+        conditions: translations.conditions
     }
+
 
 
         },

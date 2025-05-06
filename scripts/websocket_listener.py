@@ -12,7 +12,7 @@ async def listen_to_group_chat(group_id):
             while True:
                 message = await websocket.recv()
                 data = json.loads(message)
-             
+                print(f"Received message: {data}")
                 print(f"New message received:")
                 print(f"User: {data['user']}")
                 print(f"Message: {data['message']}")
