@@ -220,22 +220,22 @@
 
                                     <div class="form-element">
                                         <label for="date-field"  >{% trans "Adı Soyadı" %}</label>
-                                        <input type="text"  name="yetkili_adi"    placeholder='{% trans "Adı Soyadı" %}' />
+                                        <input type="text"  name="yetkili_adi"    placeholder='{% trans "Adı Soyadı" %}' required/>
                                     </div>
                                     <div class="form-element">
                                         <label for="date-field"  >{% trans "Email" %}</label>
-                                        <input type="email"  name="email"    placeholder='{% trans "Email" %}' />
+                                        <input type="email"  name="email"    placeholder='{% trans "Email" %}' required/>
                                     </div>
                                      <div class="form-element">
                                         <label for="date-field"  >{% trans "Parola" %}</label>
-                                        <input type="text"  name="parola"    placeholder='{% trans "Parola" %}' />
+                                        <input type="text"  name="parola"    placeholder='{% trans "Parola" %}'required />
                                     </div>
                                     <div class="form-element">
                                         <label for="date-field"  >{% trans "Görevi" %}</label>
-                                        <input type="text"  name="gorevi"    placeholder='{% trans "Görevi" %}' />
+                                        <input type="text"  name="gorevi"    placeholder='{% trans "Görevi" %}' required/>
                                     </div>
 
-                                    <div>
+                                    <div class="form-element">
                                         <label for="status-field"  >{% trans "Durum" %}</label>
                                         <select name="durumu"   data-trigger name="status-field" id="status-field" required>
                                             <option value="">{% trans "Durum" %}</option>
@@ -243,7 +243,7 @@
                                             <option value="0">{% trans "Pasif" %}</option>
                                         </select>
                                     </div>
-                                    <div>
+                                    <div class="form-element">
                                         <label for="status-field"  >{% trans "Kullanıcı İzinleri" %}</label>
                                         <select name="izinler"   data-trigger name="status-field" id="status-field" required>
                                             {% for i in  kullanici_izinlerim %}
@@ -252,10 +252,24 @@
                                             
                                         </select>
                                     </div>
-                                      <div class="form-group">
-                                            <label>{% trans "Dosya Yükle" %}</label>
-                                            <input name="file" type="file" multiple="multiple"   />
+
+                                    <div class="form-element">
+                                        <label for="dosya-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                                        <div class="file-input">
+                                            <label for="dosya-yukle">
+                                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                            </label>
+
+                                        <input type="file" name="file" id="dosya-yukle" accept=".pdf, .jpg, .jpeg, .png" multiple>
                                         </div>
+                                        <ul class="fileList">
+                                        </ul>
+                                    </div>
+
+
                                 <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('cari-ekle')">{% trans 'Vazgeç' %} </button>
                         <button class="form-action-primary" type="submit">{% trans 'Kullanıcıyı Ekle' %} </button>
@@ -312,19 +326,19 @@
                                         {% endif %}
                                         <div class="form-element">
                                         <label for="date-field" >{% trans "Adı Soyadı" %}</label>
-                                        <input type="text" value="{{i.last_name}}"  name="yetkili_adi"   placeholder='{% trans "Adı Soyadı" %}' />
+                                        <input type="text" value="{{i.last_name}}"  name="yetkili_adi"   placeholder='{% trans "Adı Soyadı" %}'required />
                                     </div>
                                     <div class="form-element">
                                         <label for="date-field" >{% trans "Email" %}</label>
-                                        <input type="email" value="{{i.email}}"  name="email"   placeholder='{% trans "Email" %}' />
+                                        <input type="email" value="{{i.email}}"  name="email"   placeholder='{% trans "Email" %}'required />
                                     </div>
                                      
                                     <div class="form-element">
                                         <label for="date-field" >{% trans "Görevi" %}</label>
-                                        <input type="text" value="{{i.gorevi}}"  name="gorevi"   placeholder='{% trans "Görevi" %}' />
+                                        <input type="text" value="{{i.gorevi}}"  name="gorevi"   placeholder='{% trans "Görevi" %}' required/>
                                     </div>
 
-                                    <div>
+                                    <div class="form-element">
                                         <label for="status-field" >{% trans "Durum" %}</label>
                                         <select name="durumu"  data-trigger name="status-field" id="status-field" required>
                                             {% if i.gorevi  %}
@@ -332,12 +346,9 @@
                                             {% else %}
                                             <option value="0">{% trans "Pasif" %}</option>
                                             {% endif %}
-                                            <option value="">{% trans "Durum" %}</option>
-                                            <option value="1">{% trans "Aktif" %}</option>
-                                            <option value="0">{% trans "Pasif" %}</option>
+                                        
                                         </select>
-                                    </div>
-                                    <div>
+                                  
                                         <label for="status-field" >{% trans "Kullanıcı İzinleri" %}</label>
                                         <select name="izinler"  data-trigger name="status-field" id="status-field" required>
                                             {% kulanici_yetkileri_goster i as a%}
@@ -351,12 +362,24 @@
                                             
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label>{% trans "Dosya Yükle" %}</label>
-                                        <input name="file" type="file" multiple="multiple"  />
+                                    <div class="form-element">
+                                        <label for="dosya-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                                        <div class="file-input">
+                                            <label for="dosya-yukle">
+                                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                            </label>
+
+                                        <input type="file" name="file" id="dosya-yukle" accept=".pdf, .jpg, .jpeg, .png" multiple>
+                                        </div>
+                                        <ul class="fileList">
+                                        </ul>
                                     </div>
                                 <div class="form-actions">
-                        <button class="form-action-primary" type="submit">{% trans 'Kullanıcıyı Güncelle' %} </button>
+                                <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kullanıcıyı Güncelle' %}</button>
                     </div>
                             </form>
             </div>
@@ -572,22 +595,22 @@
 
                                     <div class="form-element">
                                         <label for="date-field"  >{% trans "Adı Soyadı" %}</label>
-                                        <input type="text"  name="yetkili_adi"    placeholder='{% trans "Adı Soyadı" %}' />
+                                        <input type="text"  name="yetkili_adi"    placeholder='{% trans "Adı Soyadı" %}' required/>
                                     </div>
                                     <div class="form-element">
                                         <label for="date-field"  >{% trans "Email" %}</label>
-                                        <input type="email"  name="email"    placeholder='{% trans "Email" %}' />
+                                        <input type="email"  name="email"    placeholder='{% trans "Email" %}' required/>
                                     </div>
                                      <div class="form-element">
                                         <label for="date-field"  >{% trans "Parola" %}</label>
-                                        <input type="text"  name="parola"    placeholder='{% trans "Parola" %}' />
+                                        <input type="text"  name="parola"    placeholder='{% trans "Parola" %}' required/>
                                     </div>
                                     <div class="form-element">
                                         <label for="date-field"  >{% trans "Görevi" %}</label>
-                                        <input type="text"  name="gorevi"    placeholder='{% trans "Görevi" %}' />
+                                        <input type="text"  name="gorevi"    placeholder='{% trans "Görevi" %}' required/>
                                     </div>
 
-                                    <div>
+                                    <div class="form-element">
                                         <label for="status-field"  >{% trans "Durum" %}</label>
                                         <select name="durumu"   data-trigger name="status-field" id="status-field" required>
                                             <option value="">{% trans "Durum" %}</option>
@@ -595,7 +618,7 @@
                                             <option value="0">{% trans "Pasif" %}</option>
                                         </select>
                                     </div>
-                                    <div>
+                                    <div class="form-element">
                                         <label for="status-field"  >{% trans "Kullanıcı İzinleri" %}</label>
                                         <select name="izinler"   data-trigger name="status-field" id="status-field" required>
                                             {% for i in  kullanici_izinlerim %}
@@ -604,10 +627,18 @@
                                             
                                         </select>
                                     </div>
-                                      <div class="form-group">
-                                            <label>{% trans "Dosya Yükle" %}</label>
-                                            <input name="file" type="file" multiple="multiple"   />
+                                      <div class="file-input">
+                                            <label for="dosya-yukle">
+                                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                            </label>
+
+                                        <input type="file" name="file" id="dosya-yukle" accept=".pdf, .jpg, .jpeg, .png" multiple>
                                         </div>
+                                        <ul class="fileList">
+                                        </ul>
+                                    </div>
                                 <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('cari-ekle')">{% trans 'Vazgeç' %} </button>
                         <button class="form-action-primary" type="submit">{% trans 'Kullanıcı Ekle' %} </button>
@@ -651,7 +682,7 @@
                                         {% endif %}
                                         <div class="form-element">
                                         <label for="date-field" >{% trans "Adı Soyadı" %}</label>
-                                        <input type="text" value="{{i.last_name}}"  name="yetkili_adi"   placeholder='{% trans "Adı Soyadı" %}' />
+                                        <input type="text" value="{{i.last_name}}"  name="yetkili_adi"   placeholder='{% trans "Adı Soyadı" %}' required/>
                                     </div>
                                     <div class="form-element">
                                         <label for="date-field" >{% trans "Email" %}</label>
@@ -663,7 +694,7 @@
                                         <input type="text" value="{{i.gorevi}}"  name="gorevi"   placeholder='{% trans "Görevi" %}' />
                                     </div>
 
-                                    <div>
+                                    <div class="form-element">
                                         <label for="status-field" >{% trans "Durum" %}</label>
                                         <select name="durumu"  data-trigger name="status-field" id="status-field" required>
                                             {% if i.gorevi  %}
@@ -671,12 +702,10 @@
                                             {% else %}
                                             <option value="0">{% trans "Pasif" %}</option>
                                             {% endif %}
-                                            <option value="">{% trans "Durum" %}</option>
-                                            <option value="1">{% trans "Aktif" %}</option>
-                                            <option value="0">{% trans "Pasif" %}</option>
+                                            
                                         </select>
                                     </div>
-                                    <div>
+                                    <div class="form-element">
                                         <label for="status-field" >{% trans "Kullanıcı İzinleri" %}</label>
                                         <select name="izinler"  data-trigger name="status-field" id="status-field" required>
                                             {% kulanici_yetkileri_goster i as a%}
@@ -687,15 +716,26 @@
                                             {% for j in  kullanici_izinlerim %}
                                                 <option value="{{j.id}}">{{j.isim}}</option>
                                             {% endfor %}
-                                            
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label>{% trans "Dosya Yükle" %}</label>
-                                        <input name="file" type="file" multiple="multiple"  />
+                                    <div class="form-element">
+                                        <label for="dosya-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                                        <div class="file-input">
+                                            <label for="dosya-yukle">
+                                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                                            </label>
+
+                                        <input type="file" name="file" id="dosya-yukle" accept=".pdf, .jpg, .jpeg, .png" multiple>
+                                        </div>
+                                        <ul class="fileList">
+                                        </ul>
                                     </div>
                                 <div class="form-actions">
-                        <button class="form-action-primary" type="submit">{% trans 'Kullanıcıyı Güncelle' %} </button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kullanıcıyı Güncelle' %}</button>
                     </div>
                             </form>
             </div>
