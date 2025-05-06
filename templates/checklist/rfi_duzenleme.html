@@ -339,6 +339,278 @@
 {% endblock head %}
 
 {% block sidebar %}
+{% if hash_bilgi %}
+<main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'RFI' %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'RFI Düzenle' %}</a></li>
+                </ul>
+            </div>
+            <div class="page-actions">
+                <button type="button" class="page-icon-btn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_listesi_2' hashler  %}'" title="{% trans 'Vazgeç' %}">
+                    <i class="icon icon-reject"></i>
+                </button>
+                <button type="submit" class="page-icon-btn" title="{% trans 'Kaydet' %}">
+                    <i class="icon icon-confirm"></i>
+                </button>
+                <button type="button" class="page-primary-btn" id="previewBtn">
+                    <i class="icon icon-view"></i>
+                    {% trans 'Önizle' %}
+                </button>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div id="formEditor">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">{% trans "RFI Bilgileri" %}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-element">
+                                <label>{% trans "RFI Başlığı" %}</label>
+                                <input type="text" name="rfi_baslik" value="{{ rfi_sablonlari.rfi_baslik }}" required>
+                            </div>
+                            <div class="form-element">
+                                <label>{% trans "RFI Kategorisi" %}</label>
+                                <input type="text" name="rfi_kategorisi" value="{{ rfi_sablonlari.rfi_kategorisi }}" required>
+                            </div>
+                            <div class="form-element">
+                                <label>{% trans "RFI Açıklaması" %}</label>
+                                <textarea name="rfi_aciklama" rows="3" required>{{ rfi_sablonlari.rfi_aciklama }}</textarea>
+                            </div>
+                        </div>
+                        
+                        <div id="controlItems">
+                            <div class="form-element">
+                                <label>{% trans "Kontrol Kalemleri" %}</label>
+                                <p class="form-help">{% trans "Bu kalemler formda listelenecek ve sahada kontrol edilecektir." %}</p>
+                            </div>
+                            {% for i in rfi_kontrolleri %}
+                            <div class="form-row">
+                                <div class="form-element">
+                                    <input type="text" name="kontroll" placeholder="{% trans 'Kontrol Kalemi' %}" value="{{ i.kalem_baslik }}" >
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div id="formPreview">
+            <div class="page-header">
+                <div class="page-info">
+                    <div class="page-title">
+                        <a href="#" id="backToEditor">
+                            <i class="icon icon-chevron-left"></i>
+                        </a>
+                        {% trans 'RFI Önizleme' %}
+                    </div>
+                    <ul class="page-breadcrumb">
+                        <li><a href="dashboard.html">{% trans 'Ana Sayfa' %}</a></li>
+                        <li><a href="rfi-list.html">{% trans 'RFI Yönetimi' %}</a></li>
+                        <li><a href="rfi-create.html">{% trans 'Yeni RFI Oluştur' %}</a></li>
+                        <li><a href="#">{% trans 'Önizleme' %}</a></li>
+                    </ul>
+                </div>
+                <div class="page-actions">
+                    <button class="page-icon-btn" id="editBtn" title="{% trans 'Düzenle' %}">
+                        <i class="icon icon-action-edit"></i>
+                    </button>
+                    <button class="page-icon-btn" id="printBtn" title="{% trans 'Yazdır' %}">
+                        <i class="icon icon-download"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="rfi-form-container" id="printContent">
+                <div class="rfi-header">
+                    <div>
+                        <img src="{% static 'go/content/images/biada-logo-light.svg' %}" alt="{% trans 'BiadaGo Logo' %}">
+                    </div>
+                    <div class="rfi-title">
+                        <h1 id="previewProjectName">{% trans 'PROJECT NAME' %}</h1>
+                        <h2 id="previewRfiTitle">{{ rfi_sablonlari.rfi_baslik }}</h2>
+                    </div>
+                    <div class="rfi-info">
+                        <div>{% trans 'NO' %}: #BRFI0001</div>
+                        <div id="currentDate"></div>
+                    </div>
+                </div>
+
+                <div class="rfi-details">
+                    <div>
+                        <label>{% trans 'BLOK:' %}</label>
+                        <span>_________________</span>
+                    </div>
+                    <div>
+                        <label>{% trans 'MAHAL:' %}</label>
+                        <span>_________________</span>
+                    </div>
+                </div>
+
+                <div class="rfi-content">
+                    <div class="rfi-table-container">
+                        <table class="rfi-table" id="previewTable">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'İMALAT' %}</th>
+                                    <th>{% trans 'ONAY İMZASI' %}</th>
+                                    <th>{% trans 'KONTROL TARİHİ' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in rfi_kontrolleri %}
+                                <tr>
+                                    <td>{{ i.kalem_baslik }}</td>
+                                    <td class="signature-cell"></td>
+                                    <td></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="rfi-notes">
+                        <div>{% trans 'NOTLAR:' %}</div>
+                        <div class="rfi-notes-content">
+                            {{ rfi_sablonlari.rfi_aciklama }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rfi-signatures">
+                    <div class="signature-column">
+                        <div class="signature-item">
+                            <div class="signature-title">{% trans 'ALT YÜKLENİCİ MÜHENDİSİ' %}</div>
+                            <div class="signature-role">{% trans 'İmalat Sorumlusu' %}</div>
+                            <div class="signature-date">{% trans 'Tarih: ___/___/______' %}</div>
+                            <div class="signature-line"></div>
+                        </div>
+                        <div class="signature-item">
+                            <div class="signature-title">{% trans 'ALT YÜKLENİCİ MÜDÜRÜ' %}</div>
+                            <div class="signature-role">{% trans 'Firma Yetkilisi' %}</div>
+                            <div class="signature-date">{% trans 'Tarih: ___/___/______' %}</div>
+                        </div>
+                    </div>
+                    <div class="signature-column">
+                        <div class="signature-item">
+                            <div class="signature-title">{% trans 'ANA FİRMA MÜHENDİSİ' %}</div>
+                            <div class="signature-role">{% trans 'Kontrol Sorumlusu' %}</div>
+                            <div class="signature-date">{% trans 'Tarih: ___/___/______' %}</div>
+                            <div class="signature-line"></div>
+                        </div>
+                        <div class="signature-item">
+                            <div class="signature-title">{% trans 'ANA FİRMA MÜDÜRÜ' %}</div>
+                            <div class="signature-role">{% trans 'Proje Yöneticisi' %}</div>
+                            <div class="signature-date">{% trans 'Tarih: ___/___/______' %}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Bugünün tarihini al
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('tr-TR');
+            const currentDateElement = document.getElementById('currentDate');
+            if (currentDateElement) {
+                currentDateElement.textContent = dateStr;
+            }
+
+            // Önizleme butonu
+            const previewBtn = document.getElementById('previewBtn');
+            if (previewBtn) {
+                previewBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Düzenleme alanını gizle, önizleme alanını göster
+                    const formEditor = document.getElementById('formEditor');
+                    const formPreview = document.getElementById('formPreview');
+                    
+                    if (formEditor && formPreview) {
+                        formEditor.style.display = 'none';
+                        formPreview.style.display = 'block';
+                        
+                        // Tablo yüksekliğini dinamik olarak ayarla
+                        setTimeout(function() {
+                            adjustTableHeight();
+                        }, 100);
+                    }
+                });
+            }
+            
+            // Düzenleme butonları
+            const backToEditor = document.getElementById('backToEditor');
+            if (backToEditor) {
+                backToEditor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const formEditor = document.getElementById('formEditor');
+                    const formPreview = document.getElementById('formPreview');
+                    if (formEditor && formPreview) {
+                        formEditor.style.display = 'block';
+                        formPreview.style.display = 'none';
+                    }
+                });
+            }
+            
+            const editBtn = document.getElementById('editBtn');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    const formEditor = document.getElementById('formEditor');
+                    const formPreview = document.getElementById('formPreview');
+                    if (formEditor && formPreview) {
+                        formEditor.style.display = 'block';
+                        formPreview.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Yazdırma butonu
+            const printBtn = document.getElementById('printBtn');
+            if (printBtn) {
+                printBtn.addEventListener('click', function() {
+                    window.print();
+                });
+            }
+        });
+
+        // Tablo yüksekliğini dinamik olarak ayarlama
+        function adjustTableHeight() {
+            const container = document.querySelector('.rfi-form-container');
+            const header = document.querySelector('.rfi-header');
+            const details = document.querySelector('.rfi-details');
+            const notes = document.querySelector('.rfi-notes');
+            const signatures = document.querySelector('.rfi-signatures');
+            const tableContainer = document.querySelector('.rfi-table-container');
+            
+            if (!container || !header || !details || !notes || !signatures || !tableContainer) return;
+            
+            const availableHeight = container.offsetHeight - 
+                                   header.offsetHeight - 
+                                   details.offsetHeight - 
+                                   notes.offsetHeight - 
+                                   signatures.offsetHeight - 
+                                   60; // Ekstra boşluklar için
+            
+            tableContainer.style.maxHeight = availableHeight + 'px';
+        }
+    </script>
+{% else %}
 <main>
         <div class="page-header">
             <div class="page-info">
@@ -609,4 +881,6 @@
             tableContainer.style.maxHeight = availableHeight + 'px';
         }
     </script>
+{% endif %}
+
 {% endblock sidebar %}

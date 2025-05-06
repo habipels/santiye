@@ -952,7 +952,7 @@
 {% endblock head %}
 
 {% block sidebar %}
-
+{% if hash_bilgi %}
      <main>
         <div class="page-header">
             <div class="page-info">
@@ -1274,4 +1274,328 @@
             });
         });
     </script>
+{% else %}
+     <main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'RFI' %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'RFI Detayı' %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+               
+            </div>
+        </div>
+
+        <div class="rfi-detail-container">
+            <div class="rfi-document">
+                <div class="rfi-document-header">
+                    <div class="rfi-document-title">{{onayli.sablon_bilgisi.rfi_baslik}}</div>
+                    <div class="rfi-document-actions">
+                        <div class="stamp-control">
+                            <span>{% trans 'Onay Damgası' %}</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggleStampBtn" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <button class="btn-icon" id="printDocumentBtn">
+                            <i class="icon icon-download"></i>
+                            {% trans 'Yazdır' %}
+                        </button>
+                    </div>
+                </div>
+                <div class="rfi-document-content" id="documentContent">
+                    <div class="rfi-document-image-container">
+                        <!-- Taranmış belge görüntüsü (JPG olarak) -->
+                        <img src="{{onayli.file.url}}" alt="{% trans 'Taranmış RFI Belgesi' %}" class="rfi-document-image" id="rfiImage">
+                        
+                        <!-- Minimal Onay Mührü - Sağ Üst Köşe, Eğik -->
+                        {% if onayli.onaylama_bilgisi %}
+                        
+                        
+                        <div class="approval-stamp" id="approvalStamp">
+                            <div class="approval-stamp-inner">
+                                <div class="approval-stamp-text">{% trans 'ONAYLANDI' %}</div>
+                                <div class="approval-stamp-line"></div>
+                                <div class="approval-stamp-by">{% trans 'Onaylayan' %}</div>
+                                <div class="approval-stamp-name">{{onayli.onaylayan_bilgisi.last_name}}</div>
+                                <div class="approval-stamp-date">{{onayli.onaylayan_tarih | date:"d.m.Y H.i"}}</div>
+                            </div>
+                        </div>
+                        {% else %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="rfi-info">
+                <div class="rfi-info-section">
+                    <div class="rfi-info-title">{% trans 'RFI Bilgileri' %}</div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'RFI No:' %}</div>
+                        <div class="rfi-info-value">#BRFI000{{onayli.id}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'Başlık:' %}</div>
+                        <div class="rfi-info-value">{{onayli.sablon_bilgisi.rfi_baslik}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'Proje:' %}</div>
+                        <div class="rfi-info-value">{{onayli.sablon_bilgisi.rfi_santiye.proje_adi}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'Blok:' %}</div>
+                        <div class="rfi-info-value">{{onayli.blok.blog_adi}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'Kat:' %}</div>
+                        <div class="rfi-info-value">{{onayli.kat_bilgisi}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'Daire:' %}</div>
+                        <div class="rfi-info-value">{{onayli.daire_no}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'Mahal:' %}</div>
+                        <div class="rfi-info-value">{{onayli.mahal}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'Yükleme Tarihi:' %}</div>
+                        <div class="rfi-info-value">{{onayli.kayit_tarihi |date:"d.m.Y H.i"}}</div>
+                    </div>
+                    <div class="rfi-info-item">
+                        <div class="rfi-info-label">{% trans 'Yükleyen:' %}</div>
+                        <div class="rfi-info-value">{{onayli.kontrol_ekleyen.last_name}}</div>
+                    </div>
+                </div>
+                {% if onayli.onaylama_bilgisi %}
+                <div class="rfi-approval-info">
+                    <div class="rfi-approval-title">{% trans 'Onay Bilgileri' %}</div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">{% trans 'Durum:' %}</div>
+                        <div class="rfi-approval-value">{% trans 'Onaylandı' %}</div>
+                    </div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">{% trans 'Onaylayan:' %}</div>
+                        <div class="rfi-approval-value">{{onayli.onaylayan_bilgisi.last_name}}</div>
+                    </div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">{% trans 'Onay Tarihi:' %}</div>
+                        <div class="rfi-approval-value">{{onayli.onaylayan_tarih | date:"d.m.Y H.i"}}</div>
+                    </div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">{% trans 'Onay Süresi:' %}</div>
+                        <div class="rfi-approval-value">{% calculate_waiting_time_onay_suresi onayli.kayit_tarihi|date:"U" onayli.onaylayan_tarih|date:"U" %}</div>
+                    </div>
+                    <div class="rfi-approval-item">
+                        <div class="rfi-approval-label">{% trans 'Notlar:' %}</div>
+                        <div class="rfi-approval-value">{% if onayli.red_sebebi %}
+                                    {{onayli.red_sebebi}}
+                                {% else %}
+                                
+                                {% endif %}</div>
+                    </div>
+                </div>
+                {% else %}
+                {% endif %}
+                <div class="rfi-info-section">
+                    <div class="rfi-info-title">{% trans 'Zaman Çizelgesi' %}</div>
+                    <div class="rfi-timeline">
+                        <div class="rfi-timeline-item">
+                            <div class="rfi-timeline-dot"></div>
+                            <div class="rfi-timeline-content">
+                                <div class="rfi-timeline-date">{{onayli.kayit_tarihi |date:"d.m.Y H.i"}}</div>
+                                <div class="rfi-timeline-text">{% trans 'RFI yüklendi ve onaya gönderildi' %}</div>
+                                <div class="rfi-timeline-user">{{onayli.kontrol_ekleyen.last_name}}</div>
+                            </div>
+                        </div>
+                        
+                        {% if onayli.onaylama_bilgisi %}
+                        <div class="rfi-timeline-item">
+                            <div class="rfi-timeline-dot"></div>
+                            <div class="rfi-timeline-content">
+                                <div class="rfi-timeline-date">{{onayli.onaylayan_tarih |date:"d.m.Y H.i"}}</div>
+                                <div class="rfi-timeline-text">{% trans 'RFI onaylandı' %}</div>
+                                <div class="rfi-timeline-user">{{onayli.onaylayan_bilgisi.last_name}}</div>
+                            </div>
+                        </div>
+                        {% else %}
+                        {% if onayli.onaylayan_bilgisi %}
+                                <div class="rfi-timeline-item">
+                            <div class="rfi-timeline-dot"></div>
+                            <div class="rfi-timeline-content">
+                                <div class="rfi-timeline-date">{{onayli.onaylayan_tarih |date:"d.m.Y H.i"}}</div>
+                                <div class="rfi-timeline-text">{% trans 'RFI Reddedildi' %}</div>
+                                <div class="rfi-timeline-user">{{onayli.onaylayan_bilgisi.last_name}}</div>
+                            </div>
+                        </div>
+                                {% else %}
+                                {% endif %}
+                {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Yazdırma için gizli konteyner -->
+    <div id="printContainer" style="display: none;"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Mühür sürükleme işlevleri
+            const approvalStamp = document.getElementById('approvalStamp');
+            const imageContainer = document.querySelector('.rfi-document-image-container');
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+
+            // Kaydedilmiş pozisyonu yükle
+            if (approvalStamp) {
+                const savedPosition = localStorage.getItem('stampPosition');
+                if (savedPosition) {
+                    const position = JSON.parse(savedPosition);
+                    xOffset = position.x;
+                    yOffset = position.y;
+                    setTranslate(position.x, position.y, approvalStamp);
+                }
+            }
+
+            if (approvalStamp) {
+                approvalStamp.addEventListener('mousedown', dragStart);
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', dragEnd);
+            }
+
+            function dragStart(e) {
+                if (e.target === approvalStamp || approvalStamp.contains(e.target)) {
+                    isDragging = true;
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
+            }
+
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+
+                    xOffset = currentX;
+                    yOffset = currentY;
+
+                    setTranslate(currentX, currentY, approvalStamp);
+                    
+                    // Pozisyonu kaydet
+                    localStorage.setItem('stampPosition', JSON.stringify({
+                        x: currentX,
+                        y: currentY
+                    }));
+                }
+            }
+
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+            }
+
+            function setTranslate(xPos, yPos, el) {
+                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0) rotate(-15deg)`;
+            }
+
+            // Mühür göster/gizle toggle
+            const toggleStampBtn = document.getElementById('toggleStampBtn');
+            if (toggleStampBtn && approvalStamp) {
+                approvalStamp.style.display = 'flex';
+                
+                toggleStampBtn.addEventListener('change', function() {
+                    approvalStamp.style.display = this.checked ? 'flex' : 'none';
+                });
+            }
+
+            // Yazdırma işlevi
+            function printDocument() {
+                const printContainer = document.getElementById('printContainer');
+                const rfiImage = document.getElementById('rfiImage');
+                const approvalStamp = document.getElementById('approvalStamp');
+                
+                // Yazdırma konteynerini temizle
+                printContainer.innerHTML = '';
+                
+                // Görüntüyü ekle
+                const img = document.createElement('img');
+                img.src = rfiImage.src;
+                img.className = 'print-image';
+                printContainer.appendChild(img);
+                
+                // Mühürü ekle
+                if (approvalStamp && approvalStamp.style.display !== 'none') {
+                    const stamp = document.createElement('div');
+                    stamp.className = 'print-stamp';
+                    
+                    // Mühür içeriğini oluştur
+                    const stampInner = document.createElement('div');
+                    stampInner.className = 'print-stamp-inner';
+                    
+                    const text = document.createElement('div');
+                    text.className = 'print-stamp-text';
+                    text.textContent = '{% trans "ONAYLANDI" %}';
+                    
+                    const line = document.createElement('div');
+                    line.className = 'print-stamp-line';
+                    
+                    const by = document.createElement('div');
+                    by.className = 'print-stamp-by';
+                    by.textContent = '{% trans "Onaylayan" %}';
+                    
+                    const name = document.createElement('div');
+                    name.className = 'print-stamp-name';
+                    name.textContent = '{{onayli.onaylayan_bilgisi.last_name}}';
+                    
+                    const date = document.createElement('div');
+                    date.className = 'print-stamp-date';
+                    date.textContent = '{{onayli.onaylayan_tarih | date:"d.m.Y H.i"}}';
+                    
+                    stampInner.appendChild(text);
+                    stampInner.appendChild(line);
+                    stampInner.appendChild(by);
+                    stampInner.appendChild(name);
+                    stampInner.appendChild(date);
+                    
+                    stamp.appendChild(stampInner);
+                    printContainer.appendChild(stamp);
+                }
+                
+                // Yazdırma işlemini başlat
+                setTimeout(() => {
+                    printContainer.style.display = 'block';
+                    window.print();
+                    
+                    setTimeout(() => {
+                        printContainer.style.display = 'none';
+                    }, 1000);
+                }, 100);
+            }
+
+            // Yazdırma butonları için event listener'lar
+            document.querySelectorAll('#printBtn, #printDocumentBtn').forEach(button => {
+                button.addEventListener('click', printDocument);
+            });
+        });
+    </script>
+{% endif %}
+
 {% endblock sidebar %}

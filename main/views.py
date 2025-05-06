@@ -11088,7 +11088,348 @@ def rapor_kaydedici(request):
             "message": "Rapor başarıyla kaydedildi.",
             "pdf_url": pdf_url
         })
+#####################RFİ
+def rfi_Olustur_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    
 
+    content["santiyeler"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+    if request.POST:
+        santiye_bigisi = request.POST.get("santiye_bigisi")
+        rfi_adi = request.POST.get("rfi_adi")
+        rfi_kategorisi = request.POST.get("rfi_kategorisi")
+        rfi_aciklama = request.POST.get("rfi_aciklama")
+        ana_imalat_adi = request.POST.get("ana_imalat_adi")
+        kontrol = request.POST.getlist("kontrol")
+        sablon_bilgileri = rfi_sablonlar.objects.create(kayit_tarihi = get_kayit_tarihi_from_request(request),rfi_kime_ait = kullanici,
+        rfi_santiye = get_object_or_none(santiye,id = santiye_bigisi,proje_ait_bilgisi = kullanici),rfi_baslik = rfi_adi,rfi_kategorisi = rfi_kategorisi,rfi_aciklama = rfi_aciklama,olusturan = request.user)
+        if len(kontrol) > 0:
+            for i in kontrol:
+                rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi = get_kayit_tarihi_from_request(request),sablon_bilgisi = get_object_or_none(rfi_sablonlar,id = sablon_bilgileri.id),
+                kalem_baslik = i)
+        else:
+            for i in kontrol:
+                rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi = get_kayit_tarihi_from_request(request),sablon_bilgisi = get_object_or_none(rfi_sablonlar,id = sablon_bilgileri.id),
+                kalem_baslik = ana_imalat_adi)
+        return redirect_with_language("main:rfi_listesi_2",hash)
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =kullanici).last()
+    return render(request,"checklist/rfi_olustur.html",content)
+
+def rfi_listesi_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    if request.method == "POST":
+        rfi_sablonu = request.POST.get("rfi_sablonu")
+        yapi_gonder = request.POST.get("yapi_gonder")
+        kat = request.POST.get("kat")
+        apartmentNo = request.POST.get("apartmentNo")
+        location = request.POST.get("location")
+        file = request.FILES.get("file")
+        notlar = request.POST.get("notlar")
+
+        # Validate required fields
+        if not (rfi_sablonu and yapi_gonder and kat and apartmentNo and location and file):
+            return JsonResponse({"status": "error", "message": "Eksik bilgi gönderildi."}, status=400)
+        print(get_kayit_tarihi_from_request(request),"saat")
+        rfi_kontrol.objects.create(
+            kayit_tarihi=get_kayit_tarihi_from_request(request),
+            sablon_bilgisi=get_object_or_none(rfi_sablonlar, id=rfi_sablonu),
+            blok=get_object_or_none(bloglar, id=yapi_gonder),
+            kat_bilgisi=kat,
+            daire_no=apartmentNo,
+            mahal=location,
+            file=file,
+            notlar=notlar,
+            kontrol_ekleyen=request.user
+        )
+        return JsonResponse({"status": "success", "message": "RFI başarıyla oluşturuldu."})
+
+    content["rfi_sablonlari"] = rfi_sablonlar.objects.filter(rfi_kime_ait=kullanici)
+    content["rfi_listesi_onay_bekleyen"] = rfi_kontrol.objects.filter(
+        sablon_bilgisi__rfi_kime_ait=kullanici, onaylama_bilgisi=False, onaylayan_bilgisi=None
+    ).order_by("kayit_tarihi")
+    content["rfi_listesi_onay_bekleyen_sayisi"] = content["rfi_listesi_onay_bekleyen"].count()
+    content["rfi_listesi_red_yiyenler"] = rfi_kontrol.objects.filter(
+        sablon_bilgisi__rfi_kime_ait=kullanici, onaylama_bilgisi=False
+    ).exclude(onaylayan_bilgisi=None).order_by("kayit_tarihi")
+    content["rfi_listesi_onay_alanlar"] = rfi_kontrol.objects.filter(
+        sablon_bilgisi__rfi_kime_ait=kullanici, onaylama_bilgisi=True
+    ).exclude(onaylayan_bilgisi=None).order_by("kayit_tarihi")
+    return render(request, "checklist/rfi_listesi.html", content)
+
+
+def rfi_approve_2(request,hash):
+    
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+        
+    if True:
+        id = request.GET.get("id")
+        if not id:
+            return JsonResponse({"status": "error", "message": "RFI ID eksik."}, status=400)
+
+        rfi = rfi_kontrol.objects.filter(id=id).first()
+        if not rfi:
+            return JsonResponse({"status": "error", "message": "RFI bulunamadı."}, status=404)
+
+        rfi.onaylama_bilgisi = True
+        rfi.onaylayan_bilgisi = request.user
+        rfi.onaylayan_tarih = datetime.now()
+        rfi.save()
+
+        return JsonResponse({"status": "success", "message": "RFI başarıyla onaylandı."})
+    return JsonResponse({"status": "error", "message": "Geçersiz istek."}, status=405)
+
+
+def rfi_reject_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    if True:
+        id = request.GET.get("id")
+        red_sebebi = request.GET.get("red_sebebi")
+        
+        if not id or not red_sebebi:
+            return JsonResponse({"status": "error", "message": "Eksik bilgi gönderildi."}, status=400)
+
+        rfi = rfi_kontrol.objects.filter(id=id).first()
+        if not rfi:
+            return JsonResponse({"status": "error", "message": "RFI bulunamadı."}, status=404)
+
+        rfi.onaylama_bilgisi = False
+        rfi.onaylayan_bilgisi = request.user
+        rfi.onaylayan_tarih = datetime.now()
+        rfi.red_sebebi = red_sebebi
+        rfi.save()
+
+        return JsonResponse({"status": "success", "message": "RFI başarıyla reddedildi."})
+    return JsonResponse({"status": "error", "message": "Geçersiz istek."}, status=405)
+
+def rfi_template_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    content["rfi_sablonlari"] = rfi_sablonlar.objects.filter(rfi_kime_ait = kullanici)
+    content["rfi_kategorileri"] = rfi_sablonlar.objects.filter(rfi_kime_ait = kullanici).values("rfi_kategorisi").distinct() 
+    return render(request,"checklist/rfi_template.html",content)
+
+
+def rfi_detail_2(request,id,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+     
+        content["onayli"] = get_object_or_none(rfi_kontrol,sablon_bilgisi__rfi_kime_ait = kullanici,id = id)
+        
+        #rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi")
+    return render(request,"checklist/rfi_detail.html",content)
+
+def rfi_duzenleme_2(request, id,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+
+    
+
+    # Fetch the RFI template and its related controls
+    rfi_sablon = get_object_or_none(rfi_sablonlar, id=id)
+    if not rfi_sablon:
+        return redirect_with_language("main:yetkisiz")  # Redirect if the RFI template does not exist
+
+    content["rfi_sablonlari"] = rfi_sablon
+    content["rfi_kontrolleri"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi=rfi_sablon)
+    if request.POST:
+        # Update the RFI template
+        rfi_adi = request.POST.get("rfi_baslik")
+        rfi_kategorisi = request.POST.get("rfi_kategorisi")
+        rfi_aciklama = request.POST.get("rfi_aciklama")
+        ana_imalat_adi = request.POST.get("ana_imalat_adi")
+        kontrol = request.POST.getlist("kontroll")
+        rfi_sablonlar.objects.filter(id=id).update(rfi_baslik=rfi_adi, rfi_kategorisi=rfi_kategorisi, rfi_aciklama=rfi_aciklama)
+        rfi_sablon_kalemleri.objects.filter(sablon_bilgisi=rfi_sablon).delete()
+        
+        if len(kontrol) > 0:
+            for i in kontrol:
+                rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                                                    sablon_bilgisi=get_object_or_none(rfi_sablonlar, id=id),kalem_baslik = i)
+        else:
+            for i in kontrol:
+                rfi_kontrol = rfi_sablon_kalemleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                                                    sablon_bilgisi=get_object_or_none(rfi_sablonlar, id=id))
+        print(request.POST)
+        return redirect_with_language("main:rfi_template_2",hash)
+    return render(request, "checklist/rfi_duzenleme.html", content)
+
+
+
+def rfi_show_2(request,id,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar 
+        content["onayli"] = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id)
+        content["kalemler"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id))
+        content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =kullanici).last()
+        #rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi")
+    return render(request,"checklist/rfi_onizle.html",content)
+def rapor_olusturma_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    
+        content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = kullanici)     
+        content["cariler"] = cari.objects.filter(silinme_bilgisi = False,cari_kart_ait_bilgisi = kullanici)
+        content["santiyeler"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        content["bloklar"] = bloglar.objects.filter(proje_santiye_Ait__silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        content["is_planlari"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici,status = "Completed")
+        content["is_planlarii"] = IsplaniPlanlari.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        content["personeller_listesi"] = calisanlar.objects.filter(status = "0",silinme_bilgisi = False,calisan_kime_ait = kullanici)
+        content["logo_islemi"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu = kullanici).last()
+    return render(request, "santiye_yonetimi/rapor_olusturucu.html", content)
+
+def raporlari_gor_sayfasi_2(request,hash):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hashler"] = hash
+        content["hash_bilgi"] = kullanici
+        #profile =santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = kullanici)
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    
+    content["raporlar"] = rapor_bilgisi.objects.filter(silinme_bilgisi = False,rapor_kime_ait = kullanici)
+    return render(request, "santiye_yonetimi/raporlari_goster.html", content)
+
+import json
+import base64
+import os
+import uuid
+from django.http import JsonResponse
+from django.conf import settings
+from django.shortcuts import redirect
+
+def rapor_kaydedici(request):
+    if super_admin_kontrolu(request):
+        pass
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+            if a:
+                if a.izinler.santiye_kontrol:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        description = data["description"]
+        tarih_baslangic = data["dateRange"]["start"]
+        tarih_bitis = data["dateRange"]["end"]
+        veri = data["content"]
+        proje_getir = data["project"]
+        pdf = data["pdf"] 
+
+        # PDF'yi kaydet
+        try:
+            pdf_base64 = pdf # "data:application/pdf;base64," kısmını at
+            pdf_icerik = base64.b64decode(pdf_base64)
+
+            # Dosya adını oluştur
+            dosya_adi = f"{uuid.uuid4().hex}.pdf"
+            klasor_yolu = os.path.join(settings.MEDIA_ROOT, "rapor_dosyalari")
+            os.makedirs(klasor_yolu, exist_ok=True)
+            pdf_yolu = os.path.join(klasor_yolu, dosya_adi)
+
+            # Dosyayı kaydet
+            with open(pdf_yolu, "wb") as f:
+                f.write(pdf_icerik)
+
+            pdf_url = f"/media/rapor_dosyalari/{dosya_adi}"
+            c = f"rapor_dosyalari/{dosya_adi}"
+            rapor_bilgisi.objects.create(
+                rapor_kime_ait = kullanici,
+                rapor_basligi = name,
+                rapor_aciklama = description,
+                rapor_icerigi = veri,
+                olusturan = request.user,
+                baslangic_tarihi = tarih_baslangic,
+                bitis_tarihi = tarih_bitis,
+                rapor_dosyalari = c)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": f"PDF kaydedilirken hata oluştu: {str(e)}"
+            })
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Rapor başarıyla kaydedildi.",
+            "pdf_url": pdf_url
+        })
+
+####################### RFİ
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test

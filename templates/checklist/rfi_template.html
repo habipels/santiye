@@ -76,7 +76,129 @@
 {% endblock head %}
 
 {% block sidebar %}
+{% if hash_bilgi %}
+    
+    <main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'RFI' %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'RFI Şablonları' %}</a></li>
+                </ul>
+            </div>
 
+            <div class="page-actions">
+
+                <button class="page-primary-btn" id="createTemplateBtn" onclick="window.location.href='/{{dil}}{% url 'main:rfi_Olustur_2' hashler %}'">
+                    <i class="icon icon-plus"></i>
+                   {% trans 'Şablon Oluştur' %} </button>
+            </div>
+        </div>
+
+
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Mevcut Şablonlar' %}</div>
+                <div class="stats-right">
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="template-grid">
+                {% for i in rfi_sablonlari %}
+                
+                
+                    <div class="template-card">
+                        <div class="template-card-header">
+                            <div>
+                                <div class="template-card-title">{{i.rfi_baslik}}</div>
+                                <div class="template-card-category">{% trans 'Kategori' %}: {{i.rfi_kategorisi}}</div>
+                            </div>
+                            <div class="badge badge-primary">{% trans 'Aktif' %}</div>
+                        </div>
+                        <div class="template-card-description">
+                            {{i.rfi_aciklama}}
+                        </div>
+                        <div class="template-card-stats">
+                            <div class="template-card-stat">
+                                <i class="icon icon-calendar"></i>
+                                <span>{% trans 'Oluşturulma' %}: {{i.kayit_tarihi | date:"d.m.Y H:s"}}</span>
+                            </div>
+                            <div class="template-card-stat">
+                            </div>
+                        </div>
+                        <div class="template-card-actions">
+                            <button class="form-action-secondary" onclick="window.location.href='/{{dil}}{% url 'main:rfi_show_2' i.id hashler  %}'">
+                            {% trans 'Düzenle' %}</button>
+                            
+                        </div>
+                    </div>
+                {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar toggle işlevi
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+        });
+
+        // Dark mode toggle işlevi
+        document.querySelector('.dark-mode-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        // Şablon arama işlevi
+        document.getElementById('templateSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.template-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.template-card-title').textContent.toLowerCase();
+                const description = card.querySelector('.template-card-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Kategori filtreleme işlevi
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            const category = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.template-card');
+            
+            if (category === '') {
+                cards.forEach(card => {
+                    card.style.display = 'block';
+                });
+                return;
+            }
+            
+            cards.forEach(card => {
+                const cardCategory = card.querySelector('.template-card-category').textContent.toLowerCase();
+                
+                if (cardCategory.includes(category)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+{% else %}
     
     <main>
         <div class="page-header">
@@ -197,4 +319,6 @@
             });
         });
     </script>
+
+{% endif %}
 {% endblock sidebar %}

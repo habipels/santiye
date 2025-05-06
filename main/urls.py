@@ -279,6 +279,18 @@ path("rfi_duzenleme/<int:id>", views.rfi_duzenleme, name="rfi_duzenleme"),
 path("rfi_reject/", views.rfi_reject, name="rfi_reject"),
 path("rfi_approve/", views.rfi_approve, name="rfi_approve"),
 path("rfi_show/<int:id>", views.rfi_show, name="rfi_show"),
+
+path("control/rfi_create/<str:hash>", views.rfi_Olustur_2, name="rfi_Olustur_2"),
+path("control/rfi_list/<str:hash>", views.rfi_listesi_2, name="rfi_listesi_2"),
+path("control/rfi_template/<str:hash>", views.rfi_template_2, name="rfi_template_2"),
+path("control/rfi_detail/<int:id>/<str:hash>", views.rfi_detail_2, name="rfi_detail_2"),
+path("control/rfi_duzenleme/<int:id>/<str:hash>", views.rfi_duzenleme_2, name="rfi_duzenleme_2"),
+path("control/rfi_reject/<str:hash>", views.rfi_reject_2, name="rfi_reject_2"),
+path("control/rfi_approve/<str:hash>", views.rfi_approve_2, name="rfi_approve_2"),
+path("control/rfi_show/<int:id>/<str:hash>", views.rfi_show_2, name="rfi_show_2"),
+
+
+
 path("create_report/", views.rapor_olusturma, name="rapor_olusturma"),
 path("report_list/", views.raporlari_gor_sayfasi, name="raporlari_gor_sayfasi"),
 path("rapor_kaydedici/", views.rapor_kaydedici, name="rapor_kaydedici"),
