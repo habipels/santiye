@@ -67,7 +67,10 @@
                 <table id="buttons-datatables" class="display table table-bordered dataTable" style="width:100%">
                     <thead>
                         <tr>
-                            <th>{% trans 'Hesap' %}</th>
+                        {% if request.user.is_superuser %}
+                         <th>{% trans 'Hesap' %}</th>
+                        {% endif %}
+                           
                             <th>{% trans 'Tarih D-M-Y' %}</th>
                             <th>{% trans 'Gönderen' %}</th>
                             <th>{% trans 'Alıcı' %}</th>
