@@ -9737,6 +9737,39 @@ def genel_rapor_sayfasi(request):
     ).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
     return render(request,"santiye_yonetimi/genel_rapor.html",content)
 #taseron olaylari
+def genel_rapor_sayfasi_2(request,hash):
+    content = sozluk_yapisi()
+    d = decode_id(hash)
+    content["hashler"] = hash
+    kullanici = get_object_or_404(CustomUser,id = d)
+    content["hash_bilgi"] = kullanici
+    if super_admin_kontrolu(request):
+        
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    
+    content["projeler"] = santiye.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
+    content["personel_depertmani"] = calisanlar_kategorisi.objects.filter(kategori_kime_ait = kullanici,silinme_bilgisi = False)
+    content["urunler"] =  urunler.objects.filter(urun_ait_oldugu = kullanici,silinme_bilgisi = False)
+    content["imalat_kalemleri"] =  santiye_kalemleri.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False)
+    content["santiyeler"] = genel_rapor.objects.filter(proje_ait_bilgisi = kullanici,silinme_bilgisi = False).order_by("tarih")
+    from django.db.models import Sum
+    # Kaybedilen gün sayısını hesapla ve content sözlüğüne ekle
+    content["rapor_sayisi"] = genel_rapor.objects.filter(proje_ait_bilgisi=kullanici, silinme_bilgisi=False).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
+    
+    content["hava_durumu_kaynakli"] = genel_rapor.objects.filter(
+        kayip_gun_sebebi="1", proje_ait_bilgisi=kullanici, silinme_bilgisi=False
+    ).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
+
+    content["ust_yuklenici"] = genel_rapor.objects.filter(
+        kayip_gun_sebebi="0", proje_ait_bilgisi=kullanici, silinme_bilgisi=False
+    ).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
+
+    content["elektirik_kesintisi"] = genel_rapor.objects.filter(
+        kayip_gun_sebebi="3", proje_ait_bilgisi=kullanici, silinme_bilgisi=False
+    ).aggregate(toplam=Sum('kayip_gun_sayisi'))['toplam'] or 0
+    return render(request,"santiye_yonetimi/genel_rapor.html",content)
+#taseron olaylari
 def genel_rapor_olustur(request):
     content = sozluk_yapisi()
     if request.POST:
@@ -9803,6 +9836,64 @@ def genel_rapor_olustur(request):
                                           proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
                                           genel_aciklama = aciklamalar[i] )
     return redirect_with_language("main:genel_rapor_sayfasi")
+#taseron olaylari
+def genel_rapor_olustur_2(request,hash):
+    content = sozluk_yapisi()
+    if request.POST:
+        rapor_tarihi = request.POST.get("rapor_tarihi")
+        secili_santiye = request.POST.get("santiye")
+        depertman = request.POST.getlist("depert")
+        personel = request.POST.getlist("depertsayisi")
+        hava_durumu_sicaklik = request.POST.getlist("hava_durumu_sicaklik")
+        hava_durumu_ruzgar = request.POST.getlist("hava_durumu_ruzgar")
+        malzeme = request.POST.getlist("malzeme")
+        malzemesayisi = request.POST.getlist("malzemesayisi")
+        imalat = request.POST.getlist("imalat")
+        aciklama = request.POST.getlist("aciklama")
+        aciklamalar = request.POST.getlist("aciklamalar")
+        rapor_bitis_tarihi =request.POST.get("rapor_bitis_tarihi")
+        kayipgun = request.POST.get("kayipgun")
+        kayipsebebi = request.POST.get("kayipsebebi")
+        otherReason = request.POST.get("otherReason")
+        if kayipgun:
+            pass
+        else:
+            kayipgun = 0
+        if super_admin_kontrolu(request):
+            d = decode_id(hash)
+            content["hashler"] = hash
+            kullanici = get_object_or_404(CustomUser,id = d)
+            content["hash_bilgi"] = kullanici
+        
+        veri = genel_rapor.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,raporu_olusturan = request.user,
+                                   proje_santiye_Ait = get_object_or_none(santiye,id=secili_santiye),
+                                   tarih =rapor_tarihi,bitis_tarih = rapor_bitis_tarihi,kayip_gun_sayisi = float(kayipgun),
+                                   kayip_gun_aciklamasi =otherReason , kayip_gun_sebebi = kayipsebebi )
+        for i in range(len(depertman)):
+            genel_personel.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          personel_departmani = get_object_or_none(calisanlar_kategorisi,id = depertman[i]),
+                                          personel_sayisi = float(personel[i]) )
+        for i in range(len(hava_durumu_sicaklik)):
+            genel_hava_durumu.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          hava_durumu_sicaklik =  hava_durumu_sicaklik[i],
+                                          hava_durumu_ruzgar = float(hava_durumu_ruzgar[i]) )
+        for i in range(len(malzeme)):
+            gelen_malzeme.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          urun = get_object_or_none(urunler,id = malzeme[i]),
+                                          urun_adeti = float(malzemesayisi[i]) )
+        for i in range(len(imalat)):
+            genel_imalat.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          imalet_kalemi = get_object_or_none(santiye_kalemleri,id = imalat[i]),
+                                          imalat_aciklama = aciklama[i] )
+        for i in range(len(aciklamalar)):
+            genel_aciklamalar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
+                                          proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
+                                          genel_aciklama = aciklamalar[i] )
+    return redirect_with_language("main:genel_rapor_sayfasi_2",hash)
 
 def genel_rapor_onaylama(request,id):
     content = sozluk_yapisi()
@@ -9824,6 +9915,26 @@ def genel_rapor_onaylama(request,id):
                 return redirect_with_language("main:yetkisiz")
         else:
             kullanici =  request.user
+    content["santiyeler"] = get_object_or_404(genel_rapor,proje_ait_bilgisi = kullanici,silinme_bilgisi = False,id = id) 
+    content["gelen_malzeme"] = gelen_malzeme.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
+    content["genel_personel"] = genel_personel.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
+    content["genel_imalat"] = genel_imalat.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
+    content["genel_aciklamalar"] = genel_aciklamalar.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
+    content["genel_hava_durumu"] = genel_hava_durumu.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id ).last()
+    content["perseonel_iznleri_gonder"] =bagli_kullanicilar.objects.filter(izinler__izinlerin_sahibi_kullanici = kullanici,izinler__genel_rapor_onaylama = True)
+    return render(request,"santiye_yonetimi/genel_rapor_onaylama.html",content)
+def genel_rapor_onaylama_2(request,id,hash):
+    content = sozluk_yapisi()
+
+    if super_admin_kontrolu(request):
+        d = decode_id(hash)
+        content["hashler"] = hash
+        kullanici = get_object_or_404(CustomUser,id = d)
+        content["hash_bilgi"] = kullanici
+
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    
     content["santiyeler"] = get_object_or_404(genel_rapor,proje_ait_bilgisi = kullanici,silinme_bilgisi = False,id = id) 
     content["gelen_malzeme"] = gelen_malzeme.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
     content["genel_personel"] = genel_personel.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
@@ -9858,6 +9969,27 @@ def rapor_onaylama(request):
         else:
             pass
         return redirect_with_language("main:genel_rapor_onaylama",buttonId)
+def rapor_onaylama_2(request,hash):
+    content = sozluk_yapisi()
+    
+
+
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        kullanici_bilgisi = request.POST.get("kullanici_bilgisi")
+        sifre_bilgisi = request.POST.get("sifre_bilgisi")
+        if super_admin_kontrolu(request):
+            d = decode_id(hash)
+            content["hashler"] = hash
+            kullanici = get_object_or_404(CustomUser,id = d)
+            content["hash_bilgi"] = kullanici
+        
+        users = get_object_or_404(CustomUser,id = kullanici_bilgisi)
+        if users.imza_sifresi == sifre_bilgisi:
+            genel_rapor.objects.filter(id = buttonId).update(raporu_onaylayan = users,onaylama_tarihi =datetime.now())
+        else:
+            pass
+        return redirect_with_language("main:genel_rapor_sayfasi_2",hash)
 def rapor_sil(request):
     if request.POST:
         buttonId = request.POST.get("buttonId")
@@ -9878,6 +10010,19 @@ def rapor_sil(request):
                 kullanici =  request.user
         genel_rapor.objects.filter(id = buttonId).update(silinme_bilgisi = True)
         return redirect_with_language("main:genel_rapor_sayfasi")
+def rapor_sil_2(request,hash):
+    content = sozluk_yapisi()
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        if super_admin_kontrolu(request):
+            d = decode_id(hash)
+            content["hashler"] = hash
+            kullanici = get_object_or_404(CustomUser,id = d)
+            content["hash_bilgi"] = kullanici
+
+        
+        genel_rapor.objects.filter(id = buttonId).update(silinme_bilgisi = True)
+        return redirect_with_language("main:genel_rapor_sayfasi_2",hash)
 def rapor_gonder(request, rapor_id):
     # Belirtilen ID'ye sahip genel rapor bilgisi yoksa hata döner
     genel_rapor_bilgisi = get_object_or_404(genel_rapor, id=rapor_id)

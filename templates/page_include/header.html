@@ -52,14 +52,16 @@
 
     
     {% url 'main:santiye_kalem_ve_blog_2' hashler as santiye_kalem_ve_blog_url %}
-    
+    {% url 'main:genel_rapor_sayfasi_2' hashler as genel_rapor_sayfasi_url_2 %}
     <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
         <a class="sidebar-sub-toggle" href="#"><i class="icon icon-document"></i> <span>{% trans 'Raporlar' %}</span> <i class="icon icon-caret"></i></a>
         <ul class="sidebar-sub-menu">
             <li class="{% if request.path == santiye_kalem_ve_blog_url %}active{% endif %}">
                 <a href="/{{dil}}{{ santiye_kalem_ve_blog_url }}" class="sidebar-sub-item">{% trans 'Şantiye Raporları' %}</a>
             </li>
-
+            <li class="{% if request.path == genel_rapor_sayfasi_url_2 %}active{% endif %}">
+                <a href="/{{dil}}{{ genel_rapor_sayfasi_url_2 }}" class="sidebar-sub-item">{% trans 'Şantiye Günlüğü' %}</a>
+            </li>
             {% url 'accounting:gelirler_ozeti_2' hashler as gelirler_ozeti_url %}
             {% url 'accounting:giderler_ozeti_2' hashler as giderler_ozeti_url %}
             {% url 'accounting:hesap_ekstra_durumu_2' hashler as hesap_ekstra_durumu_url %}
