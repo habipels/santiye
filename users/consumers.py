@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import Group, Message
 from channels.db import database_sync_to_async
 from datetime import datetime
-
+from django.shortcuts import get_object_or_404
 User = get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -32,7 +32,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json.get('message', None)
         file_url = text_data_json.get('file_url', None)
         user = self.scope["user"]
-
+        
         # Oturum açmamış kullanıcıları kontrol et
         if not user.is_authenticated:
             print("Oturum açmamış kullanıcıdan mesaj alındı. Veritabanına kaydedilmeyecek.")
@@ -46,7 +46,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     sender=user,
                     group=group,
                     content=message,
-                    file=file_url  # Dosya URL'si varsa kaydet
+                    file=file_url,  # Dosya URL'si varsa kaydet
+                    id_bilgisi = get_object_or_404(User, username=user).id  # Kullanıcı bilgilerini al
                 )
                 timestamp = new_message.timestamp.isoformat()
             else:
@@ -63,7 +64,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': message,
                 'file_url': file_url,
                 'username': user.username,
-                'timestamp': timestamp
+                'timestamp': timestamp,
+                "id_bilgisi": user.id  # Kullanıcı bilgilerini al
             }
         )
 
@@ -72,11 +74,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         file_url = event.get('file_url', None)
         username = event['username']
         timestamp = event['timestamp']
-
+        id = event['id_bilgisi']
         # Mesajı WebSocket'ten gönder
         await self.send(text_data=json.dumps({
             'message': message,
             'file_url': file_url,
             'user': username,
-            'timestamp': timestamp
+            'timestamp': timestamp,
+            'id_bilgisi': id  # Kullanıcı bilgilerini al
         }))
