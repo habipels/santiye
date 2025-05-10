@@ -7602,6 +7602,31 @@ def kullanici_yetki_alma(request):
         izinler.rapor_olusturucu_gorme = False
         izinler.rapor_olusturucu_olusturma = False
 
+        izinler.musteri_olusturma = False
+        izinler.musteri_gorme = False
+        izinler.musteri_duzenleme = False
+        izinler.musteri_silme = False
+        izinler.crm_musteri_olusturma = False
+        izinler.crm_musteri_silme = False
+        izinler.crm_musteri_gorme = False
+        izinler.crm_musteri_duzenleme = False
+        izinler.crm_talep_olusturma = False
+        izinler.crm_talep_silme = False
+        izinler.crm_talep_gorme = False
+        izinler.crm_talep_duzenleme = False
+        izinler.crm_teklif_olusturma = False
+        izinler.crm_teklif_silme = False
+        izinler.crm_teklif_gorme = False
+        izinler.crm_teklif_duzenleme = False
+        izinler.crm_daire_olusturma = False
+        izinler.crm_daire_silme = False
+        izinler.crm_daire_gorme = False
+        izinler.crm_daire_duzenleme = False
+        izinler.crm_evrak_olusturma = False
+        izinler.crm_evrak_silme = False
+        izinler.crm_evrak_gorme = False
+        izinler.crm_evrak_duzenleme = False
+
         izinler.save()
         ##
         personeller_puantaj_olusturma = request.POST.get("personeller_puantaj_olusturma")
@@ -8131,7 +8156,80 @@ def kullanici_yetki_alma(request):
         rapor_olusturucu_olusturma = request.POST.get("rapor_olusturucu_olusturma")
         if rapor_olusturucu_olusturma:
             izinler.rapor_olusturucu_olusturma = True
-        
+
+        musteri_olusturma = request.POST.get("musteri_olusturma")
+        if musteri_olusturma:
+            izinler.musteri_olusturma = True
+        musteri_gorme = request.POST.get("musteri_gorme")
+        if musteri_gorme:
+            izinler.musteri_gorme = True
+        musteri_duzenleme = request.POST.get("musteri_duzenleme")
+        if musteri_duzenleme:
+            izinler.musteri_duzenleme = True
+        musteri_silme = request.POST.get("musteri_silme")
+        if musteri_silme:
+            izinler.musteri_silme = True
+        crm_musteri_olusturma = request.POST.get("crm_musteri_olusturma")
+        if crm_musteri_olusturma:
+            izinler.crm_musteri_olusturma = True
+        crm_musteri_silme = request.POST.get("crm_musteri_silme")
+        if crm_musteri_silme:
+            izinler.crm_musteri_silme = True
+        crm_musteri_gorme = request.POST.get("crm_musteri_gorme")
+        if crm_musteri_gorme:
+            izinler.crm_musteri_gorme = True
+        crm_musteri_duzenleme = request.POST.get("crm_musteri_duzenleme")
+        if crm_musteri_duzenleme:
+            izinler.crm_musteri_duzenleme = True
+        crm_talep_olusturma = request.POST.get("crm_talep_olusturma")
+        if crm_talep_olusturma:
+            izinler.crm_talep_olusturma = True
+        crm_talep_silme = request.POST.get("crm_talep_silme")
+        if crm_talep_silme:
+            izinler.crm_talep_silme = True
+        crm_talep_gorme = request.POST.get("crm_talep_gorme")
+        if crm_talep_gorme:
+            izinler.crm_talep_gorme = True
+        crm_talep_duzenleme = request.POST.get("crm_talep_duzenleme")
+        if crm_talep_duzenleme:
+            izinler.crm_talep_duzenleme = True
+        crm_teklif_olusturma = request.POST.get("crm_teklif_olusturma")
+        if crm_teklif_olusturma:
+            izinler.crm_teklif_olusturma = True
+        crm_teklif_silme = request.POST.get("crm_teklif_silme")
+        if crm_teklif_silme:
+            izinler.crm_teklif_silme = True
+        crm_teklif_gorme = request.POST.get("crm_teklif_gorme")
+        if crm_teklif_gorme:
+            izinler.crm_teklif_gorme = True
+        crm_teklif_duzenleme = request.POST.get("crm_teklif_duzenleme")
+        if crm_teklif_duzenleme:
+            izinler.crm_teklif_duzenleme = True
+        crm_daire_olusturma = request.POST.get("crm_daire_olusturma")
+        if crm_daire_olusturma:
+            izinler.crm_daire_olusturma = True
+        crm_daire_silme = request.POST.get("crm_daire_silme")
+        if crm_daire_silme:
+            izinler.crm_daire_silme = True
+        crm_daire_gorme = request.POST.get("crm_daire_gorme")
+        if crm_daire_gorme:
+            izinler.crm_daire_gorme = True
+        crm_daire_duzenleme = request.POST.get("crm_daire_duzenleme")
+        if crm_daire_duzenleme:
+            izinler.crm_daire_duzenleme = True
+        crm_evrak_olusturma = request.POST.get("crm_evrak_olusturma")
+        if crm_evrak_olusturma:
+            izinler.crm_evrak_olusturma = True
+        crm_evrak_silme = request.POST.get("crm_evrak_silme")
+        if crm_evrak_silme:
+            izinler.crm_evrak_silme = True
+        crm_evrak_gorme = request.POST.get("crm_evrak_gorme")
+        if crm_evrak_gorme:
+            izinler.crm_evrak_gorme = True
+        crm_evrak_duzenleme = request.POST.get("crm_evrak_duzenleme")
+        if crm_evrak_duzenleme:
+            izinler.crm_evrak_duzenleme = True
+
         izinler.save()
         id_bilgiis = izinler.id
     return redirect_with_language("main:kullanici_yetkileri_duzenle",id_bilgiis)

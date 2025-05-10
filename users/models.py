@@ -268,10 +268,10 @@ class personel_izinleri(models.Model):
     genel_rapor_silme = models.BooleanField(default = False)
     genel_rapor_onaylama = models.BooleanField(default = False)
     #musteri Kısmı
-    musteri_olusturma = models.BooleanField(default = False)
-    musteri_gorme = models.BooleanField(default = False)
-    musteri_duzenleme = models.BooleanField(default = False)
-    musteri_silme = models.BooleanField(default = False)
+    musteri_olusturma = models.BooleanField(default=False)
+    musteri_gorme = models.BooleanField(default=False)
+    musteri_duzenleme = models.BooleanField(default=False)
+    musteri_silme = models.BooleanField(default=False)
     # CRM permissions
     crm_musteri_olusturma = models.BooleanField(default=False, verbose_name="CRM Müşteri Oluşturma İzni")
     crm_musteri_silme = models.BooleanField(default=False, verbose_name="CRM Müşteri Silme İzni")
