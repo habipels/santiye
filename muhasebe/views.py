@@ -4430,7 +4430,7 @@ def gelirler_ozeti(request):
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
-                if a.izinler.gider_ozeti_gorme:
+                if a.izinler.gelir_ozeti_gorme:
                     profile = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu = request.user.kullanicilar_db).order_by("-fatura_tarihi")
                     content["kasa"] = Kasa.objects.filter(silinme_bilgisi = False,kasa_kart_ait_bilgisi = request.user.kullanicilar_db)
                 else:

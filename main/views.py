@@ -7599,6 +7599,9 @@ def kullanici_yetki_alma(request):
         izinler.zimmet_silme = False
         izinler.zimmet_gorme = False
 
+        izinler.rapor_olusturucu_gorme = False
+        izinler.rapor_olusturucu_olusturma = False
+
         izinler.save()
         ##
         personeller_puantaj_olusturma = request.POST.get("personeller_puantaj_olusturma")
@@ -8121,9 +8124,17 @@ def kullanici_yetki_alma(request):
         if zimmet_gorme:
             izinler.zimmet_gorme = True
 
+        rapor_olusturucu_gorme = request.POST.get("rapor_olusturucu_gorme")
+        if rapor_olusturucu_gorme:
+            izinler.rapor_olusturucu_gorme = True
+
+        rapor_olusturucu_olusturma = request.POST.get("rapor_olusturucu_olusturma")
+        if rapor_olusturucu_olusturma:
+            izinler.rapor_olusturucu_olusturma = True
         
         izinler.save()
-    return redirect_with_language("main:kullanici_yetkileri")
+        id_bilgiis = izinler.id
+    return redirect_with_language("main:kullanici_yetkileri_duzenle",id_bilgiis)
 
 def cari_history_view(request, cari_id):
     cari_instance = cari.objects.get(id=cari_id)
@@ -10981,7 +10992,7 @@ def rapor_olusturma(request):
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
             if a:
-                if a.izinler.santiye_kontrol:
+                if a.izinler.rapor_olusturucu_gorme and a.izinler.rapor_olusturucu_olusturma:
                     kullanici = request.user.kullanicilar_db
                 else:
                     return redirect_with_language("main:yetkisiz")
@@ -11007,7 +11018,7 @@ def raporlari_gor_sayfasi(request):
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
             if a:
-                if a.izinler.santiye_kontrol:
+                if a.izinler.rapor_olusturucu_gorme:
                     kullanici = request.user.kullanicilar_db
                 else:
                     return redirect_with_language("main:yetkisiz")
@@ -11033,7 +11044,7 @@ def rapor_kaydedici(request):
         if request.user.kullanicilar_db:
             a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
             if a:
-                if a.izinler.santiye_kontrol:
+                if a.izinler.rapor_olusturucu_olusturma:
                     kullanici = request.user.kullanicilar_db
                 else:
                     return redirect_with_language("main:yetkisiz")

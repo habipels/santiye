@@ -200,9 +200,9 @@ class personel_izinleri(models.Model):
     personeller_gorme = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
     personeller_duzenleme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
     #Dashboard Kategorileri
-    dashboard_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
+    dashboard_olusturma = models.BooleanField(default = True,verbose_name = "Hakedişler Oluşturma İzni")
     dashboard_silme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
-    dashboard_gorme = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
+    dashboard_gorme = models.BooleanField(default = True,verbose_name = "Hakedişler Oluşturma İzni")
     dashboard_duzenleme = models.BooleanField(default = False,verbose_name = "Hakedişler Silme İzni ")
     #Gelir Özeti Kategorileri
     gelir_ozeti_olusturma = models.BooleanField(default = False,verbose_name = "Hakedişler Oluşturma İzni")
@@ -298,6 +298,12 @@ class personel_izinleri(models.Model):
     crm_evrak_gorme = models.BooleanField(default=False, verbose_name="CRM Evrak Görme İzni")
     crm_evrak_duzenleme = models.BooleanField(default=False, verbose_name="CRM Evrak Düzenleme İzni")
     santiye_kontrol =  models.BooleanField(default=True, verbose_name="Santiye Kontrol")
+    rapor_olusturucu_gorme = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Görme İzni")
+    rapor_olusturucu_olusturma = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Oluşturma İzni")
+    #rapor_olusturucu_silme = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Silme İzni")
+    #rapor_olusturucu_duzenleme = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Düzenleme İzni")
+    #rapor_olusturucu_gorme = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Görme İzni")
+    
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class bagli_kullanicilar(models.Model):
