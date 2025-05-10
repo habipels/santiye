@@ -7627,6 +7627,12 @@ def kullanici_yetki_alma(request):
         izinler.crm_evrak_gorme = False
         izinler.crm_evrak_duzenleme = False
 
+        izinler.ust_yuklenici_gorme = False
+        izinler.ust_yuklenici_olusturma = False
+        izinler.ust_yuklenici_duzenleme = False
+        izinler.ust_yuklenici_silme = False
+
+
         izinler.save()
         ##
         personeller_puantaj_olusturma = request.POST.get("personeller_puantaj_olusturma")
@@ -8229,6 +8235,60 @@ def kullanici_yetki_alma(request):
         crm_evrak_duzenleme = request.POST.get("crm_evrak_duzenleme")
         if crm_evrak_duzenleme:
             izinler.crm_evrak_duzenleme = True
+
+        ust_yuklenici_gorme = request.POST.get("ust_yuklenici_gorme")
+        if ust_yuklenici_gorme:
+            izinler.ust_yuklenici_gorme = True
+        ust_yuklenici_olusturma = request.POST.get("ust_yuklenici_olusturma")
+        if ust_yuklenici_olusturma:
+            izinler.ust_yuklenici_olusturma = True
+        ust_yuklenici_duzenleme = request.POST.get("ust_yuklenici_duzenleme")
+        if ust_yuklenici_duzenleme:
+            izinler.ust_yuklenici_duzenleme = True
+        ust_yuklenici_silme = request.POST.get("ust_yuklenici_silme")
+        if ust_yuklenici_silme:
+            izinler.ust_yuklenici_silme = True
+        # RFI İzinleri
+        izinler.rfi_gorme = False
+        izinler.rfi_olusturma = False
+        izinler.rfi_duzenleme = False
+        izinler.rfi_silme = False
+
+        if request.POST.get("rfi_gorme"):
+            izinler.rfi_gorme = True
+        if request.POST.get("rfi_olusturma"):
+            izinler.rfi_olusturma = True
+        if request.POST.get("rfi_duzenleme"):
+            izinler.rfi_duzenleme = True
+        if request.POST.get("rfi_silme"):
+            izinler.rfi_silme = True
+
+        # RFI Listesi İzinleri
+        izinler.rfi_listesi_gorme = False
+        izinler.rfi_listesi_olusturma = False
+        izinler.rfi_listesi_duzenleme = False
+        izinler.rfi_listesi_silme = False
+
+        if request.POST.get("rfi_listesi_gorme"):
+            izinler.rfi_listesi_gorme = True
+        if request.POST.get("rfi_listesi_olusturma"):
+            izinler.rfi_listesi_olusturma = True
+        if request.POST.get("rfi_listesi_duzenleme"):
+            izinler.rfi_listesi_duzenleme = True
+        if request.POST.get("rfi_listesi_silme"):
+            izinler.rfi_listesi_silme = True
+
+        # RFI Listesi Onaylama İzinleri
+        izinler.rfi_listesi_onaylama_gorme = False
+        izinler.rfi_listesi_onaylama_olustur = False
+        izinler.rfi_listesi_onaylama_silme = False
+
+        if request.POST.get("rfi_listesi_onaylama_gorme"):
+            izinler.rfi_listesi_onaylama_gorme = True
+        if request.POST.get("rfi_listesi_onaylama_olustur"):
+            izinler.rfi_listesi_onaylama_olustur = True
+        if request.POST.get("rfi_listesi_onaylama_silme"):
+            izinler.rfi_listesi_onaylama_silme = True
 
         izinler.save()
         id_bilgiis = izinler.id

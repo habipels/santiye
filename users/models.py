@@ -300,6 +300,21 @@ class personel_izinleri(models.Model):
     santiye_kontrol =  models.BooleanField(default=True, verbose_name="Santiye Kontrol")
     rapor_olusturucu_gorme = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Görme İzni")
     rapor_olusturucu_olusturma = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Oluşturma İzni")
+    
+    rfi_olusturma = models.BooleanField(default=False, verbose_name="RFI Oluşturma İzni")
+    rfi_gorme = models.BooleanField(default=False, verbose_name="RFI Görme İzni")
+    rfi_duzenleme = models.BooleanField(default=False, verbose_name="RFI Düzenleme İzni")
+    rfi_silme = models.BooleanField(default=False, verbose_name="RFI Silme İzni")
+    
+    rfi_listesi_olusturma = models.BooleanField(default=False, verbose_name="RFI Listesi Oluşturma İzni")
+    rfi_listesi_gorme = models.BooleanField(default=False, verbose_name="RFI Listesi Görme İzni")
+    rfi_listesi_duzenleme = models.BooleanField(default=False, verbose_name="RFI Listesi Düzenleme İzni")
+    rfi_listesi_silme = models.BooleanField(default=False, verbose_name="RFI Listesi Silme İzni")
+
+    rfi_listesi_onaylama_olustur = models.BooleanField(default=False, verbose_name="RFI Listesi Onaylama İzni")
+    rfi_listesi_onaylama_gorme = models.BooleanField(default=False, verbose_name="RFI Listesi Onaylama Görme İzni")
+    rfi_listesi_onaylama_silme = models.BooleanField(default=False, verbose_name="RFI Listesi Onaylama Silme İzni")
+
     #rapor_olusturucu_silme = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Silme İzni")
     #rapor_olusturucu_duzenleme = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Düzenleme İzni")
     #rapor_olusturucu_gorme = models.BooleanField(default=False, verbose_name="Rapor Oluşturucu Görme İzni")
