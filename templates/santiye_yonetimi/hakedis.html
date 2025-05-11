@@ -360,18 +360,27 @@
             <div class="page-info">
                 <div class="page-title">
                     <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
-                    Hakedişler
+                    {% trans 'Hakedişler' %}
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans 'Dashboard' %}</a></li>
                     <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
-                    <li><a href="#">Hakedişler</a></li>
+                    <li><a href="#">{% trans 'Hakedişler' %}</a></li>
                 </ul>
             </div>
 
             <div class="page-actions">
+
+             {% if request.user.kullanicilar_db %}
+                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                {% if yetki.hakedisler_olusturma %}
                 <button class="page-primary-btn" onclick="openModal('yeni-hakedis')"><i class="icon icon-new"></i>
                     {% trans 'Hakediş Ekle' %}</button>
+                {% endif %}
+               {% else %}
+                <button class="page-primary-btn" onclick="openModal('yeni-hakedis')"><i class="icon icon-new"></i>
+                    {% trans 'Hakediş Ekle' %}</button>
+               {% endif %}
             </div>
         </div>
 
@@ -399,7 +408,9 @@
 
         <div class="large-stats-card table-card table-detail-card">
             <div class="stats-header">
-                <div class="stats-title">Hakedişler</div>
+                <div class="stats-title">
+                {% trans 'Hakedişler' %}
+                </div>
                 <div class="stats-search">
                     <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
                     <button><i class="icon icon-search"></i></button>
@@ -448,9 +459,22 @@
                             </td>
                             <td>
                                 <div class="td-actions">
-                               
-                                    <a class="status-success" onclick="openModal('yeni-hakedis{{i.id}}')"><i class="icon icon-action-edit"></i></a>
+                                {% if request.user.kullanicilar_db %}
+                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+            {% if  yetki.hakedisler_duzenleme %}
+               <a class="status-success" onclick="openModal('yeni-hakedis{{i.id}}')"><i class="icon icon-action-edit"></i></a>
+            {% else %}
+            {% endif %}
+            {% if yetki.hakedisler_silme %}
+                
                                     <a onclick="openModal('deleteConfirmationModal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+            {% else %}
+            {% endif %}
+            {% else %}
+                <a class="status-success" onclick="openModal('yeni-hakedis{{i.id}}')"><i class="icon icon-action-edit"></i></a>
+                                    <a onclick="openModal('deleteConfirmationModal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
+            {% endif %}
+                                    
                                 </div>
                             </td>
                         </tr>
