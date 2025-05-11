@@ -14,7 +14,7 @@
         <div class="page-header">
             <div class="page-info">
                 <div class="page-title">
-                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    <a href="javascript:window.history.back();"><i class="icon icon-arrow-circle-left"></i></a>
                     {% trans "Teklif Düzenle" %}
                 </div>
                 <ul class="page-breadcrumb">
@@ -136,7 +136,7 @@
                         </tbody>
                     </table>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-secondary" type="button" onclick="window.history.back();">{% trans "Vazgeç" %}</button>
                         <button class="form-action-primary" type="submit">{% trans "Kaydet" %}</button>
                     </div>
                 </div>
@@ -236,10 +236,17 @@
             source: '/crm/musteri_bilgisi_views/',
             minLength: 2,
             select: function(event, ui) {
-                $('.soyad').val(ui.item.soyadi);
-                $('.adsoyad').val(ui.item.adi);
-                $('#telefon').val(ui.item.value);
+                if (ui.item) {
+                    $('.soyad').val(ui.item.soyadi);
+                    $('.adsoyad').val(ui.item.adi);
+                    $('#telefon').val(ui.item.value);
+                }
                 return false;
+            },
+            response: function(event, ui) {
+                if (ui.content.length === 0) {
+                    alert("{% trans 'Müşteri bulunamadı. Lütfen önce müşteriyi ekleyin.' %}");
+                }
             }
         }).data('ui-autocomplete')._renderItem = function(ul, item) {
             return $('<li>')
@@ -247,5 +254,38 @@
                 .appendTo(ul);
         };
     });
+</script>
+
+<script>
+    function calculateTotals() {
+        let araToplam = 0;
+        let toplamIndirim = 0;
+        let toplamIQD = 0;
+
+        $(".fatura-kalemleri tbody tr").each(function () {
+            const miktar = parseFloat($(this).find("input[name='kalem-miktar']").val()) || 0;
+            const birimFiyati = parseFloat($(this).find("input[name='kalem-birim-fiyati']").val()) || 0;
+            const indirim = parseFloat($(this).find("input[name='kalem-indirim']").val()) || 0;
+
+            const toplam = miktar * birimFiyati;
+            const indirimliToplam = toplam - (toplam * indirim / 100);
+            const toplamIQDValue = indirimliToplam * 1.5; // Example conversion rate
+
+            $(this).find("input[name='kalem-toplam']").val(indirimliToplam.toFixed(2));
+            $(this).find("input[name='kalem-toplam-iqd']").val(toplamIQDValue.toFixed(2));
+
+            araToplam += toplam;
+            toplamIndirim += toplam * indirim / 100;
+            toplamIQD += toplamIQDValue;
+        });
+
+        $("#info-ara-toplam").text(`$${araToplam.toFixed(2)}`);
+        $("#info-toplam-indirim").text(`-$${toplamIndirim.toFixed(2)}`);
+        $("#info-toplam-iqd").text(`$${toplamIQD.toFixed(2)}`);
+        $("#info-toplam").text(`$${(araToplam - toplamIndirim).toFixed(2)}`);
+    }
+
+    $(document).on("input", ".fatura-kalemleri input", calculateTotals);
+    $(document).ready(calculateTotals);
 </script>
 {% endblock sidebar %}

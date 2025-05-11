@@ -2540,7 +2540,7 @@ def group_chat(request, group_id):
                 'file_url': message.file.url if message.file else None,
                 'username': message.sender.username,
                 'timestamp': message.timestamp.isoformat(),
-                'id_bilgisi': message.sender.username.id ,
+                'id_bilgisi': message.sender.id ,
                 "last_name":message.sender.last_name, # Kullanıcı bilgilerini al
                 "profile_picture": message.sender.image.url if message.sender.image else None,
             }
