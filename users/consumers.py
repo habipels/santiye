@@ -66,7 +66,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'username': user.username,
                 'timestamp': timestamp,
                 "id_bilgisi": user.id,
-                  "last_name": user.last_name  # Kullanıcı bilgilerini al
+                  "last_name": user.last_name,  # Kullanıcı bilgilerini al
+                    "profile_picture": user.image.url if user.image else None,
             }
         )
 
@@ -77,6 +78,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         timestamp = event['timestamp']
         id = event['id_bilgisi']
         last_name = event['last_name']
+        profile_picture = event.get('profile_picture', None)
         # Mesajı WebSocket'ten gönder
         await self.send(text_data=json.dumps({
             'message': message,
@@ -84,5 +86,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'user': username,
             'timestamp': timestamp,
             'id_bilgisi': id ,
-             "last_name":last_name # Kullanıcı bilgilerini al
+            "last_name":profile_picture,# Kullanıcı bilgilerini al
+            
         }))

@@ -2540,6 +2540,9 @@ def group_chat(request, group_id):
                 'file_url': message.file.url if message.file else None,
                 'username': message.sender.username,
                 'timestamp': message.timestamp.isoformat(),
+                'id_bilgisi': message.sender.username.id ,
+                "last_name":message.sender.last_name, # Kullanıcı bilgilerini al
+                "profile_picture": message.sender.image.url if message.sender.image else None,
             }
         )
 
@@ -2565,9 +2568,9 @@ def group_chat_messages(request, group_id):
     groups = Group.objects.filter(members=request.user)
     context["messages"] = MessageSerializer(messages, many=True).data
     context["users"] = CustomUserSerializer(users, many=True).data
-    context["groups"] = GroupSerializer(groups, many=True).data
-    #context["group"] = GroupSerializer(group, many=True).data
-    context["group_id"] = group_id  # Add group_id to context
+    # context["groups"] = GroupSerializer(groups, many=True).data
+    # context["group"] = GroupSerializer(group, many=True).data
+    # context["group_id"] = group_id  # Add group_id to context
     return Response(context)
 
 @authentication_classes([TokenAuthentication])
