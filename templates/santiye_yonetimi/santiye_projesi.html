@@ -977,8 +977,21 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 
         <div class="tab-navs santiyeler-tab">
             <button class="tab-navs-btn active" data-tab="santiyeler">{% trans 'Şantiyeler' %}</button>
+            {% if request.user.kullanicilar_db %}
+                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+            {% if  yetki.blog_gorme %}
+                <button class="tab-navs-btn" disabled data-tab="yapilar">{% trans 'Yapılar' %}</button>
+            {% else %}
+            {% endif %}
+            {% if yetki.kalemleri_gorme %}
+                 <button class="tab-navs-btn" disabled data-tab="kalemler">{% trans 'Kalemler' %}</button>
+            {% else %}
+            {% endif %}
+            {% else %}
             <button class="tab-navs-btn" disabled data-tab="yapilar">{% trans 'Yapılar' %}</button>
             <button class="tab-navs-btn" disabled data-tab="kalemler">{% trans 'Kalemler' %}</button>
+            {% endif %}
+           
         </div>
 
         <div class="tab-contents">

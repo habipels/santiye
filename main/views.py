@@ -7403,6 +7403,7 @@ def kullanici_yetki_alma(request):
     if request.POST:
         guncellenen = request.POST.get("guncellenen")
         izinler = get_object_or_404(personel_izinleri,id = guncellenen) 
+        id_bilgiis = izinler.id
         ##
         #izinleri Sıfırla
         izinler.dashboard_gorme = False
@@ -8291,8 +8292,8 @@ def kullanici_yetki_alma(request):
             izinler.rfi_listesi_onaylama_silme = True
 
         izinler.save()
-        id_bilgiis = izinler.id
-    return redirect_with_language("main:kullanici_yetkileri_duzenle",id_bilgiis)
+        
+        return redirect_with_language("main:kullanici_yetkileri_duzenle",id_bilgiis)
 
 def cari_history_view(request, cari_id):
     cari_instance = cari.objects.get(id=cari_id)
