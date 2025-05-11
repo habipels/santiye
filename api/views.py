@@ -2568,5 +2568,16 @@ def group_chat_messages(request, group_id):
     context["groups"] = GroupSerializer(groups, many=True).data
     #context["group"] = GroupSerializer(group, many=True).data
     context["group_id"] = group_id  # Add group_id to context
+    return Response(context)
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def groups(request):
+    context = {}
+    groups = Group.objects.filter(members=request.user)
+    context["groups"] = GroupSerializer(groups, many=True).data
+    #context["group"] = GroupSerializer(group, many=True).data
+    #context["group_id"] = group_id  # Add group_id to context
     return Response(context)
