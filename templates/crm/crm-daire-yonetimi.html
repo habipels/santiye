@@ -35,6 +35,7 @@
             <div class="daire" data-santiye-id="{{ i.blog_bilgisi.proje_santiye_Ait.id }}" data-blok-id="{{ i.blog_bilgisi.blok_id }}" data-kat-id="{{ i.kat_id }}">
                 <div class="daire-images">
                     <span class="daire-status daire-status-completed">{% trans "Teslim Edildi" %}</span>
+                    <br>
                     <div class="daire-thumbnail">
                         <!--<img src="./content/images/daire-1.jfif" alt="">-->
                     </div>
@@ -44,7 +45,18 @@
                     <div class="daire-title">{{i.blog_bilgisi.proje_santiye_Ait.proje_adi}}</div>
                     <div class="daire-title"> <a href="/{{dil}}{% url 'crm:crm_dairedetayi' i.id %}">{% trans "Daire No" %} : {{i.daire_no}}</a></div>
                     <div class="daire-location"><i class="icon icon-location"></i> {% get_city_from_lat_lon i.blog_bilgisi.proje_santiye_Ait.lat i.blog_bilgisi.proje_santiye_Ait.lon  %}</div>
-                    <div class="daire-customer"><i class="icon icon-customer"></i> {% atanan_musteri_sayisi i %} {% trans "Atanan Müşteri" %}</div>
+                    <div class="daire-customer">
+                        <i class="icon icon-customer"></i> 
+                        {% atanan_musteri_sayisi i %} {% trans "Atanan Müşteri" %}
+                        <span>
+                        {% daire_musteri_durum i as d  %}
+                            {% if d == 1 %}
+                                {% trans "Teslim Edildi" %}
+                            {% else %}
+                                {% trans "Bekleniyor" %}
+                            {% endif %}
+                        </span>
+                    </div>
                 </div>
             </div>
           {% endfor %}
@@ -63,11 +75,11 @@
                 {% trans "Daire Ekle" %}
             </div>
             <div class="modal-body">
-                <form method="POST" action="/{{dil}}{% url 'crm:daire_ekle' %}">
-                    {% csrf_token %} 
+                <form id="daire-ekle-form" method="POST" action="/{{dil}}{% url 'crm:daire_ekle' %}">
+                    {% csrf_token %}
                     <div class="form-element">
                         <label for="santiye">{% trans "Şantiye" %}</label>
-                        <select name="santiye" id="santiye">
+                        <select name="santiye" id="santiye" required>
                             <option value="" selected disabled>{% trans "Şantiye Seçiniz" %}</option>
                             {% for santiye in santiyeler %}
                                 <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
@@ -76,18 +88,15 @@
                     </div>
                     <div class="form-element">
                         <label for="blok">{% trans "Blok" %}</label>
-                        <select name="blok" id="blok">
+                        <select name="blok" id="blok" required>
                             <option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>
                         </select>
                     </div>
                     <div class="form-row">
                         <div class="form-element">
                             <label for="kat">{% trans "Kat" %}</label>
-                            <select name="kat" id="kat">
-                                <option value="" selected disabled></option>
-                                <option value="...">...</option>
-                                <option value="...">...</option>
-                                <option value="...">...</option>
+                            <select name="kat" id="kat" required>
+                                <option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>
                             </select>
                         </div>
                         <div class="form-element">
@@ -173,16 +182,6 @@
         
     <script>
         document.getElementById('search-santiye').addEventListener('change', function() {
-            const santiyeId = this.value;
-
-            fetch("{% url 'crm:get_bloglar' %}?santiye_id=" + santiyeId)
-                .then(response => response.json())
-                .then(data => {
-                    const blokSelect = document.getElementById('search-blok');
-                    blokSelect.innerHTML = '<option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>';
-
-                    data.forEach(blok => {
-                        const option = document.createElement('option');
                         option.value = blok.id;
                         option.textContent = blok.blog_adi;
                         blokSelect.appendChild(option);
@@ -281,9 +280,18 @@
     });
     </script>
     
+    <script>
+        document.getElementById('daire-ekle-form').addEventListener('submit', function(event) {
+            const santiye = document.getElementById('santiye').value;
+            const blok = document.getElementById('blok').value;
+            const kat = document.getElementById('kat').value;
 
-
-
+            if (!santiye || !blok || !kat) {
+                event.preventDefault();
+                alert("{% trans 'Lütfen Şantiye, Blok ve Kat seçimlerini yapınız.' %}");
+            }
+        });
+    </script>
 
     <script>
         function toggleDarkMode() {

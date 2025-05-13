@@ -87,8 +87,7 @@
                             </thead>
                             <tbody>
                                 {% for i in musteri_daireleri %}
-                                <tr>
-                                    
+                                <tr class="{% if i.durum == '0' %}status-pending{% elif i.durum == '1' %}status-approved{% elif i.durum == '2' %}status-rejected{% endif %}">
                                     <td>{{i.kayit_tarihi | date:"d.m.Y"}}</td>
                                     <td>{{i.daire.blog_bilgisi.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
                                     <td>{{i.daire.blog_bilgisi.proje_santiye_Ait.proje_adi}}</td>
@@ -96,24 +95,19 @@
                                     <td>{{i.daire.kat}}</td>
                                     <td>{{i.daire.daire_no}}</td>
                                     <td>
-                                    {% if i.durum == "0" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Devam Ediyor" %}</span>
-                                        </div>
-                                    {% elif i.durum == "1" %}
-                                     <div class="td-info"><span class="status-pending stats-lg">{% trans "Onaylandı" %}</span>
-                                        </div>
+                                        {% if i.durum == "0" %}
+                                        <div class="td-info"><span class="status-pending stats-lg">{% trans "Devam Ediyor" %}</span></div>
+                                        {% elif i.durum == "1" %}
+                                        <div class="td-info"><span class="status-approved stats-lg">{% trans "Onaylandı" %}</span></div>
                                         {% elif i.durum == "2" %}
-                                     <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
-                                        </div>
-                                    {% endif %}
-                                        
+                                        <div class="td-info"><span class="status-rejected stats-lg">{% trans "Reddedildi" %}</span></div>
+                                        {% endif %}
                                     </td>
                                     <td>
                                         <div class="td-actions">
-                                        <a onclick="openModal('daire_teslim_et{{i.id}}')" class="status-success">{% trans "Daireyi Onayla" %}</a>
+                                            <a onclick="openModal('daire_teslim_et{{i.id}}')" class="status-success">{% trans "Daireyi Onayla" %}</a>
                                             <a onclick="openModal('yeni-daire-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
-                                            <a onclick="openModal('daireler{{i.id}}')" class="status-cancel"><i
-                                                    class="icon icon-action-delete"></i></a>
+                                            <a onclick="openModal('daireler{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
                                         </div>
                                     </td>
                                 </tr>

@@ -76,21 +76,19 @@
         <div class="modal-body">
             <form method="post" action="/{{dil}}{% url 'crm:musteri_ekleme' %}">
                 {% csrf_token %}
-                <div class="form-row">
-                    <div class="form-element">
-                        <label for="musteri-adi">{% trans "Müşteri Adı" %}</label>
-                        <input type="text" name="musteri_adi" id="musteri-adi">
-                    </div>
-                    <div class="form-element">
-                        <label for="musteri-soyadi">{% trans "Müşteri Soyadı" %}</label>
-                        <input type="text" name="musteri_soyadi" id="musteri-soyadi">
-                    </div>
-                    <div class="form-element">
-                        <label for="musteri-telefon-numarasi">{% trans "Müşteri Telefon Numarası" %}</label>
-                        <input type="text" name="musteri_telefon_numarasi" id="musteri-telefon-numarasi">
-                    </div>
+                <div class="form-element" style="margin-bottom: 15px;">
+                    <label for="musteri-adi">{% trans "Müşteri Adı" %}</label>
+                    <input type="text" name="musteri_adi" id="musteri-adi" placeholder="{% trans 'Adı giriniz' %}" required>
                 </div>
-                <div class="form-actions">
+                <div class="form-element" style="margin-bottom: 15px;">
+                    <label for="musteri-soyadi">{% trans "Müşteri Soyadı" %}</label>
+                    <input type="text" name="musteri_soyadi" id="musteri-soyadi" placeholder="{% trans 'Soyadı giriniz' %}" required>
+                </div>
+                <div class="form-element" style="margin-bottom: 15px;">
+                    <label for="musteri-telefon-numarasi">{% trans "Müşteri Telefon Numarası" %}</label>
+                    <input type="text" name="musteri_telefon_numarasi" id="musteri-telefon-numarasi" placeholder="{% trans 'Telefon numarası giriniz' %}" required>
+                </div>
+                <div class="form-actions" style="text-align: right;">
                     <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
                     <button class="form-action-primary" type="submit">{% trans "Müşteri Ekle" %}</button>
                 </div>

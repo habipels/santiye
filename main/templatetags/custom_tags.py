@@ -2328,3 +2328,9 @@ def split(value, arg):
     if value:
         return value.split(arg)[-1]
     return value
+
+@register.simple_tag
+def daire_musteri_durum(daire):
+    if musteri_daire_baglama.objects.filter(daire=daire, durum='0').count() > 0:
+        return 1
+    return 0
