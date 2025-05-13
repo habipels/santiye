@@ -212,7 +212,7 @@
                 {% trans "Talep/Şikayet Oluştur" %}
             </div>
             <div class="modal-body">
-                <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_olustur' %}">
+                <form id="yeni-talep-form" method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_olustur' %}">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="form-element">
@@ -224,7 +224,7 @@
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
-                        <select name="talep_nedeni" id="talep-nedeni">
+                        <select name="talep_nedeni" id="talep-nedeni" required>
                             <option value="" selected disabled>{% trans "Talep Seçin" %}</option>
                             <option value="1">{% trans "talep1" %}</option>
                             <option value="2">{% trans "talep2" %}</option>
@@ -237,12 +237,21 @@
                     </div>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
-                        <button class="form-action-primary" type="submit" >{% trans "Devam Et" %}</button>
+                        <button class="form-action-primary" type="submit">{% trans "Devam Et" %}</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('yeni-talep-form').addEventListener('submit', function(event) {
+            const talepNedeni = document.getElementById('talep-nedeni').value;
+            if (!talepNedeni) {
+                event.preventDefault();
+                alert("{% trans 'Lütfen bir talep/şikayet nedeni seçin.' %}");
+            }
+        });
+    </script>
 {% for i in talepler  %}
 <div class="modal" id="duzelt-talep{{i.id}}">
         <div class="modal-inner" style="width: 500px">

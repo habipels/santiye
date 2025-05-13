@@ -22,6 +22,8 @@
             <div class="page-actions">
                 <button class="page-primary-btn" onclick="openModal('daire-ekle')"><i class="icon icon-new"></i>
                     {% trans "Yeni Daire Ekle" %}</button>
+                <button class="page-primary-btn" onclick="openModal('search-modal')"><i class="icon icon-search"></i>
+                    {% trans "Daire Ara" %}</button>
             </div>
         </div>
 
@@ -30,7 +32,7 @@
             {% for i in daireler %}
             
             
-            <div class="daire">
+            <div class="daire" data-santiye-id="{{ i.blog_bilgisi.proje_santiye_Ait.id }}" data-blok-id="{{ i.blog_bilgisi.blok_id }}" data-kat-id="{{ i.kat_id }}">
                 <div class="daire-images">
                     <span class="daire-status daire-status-completed">{% trans "Teslim Edildi" %}</span>
                     <div class="daire-thumbnail">
@@ -112,6 +114,41 @@
         </div>
     </div>
 
+    <div class="modal" id="search-modal">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans "Daire Ara" %}
+            </div>
+            <div class="modal-body">
+                <div class="form-element">
+                    <label for="search-santiye">{% trans "Şantiye" %}</label>
+                    <select id="search-santiye">
+                        <option value="" selected disabled>{% trans "Şantiye Seçiniz" %}</option>
+                        {% for santiye in santiyeler %}
+                            <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="search-blok">{% trans "Blok" %}</label>
+                    <select id="search-blok">
+                        <option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="search-kat">{% trans "Kat" %}</label>
+                    <select id="search-kat">
+                        <option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="button" onclick="filterDaireler()">{% trans "Ara" %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         document.getElementById('santiye').addEventListener('change', function() {
@@ -134,8 +171,70 @@
         });
         </script>
         
+    <script>
+        document.getElementById('search-santiye').addEventListener('change', function() {
+            const santiyeId = this.value;
 
+            fetch("{% url 'crm:get_bloglar' %}?santiye_id=" + santiyeId)
+                .then(response => response.json())
+                .then(data => {
+                    const blokSelect = document.getElementById('search-blok');
+                    blokSelect.innerHTML = '<option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>';
 
+                    data.forEach(blok => {
+                        const option = document.createElement('option');
+                        option.value = blok.id;
+                        option.textContent = blok.blog_adi;
+                        blokSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('search-blok').addEventListener('change', function() {
+            const blokId = this.value;
+
+            fetch("{% url 'crm:get_katlar' %}?blok_id=" + blokId)
+                .then(response => response.json())
+                .then(data => {
+                    const katSelect = document.getElementById('search-kat');
+                    katSelect.innerHTML = '<option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>';
+
+                    data.forEach(kat => {
+                        const option = document.createElement('option');
+                        option.value = kat.id;
+                        option.textContent = kat.kat_adi;
+                        katSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        function filterDaireler() {
+            const santiyeId = document.getElementById('search-santiye').value;
+            const blokId = document.getElementById('search-blok').value;
+            const katId = document.getElementById('search-kat').value;
+
+            const daireler = document.querySelectorAll('.daire');
+            daireler.forEach(daire => {
+                const daireSantiye = daire.getAttribute('data-santiye-id');
+                const daireBlok = daire.getAttribute('data-blok-id');
+                const daireKat = daire.getAttribute('data-kat-id');
+
+                if (
+                    (!santiyeId || daireSantiye === santiyeId) &&
+                    (!blokId || daireBlok === blokId) &&
+                    (!katId || daireKat === katId)
+                ) {
+                    daire.style.display = 'block';
+                } else {
+                    daire.style.display = 'none';
+                }
+            });
+
+            closeModal();
+        }
+    </script>
 
     <script>
         function openModal(modalID, close = true) {

@@ -63,13 +63,13 @@ def crm_dashboard(request):
     content["toplam_daire"] = daire_bilgisi.objects.filter(daire_kime_ait=kullanici).count()
     content["atanan_daire"] = musteri_daire_baglama.objects.filter(baglama_kime_ait=kullanici, durum="1").count()
     content["atanmamis_daire"] = content["toplam_daire"] - content["atanan_daire"]
-    content["acik_talep"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="0", durum="0").count()
-    content["acik_sikayet"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1", durum="0").count()
+    content["acik_talep"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="0", durum="0",silinme_bilgisi = False).count()
+    content["acik_sikayet"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1", durum="0",silinme_bilgisi = False).count()
     content["beklemedeki_teklifler"] = teklifler.objects.filter(teklif_kime_ait=kullanici, durum="0").count()
     content["toplam_musteri"] = musteri_bilgisi.objects.filter(musteri_kime_ait=kullanici).count()
     content["daireler"] = daire_bilgisi.objects.filter(daire_kime_ait=kullanici)
-    content["talepler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="0")
-    content["sikayetler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1")
+    content["talepler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="0",silinme_bilgisi = False)
+    content["sikayetler"] = talep_ve_sikayet.objects.filter(sikayet_kime_ait=kullanici, talep_sikayet_ayrimi="1",silinme_bilgisi = False)
 
     # Document statistics
     image_files = daire_evraklari.objects.filter(evrak_kime_ait=kullanici, evrak__iregex=r'\.(jpg|jpeg|png|gif|webp)$')
