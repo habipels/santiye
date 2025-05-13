@@ -34,14 +34,24 @@
             
             <div class="daire" data-santiye-id="{{ i.blog_bilgisi.proje_santiye_Ait.id }}" data-blok-id="{{ i.blog_bilgisi.blok_id }}" data-kat-id="{{ i.kat_id }}">
                 <div class="daire-images">
-                    <span class="daire-status daire-status-completed">{% trans "Teslim Edildi" %}</span>
+                   
+                    {% daire_musteri_durum i as d  %}
+                            {% if d == 1 %}
+                             <span class="daire-status daire-status-completed">
+                                {% trans "Teslim Edildi" %}</span>
+                            {% else %}
+                                <span class="daire-status daire-status-warning">{% trans "Bekleniyor" %}</span>
+                            {% endif %}
+                    
                     <br>
                     <div class="daire-thumbnail">
                         <!--<img src="./content/images/daire-1.jfif" alt="">-->
                     </div>
                 </div>
                 <div class="daire-details">
-                    <span>{% trans "Tamamlanma Tarihi" %}: {{i.kayit_tarihi|date:'d.m.Y'}}</span>
+                    <span>
+                    
+                    {% trans "Tamamlanma Tarihi" %}: {{i.kayit_tarihi|date:'d.m.Y'}}</span>
                     <div class="daire-title">{{i.blog_bilgisi.proje_santiye_Ait.proje_adi}}</div>
                     <div class="daire-title"> <a href="/{{dil}}{% url 'crm:crm_dairedetayi' i.id %}">{% trans "Daire No" %} : {{i.daire_no}}</a></div>
                     <div class="daire-location"><i class="icon icon-location"></i> {% get_city_from_lat_lon i.blog_bilgisi.proje_santiye_Ait.lat i.blog_bilgisi.proje_santiye_Ait.lon  %}</div>
@@ -49,12 +59,7 @@
                         <i class="icon icon-customer"></i> 
                         {% atanan_musteri_sayisi i %} {% trans "Atanan Müşteri" %}
                         <span>
-                        {% daire_musteri_durum i as d  %}
-                            {% if d == 1 %}
-                                {% trans "Teslim Edildi" %}
-                            {% else %}
-                                {% trans "Bekleniyor" %}
-                            {% endif %}
+                        
                         </span>
                     </div>
                 </div>

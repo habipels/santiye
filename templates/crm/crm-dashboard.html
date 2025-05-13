@@ -51,7 +51,13 @@
         {% for i in daireler %}
         <div class="daire">
                 <div class="daire-images">
-                    <span class="daire-status daire-status-completed">{% trans 'Teslim Edildi' %}</span>
+                    {% daire_musteri_durum i as d  %}
+                            {% if d == 1 %}
+                             <span class="daire-status daire-status-completed">
+                                {% trans "Teslim Edildi" %}</span>
+                            {% else %}
+                                <span class="daire-status daire-status-warning">{% trans "Bekleniyor" %}</span>
+                            {% endif %}
                     <br>
                     <div class="daire-thumbnail">
                         <!--<img src="./content/images/daire-1.jfif" alt="">-->
