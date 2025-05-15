@@ -2243,11 +2243,48 @@ chart.render();
                 {% endfor %}
                 </div>
             </div>   
-            <div class="large-cards">
-           <!-- Proje Blokları Kartları -->
+            <!-- Dinamik Blok Kartları -->
+                        {% if request.user.kullanicilar_db %}
+                            {% blok_bilgileri request.user.kullanicilar_db as blok_olusturma %}
+                        {% else %}
+                            {% blok_bilgileri request.user as blok_olusturma %}
+                        {% endif %}
+                        
+                        {% for i in blok_olusturma %}
+                            <div class="stats-card">
+                                <div class="blok-baslik">
+                                    <h5>{{ i.yapi }}</h5>
+                                    {%  bloglari_rapora_yansitma i.proje_santiye_Ait as blog %}
+                                    {% bloglar_daireleri_kalemleri_fiziksel_bilgileri i.id blog.k as fiziksel_ilerlemei  %}
+                                    <div class="blok-ikon" data-id="{{ i.id }}">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                </div>
+                                <div class="ilerleme-container">
+                                    <div class="ilerleme-bar-arka">
+                                        <div class="ilerleme-bar-on" data-width="{{fiziksel_ilerlemei |safe }}" data-id="{{ i.id }}"></div>
+                                    </div>
+                                    <div class="yuzde-gosterge">%{{fiziksel_ilerlemei |safe }}</div>
+                                </div>
+                                <div class="blok-detay">
+                                    <span>{% trans 'Tamamlandı' %}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
 
 
-            </div>                                                                                                                                          
+
+            <!-- Grafik Görselleştirmesi -->
+            <div class="stats-card">
+                <div class="card-header">
+                    <h5>{% trans 'İlerleme Tablosu' %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height:90px; width:auto">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+            </div>                                                                                                                                        
 {% endif %}
 </div>
                             
