@@ -220,15 +220,15 @@
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="form-element">
-                            <input type="radio" name="tur" id="tur-talep" value="0">
+                            <input type="radio" name="tur" id="tur-talep" value="0" maxlength="200">
                             <label for="tur-talep">{% trans "Talep" %}</label>
-                            <input type="radio" name="tur" id="tur-sikayet" value="1">
+                            <input type="radio" name="tur" id="tur-sikayet" value="1" maxlength="200">
                             <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
-                        <select name="talep_nedeni" id="talep-nedeni" required>
+                        <select name="talep_nedeni" id="talep-nedeni" required maxlength="200">
                             <option value="" selected disabled>{% trans "Talep Seçin" %}</option>
                             <option value="1">{% trans "talep1" %}</option>
                             <option value="2">{% trans "talep2" %}</option>
@@ -236,7 +236,7 @@
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
-                            <textarea name="aciklama" id="aciklama"></textarea>
+                            <textarea name="aciklama" id="aciklama" maxlength="200"></textarea>
                         </div>
                     </div>
                     <div class="form-actions">
@@ -265,18 +265,18 @@
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_duzenle' %}">
                     {% csrf_token %}
-                    <input type="text" name="talep_id" hidden value="{{i.id}}" >
+                    <input type="text" name="talep_id" hidden value="{{i.id}}" maxlength="200">
                     <div class="form-row">
                         <div class="form-element">
-                            <input checked type="radio" name="tur" id="tur-talep" value="0">
+                            <input checked type="radio" name="tur" id="tur-talep" value="0" maxlength="200">
                             <label for="tur-talep">{% trans "Talep" %}</label>
-                            <input type="radio" name="tur" id="tur-sikayet" value="1">
+                            <input type="radio" name="tur" id="tur-sikayet" value="1" maxlength="200">
                             <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
-                        <select name="talep_nedeni" id="talep-nedeni">
+                        <select name="talep_nedeni" id="talep-nedeni" maxlength="200">
                             <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
                             
                             <option value="1">{% trans "talep1" %}</option>
@@ -285,7 +285,7 @@
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
-                            <textarea name="aciklama" id="aciklama">{{i.sikayet_aciklamasi |safe}}</textarea>
+                            <textarea name="aciklama" id="aciklama" maxlength="200">{{i.sikayet_aciklamasi |safe}}</textarea>
                         </div>
                     </div>
                     <div class="form-actions">
@@ -359,18 +359,18 @@
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_duzenle' %}">
                     {% csrf_token %}
-                    <input type="text" name="talep_id" hidden value="{{i.id}}" >
+                    <input type="text" name="talep_id" hidden value="{{i.id}}" maxlength="200">
                     <div class="form-row">
                         <div class="form-element">
-                            <input checked type="radio" name="tur" id="tur-talep" value="0">
+                            <input checked type="radio" name="tur" id="tur-talep" value="0" maxlength="200">
                             <label for="tur-talep">{% trans "Talep" %}</label>
-                            <input type="radio" name="tur" id="tur-sikayet" value="1">
+                            <input type="radio" name="tur" id="tur-sikayet" value="1" maxlength="200">
                             <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
-                        <select name="talep_nedeni" id="talep-nedeni">
+                        <select name="talep_nedeni" id="talep-nedeni" maxlength="200">
                             <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
                             
                             <option value="1">{% trans "talep1" %}</option>
@@ -379,7 +379,7 @@
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
-                            <textarea name="aciklama" id="aciklama">{{i.sikayet_aciklamasi |safe}}</textarea>
+                            <textarea name="aciklama" id="aciklama" maxlength="200">{{i.sikayet_aciklamasi |safe}}</textarea>
                         </div>
                     </div>
                     <div class="form-actions">
