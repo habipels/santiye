@@ -86,6 +86,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'user': username,
             'timestamp': timestamp,
             'id_bilgisi': id ,
-            "last_name":profile_picture,# Kullanıcı bilgilerini al
+            "last_name":last_name,
+             "profile_picture":profile_picture# Kullanıcı bilgilerini al
             
         }))

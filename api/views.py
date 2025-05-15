@@ -64,7 +64,7 @@ class CustomAuthToken(ObtainAuthToken):
                 'email': user.email,
                 "user_name":user.username,
                 "name_sorname":user.last_name,
-                "image":False
+                "image":"https://cloud.biadago.com/static/go/images/profile.png"
             })
 def super_admin_kontrolu(request):
     if request.user.is_superuser:
@@ -2542,7 +2542,7 @@ def group_chat(request, group_id):
                 'timestamp': message.timestamp.isoformat(),
                 'id_bilgisi': message.sender.id ,
                 "last_name":message.sender.last_name, # Kullanıcı bilgilerini al
-                "profile_picture": message.sender.image.url if message.sender.image else None,
+                "profile_picture": message.sender.image.url if message.sender.image else "/static/go/images/profile.png",
             }
         )
 
