@@ -25,6 +25,7 @@
         overflow: hidden;
         transition: all 0.3s ease;
         margin: 10px;
+        
     }
     .dark-mode .blok-kart {
         position: relative;
@@ -2640,8 +2641,15 @@ chart.render();
                 </div>
             </div>                                     
 
-
-
+</div>
+    <div class="large-cards">
+           <!-- Proje Blokları Kartları -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    
+                </div>
+<div class="col-12">
+                    <div class="row">
                 
                         <!-- Dinamik Blok Kartları -->
                         {% if request.user.kullanicilar_db %}
@@ -2651,7 +2659,8 @@ chart.render();
                         {% endif %}
                         
                         {% for i in blok_olusturma %}
-                            <div class="stats-card">
+                             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-3">
+                            <div class="blok-kart">
                                 <div class="blok-baslik">
                                     <h5>{{ i.yapi }}</h5>
                                     {%  bloglari_rapora_yansitma i.proje_santiye_Ait as blog %}
@@ -2670,22 +2679,32 @@ chart.render();
                                     <span>{% trans 'Tamamlandı' %}</span>
                                 </div>
                             </div>
+                        </div>
                         {% endfor %}
+                    </div>
+                </div>
+            </div>
+
 
 
 
             <!-- Grafik Görselleştirmesi -->
-            <div class="stats-card">
-                <div class="card-header">
-                    <h5>{% trans 'İlerleme Tablosu' %}</h5>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="position: relative; height:90px; width:auto">
-                        <canvas id="doughnutChart"></canvas>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h5>{% trans 'İlerleme Tablosu' %}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container" style="position: relative; height:300px; width:100%">
+                                <canvas id="doughnutChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-    </div>   
+
+        </div>
 {% endif %}
           
         
@@ -4344,7 +4363,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const targetWidth = bar.getAttribute('data-width');
         setTimeout(() => {
             bar.style.width = targetWidth + '%';
-        }, 100);
+        }, 300);
     });
 
     // Sayaç animasyonu
@@ -4377,7 +4396,7 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '45%',
+            cutout: '65%',
             plugins: {
                 legend: {
                     position: 'right',
