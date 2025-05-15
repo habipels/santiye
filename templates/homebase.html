@@ -324,6 +324,27 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+<script>
+  // Emoji'leri silen fonksiyon
+  function removeEmojis(str) {
+    return str.replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF][\uDC00-\uDFFF])/g,
+      ''
+    );
+  }
+
+  // Sayfadaki tüm input ve textarea'lara emoji filtresi uygula
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('input, textarea').forEach(element => {
+      element.addEventListener('input', function () {
+        const cleaned = removeEmojis(this.value);
+        if (this.value !== cleaned) {
+          this.value = cleaned;
+        }
+      });
+    });
+  });
+</script>
 
 </body>
 </html>

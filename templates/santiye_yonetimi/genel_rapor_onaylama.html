@@ -281,6 +281,7 @@
                 {% endfor %}
             </select>
             <button class="onayla-btn" type="button" onclick="sorumluSecildi()">{% trans 'Onayla' %}</button>
+            <button class="onayla-btn" type="button" onclick="openEditModal()">{% trans 'Düzenle' %}</button>
         </div>
         {% endif %}
         
@@ -301,6 +302,42 @@
                 <button class="form-action-secondary" onclick="closeModal()">{% trans 'İptal' %}</button>
                 <button class="form-action-primary" type="submit">{% trans 'Onayla' %}</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rapor Düzenleme Modali -->
+<div class="modal" id="raporDuzenleModal">
+    <div class="modal-inner">
+        <div class="modal-header">
+            <h2>{% trans 'Rapor Düzenle' %}</h2>
+            <button class="modal-close-btn" onclick="closeEditModal()">✖</button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/{{ dil }}{% url 'main:rapor_duzenleme' %}">
+                {% csrf_token %}
+                <input type="hidden" name="rapor_id" value="{{ santiyeler.id }}" required>
+                <div class="form-element">
+                    <label for="baslangic-tarihi">{% trans 'Başlangıç Tarihi' %}</label>
+                    <input type="date" id="baslangic-tarihi" name="baslangic_tarihi" value="{{ santiyeler.tarih|date:'Y-m-d' }}" required>
+                </div>
+                <div class="form-element">
+                    <label for="bitis-tarihi">{% trans 'Bitiş Tarihi' %}</label>
+                    <input type="date" id="bitis-tarihi" name="bitis_tarihi" value="{{ santiyeler.bitis_tarih|date:'Y-m-d' }}" required>
+                </div>
+                <div class="form-element">
+                    <label for="kayip-gun-sayisi">{% trans 'Kayıp Gün Sayısı' %}</label>
+                    <input type="number" id="kayip-gun-sayisi" name="kayip_gun_sayisi" value="{{ santiyeler.kayip_gun_sayisi }}" required>
+                </div>
+                <div class="form-element">
+                    <label for="kayip-gun-aciklamasi">{% trans 'Kayıp Gün Açıklaması' %}</label>
+                    <textarea id="kayip-gun-aciklamasi" name="kayip_gun_aciklamasi" required>{{ santiyeler.kayip_gun_aciklamasi }}</textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeEditModal()">{% trans 'İptal' %}</button>
+                    <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -326,6 +363,14 @@
 
     function closeModal() {
         document.getElementById('pinOnayModal').style.display = 'none';
+    }
+
+    function openEditModal() {
+        document.getElementById('raporDuzenleModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById('raporDuzenleModal').style.display = 'none';
     }
 
  
