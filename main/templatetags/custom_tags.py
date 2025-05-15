@@ -1229,6 +1229,10 @@ def basit_toplama(a,b):
     y = float(a)+float(b)
     return str(round(y,2))
 @register.simple_tag
+def basit_cikartma_islemi(a,b):
+    y = float(a)-float(b)
+    return str(round(y,2))
+@register.simple_tag
 def basit_toplama_2(a,b):
     a= str(a).replace('.', '')
     a = a.replace(',', '.')
