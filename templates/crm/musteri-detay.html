@@ -28,7 +28,7 @@
                 <button data-tab-btn="evraklar" style="display: none;" class="page-primary-btn" onclick="openModal('yeni-evrak-ekle')"><i class="icon icon-new"></i>{% trans "Yeni Evrak Ekle" %}</button>
                 <button data-tab-btn="talep-sikayet" style="display: none;" class="page-primary-btn" onclick="openModal('yeni-talep-sikayet')"><i class="icon icon-new"></i>{% trans "Yeni Talep/Şikayet Ekle" %}</button>
                 <button data-tab-btn="gorusme-notlari" style="display: none;" class="page-primary-btn" onclick="openModal('yeni-not')"><i class="icon icon-new"></i>{% trans "Yeni Not Ekle" %}</button>
-                <button data-tab-btn="teklifler" style="display: none;" class="page-primary-btn" onclick="openModal('yeni-teklif')"><i class="icon icon-new"></i>{% trans "Yeni Teklif Oluştur" %}</button>
+                <!--<button data-tab-btn="teklifler" style="display: none;" class="page-primary-btn" onclick="openModal('yeni-teklif')"><i class="icon icon-new"></i>{% trans "Yeni Teklif Oluştur" %}</button>-->
             </div>
         </div>
 
@@ -87,7 +87,7 @@
                             </thead>
                             <tbody>
                                 {% for i in musteri_daireleri %}
-                                <tr class="{% if i.durum == '0' %}status-pending{% elif i.durum == '1' %}status-approved{% elif i.durum == '2' %}status-rejected{% endif %}">
+                                <tr>
                                     <td>{{i.kayit_tarihi | date:"d.m.Y"}}</td>
                                     <td>{{i.daire.blog_bilgisi.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
                                     <td>{{i.daire.blog_bilgisi.proje_santiye_Ait.proje_adi}}</td>
@@ -105,7 +105,11 @@
                                     </td>
                                     <td>
                                         <div class="td-actions">
+                                        {% if i.durum == "0" %}
+
                                             <a onclick="openModal('daire_teslim_et{{i.id}}')" class="status-success">{% trans "Daireyi Onayla" %}</a>
+                                        {% endif %}
+                                          
                                             <a onclick="openModal('yeni-daire-duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
                                             <a onclick="openModal('daireler{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
                                         </div>
@@ -339,7 +343,7 @@
                                     <th>{% trans "Not Başlığı" %}</th>
                                     <th>{% trans "Tarih" %}</th>
                                     <th>{% trans "Görüşme Detayı" %}</th>
-                                    <th>{% trans "İşlemler" %}</th>
+                                  
                                 </tr>
                             </thead>
                             <tbody>
@@ -350,15 +354,7 @@
                                     <td>{{i.not_basligi}}</td>
                                     <td>{{i.not_tarihi | date:'d.m.Y'}}</td>
                                     <td style="text-align: left;">{{i.not_aciklamasi|safe}}</td>
-                                    <td>
-                                        <div class="td-actions">
-                                            <div class="td-actions">
-                                                <a class="status-info"><i class="icon icon-eye"></i></a>
-                                                <a class="status-success"><i class="icon icon-action-edit"></i></a>
-                                                <a href="#" class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -497,10 +493,10 @@
             <div class="modal-body">
                 <form id="yeniDaireAtaForm" method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_ata' %}">
                     {% csrf_token %} 
-                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}" required>
                     <div class="form-element">
                         <label for="santiye">{% trans "Şantiye" %}</label>
-                        <select name="santiye" id="santiye">
+                        <select name="santiye" id="santiye" required>
                             <option value="" selected disabled>{% trans "Şantiye Seçiniz" %}</option>
                             {% for santiye in santiyeler %}
                                 <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
@@ -509,14 +505,14 @@
                     </div>
                     <div class="form-element">
                         <label for="blok">{% trans "Blok" %}</label>
-                        <select name="blok" id="blok">
+                        <select name="blok" id="blok" required>
                             <option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>
                         </select>
                     </div>
                     <div class="form-row">
                         <div class="form-element">
                             <label for="kat">{% trans "Kat" %}</label>
-                            <select name="kat" id="kat">
+                            <select name="kat" id="kat" required>
                                 <option value="" selected disabled></option>
                                 <option value="...">...</option>
                                 <option value="...">...</option>
@@ -525,7 +521,7 @@
                         </div>
                         <div class="form-element">
                             <label for="daire-no">{% trans "Daire No" %}</label>
-                            <select name="daire" id="daire">
+                            <select name="daire" id="daire" required>
                                 <option value="" selected disabled></option>
                                 <option value="...">...</option>
                                 <option value="...">...</option>
@@ -552,10 +548,10 @@
             <div class="modal-body">
                 <form method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_duzenle' %}">
                     {% csrf_token %} 
-                    <input type="text" hidden name="duzenle" value="{{i.id}}">
+                    <input type="text" hidden name="duzenle" value="{{i.id}}" required>
                     <div class="form-element">
                         <label for="santiye">{% trans "Şantiye" %}</label>
-                        <select name="santiye" id="santiye">
+                        <select name="santiye" id="santiye" required>
                             <option value="{{i.daire.blog_bilgisi.proje_santiye_Ait.id}}" selected disabled>{{i.daire.blog_bilgisi.proje_santiye_Ait.proje_adi}}</option>
                             {% for santiye in santiyeler %}
                                 <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
@@ -564,21 +560,21 @@
                     </div>
                     <div class="form-element">
                         <label for="blok">{% trans "Blok" %}</label>
-                        <select name="blok" id="blok">
+                        <select name="blok" id="blok" required>
                             <option value="{{i.daire.blog_bilgisi.id}}" selected disabled>{{i.daire.blog_bilgisi.blog_adi}}</option>
                         </select>
                     </div>
                     <div class="form-row">
                         <div class="form-element">
                             <label for="kat">{% trans "Kat" %}</label>
-                            <select name="kat" id="kat">
+                            <select name="kat" id="kat" required>
                                 <option value="{{i.daire.kat}}" selected disabled>{{i.daire.kat}}</option>
                                
                             </select>
                         </div>
                         <div class="form-element">
                             <label for="daire-no">{% trans "Daire No" %}</label>
-                            <select name="daire" id="daire">
+                            <select name="daire" id="daire" required>
                                 <option value="{{i.daire.daire_no}}" selected disabled>{{i.daire.daire_no}}</option>
                                 
                             </select>
@@ -603,8 +599,8 @@
             <div class="modal-body">
                 <form autocomplete="off"action="/{{dil}}{% url 'crm:daire_musteriye_sil' %}" method="post">
                                     {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}" required>
+                                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}" required>
                     <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('departman-sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
@@ -624,8 +620,8 @@
             <div class="modal-body">
                 <form autocomplete="off"action="/{{dil}}{% url 'crm:daire_musteriye_onayla' %}" method="post">
                                     {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}" required>
+                                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}" required>
                     <p> {% trans 'Daire Teslim Edilsin Mi ? ' %}</p>
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal('daire_teslim_et{{i.id}}')">{% trans 'Vazgeç' %}</button>
@@ -647,20 +643,20 @@
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:museri_notu_ekle' %}">
                     {% csrf_token %}
-                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}" required>
                     <div class="form-row">
                         <div class="form-element">
-                            <input type="date" name="tarih" id="tarih" >
+                            <input type="date" name="tarih" id="tarih" required>
                             <label for="tur-talep">{% trans "Tarih" %}</label>
                            
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Not Başlığı" %}</label>
-                        <input type="text" name="not_basligi">
+                        <input type="text" name="not_basligi" required>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
-                            <textarea name="aciklama" id="aciklama"></textarea>
+                            <textarea name="aciklama" id="aciklama" required></textarea>
                         </div>
                     </div>
                     <div class="form-actions">
@@ -679,18 +675,18 @@
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_olustur_musteri_detayi' %}">
                     {% csrf_token %}
-                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}">
+                    <input type="text" hidden name="musteri" value="{{musteri_detayi.id}}" required>
                     <div class="form-row">
                         <div class="form-element">
-                            <input type="radio" name="tur" id="tur-talep" value="0">
+                            <input type="radio" name="tur" id="tur-talep" value="0" required>
                             <label for="tur-talep">{% trans "Talep" %}</label>
-                            <input type="radio" name="tur" id="tur-sikayet" value="1">
+                            <input type="radio" name="tur" id="tur-sikayet" value="1" required>
                             <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
-                        <select name="talep_nedeni" id="talep-nedeni">
+                        <select name="talep_nedeni" id="talep-nedeni" required>
                             <option value="" selected disabled>{% trans "Talep Seçin" %}</option>
                             <option value="1">talep1</option>
                             <option value="2">talep2</option>
@@ -698,12 +694,12 @@
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
-                            <textarea name="aciklama" id="aciklama"></textarea>
+                            <textarea name="aciklama" id="aciklama" required></textarea>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Dairesi" %}</label>
-                        <select name="daireler" >
+                        <select name="daireler" required>
                             <option value="" selected disabled>{% trans "Daire Seçin" %}</option>
                             {% for i in musteri_daireleri %}
                                  <option value="{{i.daire.id}}">{{i.daire.daire_no}}</option>
@@ -731,18 +727,19 @@
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_duzenle_musteri_detayi' %}">
                     {% csrf_token %}
-                    <input type="text" name="talep_id" hidden value="{{i.id}}" >
+                    <input type="text" name="talep_id" hidden value="{{i.id}}" required>
+                    <input type="text" name="musteri" hidden value="{{i.musteri.id}}" required>
                     <div class="form-row">
                         <div class="form-element">
-                            <input checked type="radio" name="tur" id="tur-talep" value="0">
+                            <input checked type="radio" name="tur" id="tur-talep" value="0" required>
                             <label for="tur-talep">{% trans "Talep" %}</label>
-                            <input type="radio" name="tur" id="tur-sikayet" value="1">
+                            <input type="radio" name="tur" id="tur-sikayet" value="1" required>
                             <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
-                        <select name="talep_nedeni" id="talep-nedeni">
+                        <select name="talep_nedeni" id="talep-nedeni" required>
                             <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
                             
                             <option value="1">talep1</option>
@@ -751,15 +748,15 @@
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
-                            <textarea name="aciklama" id="aciklama">{{i.sikayet_aciklamasi |safe}}</textarea>
+                            <textarea name="aciklama" id="aciklama" required>{{i.sikayet_aciklamasi |safe}}</textarea>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Dairesi" %}</label>
-                        <select name="daireler" >
+                        <select name="daireler" required>
                             <option value="{{i.daire.id}}" selected disabled>{{i.daire.daire_no}}</option>
-                            {% for i in musteri_daireleri %}
-                                 <option value="{{i.daire.id}}">{{i.daire.daire_no}}</option>
+                            {% for j in musteri_daireleri %}
+                                 <option value="{{j.daire.id}}">{{j.daire.daire_no}}</option>
                             {% endfor %}
                            
                             
@@ -816,7 +813,7 @@
             <div class="modal-body">
                 <form autocomplete="off"action="/{{dil}}{% url 'crm:talep_veya_sikayet_sil' %}" method="post">
                                     {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}" required>
                  
                     <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
@@ -837,18 +834,18 @@
             <div class="modal-body">
                 <form method="post" action="/{{dil}}{% url 'crm:talep_veya_sikayet_duzenle_musteri_detayi' %}">
                     {% csrf_token %}
-                    <input type="text" name="talep_id" hidden value="{{i.id}}" >
+                    <input type="text" name="talep_id" hidden value="{{i.id}}" required>
                     <div class="form-row">
                         <div class="form-element">
-                            <input checked type="radio" name="tur" id="tur-talep" value="0">
+                            <input checked type="radio" name="tur" id="tur-talep" value="0" required>
                             <label for="tur-talep">{% trans "Talep" %}</label>
-                            <input type="radio" name="tur" id="tur-sikayet" value="1">
+                            <input type="radio" name="tur" id="tur-sikayet" value="1" required>
                             <label for="tur-sikayet">{% trans "Şikayet" %}</label>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
-                        <select name="talep_nedeni" id="talep-nedeni">
+                        <select name="talep_nedeni" id="talep-nedeni" required>
                             <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
                             
                             <option value="1">talep1</option>
@@ -857,12 +854,12 @@
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
-                            <textarea name="aciklama" id="aciklama">{{i.sikayet_aciklamasi |safe}}</textarea>
+                            <textarea name="aciklama" id="aciklama" required>{{i.sikayet_aciklamasi |safe}}</textarea>
                         </div>
                     </div>
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Dairesi" %}</label>
-                        <select name="daireler" >
+                        <select name="daireler" required>
                             <option value="{{i.daire.id}}" selected disabled>{{i.daire.daire_no}}</option>
                             {% for i in musteri_daireleri %}
                                  <option value="{{i.daire.id}}">{{i.daire.daire_no}}</option>
@@ -922,7 +919,7 @@
             <div class="modal-body">
                 <form autocomplete="off"action="/{{dil}}{% url 'crm:talep_veya_sikayet_sil' %}" method="post">
                                     {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}" required>
                  
                     <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
@@ -945,7 +942,7 @@
             <div class="modal-body">
                 <form autocomplete="off"action="/{{dil}}{% url 'crm:teklif_silme' %}" method="post">
                                     {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}" required>
                  
                     <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
                     <div class="form-actions">
@@ -967,21 +964,21 @@
         <div class="modal-body">
             <form method="post" action="/{{ dil }}{% url 'crm:musteri_notu_duzenle' %}">
                 {% csrf_token %}
-                <input type="hidden" name="not_id" value="{{ i.id }}">
-                <input type="hidden" name="musteri" value="{{ musteri_detayi.id }}">
+                <input type="hidden" name="not_id" value="{{ i.id }}" required>
+                <input type="hidden" name="musteri" value="{{ musteri_detayi.id }}" required>
                 <div class="form-row">
                     <div class="form-element">
-                        <input type="date" name="tarih" id="tarih" value="{{ i.not_tarihi|date:'Y-m-d' }}">
+                        <input type="date" name="tarih" id="tarih" value="{{ i.not_tarihi|date:'Y-m-d' }}" required>
                         <label for="tarih">{% trans "Tarih" %}</label>
                     </div>
                 </div>
                 <div class="form-element">
                     <label for="not_basligi">{% trans "Not Başlığı" %}</label>
-                    <input type="text" name="not_basligi" value="{{ i.not_basligi }}">
+                    <input type="text" name="not_basligi" value="{{ i.not_basligi }}" required>
                 </div>
                 <div class="form-element">
                     <label for="aciklama">{% trans "Açıklama" %}</label>
-                    <textarea name="aciklama" id="aciklama">{{ i.not_aciklamasi }}</textarea>
+                    <textarea name="aciklama" id="aciklama" required>{{ i.not_aciklamasi }}</textarea>
                 </div>
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
@@ -999,8 +996,8 @@
         <div class="modal-body">
             <form method="post" action="/{{ dil }}{% url 'crm:musteri_notu_sil' %}">
                 {% csrf_token %}
-                <input type="hidden" name="not_id" value="{{ i.id }}">
-                <input type="hidden" name="musteri" value="{{ musteri_detayi.id }}">
+                <input type="hidden" name="not_id" value="{{ i.id }}" required>
+                <input type="hidden" name="musteri" value="{{ musteri_detayi.id }}" required>
                 <p>{% trans "Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz." %}</p>
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
@@ -1020,7 +1017,7 @@
         <div class="modal-body">
             <form method="post" action="/{{ dil }}{% url 'crm:musteri_evrak_ekle' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="hidden" name="musteri_id" value="{{ musteri_detayi.id }}">
+                <input type="hidden" name="musteri_id" value="{{ musteri_detayi.id }}" required>
                 <div class="form-element">
                     <label for="evrak_adi">{% trans "Evrak Adı" %}</label>
                     <input type="text" name="evrak_adi" id="evrak_adi" required>
@@ -1047,7 +1044,7 @@
         <div class="modal-body">
             <form method="post" action="/{{ dil }}{% url 'crm:musteri_evrak_duzenle' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="hidden" name="evrak_id" value="{{ evrak.id }}">
+                <input type="hidden" name="evrak_id" value="{{ evrak.id }}" required>
                 <div class="form-element">
                     <label for="evrak_adi">{% trans "Evrak Adı" %}</label>
                     <input type="text" name="evrak_adi" id="evrak_adi" value="{{ evrak.evrak_detayi }}" required>
@@ -1073,8 +1070,8 @@
         <div class="modal-body">
             <form method="post" action="/{{ dil }}{% url 'crm:musteri_evrak_sil' %}">
                 {% csrf_token %}
-                <input type="hidden" name="evrak_id" value="{{ evrak.id }}">
-                <input type="hidden" name="musteri_id" value="{{ musteri_detayi.id }}">
+                <input type="hidden" name="evrak_id" value="{{ evrak.id }}" required>
+                <input type="hidden" name="musteri_id" value="{{ musteri_detayi.id }}" required>
                 <p>{% trans "Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz." %}</p>
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
