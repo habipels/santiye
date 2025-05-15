@@ -1,4 +1,4 @@
-  {% load static %}
+{% load static %}
 {% load i18n %}
 {% load custom_tags %}
     <main>
@@ -80,18 +80,17 @@
                     </thead>
                     <tbody>
                       {% for i in santiyeler %}
-                                                <tr>
-                                                 {% if request.user.is_superuser %}
-                                                    <td>{{i.virman_ait_oldugu.first_name}}</td>
-                                                    {% endif %}
-                                                    <td>{{i.virman_tarihi | date:"d.m.Y"}}</td>
-                                                    <td>{{i.gonderen_kasa.kasa_adi}}</td>
-                                                    <td>{{i.alici_kasa.kasa_adi}}</td>
-                                                    <td>{{i.tutar}}</td>
-                                                    <td>{{i.aciklama}}</td>
-                                                </tr>
-                                                {% endfor %}
-
+                        <tr>
+                          {% if request.user.is_superuser %}
+                            <td>{{ i.virman_ait_oldugu.first_name }}</td>
+                          {% endif %}
+                          <td>{{ i.virman_tarihi | date:"d.m.Y" }}</td>
+                          <td>{{ i.gonderen_kasa.kasa_adi }}</td>
+                          <td>{{ i.alici_kasa.kasa_adi }}</td>
+                          <td data-export="{{ i.tutar|stringformat:'f' }}">{{ i.tutar }}</td>
+                          <td>{{ i.aciklama }}</td>
+                        </tr>
+                      {% endfor %}
                     </tbody>
                 </table>
                  <div class="large-stats-card-footer-actions">

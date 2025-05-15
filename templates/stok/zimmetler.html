@@ -580,7 +580,11 @@ function getFormattedDateTime() {
                 
                 {% if i.zimmet_durumu == "0" %}
                 <div class="td-actions">
-                                    <a class="status-info"><i class="icon icon-action-file"></i></a>
+                                    {% if i.zimet_veris_belgesi %}
+                                        <a href="{{i.zimet_veris_belgesi.url}}" class="status-info"><i class="icon icon-action-file"></i></a>
+                                    {% else %}
+                                    {% endif %}
+                                    
                                     <a onclick="zimmet_gonder('{{i.id}}')" class="status-view"><i
                                             class="icon icon-view"></i></a>
                                 </div>
@@ -686,11 +690,11 @@ function getFormattedDateTime() {
                {% trans 'Yeni Teslim ve Zimmet Oluştur' %}
             </div>
             <div class="modal-body">
-               <form id="createZimmetForm" action="/{{dil}}{% url 'accounting:zimmet_ekle' %}" method="POST">
+               <form enctype="multipart/form-data" id="createZimmetForm" action="/{{dil}}{% url 'accounting:zimmet_ekle' %}" method="POST">
                 {% csrf_token %}
                     <div class="form-element">
-                        <input type="hidden" name="personel" name="personel-id" id="personel-id">
-
+                        <input type="hidden" name="personel"  id="personel-id">
+                         <input type="hidden" id="personel">
                         <label style="margin-bottom: 6px;">{% trans 'Personel Seç' %}</label>
                         <div class="personel-secimi">
                             <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
@@ -720,6 +724,7 @@ function getFormattedDateTime() {
                             $(".personel-secimi-listesi-item").on("click", function () {
                                 $(".personel-secimi img").attr("src", $(this).children("img").attr("src"));
                                 $(".personel-secimi span").text($(this).children("span").text());
+                                $("#personel").val($(this).children("span").text());
                                 $("#personel-id").val($(this).attr("data-personel-id"));
                                 $(".personel-secimi-listesi").removeClass("open");
                             })
@@ -729,7 +734,7 @@ function getFormattedDateTime() {
                         <label for="malzeme">{% trans 'Malzeme' %}:</label>
                         <select id="malzeme" required name="malzeme">
                             {% for i in santiyeler %}
-                                <option data-miktar-max = "{% stok_sayisi i %}" value="{{i.id}}">{{i.urun_adi}}({% trans "Stok Miktari" %} : {% stok_sayisi i %})  </option>
+                                <option data-miktar-max = "{% stok_sayisi i %}" data-name="{{i.urun_adi}}" value="{{i.id}}">{{i.urun_adi}}({% trans "Stok Miktari" %} : {% stok_sayisi i %})  </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -741,6 +746,15 @@ function getFormattedDateTime() {
                        <label required for="teslimTarihi">{% trans 'Teslim Tarihi' %}:</label>
         <input type="date" id="teslimTarihi" required name="teslimTarihi">
                     </div>
+                     <div class="file-input">
+                            <label for="ekler">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input required type="file" name="file" id="avansDosya">
+                        </div>
                     <div class="form-actions">
                       
                         <button class="form-action-secondary" type="button" onclick="closeModal('zimmet-olustur')">{% trans 'İptal' %}</button>
@@ -870,7 +884,14 @@ function getFormattedDateTime() {
 
         // Formdan alınan verileri çekme
         const personel = document.getElementById('personel').value;
-        const malzeme = document.getElementById('malzeme').value;
+        const malzemeInput = document.getElementById('malzeme');
+
+        document.querySelectorAll('[data-name]').forEach(function(el) {
+            el.addEventListener('click', function() {
+                const name = this.getAttribute('data-name');
+                malzemeInput = name;
+            });
+        });
         const miktar = document.getElementById('miktar').value;
         const teslimTarihi = document.getElementById('teslimTarihi').value;
 

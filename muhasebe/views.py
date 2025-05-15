@@ -5777,12 +5777,13 @@ def zimmet_ekle(request):
         urun = request.POST.get("malzeme")
         miktar = request.POST.get("miktar")
         teslimTarihi = request.POST.get("teslimTarihi")
+        file = request.FILES.get("file")
         zimmet_olayi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             zimmet_kime_ait = kullanici,zimmeti_veren = request.user,
             zimmet_alan_personel = get_object_or_none(calisanlar,id = personel),
             zimmet_verilen_urun = get_object_or_none(urunler,id = urun),
             zimmet_durumu = "0",zimmet_miktari = miktar,
-            zimmet_verilis_tarihi = teslimTarihi
+            zimmet_verilis_tarihi = teslimTarihi,zimet_veris_belgesi = file
         )
     return redirect_with_language("accounting:zimmetler")
 def zimmeti_teslim_Al(request,id,iz):
