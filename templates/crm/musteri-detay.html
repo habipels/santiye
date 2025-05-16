@@ -13,8 +13,8 @@
         <div class="page-header">
             <div class="page-info">
                 <div class="page-title">
-                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    <h1>{% trans "Müşteri Detay" %}</h1>
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Müşteri Detay' %}
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans "Dashboard" %}</a></li>
@@ -35,7 +35,13 @@
         <div class="musteri-detay-head">
             <div class="musteri-detay-info">
                 <div class="musteri-detay-profile">
-                    <img src="./content/images/avatar-2.png" alt="">
+                    {% if musteri_detayi.resim %}
+                        <img src="{{ musteri_detayi.resim.url }}" alt="">
+                    {% else %}
+                        <div class="initial-avatar">
+                            {{ musteri_detayi.musteri_adi.0|upper }}{{ musteri_detayi.musteri_soyadi.0|upper }}
+                        </div>
+                    {% endif %}
                     <div class="musteri-detay-title">
                         {{musteri_detayi.musteri_adi}} {{musteri_detayi.musteri_soyadi}}
                         <span>{% trans "Müşteri" %}</span>
@@ -687,10 +693,11 @@
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
                         <select name="talep_nedeni" id="talep-nedeni" required>
-                            <option value="" selected disabled>{% trans "Talep Seçin" %}</option>
-                            <option value="1">talep1</option>
-                            <option value="2">talep2</option>
-                            <option value="3">talep3</option>
+                         <option value="" selected disabled>{% trans 'Talep Nedeni Seçiniz' %}</option>
+                            <option value="1">{% trans "İmalat Eksiklği" %}</option>
+                            <option value="2">{% trans "İmalat Hatası" %}</option>
+                            <option value="3">{% trans "Özel Talepler" %}</option>
+                            <option value="3">{% trans "Diğer" %}</option>
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
@@ -741,10 +748,10 @@
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
                         <select name="talep_nedeni" id="talep-nedeni" required>
                             <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
-                            
-                            <option value="1">talep1</option>
-                            <option value="2">talep2</option>
-                            <option value="3">talep3</option>
+                            <option value="1">{% trans "İmalat Eksiklği" %}</option>
+                            <option value="2">{% trans "İmalat Hatası" %}</option>
+                            <option value="3">{% trans "Özel Talepler" %}</option>
+                            <option value="3">{% trans "Diğer" %}</option>
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
@@ -776,9 +783,14 @@
         <div class="modal-body">
             <div class="talep-detay">
                 <div class="talep-detay-head">
-                    
                     {% if i.musteri %}
-                    <img src="{% static 'go/content/images/avatar-2.png' %}" alt="">
+                        {% if i.musteri.resim %}
+                            <img src="{{ i.musteri.resim.url }}" alt="">
+                        {% else %}
+                            <div class="initial-avatar">
+                                {{ i.musteri.musteri_adi.0|upper }}{{ i.musteri.musteri_soyadi.0|upper }}
+                            </div>
+                        {% endif %}
                         {{i.musteri.musteri_adi}} {{i.musteri.musteri_soyadi}}
                     {% else %}
                     {% endif %}
@@ -846,11 +858,12 @@
                     <div class="form-element">
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
                         <select name="talep_nedeni" id="talep-nedeni" required>
-                            <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
                             
-                            <option value="1">talep1</option>
-                            <option value="2">talep2</option>
-                            <option value="3">talep3</option>
+                            <option value="{{i.sikayet_nedeni}}" selected disabled>{{i.sikayet_nedeni}}</option>
+                            <option value="1">{% trans "İmalat Eksiklği" %}</option>
+                            <option value="2">{% trans "İmalat Hatası" %}</option>
+                            <option value="3">{% trans "Özel Talepler" %}</option>
+                            <option value="3">{% trans "Diğer" %}</option>
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
@@ -882,9 +895,14 @@
         <div class="modal-body">
             <div class="talep-detay">
                 <div class="talep-detay-head">
-                    
                     {% if i.musteri %}
-                    <img src="{% static 'go/content/images/avatar-2.png' %}" alt="">
+                        {% if i.musteri.resim %}
+                            <img src="{{ i.musteri.resim.url }}" alt="">
+                        {% else %}
+                            <div class="initial-avatar">
+                                {{ i.musteri.musteri_adi.0|upper }}{{ i.musteri.musteri_soyadi.0|upper }}
+                            </div>
+                        {% endif %}
                         {{i.musteri.musteri_adi}} {{i.musteri.musteri_soyadi}}
                     {% else %}
                     {% endif %}
@@ -1226,4 +1244,28 @@ document.getElementById('blok').addEventListener('change', function() {
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
+
+    <style>
+        .initial-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .dark-mode .initial-avatar {
+            background-color: #4f5cff;
+        }
+        
+        .musteri-detay-profile {
+            display: flex;
+            align-items: center;
+        }
+    </style>
 {% endblock sidebar %}

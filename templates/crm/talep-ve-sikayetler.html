@@ -3,17 +3,22 @@
 {% load static %}
 {% load custom_tags %}
 {% block sidebar %}
-
-
-
+<script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
     <main>
 
 
         <div class="page-header">
             <div class="page-info">
                 <div class="page-title">
-                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
-                    <h1>{% trans "Talep ve Şikayetler" %}</h1>
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Talep ve Şikayetler' %}
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans "Dashboard" %}</a></li>
@@ -163,23 +168,32 @@
                     $("#" + $(this).attr("data-tab")).addClass("active");
                 })
             </script>
-
+            <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
             <div class="large-stats-card-footer-actions">
-                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
-                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-zip"></i></a>
-                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
-            </div>
+            <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+            <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+            <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+        </div>
 
         </div>
 
         <script>
             let talepler = new DataTable('#talepler-table', {
+                dom: 'Bfrtip',
                 paging: false,
                 searching: true,
                 info: false,
                 layout: {
                     topStart: {
-                        
+                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
                     }
                 },
                 columnDefs: [{ width: '40%', targets: 3 }]
@@ -230,9 +244,10 @@
                         <label for="talep-nedeni">{% trans "Talep/Şikayet Nedeni" %}</label>
                         <select name="talep_nedeni" id="talep-nedeni" required maxlength="200">
                             <option value="" selected disabled>{% trans "Talep Seçin" %}</option>
-                            <option value="1">{% trans "talep1" %}</option>
-                            <option value="2">{% trans "talep2" %}</option>
-                            <option value="3">{% trans "talep3" %}</option>
+                            <option value="1">{% trans "İmalat Eksiklği" %}</option>
+                            <option value="2">{% trans "İmalat Hatası" %}</option>
+                            <option value="3">{% trans "Özel Talepler" %}</option>
+                            <option value="3">{% trans "Diğer" %}</option>
                         </select>
                         <div class="form-element">
                             <label for="aciklama">{% trans "Açıklama" %}</label>
@@ -301,9 +316,14 @@
         <div class="modal-body">
             <div class="talep-detay">
                 <div class="talep-detay-head">
-                    
                     {% if i.musteri %}
-                    <img src="{% static 'go/content/images/avatar-2.png' %}" alt="">
+                        {% if i.musteri.resim %}
+                            <img src="{{ i.musteri.resim.url }}" alt="">
+                        {% else %}
+                            <div class="initial-avatar">
+                                {{ i.musteri.musteri_adi.0|upper }}{{ i.musteri.musteri_soyadi.0|upper }}
+                            </div>
+                        {% endif %}
                         {{i.musteri.musteri_adi}} {{i.musteri.musteri_soyadi}}
                     {% else %}
                     {% endif %}
@@ -395,9 +415,14 @@
         <div class="modal-body">
             <div class="talep-detay">
                 <div class="talep-detay-head">
-                    
                     {% if i.musteri %}
-                    <img src="{% static 'go/content/images/avatar-2.png' %}" alt="">
+                        {% if i.musteri.resim %}
+                            <img src="{{ i.musteri.resim.url }}" alt="">
+                        {% else %}
+                            <div class="initial-avatar">
+                                {{ i.musteri.musteri_adi.0|upper }}{{ i.musteri.musteri_soyadi.0|upper }}
+                            </div>
+                        {% endif %}
                         {{i.musteri.musteri_adi}} {{i.musteri.musteri_soyadi}}
                     {% else %}
                     {% endif %}
@@ -526,5 +551,31 @@
         $(document).ready(updateMaxWidth);
         $(window).resize(updateMaxWidth);
     </script>
+
+    <style>
+    .initial-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    .dark-mode .initial-avatar {
+        background-color: #4f5cff;
+    }
+
+    .talep-detay-head {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    </style>
 
 {% endblock sidebar %}

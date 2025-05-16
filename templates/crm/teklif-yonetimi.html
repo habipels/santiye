@@ -3,7 +3,14 @@
 {% load static %}
 {% load custom_tags %}
 {% block sidebar %}
-
+<script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
 <main>
     <div class="page-header">
         <div class="page-info">
@@ -35,6 +42,15 @@
         </div>
 
         <div class="tab-navs">
+                            <style>
+                            .dt-buttons {
+                                opacity: 0;
+                                height: 0;
+                                position: fixed;
+                                top: 10000px;
+                                left: 10000px;
+                            } 
+                            </style>
             <button class="tab-navs-btn active" data-tab="Tümü">{% trans "Tümü" %}</button>
             <button class="tab-navs-btn" data-tab="Gönderildi">{% trans "Gönderildi" %}</button>
             <button class="tab-navs-btn" data-tab="Onaylandı">{% trans "Onaylandı" %}</button>
@@ -87,20 +103,21 @@
 
         <div class="large-stats-card-footer-actions">
             <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
-            <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-zip"></i></a>
+            <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
             <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
         </div>
     </div>
 
     <script>
         let table = new DataTable('#tumu-table', {
+            dom: 'Bfrtip',
             paging: false,
             searching: true,
             info: false,
             layout: {
-                topStart: {
-                    //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                }
+                    topStart: {
+                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                    }
             }
         });
 
