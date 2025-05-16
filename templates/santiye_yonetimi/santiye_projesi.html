@@ -922,6 +922,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
     
 </script>
 
+
 {% else %}
 <style>
 
@@ -1630,29 +1631,6 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                                     <label for="date-field" >{% trans 'İmalat Alanı' %}</label>
                                     <select required name="kata_veya_binaya_daihil" id="date-field">
                                         <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
-                                        <option value="0">{% trans 'Kat Bazında' %}</option>
-                                        <option value="1">{% trans 'Bina Genelinde' %}</option>
-                                        <option value="2">{% trans 'Cephe Bazında' %}</option>
-                                    </select>
-                                </div>    
-                                            
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'İmalat Kalemi' %}</label>
-                                            <input type="text" value="{{i.kalem_adi}}"  min="1" name="yetkili_adi" id="date-field"  placeholder="{% trans 'İmalat Kalemi' %}" required />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Şantiye Ağırlığı' %}</label>
-                                            <input type="number" step="0.001" value="{{i.santiye_agirligi | stringformat:'.2F'  }}"  name="katsayisi" id="date-field"  placeholder="{% trans 'Şantiye Ağırlığı' %}" required />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Finansal Ağırlık' %}</label>
-                                            <input type="number" step="0.001" value="{{i.santiye_finansal_agirligi | stringformat:'.2F'  }}"  name="blogsayisi" id="date-field"  placeholder="{% trans 'Fİnansal Ağırlığı' %}" required />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Birimi' %}</label>
-                                            <select  name="birim_bilgisi" id="date-field" required>
-                                                <option selected value="{{i.birimi.id}}">{{i.birimi.Proje_tipi_adi}}</option>
-                                                {% for l in birim_bilgisi %}
                                                     <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
                                                 {% endfor %}
 
@@ -1700,7 +1678,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
         </div>
     </div>
 {% endfor %}
-{% endfor %}
+
 
 {% for j in santiyeler %}
                                 {% blog_td_gonder j as bilgi %}
@@ -1877,4 +1855,26 @@ $("#yeni_santiye").click(function () {
       });
     });
   </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('form');
+
+        forms.forEach((form) => {
+            const baslangicInput = form.querySelector('input[name="baslangictarihi"]');
+            const bitisInput = form.querySelector('input[name="bitistarihi"]');
+
+            if (baslangicInput && bitisInput) {
+                form.addEventListener('submit', function (event) {
+                    const baslangicTarihi = new Date(baslangicInput.value);
+                    const bitisTarihi = new Date(bitisInput.value);
+
+                    if (baslangicTarihi >= bitisTarihi) {
+                        event.preventDefault();
+                        alert("{% trans 'Başlangıç tarihi, bitiş tarihinden önce olmalıdır.' %}");
+                    }
+                });
+            }
+        });
+    });
+</script>
 {% endblock sidebar %}
