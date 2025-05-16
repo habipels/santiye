@@ -106,7 +106,16 @@
                             <td>{{ talep.islem_tarihi|date:"d M Y" }}</td>
                             <td style="text-align: left;">{{ talep.sikayet_aciklamasi }}</td>
                             <td>
-                                <div class="td-info"><span class="status-{{ talep.durum }} stats-lg">{{ talep.durum }}</span></div>
+                               {% if talep.durum == "0" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
+                                        </div>
+                                    {% elif talep.durum == "1" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
+                                        </div>
+                                    {% elif talep.durum == "2" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
+                                        </div>
+                                    {% endif %}
                             </td>
                             
                         </tr>
@@ -137,7 +146,16 @@
                             <td>{{ sikayet.islem_tarihi|date:"d M Y" }}</td>
                             <td style="text-align: left;">{{ sikayet.sikayet_aciklamasi }}</td>
                             <td>
-                                <div class="td-info"><span class="status-{{ sikayet.durum }} stats-lg">{{ sikayet.durum }}</span></div>
+                               {% if sikayet.durum == "0" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
+                                        </div>
+                                    {% elif sikayet.durum == "1" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
+                                        </div>
+                                    {% elif sikayet.durum == "2" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
+                                        </div>
+                                    {% endif %}
                             </td>
                            
                         </tr>
