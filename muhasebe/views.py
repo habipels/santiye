@@ -5835,6 +5835,7 @@ def zimmet(request,id):
                     "durum":kalem.zimmet_durumu,
                     
             }
+        print(fatura_data)
         return JsonResponse(fatura_data)
 
 def avans_maas(request):

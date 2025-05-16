@@ -674,6 +674,9 @@ function getFormattedDateTime() {
 
                 <div class="form-actions">
                     <button class="form-action-secondary" type="button" onclick="closeModal('zimmet-detay')">Vazgeç</button>
+                    <div class="div">
+
+                    </div>
                     <button class="form-action-primary" type="button">Hasarlı Teslim Alındı</button>
                     <button class="form-action-highlight" type="button">Teslim Alındı</button>
                 </div>
@@ -832,12 +835,25 @@ function getFormattedDateTime() {
                 document.getElementById("alis").textContent = data.veris;
 
                 // Durum kontrolü
-                if (data.durum == "0") {
-                    document.getElementById("durumu").textContent = "{% trans 'Teslim Verildi' %}";
-                    document.getElementsByClassName("form-actions").innerHTML = `
-                        <a id="teslim_alma" href="/{{dil}}/accounting/teslim/${data.id}/1/">{% trans 'Teslim Alındı' %}</a>
-                        <a href="/{{dil}}/accounting/teslim/${data.id}/2/">{% trans 'Hasarlı Teslim Alındı' %}</a>
-                        <button onclick="closeModal('zimmetDetailModal')">{% trans 'İptal' %}</button>`;
+                if (data.durum == '0') {
+                     document.getElementById("durumu").textContent = "{% trans 'Teslim Verildi' %}";
+
+// .form-actions içindeki tüm butonları temizle
+const formActions = document.querySelector(".form-actions");
+
+// .form-actions içindeki mevcut tüm button'ları kaldır
+const buttons = formActions.querySelectorAll("button");
+buttons.forEach(btn => btn.remove());
+
+// .form-actions içindeki .div alanını bul ve yeni içerik ekle
+const divAlan = formActions.querySelector(".div");
+divAlan.innerHTML = `
+    <a id="teslim_alma" class="form-action-highlight" href="/{{dil}}/accounting/teslim/${data.id}/1/">{% trans 'Teslim Alındı' %}</a>
+    <a class="form-action-primary" href="/{{dil}}/accounting/teslim/${data.id}/2/">{% trans 'Hasarlı Teslim Alındı' %}</a>
+    <button class="form-action-secondary" onclick="closeModal('zimmetDetailModal')">{% trans 'İptal' %}</button>
+`;
+
+                  
                 } else if (data.durum == "1") {
                     document.getElementById("durumu").textContent = "{% trans 'Teslim Alındı' %}";
                     document.getElementById("teslim_al").innerHTML = ''; // Zaten teslim alındıysa linkleri gizliyoruz
