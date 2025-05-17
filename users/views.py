@@ -26,79 +26,107 @@ def redirect_with_language(view_name, *args, **kwargs):
     lang = get_language()
     url = reverse(view_name, args=args, kwargs=kwargs)
     return redirect(f'/{lang}{url}')
+from collections import defaultdict
+from django.http import JsonResponse
+
 def personel_bilgisi_axaj(request, id):
-    bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()
-    if True:
-        calisan = get_object_or_none(calisanlar, id = id)
-        maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
-        cali_belgeleri = calisan_belgeleri.objects.filter(calisan = get_object_or_none(calisanlar, id = id))
-        # Sorguları çalıştır
-        calismalar = calisanlar_calismalari.objects.filter(
-            calisan=get_object_or_none(calisanlar, id=id)
-        ).annotate(
-            year=ExtractYear('tarihi'),
-            month=ExtractMonth('tarihi')
-        ).values(
-            'year', 'month', 'maas__id', 'calisan__id'  # Maas ID ve ismi ile gruplanıyor
-        ).annotate(
-            total_normal_calisma_saati=Sum('normal_calisma_saati'),
-            total_mesai_calisma_saati=Sum('mesai_calisma_saati')
-        ).order_by('year', 'month', 'maas__id')
+    bilgi = faturalar_icin_bilgiler.objects.filter(
+        gelir_kime_ait_oldugu=get_object_or_none(calisanlar, id=id).calisan_kime_ait
+    ).last()
 
-        odemeler = calisanlar_calismalari_odemeleri.objects.filter(
-            calisan=get_object_or_none(calisanlar, id=id)
-        ).annotate(
-            year=ExtractYear('tarihi'),
-            month=ExtractMonth('tarihi')
-        ).values(
-            'year', 'month', 'calisan__id'  # Maas ID ve ismi ile gruplanıyor
-        ).annotate(
-            total_tutar=Sum('tutar')
-        ).order_by('year', 'month')
+    calisan = get_object_or_none(calisanlar, id=id)
+    maasli = calisan_maas_durumlari.objects.filter(calisan=calisan).last()
+    cali_belgeleri = calisan_belgeleri.objects.filter(calisan=calisan)
 
-        # Ödemeleri bir dict içine yerleştir
-        odemeler_dict = {(odeme['year'], odeme['month']): odeme['total_tutar'] for odeme in odemeler}
+    # Calismalar: hepsi tarihiyle çekiliyor
+    calismalar_qs = calisanlar_calismalari.objects.filter(calisan=calisan).values(
+        'tarihi', 'maas__id'
+    ).annotate(
+        total_normal_calisma_saati=Sum('normal_calisma_saati'),
+        total_mesai_calisma_saati=Sum('mesai_calisma_saati')
+    )
 
-        # Personel detayını oluştur
-        personel_detayi = {
-            'id': str(id),
-            'calisan_kategori': calisan.calisan_kategori.kategori_isimi,
-            'calisan_pozisyonu': calisan.calisan_pozisyonu.kategori_isimi,
-            'calisan_kategori_id': str(calisan.calisan_kategori.id),
-            'calisan_pozisyonu_id': str(calisan.calisan_pozisyonu.id),
-            'uyrugu': calisan.uyrugu,
-            'pasaport_numarasi': calisan.pasaport_numarasi,
-            'isim': calisan.isim,
-            'soyisim': calisan.soyisim,
-            'profile': calisan.profile.url if calisan.profile else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
-            'dogum_tarihi': str(calisan.dogum_tarihi),
-            'telefon_numarasi': str(calisan.telefon_numarasi),
-            'status': str(calisan.status),
-            'maas': str(maasli.maas),
-            'yevmiye': str(maasli.yevmiye),
-            'faza_mesai_orani': str(maasli.fazla_mesai_orani),
-            'durum': "1" if maasli.durum else "0",
-            'para_birimi': "1" if maasli.para_birimi else "0",
-            "gunluk_saatlik_ucret": str(maasli.maas/ bilgi.gunluk_calisma_saati),
-            'belgeler': [
-                {
-                    'id': belge.id,
-                    'belge_turu': belge.belge_turu,
-                    'resim': belge.belge.url if belge.belge else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
-                } for belge in cali_belgeleri
-            ],
-            'calismalar': [
-                {
-                    'tarih': str(calis['year']) + "-" + str(calis['month']),
-                    'hakedis_tutari': (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye),
-                    'odenen': odemeler_dict.get((calis['year'], calis['month']), 0),
-                    'kalan': ((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)) - odemeler_dict.get((calis['year'], calis['month']), 0),
-                    'bodro': "",  # Bordro ile ilgili ek bir işlem yapılacaksa buraya eklenir.
-                } for calis in calismalar
-            ]
-        }
-        
-        return JsonResponse(personel_detayi)
+    # Ödemeler
+    odemeler_qs = calisanlar_calismalari_odemeleri.objects.filter(calisan=calisan).values(
+        'tarihi'
+    ).annotate(
+        total_tutar=Sum('tutar')
+    )
+
+    # Calismalari (yil, ay) bazinda grupla
+    calismalar_dict = defaultdict(lambda: {'total_normal': 0, 'total_mesai': 0, 'maas_id': None})
+    for c in calismalar_qs:
+        tarih = c['tarihi']
+        if not tarih:
+            continue
+        year = tarih.year
+        month = tarih.month
+        key = (year, month)
+        calismalar_dict[key]['total_normal'] += c['total_normal_calisma_saati']
+        calismalar_dict[key]['total_mesai'] += c['total_mesai_calisma_saati']
+        calismalar_dict[key]['maas_id'] = c['maas__id']
+
+    # Odemeleri (yil, ay) bazinda grupla
+    odemeler_dict = defaultdict(float)
+    for o in odemeler_qs:
+        tarih = o['tarihi']
+        if not tarih:
+            continue
+        key = (tarih.year, tarih.month)
+        odemeler_dict[key] += o['total_tutar']
+
+    # Calismalari final listeye çevir
+    calismalar_list = []
+    for (year, month), vals in sorted(calismalar_dict.items()):
+        maas_obj = get_object_or_none(calisan_maas_durumlari, id=vals['maas_id'])
+        if not maas_obj or not bilgi or not bilgi.gunluk_calisma_saati:
+            continue
+
+        hakedis_tutari = (vals['total_normal'] * maas_obj.maas) / bilgi.gunluk_calisma_saati + \
+                         (vals['total_mesai'] * maas_obj.yevmiye)
+        odenen = odemeler_dict.get((year, month), 0)
+        kalan = hakedis_tutari - odenen
+
+        calismalar_list.append({
+            'tarih': f"{year}-{month}",
+            'hakedis_tutari': hakedis_tutari,
+            'odenen': odenen,
+            'kalan': kalan,
+            'bodro': "",
+        })
+
+    personel_detayi = {
+        'id': str(id),
+        'calisan_kategori': calisan.calisan_kategori.kategori_isimi,
+        'calisan_pozisyonu': calisan.calisan_pozisyonu.kategori_isimi,
+        'calisan_kategori_id': str(calisan.calisan_kategori.id),
+        'calisan_pozisyonu_id': str(calisan.calisan_pozisyonu.id),
+        'uyrugu': calisan.uyrugu,
+        'pasaport_numarasi': calisan.pasaport_numarasi,
+        'isim': calisan.isim,
+        'soyisim': calisan.soyisim,
+        'profile': calisan.profile.url if calisan.profile else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
+        'dogum_tarihi': str(calisan.dogum_tarihi),
+        'telefon_numarasi': str(calisan.telefon_numarasi),
+        'status': str(calisan.status),
+        'maas': str(maasli.maas),
+        'yevmiye': str(maasli.yevmiye),
+        'faza_mesai_orani': str(maasli.fazla_mesai_orani),
+        'durum': "1" if maasli.durum else "0",
+        'para_birimi': "1" if maasli.para_birimi else "0",
+        "gunluk_saatlik_ucret": str(maasli.maas / bilgi.gunluk_calisma_saati),
+        'belgeler': [
+            {
+                'id': belge.id,
+                'belge_turu': belge.belge_turu,
+                'resim': belge.belge.url if belge.belge else "https://www.pngitem.com/pimgs/m/81-819673_construction-workers-safety-icons-health-and-safety-policy.png",
+            } for belge in cali_belgeleri
+        ],
+        'calismalar': calismalar_list
+    }
+    print(personel_detayi)
+    return JsonResponse(personel_detayi)
+
 
 def calismalari_cek_2(request,id):
     personel = id
