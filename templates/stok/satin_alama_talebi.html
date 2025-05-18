@@ -125,22 +125,22 @@
                 {% if request.user.kullanicilar_db %}
                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                 {% if yetki.satin_alma_talebi_silme %}
-                    <a onclick="openModal('requestDetailModal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-trash"></i> Sil</a>
+                    <a onclick="openModal('requestDetailModal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-trash"></i>{% trans 'Sil' %} </a>
                                                        
                 {% else %}
                                                                                                                                     
                 {% endif %}
                 {% if yetki.satin_alma_talebi_onaylama_olusturma %}
-                <a onclick="openModal('confirm-modal{{i.id}}')" class="status-success stats-lg"><i class="icon icon-confirm"></i> Onayla</a>
-                <a onclick="openModal('decline-modal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-reject"></i> Reddet</a>      
+                <a onclick="openModal('confirm-modal{{i.id}}')" class="status-success stats-lg"><i class="icon icon-confirm"></i>{% trans 'Onayla' %} </a>
+                <a onclick="openModal('decline-modal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-reject"></i>{% trans 'Reddet' %} </a>      
                                                        
                 {% else %}
                                                                                                                                     
                 {% endif %}
                 {% else %}
-                <a onclick="openModal('requestDetailModal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-trash"></i> Sil</a>
-                <a onclick="openModal('confirm-modal{{i.id}}')" class="status-success stats-lg"><i class="icon icon-confirm"></i> Onayla</a>
-                <a onclick="openModal('decline-modal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-reject"></i> Reddet</a>      
+                <a onclick="openModal('requestDetailModal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-trash"></i>{% trans 'Sil' %} </a>
+                <a onclick="openModal('confirm-modal{{i.id}}')" class="status-success stats-lg"><i class="icon icon-confirm"></i> {% trans 'Onayla' %}</a>
+                <a onclick="openModal('decline-modal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-reject"></i> {% trans 'Reddet' %} </a>      
                                                                                                          
                 {% endif %}
                     
@@ -405,8 +405,8 @@
             <p><strong>{% trans 'Talep Tarihi' %}:</strong> {{i.talep_Olusturma_tarihi|  date:'d.m.Y'}}</p>
             <p><strong>{% trans 'Açıklama' %}:</strong> {{i.aciklama}}</p>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal('requestDetailModal{{i.id}}')">Vazgeç</button>
-                        <button class="form-action-danger" ><a href="/{{dil}}{% url 'accounting:satin_alma_talebi_sil_2' i.id hashler %}"> Evet, Silinsin</a></button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal('requestDetailModal{{i.id}}')">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-danger" ><a href="/{{dil}}{% url 'accounting:satin_alma_talebi_sil_2' i.id hashler %}">{% trans 'Evet, Silinsin' %} </a></button>
                     </div>
                 
             </div>
@@ -511,22 +511,22 @@
                 {% if request.user.kullanicilar_db %}
                 {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
                 {% if yetki.satin_alma_talebi_silme %}
-                    <a onclick="openModal('requestDetailModal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-trash"></i> Sil</a>
+                    <a onclick="openModal('requestDetailModal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-trash"></i>{% trans 'Sil' %} </a>
                                                        
                 {% else %}
                                                                                                                                     
                 {% endif %}
                 {% if yetki.satin_alma_talebi_onaylama_olusturma %}
-                <a onclick="openModal('confirm-modal{{i.id}}')" class="status-success stats-lg"><i class="icon icon-confirm"></i> Onayla</a>
-                <a onclick="openModal('decline-modal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-reject"></i> Reddet</a>      
+                <a onclick="openModal('confirm-modal{{i.id}}')" class="status-success stats-lg"><i class="icon icon-confirm"></i>{% trans 'Onayla' %} </a>
+                <a onclick="openModal('decline-modal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-reject"></i>{% trans 'Reddet' %} </a>      
                                                        
                 {% else %}
                                                                                                                                     
                 {% endif %}
                 {% else %}
-                <a onclick="openModal('requestDetailModal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-trash"></i> Sil</a>
-                <a onclick="openModal('confirm-modal{{i.id}}')" class="status-success stats-lg"><i class="icon icon-confirm"></i> Onayla</a>
-                <a onclick="openModal('decline-modal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-reject"></i> Reddet</a>      
+                <a onclick="openModal('requestDetailModal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-trash"></i>{% trans 'Sil' %} </a>
+                <a onclick="openModal('confirm-modal{{i.id}}')" class="status-success stats-lg"><i class="icon icon-confirm"></i>{% trans 'Onayla' %} </a>
+                <a onclick="openModal('decline-modal{{i.id}}')" class="status-cancel stats-lg"><i class="icon icon-reject"></i>{% trans 'Reddet' %} </a>      
                                                                                                          
                 {% endif %}
                     
@@ -791,8 +791,8 @@
             <p><strong>{% trans 'Talep Tarihi' %}:</strong> {{i.talep_Olusturma_tarihi|  date:'d.m.Y'}}</p>
             <p><strong>{% trans 'Açıklama' %}:</strong> {{i.aciklama}}</p>
                     <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal('requestDetailModal{{i.id}}')">Vazgeç</button>
-                        <button class="form-action-danger" ><a href="/{{dil}}{% url 'accounting:satin_alma_talebi_sil' i.id %}"> Evet, Silinsin</a></button>
+                        <button class="form-action-secondary" type="button" onclick="closeModal('requestDetailModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" ><a href="/{{dil}}{% url 'accounting:satin_alma_talebi_sil' i.id %}">{% trans 'Evet, Silinsin' %} </a></button>
                     </div>
                 
             </div>
