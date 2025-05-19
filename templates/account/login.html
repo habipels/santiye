@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -116,6 +117,106 @@
 .dark-light-toggle .fa-moon {
     color: #24d6b6;
     font-size: 16px;
+}
+
+/* Dil Değiştirici Stilleri */
+.language-toggle {
+    position: absolute;
+    top: 20px;
+    right: 90px;
+    z-index: 2;
+}
+
+.language-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    width: auto;
+}
+
+.language-button img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.language-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 30px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 160px;
+}
+
+.language-dropdown.show {
+    display: block;
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.language-option:hover {
+    background-color: #f5f5f5;
+}
+
+.language-option img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.language-option span {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Dark mode için dil değiştirici stilleri */
+body.dark-mode .language-dropdown {
+    background-color: #202020;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .language-option:hover {
+    background-color: #2c2c2c;
+}
+
+body.dark-mode .language-option span {
+    color: #eee;
+}
+
+/* Mobil için stil düzenlemeleri */
+@media screen and (max-width: 600px) {
+    .dark-light-toggle {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .language-toggle {
+        top: 10px;
+        right: 80px;
+    }
+    
+    .language-button img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .language-dropdown {
+        width: 140px;
+    }
 }
 
 #globeViz {
@@ -444,6 +545,33 @@ body.dark-mode .loading-message {
 <body>
 <div id="offlineMessage" class="offline-message">{% trans "Şu anda internet bağlantınız yok. Lütfen bağlantınızı kontrol edin." %}</div>
 
+    <div class="language-toggle">
+        <button class="language-button" id="languageToggleBtn">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% for i in diller %}
+                {% if i.dil_kisaltması == LANGUAGE_CODE %}
+                    <img src="{{ i.dil_bayragi_icon.url }}" alt="{{ i.dil_kisaltması }}" id="currentLanguageFlag">
+                {% endif %}
+            {% endfor %}
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% get_language_info_list for LANGUAGES as languages %}
+            
+            {% for lang in languages %}
+                {% for i in diller %}
+                    {% if i.dil_kisaltması == lang.code %}
+                        <a href="/{{ lang.code }}{% remove_lang_from_url %}" class="language-option">
+                            <img src="{{ i.dil_bayragi_icon.url }}" alt="{{ lang.code }}">
+                            <span>{{ lang.name_local }}</span>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+    
     <div class="dark-light-toggle">
         <input type="checkbox" id="darkModeToggle">
         <label for="darkModeToggle" class="toggle-label">
@@ -628,7 +756,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// Dil değiştirici dropdown
+const languageToggleBtn = document.getElementById('languageToggleBtn');
+const languageDropdown = document.getElementById('languageDropdown');
 
+if (languageToggleBtn) {
+    languageToggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        languageDropdown.classList.toggle('show');
+    });
+}
+
+// Sayfanın herhangi bir yerine tıklandığında dropdown'ı kapat
+document.addEventListener('click', function() {
+    if (languageDropdown.classList.contains('show')) {
+        languageDropdown.classList.remove('show');
+    }
+});
+
+// Dropdown içine tıklandığında yayılmayı engelle
+languageDropdown.addEventListener('click', function(e) {
+    e.stopPropagation();
+});
 
 </script>
 
