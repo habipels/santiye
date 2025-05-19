@@ -62,4 +62,52 @@
             <!-- end container -->
         </div>
         <!-- end auth page content -->
+
+<!-- Dil tercihini kontrol edip uygulayan script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sayfa yüklendiğinde kullanıcının tercih ettiği dili kontrol et
+    checkStoredLanguage();
+});
+
+// Kayıtlı dil tercihini kontrol et ve gerekirse sayfayı o dile yönlendir
+function checkStoredLanguage() {
+    const storedLang = localStorage.getItem('preferredLanguage');
+    // Django'dan mevcut dil kodunu al
+    const currentLang = '{{ LANGUAGE_CODE }}';
+    
+    // Konsola durum bilgisi yaz
+    console.log('Kaydedilen dil tercihi:', storedLang);
+    console.log('Sayfanın mevcut dili:', currentLang);
+    
+    // Eğer kayıtlı bir dil tercihi varsa ve mevcut dilden farklıysa
+    if (storedLang && storedLang !== currentLang) {
+        console.log('Kullanıcının tercihine göre yönlendiriliyor:', storedLang);
+        
+        // Mevcut URL'yi al
+        const currentUrl = window.location.pathname;
+        
+        // Yeni URL'yi oluştur
+        let newUrl = '/' + storedLang;
+        
+        // URL'de dil kodu varsa (örn: /tr/logout), onu değiştir
+        const urlParts = currentUrl.split('/');
+        if (urlParts.length > 2) {
+            // İlk parça boş, ikinci parça mevcut dil kodu olabilir
+            const possibleLangCode = urlParts[1];
+            // Eğer mevcut URL'de dil kodu varsa (2 karakterlik ve sadece harflerden oluşan)
+            if (possibleLangCode.length === 2 && /^[a-z]+$/.test(possibleLangCode)) {
+                // Dil kodundan sonraki kısmı koru
+                newUrl += currentUrl.substring(3);
+            } else {
+                // Dil kodu yoksa mevcut URL'yi olduğu gibi ekle
+                newUrl += currentUrl;
+            }
+        }
+        
+        // Sayfayı tercih edilen dile yönlendir
+        window.location.href = newUrl;
+    }
+}
+</script>
 {% endblock sidebar %}

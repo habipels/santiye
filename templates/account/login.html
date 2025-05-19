@@ -779,6 +779,63 @@ languageDropdown.addEventListener('click', function(e) {
     e.stopPropagation();
 });
 
+// Sayfa yüklendiğinde dil tercihini kontrol et ve uygula
+document.addEventListener('DOMContentLoaded', function() {
+    checkStoredLanguage();
+    
+    // Dil seçeneklerine click event ekle
+    const languageOptions = document.querySelectorAll('.language-option');
+    languageOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            // Dil kodunu al
+            const langCode = this.querySelector('img').getAttribute('alt');
+            // Local storage'a kaydet
+            localStorage.setItem('preferredLanguage', langCode);
+            console.log('Dil tercihi kaydedildi:', langCode);
+            
+            // Normal link davranışına izin ver (sayfayı yeniden yükleyecek)
+        });
+    });
+});
+
+// Kayıtlı dil tercihini kontrol et ve uygula
+function checkStoredLanguage() {
+    const storedLang = localStorage.getItem('preferredLanguage');
+    const currentLang = '{{ LANGUAGE_CODE }}';
+    
+    console.log('Kaydedilen dil:', storedLang);
+    console.log('Mevcut dil:', currentLang);
+    
+    // Kayıtlı bir dil tercihi varsa ve mevcut dilden farklıysa
+    if (storedLang && storedLang !== currentLang) {
+        console.log('Kaydedilen dile yönlendiriliyor:', storedLang);
+        
+        // Mevcut URL'yi al
+        const currentUrl = window.location.pathname;
+        
+        // Dil kodunu değiştir
+        let newUrl = '/' + storedLang;
+        
+        // URL'de dil kodu varsa (örn: /en/login), onu değiştir
+        const urlParts = currentUrl.split('/');
+        if (urlParts.length > 2) {
+            // İlk parça boş, ikinci parça mevcut dil kodu olabilir
+            const possibleLangCode = urlParts[1];
+            // Eğer mevcut URL'de dil kodu varsa (2 karakterlik ve sadece harflerden oluşan)
+            if (possibleLangCode.length === 2 && /^[a-z]+$/.test(possibleLangCode)) {
+                // Dil kodundan sonraki kısmı koru
+                newUrl += currentUrl.substring(3);
+            } else {
+                // Dil kodu yoksa mevcut URL'yi olduğu gibi ekle
+                newUrl += currentUrl;
+            }
+        }
+        
+        // Sayfayı tercih edilen dile yönlendir
+        window.location.href = newUrl;
+    }
+}
+
 </script>
 
 </html>
