@@ -95,6 +95,203 @@ $(function() {
             display: none !important;
 }
 }
+.table-detail-card {
+    margin-top: 0px; 
+}
+/* Tab Stilleri */
+.gantt-tabs-container {
+    width: 100%;
+}
+
+.gantt-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0 0 -1px 0;
+    list-style: none;
+    position: relative;
+}
+
+.gantt-tab-item {
+    margin-right: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px 5px 0 0;
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: #f5f5f5;
+    position: relative;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.gantt-tab-item.active {
+    background-color: #fff;
+    border-bottom-color: #fff;
+    font-weight: bold;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+}
+
+.dark-mode .gantt-tab-item {
+    background-color: #333;
+    border-color: #444;
+    color: #eee;
+}
+
+.dark-mode .gantt-tab-item.active {
+    background-color: #202020;
+    border-bottom-color: #202020;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+}
+
+.gantt-tabs-sortable-ghost {
+    opacity: 0.5;
+    background-color: #c8e6ff !important;
+}
+
+.dark-mode .gantt-tabs-sortable-ghost {
+    background-color: #4a6c8f !important;
+}
+
+.gantt-tab-content {
+    display: none;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 0 0 5px 5px;
+}
+
+.dark-mode .gantt-tab-content {
+    border-color: #444;
+    background-color: #202020;
+}
+
+.gantt-tab-content.active {
+    display: block;
+}
+
+.gantt-tab-add {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.gantt-tab-add input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin-right: 10px;
+}
+
+.gantt-tab-add button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dark-mode .gantt-tab-add input {
+    background-color: #333;
+    border-color: #444;
+    color: #eee;
+}
+
+.dark-mode .gantt-tab-add button {
+    background-color: #0056b3;
+}
+
+.gantt-edit-tab {
+    margin-left: 10px;
+    font-size: 12px;
+    color: #777;
+    cursor: pointer;
+}
+
+.dark-mode .gantt-edit-tab {
+    color: #aaa;
+}
+
+.gantt-tab-action {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.gantt-tab-action.edit {
+    color: #007bff;
+}
+
+.gantt-tab-action.delete {
+    color: #dc3545;
+}
+
+.dark-mode .gantt-tab-action.edit {
+    color: #4a9eff;
+}
+
+.dark-mode .gantt-tab-action.delete {
+    color: #ff6b6b;
+}
+
+.gantt-tab-rename-form {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 5;
+    border-radius: 5px 5px 0 0;
+}
+
+.dark-mode .gantt-tab-rename-form {
+    background-color: #333;
+}
+
+.gantt-tab-rename-form input {
+    width: calc(100% - 70px);
+    height: 100%;
+    border: none;
+    padding: 0 10px;
+    background-color: transparent;
+}
+
+.gantt-tab-rename-form button {
+    width: 30px;
+    height: 100%;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: #28a745;
+}
+
+.gantt-tab-rename-form button.cancel {
+    color: #dc3545;
+}
+
+@media (max-width: 768px) {
+    .gantt-tabs-container > div {
+        flex-direction: column;
+    }
+    
+    .gantt-tab-add {
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .gantt-tab-item {
+        margin-bottom: 5px;
+        width: 100%;
+        max-width: none;
+        border-radius: 5px;
+    }
+}
 </style>
 
 <script>
@@ -158,32 +355,50 @@ function exportGanttToPDF() {
                 <li><a href="#">{% trans 'Stratejik İş Planı' %}</a></li>
             </ul>
         </div>
+        
+        <!-- Tabları buraya taşıyoruz -->
+        <div class="gantt-tabs-container" style="margin-top: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0px;">
+                <ul class="gantt-tabs" id="ganttTabs" style="margin-bottom: 0;">
+                    <li class="gantt-tab-item active" data-tab="tab1">{% trans 'Genel Gantt' %} <span class="gantt-tab-action edit" onclick="renameTab(event, 'tab1')"><i class="icon icon-action-edit"></i></span><span class="gantt-tab-action delete" onclick="deleteTab(event, 'tab1')"><i class="icon icon-action-delete"></i></span></li>
+                </ul>
+                
+                <div class="gantt-tab-add" style="margin: 0; display: inline-flex;">
+                    <input type="text" id="newTabName" placeholder="{% trans 'Yeni tab adı...' %}" style="height: 32px; width: 150px; margin-right: 5px;">
+                    <button onclick="addNewTab()" style="height: 32px; padding: 0 10px;">{% trans 'Ekle' %}</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="large-stats-card table-card table-detail-card">
-        <div class="stats-header">
-            <div class="stats-title">{% trans 'Stratejik İş Planı (GANTT)' %}</div>
-        </div>
+
 <div id="loadingMessage" style="display: none; z-index: 10000;position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.75); color: #fff; padding: 20px; border-radius: 8px;">
   {% trans 'PDF oluşturuluyor, lütfen bekleyin...' %}
 </div>
-<div id="workSpace"></div>
-                          <style>
-                            .dt-buttons {
-                                opacity: 0;
-                                height: 0;
-                                position: fixed;
-                                top: 10000px;
-                                left: 10000px;
-                            } 
-                          </style>
-                          <div class="large-stats-card-footer-actions">
-                              <div class="lsc-footer-info">
-                                  <i class="icon icon-info"></i> <span style="margin-top: 6px; display: inline-block;">{% trans 'Stratejik İş Planı, projelerin görev ve süre yönetimini optimize ederek başarıya ulaşmanıza yardımcı olur.' %}</span>
 
-                              </div>
-                          </div>
-                          </div>
+<div class="gantt-tab-content active" id="tab1-content">
+    <div id="workSpace"></div>
+</div>
+
+<style>
+    .dt-buttons {
+        opacity: 0;
+        height: 0;
+        position: fixed;
+        top: 10000px;
+        left: 10000px;
+    } 
+</style>
+
+<div class="large-stats-card-footer-actions">
+    <div class="lsc-footer-info">
+        <i class="icon icon-info"></i> <span style="margin-top: 6px; display: inline-block;">{% trans 'Stratejik İş Planı, projelerin görev ve süre yönetimini optimize ederek başarıya ulaşmanıza yardımcı olur.' %}</span>
+
+    </div>
+</div>
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const resizeButtons = document.querySelectorAll(".button.textual.icon");
@@ -271,6 +486,10 @@ $(function() {
 
 
 function getDemoProject() {
+  // Bugünün tarihi
+  const today = new Date();
+  const todayMs = today.getTime();
+  
   // Proje verisini yükle
   var ret = {% if gant %}
     {{gant.gantt_verisi|safe}}
@@ -290,9 +509,9 @@ function getDemoProject() {
           "level": 0,
           "status": "STATUS_ACTIVE",
           "depends": "",
-          "start": 1396994400000,
+          "start": todayMs, // Bugünün tarihi
           "duration": 20,
-          "end": 1399586399999,
+          "end": todayMs + (20 * 24 * 60 * 60 * 1000), // 20 gün sonrası
           "startIsMilestone": false,
           "endIsMilestone": false,
           "collapsed": false,
@@ -319,16 +538,7 @@ function getDemoProject() {
   ret.tasks.forEach(function(task) {
     task.canWrite = true;
   });
-
   
-  // Tarih ayarlaması
-  var offset = new Date().getTime() - ret.tasks[0].start;
-  ret.tasks.forEach(function(task) {
-
-    task.start = task.start + offset;
-    console.log(task.start);
-  });
-
   return ret;
 }
 
@@ -384,7 +594,7 @@ function saveGanttOnServer() {
     var prj = ge.saveProject(); // Proje verisini alıyoruz
 
     $.ajax({
-        url: "/gantt-kaydet/",  // Django view’inize uygun URL
+        url: "/gantt-kaydet/",  // Django view'inize uygun URL
         type: "POST",
         data: {
             'gant_verisi': JSON.stringify(prj)  // Veriyi JSON olarak gönderiyoruz
@@ -463,27 +673,52 @@ function getFile() {
 }
 
 
-function loadFromLocalStorage() {
+function loadFromLocalStorage(tabId = 'tab1') {
   var ret;
+  
   if (localStorage) {
-    if (localStorage.getObject("teamworkGantDemo")) {
+    // Önce tab'a özgü veriyi dene
+    if (localStorage.getObject(`teamworkGantDemo_${tabId}`)) {
+      ret = localStorage.getObject(`teamworkGantDemo_${tabId}`);
+    } 
+    // Yoksa global veriyi dene (uyumluluk için)
+    else if (localStorage.getObject("teamworkGantDemo")) {
       ret = localStorage.getObject("teamworkGantDemo");
     }
   }
-
-  //if not found create a new example task
-  if (!ret || !ret.tasks || ret.tasks.length == 0){
-    ret=getDemoProject();
+  
+  // Bulunamadıysa yeni örnek oluştur
+  if (!ret || !ret.tasks || ret.tasks.length == 0) {
+    ret = getDemoProject();
   }
+  
   return ret;
 }
 
 
 function saveInLocalStorage() {
-  var prj = ge.saveProject();
-
+  // Aktif tabı bul
+  const activeTab = document.querySelector('.gantt-tab-item.active');
+  const tabId = activeTab ? activeTab.getAttribute('data-tab') : 'tab1';
+  
+  // İlgili Gantt örneğini bul
+  const ge = gantInstances[tabId];
+  if (!ge) {
+    console.error(`Gantt instance for tab ${tabId} not found!`);
+    return;
+  }
+  
+  // Projeyi kaydet
+  const prj = ge.saveProject();
+  
   if (localStorage) {
-    localStorage.setObject("teamworkGantDemo", prj);
+    // Her tab için ayrı storage key kullan
+    localStorage.setObject(`teamworkGantDemo_${tabId}`, prj);
+    
+    // Eski global çalışmalar için uyumluluk
+    if (tabId === 'tab1') {
+      localStorage.setObject("teamworkGantDemo", prj);
+    }
   }
 }
 
@@ -980,5 +1215,509 @@ $(document).on("change", "#load-file", function() {
   upload(uploadedFile);
 });
 
+</script>
+
+<script>
+// Tab Sistemi için JavaScript
+let tabCounter = 1;
+let gantInstances = {}; // Her tab için ayrı gantt örneği saklamak için
+
+// Sayfa yüklendiğinde ilk tab için gantt'ı başlat
+document.addEventListener("DOMContentLoaded", function() {
+    // İlk tab için Gantt örneği oluştur
+    initializeGanttForTab('tab1');
+    
+    // İlk tab başlığını ayarla
+    const firstTab = document.querySelector('.gantt-tab-item');
+    if (firstTab) {
+        updateTabTitle(firstTab.textContent.trim());
+    }
+});
+
+// Tab değiştirme
+function switchTab(tabId) {
+    // Tüm tabları inaktif yap
+    document.querySelectorAll('.gantt-tab-item').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.gantt-tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Seçilen tabı aktif yap
+    const selectedTab = document.querySelector(`[data-tab="${tabId}"]`);
+    selectedTab.classList.add('active');
+    document.getElementById(`${tabId}-content`).classList.add('active');
+    
+    // Başlığı güncelle
+    updateTabTitle(selectedTab.textContent.trim());
+    
+    // İlgili Gantt örneğini al ve ilk göreve odakla
+    const ge = gantInstances[tabId];
+    if (ge) {
+        setTimeout(() => {
+            centerGanttOnToday(ge);
+        }, 300);
+    }
+}
+
+// Başlığı güncelleme fonksiyonu
+function updateTabTitle(tabName) {
+    // Edit ve delete ikonlarını temizle
+    let cleanTabName = tabName.replace(/\s*<span.*<\/span>\s*/g, '').trim();
+    document.getElementById('activeTabTitle').innerHTML = `{% trans 'Stratejik İş Planı (GANTT)' %} - ${cleanTabName}`;
+}
+
+// Yeni tab eklemek için
+function addNewTab() {
+    const tabName = document.getElementById('newTabName').value.trim();
+    if (!tabName) {
+        alert("{% trans 'Lütfen tab için bir isim girin!' %}");
+        return;
+    }
+    
+    tabCounter++;
+    const tabId = `tab${tabCounter}`;
+    
+    // Tüm tabları inaktif yap
+    document.querySelectorAll('.gantt-tab-item').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.gantt-tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Yeni tab ve içeriğini ekle
+    const tabsContainer = document.getElementById('ganttTabs');
+    const newTab = document.createElement('li');
+    newTab.className = 'gantt-tab-item active';
+    newTab.setAttribute('data-tab', tabId);
+    newTab.innerHTML = `${tabName} <span class="gantt-tab-action edit" onclick="renameTab(event, '${tabId}')"><i class="icon icon-action-edit"></i></span><span class="gantt-tab-action delete" onclick="deleteTab(event, '${tabId}')"><i class="icon icon-action-delete"></i></span>`;
+    
+    tabsContainer.appendChild(newTab);
+    
+    // Tab içeriği oluştur
+    const tabContentContainer = document.createElement('div');
+    tabContentContainer.className = 'gantt-tab-content active';
+    tabContentContainer.id = `${tabId}-content`;
+    
+    // workSpace div'ini oluştur
+    const workSpaceDiv = document.createElement('div');
+    workSpaceDiv.id = `${tabId}-workSpace`;
+    workSpaceDiv.style.width = "100%";
+    workSpaceDiv.style.height = "500px"; // Belirli bir yükseklik verelim
+    tabContentContainer.appendChild(workSpaceDiv);
+    
+    // Tab içerik konteynerini sayfaya ekle
+    const tabsContainerParent = document.querySelector('.gantt-tabs-container').parentNode;
+    tabsContainerParent.insertBefore(tabContentContainer, document.querySelector('.large-stats-card-footer-actions'));
+    
+    // Başlığı güncelle
+    updateTabTitle(tabName);
+    
+    // Input alanını temizle
+    document.getElementById('newTabName').value = '';
+    
+    // Yeni tab için gantt başlat (DOM'a eklendikten sonra)
+    setTimeout(() => {
+        initializeGanttForTab(tabId);
+    }, 300); // Biraz daha uzun bekletelim
+}
+
+// Tab'a tıklandığında
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('gantt-tab-item') || e.target.closest('.gantt-tab-item')) {
+        const targetTab = e.target.classList.contains('gantt-tab-item') ? e.target : e.target.closest('.gantt-tab-item');
+        
+        // Tıklanan bir aksiyon değilse (düzenle/sil butonu)
+        if (!e.target.closest('.gantt-tab-action')) {
+            const tabId = targetTab.getAttribute('data-tab');
+            
+            // Bu tab için Gantt örneği henüz oluşturulmadıysa oluştur
+            if (tabId !== 'tab1' && !gantInstances[tabId]) {
+                console.log(`Tab ${tabId} için Gantt yükleniyor (lazy loading)`);
+                initializeGanttForTab(tabId);
+            } else {
+                switchTab(tabId);
+            }
+        }
+    }
+});
+
+// Tab ismini düzenleme
+function renameTab(event, tabId) {
+    event.stopPropagation();
+    
+    const tab = document.querySelector(`[data-tab="${tabId}"]`);
+    const currentName = tab.childNodes[0].nodeValue.trim();
+    
+    // Halihazırda düzenleme formu var mı kontrol et
+    if (tab.querySelector('.gantt-tab-rename-form')) {
+        return;
+    }
+    
+    // Düzenleme formunu oluştur
+    const renameForm = document.createElement('div');
+    renameForm.className = 'gantt-tab-rename-form';
+    renameForm.innerHTML = `
+        <input type="text" value="${currentName}">
+        <button type="button" onclick="saveTabName('${tabId}')"><i class="icon icon-action-success"></i></button>
+        <button type="button" class="cancel" onclick="cancelRename('${tabId}')"><i class="icon icon-action-reject"></i></button>
+    `;
+    
+    tab.appendChild(renameForm);
+    renameForm.style.display = 'flex';
+    
+    // Input'a odaklan
+    const input = renameForm.querySelector('input');
+    input.focus();
+    input.select();
+    
+    // Enter tuşu ile kaydet, Escape ile iptal et
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            saveTabName(tabId);
+        } else if (e.key === 'Escape') {
+            cancelRename(tabId);
+        }
+    });
+}
+
+// Tab ismini kaydet
+function saveTabName(tabId) {
+    const tab = document.querySelector(`[data-tab="${tabId}"]`);
+    const form = tab.querySelector('.gantt-tab-rename-form');
+    const newName = form.querySelector('input').value.trim();
+    
+    if (newName) {
+        // İlk düğümü (metin düğümü) bul ve değiştir
+        let replaced = false;
+        for (let i = 0; i < tab.childNodes.length; i++) {
+            if (tab.childNodes[i].nodeType === Node.TEXT_NODE) {
+                tab.childNodes[i].nodeValue = newName + ' ';
+                replaced = true;
+                break;
+            }
+        }
+        
+        // Eğer metin düğümü bulunamadıysa, yeni bir tane ekle
+        if (!replaced) {
+            tab.insertBefore(document.createTextNode(newName + ' '), tab.firstChild);
+        }
+        
+        // Aktif tab ise başlığı da güncelle
+        if (tab.classList.contains('active')) {
+            updateTabTitle(newName);
+        }
+        
+        // Tabları localStorage'a kaydet
+        saveTabsToStorage();
+    }
+    
+    // Düzenleme formunu kaldır
+    form.remove();
+}
+
+// Tab ismi düzenlemeyi iptal et
+function cancelRename(tabId) {
+    const tab = document.querySelector(`[data-tab="${tabId}"]`);
+    const form = tab.querySelector('.gantt-tab-rename-form');
+    form.remove();
+}
+
+// Tab silme
+function deleteTab(event, tabId) {
+    event.stopPropagation();
+    
+    // İlk tab silinmesin
+    if (tabId === 'tab1') {
+        alert("{% trans 'Varsayılan tab silinemez!' %}");
+        return;
+    }
+    
+    if (confirm("{% trans 'Bu tabı silmek istediğinize emin misiniz?' %}")) {
+        // Tab ve içeriğini kaldır
+        const tab = document.querySelector(`[data-tab="${tabId}"]`);
+        const tabContent = document.getElementById(`${tabId}-content`);
+        
+        tab.remove();
+        tabContent.remove();
+        
+        // Gantt örneğini temizle
+        if (gantInstances[tabId]) {
+            delete gantInstances[tabId];
+        }
+        
+        // Tabları localStorage'a kaydet
+        saveTabsToStorage();
+        
+        // İlk taba geç
+        switchTab('tab1');
+    }
+}
+
+// Gantt şemasını bugünün tarihine odaklama
+function centerGanttOnToday(ganttMaster) {
+    console.log("Bugünün tarihine odaklanılıyor...");
+    
+    setTimeout(() => {
+        try {
+            // Gantt nesnesini al
+            const gantt = ganttMaster.gantt;
+            if (!gantt) {
+                console.error("Gantt nesnesi bulunamadı");
+                return;
+            }
+            
+            // Bugünün tarihini al
+            const today = new Date();
+            console.log("Bugünün tarihi:", today.toLocaleDateString());
+            
+            // Gantt'ı yeniden çiz ve zoom'u ayarla
+            console.log("Gantt yeniden çiziliyor...");
+            gantt.zoom = "3M"; // Üç aylık periyot
+            
+            // Bugüne odaklan özelliğini aç
+            gantt.centerOnToday = true;
+            
+            // Yeniden çiz
+            ganttMaster.redraw();
+            
+            // Gantt'ı bugünün tarihine scroll yap
+            setTimeout(() => {
+                try {
+                    // Bugüne en yakın zaman çizgisi başlığını bul
+                    const ganttEl = gantt.element;
+                    const todayMs = today.getTime();
+                    
+                    // Bugüne en yakın zaman çizgisi başlığını bul
+                    const headers = ganttEl.find(".headTimeline2 .col");
+                    if (headers.length > 0) {
+                        console.log("Zaman çizgisi başlıkları bulundu:", headers.length);
+                        
+                        let closestHeader = null;
+                        let closestDiff = Number.MAX_SAFE_INTEGER;
+                        
+                        headers.each(function() {
+                            const dateAttr = $(this).attr("date");
+                            if (dateAttr) {
+                                const headerDate = new Date(parseInt(dateAttr));
+                                const diffTime = Math.abs(headerDate - today);
+                                
+                                if (diffTime < closestDiff) {
+                                    closestDiff = diffTime;
+                                    closestHeader = $(this);
+                                }
+                            }
+                        });
+                        
+                        if (closestHeader) {
+                            console.log("Bugüne en yakın başlık bulundu");
+                            
+                            // Scroll pozisyonunu hesapla
+                            const scrollElement = ganttEl.find(".gantt-body-scroll");
+                            const headerOffset = closestHeader.position().left;
+                            
+                            // Biraz soldan boşluk bırak
+                            const scrollPos = Math.max(0, headerOffset - 100);
+                            console.log("Scroll pozisyonu:", scrollPos);
+                            
+                            // Scroll yap
+                            scrollElement.scrollLeft(scrollPos);
+                            
+                            // Scroll'u tekrar kontrol et
+                            setTimeout(() => {
+                                scrollElement.scrollLeft(scrollPos);
+                                console.log("Scroll tekrar uygulandı");
+                            }, 300);
+                        } else {
+                            console.error("Bugüne yakın başlık bulunamadı");
+                        }
+                    } else {
+                        console.error("Zaman çizgisi başlıkları bulunamadı");
+                    }
+                } catch (error) {
+                    console.error("Bugüne odaklanma hatası:", error);
+                }
+            }, 300);
+        } catch (error) {
+            console.error("Bugüne odaklanma hatası:", error);
+        }
+    }, 1000);
+}
+
+// Her tab için Gantt başlatma
+function initializeGanttForTab(tabId) {
+    console.log(`Initializing Gantt for tab: ${tabId}`);
+    
+    // workSpace div'ini kontrol et ve gerekirse oluştur
+    let workSpaceElement = document.getElementById(`${tabId}-workSpace`);
+    if (!workSpaceElement) {
+        console.error(`WorkSpace element for ${tabId} not found!`);
+        return;
+    }
+    
+    // Gantt örneği oluştur
+    try {
+        const ge = new GanttMaster();
+        ge.set100OnClose = true;
+        ge.shrinkParent = true;
+        
+        // Tab workSpace'i için Gantt başlat
+        ge.init(workSpaceElement);
+        loadI18n();
+        
+        // Zoom ölçeğini ayarla - varsayılan zoom'u kaldırma
+        delete ge.gantt.zoom;
+        
+        // Proje verisini yükle
+        let project;
+        // Tab adını al
+        const tabElement = document.querySelector(`[data-tab="${tabId}"]`);
+        const tabName = tabElement ? tabElement.textContent.trim() : "Yeni Proje";
+        
+        if (tabId === 'tab1') {
+            project = loadFromLocalStorage(tabId);
+        } else {
+            // Yeni tablar için boş bir proje yapısı oluştur
+            project = getDemoProject();
+            // Tab adını projede kullan
+            project.tasks[0].name = tabName;
+        }
+        
+        if (!project.canWrite) {
+            document.querySelectorAll(".ganttButtonBar button.requireWrite").forEach(btn => {
+                btn.setAttribute("disabled", "true");
+            });
+        }
+        
+        // Projeyi yükle ve checkpoint oluştur
+        ge.loadProject(project);
+        ge.checkpoint();
+        
+        // Bu tab için Gantt örneğini kaydet
+        gantInstances[tabId] = ge;
+        
+        // Bugünün tarihine odaklan
+        setTimeout(() => {
+            centerGanttOnToday(ge);
+        }, 1000);
+        
+        console.log(`Gantt initialized for tab: ${tabId}`);
+    } catch (error) {
+        console.error(`Error initializing Gantt for tab ${tabId}:`, error);
+    }
+}
+
+// Tabları sürükle-bırak ile sıralanabilir yapma
+document.addEventListener("DOMContentLoaded", function() {
+    initSortableTabs();
+    loadTabsFromStorage();
+});
+
+// Tabları sürüklenebilir yapma
+function initSortableTabs() {
+    const tabsList = document.getElementById('ganttTabs');
+    if (tabsList) {
+        new Sortable(tabsList, {
+            animation: 150,
+            ghostClass: 'gantt-tabs-sortable-ghost',
+            onEnd: function() {
+                // Tab sıralaması değiştikten sonra saklama
+                saveTabsToStorage();
+            }
+        });
+    }
+}
+
+// Tab isimlerini ve sıralamasını localStorage'a saklama
+function saveTabsToStorage() {
+    const tabs = [];
+    document.querySelectorAll('.gantt-tab-item').forEach(tab => {
+        const tabId = tab.getAttribute('data-tab');
+        const tabName = tab.textContent.trim().replace(/\s*<span.*<\/span>\s*/g, '');
+        tabs.push({ id: tabId, name: tabName });
+    });
+    
+    localStorage.setItem('ganttTabs', JSON.stringify(tabs));
+    console.log('Tab isimleri ve sıralaması saklandı');
+}
+
+// Tab isimlerini ve sıralamasını localStorage'dan yükleme
+function loadTabsFromStorage() {
+    const savedTabs = localStorage.getItem('ganttTabs');
+    if (savedTabs) {
+        try {
+            const tabs = JSON.parse(savedTabs);
+            if (tabs.length > 0) {
+                console.log('Kaydedilmiş tablar yükleniyor:', tabs.length);
+                
+                // İlk tab dışındaki (varsayılan) tüm tabları temizle
+                const tabsList = document.getElementById('ganttTabs');
+                const firstTab = tabsList.querySelector('.gantt-tab-item');
+                if (firstTab) {
+                    // İlk tabın adını güncelle
+                    const firstTabData = tabs.find(t => t.id === 'tab1');
+                    if (firstTabData) {
+                        updateTabTextNode(firstTab, firstTabData.name);
+                    }
+                    
+                    // Diğer tabları yükle
+                    tabs.forEach((tab, index) => {
+                        if (tab.id !== 'tab1') {
+                            // Yeni tab oluştur
+                            const newTab = document.createElement('li');
+                            newTab.className = 'gantt-tab-item';
+                            newTab.setAttribute('data-tab', tab.id);
+                            newTab.innerHTML = `${tab.name} <span class="gantt-tab-action edit" onclick="renameTab(event, '${tab.id}')"><i class="icon icon-action-edit"></i></span><span class="gantt-tab-action delete" onclick="deleteTab(event, '${tab.id}')"><i class="icon icon-action-delete"></i></span>`;
+                            tabsList.appendChild(newTab);
+                            
+                            // Tab içeriği oluştur
+                            const tabContentContainer = document.createElement('div');
+                            tabContentContainer.className = 'gantt-tab-content';
+                            tabContentContainer.id = `${tab.id}-content`;
+                            
+                            // workSpace div'ini oluştur
+                            const workSpaceDiv = document.createElement('div');
+                            workSpaceDiv.id = `${tab.id}-workSpace`;
+                            workSpaceDiv.style.width = "100%";
+                            workSpaceDiv.style.height = "500px";
+                            tabContentContainer.appendChild(workSpaceDiv);
+                            
+                            // Tab içerik konteynerini sayfaya ekle
+                            const tabsContainerParent = document.querySelector('.gantt-tabs-container').parentNode;
+                            tabsContainerParent.insertBefore(tabContentContainer, document.querySelector('.large-stats-card-footer-actions'));
+                            
+                            // Tab içeriğini hazırla, ancak şimdi yükleme - kullanıcı sekmeye tıkladığında yüklenecek
+                            console.log(`Tab ${tab.id} oluşturuldu`);
+                        }
+                    });
+                }
+            }
+        } catch (e) {
+            console.error('Tab verilerini yükleme hatası:', e);
+        }
+    }
+}
+
+// Tab metnini güncellemek için yardımcı fonksiyon
+function updateTabTextNode(tabElement, newText) {
+    // İlk düğümü (metin düğümü) bul ve değiştir
+    let replaced = false;
+    for (let i = 0; i < tabElement.childNodes.length; i++) {
+        if (tabElement.childNodes[i].nodeType === Node.TEXT_NODE) {
+            tabElement.childNodes[i].nodeValue = newText + ' ';
+            replaced = true;
+            break;
+        }
+    }
+    
+    // Eğer metin düğümü bulunamadıysa, yeni bir tane ekle
+    if (!replaced) {
+        tabElement.insertBefore(document.createTextNode(newText + ' '), tabElement.firstChild);
+    }
+}
 </script>
 {% endblock sidebar %}
