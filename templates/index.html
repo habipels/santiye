@@ -1422,17 +1422,17 @@ chart.render();
                 <div class="card-body">
                     <div class="building-container">
                                                 <div class="building" id="building">
-                                                    <div class="face" id="face1"><div class="roof">Kuzey</div></div>
-                                                    <div class="face" id="face2"><div class="roof">Doğu</div></div>
-                                                    <div class="face" id="face3"><div class="roof">Güney</div></div>
-                                                    <div class="face" id="face4"><div class="roof">Batı</div></div>
+                                                    <div class="face" id="face1"><div class="roof">{% trans 'Kuzey' %}</div></div>
+                                                    <div class="face" id="face2"><div class="roof">{% trans 'Doğu' %}</div></div>
+                                                    <div class="face" id="face3"><div class="roof">{% trans 'Güney' %}</div></div>
+                                                    <div class="face" id="face4"><div class="roof">{% trans 'Batı' %}</div></div>
                                                 </div>
                     
                                                 <!-- Mouse yanında çıkan mini modal -->
                                                 <div id="infoModal" class="info-modal">
                                                     <span class="close-btn" onclick="closeInfoModal()">×</span>
                                                     <p id="modalText"></p>
-                                                    <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+                                                    <button class="action-btn" onclick="goToTask()">{% trans 'İş Emrine Git' %}</button>
                                                 </div>
                     </div>
                 </div>
@@ -1496,7 +1496,7 @@ chart.render();
                                 <span>{{i.telefon_numarasi}}</span>
                             </div>
                             <div class="employee-stats">
-                                <span>Ay / Çalışma Saati</span>
+                                <span>{% trans 'Ay / Çalışma Saati' %}</span>
                                 {{i.toplam_calisma_saati}}
                             </div>
                         </div>
@@ -1540,7 +1540,7 @@ chart.render();
                                 <span>{{i.telefon_numarasi}}</span>
                             </div>
                             <div class="employee-stats">
-                                <span>Ay / Çalışma Saati</span>
+                                <span>{% trans 'Ay / Çalışma Saati' %}</span>
                                 {{i.toplam_calisma_saati}}
                             </div>
                         </div>
@@ -1559,11 +1559,11 @@ chart.render();
 {% if yetki.santiye_gorme %}   
 <div class="info-card">
                 <div class="info-card-image">
-                    <img src="{% static 'go/images/info-card-1.png' %}" alt="Aktif Şantiye Sayısı">
+                    <img src="{% static 'go/images/info-card-1.png' %}" alt="{% trans 'Aktif Şantiye Sayısı' %}">
                 </div>
                 <div class="info-card-content">
                 {% blocktrans with aktif_santiye=personelbilgi.aktif_santiye %}
-                        {{ aktif_santiye }} <span>Aktif Şantiye Sayısı</span>
+                        {{ aktif_santiye }} <span>Aktif Şantiye Sayısı
                         {% endblocktrans %}
                 
                     
@@ -1574,11 +1574,11 @@ chart.render();
 {% else %}
      <div class="info-card">
                 <div class="info-card-image">
-                    <img src="{% static 'go/images/info-card-1.png' %}" alt="Aktif Şantiye Sayısı">
+                    <img src="{% static 'go/images/info-card-1.png' %}" alt="{% trans 'Aktif Şantiye Sayısı' %}">
                 </div>
                 <div class="info-card-content">
                 {% blocktrans with aktif_santiye=personelbilgi.aktif_santiye %}
-                        {{ aktif_santiye }} <span>Aktif Şantiye Sayısı</span>
+                        {{ aktif_santiye }} <span>Aktif Şantiye Sayısı
                         {% endblocktrans %}
                 
                     
@@ -1591,7 +1591,7 @@ chart.render();
 {% if yetki.personeller_gorme %} 
             <div class="info-card">
                 <div class="info-card-image">
-                    <img src="{% static 'go/images/info-card-2.png' %}" alt="Aktif Personel Sayısı">
+                    <img src="{% static 'go/images/info-card-2.png' %}" alt="{% trans 'Aktif Personel Sayısı' %}">
                 </div>
                 <div class="info-card-content">
                 {% blocktrans with personel_sayisi=personelbilgi.personel_sayisi %}
@@ -1605,7 +1605,7 @@ chart.render();
 {% else %}
                    <div class="info-card">
                 <div class="info-card-image">
-                    <img src="{% static 'go/images/info-card-2.png' %}" alt="Aktif Personel Sayısı">
+                    <img src="{% static 'go/images/info-card-2.png' %}" alt="{% trans 'Aktif Personel Sayısı' %}">
                 </div>
                 <div class="info-card-content">
                 {% blocktrans with personel_sayisi=personelbilgi.personel_sayisi %}
@@ -1620,7 +1620,7 @@ chart.render();
 {% if yetki.projeler_gorme %}  
 <div class="info-card">
                 <div class="info-card-image">
-                    <img src="{% static 'go/images/info-card-3.png' %}" alt="Aktif Proje Sayısı">
+                    <img src="{% static 'go/images/info-card-3.png' %}" alt="{% trans 'Aktif Proje Sayısı' %}">
                 </div>
                 <div class="info-card-content">
                 {% blocktrans with aktif_proje=personelbilgi.aktif_proje %}
@@ -1634,7 +1634,7 @@ chart.render();
 {% else %}
     <div class="info-card">
                 <div class="info-card-image">
-                    <img src="{% static 'go/images/info-card-3.png' %}" alt="Aktif Proje Sayısı">
+                    <img src="{% static 'go/images/info-card-3.png' %}" alt="{% trans 'Aktif Proje Sayısı' %}">
                 </div>
                 <div class="info-card-content">
                 {% blocktrans with aktif_proje=personelbilgi.aktif_proje %}
@@ -3421,10 +3421,10 @@ chart.render();
             
             
             <div class="building" id="building-{{i.id}}" style="display: none;">
-                <div class="face" id="{{i.gorseli}}-{{i.id}}-face1"><div class="roof">Kuzey</div></div>
-                <div class="face" id="{{i.gorseli}}-{{i.id}}-face2"><div class="roof">Doğu</div></div>
-                <div class="face" id="{{i.gorseli}}-{{i.id}}-face3"><div class="roof">Güney</div></div>
-                <div class="face" id="{{i.gorseli}}-{{i.id}}-face4"><div class="roof">Batı</div></div>
+                <div class="face" id="{{i.gorseli}}-{{i.id}}-face1"><div class="roof">{% trans 'Kuzey' %}</div></div>
+                <div class="face" id="{{i.gorseli}}-{{i.id}}-face2"><div class="roof">{% trans 'Doğu' %}</div></div>
+                <div class="face" id="{{i.gorseli}}-{{i.id}}-face3"><div class="roof">{% trans 'Güney' %}</div></div>
+                <div class="face" id="{{i.gorseli}}-{{i.id}}-face4"><div class="roof">{% trans 'Batı' %}</div></div>
             </div>
             {% endfor %}
         </div>
@@ -3433,7 +3433,7 @@ chart.render();
         <div id="infoModal" class="info-modal">
             <span class="close-btn" onclick="closeInfoModal()">×</span>
             <p id="modalText"></p>
-            <button class="action-btn" onclick="goToTask()">İş Emrine Git</button>
+            <button class="action-btn" onclick="goToTask()">{% trans 'İş Emrine Git' %}</button>
         </div>
     </div>
 </div>
@@ -3539,7 +3539,7 @@ chart.render();
                                     <span>{{i.telefon_numarasi}}</span>
                                 </div>
                                 <div class="employee-stats">
-                                    <span>Ay / Çalışma Saati</span>
+                                    <span>{% trans 'Ay / Çalışma Saati' %}</span>
                                     {{i.toplam_calisma_saati}}
                                 </div>
                             </div>
@@ -3558,7 +3558,7 @@ chart.render();
 {% if yetki.santiye_gorme %}   
    <div class="info-card">
                     <div class="info-card-image">
-                        <img src="{% static 'go/images/info-card-1.png' %}" alt="Aktif Şantiye Sayısı">
+                        <img src="{% static 'go/images/info-card-1.png' %}" alt="{% trans 'Aktif Şantiye Sayısı' %}">
                     </div>
                     <div class="info-card-content">
                     {% blocktrans with aktif_santiye=personelbilgi.aktif_santiye %}
@@ -3573,7 +3573,7 @@ chart.render();
 {% else %}
          <div class="info-card">
                     <div class="info-card-image">
-                        <img src="{% static 'go/images/info-card-1.png' %}" alt="Aktif Şantiye Sayısı">
+                        <img src="{% static 'go/images/info-card-1.png' %}" alt="{% trans 'Aktif Şantiye Sayısı' %}">
                     </div>
                     <div class="info-card-content">
                     {% blocktrans with aktif_santiye=personelbilgi.aktif_santiye %}
@@ -3590,7 +3590,7 @@ chart.render();
 {% if yetki.personeller_gorme %} 
                 <div class="info-card">
                     <div class="info-card-image">
-                        <img src="{% static 'go/images/info-card-2.png' %}" alt="Aktif Personel Sayısı">
+                        <img src="{% static 'go/images/info-card-2.png' %}" alt="{% trans 'Aktif Personel Sayısı' %}">
                     </div>
                     <div class="info-card-content">
                     {% blocktrans with personel_sayisi=personelbilgi.personel_sayisi %}
@@ -3604,7 +3604,7 @@ chart.render();
 {% else %}
                        <div class="info-card">
                     <div class="info-card-image">
-                        <img src="{% static 'go/images/info-card-2.png' %}" alt="Aktif Personel Sayısı">
+                        <img src="{% static 'go/images/info-card-2.png' %}" alt="{% trans 'Aktif Personel Sayısı' %}">
                     </div>
                     <div class="info-card-content">
                     {% blocktrans with personel_sayisi=personelbilgi.personel_sayisi %}
@@ -3619,7 +3619,7 @@ chart.render();
 {% if yetki.projeler_gorme %}  
   <div class="info-card">
                     <div class="info-card-image">
-                        <img src="{% static 'go/images/info-card-3.png' %}" alt="Aktif Proje Sayısı">
+                        <img src="{% static 'go/images/info-card-3.png' %}" alt="{% trans 'Aktif Proje Sayısı' %}">
                     </div>
                     <div class="info-card-content">
                     {% blocktrans with aktif_proje=personelbilgi.aktif_proje %}
@@ -3633,7 +3633,7 @@ chart.render();
 {% else %}
         <div class="info-card">
                     <div class="info-card-image">
-                        <img src="{% static 'go/images/info-card-3.png' %}" alt="Aktif Proje Sayısı">
+                        <img src="{% static 'go/images/info-card-3.png' %}" alt="{% trans 'Aktif Proje Sayısı' %}">
                     </div>
                     <div class="info-card-content">
                     {% blocktrans with aktif_proje=personelbilgi.aktif_proje %}
@@ -3779,11 +3779,11 @@ chart.render();
                                         <span
                                         class="status-inprogress stats-lg">{{i.status}}</span>
                                     {% elif i.status == "New" %}
-                                    <div class="td-info"><span class="status-highlight stats-lg">Yeni</span></div>
+                                    <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
                                     {% elif i.status == "Pending" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
                                      {% elif i.status == "Completed" %}
-                                    <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                    <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
                                         {% endif %}
                                     
                             
@@ -3837,11 +3837,11 @@ chart.render();
                                         <span
                                         class="status-inprogress stats-lg">{{i.status}}</span>
                                     {% elif i.status == "New" %}
-                                    <div class="td-info"><span class="status-highlight stats-lg">New</span></div>
+                                    <div class="td-info"><span class="status-highlight stats-lg">{% trans 'Yeni' %}</span></div>
                                     {% elif i.status == "Pending" %}
-                                    <div class="td-info"><span class="status-pending stats-lg">Beklemede</span></div>
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans 'Beklemede' %}</span></div>
                                      {% elif i.status == "Completed" %}
-                                    <div class="td-info"><span class="status-success stats-lg">Tamamlandı</span></div>
+                                    <div class="td-info"><span class="status-success stats-lg">{% trans 'Tamamlandı' %}</span></div>
                                         {% endif %}
                                     
                             
