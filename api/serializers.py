@@ -116,8 +116,43 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = '__all__' 
 
+
+
+
+class SenderSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'image',
+            'telefon_numarasi',
+            'gorevi',
+            'status',
+            'email',
+            'online'
+        ]
+
+    def get_image(self, obj):
+        if obj.image:
+            return obj.image.url
+        return "https://cloud.biadago.com/static/go/images/profile.png"
+
 class MessageSerializer(serializers.ModelSerializer):
+    sender = SenderSerializer(read_only=True)
 
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'group', 'content', 'timestamp', 'file', 'read']
+        fields = [
+            'id',
+            'sender',
+            'group',
+            'content',
+            'timestamp',
+            'file',
+            'read',
+        ]

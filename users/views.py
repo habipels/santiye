@@ -275,7 +275,7 @@ def kullanicilarim(request):
     #print(profile)
     return render(request,"account/kullanicilar.html",content)
 #kullanıcılar
-
+from django.contrib.auth.hashers import make_password
 def kullanici_ekleme(request):
     if request.POST:
         if request.user.is_superuser:
@@ -288,6 +288,7 @@ def kullanici_ekleme(request):
             parola = request.POST.get("parola")
             file = request.POST.getlist("file")
             izinler = request.POST.get("izinler")
+            #yeni_sifre = request.POST.get("sifre")
             if durumu == "1":
                 durumu = True
             else:
@@ -320,37 +321,55 @@ def kullanici_silme(request):
 def kullanici_bilgileri_duzenle(request):
     if request.POST:
         if request.user.is_superuser:
-            pass
+            pass  # Superuser için özel işlem varsa buraya eklenmeli
         else:
-            
             buttonId = request.POST.get("buttonId")
             yetkili_adi = request.POST.get("yetkili_adi")
             email = request.POST.get("email")
             gorevi = request.POST.get("gorevi")
             durumu = request.POST.get("durumu")
-            file = request.POST.getlist("file")
+            file = request.FILES.getlist("file")
             izinler = request.POST.get("izinler")
-            bagli_kullanicilar.objects.filter(kullanicilar =get_object_or_404(CustomUser, id = buttonId)).delete()
-            if durumu == "1":
-                durumu = True
-            else:
-                durumu = False
-            CustomUser.objects.filter(id=buttonId).update(
-                first_name = request.user.first_name,
-                last_name = yetkili_adi,
-                username = email,
-                email = email,
-                gorevi =gorevi,
-                kullanicilar_db = request.user,
-                is_active = durumu
-            )
-            if len(file)> 1:
-                for images in file:
-                    personel_dosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),dosyalari=images,kullanici = get_object_or_404(CustomUser,id = buttonId))  # Urun_resimleri modeline resimleri kaydet
-            if izinler:
-                bagli_kullanicilar.objects.create(izinler = get_object_or_404(personel_izinleri,id = izinler),kullanicilar = get_object_or_404(CustomUser, id = buttonId))
-        return redirect_with_language("users:kullanicilarim")
+            yeni_sifre = request.POST.get("sifre")  # 🔐 Şifre alanı
 
+            user = get_object_or_404(CustomUser, id=buttonId)
+
+            bagli_kullanicilar.objects.filter(kullanicilar=user).delete()
+
+            is_active = True if durumu == "1" else False
+
+            # Şifreyi güncelle, sadece doluysa
+            if yeni_sifre:
+                user.password = make_password(yeni_sifre)
+
+            # Diğer alanları güncelle
+            user.first_name = request.user.first_name
+            user.last_name = yetkili_adi
+            user.username = email
+            user.email = email
+            user.gorevi = gorevi
+            user.kullanicilar_db = request.user
+            user.is_active = is_active
+
+            user.save()
+
+            # Dosya ekleme
+            if file:
+                for images in file:
+                    personel_dosyalari.objects.create(
+                        kayit_tarihi=get_kayit_tarihi_from_request(request),
+                        dosyalari=images,
+                        kullanici=user
+                    )
+
+            # İzin bağlama
+            if izinler:
+                bagli_kullanicilar.objects.create(
+                    izinler=get_object_or_404(personel_izinleri, id=izinler),
+                    kullanicilar=user
+                )
+
+        return redirect_with_language("users:kullanicilarim")
 ######################3
 #kullanıcılar
 def kullanicilarim_2(request,hash):
