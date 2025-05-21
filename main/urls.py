@@ -212,6 +212,7 @@ urlpatterns = [#
     path("control/creategeneralreport/<str:hash>", views.genel_rapor_olustur_2, name="genel_rapor_olustur_2"),
     
      path("gantlist", views.gant_list, name="gant_list"),
+      path("gant_aktarma", views.gant_aktarma, name="gant_aktarma"),
      path("gant_sablon_ekle", views.gant_sablon_ekle, name="gant_sablon_ekle"),
      path("gant_sablon_duzenle", views.gant_sablon_duzenle, name="gant_sablon_duzenle"),
      path("gant_sablon_silme", views.gant_sablon_silme, name="gant_sablon_silme"),

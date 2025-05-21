@@ -7409,7 +7409,32 @@ def gant_kaydet(request):
         return JsonResponse({'ok': True, 'message': 'Gantt kaydedildi'})
     
     return redirect_with_language("main:takvim_olaylari",gant_aitlik)
-
+def gant_aktarma(request):
+    if request.method == 'POST':
+        gelen_gant = request.POST.get("gelen_gant")
+        giden_gant = request.POST.get("giden_gant")
+        if not gelen_gant:
+            return JsonResponse({'ok': False, 'message': 'Gantt verisi bulunamadı.'})
+        if super_admin_kontrolu(request):
+            # Super admin işlemleri
+            pass
+        else:
+            if request.user.kullanicilar_db:
+                a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+                if a and a.izinler.gant_duzenleme:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                kullanici = request.user
+        gant_gelen_cekme = gantt_olayi.objects.filter(gatn_aitlik__id = gelen_gant).last()
+        gantt_olayi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+            gantt_sahibii=kullanici,
+            ganti_degistiren_kisi=request.user,
+            gantt_verisi=gant_gelen_cekme.gantt_verisi,
+            gatn_aitlik = get_object_or_none(gant_aitlikleri, id=giden_gant, gantt_sahibii=kullanici),
+        )
+        return redirect_with_language("main:gant_list")
 def santiye_raporu_2(request,id,hash):
     content = sozluk_yapisi()
     content = sozluk_yapisi()

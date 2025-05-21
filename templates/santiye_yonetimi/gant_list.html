@@ -51,17 +51,17 @@
         </div>
         <div class="page-actions">
          {% if request.user.kullanicilar_db %}
-                                     {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                        {% if yetki.gant_olusturma %}
-                                                <button class="page-primary-btn" onclick="openModal('kasa-ekle')"><i class="icon icon-new"></i>{% trans 'İş Planı Oluştur' %}</button>                                               
-                                                                                                        
-                                        {% endif %}
+            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+            {% if yetki.gant_olusturma %}
+            <button class="page-primary-btn" onclick="openModal('kasa-ekle')"><i class="icon icon-new"></i>{% trans 'İş Planı Oluştur' %}</button>                                               
+            <button class="page-primary-btn" onclick="openModal('kopyala')"><i class="icon icon-new"></i>{% trans 'İş Planı Kopyalama' %}</button>                                                                                                                                         
+            {% endif %}
                                        
                                             
                               
            {% else %}
                     <button class="page-primary-btn" onclick="openModal('kasa-ekle')"><i class="icon icon-new"></i>{% trans 'İş Planı Oluştur' %}</button>                    
-                                            
+                     <button class="page-primary-btn" onclick="openModal('kopyala')"><i class="icon icon-new"></i>{% trans 'İş Planı Kopyalama' %}</button>                        
             {% endif %}
                                                     
                                                
@@ -190,6 +190,47 @@
                     <div class="form-actions">
                         <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
                         <button class="form-action-primary" type="submit">{% trans 'İş Planını Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+<div class="modal" id="kopyala">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'İş Planı Kopyalama' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" method="post" action="/{{dil}}{% url 'main:gant_aktarma' %}"  autocomplete="off">
+                                {% csrf_token %}
+                                
+                    
+
+
+                                    <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Aktarılacak İş Planı' %}</label>
+                                            <select   name="gelen_gant" >
+                                                {% for i in gant_sablonlari %}
+                                                    <option value="{{i.id}}">{{i.gant_adi}}</option>
+                                                {% endfor %}
+                                              
+                                            </select>
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Aktarım Olacak İş Planı' %}</label>
+                                            <select   name="giden_gant" >
+                                                {% for i in gant_sablonlari %}
+                                                    <option value="{{i.id}}">{{i.gant_adi}}</option>
+                                                {% endfor %}
+                                              
+                                            </select>
+                                        </div>
+                                        
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Aktarmayı Yap' %}</button>
                     </div>
                 </form>
             </div>
