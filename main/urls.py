@@ -210,7 +210,12 @@ urlpatterns = [#
     path("control/delgeneralreport/<str:hash>", views.rapor_sil_2, name="rapor_sil_2"),
     path("creategeneralreport", views.genel_rapor_olustur, name="genel_rapor_olustur"),
     path("control/creategeneralreport/<str:hash>", views.genel_rapor_olustur_2, name="genel_rapor_olustur_2"),
-    path("gantt", views.takvim_olaylari, name="takvim_olaylari"),
+    
+     path("gantlist", views.gant_list, name="gant_list"),
+     path("gant_sablon_ekle", views.gant_sablon_ekle, name="gant_sablon_ekle"),
+     path("gant_sablon_duzenle", views.gant_sablon_duzenle, name="gant_sablon_duzenle"),
+     path("gant_sablon_silme", views.gant_sablon_silme, name="gant_sablon_silme"),
+    path("gantt/<int:id>", views.takvim_olaylari, name="takvim_olaylari"),
     path('gantt-kaydet/', views.gant_kaydet, name='gant_kaydet'),
     path("userauthorizations", views.kullanici_yetkileri, name="kullanici_yetkileri"),
     path("kullaniciyetkiolustur", views.kullanici_yetki_olustur, name="kullanici_yetki_olustur"),

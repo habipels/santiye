@@ -434,8 +434,18 @@ class IsplaniDosyalari(models.Model):
     dosya = models.FileField(upload_to='isplani_dosyalari/', verbose_name="Dosya Adı", blank=True, null=True)
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
+class gant_aitlikleri(models.Model):
+    gant_adi = models.CharField(max_length=200, verbose_name="Gantt Adı", blank=True, null=True)
+    gant_blok = models.ForeignKey(bloglar, verbose_name="Gantt Blogu", blank=True, null=True, on_delete=models.SET_NULL)
+    gantt_sahibii = models.ForeignKey(CustomUser, verbose_name="Gantt Sahibi", blank=True, null=True, on_delete=models.SET_NULL, related_name="gantt_sahibii_Aitlik")
+    ganti_degistiren_kisi = models.ForeignKey(CustomUser, verbose_name="Gantt değiştiren kişi", blank=True, null=True, on_delete=models.SET_NULL, related_name="ganti_degistiren_kisi_Aitlik")
+    aciklama = models.TextField(verbose_name="Açıklama", blank=True, null=True)
+    kayit_tarihi = models.DateTimeField(default=datetime.now, null=True)
+    silinme_bilgisi = models.BooleanField(default=False)
+    history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
 
 class gantt_olayi(models.Model):
+    gatn_aitlik = models.ForeignKey(gant_aitlikleri, verbose_name="Gantt Aitliği", blank=True, null=True, on_delete=models.SET_NULL)
     gantt_sahibii = models.ForeignKey(CustomUser, verbose_name="Gantt Sahibi", blank=True, null=True, on_delete=models.SET_NULL, related_name="gantt_sahibii")
     ganti_degistiren_kisi = models.ForeignKey(CustomUser, verbose_name="Gantt değiştiren kişi", blank=True, null=True, on_delete=models.SET_NULL, related_name="ganti_degistiren_kisi")
     gantt_verisi = models.TextField(verbose_name="json verisi")

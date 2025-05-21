@@ -7241,8 +7241,117 @@ def yapilacalar_time_line_duzenle(request):
 
 from .utils import *
 from django.utils.safestring import mark_safe
-def takvim_olaylari(request):
+def gant_list(request):
     content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile = gantt_olayi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gant_gorme:
+                    kullanici = request.user.kullanicilar_db
+                    
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+        gant_sablonlari = gant_aitlikleri.objects.filter(gantt_sahibii = kullanici,silinme_bilgisi = False)
+        blok_alamlar = bloglar.objects.filter(proje_ait_bilgisi = kullanici)
+        content["bloklar"] = blok_alamlar
+        content["gant_sablonlari"] = gant_sablonlari
+    return render(request,"santiye_yonetimi/gant_list.html",content)
+def gant_sablon_ekle(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile = gantt_olayi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gant_olusturma:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+        if request.POST:
+            baslik = request.POST.get("kasaadi")   
+            blok_bilgileri = request.POST.get("avanslarda_kullan")
+            aciklama  = request.POST.get("aciklame")
+            gant_aitlikleri.objects.create(
+                gant_adi = baslik,
+                gant_blok = get_object_or_404(bloglar,id = blok_bilgileri),
+                gantt_sahibii = kullanici,
+                ganti_degistiren_kisi = request.user,
+                aciklama = aciklama)
+            return redirect_with_language("main:gant_list")
+def gant_sablon_duzenle(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile = gantt_olayi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gant_olusturma:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+        if request.POST:
+            baslik = request.POST.get("kasaadi")   
+            blok_bilgileri = request.POST.get("avanslarda_kullan")
+            aciklama  = request.POST.get("aciklame")
+            id = request.POST.get("id")
+            gant_aitlikleri.objects.filter(id = id).update(
+                gant_adi = baslik,
+                gant_blok = get_object_or_404(bloglar,id = blok_bilgileri),
+                gantt_sahibii = kullanici,
+                ganti_degistiren_kisi = request.user,
+                aciklama = aciklama)
+            return redirect_with_language("main:gant_list")
+def gant_sablon_silme(request):
+    content = sozluk_yapisi()
+    if super_admin_kontrolu(request):
+        profile = gantt_olayi.objects.all()
+        kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
+        content["kullanicilar"] =kullanicilar
+    else:
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+            if a:
+                if a.izinler.gant_olusturma:
+                    kullanici = request.user.kullanicilar_db
+                else:
+                    return redirect_with_language("main:yetkisiz")
+            else:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+        if request.POST:
+           
+            id = request.POST.get("id")
+            gant_aitlikleri.objects.filter(id = id).update(
+                silinme_bilgisi = True)
+            return redirect_with_language("main:gant_list")
+
+def takvim_olaylari(request,id):
+    content = sozluk_yapisi()
+
     if super_admin_kontrolu(request):
         profile = IsplaniPlanlari.objects.all()
         kullanicilar = CustomUser.objects.filter(kullanicilar_db = None,is_superuser = False).order_by("-id")
@@ -7252,14 +7361,17 @@ def takvim_olaylari(request):
             a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
             if a:
                 if a.izinler.gant_gorme:
-                    content["gant"]  =gantt_olayi.objects.filter(gantt_sahibii = request.user.kullanicilar_db).last()
+                    kullanici = request.user.kullanicilar_db
+                    #content["gant"]  =gantt_olayi.objects.filter(gantt_sahibii = request.user.kullanicilar_db).last()
     
                 else:
                     return redirect_with_language("main:yetkisiz")
             else:
                 return redirect_with_language("main:yetkisiz")
         else:
-            content["gant"]  =gantt_olayi.objects.filter(gantt_sahibii = request.user).last()
+            kullanici = request.user
+        content["gant_aitlikleri"] = get_object_or_none(gant_aitlikleri,id = id, gantt_sahibii = kullanici) 
+        content["gant"]  = gantt_olayi.objects.filter(gantt_sahibii = kullanici,gatn_aitlik = get_object_or_none(gant_aitlikleri,id = id, gantt_sahibii = kullanici) ).last()
             
     
     return render(request,"santiye_yonetimi/takvim.html",content)
@@ -7270,6 +7382,7 @@ from django.shortcuts import redirect
 def gant_kaydet(request):
     if request.method == 'POST':
         gant_verisi = request.POST.get("gant_verisi")
+        gant_aitlik = request.POST.get("gant_aitlik")
         if not gant_verisi:
             return JsonResponse({'ok': False, 'message': 'Gantt verisi bulunamadı.'})
 
@@ -7289,12 +7402,13 @@ def gant_kaydet(request):
         gantt_olayi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
             gantt_sahibii=kullanici,
             ganti_degistiren_kisi=request.user,
-            gantt_verisi=gant_verisi
+            gantt_verisi=gant_verisi,
+            gatn_aitlik = get_object_or_none(gant_aitlikleri, id=gant_aitlik, gantt_sahibii=kullanici),
         )
 
         return JsonResponse({'ok': True, 'message': 'Gantt kaydedildi'})
     
-    return redirect_with_language("main:takvim_olaylari")
+    return redirect_with_language("main:takvim_olaylari",gant_aitlik)
 
 def santiye_raporu_2(request,id,hash):
     content = sozluk_yapisi()
@@ -7574,6 +7688,7 @@ def kullanici_yetki_alma(request):
         izinler.gant_olusturma = False
         izinler.gant_gorme = False
         izinler.gant_duzenleme = False
+        izinler.gant_silme = False
         #
         izinler.genel_rapor_olusturma = False
         izinler.genel_rapor_gorme = False
@@ -8079,6 +8194,10 @@ def kullanici_yetki_alma(request):
         gant_duzenleme = request.POST.get("gant_duzenleme")
         if gant_duzenleme : 
             izinler.gant_duzenleme = True
+        gant_silme = request.POST.get("gant_silme")
+        if gant_silme :
+            izinler.gant_silme = True
+
         #
         genel_rapor_olusturma = request.POST.get("genel_rapor_olusturma")
         if genel_rapor_olusturma:  
