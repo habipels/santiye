@@ -229,7 +229,7 @@
             color: #000000 !important;
             font-weight: 600 !important;
         }
-        
+
         /* Modal Stil */
         .modal {
             display: none;
@@ -838,7 +838,7 @@
                     <div>{% trans 'Rapor No' %}: #{{santiyeler.id}}</div>
                     <div>{{santiyeler.tarih|date:'d.m.Y'}}</div>
                 </div>
-            </div>
+        </div>
 
             <div class="report-basic-info">
                 <div class="info-item">
@@ -857,7 +857,7 @@
                     <label>{% trans 'Kayıp Gün Açıklaması' %}</label>
                     <span>{{santiyeler.kayip_gun_aciklamasi|default:"-"}}</span>
                 </div>
-            </div>
+        </div>
 
             <div class="report-content">
                 <div class="report-section">
@@ -866,12 +866,12 @@
                     </div>
                     <div class="report-section-content">
                         <ul>
-                            {% for i in genel_personel %}
+        {% for i in genel_personel %}
                             <li>
                                 <span>{{i.personel_departmani.kategori_isimi}}</span>
                                 <span>{{i.personel_sayisi | stringformat:'.0f' }} kişi</span>
                             </li>
-                            {% endfor %}
+        {% endfor %}
                         </ul>
                     </div>
                 </div>
@@ -901,13 +901,13 @@
                     </div>
                     <div class="report-section-content">
                         <ul>
-                            {% for i in gelen_malzeme %}
+            {% for i in gelen_malzeme %}
                             <li>
                                 <span>{{i.urun.urun_adi}}</span>
                                 <span>{{i.urun_adeti}} adet</span>
                             </li>
-                            {% endfor %}
-                        </ul>
+        {% endfor %}
+        </ul>
                     </div>
                 </div>
 
@@ -916,20 +916,20 @@
                         {% trans 'İmalat Durumu' %}
                     </div>
                     <div class="report-section-content">
-                        {% for i in genel_imalat %}
-                        <p><strong>{{i.imalet_kalemi.kalem_adi}}:</strong> {{i.imalat_aciklama}}</p>
-                        {% endfor %}
-                    </div>
-                </div>
+                {% for i in genel_imalat %}
+            <p><strong>{{i.imalet_kalemi.kalem_adi}}:</strong> {{i.imalat_aciklama}}</p>
+        {% endfor %}
+            </div>
+        </div>
 
                 <div class="report-section">
                     <div class="report-section-header">
                         {% trans 'Genel Durum' %}
                     </div>
                     <div class="report-section-content">
-                        {% for i in genel_aciklamalar %}
+        {% for i in genel_aciklamalar %}
                         <p>{{i.genel_aciklama}}</p>
-                        {% endfor %}
+        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -947,43 +947,43 @@
                     </button>
                 </div>
                 {% else %}
-                <form action="/{{dil}}{% url 'main:rapor_onaylama' %}" method="post">
-                    {% csrf_token %}
+<form action="/{{dil}}{% url 'main:rapor_onaylama' %}" method="post">
+    {% csrf_token %}
                     <div class="approval-controls">
                         <p>{% trans 'Raporu onaylamak için sorumlu kişiyi seçin ve PIN kodunuzu girin' %}</p>
-                        <input type="text" hidden name="buttonId" value="{{santiyeler.id}}">
+            <input type="text" hidden name="buttonId" value="{{santiyeler.id}}">
                         <label for="sorumluSecimi">{% trans 'Sorumlu Kişi' %}</label>
-                        <select id="sorumluSecimi" name="kullanici_bilgisi" class="form-control">
-                            <option value="" disabled selected>{% trans 'Seçiniz' %}</option>
-                            {% for i in perseonel_iznleri_gonder %}               
+            <select id="sorumluSecimi" name="kullanici_bilgisi" class="form-control">
+                <option value="" disabled selected>{% trans 'Seçiniz' %}</option>
+                {% for i in perseonel_iznleri_gonder %}               
                             <option value="{{i.kullanicilar.id}}">{{i.kullanicilar.last_name}} - {% if i.kullanicilar.gorevi %}{{i.kullanicilar.gorevi}}{% endif %}</option>
-                            {% endfor %}
-                        </select>
-                        <button class="onayla-btn" type="button" onclick="sorumluSecildi()">{% trans 'Onayla' %}</button>
-                    </div>
-                    
-                    <!-- PIN Onay Modali -->
-                    <div class="modal" id="pinOnayModal">
-                        <div class="modal-inner">
-                            <div class="modal-header">
-                                <h2>{% trans 'Rapor Onayı' %}</h2>
-                                <button class="modal-close-btn" onclick="closeModal()">✖</button>
-                            </div>
-                            <div class="modal-body">
-                                <p>{% trans 'Raporu onaylamak için PIN kodunuzu girin:' %}</p>
-                                <input type="password" id="pinKodu" name="sifre_bilgisi" placeholder="{% trans 'PIN Kodu' %}" maxlength="4" class="form-control">
-                                <div class="form-actions">
+                {% endfor %}
+            </select>
+            <button class="onayla-btn" type="button" onclick="sorumluSecildi()">{% trans 'Onayla' %}</button>
+        </div>
+
+<!-- PIN Onay Modali -->
+<div class="modal" id="pinOnayModal">
+    <div class="modal-inner">
+        <div class="modal-header">
+            <h2>{% trans 'Rapor Onayı' %}</h2>
+            <button class="modal-close-btn" onclick="closeModal()">✖</button>
+        </div>
+        <div class="modal-body">
+            <p>{% trans 'Raporu onaylamak için PIN kodunuzu girin:' %}</p>
+            <input type="password" id="pinKodu" name="sifre_bilgisi" placeholder="{% trans 'PIN Kodu' %}" maxlength="4" class="form-control">
+            <div class="form-actions">
                                     <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'İptal' %}</button>
-                                    <button class="form-action-primary" type="submit">{% trans 'Onayla' %}</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                {% endif %}
+                <button class="form-action-primary" type="submit">{% trans 'Onayla' %}</button>
             </div>
         </div>
     </div>
+</div>
+</form>
+                {% endif %}
+            </div>
+        </div>
+</div>
 </main>
 
 <script>
@@ -1005,7 +1005,7 @@
         document.getElementById('pinOnayModal').style.display = 'none';
     }
 
-    function yazdirBolge() {
+function yazdirBolge() {
         window.print();
     }
 
