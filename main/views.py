@@ -10238,6 +10238,7 @@ def genel_rapor_onaylama(request,id):
                 return redirect_with_language("main:yetkisiz")
         else:
             kullanici =  request.user
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =kullanici).last()
     content["santiyeler"] = get_object_or_404(genel_rapor,proje_ait_bilgisi = kullanici,silinme_bilgisi = False,id = id) 
     content["gelen_malzeme"] = gelen_malzeme.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
     content["genel_personel"] = genel_personel.objects.filter(hangi_rapor = kullanici, proje_ait_bilgisi__id = id )
