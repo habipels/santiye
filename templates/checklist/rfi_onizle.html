@@ -855,7 +855,12 @@
                             <div class="form-row">
                                 <div class="form-element" style="width: 70%;">
                                     <select id="controlItemCount">
-                                        <option value="0">{% trans 'Sadece Ana İmalat' %}</option>
+                                        {% if kalemler_count == 0 %}
+                                            <option value="0">{% trans 'Sadece Ana İmalat' %}</option>
+                                        {% else %}
+                                        <option value="{{kalemler_count}}">{{kalemler_count}}{% trans ' Kalem' %}</option>
+                                        {% endif %}
+                                        
                                         <option value="1">{% trans '1 Kalem' %}</option>
                                         <option value="2">{% trans '2 Kalem' %}</option>
                                         <option value="3">{% trans '3 Kalem' %}</option>
@@ -897,7 +902,7 @@
                                 <div class="form-row">
                             <div class="form-element">
                                 
-                                <input type="text" placeholder="{% trans 'Kontrol Kalemi' %}"  value="{{i.kalem_baslik}}"> 
+                                <input type="text" name="kontrol" placeholder="{% trans 'Kontrol Kalemi' %}"  value="{{i.kalem_baslik}}"> 
                                 </div>
                         </div>
                                 {% endfor %}

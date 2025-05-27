@@ -11284,6 +11284,7 @@ def rfi_show(request,id):
             kullanici =request.user  
         content["onayli"] = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id)
         content["kalemler"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id))
+        content["kalemler_count"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi = get_object_or_none(rfi_sablonlar,rfi_kime_ait = kullanici,id = id)).count()
         content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =kullanici).last()
         #rfi_kontrol.objects.filter(sablon_bilgisi__rfi_kime_ait = kullanici,onaylama_bilgisi = False,onaylayan_bilgisi = None).order_by("kayit_tarihi")
     return render(request,"checklist/rfi_onizle.html",content)
