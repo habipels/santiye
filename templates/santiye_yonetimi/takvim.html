@@ -3,6 +3,8 @@
 {% load custom_tags %}
 {% load static %}
 {% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
@@ -157,7 +159,38 @@ function exportGanttToPDF() {
     });
 }
 
+function exportGanttToExcelFromTasks() {
+  document.getElementById("loadingMessage").style.display = "block";
+
+  // Gantt verisini al
+  const ganttData = getDemoProject();
+
+  // Görevleri Excel için uygun formatta hazırla
+  const taskRows = ganttData.tasks.map(task => ({
+    "Kod": task.code || "",
+    "Görev Adı": task.name || "",
+    "Durum": (task.status || "").replace("STATUS_", ""),
+    "Başlangıç": new Date(task.start).toLocaleDateString(),
+    "Bitiş": new Date(task.end).toLocaleDateString(),
+    "Süre (gün)": task.duration || "",
+    "İlerleme (%)": task.progress || 0,
+    "Kritik mi?": task.isCritical ? "Evet" : "Hayır",
+    "Seviye": task.level || 0
+  }));
+
+  // Excel çalışma sayfası oluştur
+  const worksheet = XLSX.utils.json_to_sheet(taskRows);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Gantt Tablosu");
+
+  // Dosyayı indir
+  XLSX.writeFile(workbook, "Gantt-Chart.xlsx");
+
+  document.getElementById("loadingMessage").style.display = "none";
+}
+
 </script>
+
 
 
 <main>
@@ -700,6 +733,9 @@ function showBaselineInfo (event,element){
       <button onclick="$('#workSpace').trigger('zoomPlus.gantt');return false;" class="button textual icon " title="zoom in"><span class="teamworkIcon">(</span></button>
     <span class="ganttButtonSeparator"></span>
       <button onclick="exportGanttToPDF()" class="button textual icon" title="Export to PDF"><span class="teamworkIcon">p</span></button>
+    <span class="ganttButtonSeparator"></span>
+        <span class="ganttButtonSeparator"></span>
+      <button onclick="exportGanttToExcelFromTasks()" class="button textual icon" title="Export to PDF"><span class="teamworkIcon">p</span></button>
     <span class="ganttButtonSeparator"></span>
       <button onclick="ge.gantt.showCriticalPath=!ge.gantt.showCriticalPath; ge.redraw();return false;" class="button textual icon requireCanSeeCriticalPath" title="CRITICAL_PATH"><span class="teamworkIcon">&pound;</span></button>
     <span class="ganttButtonSeparator requireCanSeeCriticalPath"></span>
