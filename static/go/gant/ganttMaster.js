@@ -1644,7 +1644,7 @@ GanttMaster.prototype.manageSaveRequired=function(ev, showSave) {
 
   var self=this;
   function checkChanges() {
-    var changes = false;
+    var changes = false; // assume changes
     //there is somethin in the redo stack?
     if (self.__undoStack.length > 0) {
       var oldProject = JSON.parse(self.__undoStack[0]);
