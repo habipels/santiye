@@ -2584,3 +2584,17 @@ def groups(request):
     #context["group"] = GroupSerializer(group, many=True).data
     #context["group_id"] = group_id  # Add group_id to context
     return Response(context)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def bildirim(request):
+    if request.data:
+        platform = request.data.get('platform')
+        token = request.data.get('token')
+        CustomUser.objects.filter(id=request.user.id).update(
+            platform=platform,
+            token=token
+        )
+        return Response({"detail": "Bildirim ayarları bilgileri güncellendi."}, status=status.HTTP_200_OK)
+    return Response({"detail": "Geçersiz istek."}, status=status.HTTP_400_BAD_REQUEST)

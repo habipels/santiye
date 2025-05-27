@@ -7088,7 +7088,7 @@ def yapilacak_durumu_yenileme(request):
         images = request.FILES.getlist('file')
         isim = 1
         for images in images:
-            IsplaniIlerlemeDosyalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = get_object_or_404(IsplaniPlanlariIlerleme,id = new_project.id),yapan_kisi = request.user,dosya=images,dosya_sahibi = get_object_or_404(IsplaniPlanlari,id =yenilenecekeklemeyapilacak))  # Urun_resimleri modeline resimleri kaydet
+            IsplaniIlerlemeDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlariIlerleme,id = new_project.id),yapan_kisi = request.user,dosya=images,dosya_sahibi = get_object_or_404(IsplaniPlanlari,id =yenilenecekeklemeyapilacak))  # Urun_resimleri modeline resimleri kaydet
             isim = isim+1
     return redirect_with_language("main:yapilacaklar")
 

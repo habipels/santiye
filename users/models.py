@@ -16,6 +16,9 @@ class CustomUser(AbstractUser):
         ('sirketcalisani', 'sirketcalisani'),
         ('moderator', 'moderator'),
     )
+    plat = (('web', 'Web'),
+        ('android', 'Android'),
+        ('ios', 'iOS'),)
 
     email = models.EmailField(unique=True)
     status = models.CharField(max_length=100, choices=STATUS, default='sirket')
@@ -29,6 +32,8 @@ class CustomUser(AbstractUser):
     gorevi = models.CharField(max_length = 250 ,verbose_name="Görevi",blank = True,null = True)
     adrrsi = models.TextField("Adres", max_length=600, default='', blank=True)
     online  = models.BooleanField(default=False)
+    token = models.CharField(max_length=255, unique=False, blank=True, null=True, verbose_name="Token")
+    platform = models.CharField(max_length=10,choices=plat, default='web', verbose_name="Platform")
     history = HistoricalRecords(user_model=settings.AUTH_USER_MODEL)
     kullanici_tercih_dili = models.CharField(max_length=10,verbose_name="Kullanıcı Tercih Dili",default="en")
     last_seen = models.DateTimeField(default=timezone.now)
