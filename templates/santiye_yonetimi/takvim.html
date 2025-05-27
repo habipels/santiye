@@ -160,35 +160,40 @@ function exportGanttToPDF() {
 }
 
 function exportGanttToExcelFromTasks() {
-  document.getElementById("loadingMessage").style.display = "block";
+ document.getElementById("loadingMessage").style.display = "block";
 
-  // Gantt verisini al
   const ganttData = getDemoProject();
+  const today = new Date().getTime();
 
-  // Görevleri Excel için uygun formatta hazırla
-  const taskRows = ganttData.tasks.map(task => ({
-    "Kod": task.code || "",
-    "Görev Adı": task.name || "",
-    "Durum": (task.status || "").replace("STATUS_", ""),
-    "Başlangıç": new Date(task.start).toLocaleDateString(),
-    "Bitiş": new Date(task.end).toLocaleDateString(),
-    "Süre (gün)": task.duration || "",
-    "İlerleme (%)": task.progress || 0,
-    "Kritik mi?": task.isCritical ? "Evet" : "Hayır",
-    "Seviye": task.level || 0
-  }));
+  const taskRows = ganttData.tasks.map(task => {
+    const endDate = new Date(task.end);
+    const remainingDays = Math.max(0, Math.ceil((task.end - today) / (1000 * 60 * 60 * 24)));
 
-  // Excel çalışma sayfası oluştur
+    return {
+      "Kod": task.code || "",
+      "Görev Adı": task.name || "",
+      "Durum": (task.status || "").replace("STATUS_", ""),
+      "Başlangıç": new Date(task.start).toLocaleDateString(),
+      "Bitiş": endDate.toLocaleDateString(),
+      "Süre (gün)": task.duration || "",
+      "İlerleme (%)": task.progress || 0,
+      "Kalan Gün": remainingDays,
+      "Kritik mi?": task.isCritical ? "Evet" : "Hayır",
+      "Seviye": task.level || 0
+    };
+  });
+
   const worksheet = XLSX.utils.json_to_sheet(taskRows);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Gantt Tablosu");
 
-  // Dosyayı indir
+  // Burada XLSX'ın conditional formatting desteği sınırlı olduğu için 
+  // direkt Excel'de açtıktan sonra elle "İlerleme (%)" kolonuna data bar uygula diyebiliriz.
+
   XLSX.writeFile(workbook, "Gantt-Chart.xlsx");
 
   document.getElementById("loadingMessage").style.display = "none";
 }
-
 </script>
 
 
