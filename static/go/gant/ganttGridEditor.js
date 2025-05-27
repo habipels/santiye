@@ -376,18 +376,18 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
           }
 
           if (oneFailed){
-            task.changeStatus("STATUS_FAILED")
+            task.changeStatus("STATUS_FAILED", false, true)
           } else if (oneUndefined){
-            task.changeStatus("STATUS_UNDEFINED")
+            task.changeStatus("STATUS_UNDEFINED", false, true)
           } else if (oneActive){
             //task.changeStatus("STATUS_SUSPENDED")
-            task.changeStatus("STATUS_WAITING")
+            task.changeStatus("STATUS_WAITING", false, true)
           } else  if (oneSuspended){
-            task.changeStatus("STATUS_SUSPENDED")
+            task.changeStatus("STATUS_SUSPENDED", false, true)
           } else  if (oneWaiting){
-            task.changeStatus("STATUS_WAITING")
+            task.changeStatus("STATUS_WAITING", false, true)
           } else {
-            task.changeStatus("STATUS_ACTIVE")
+            task.changeStatus("STATUS_ACTIVE", false, true)
           }
 
           self.master.changeTaskDeps(task); //dates recomputation from dependencies
@@ -497,7 +497,7 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
       var newStatus = $(this).attr("status");
       changer.remove();
       self.master.beginTransaction();
-      task.changeStatus(newStatus);
+      task.changeStatus(newStatus, false, true);
       self.master.endTransaction();
       el.attr("status", task.status);
     });
@@ -702,7 +702,7 @@ GridEditor.prototype.openFullEditor = function (task, editOnlyAssig) {
       task.setPeriod(Date.parseString(taskEditor.find("#start").val()).getTime(), Date.parseString(taskEditor.find("#end").val()).getTime() + (3600000 * 22));
 
       //change status
-      task.changeStatus(taskEditor.find("#status").val());
+      task.changeStatus(taskEditor.find("#status").val(), false, true);
 
       if (self.master.endTransaction()) {
         taskEditor.find(":input").updateOldValue();

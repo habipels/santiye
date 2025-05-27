@@ -294,6 +294,9 @@ def decode_id(hash_id):
     return ids[0] if ids else None
 def page_not_found_view(request, exception):
     return render(request, '404.html')
+
+def custom_error_500(request):
+    return redirect("/")   
 """
 trans = translate(language='tr')
     z = BlogPost.objects.all()
