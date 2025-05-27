@@ -450,3 +450,4 @@ SESSION_COOKIE_AGE = 2880 * 60
 
 # Her istekte session süresi sıfırlansın
 SESSION_SAVE_EVERY_REQUEST = True
+LOGIN_URL = '/users/login/'
