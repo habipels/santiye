@@ -1343,195 +1343,433 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 });
     </script>
 </main>
- 
-<div class="modal fade" id="yeni-santiye" tabindex="-1" aria-labelledby="yeniSantiyeLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                {% trans 'Yeni Şantiye Ekle' %}
-                
-            </div>
-<div class="modal-body">
-    <form autocomplete="off" class="tablelist-form" action="/{{dil}}{% url 'main:santiye_ekleme_sahibi' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        <div class="form-element">
-            <label>{% trans 'Proje Tipi Seç' %}</label>
-            <select name="projetipi" required>
-                <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
-                {% for j in proje_tipleri %}
-                    <option value="{{ j.id }}">{{ j.Proje_tipi_adi }}</option>
-                {% endfor %}
-            </select>
+<div class="modal fade" id="yeni-santiye" tabindex="-1" aria-labelledby="yeniSantiyeLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Yeni Şantiye Ekle' %}
 
-            <label>{% trans 'Şantiye Konumu' %}</label>
-            <div id="map" style="height: 400px; width: 100%;"></div>
         </div>
+        <div class="modal-body">
+            <form autocomplete="off" class="tablelist-form" action="/{{dil}}{% url 'main:santiye_ekleme_sahibi' %}"
+                method="post" enctype="multipart/form-data">
+                {% csrf_token %}
 
-        <div>
-            <input type="text" name="latitude" id="latitude" required>
-            <input type="text" name="longitude" id="longitude" required>
-        </div>
+                <div class="form-element">
+                    <label>{% trans 'Proje Tipi Seç' %}</label>
+                    <select name="projetipi" required>
+                        <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
+                        {% for j in proje_tipleri %}
+                        <option value="{{ j.id }}">{{ j.Proje_tipi_adi }}</option>
+                        {% endfor %}
+                    </select>
 
-        <div class="form-element">
-            <label for="date-field">{% trans 'Proje Adı' %}</label>
-            <input type="text"  max="200" min="1" name="yetkili_adi" id="date-field" placeholder="{% trans 'Proje Adı' %}" required />
-        </div>
-        
-        <div class="form-element">
-            <label for="date-field">{% trans 'Şantiye Modelinizi Seçiniz' %}</label>
-           <div class="radio-container">
-                {% for i in binalar %}
-                <div class="radio-box" style="margin: 5px; border: 1px solid black;" data-radio="option{{i.id}}">
-                <div class="radio-box-inner" >
-                    {% for j in '0123456789'|make_list %}
-                    <div style="background-image: url({{i.ondden_goruntu.url}});height: 10px; background-size: cover; background-position: center;"></div>
-
-                    {% endfor %}
-                    
-                   
+                    <label>{% trans 'Şantiye Konumu' %}</label>
+                    <div id="map" style="height: 400px; width: 100%;"></div>
                 </div>
-            </div>
-                {% endfor %}
-            
-            {% for i in binalar %}
-            <input type="radio" id="option{{i.id}}" name="options" value="{{i.id}}">
-                {% endfor %}
-        </div>
-    </div>
-        <div class="form-actions">
-            <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-            <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
-        </div>
-    </form>
-</div>
 
+                <div>
+                    <input type="text" name="latitude" id="latitude" required>
+                    <input type="text" name="longitude" id="longitude" required>
+                </div>
+
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Proje Adı' %}</label>
+                    <input type="text" max="200" min="1" name="yetkili_adi" id="date-field"
+                        placeholder="{% trans 'Proje Adı' %}" required />
+                </div>
+
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Şantiye Modelinizi Seçiniz' %}</label>
+                    <div class="radio-container">
+                        {% for i in binalar %}
+                        <div class="radio-box" style="margin: 5px; border: 1px solid black;"
+                            data-radio="option{{i.id}}">
+                            <div class="radio-box-inner">
+                                {% for j in '0123456789'|make_list %}
+                                <div
+                                    style="background-image: url({{i.ondden_goruntu.url}});height: 10px; background-size: cover; background-position: center;">
+                                </div>
+
+                                {% endfor %}
+
+
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% for i in binalar %}
+                        <input type="radio" id="option{{i.id}}" name="options" value="{{i.id}}">
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç'%}</button>
+                    <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                </div>
+            </form>
         </div>
+
+    </div>
 </div>
 {% for i in santiyeler %}
 <div class="modal" id="santiye_duzelt{{i.id}}">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                {% trans 'Şantiye Düzenle' %}
-                
-            </div>
-            <div class="modal-body">
-                 <form autocomplete="off"class="tablelist-form" action="/{{dil}}/setsiteprojetc" method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                                 <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
-                   
-                                            
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Proje Adı' %}</label>
-                                            <input type="text" value="{{i.proje_adi}}"   max="200"  min="1" name="yetkili_adi" id="date-field"  placeholder="{% trans 'Proje Adı' %}" />
-                                        </div>
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Şantiye Düzenle' %}
 
-                            
-                                        <div class="form-element">
-                                            <label for="date-field">{% trans 'Şantiye Modelinizi Seçiniz' %}</label>
-                                           <div class="radio-container">
-                                                {% for j in binalar %}
-                                                <div class="radio-box" style="margin: 5px; border: 1px solid black;" data-radio="{{i.id}}ooption{{j.id}}">
-                                                <div class="radio-box-inner" >
-                                                    {% for k in '0123456789'|make_list %}
-                                                    <div style="background-image: url({{j.ondden_goruntu.url}});height: 10px; background-size: cover; background-position: center;"></div>
-                                
-                                                    {% endfor %}
-                                                    
-                                                   
-                                                </div>
-                                            </div>
-                                                {% endfor %}
-                                            
-                                            {% for j in binalar %}
-                                            {% if i.bina_goruntuleri_aitlik.id == j.id  %}
-                                                <input checked type="radio" id="{{i.id}}ooption{{j.id}}" name="options" value="{{j.id}}">
-                                            {% else %}
-                                            <input type="radio" id="{{i.id}}ooption{{j.id}}" name="options" value="{{j.id}}">
-                                            {% endif %}
-                                            
-                                                {% endfor %}
-                                        </div>
-                                    </div>
-                      
-                  
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-primary" type="submit" >{% trans 'Güncelle' %}
-                            </button>
-                    </div>
-                </form>
-            </div>
         </div>
-</div>
+        <div class="modal-body">
+            <form autocomplete="off" class="tablelist-form" action="/{{dil}}/setsiteprojetc" method="post"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}" />
 
-    <div class="modal" id="delete-modal{{i.id}}">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-            {% trans 'Silme Uyarısı' %}
-                
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"action="/{{dil}}/delsiteproject" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                    <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
+
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Proje Adı' %}</label>
+                    <input type="text" value="{{i.proje_adi}}" max="200" min="1" name="yetkili_adi" id="date-field"
+                        placeholder="{% trans 'Proje Adı' %}" />
+                </div>
+
+
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Şantiye Modelinizi Seçiniz' %}</label>
+                    <div class="radio-container">
+                        {% for j in binalar %}
+                        <div class="radio-box" style="margin: 5px; border: 1px solid black;"
+                            data-radio="{{i.id}}ooption{{j.id}}">
+                            <div class="radio-box-inner">
+                                {% for k in '0123456789'|make_list %}
+                                <div
+                                    style="background-image: url({{j.ondden_goruntu.url}});height: 10px; background-size: cover; background-position: center;">
+                                </div>
+
+                                {% endfor %}
+
+
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% for j in binalar %}
+                        {% if i.bina_goruntuleri_aitlik.id == j.id %}
+                        <input checked type="radio" id="{{i.id}}ooption{{j.id}}" name="options" value="{{j.id}}">
+                        {% else %}
+                        <input type="radio" id="{{i.id}}ooption{{j.id}}" name="options" value="{{j.id}}">
+                        {% endif %}
+
+                        {% endfor %}
                     </div>
-                </form>
-            </div>
+                </div>
+
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <div class="modal" id="yeni-kalem{{i.id}}">
+<div class="modal" id="delete-modal{{i.id}}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" action="/{{dil}}/delsiteproject" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="yeni-kalem{{i.id}}">
     {% kalem_max_fiziksel_max_finansal i as veri %}
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                {% trans 'Yeni İmalat Kalemi Ekle' %}
-               
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:santiyeye_kalem_ekle' %}"  method="post" enctype="multipart/form-data" >
-                    {% csrf_token %}
-    
-                                            
-                                            <div class="form-element">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Yeni İmalat Kalemi Ekle' %}
 
-                                            <label for="date-field" >{% trans 'Yapılar' %}</label>
-                                            <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
-                                    <select name="projetipi" required id="cokluetiket" class="etkett me-2" multiple style="height: 45px;">
-                                        {% bloglar_form_gonder i %}
-                                    </select>
-                                    
-                                </div>
-                                <div class="form-element">
-                                    <label for="date-field" >{% trans 'İmalat Alanı' %}</label>
-                                    <select required name="kata_veya_binaya_daihil" id="date-field">
-                                        <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
-                                        <option value="0">{% trans 'Kat Bazında' %}</option>
-                                        <option value="1">{% trans 'Bina Genelinde' %}</option>
-                                        <option value="2">{% trans 'Cephe Bazında' %}</option>
-                                    </select>
-                                </div> 
-                                        
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" class="tablelist-form" action="/{{dil}}{% url 'main:santiyeye_kalem_ekle' %}"
+                method="post" enctype="multipart/form-data">
+                {% csrf_token %}
 
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'İmalat Adı' %}</label>
-                                            <input type="text"  max="200"   min="1" name="yetkili_adi" id="date-field"  placeholder="{% trans 'İmalat adı giriniz' %}" required />
+
+                <div class="form-element">
+
+                    <label for="date-field">{% trans 'Yapılar' %}</label>
+                    <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl,
+                        Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
+                    <select name="projetipi" required id="cokluetiket" class="etkett me-2" multiple
+                        style="height: 45px;">
+                        {% bloglar_form_gonder i %}
+                    </select>
+
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'İmalat Alanı' %}</label>
+                    <select required name="kata_veya_binaya_daihil" id="date-field">
+                        <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
+                        <option value="0">{% trans 'Kat Bazında' %}</option>
+                        <option value="1">{% trans 'Bina Genelinde' %}</option>
+                        <option value="2">{% trans 'Cephe Bazında' %}</option>
+                    </select>
+                </div>
+
+
+                <div class="form-element">
+                    <label for="date-field">{% trans 'İmalat Adı' %}</label>
+                    <input type="text" max="200" min="1" name="yetkili_adi" id="date-field"
+                        placeholder="{% trans 'İmalat adı giriniz' %}" required />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Şantiye Ağırlığı' %}</label>
+                    <input type="number" min="0.01" max="{{veri.max_fiziksel}}" step="0.001" value="0" name="katsayisi"
+                        id="date-field" placeholder="{% trans 'Şantiye Ağırlığı' %}" required />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Finansal Ağırlık' %}</label>
+                    <input type="number" min="0.01" max="{{veri.max_finansal}}" step="0.001" value="0" name="blogsayisi"
+                        id="date-field" placeholder="{% trans 'Fİnansal Ağırlığı' %}" required />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Birimi' %}</label>
+                    <select name="birim_bilgisi" id="date-field" required>
+
+                        {% for l in birim_bilgisi %}
+                        <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
+                        {% endfor %}
+
+
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Metraj' %}</label>
+                    <input type="number" step="0.001" value="0" min="0" name="metraj" id="date-field"
+                        placeholder="{% trans 'Metraj' %}" required />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Tutar' %}</label>
+                    <input type="number" step="0.001" value="0" min="0" name="tutar" id="date-field"
+                        placeholder="{% trans 'Tutar' %}" required />
+                </div>
+
+
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç'%}</button>
+                    <button class="form-action-primary" type="submit">{% trans 'Ekle' %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal" id="yeni-yapi{{i.id}}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Yeni Yapı Ekle' %}
+
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" class="tablelist-form" action="/{{dil}}{% url 'main:blog_ekle' %}" method="post"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="text" value="{{i.id}}" hidden name="santiye_bilgisi">
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Yapı Adı' %}</label>
+                    <input type="text" required min="1" max="200" name="blok_adi" id="date-field"
+                        placeholder="{% trans 'Yapı adını giriniz' %}" />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Kat Sayısı' %}</label>
+                    <input type="number" required min="1" name="kat_sayisi" required id="date-field"
+                        placeholder="{% trans 'Kat sayısı giriniz' %}" />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Başlangıç Tarihi' %}</label>
+                    <input type="date" required name="baslangictarihi" required id="date-field" />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Bitiş Tarihi' %}</label>
+                    <input type="date" required name="bitistarihi" required id="date-field" />
+                </div>
+
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç'%}</button>
+                    <button class="form-action-primary" type="submit">{% trans 'Yapı Ekle' %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% for j in santiyeler %}
+{% blog_td_gonder j as bilgi %}
+{% for i in bilgi %}
+<div class="modal" id="yapi_duzenle{{i.id}}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Yapıyı Düzenle' %}
+
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" class="tablelist-form" action="/{{dil}}{% url 'main:blog_duzenle' %}" method="post"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <input type="text" name="santiye_bilgisi" hidden value="{{i.proje_santiye_Ait.id}}">
+                <input type="text" name="blog" hidden value="{{i.id}}">
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Yapı Adı' %}</label>
+                    <input type="text" required value="{{i.blog_adi}}" min="1" max="200" name="blok_adi" id="date-field"
+                        placeholder="{% trans 'Yapı Adı' %}" />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Kat Sayısı' %}</label>
+                    <input type="number" required value="{{i.kat_sayisi |stringformat:'.f'}}" min="1" name="kat_sayisi"
+                        required id="date-field" />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Başlangıç Tarihi' %}</label>
+                    <input type="date" required value="{{i.baslangic_tarihi | date:'Y-m-d' }}" name="baslangictarihi"
+                        required id="date-field" />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Bitiş Tarihi' %}</label>
+                    <input type="date" required value="{{i.bitis_tarihi | date:'Y-m-d'}}" name="bitistarihi" required
+                        id="date-field" />
+                </div>
+
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal" id="delete-yapi{{i.id}}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" action="/{{dil}}{% url 'main:blog_sil' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="buttonIdInput" name="geri" value="{{i.proje_santiye_Ait.id}}">
+                <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endfor %}
+{% for j in santiyeler %}
+{% kalemleri_td_gonder j as bilgi %}
+{% for i in bilgi %}
+
+<div class="modal" id="delete-kalem{{i.id}}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" action="/{{dil}}{% url 'main:kalem_sil' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
+                <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="kalem-duzenle{{i.id}}">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'İmalat Kalemi Düzenle' %}
+
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" class="tablelist-form" action="/{{dil}}{% url 'main:santiye_kalemleri_duzenle' %}"
+                method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
+                <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}" />
+
+                <div class="form-element">
+                    {% secililer_yapi_kalem i.id as secili %}
+                    {% bloglar_form_gonder_kaleme j as yapilari_al %}
+                    <label for="date-field">{% trans 'Yapılar' %}</label>
+                    <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl,
+                        Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
+                    <select name="projetipi" required id="cokluetiket" class="etkett me-2" multiple
+                        style="height: 45px;">
+                        {% for k in yapilari_al %}
+                        {% if k in secili %}
+                        <option selected value="{{k.id}}">{{k.blog_adi}}</option>
+                        {% else %}
+                        <option value="{{k.id}}">{{k.blog_adi}}</option>
+                        {% endif %}
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'İmalat Alanı' %}</label>
+                    <select required name="kata_veya_binaya_daihil" id="date-field">
+                        <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
+                        <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
+                        <option value="0">{% trans 'Kat Bazında' %}</option>
+                        <option value="1">{% trans 'Bina Genelinde' %}</option>
+                        <option value="2">{% trans 'Cephe Bazında' %}</option>
+
+
+
+                    </select>
+                </div>
+                <div class="form-element">
+                                            <label for="date-field" >{% trans 'İmalat Kalemi' %}</label>
+                                            <input type="text" value="{{i.kalem_adi}}"  name="yetkili_adi" id="date-field"  placeholder="{% trans 'İmalat Kalemi' %}" required />
                                         </div>
                                         <div class="form-element">
                                             <label for="date-field" >{% trans 'Şantiye Ağırlığı' %}</label>
-                                            <input type="number" min = "0.01" max = "{{veri.max_fiziksel}}" step="0.001" value="0"  name="katsayisi" id="date-field"  placeholder="{% trans 'Şantiye Ağırlığı' %}" required />
+                                            <input type="number" step="0.001" value="{{i.santiye_agirligi | stringformat:'.2F'  }}"  name="katsayisi" id="date-field"  placeholder="{% trans 'Şantiye Ağırlığı' %}" required />
                                         </div>
                                         <div class="form-element">
                                             <label for="date-field" >{% trans 'Finansal Ağırlık' %}</label>
-                                            <input type="number" min = "0.01"  max = "{{veri.max_finansal}}" step="0.001" value="0"  name="blogsayisi" id="date-field"  placeholder="{% trans 'Fİnansal Ağırlığı' %}" required />
+                                            <input type="number" step="0.001" value="{{i.santiye_finansal_agirligi | stringformat:'.2F'  }}"  name="blogsayisi" id="date-field"  placeholder="{% trans 'Fİnansal Ağırlığı' %}" required />
                                         </div>
                                         <div class="form-element">
                                             <label for="date-field" >{% trans 'Birimi' %}</label>
                                             <select  name="birim_bilgisi" id="date-field" required>
-
+                                                <option selected value="{{i.birimi.id}}">{{i.birimi.Proje_tipi_adi}}</option>
                                                 {% for l in birim_bilgisi %}
                                                     <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
                                                 {% endfor %}
@@ -1539,210 +1777,34 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 
                                             </select>
                                         </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Metraj' %}</label>
-                                            <input type="number" step="0.001" value="0" min="0"  name="metraj" id="date-field"  placeholder="{% trans 'Metraj' %}" required />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Tutar' %}</label>
-                                            <input type="number" step="0.001" value="0" min="0"  name="tutar" id="date-field"  placeholder="{% trans 'Tutar' %}" required />
-                                        </div>
-                              
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Metraj' %}</label>
+                    <input type="number" step="0.001" value="{{i.metraj|stringformat:'.2f'}}" min="0" name="metraj"
+                        id="date-field" placeholder="{% trans 'Metraj' %}" required />
+                </div>
+                <div class="form-element">
+                    <label for="date-field">{% trans 'Tutar' %}</label>
+                    <input type="number" step="0.001" value="{{i.tutari|stringformat:'.2f'}}" min="0" name="tutar"
+                        id="date-field" placeholder="{% trans 'Tutar' %}" required />
+                </div>
 
-                    
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-primary" type="submit">{% trans 'Ekle' %}</button>
-                    </div>
-                </form>
-            </div>
+
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç'%}</button>
+                    <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
+                </div>
+            </form>
         </div>
     </div>
-    <div class="modal" id="yeni-yapi{{i.id}}">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                {% trans 'Yeni Yapı Ekle' %}
-               
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:blog_ekle' %}"  method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                                <input type="text" value="{{i.id}}" hidden name="santiye_bilgisi">
-                    <div class="form-element">
-                                            <label for="date-field"  >{% trans 'Yapı Adı' %}</label>
-                                            <input type="text"  required min="1" max="200"  name="blok_adi" id="date-field"   placeholder="{% trans 'Yapı adını giriniz' %}" />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field"  >{% trans 'Kat Sayısı' %}</label>
-                                            <input type="number" required min="1"  name="kat_sayisi" required id="date-field" placeholder="{% trans 'Kat sayısı giriniz' %}"   />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field"  >{% trans 'Başlangıç Tarihi' %}</label>
-                                            <input type="date" required  name="baslangictarihi" required id="date-field"    />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field"  >{% trans 'Bitiş Tarihi' %}</label>
-                                            <input type="date" required  name="bitistarihi" required id="date-field"    />
-                                        </div>
-
-                    
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-primary" type="submit">{% trans 'Yapı Ekle' %}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-   {% endfor %}
-{% for j in santiyeler %}
-{% kalemleri_td_gonder j as bilgi %}
-    {% for i in bilgi %}
-<div class="modal" id="kalem-duzenle{{i.id}}">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                {% trans 'İmalat Kalemi Düzenle' %}
-               
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:santiye_kalemleri_duzenle' %}" method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                        <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
-                        <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
-           
-                                         <div class="form-element">
-                                         {% secililer_yapi_kalem i.id as secili %}
-                                            {% bloglar_form_gonder_kaleme j as yapilari_al %}
-                                            <label for="date-field" >{% trans 'Yapılar' %}</label>
-                                            <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl, Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
-                                    <select name="projetipi" required id="cokluetiket" class="etkett me-2" multiple style="height: 45px;">
-                                        {% for k in yapilari_al  %}
-                                            {% if k in secili %}
-                                                <option selected value="{{k.id}}">{{k.blog_adi}}</option>
-                                            {% else %}
-                                            <option value="{{k.id}}">{{k.blog_adi}}</option>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                    </select>
-                                    
-                                </div>
-                                <div class="form-element">
-                                    <label for="date-field" >{% trans 'İmalat Alanı' %}</label>
-                                    <select required name="kata_veya_binaya_daihil" id="date-field">
-                                        <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
-                                                    <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
-                                                {% endfor %}
-
-
-                                            </select>
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Metraj' %}</label>
-                                            <input type="number" step="0.001" value="{{i.metraj|stringformat:'.2f'}}" min="0"  name="metraj" id="date-field"  placeholder="{% trans 'Metraj' %}" required />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Tutar' %}</label>
-                                            <input type="number" step="0.001" value="{{i.tutari|stringformat:'.2f'}}" min="0"  name="tutar" id="date-field"  placeholder="{% trans 'Tutar' %}" required />
-                                        </div>
-                           
-
-                    
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
 </div>
 
-    <div class="modal" id="delete-kalem{{i.id}}">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-            {% trans 'Silme Uyarısı' %}
-                
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"action="/{{dil}}{% url 'main:kalem_sil' %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                    <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
+
+
+
 {% endfor %}
-
-
-{% for j in santiyeler %}
-                                {% blog_td_gonder j as bilgi %}
-                                {% for i in bilgi %}
-<div class="modal" id="yapi_duzenle{{i.id}}">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                {% trans 'Yapıyı Düzenle' %}
-               
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:blog_duzenle' %}" method="post" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                                
-                                    <input type="text" name="santiye_bilgisi" hidden value="{{i.proje_santiye_Ait.id}}">
-                                    <input type="text" name="blog" hidden value="{{i.id}}">
-                                    <div class="form-element">
-                                        <label for="date-field"  >{% trans 'Yapı Adı' %}</label>
-                                        <input type="text"  required value="{{i.blog_adi}}" min="1" max="200"   name="blok_adi" id="date-field"   placeholder="{% trans 'Yapı Adı' %}" />
-                                    </div>
-                                    <div class="form-element">
-                                        <label for="date-field"  >{% trans 'Kat Sayısı' %}</label>
-                                        <input type="number" required value="{{i.kat_sayisi |stringformat:'.f'}}" min="1" name="kat_sayisi" required id="date-field"    />
-                                    </div>
-                                    <div class="form-element">
-                                            <label for="date-field"  >{% trans 'Başlangıç Tarihi' %}</label>
-                                            <input type="date" required  value="{{i.baslangic_tarihi | date:'Y-m-d' }}" name="baslangictarihi" required id="date-field"    />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field"  >{% trans 'Bitiş Tarihi' %}</label>
-                                            <input type="date" required value="{{i.bitis_tarihi | date:'Y-m-d'}}"  name="bitistarihi" required id="date-field"    />
-                                        </div>
-
-                    
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-</div>
-    <div class="modal" id="delete-yapi{{i.id}}">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-            {% trans 'Silme Uyarısı' %}
-                
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"action="/{{dil}}{% url 'main:blog_sil' %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" id="buttonIdInput" name="geri" value="{{i.proje_santiye_Ait.id}}">
-                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
-                    <p>{% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-danger" type="submit">{% trans 'Sil' %}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-                            {% endfor %}
-                                {% endfor %}
+{% endfor %}
     <script>
         function openModal(modalID, close = true) {
             if (close) {
