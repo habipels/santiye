@@ -33,10 +33,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         file_url = text_data_json.get('file_url', None)
         user = self.scope["user"]
         
-        # Oturum açmamış kullanıcıları kontrol et
-        if not user.is_authenticated:
-            print("Oturum açmamış kullanıcıdan mesaj alındı. Veritabanına kaydedilmeyecek.")
-            return
+        
 
         try:
             group = await database_sync_to_async(Group.objects.get)(id=self.group_id)
@@ -47,7 +44,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     group=group,
                     content=message,
                     file=file_url,  # Dosya URL'si varsa kaydet
-                    id_bilgisi = get_object_or_404(User, username=user).id  # Kullanıcı bilgilerini al
+                  
                 )
                 timestamp = new_message.timestamp.isoformat()
             else:
