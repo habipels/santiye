@@ -706,6 +706,7 @@ def crm_teklif_olustur_gonder(request):
         birim_fiyat= request.POST.getlist("kalem-birim-fiyati")
         toplam= request.POST.getlist("kalem-toplam")
         iqd= request.POST.getlist("kalem-toplam-iqd")
+        
         musteri = get_object_or_none(musteri_bilgisi,musteri_kime_ait = kullanici,
                                      musteri_adi = adsoyad,
                                      musteri_soyadi = soyad,
@@ -719,11 +720,12 @@ def crm_teklif_olustur_gonder(request):
                                      musteri_telefon_numarasi =telefon
             )
         toplam_tutar = 0
+       
         tekliff = teklifler.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
-            teklif_kime_ait = kullanici,
-            teklif_basligi = Teklif_basligi,
-            musterisi = musteri
-        )
+                teklif_kime_ait = kullanici,
+                teklif_basligi = Teklif_basligi,
+                musterisi = musteri
+            )
         for i in range(0,len(urun)):
             teklif_icerikleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                 kime_ait = kullanici,

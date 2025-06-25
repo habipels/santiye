@@ -722,13 +722,14 @@ def personeller_ekle(request):
                 currency = True
             else:
                 currency = False
-            bilgi = calisanlar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
-            calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
-            isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
-            calisan_maas_durumlari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
-            yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
-            for i in documents:
-                calisan_belgeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
+            for i in range(21):
+                bilgi = calisanlar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
+                calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
+                isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
+                calisan_maas_durumlari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ),maas = dailyWage,
+                yevmiye = hourlyWage,durum =salaryType,para_birimi = currency,fazla_mesai_orani =fazla_mesai_orani  )
+                for i in documents:
+                    calisan_belgeleri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =bilgi.id ) ,belge = i )
     return redirect_with_language("user:personeller_sayfasi")
 def personeller_ekle_2(request,hash):
     content = sozluk_yapisi()
@@ -1723,3 +1724,19 @@ def logout_other_sessions(user, current_session_key):
         data = session.get_decoded()
         if data.get('_auth_user_id') == str(user.id) and session.session_key != current_session_key:
             session.delete()
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def save_device_token(request):
+    token = request.data.get('token')
+    if not token:
+        return Response({'error': 'Token is required'}, status=400)
+
+    DeviceToken.objects.update_or_create(
+        user=request.user,
+        defaults={'token': token}
+    )
+
+    return Response({'status': 'ok'})

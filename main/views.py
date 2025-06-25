@@ -375,6 +375,63 @@ def loglar(request):
         return redirect_with_language("/users/login/")
 
     return render(request,"santiye_yonetimi/loglar.html",content)
+# views.py
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+import requests
+
+FCM_SERVER_KEY = "FİREBASE_SERVER_KEYİNİZİ_BURAYA_YAPISTIRIN"
+
+def send_fcm_message(token, title, body):
+    url = "https://fcm.googleapis.com/fcm/send"
+    headers = {
+        "Authorization": "key=" + FCM_SERVER_KEY,
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "to": token,
+        "notification": {
+            "title": title,
+            "body": body,
+            "sound": "default"
+        },
+        "priority": "high",
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    return response.status_code, response.json()
+
+@csrf_exempt
+def save_device_token(request):
+    print("Token kaydetme isteği alındı")
+    if request.method == "POST":
+        data = json.loads(request.body)
+        token = data.get("token")
+        print("Token geldi:", token)
+
+        # Token veritabanına kaydet (örneğin kullanıcı modeli güncelle)
+        if request.user.is_authenticated:
+            CustomUser.objects.filter(id=request.user.id).update(token=token, platform="web")
+        else:
+            # İstersen anonim kullanıcılar için farklı işlem yap
+            pass
+
+        # Test amaçlı bildirim gönder
+        """status_code, resp_json = send_fcm_message(
+            token,
+            "Test Bildirimi",
+            "Token başarıyla kaydedildi ve test bildirimi gönderildi."
+        )
+        print("FCM gönderim durumu:", status_code, resp_json)
+        """
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"error": "Invalid method"}, status=405)
+
 
 #superadmin Kontrol
 def yetki(request):

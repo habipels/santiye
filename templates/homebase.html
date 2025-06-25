@@ -345,6 +345,95 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 </script>
+<!-- Firebase compat SDK'ları -->
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging-compat.js"></script>
+
+<script>
+  // Firebase yapılandırman
+  const firebaseConfig = {
+    apiKey: "AIzaSyD5HHO-gcwyuuWeXp1TzZKP8QTcPScwNZo",
+    authDomain: "biadago-cloud.firebaseapp.com",
+    projectId: "biadago-cloud",
+    storageBucket: "biadago-cloud.appspot.com",
+    messagingSenderId: "990430074148",
+    appId: "1:990430074148:web:83f5b40ec6944b8a268fb1",
+    measurementId: "G-67DK949V4Q"
+  };
+
+  // Firebase'i başlat
+  const app = firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
+
+  // CSRF token alıcı fonksiyon (Django için)
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  let swRegistration = null;
+
+  // Service Worker kaydı ve token alma işlemi
+  navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then((registration) => {
+      console.log("✅ Service worker başarıyla kayıt edildi:", registration);
+      swRegistration = registration;
+      return Notification.requestPermission();
+    })
+    .then((permission) => {
+      if (permission === "granted") {
+        return messaging.getToken({
+          vapidKey: 'BG2S16yckxN-v-uSckaUR0nnGLYQzwq4xgQO9O4HV2ojB4yEpchAtzEVy1hXJJCohqc4n7xwM2ELKeEAKpK6aR0',
+          serviceWorkerRegistration: swRegistration
+        });
+      } else {
+        throw new Error("Bildirim izni verilmedi");
+      }
+    })
+    .then((currentToken) => {
+      if (currentToken) {
+        console.log("🎯 Token alındı:", currentToken);
+
+        // Backend'e token gönder
+        fetch("/tokken_kaydetme/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+          },
+          body: JSON.stringify({
+            token: currentToken
+          })
+        })
+        .then(response => response.json())
+        .then(data => console.log("✅ Token kaydı tamam:", data))
+        .catch(error => console.error("❌ Backend hatası:", error));
+      } else {
+        console.warn("⚠️ Token alınamadı");
+      }
+    })
+    .catch((err) => {
+      console.error("❌ Service worker veya token hatası:", err);
+    });
+
+  // Ön planda gelen mesajları dinle
+  messaging.onMessage((payload) => {
+    console.log("🔔 Ön planda gelen bildirim:", payload);
+    // Burada toast veya modal ile gösterim yapabilirsin
+  });
+</script>
+
+
 
 </body>
 </html>

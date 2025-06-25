@@ -27,10 +27,10 @@ from django.views.generic.base import TemplateView #import TemplateView
 
 import os
 urlpatterns = [
-path("firebase-messaging.js",TemplateView.as_view(template_name="firebase-messaging.txt", content_type="text/plain")),
-   path("firebase-messaging-sw.js",TemplateView.as_view(template_name="firebase-messaging-sw.txt", content_type="text/plain")),
-   path("firebase-app.js",TemplateView.as_view(template_name="firebase-app.txt", content_type="text/plain")),
-    path("service-worker.js",TemplateView.as_view(template_name="service-worker.txt", content_type="text/plain")),
+path("firebase-messaging.js",TemplateView.as_view(template_name="firebase-messaging.txt", content_type="application/javascript")),
+   path("firebase-messaging-sw.js",TemplateView.as_view(template_name="firebase-messaging-sw.txt", content_type="application/javascript")),
+   path("firebase-app.js",TemplateView.as_view(template_name="firebase-app.txt", content_type="application/javascript")),
+    path("service-worker.js",TemplateView.as_view(template_name="service-worker.txt", content_type="application/javascript")),
     path("", include('main.urls', namespace='main')),
     path("accounting/", include('muhasebe.urls', namespace='muhasebe')),
     path('admin/', admin.site.urls),
