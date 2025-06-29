@@ -407,44 +407,53 @@ if not firebase_admin._apps:
     cred = credentials.Certificate(service)  # Dosya yolunu doğru ver
     firebase_admin.initialize_app(cred)
 
-def send_fcm_message(token, title, body):
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title=title,
-            body=body,
-        ),
-        token=token,
+from firebase_admin import messaging
+def send_fcm_notification(token, title, body):
+    headers = {
+        'Authorization': f'Bearer {settings.FCM_ACCESS_TOKEN}',
+        'Content-Type': 'application/json; UTF-8',
+    }
+
+    data = {
+        'message': {
+            'token': token,
+            'notification': {
+                'title': title,
+                'body': body
+            }
+        }
+    }
+
+    response = requests.post(
+        'https://fcm.googleapis.com/v1/projects/YOUR_PROJECT_ID/messages:send',
+        headers=headers,
+        json=data
     )
-    print("Mesaj gönderiliyor:", message)
-    response = messaging.send(message)
-    return response  # Mesaj ID'si döner
+    return response.status_code, response.json()
+from django.contrib.auth.decorators import login_required
+
 
 @csrf_exempt
+@login_required
 def save_device_token(request):
-    print("Token kaydetme isteği alındı")
     if request.method == "POST":
         data = json.loads(request.body)
         token = data.get("token")
-        print("Token geldi:", token)
+        platform = data.get("platform", "web")
 
-        # Token veritabanına kaydet (örneğin kullanıcı modeli güncelle)
-        if request.user.is_authenticated:
-            CustomUser.objects.filter(id=request.user.id).update(token=token, platform="web")
-        else:
-            # İstersen anonim kullanıcılar için farklı işlem yap
-            pass
+        if not token:
+            return JsonResponse({"error": "Token yok"}, status=400)
 
-        # Test amaçlı bildirim gönder
-        resp_json = send_fcm_message(
-            token,
-            "Test Bildirimi",
-            "Token başarıyla kaydedildi ve test bildirimi gönderildi."
+        # Token'ı kaydet/güncelle
+        device_token, created = DeviceToken.objects.update_or_create(
+            user=request.user,
+            token=token,
+            defaults={"platform": platform},
         )
-        print("FCM gönderim durumu:", resp_json)
-        
-        return JsonResponse({"status": "ok"})
-    return JsonResponse({"error": "Invalid method"}, status=405)
 
+        return JsonResponse({"status": "ok", "created": created})
+
+    return JsonResponse({"error": "Invalid method"}, status=405)
 
 #superadmin Kontrol
 def yetki(request):

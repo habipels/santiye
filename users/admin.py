@@ -16,3 +16,4 @@ admin.site.register(calisanlar_calismalari)
 admin.site.register(Message)
 
 admin.site.register(Group)
+admin.site.register(DeviceToken)

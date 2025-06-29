@@ -49,6 +49,15 @@ class CustomUser(AbstractUser):
         now = timezone.now()
         return now - self.last_seen < timezone.timedelta(minutes=5)
 
+class DeviceToken(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='device_tokens')
+    token = models.CharField(max_length=255, unique=True)
+    platform = models.CharField(max_length=20, default='web')  # iOS, Android, web vs.
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.platform} - {self.token[:10]}..."
 class faturalardaki_gelir_gider_etiketi_ozel(models.Model):
     kullanici = models.ForeignKey(CustomUser, on_delete = models.SET_NULL,blank  =True,null = True,verbose_name="Kullanıcı Bilgisi")
     gelir_etiketi = models.CharField(max_length=10,verbose_name  ="Gelir Etiketi",blank = True,null=True)

@@ -2584,17 +2584,25 @@ def groups(request):
     #context["group"] = GroupSerializer(group, many=True).data
     #context["group_id"] = group_id  # Add group_id to context
     return Response(context)
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def bildirim(request):
-    if request.data:
-        platform = request.data.get('platform')
-        token = request.data.get('token')
-        CustomUser.objects.filter(id=request.user.id).update(
-            platform=platform,
-            token=token
-        )
-        return Response({"detail": "Bildirim ayarları bilgileri güncellendi."}, status=status.HTTP_200_OK)
-    return Response({"detail": "Geçersiz istek."}, status=status.HTTP_400_BAD_REQUEST)
+    platform = request.data.get('platform', 'web')
+    token = request.data.get('token')
+
+    if not token:
+        return Response({"detail": "Token gereklidir."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Token varsa güncelle veya oluştur
+    device_token, created = DeviceToken.objects.update_or_create(
+        user=request.user,
+        token=token,
+        defaults={"platform": platform},
+    )
+
+    if created:
+        message = "Token başarıyla kaydedildi."
+    else:
+        message = "Token başarıyla güncellendi."
+
+    return Response({"detail": message}, status=status.HTTP_200_OK)
