@@ -1632,7 +1632,7 @@ def group_chat(request, group_id):
     context = sozluk_yapisi()
     group = get_object_or_404(Group, id=group_id)
     messages = Message.objects.filter(group=group)
-    messages = messages.order_by('timestamp')[:100]
+    messages = messages.order_by('timestamp')[:20]
     for message in messages:
         if message.sender != request.user:
             message.read = True
