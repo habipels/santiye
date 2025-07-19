@@ -6486,12 +6486,12 @@ def yapilacalar_ekle(request):
             pass
         else:
             if request.user.kullanicilar_db:
-                a = get_object_or_none(bagli_kullanicilar,kullanicilar = request.user)
+                a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
                 if a:
                     if a.izinler.yapilacaklar_olusturma:
                         baslik = request.POST.get("baslik")
                         durum = request.POST.get("durum")
-                        aciliyet =request.POST.get("aciliyet")
+                        aciliyet = request.POST.get("aciliyet")
                         teslim_tarihi = request.POST.get("teslim_tarihi")
                         blogbilgisi = request.POST.getlist("blogbilgisi")
                         aciklama = request.POST.get("aciklama")
@@ -6499,45 +6499,69 @@ def yapilacalar_ekle(request):
                         yapi_gonder = request.POST.get("yapi_gonder")
                         kat = request.POST.get("kat")
                         base64_image = request.POST.get('base_64_format', '')
-                        pin_lokasyunuxd = request.POST.get("pin_lokasyunux") 
-                        pin_lokasyunuyd = request.POST.get("pin_lokasyunuy") 
-                        if base64_image !="" .startswith('data:image/png;base64,'):
+                        pin_lokasyunuxd = request.POST.get("pin_lokasyunux")
+                        pin_lokasyunuyd = request.POST.get("pin_lokasyunuy")
+
+                        if base64_image != "" and base64_image.startswith('data:image/png;base64,'):
                             base64_image = base64_image.replace('data:image/png;base64,', '')
                             file_extension = 'png'
-                        elif base64_image !="" .startswith('data:image/jpeg;base64,'):
+                        elif base64_image != "" and base64_image.startswith('data:image/jpeg;base64,'):
                             base64_image = base64_image.replace('data:image/jpeg;base64,', '')
                             file_extension = 'jpeg'
-                        
-                        if base64_image !=""  :
+
+                        if base64_image != "" :
                             image_data = base64.b64decode(base64_image)
                             image_file = ContentFile(image_data, name=f'image.{file_extension}')
-                        if kat== None or kat  == ""  :
+
+                        if kat is None or kat == "":
                             kat = 0
 
                         new_project = IsplaniPlanlari(
-                            proje_ait_bilgisi = request.user.kullanicilar_db,
-                            title = baslik,
-                            status = durum,
-                            aciklama = aciklama,
-                            oncelik_durumu =aciliyet,
-                            teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
-                            blok = get_object_or_none(bloglar,id = yapi_gonder),
-                            katman = get_object_or_none(katman,id = katman_bilgisi),
-                            kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
+                            proje_ait_bilgisi=request.user.kullanicilar_db,
+                            title=baslik,
+                            status=durum,
+                            aciklama=aciklama,
+                            oncelik_durumu=aciliyet,
+                            teslim_tarihi=teslim_tarihi,
+                            silinme_bilgisi=False,
+                            blok=get_object_or_none(bloglar, id=yapi_gonder),
+                            katman=get_object_or_none(katman, id=katman_bilgisi),
+                            kat=kat,
+                            locasyonx=pin_lokasyunuxd,
+                            locasyony=pin_lokasyunuyd
                         )
                         new_project.save()
-                        bloglar_bilgisi = []
-                        for i in blogbilgisi:
-                            bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
+
+                        bloglar_bilgisi = [CustomUser.objects.get(id=int(i)) for i in blogbilgisi]
                         new_project.yapacaklar.add(*bloglar_bilgisi)
-                        images = request.FILES.getlist('file')
-                        #print(images)
-                        isim = 1
-                        for images in images:
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=images)  # Urun_resimleri modeline resimleri kaydet
-                            isim = isim+1
-                        if base64_image !="" :
-                            IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user.kullanicilar_db,dosya=image_file,pin="pin")
+
+                        for image in request.FILES.getlist('file'):
+                            IsplaniDosyalari.objects.create(
+                                proje_ait_bilgisi=new_project,
+                                dosya_sahibi=request.user.kullanicilar_db,
+                                dosya=image
+                            )
+
+                        if base64_image != "" :
+                            IsplaniDosyalari.objects.create(
+                                proje_ait_bilgisi=new_project,
+                                dosya_sahibi=request.user.kullanicilar_db,
+                                dosya=image_file,
+                                pin="pin"
+                            )
+
+                        # Bildirim gönderimi
+                        for user in bloglar_bilgisi:
+                            device_tokens = DeviceToken.objects.filter(user=user).values_list('token', flat=True)
+                            for token in device_tokens:
+                                try:
+                                    send_fcm_notification(
+                                        token=token,
+                                        title="Yeni Görev Ataması",
+                                        body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}"
+                                    )
+                                except Exception as e:
+                                    print(f"FCM gönderim hatası: {e}")
                     else:
                         return redirect_with_language("main:yetkisiz")
                 else:
@@ -6545,7 +6569,7 @@ def yapilacalar_ekle(request):
             else:
                 baslik = request.POST.get("baslik")
                 durum = request.POST.get("durum")
-                aciliyet =request.POST.get("aciliyet")
+                aciliyet = request.POST.get("aciliyet")
                 teslim_tarihi = request.POST.get("teslim_tarihi")
                 blogbilgisi = request.POST.getlist("blogbilgisi")
                 aciklama = request.POST.get("aciklama")
@@ -6553,46 +6577,72 @@ def yapilacalar_ekle(request):
                 yapi_gonder = request.POST.get("yapi_gonder")
                 kat = request.POST.get("kat")
                 base64_image = request.POST.get('base_64_format', '')
-                pin_lokasyunuxd = request.POST.get("pin_lokasyunux") 
+                pin_lokasyunuxd = request.POST.get("pin_lokasyunux")
                 pin_lokasyunuyd = request.POST.get("pin_lokasyunuy")
-                if base64_image !="" .startswith('data:image/png;base64,'):
+
+                if base64_image != "" and base64_image.startswith('data:image/png;base64,'):
                     base64_image = base64_image.replace('data:image/png;base64,', '')
                     file_extension = 'png'
-                elif base64_image !="" .startswith('data:image/jpeg;base64,'):
+                elif base64_image != "" and base64_image.startswith('data:image/jpeg;base64,'):
                     base64_image = base64_image.replace('data:image/jpeg;base64,', '')
                     file_extension = 'jpeg'
-                if kat == None or kat  == ""  :
-                    kat = 0
-                #print(kat)
-                new_project = IsplaniPlanlari(
-                    proje_ait_bilgisi = request.user,
-                    title = baslik,
-                    status = durum,
-                    aciklama = aciklama,
-                    oncelik_durumu =aciliyet,
-                    teslim_tarihi = teslim_tarihi,silinme_bilgisi = False,
-                    blok = get_object_or_none(bloglar,id = yapi_gonder),
-                    katman = get_object_or_none(katman,id = katman_bilgisi),
-                    kat = kat,locasyonx = pin_lokasyunuxd,locasyony = pin_lokasyunuyd
-                )
-                new_project.save()
-                bloglar_bilgisi = []
-                for i in blogbilgisi:
-                    bloglar_bilgisi.append(CustomUser.objects.get(id=int(i)))
-                new_project.yapacaklar.add(*bloglar_bilgisi)
-                images = request.FILES.getlist('file')
-                #print(images)
-                isim = 1
-                for images in images:
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=images)  # Urun_resimleri modeline resimleri kaydet
-                    isim = isim+1
-                if base64_image !=""  :
+
+                if base64_image != "" :
                     image_data = base64.b64decode(base64_image)
                     image_file = ContentFile(image_data, name=f'image.{file_extension}')
-                if base64_image !="" :
-                    IsplaniDosyalari.objects.create(proje_ait_bilgisi = get_object_or_404(IsplaniPlanlari,id = new_project.id),dosya_sahibi = request.user,dosya=image_file,pin="pin")
+
+                if kat is None or kat == "":
+                    kat = 0
+
+                new_project = IsplaniPlanlari(
+                    proje_ait_bilgisi=request.user,
+                    title=baslik,
+                    status=durum,
+                    aciklama=aciklama,
+                    oncelik_durumu=aciliyet,
+                    teslim_tarihi=teslim_tarihi,
+                    silinme_bilgisi=False,
+                    blok=get_object_or_none(bloglar, id=yapi_gonder),
+                    katman=get_object_or_none(katman, id=katman_bilgisi),
+                    kat=kat,
+                    locasyonx=pin_lokasyunuxd,
+                    locasyony=pin_lokasyunuyd
+                )
+                new_project.save()
+
+                bloglar_bilgisi = [CustomUser.objects.get(id=int(i)) for i in blogbilgisi]
+                new_project.yapacaklar.add(*bloglar_bilgisi)
+
+                for image in request.FILES.getlist('file'):
+                    IsplaniDosyalari.objects.create(
+                        proje_ait_bilgisi=new_project,
+                        dosya_sahibi=request.user,
+                        dosya=image
+                    )
+
+                if base64_image != "" :
+                    IsplaniDosyalari.objects.create(
+                        proje_ait_bilgisi=new_project,
+                        dosya_sahibi=request.user,
+                        dosya=image_file,
+                        pin="pin"
+                    )
+
+                # Bildirim gönderimi
+                for user in bloglar_bilgisi:
+                    device_tokens = DeviceToken.objects.filter(user=user).values_list('token', flat=True)
+                    for token in device_tokens:
+                        try:
+                            send_fcm_notification(
+                                token=token,
+                                title="Yeni Görev Ataması",
+                                body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}"
+                            )
+                        except Exception as e:
+                            print(f"FCM gönderim hatası: {e}")
+
     return redirect_with_language("main:yapilacaklar")
-#
+
 def yapilacalar_ekle_2(request,hash):
     content = sozluk_yapisi()
     d = decode_id(hash)

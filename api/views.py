@@ -2011,6 +2011,79 @@ def yapilacaklar_api(request):
     ),many = True).data
     
     return Response(content, status=status.HTTP_200_OK)
+import requests
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+service={
+  "type": "service_account",
+  "project_id": "biadago-cloud",
+  "private_key_id": "70e24c8bcac3a97b664fb3a14c79322736d59576",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDWvSHVgKNhVZmr\n1tS5q+YmEgguBgrgOMXbvy/yFUArRYkO1i5mIS8tGtuQEsWX3Xytomk7/bKFsrkk\nk42eGAdtNX9PaR70WZBgo2ScEsp9cfnALLR9Qobmgef3SDmGdJpYgTZSc6isCtC/\nOrARC7pQlZjHbafRFzFONRJPfVHHpi67J1LGJaOND9/+CK2+r8qhEWujGBmgKR3i\nQ9pfKTXWmJsabx1d0aaSTBoLUPfWaUa75EP321JFhVRRVWg485L2BF7RceU4J1cK\n3Po7knfOClfzW8lfSWSO7p6OaAgHfz9kn5vxXMgh7DncfJXFw5dJ8++V9kqsS4jw\ntrY13mHJAgMBAAECggEANey51d0fah5uYCYrNlMSEQZfMnuG+KaZHSVGO4MVoagt\nEmI7tZ7os2l2sJfeMdRHbm0GAzAiyAtJDgPVwNkk6EpSZZUu1kq1hGcTqVPYsKbS\nAm3Xh0sRCEqf/0uOUpLufYI5K3xq44U1xYfN1gH9cCYY/x+s0EeENLEEH50HT9yY\nK7v9RfNx69anfflIlrRt3VHm5Ocj+bGKeBzoMQ+YiIC91fNAa85jr+heOdvnObmP\n2ipEQSmhmyze1Z+Fdxz+GBXA74f0c78tLjBU3WiGHBf2EXMSUCtbTSsiuF9DZpyN\nf1/U+cKJ1EDmajUvwpSEj1tDwihXPE1hFuruYwioZwKBgQD0lTQUU16KGbBeLxUT\nKH6GZlQJbl7v6jHAKzHn/8QaZfsfoF2VKw3f4yRaAESS48NdvIOC8rPsEp9yjzNs\nV38jRFyAI5WgFVIhZR3gyIiFHjhyBLKMWQAh024zWBw9GvFwCG8Uc2aNAyPGgjLH\nn/ZWY1RdxLpf8D8eF4+RIvk6swKBgQDgw0no40cHC2CjMBrtLWOOMstxNEeIsYxf\n7+csRwXyWWkIW4JHOyTpKGBQjC+SNic8KvQ7+DywrCS7igz3qcKRIvBhUq9qtt6v\nDtpX8k48MO9VeumcDDHLy/27vchC40ikW92VWa3X5ZE+FQjux0K3cP1do3gUEgE+\nHVbBLcIfkwKBgQDwVQR9zIYjUabahY1B7BKX4klFkyy6tvf4CvnZLJv4DKm8pAoR\nH+NcUohP39+CL0iz/R+FNxPRL2N6YHh5R2josK3sRAss6IZxxjibvrFXjSCN+Uux\nWWsl0eqBjV0CNk10dvUftV3ZxnILB7j6K5cVwDkQgtVYnGyJF0G9rg4UvQKBgAQY\nSr5tdZvRPz953uO3UfsDPeWgGDWLVo1g54tM9/TEYD+Au0zk7PU6gRa2lx9I0Uot\nVinJigGGAV1RVI8mjp7qTgrX4M5G6qOx15SGm5pJIfMivCLVrgqSetryyDU/wtEL\nw2u3KI2oZw8EfxcqljKVYmhUVBm5gkBJdI0scj71AoGBAKkpu+NVy55oql/fYMRv\ngXd7KSAGE5UdR0MYRPe8SJ4o5G1rrDahjW7N9LWwJQwWxek5xHCkFJOndE1g4jP9\nVbjKqD4iqyiyuSi/6wWWdEbOMZrp7t+MTGRPELXns3Fjl/aDmDNd3uyW2QhIgqjl\nqbOmlytGXqUhIS+DW4WU8ALI\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-x8ood@biadago-cloud.iam.gserviceaccount.com",
+  "client_id": "118028014141792543512",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-x8ood%40biadago-cloud.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+import firebase_admin
+from firebase_admin import credentials, messaging
+
+# Uygulama zaten başlatılmadıysa başlat
+if not firebase_admin._apps:
+    cred = credentials.Certificate(service)  # Dosya yolunu doğru ver
+    firebase_admin.initialize_app(cred)
+
+from firebase_admin import messaging
+def send_fcm_notification(token, title, body):
+    headers = {
+        'Authorization': f'Bearer {settings.FCM_ACCESS_TOKEN}',
+        'Content-Type': 'application/json; UTF-8',
+    }
+
+    data = {
+        'message': {
+            'token': token,
+            'notification': {
+                'title': title,
+                'body': body
+            }
+        }
+    }
+
+    response = requests.post(
+        'https://fcm.googleapis.com/v1/projects/YOUR_PROJECT_ID/messages:send',
+        headers=headers,
+        json=data
+    )
+    return response.status_code, response.json()
+from django.contrib.auth.decorators import login_required
+
+
+@csrf_exempt
+@login_required
+def save_device_token(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        token = data.get("token")
+        platform = data.get("platform", "web")
+
+        if not token:
+            return JsonResponse({"error": "Token yok"}, status=400)
+
+        # Token'ı kaydet/güncelle
+        device_token, created = DeviceToken.objects.update_or_create(
+            user=request.user,
+            token=token,
+            defaults={"platform": platform},
+        )
+
+        return JsonResponse({"status": "ok", "created": created})
+
+    return JsonResponse({"error": "Invalid method"}, status=405)
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -2019,23 +2092,21 @@ def yapilacaklar_api(request):
 def yapilacalar_ekle_api(request):
     if request.user.is_superuser:
         return Response({"detail": "Superuser access is restricted for this endpoint."}, status=status.HTTP_403_FORBIDDEN)
-    
+
     serializer = IsplaniPlanlariSerializer(data=request.data)
-    
     if serializer.is_valid():
         baslik = request.data.get("baslik")
         durum = request.data.get("durum")
         aciliyet = request.data.get("aciliyet")
         teslim_tarihi = request.data.get("teslim_tarihi")
-        blogbilgisi = request.data.get("kullanicilari")
-        blogbilgisi = blogbilgisi.split(",")
+        blogbilgisi = request.data.get("kullanicilari", "").split(",")
         aciklama = request.data.get("aciklama")
         katman_bilgisi = request.data.get("katman_bilgisi")
         yapi_gonder = request.data.get("yapi_gonder")
-        kat = request.data.get("kat")
+        kat = request.data.get("kat") or 0
         locasyonx = request.data.get("locasyonx")
         locasyony = request.data.get("locasyony")
-        
+
         new_project = IsplaniPlanlari(
             proje_ait_bilgisi=request.user,
             title=baslik,
@@ -2044,15 +2115,17 @@ def yapilacalar_ekle_api(request):
             oncelik_durumu=aciliyet,
             teslim_tarihi=teslim_tarihi,
             silinme_bilgisi=False,
-            blok = get_object_or_404(bloglar,id = yapi_gonder),
-            katman = get_object_or_404(katman,id = katman_bilgisi),
-            kat = kat,locasyonx = locasyonx,locasyony = locasyony
+            blok=get_object_or_404(bloglar, id=yapi_gonder),
+            katman=get_object_or_404(katman, id=katman_bilgisi),
+            kat=kat,
+            locasyonx=locasyonx,
+            locasyony=locasyony
         )
         new_project.save()
-        
-        bloglar_bilgisi = [CustomUser.objects.get(id=int(i)) for i in blogbilgisi]
+
+        bloglar_bilgisi = [CustomUser.objects.get(id=int(i)) for i in blogbilgisi if i.strip()]
         new_project.yapacaklar.add(*bloglar_bilgisi)
-        
+
         files = request.FILES.getlist('file')
         for file in files:
             IsplaniDosyalari.objects.create(
@@ -2060,11 +2133,24 @@ def yapilacalar_ekle_api(request):
                 dosya_sahibi=request.user,
                 dosya=file
             )
-        
-        return Response({"detail": "Task successfully created."}, status=status.HTTP_201_CREATED)
-    
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        # FCM bildirim gönderimi (link ile)
+        for user in bloglar_bilgisi:
+            device_tokens = DeviceToken.objects.filter(user=user).values_list('token', flat=True)
+            for token in device_tokens:
+                try:
+                    send_fcm_notification(
+                        token=token,
+                        title="Yeni Görev Ataması",
+                        body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}",
+                        
+                    )
+                except Exception as e:
+                    print(f"FCM gönderim hatası: {e}")
+
+        return Response({"detail": "Task successfully created."}, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
