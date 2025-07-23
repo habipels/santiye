@@ -722,7 +722,7 @@ def personeller_ekle(request):
                 currency = True
             else:
                 currency = False
-            for i in range(21):
+            for i in range(1):
                 bilgi = calisanlar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan_kime_ait = kullanici,calisan_kategori = get_object_or_none(calisanlar_kategorisi , id =department),
                 calisan_pozisyonu = get_object_or_none(calisanlar_pozisyonu , id =position),uyrugu  = nationality,pasaport_numarasi = passportNo,
                 isim = firstName,soyisim = lastName,profile = profilePicture,dogum_tarihi =dogum_tarihi,telefon_numarasi = phoneNumber  )
