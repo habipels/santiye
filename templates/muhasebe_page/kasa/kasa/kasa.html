@@ -181,69 +181,65 @@
     </div>
 
 
-    <div class="modal" id="virman">
-        <div class="modal-inner" style="width: 500px">
-            <div class="modal-header">
-                {% trans 'Virman' %}
-            </div>
-            <div class="modal-body">
-                <form autocomplete="off"class="tablelist-form" method="post" action="/{{dil}}{% url 'accounting:virman_yapma' %}" autocomplete="off">
-                                {% csrf_token %}
-                                
-                                    <div class="form-element" id="modal-id" style="display: none;">
-                                        <label for="id-field" class="form-label">{% trans 'ID' %}</label>
-                                        <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
-                                    </div>
-                                    
+<div class="modal" id="virman">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans 'Virman' %}
+        </div>
+        <div class="modal-body">
+            <form autocomplete="off" class="tablelist-form" method="post" action="/{{dil}}{% url 'accounting:virman_yapma' %}">
+                {% csrf_token %}
 
-                                    <div class="form-element">
-                                        <label for="gonderen" class="form-label">{% trans 'Gönderen' %}</label>
-                                        <select id="gonderen" name="gonderen" class="form-control">
-                                            <option selected disabled>{% trans 'Seçiniz..' %}</option>
-                                                {% for i in santiyeler %}
-                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
-                                                {% endfor %}
-                                        </select>
-                                        
-                                    </div>
+                <div class="form-element" id="modal-id" style="display: none;">
+                    <label for="id-field" class="form-label">{% trans 'ID' %}</label>
+                    <input type="text" id="id-field" class="form-control" placeholder="ID" readonly />
+                </div>
 
-                                    <div class="form-element">
-                                        <label for="alici"  class="form-label">{% trans 'Alıcı' %}</label>
-                                        <select id="alici" name="alici" class="form-control">
-                                            <option selected disabled>{% trans 'Seçiniz..' %}</option>
-                                            {% for i in santiyeler %}
-                                                <option value="{{i.id}}">{{i.kasa_adi}}</option>
-                                                {% endfor %}
-                                        </select>
-                                        
-                                    </div>
+                <div class="form-element">
+                    <label for="gonderen" class="form-label">{% trans 'Gönderen' %}</label>
+                    <select id="gonderen" name="gonderen" class="form-control" required>
+                        <option value="" disabled selected>{% trans 'Seçiniz..' %}</option>
+                        {% for i in santiyeler %}
+                        <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                                    <div class="form-element">
-                                        <label for="tarih" class="form-label">{% trans 'Tarih' %}</label>
-                                        <input id="tarih" name="islemtarihi" type="date" class="form-control" />
-                                        
-                                    </div>
+                <div class="form-element">
+                    <label for="alici" class="form-label">{% trans 'Alıcı' %}</label>
+                    <select id="alici" name="alici" class="form-control" required>
+                        <option value="" disabled selected>{% trans 'Seçiniz..' %}</option>
+                        {% for i in santiyeler %}
+                        <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                                    <div class="form-element">
-                                        <label for="tutar" class="form-label">{% trans 'Tutar' %}</label>
-                                        <input id="tutar" name="tutar" step="0.01" type="text" class="form-control" placeholder="{% trans 'Tutar giriniz' %}"/>
-                                        
-                                    </div>
+                <div class="form-element">
+                    <label for="tarih" class="form-label">{% trans 'Tarih' %}</label>
+                    <input id="tarih" name="islemtarihi" type="date" class="form-control" required />
+                </div>
 
-                                    <div class="form-element">
-                                        <label for="aciklama" class="form-label">{% trans 'Açıklama' %}</label>
-                                        <textarea id="aciklama" name="aciklama" type="text" class="form-control" placeholder="{% trans 'Açıklama' %}"></textarea>
-                                        
-                                    </div>
-                                    
-                    <div class="form-actions">
-                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
-                        <button class="form-action-primary" type="submit">{% trans 'Ödeme Aktar' %}</button>
-                    </div>
-                </form>
-            </div>
+                <div class="form-element">
+                    <label for="tutar" class="form-label">{% trans 'Tutar' %}</label>
+                    <input id="tutar" name="tutar" step="0.01" type="text" class="form-control" placeholder="{% trans 'Tutar giriniz' %}" required />
+                </div>
+
+                <div class="form-element">
+                    <label for="aciklama" class="form-label">{% trans 'Açıklama' %}</label>
+                    <textarea id="aciklama" name="aciklama" type="text" class="form-control" placeholder="{% trans 'Açıklama' %}"></textarea>
+                    <!-- NOT: Açıklama alanına 'required' konmadı -->
+                </div>
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    <button class="form-action-primary" type="submit">{% trans 'Ödeme Aktar' %}</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
 
 
     <script>
