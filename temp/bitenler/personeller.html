@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiadaGo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./content/style/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-toggle"><i class="icon icon-sidebar-right"></i><i class="icon icon-sidebar-left"></i></div>
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-main-part"></div>
+            <div class="sidebar-logo-second-part"></div>
+            <div class="sidebar-logo-large-parts">
+                <img src="./content/images/half-o.png">
+                <img src="./content/images/o.png">
+            </div>
+        </div>
+        <div class="sidebar-navs">
+            <ul class="sidebar-nav">
+                <li class="active"><a href="#"><i class="icon icon-dashboard"></i> <span>{% trans 'Dashboard' %}</span> </a></li>
+
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-super-admin"></i> <span>Super
+                            Admin</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Altmenü...</a></li>
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>AltAltmenü</span> <i
+                                    class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
+                                <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
+                                <li><a href="#" class="sidebar-sub-item">Altmenü</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li><a href="#"><i class="icon icon-document"></i> <span>{% trans 'Raporlar' %}</span> </a></li>
+
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-santiye-yonetimi"></i> <span>Şantiye
+                            Yönetimi</span> <i class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li><a href="#" class="sidebar-sub-item">Proje Yönetimi</a></li>
+                        <li><a href="#" class="sidebar-sub-item">İş Emirleri</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Dosya Yöneticisi</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Taşeronlar</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Üst Yönetici</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Hakedişler</a></li>
+                        <li><a href="#" class="sidebar-sub-item">Sözleşmeler</a></li>
+                    </ul>
+                </li>
+
+
+                <li></li>
+                <li><a href="#"><i class="icon icon-muhasebe"></i> <span>Muhasebe</span> </a></li>
+                <li><a href="#"><i class="icon icon-profile"></i> <span>Personel</span> </a></li>
+                <li><a href="#"><i class="icon icon-stok"></i> <span>Satın Alma ve Stok</span> </a></li>
+                <li><a href="#"><i class="icon icon-users"></i> <span>Kullanıcılar</span> </a></li>
+            </ul>
+            <hr>
+            <ul class="sidebar-nav">
+                <li><a href="#"><i class="icon icon-notifications"></i> <span>{% trans 'Bildirimler' %}</span> </a></li>
+
+                <li>
+                    <a class="sidebar-sub-toggle" href="#"><i class="icon icon-settings"></i> <span>Ayarlar</span> <i
+                            class="icon icon-caret"></i></a>
+                    <ul class="sidebar-sub-menu">
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>Kullanıcı Ayarları</span> <i
+                                    class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="#" class="sidebar-sub-item">...</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>Şantiye Ayarları</span> <i
+                                    class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="#" class="sidebar-sub-item">Proje Tipi</a></li>
+                                <li><a href="#" class="sidebar-sub-item">Şantiye</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="sidebar-sub-toggle" href="#"><span>Muhasebe Ayarları</span> <i
+                                    class="icon icon-caret"></i></a>
+                            <ul class="sidebar-sub-menu">
+                                <li><a href="#" class="sidebar-sub-item">...</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="icon icon-help"></i> <span>Destek ve Yardım</span> </a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <div class="sidebar-mobile-toggle">
+        <img src="./content/images/logo-sm.png" class="sidebar-mobile-sm-logo" alt="" />
+        <i class="icon icon-chevron-right"></i>
+    </div>
+
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarToggle = document.querySelector(".sidebar-toggle");
+        let sidebarMobileToggle = document.querySelector(".sidebar-mobile-toggle");
+        sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-collapsed");
+        })
+        sidebarMobileToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-collapsed");
+        })
+
+        $('.sidebar-sub-toggle').click(function () {
+            $(this).next('.sidebar-sub-menu').slideToggle();
+            $(this).next('.sidebar-sub-menu').toggleClass("open");
+            $(this).find('.icon-caret').toggleClass('rotate');
+        });
+
+        if ($(window).width() <= 1000 && $(window).width() >= 420) {
+            sidebar.classList.add("sidebar-collapsed");
+        }
+    </script>
+
+    <header>
+        <div class="header-search">
+            <input type="search" name="search" id="search" placeholder="{% trans 'Uygulama içerisinde ara' %}">
+            <button><i class="icon icon-search"></i></button>
+        </div>
+        <div class="header-actions">
+            <div class="header-actions-dropdown">
+                <a href="#"><i class="icon icon-dashboard"></i></a>
+                <div class="actions-dropdown-content">
+                    <div class="actions-dropdown-content-title">
+                        Web Apps
+                    </div>
+                    <div class="actions-dropdown-content-apps">
+                        <a href="#" class="adc-app">
+                            <div class="adc-app-icon">
+                                <img src="./content/images/google-play.png" alt="Google Play">
+                            </div>
+                            <div class="adc-app-title">Android</div>
+                        </a>
+                        <a href="#" class="adc-app">
+                            <div class="adc-app-icon">
+                                <img src="./content/images/appstore.png" alt="App Store">
+                            </div>
+                            <div class="adc-app-title">IOS</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" onclick="toggleFullScreen()"><i class="icon icon-fullscreen"></i></a>
+            <a href="#"><i class="icon icon-moon"></i></a>
+            <div class="header-actions-dropdown notifications-dropdown">
+                <a href="#"><i class="icon icon-notification"></i></a>
+                <div class="actions-dropdown-content">
+                    <div class="actions-dropdown-content-title">
+                        {% trans 'Bildirimler' %}
+                        <span>12 {% trans 'adet yeni bildiriminiz var.' %}</span>
+                    </div>
+                    <div class="notifications-tabs">
+                        <button onclick="notificationTab(event, 'notification-all')"
+                            class="notification-tab-btn active">{% trans 'adet yeni bildiriminiz var.' %}
+                            <span>22</span></button>
+                        <button onclick="notificationTab(event, 'notification-unread')"
+                            class="notification-tab-btn">Okunmamış <span>3</span></button>
+                    </div>
+                    <div class="notifications" id="notification-all">
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-success">Görevinizi tamamladınız</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">Ödeme tarihini geçen bir
+                                    faturanız bulunmaktadır.</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notifications" id="notification-unread" style="display: none;">
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="./content/images/avatar-2.png" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        function notificationTab(e, id) {
+                            var i, x, notificationTabBtn;
+                            x = document.getElementsByClassName("notifications");
+                            for (i = 0; i < x.length; i++) {
+                                x[i].style.display = "none";
+                            }
+                            notificationTabBtn = document.getElementsByClassName("notification-tab-btn");
+                            for (i = 0; i < x.length; i++) {
+                                notificationTabBtn[i].className = notificationTabBtn[i].className.replace(" active", "");
+                            }
+                            document.getElementById(id).style.display = "block";
+                            e.currentTarget.className += " active";
+                        }
+                    </script>
+
+                    <div class="notifications-footer">
+                        <a href="#">Tümünü Gör <i class="icon icon-forward"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-language-wrapper">
+            <div class="header-language">
+                <img src="./content/images/tr.png" alt="TR" class="header-language-flag">
+                <span>Türkçe</span>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+            <div class="header-language-dropdown">
+                <div class="language-selector">
+                    <input type="radio" name="lang" id="lang-tr" checked>
+                    <label for="lang-tr">
+                        <img src="./content/images/tr.png" alt="TR">
+                        Türkçe
+                    </label>
+                </div>
+                <div class="language-selector">
+                    <input type="radio" name="lang" id="lang-en">
+                    <label for="lang-en">
+                        <img src="./content/images/tr.png" alt="TR">
+                        İngilizce
+                    </label>
+                </div>
+                <div class="language-selector">
+                    <input type="radio" name="lang" id="lang-ar">
+                    <label for="lang-ar">
+                        <img src="./content/images/tr.png" alt="TR">
+                        Arapça
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="header-profile-wrapper">
+            <div class="header-profile">
+                <div class="profile-avatar">
+                    <img src="./content/images/avatar.png" alt="Avatar">
+                </div>
+                <div class="profile-title">
+                    <span>Welcome back 👋</span>
+                    Johnathan
+                </div>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+            <div class="header-profile-dropdown">
+                <div class="profile-dropdown-title">
+                    Johnathan
+                    <span>Admin...</span>
+                </div>
+                <div class="profile-dropdown-actions">
+                    <a href="#"><i class="icon icon-profile"></i> Profil</a>
+                    <a href="#"><i class="icon icon-settings"></i> Ayarlar</a>
+                    <a href="#"><i class="icon icon-lock"></i> Ekranı Kilitle</a>
+                </div>
+                <div class="profile-dropdown-logout">
+                    <a href="#">Çıkış Yap</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    Personeller
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">Çalışan Yönetimi</a></li>
+                    <li><a href="#">Personeller</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+                <button class="page-primary-btn" onclick="openModal('personel-olustur', false)"><i
+                        class="icon icon-new"></i>
+                    Personel Oluştur</button>
+            </div>
+        </div>
+
+
+        <div class="employees-page">
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+            <div class="employeep" onclick="openModal('personel-detay-karti', false)">
+                <div class="employeep-image">
+                    <img src="./content/images/avatar-2.png" alt="employeep">
+                </div>
+                <div class="employeep-name">Jane Cooper</div>
+                <div class="employeep-tags">
+                    <div class="employeep-tag-job">Mühendis</div>
+                    <div class="employeep-tag-salary">15.500 ₺</div>
+                </div>
+                <div class="employeep-details">
+                    <div class="employeep-detail">
+                        <span>{% trans 'Departman' %}</span>
+                        Departman-1
+                    </div>
+                    <div class="employeep-detail">
+                        <span>İşe Başlama Tarihi</span>
+                        23.06.2022
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+
+    <div class="modal" id="personel-detay-karti">
+        <div class="modal-inner" style="width: 724px;">
+            <div class="modal-header">
+                Personel Detay Kartı
+            </div>
+            <div class="modal-body">
+                <div class="employee-details-modal-header">
+                    <div class="employee-details-modal-header-info">
+                        <img src="./content/images/avatar-2.png">
+                        <span>Jane Cooper</span>
+                    </div>
+                    <div class="employee-details-modal-header-tags">
+                        <div class="employeep-tag">Yönetim</div>
+                        <div class="employeep-tag-job">Mühendis</div>
+                        <div class="employeep-tag-salary">15.500 ₺</div>
+                    </div>
+                </div>
+
+                <div class="employee-details-tab-navs">
+                    <div class="employee-details-tab-nav active" data-tab="personel-bilgileri">Personel Bilgileri</div>
+                    <div class="employee-details-tab-nav" data-tab="ucret-yonetimi">Ücret Yönetimi</div>
+                    <div class="employee-details-tab-nav" data-tab="puantaj-yonetimi">Puantaj Yönetimi</div>
+                </div>
+
+                <div class="employee-details-tabs">
+                    <div class="employee-details-tab" id="personel-bilgileri">
+                        <div class="employee-modal-infos">
+                            <div class="employee-modal-info"><span>{% trans 'Pasaport No' %}: </span> 123456789</div>
+                            <div class="employee-modal-info"><span>Uyruk: </span> Türkiye</div>
+                            <div class="employee-modal-info"><span>{% trans 'Doğum Tarihi' %}: </span> 01/01/2000</div>
+                            <div class="employee-modal-info"><span>Telefon Numarası: </span> 0555 555 5555</div>
+                            <div class="employee-modal-info"><span>Ücret Tipi: </span> -</div>
+                            <div class="employee-modal-info"><span>Para Birimi: </span> TL</div>
+                            <div class="employee-modal-info"><span>{% trans 'Günlük Ücret' %}: </span> 1.500 ₺</div>
+                            <div class="employee-modal-info"><span>{% trans 'Saatlik Ücret' %}: </span> 300 ₺</div>
+                            <div class="employee-modal-info"><span>Not: </span> Lorem ipsum dolor sit amet consectetur
+                                adipisicing elit. Sed voluptatibus reiciendis eaque dolor officiis, commodi voluptates
+                                accusamus, sit libero aliquam minus! Neque alias quod illum ex porro, optio dolore
+                                repellat.</div>
+                        </div>
+                        <div class="employee-modal-documents">
+                            <div class="employee-modal-document">
+                                <span>Oturum Belgesi</span>
+                                <img src="./content/images/oturum-belgesi.png">
+                            </div>
+                            <div class="employee-modal-document">
+                                <span>Pasaport</span>
+                                <img src="./content/images/oturum-belgesi.png">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="employee-details-tab active" id="ucret-yonetimi">
+                        <div class="form-actions">
+                            <button class="form-action-highlight" type="button"
+                                onclick="openModal('maas-olustur', false)">Maaş
+                                Oluştur</button>
+                            <button class="form-action-primary" type="button"
+                                onclick="openModal('maas-ode', false)">Maaş
+                                Öde</button>
+                            <button class="form-action-primary" type="button"
+                                onclick="openModal('avans-ode', false)">Avans
+                                Öde</button>
+                        </div>
+                        <table id="employee-details-modal-table">
+                            <thead>
+                                <tr>
+                                    <th>Ay</th>
+                                    <th>Hakediş</th>
+                                    <th>Ödenen</th>
+                                    <th>Kalan</th>
+                                    <th>Bordro</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Eylül</td>
+                                    <td>5000</td>
+                                    <td>3000</td>
+                                    <td>2000</td>
+                                    <td><i class="icon icon-download"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <script>
+                            let datatable = new DataTable('#employee-details-modal-table', {
+                                paging: false,
+                                searching: false,
+                                info: false,
+                                layout: {
+                                    topStart: {
+                                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                    <div class="employee-details-tab" id="puantaj-yonetimi">...</div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button"
+                        onclick="closeModal('personel-detay-karti')">Vazgeç</button>
+                    <button class="form-action-danger" type="button" onclick="openModal('isten-ayril', false)">İşten
+                        Ayrıl</button>
+                    <button class="form-action-primary" type="button"
+                        onclick="openModal('personel-duzenle', false)">Düzenle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(".employee-details-tab-nav").on("click", function () {
+            $(".employee-details-tab-nav").removeClass("active");
+            $(this).addClass("active");
+
+            $(".employee-details-tab").removeClass("active");
+            $("#" + $(this).attr("data-tab")).addClass("active");
+        })
+    </script>
+
+
+
+    <div class="modal" id="isten-ayril">
+        <div class="modal-inner" style="width: 724px;">
+            <div class="modal-header">
+                Personel Detay Kartı
+            </div>
+            <div class="modal-body">
+                <div class="employee-details-modal-header">
+                    <div class="employee-details-modal-header-info">
+                        <img src="./content/images/avatar-2.png">
+                        <span>Jane Cooper</span>
+                    </div>
+                    <div class="employee-details-modal-header-tags">
+                        <div class="employeep-tag">Yönetim</div>
+                        <div class="employeep-tag-job">Mühendis</div>
+                        <div class="employeep-tag-salary">15.500 ₺</div>
+                    </div>
+                </div>
+
+
+                <form style="margin-top: 20px;">
+                    <div class="form-element">
+                        <label for="isten-ayrilma-sebebi">İşten Ayrılma Sebebi</label>
+                        <select name="isten-ayrilma-sebebi" id="isten-ayrilma-sebebi">
+                            <option value="Disiplin">Disiplin</option>
+                            <option value="Disiplin">Disiplin</option>
+                            <option value="Disiplin">Disiplin</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea name="aciklama" id="aciklama"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('isten-ayril')">Vazgeç</button>
+                        <button class="form-action-danger" type="submit">İşten Ayrıl</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="maas-olustur">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Maaş Oluştur
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="ay-secimi">Ay Seçimi</label>
+                        <select name="ay-secimi" id="ay-secimi">
+                            <option value="" selected disabled></option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('maas-olustur')">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Devam Et</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="maas-ode">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Maaş Öde
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="maas-ayi">Maaş Ayı</label>
+                        <select name="maas-ayi" id="maas-ayi">
+                            <option value="" selected disabled></option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="kalan-bakiye">Kalan Bakiye</label>
+                        <input type="number" name="kalan-bakiye" id="kalan-bakiye">
+                    </div>
+                    <div class="form-element">
+                        <label for="kur">Kur</label>
+                        <input type="number" name="kur" id="kur">
+                    </div>
+                    <div class="form-element">
+                        <label for="odeme-tarihi">Ödeme Tarihi</label>
+                        <input type="date" name="odeme-tarihi" id="odeme-tarihi">
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea name="aciklama" id="aciklama"></textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="ekler">Dosya Yükle</label>
+
+                        <div class="file-input">
+                            <label for="ekler">
+                                <img src="./content/images/illustration-upload.png">
+
+                                <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="ekler" id="ekler">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('maas-ode')">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Maaş Öde</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="avans-ode">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                Avans Öde
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-element">
+                        <label for="ay-secimi">Ay Seçimi</label>
+                        <select name="ay-secimi" id="ay-secimi">
+                            <option value="" selected disabled></option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                            <option value="Ay">Ay</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="tutar">Tutar</label>
+                        <input type="number" name="tutar" id="tutar">
+                    </div>
+                    <div class="form-element">
+                        <label for="kur">Kur</label>
+                        <input type="number" name="kur" id="kur">
+                    </div>
+                    <div class="form-element">
+                        <label for="odeme-tarihi">Ödeme Tarihi</label>
+                        <input type="date" name="odeme-tarihi" id="odeme-tarihi">
+                    </div>
+                    <div class="form-element">
+                        <label for="aciklama">{% trans 'Açıklama' %}</label>
+                        <textarea name="aciklama" id="aciklama"></textarea>
+                    </div>
+                    <div class="form-element">
+                        <label for="ekler">Dosya Yükle</label>
+
+                        <div class="file-input">
+                            <label for="ekler">
+                                <img src="./content/images/illustration-upload.png">
+
+                                <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="ekler" id="ekler">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button"
+                            onclick="closeModal('avans-ode')">Vazgeç</button>
+                        <button class="form-action-primary" type="submit">Avans Öde</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="personel-olustur">
+        <div class="modal-inner" style="width: 724px;">
+            <div class="modal-header">
+                Personel Ekle
+            </div>
+            <div class="modal-body">
+
+                <form>
+                    <div class="form-row">
+                        <div class="form-element add-employee-image">
+                            <img src="./content/images/default-profile.png" id="personel-olustur-img">
+                            <div class="file-input">
+                                <label for="personel-profile">
+                                    <button type="button"><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
+                                </label>
+                                <input type="file" name="personel-profile" id="personel-profile">
+                            </div>
+                            <script>
+                                $('#personel-profile').change(function (event) {
+                                    const file = event.target.files[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function (e) {
+                                            $('#personel-olustur-img').attr('src', e.target.result);
+                                        }
+                                        reader.readAsDataURL(file);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="form-element">
+                            <div class="form-element">
+                                <label for="adsoyad">Ad Soyad</label>
+                                <input type="text" name="adsoyad" id="adsoyad">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="pasaport-no">{% trans 'Pasaport No' %}</label>
+                            <input type="text" name="pasaport-no" id="pasaport-no">
+                        </div>
+                        <div class="form-element">
+                            <label for="uyruk">Uyruk</label>
+                            <input type="text" name="uyruk" id="uyruk">
+                        </div>
+                        <div class="form-element">
+                            <label for="date">{% trans 'Doğum Tarihi' %}</label>
+                            <input type="text" name="date" id="date">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="date">İşe Giriş Tarihi</label>
+                            <input type="text" name="date" id="date">
+                        </div>
+                        <div class="form-element">
+                            <label for="telefon-no">Telefon No</label>
+                            <input type="text" name="telefon-no" id="telefon-no">
+                        </div>
+                        <div class="form-element">
+                            <label for="ucret-tipi">Ücret Tipi</label>
+                            <select name="ucret-tipi" id="ucret-tipi">
+                                <option value="" selected disabled></option>
+                                <option value="Tip">Tip</option>
+                                <option value="Tip">Tip</option>
+                                <option value="Tip">Tip</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="para-birimi">Para Birimi</label>
+                            <select name="para-birimi" id="para-birimi">
+                                <option value="" selected disabled></option>
+                                <option value="Birim">Birim</option>
+                                <option value="Birim">Birim</option>
+                                <option value="Birim">Birim</option>
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label for="gunluk-ucret">{% trans 'Günlük Ücret' %}</label>
+                            <input type="number" name="gunluk-ucret" id="gunluk-ucret">
+                        </div>
+                        <div class="form-element">
+                            <label for="saatlik-ucret">{% trans 'Saatlik Ücret' %}</label>
+                            <input type="number" name="saatlik-ucret" id="saatlik-ucret">
+                        </div>
+                    </div>
+
+
+                    <div class="form-element">
+                        <label for="not">Not</label>
+                        <input type="text" name="not" id="not">
+                    </div>
+
+                    <div class="form-element">
+                        <label for="ekler">Belge Yükle</label>
+
+                        <div class="file-input">
+                            <label for="ekler">
+                                <img src="./content/images/illustration-upload.png">
+
+                                <button><i class="icon icon-file"></i>{% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input type="file" name="ekler" id="ekler">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                </form>
+
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button"
+                        onclick="closeModal('personel-olustur')">Vazgeç</button>
+                    <button class="form-action-primary" type="submit">Devam Et</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="personel-duzenle">
+        <div class="modal-inner" style="width: 724px;">
+            <div class="modal-header">
+                Personel Düzenle
+            </div>
+            <div class="modal-body">
+                <div class="employee-details-modal-header">
+                    <div class="employee-details-modal-header-info">
+                        <img src="./content/images/avatar-2.png">
+                        <span>Jane Cooper</span>
+                    </div>
+                    <div class="employee-details-modal-header-tags">
+                        <div class="employeep-tag">Yönetim</div>
+                        <div class="employeep-tag-job">Mühendis</div>
+                        <div class="employeep-tag-salary">15.500 ₺</div>
+                    </div>
+                </div>
+
+
+                <form style="margin-top: 20px;">
+
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="pasaport-no">{% trans 'Pasaport No' %}</label>
+                            <input type="text" name="pasaport-no" id="pasaport-no">
+                        </div>
+                        <div class="form-element">
+                            <label for="uyruk">Uyruk</label>
+                            <input type="text" name="uyruk" id="uyruk">
+                        </div>
+                        <div class="form-element">
+                            <label for="date">{% trans 'Doğum Tarihi' %}</label>
+                            <input type="text" name="date" id="date">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="date">İşe Giriş Tarihi</label>
+                            <input type="text" name="date" id="date">
+                        </div>
+                        <div class="form-element">
+                            <label for="telefon-no">Telefon No</label>
+                            <input type="text" name="telefon-no" id="telefon-no">
+                        </div>
+                        <div class="form-element">
+                            <label for="ucret-tipi">Ücret Tipi</label>
+                            <select name="ucret-tipi" id="ucret-tipi">
+                                <option value="" selected disabled></option>
+                                <option value="Tip">Tip</option>
+                                <option value="Tip">Tip</option>
+                                <option value="Tip">Tip</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="para-birimi">Para Birimi</label>
+                            <select name="para-birimi" id="para-birimi">
+                                <option value="" selected disabled></option>
+                                <option value="Birim">Birim</option>
+                                <option value="Birim">Birim</option>
+                                <option value="Birim">Birim</option>
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label for="gunluk-ucret">{% trans 'Günlük Ücret' %}</label>
+                            <input type="number" name="gunluk-ucret" id="gunluk-ucret">
+                        </div>
+                        <div class="form-element">
+                            <label for="saatlik-ucret">{% trans 'Saatlik Ücret' %}</label>
+                            <input type="number" name="saatlik-ucret" id="saatlik-ucret">
+                        </div>
+                    </div>
+
+
+                    <div class="form-element">
+                        <label for="not">Not</label>
+                        <input type="text" name="not" id="not">
+                    </div>
+
+                    <div class="employee-modal-documents">
+                        <div class="employee-modal-document">
+                            <span>Oturum Belgesi <i class="icon icon-trash"></i></span>
+                            <img src="./content/images/oturum-belgesi.png">
+                        </div>
+                        <div class="employee-modal-document">
+                            <span>Pasaport <i class="icon icon-trash"></i></span>
+                            <img src="./content/images/oturum-belgesi.png">
+                        </div>
+                    </div>
+                </form>
+
+
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button"
+                        onclick="closeModal('personel-duzenle')">Vazgeç</button>
+                    <button class="form-action-primary" type="submit">Değişiklikleri Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal($(e.target).attr("id"));
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+</body>
+
+</html>

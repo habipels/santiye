@@ -1,0 +1,330 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% load custom_tags %}
+{% block sidebar %}
+
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans "Daire Detay" %}
+            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="#">{% trans "Dashboard" %}</a></li>
+                <li><a href="#">{% trans "Daire Yönetimi" %}</a></li>
+                <li><a href="#">{% trans "Daire Detay" %}</a></li>
+            </ul>
+        </div>
+        <div class="page-actions">
+            <button class="page-primary-btn" onclick="openModal('yeni-evrak-ekle')"><i class="icon icon-new"></i>{% trans "Yeni Evrak" %}</button>
+            <button class="page-primary-btn" onclick="openModal('daire-ata')"><i class="icon icon-new"></i>{% trans "Yeni Müşteri" %}</button>
+        </div>
+    </div>
+
+    <div class="daire-detay" style="margin-top: 30px;">
+        <div class="daire-detay-images">
+            <div class="daire-thumbnail">
+            {% if birinci_resim %}
+                <img src="{{birinci_resim.evrak.url}}" alt="">
+            {% else %}
+            {% endif %}
+                
+            </div>
+            <div class="daire-other-images">
+                {% for evrak in image_extensions %}
+                <img src="{{ evrak.evrak.url }}" alt="{{ evrak.evrak_adi }}">
+                
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="daire-content">
+            <div class="daire-bilgiler">
+                <div class="daire-lokasyon"><i class="icon icon-location"></i> {{ daire_detayi.blog_bilgisi.proje_santiye_Ait.proje_adi }}</div>
+                <div class="daire-bilgi">{% trans "Teslim Tarihi" %}: <span>{{ daire_detayi.kayit_tarihi|date:"d/m/Y" }}</span></div>
+                <div class="daire-bilgi">{% trans "Teslim Durumu" %}: <div class="daire-status daire-status-completed">{% trans "Tamamlandı" %}</div></div>
+                <div class="daire-bilgi">
+                    <div>m<sup>2</sup> {% trans "(Brüt)" %}:</div> <span>{{ daire_detayi.metre_kare_brut }}</span>
+                </div>
+                <div class="daire-bilgi">{% trans "Oda Sayısı" %}: <span>{{ daire_detayi.oda_sayisi|add:"0" }}</span></div>
+                <div class="daire-bilgi">{% trans "Kat Sayısı" %}: <span>{{ daire_detayi.kat }}</span></div>
+                <div class="daire-atanan-musteri">
+                    {% trans "Atanan Müşteri" %}
+                    <div class="daire-atanan-musteri-inner">
+                        <img src="{% static 'content/images/avatar.png' %}" alt="">
+                        <span>{{ atanan_musteri.musterisi.musteri_adi }} {{ atanan_musteri.musterisi.musteri_soyadi }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="daire-detaylar">
+                <div class="info-header">{% trans "Teslim Sırasında Alınan Evraklar" %}</div>
+                <div class="daire-detay-evraklar">
+                    {% for evrak in daire_evraklari %}
+                    {% if not evrak.evrak.url|lower|slice:"-4:" in image_extensions %}
+                    <div class="dde-evrak">
+                        <i class="icon icon-folder"></i>
+                        <a href="{{ evrak.evrak.url }}" target="_blank">{{ evrak.evrak_adi }}</a>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="info-header">{% trans "Resimler" %}</div>
+                <div class="daire-detay-resimler">
+                    {% for evrak in daire_evraklari %}
+                    {% if evrak.evrak.url|lower|slice:"-4:" in image_extensions %}
+                    <div class="dde-resim">
+                        <img src="{{ evrak.evrak.url }}" alt="{{ evrak.evrak_adi }}">
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="large-stats-card table-card table-detail-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans "Müşteri Talepleri" %}</div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="musteri-talepleri">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Talep Tarihi" %}</th>
+                                    <th>{% trans "Talep Gerekçesi" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for talep in talepler %}
+                                <tr>
+                                    <td>{{ talep.kayit_tarihi|date:"d M Y" }}</td>
+                                    <td style="text-align: left;">{{ talep.sikayet_aciklamasi }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="large-stats-card table-card table-detail-card">
+                    <div class="stats-header">
+                        <div class="stats-title">{% trans "Şikayetler" %}</div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="sikayetler">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Şikayet Tarihi" %}</th>
+                                    <th>{% trans "Şikayet Gerekçesi" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sikayet in sikayetler %}
+                                <tr>
+                                    <td>{{ sikayet.kayit_tarihi|date:"d M Y" }}</td>
+                                    <td style="text-align: left;">{{ sikayet.sikayet_aciklamasi }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <script>
+                    let musteriTalepleri = new DataTable('#musteri-talepleri', {
+                        paging: false,
+                        searching: true,
+                        info: false,
+                        layout: {
+                            topStart: {
+                                //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                            }
+                        },
+                        columnDefs: [{ width: '20%', targets: 0 }]
+                    });
+
+                    let sikayetler = new DataTable('#sikayetler', {
+                        paging: false,
+                        searching: true,
+                        info: false,
+                        layout: {
+                            topStart: {
+                                //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                            }
+                        },
+                        columnDefs: [{ width: '20%', targets: 0 }]
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="modal" id="musteri-ekle">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans "Müşteri Ekle" %}
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-element">
+                    <label for="musteri">{% trans "Müşteri" %}</label>
+                    <select name="musteri" id="musteri">
+                        <option value="" selected disabled></option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="kat">{% trans "Kat" %}</label>
+                    <select name="kat" id="kat">
+                        <option value="" selected disabled></option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="no">{% trans "No" %}</label>
+                    <select name="no" id="no">
+                        <option value="" selected disabled></option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                        <option value="...">...</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="submit">{% trans "Müşteri Ekle" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="yeni-evrak-ekle">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans "Evrak Ekle" %}
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/{{ dil }}{% url 'crm:daire_evrak_ekle' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="daire_id" value="{{ daire_detayi.id }}">
+                <div class="form-element">
+                    <label for="evrak_adi">{% trans "Evrak Adı" %}</label>
+                    <input type="text" name="evrak_adi" id="evrak_adi" required>
+                </div>
+                <div class="form-element">
+                    <label for="evrak">{% trans "Evrak" %}</label>
+                    <input type="file" name="evrak" id="evrak" required>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="submit">{% trans "Ekle" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="daire-ata">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans "Müşteriye Daire Ata" %}
+        </div>
+        <div class="modal-body">
+            <form id="daireAtaForm" method="POST" action="/{{dil}}{% url 'crm:daire_musteriye_ata' %}">
+                {% csrf_token %}
+                <input type="hidden" name="daire" value="{{daire_detayi.id}}">
+                <input type="hidden" name="blok" value="{{daire_detayi.blog_bilgisi.id}}">
+                <input type="hidden" name="kat" value="{{daire_detayi.kat}}">
+                <input type="hidden" name="daire_no" value="{{daire_detayi.daire_no}}">
+                <div class="form-element">
+                    <label for="musteri">{% trans "Müşteri" %}</label>
+                    <select name="musteri" id="musteri" required>
+                        <option value="" selected disabled></option>
+                        {% for musteri in musteriler %}
+                        <option value="{{musteri.id}}">{{musteri.musteri_adi}} {{musteri.musteri_soyadi}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="submit" onclick="validateForm(event)">{% trans "Ata" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal(modalID, close = true) {
+        if (close) {
+            closeModal();
+        }
+        $("#" + modalID).css("display", "flex").hide().fadeIn()
+    }
+
+    function closeModal(modalID = "") {
+        if (modalID.length === 0) {
+            $(".modal").fadeOut();
+        } else {
+            $("#" + modalID).fadeOut();
+        }
+    }
+
+    $(".modal").on("click", function (e) {
+        if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+            closeModal();
+        }
+    });
+
+    function validateForm(event) {
+        const musteri = document.getElementById('musteri').value;
+        if (!musteri) {
+            alert('Lütfen bir müşteri seçin.');
+            event.preventDefault();
+        }
+    }
+
+    document.getElementById('blok').addEventListener('change', function() {
+        const blok_id = this.value;
+        fetch("{% url 'crm:get_katlar' %}?blok_id=" + blok_id)
+            .then(response => response.json())
+            .then(data => {
+                const katSelect = document.getElementById('kat');
+                katSelect.innerHTML = '<option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>'; // Clear previous options
+                data.forEach(kat => {
+                    const option = document.createElement('option');
+                    option.value = kat.id;
+                    option.textContent = kat.kat_adi;
+                    katSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('kat').addEventListener('change', function() {
+        const blok_id = document.getElementById('blok').value;
+        const kat_bilgisi = this.value;
+        fetch("{% url 'crm:get_daireler' %}?blok_id=" + blok_id + "&kat=" + kat_bilgisi)
+            .then(response => response.json())
+            .then(data => {
+                const daireSelect = document.getElementById('daire');
+                daireSelect.innerHTML = '<option value="" selected disabled>{% trans "Daire Seçiniz" %}</option>'; // Clear previous options
+                data.forEach(daire => {
+                    const option = document.createElement('option');
+                    option.value = daire.id;
+                    option.textContent = daire.daire_adi;
+                    daireSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+
+{% endblock sidebar %}

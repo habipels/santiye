@@ -1,0 +1,144 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+
+    <link rel="stylesheet" href="{% static 'go/content/style/style.css' %}">
+    <link rel="stylesheet" href="{% static 'go/content/style/custom-checklist.css' %}">
+    <link rel="stylesheet" href="{% static 'go/content/style/project-page.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{% static 'go/content/script/project-manager.js' %}"></script>
+{% endblock head %}
+{% block sidebar %}
+{% if hash_bilgi %}
+
+{% else %}
+<form action="/{{dil}}{% url 'main:santiye_proje_olustur' %}" method="post">
+   {% csrf_token %}
+    <main>
+        <div class="page-header">
+            <div class="page-title">
+                <h2>{% trans "R5 Blok Detayları" %}</h2>
+                <p>{% trans "Blok bilgilerini düzenleyin ve kontrol listesi oluşturun" %}</p>
+            </div>
+            <div class="page-actions">
+                <button type="button" class="button" id="previewUnits">
+                    <i class="fa-solid fa-eye"></i> {% trans "Ön İzleme" %}
+                </button>
+                <button type="submit" class="button button-primary" id="saveProject">
+                    <i class="fa-solid fa-save"></i> {% trans "Kaydet" %}
+                </button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Temel Bilgiler -->
+                    <div class="section">
+                        <div class="section-title">{% trans "Blok Bilgileri" %}</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{% trans "Blok Adı" %}</label>
+                                <input type="text" class="form-control" disabled id="blockName" value="{{blok.blog_adi}}">
+                            </div>
+                            <div class="form-group">
+                                <label>{% trans "Kat Sayısı" %}</label>
+                                <input type="number" class="form-control" disabled id="floorCount" value="{{blok.kat_sayisi|stringformat:'.F'}}">
+                            </div>
+                            <div class="form-group">
+                                <label>{% trans "Kat Başına Daire" %}</label>
+                                <input type="number" name="blok" hidden  value="{{blok.id}}">
+                                <input type="number" name="kat_basina_daire" class="form-control" id="unitsPerFloor" value="3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daire Numaralandırma -->
+                    <div class="section">
+                        <div class="section-title">{% trans "Daire Numaralandırma" %}</div>
+                        <div class="form-group">
+                            <label>{% trans "Başlangıç Numarası" %}</label>
+                            <input type="number" class="form-control" id="startNumber" value="101">
+                        </div>
+                        <div class="numbering-preview">
+                            <div class="preview-header">
+                                <h4>{% trans "Ön İzleme" %}</h4>
+                                <div class="preview-filters">
+                                    <button type="button" class="preview-filter active" data-view="floors">{% trans "Kat Bazlı" %}</button>
+                                    <button type="button" class="preview-filter" data-view="list">{% trans "Liste" %}</button>
+                                </div>
+                            </div> 
+                            <div class="preview-container">
+                                <div id="numberingPreview">
+                                    <!-- Ön izleme içeriği buraya gelecek -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ortak Alanlar -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">{% trans "Ortak Alanlar" %}</div>
+                            <div class="section-actions">
+                                <button type="button" class="button button-outline" id="addCommonArea">
+                                    <i class="fa-solid fa-plus"></i> {% trans "Alan Ekle" %}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="common-areas-list" id="commonAreasList">
+                            <!-- Örnek ortak alan -->
+                            <div class="area-item">
+                                <input type="text" name="ortak_alanadi" class="form-control" placeholder="{% trans "Ortak alan adı..." %}">
+                                <select name="verisi" class="form-control">
+                                    <option value="-1">{% trans "Alan Tipi Seçin" %}</option>
+                                    <option value="0">{% trans "Koridor" %}</option>
+                                    <option value="1">{% trans "Merdiven" %}</option>
+                                    <option value="2">{% trans "Giriş" %}</option>
+                                    <option value="3">{% trans "Diğer" %}</option>
+                                </select>
+                                <button type="button" class="button-icon remove-area">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cepheler -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">{% trans "Cepheler" %}</div>
+                            <div class="section-actions">
+                                <button type="button" class="button button-outline" id="addFacade">
+                                    <i class="fa-solid fa-plus"></i> {% trans "Cephe Ekle" %}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="facades-list" id="facadesList">
+                            <!-- Örnek cephe -->
+                            <div class="facade-item">
+                                <input type="text" name="cepheaciklmasi" class="form-control" placeholder="{% trans "Cephe adı..." %}">
+                                <select name="cephe_verisi"  class="form-control">
+                                    <option value="-1">{% trans "Yön Seçin" %}</option>
+                                    <option value="0">{% trans "Kuzey" %}</option>
+                                    <option value="1">{% trans "Güney" %}</option>
+                                    <option value="2">{% trans "Doğu" %}</option>
+                                    <option value="3">{% trans "Batı" %}</option>
+                                </select>
+                                <button type="button" class="button-icon remove-facade">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</form>
+{% endif %}
+
+{% endblock sidebar %}

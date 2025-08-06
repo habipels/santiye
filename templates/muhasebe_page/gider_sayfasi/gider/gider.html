@@ -1,0 +1,340 @@
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+ {% if hash_bilgi %}
+    <style>
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table.display.nowrap {
+            width: 100% !important;
+            table-layout: auto;
+        }
+        
+        /* DataTables responsive ayarları */
+        .dataTables_wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        /* Tablo sütun genişlikleri */
+        table.dataTable th,
+        table.dataTable td {
+            white-space: nowrap;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Cari adı sütunu için özel stil */
+        table.dataTable td:nth-child(3) {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Açıklama sütunu için özel stil */
+        table.dataTable td:nth-child(4) {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* İlk sütun (İncele) için sabit genişlik */
+        table.dataTable th:first-child,
+        table.dataTable td:first-child {
+            width: 60px;
+            max-width: 60px;
+            min-width: 60px;
+        }
+        
+        /* Fatura No için sabit genişlik */
+        table.dataTable th:nth-child(2),
+        table.dataTable td:nth-child(2) {
+            width: 100px;
+            max-width: 100px;
+        }
+        
+        /* Durum sütunu için */
+        table.dataTable th:last-child,
+        table.dataTable td:last-child {
+            width: 80px;
+            max-width: 80px;
+        }
+        
+        /* Dark Mode stili - invoice-detail-modal için */
+
+   
+        
+
+        /* Scrollbar stillendirme */
+        .dark-mode .invoice-detail-modal::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .dark-mode .invoice-detail-modal::-webkit-scrollbar-track {
+            background: #232c42;
+        }
+        
+        .dark-mode .invoice-detail-modal::-webkit-scrollbar-thumb {
+            background: #3a4662;
+            border-radius: 5px;
+        }
+        
+        /* Z-index ile modal'ı üstte tutma */
+        body.dark-mode {
+            position: relative;
+        }
+        
+        .dark-mode .invoice-detail-modal {
+            z-index: 9999;
+        }
+    </style>
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
+      <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Basit ve küçük kaydırma çubuğu -->
+<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+
+<!-- Dalgalanma efekti -->
+<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+
+<!-- Feather simgeleri -->
+<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+
+<!-- Lord ikon -->
+<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+
+<!-- Genel eklentiler -->
+<script src="{% static 'assets/js/plugins.js' %}"></script>
+
+<!-- Özel script dosyanız -->
+<script src="{% static 'assets/js/custom.js' %}"></script>
+
+
+<main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                        <a href="javascript:void(0);" onclick="window.history.back();">
+                            <i class="icon icon-arrow-circle-left"></i>
+                        </a>  {% trans 'Gider Faturaları' %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Muhasebe' %}</a></li>
+                    <li><a href="#">{% trans 'Gider Faturası' %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+                    <button class="page-primary-btn" onclick="window.location.href='/{{dil}}{% url 'accounting:gider_ekle_2' hashler %}'">
+                    {% trans 'Gider Faturası Oluştur' %}</button>
+            </div>
+        </div>
+
+                
+                        <div class="large-stats-card table-card table-detail-card">
+                                <!-- Tablo arama inputu <div class="stats-header">
+                                    <div class="stats-title">{% trans 'Hakedişler' %}</div>
+                                    
+                                    <div class="stats-search">
+                                        <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                                        <button><i class="icon icon-search"></i></button>
+                                    
+                                    </div>-->
+                                </div>
+                              
+                                    <div class="table-wrapper">
+                                        <table id="example" class="display nowrap" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>{% trans "İncele" %}</th>
+                                                    <th>{% trans "Fatura No" %}</th>
+                                                    <th>{% trans "Cari" %}</th>
+                                                    <th>{% trans "Açıklama" %}</th>
+                                                    <th>{% trans "Etiket 1" %}</th>
+                                                    <th>{% trans "Etiket 2" %}</th>
+                                                    <th>{% trans "Etiket 3" %}</th>
+                                                    <th>{% trans "Fatura Tarihi" %}</th>
+                                                    <th>{% trans "Vade Tarihi" %}</th>
+                                                    <th>{% trans "Fatura Bedeli" %}</th>
+                                                    <th>{% trans "Kalan Tutar" %}</th>
+                                                    <th>{% trans "DURUM" %}</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>{% trans "İncele" %}</th>
+                                                    <th>{% trans "Fatura No" %}</th>
+                                                    <th>{% trans "Cari" %}</th>
+                                                    <th>{% trans "Açıklama" %}</th>
+                                                    <th>{% trans "Etiket 1" %}</th>
+                                                    <th>{% trans "Etiket 2" %}</th>
+                                                    <th>{% trans "Etiket 3" %}</th>
+                                                    <th>{% trans "Fatura Tarihi" %}</th>
+                                                    <th>{% trans "Vade Tarihi" %}</th>
+                                                    <th>{% trans "Fatura Bedeli" %}</th>
+                                                    <th>{% trans "Kalan Tutar" %}</th>
+                                                    <th>{% trans "DURUM" %}</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+
+                                    </div>
+
+                        
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!--end col-->
+                </div>
+                <!--end row-->
+            </div>
+        </div>
+        <div class="invoice-detail-modal" id="invoice-detail-modal">
+           
+        </div>
+        <div id="tahsilat-makbuzu-modal" class="tahsilat-makbuzu-modal">
+          
+        </div>
+
+ 
+    
+    <!-- end main content-->
+<div id="fatura_silme_divi">
+
+</main>
+    {% else %}
+
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
+      <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Basit ve küçük kaydırma çubuğu -->
+<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+
+<!-- Dalgalanma efekti -->
+<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+
+<!-- Feather simgeleri -->
+<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+
+<!-- Lord ikon -->
+<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+
+<!-- Genel eklentiler -->
+<script src="{% static 'assets/js/plugins.js' %}"></script>
+
+<!-- Özel script dosyanız -->
+<script src="{% static 'assets/js/custom.js' %}"></script>
+
+
+<main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                        <a href="javascript:void(0);" onclick="window.history.back();">
+                            <i class="icon icon-arrow-circle-left"></i>
+                        </a>  {% trans 'Gider Faturaları' %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="javascript: void(0);">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Muhasebe' %}</a></li>
+                    <li><a href="#">{% trans 'Gider Faturası' %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+                    <button class="page-primary-btn" onclick="window.location.href='/{{dil}}{% url 'accounting:gider_ekle' %}'">
+                    {% trans 'Gider Faturası Oluştur' %}</button>
+            </div>
+        </div>
+
+                
+                        <div class="large-stats-card table-card table-detail-card">
+                                <!-- Tablo arama inputu <div class="stats-header">
+                                    <div class="stats-title">{% trans 'Hakedişler' %}</div>
+                                    
+                                    <div class="stats-search">
+                                        <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                                        <button><i class="icon icon-search"></i></button>
+                                    
+                                    </div>-->
+                                </div>
+                              
+                                    <div class="table-wrapper">
+                                        <table id="example" class="display nowrap" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>{% trans "İncele" %}</th>
+                                                    <th>{% trans "Fatura No" %}</th>
+                                                    <th>{% trans "Cari" %}</th>
+                                                    <th>{% trans "Açıklama" %}</th>
+                                                    <th>{% trans "Kategori" %}</th>
+                                                    <th>{% trans "Etiket 1" %}</th>
+                                                    <th>{% trans "Etiket 2" %}</th>
+                                                    <th>{% trans "Etiket 3" %}</th>
+                                                    <th>{% trans "Fatura Tarihi" %}</th>
+                                                    <th>{% trans "Vade Tarihi" %}</th>
+                                                    <th>{% trans "Fatura Bedeli" %}</th>
+                                                    <th>{% trans "Kalan Tutar" %}</th>
+                                                    <th>{% trans "DURUM" %}</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>{% trans "İncele" %}</th>
+                                                    <th>{% trans "Fatura No" %}</th>
+                                                    <th>{% trans "Cari" %}</th>
+                                                    <th>{% trans "Açıklama" %}</th>
+                                                    <th>{% trans "Kategori" %}</th>
+                                                    <th>{% trans "Etiket 1" %}</th>
+                                                    <th>{% trans "Etiket 2" %}</th>
+                                                    <th>{% trans "Etiket 3" %}</th>
+                                                    <th>{% trans "Fatura Tarihi" %}</th>
+                                                    <th>{% trans "Vade Tarihi" %}</th>
+                                                    <th>{% trans "Fatura Bedeli" %}</th>
+                                                    <th>{% trans "Kalan Tutar" %}</th>
+                                                    <th>{% trans "DURUM" %}</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+
+                                    </div>
+
+                        
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!--end col-->
+                </div>
+                <!--end row-->
+            </div>
+        </div>
+        <div class="invoice-detail-modal" id="invoice-detail-modal">
+           
+        </div>
+        <div id="tahsilat-makbuzu-modal" class="tahsilat-makbuzu-modal">
+          
+        </div>
+
+ 
+    
+    <!-- end main content-->
+<div id="fatura_silme_divi">
+
+</main>
+    {% endif %}

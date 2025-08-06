@@ -1,0 +1,1475 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+
+{% block sidebar %}
+{% if hash_bilgi %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ <style>
+        /* Dropdown Menüsü için Temel Stiller */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-menu {
+            display: none; /* Başlangıçta görünmez */
+            position: absolute;
+            right: 0; /* Menü sağa yaslı */
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-menu a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block; /* Menü görünür hale gelir */
+        }
+
+        .btn {
+            background: transparent; /* Buton arka planı şeffaf */
+            border: none; /* Kenar çizgisi yok */
+            cursor: pointer; /* İmleç işaretçisi */
+        }
+    </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+                
+      
+
+            
+                <main >
+                    <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Dosya Yöneticisi' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Dosya Yöneticisi' %}</a></li>
+                </ul>
+            </div>
+        </div>
+                    <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-1 p-1">
+                        <div class="file-manager-sidebar">
+                            <div class="p-3 d-flex flex-column h-100">
+                                <div class="mb-3">
+                                    <h5 class="mb-0 fw-bold">{% trans 'Depolama Alanım' %}</h5>
+                                </div>
+                                <div class="search-box">
+                                    <input type="text" class="form-control bg-light border-light" placeholder="Search here...">
+                                    <i class="ri-search-2-line search-icon"></i>
+                                </div>
+                                <div class="mt-3 mx-n4 px-4 file-menu-sidebar-scroll" data-simplebar>
+                                     <ul class="list-unstyled file-manager-menu">
+                                        <li>
+                                            <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true" aria-controls="collapseExample">
+                                                <i class="ri-folder-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Şantiye Klasörlerim' %}</span>
+                                            </a>
+                                            <div class="collapse show" id="collapseExample">
+                                                <ul class="sub-menu list-unstyled">
+                                                    <li>
+                                                        <a href="/{{dil}}{% url 'main:sozlesmler_depolamam_2' hashler %}">{% trans 'Sözleşme Dosyaları' %}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/{{dil}}{% url 'main:hakedis_depolamam_2' hashler %}">{% trans 'Hakediş Dosyaları' %}</a>
+                                                    </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:dokumanlar_2' hashler %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Dökümanlarım' %}</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:media_dosyalari_2' hashler %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Media Dosyalarım' %}</span></a>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:zamana_dosyalari_2' hashler %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Geçmiş' %}</span></a>
+                                        </li>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:silinen_dosyalari_2' hashler %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Silinen Dosyalar' %}</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+
+                                <div class="mt-auto">
+                                    <h6 class="fs-11 text-muted text-uppercase mb-3">{% trans 'Depolama Durumum' %}</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <i class="ri-database-2-line fs-17"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3 overflow-hidden">
+                                            {% kullanici_dosya_boyutu request.user.id %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-manager-content w-100 p-3 py-0">
+                            <div class="mx-n3 pt-4 px-4 file-manager-content-scroll" data-simplebar>
+                                <div id="folder-list" class="mb-2">
+                                    <div class="row justify-content-beetwen g-2 mb-3">
+
+                                        <div class="col">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0 me-2 d-block d-lg-none">
+                                                    <button type="button" class="btn btn-soft-success btn-icon btn-sm fs-16 file-menu-btn">
+                                                        <i class="ri-menu-2-fill align-bottom"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="flex-grow-1">
+                       
+                                                     <h6 class="fs-16 mb-0"> <a href="/{{dil}}{% url 'main:depolama_sistemim_2' hashler %}">{% trans 'Ana Depolama' %}</a> > {% klasor_olayi id_bilgisi %}</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                        <div class="col-auto">
+                                            <div class="d-flex gap-2 align-items-start">
+                                               
+    {% dosya_ekleme_yetenegi request.user.id as bilgisi_al %}
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.dosya_yoneticisi_olusturma %}
+                                                          <button class="status-primary status-btn" onclick="openModal('yeni-kategori')"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Klasör Oluştur' %} </button>
+                                                           {% if bilgisi_al %}
+                                                           <button class="status-primary status-btn"  onclick="openModal('dosyaekle')" ><i class="ri-add-line align-bottom me-1"></i>{% trans 'Dosya Ekle' %} </button>                               
+                                                           {% else %}
+                                                           {% endif %}
+                                                           
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                         <button class="status-primary status-btn"  onclick="openModal('yeni-kategori')"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Klasör Oluştur' %}</button>
+                                                         {% if bilgisi_al %}
+                                                           <button class="status-primary status-btn"  onclick="openModal('dosyaekle')" ><i class="ri-add-line align-bottom me-1"></i>{% trans 'Dosya Ekle' %} </button>                               
+                                                           {% else %}
+                                                           {% endif %}
+                                                {% endif %}
+
+                                                
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                    </div>
+                                    <!--end row-->
+                                    <div class="row" id="folderlist-data">
+                                        {% for i in santiyeler %}
+                                        <div class="col-xxl-3 col-6 folder-card">
+                                            <div class="card bg-light shadow-none" id="folder-1">
+                                                <div class="card-body">
+                                                    <div class="d-flex mb-1">
+                                                        <div class="form-check form-check-danger mb-3 fs-15 flex-grow-1">
+                                                            <input class="form-check-input" type="checkbox" value="" id="folderlistCheckbox_1" >
+                                                            <label class="form-check-label" for="folderlistCheckbox_1"></label>
+                                                        </div>
+                                                        <div class="dropdown">
+            <button data-bs-toggle="dropdown" class="btn btn-ghost-primary btn-icon btn-sm dropdown-toggle" type="button" aria-expanded="false">
+               
+            </button>
+           
+    <ul class="dropdown-menu">
+      {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.dosya_yoneticisi_duzenleme %}
+                            <li>
+                                <a class="dropdown-item edit-folder-list" onclick="openModal('yeni-kategori{{i.id}}')" role="button">{% trans 'Yeniden Adlandır' %}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li>
+                            <a class="dropdown-item edit-folder-list" onclick="openModal('yeni-kategori{{i.id}}')" role="button">{% trans 'Yeniden Adlandır' %}</a>
+                        </li>
+                    {% endif %}
+
+                    {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.dosya_yoneticisi_silme %}
+                            <li>
+                                <a class="dropdown-item edit-folder-list" onclick="openModal('deleteRecordModal{{i.id}}')" role="button">{% trans 'Sil' %}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li>
+                            <a class="dropdown-item edit-folder-list" onclick="openModal('deleteRecordModal{{i.id}}')" role="button">{% trans 'Sil' %}</a>
+                        </li>
+                    {% endif %}
+    </ul>
+  
+            
+        </div>
+                                                    </div>
+
+                                                    <div class="text-center">
+                                                        <div class="mb-2">
+                                                            <i class="ri-folder-2-fill align-bottom text-warning display-5"></i>
+                                                        </div>
+                                                        <h6 class="fs-15 folder-name">{{i.klasor_adi}}</h6>
+                                                    </div>
+                                                    <div class="hstack mt-4 text-muted">
+                                                        {% dosya_sayisi_ve_boyutu i.id %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                            {% endfor %}
+                                    </div>
+                                    <!--end row-->
+                                    
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <div class="pagination-wrap hstack gap-2">
+                                        <ul class="pagination pagination-m justify-content-center">
+
+                                            {% if medya.has_previous %}
+                                              <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                            
+                                              {% if medya.number > 3 %}
+                                            
+                                                <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                {% if medya.number > 4 %}
+                                                  <li class="page-item"><span class="page-link">...</span></li>
+                                                {% endif %}
+                                              {% endif %}
+                                            {% endif %}
+                                            
+                                            {% for num in medya.paginator.page_range %}
+                                              {% if medya.number == num %}
+                                                <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                              {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                              {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% if medya.has_next %}
+                                              {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                <li class="page-item"><span class="page-link">...</span></li>
+                                                <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                              {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                              {% endif %}
+                                            
+                                              <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                            {% endif %}
+                                            </ul>
+                                    </div>
+                                </div>
+                                <div class="table-responsive table-card mt-3 mb-1">
+                                    <table class="table align-middle table-nowrap" id="customerTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th scope="col" style="width: 50px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="checkAll" value="option">
+                                                    </div>
+                                                </th>
+                                                <th class="sort" data-sort="customer_name">{% trans 'Klasör Adı' %}</th>
+                                                <th class="sort" data-sort="email">{% trans 'Dosya Adı' %}</th>
+                                                <th class="sort" data-sort="date">{% trans 'Açıklama' %}</th>
+                                                <th class="sort" data-sort="phone">{% trans 'Yüklenme Tarihi' %}</th>
+                                                <th class="sort" data-sort="date">{% trans 'Boyut' %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="list form-check-all">
+                                        {% for i in dosyalarim %}
+                                            <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                <th scope="row">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
+                                                    </div>
+                                                </th>
+                                                <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
+                                                <td class="customer_name">{{i.proje_ait_bilgisi.klasor_adi}}
+                                                </td>
+                                                <td class="email">
+                                                <a target="_blank" href="{{i.dosya.url}}">{{i.dosya_adi}}</a></td>
+                                                <td class="date">
+                                                    {{i.aciklama}}
+                                                
+                                                </td>
+                                                <td class="date">
+                                                    {{i.kayit_tarihi}}
+                                                
+                                                </td>
+                                                <td class="date">
+                                                {% if i.dosya %}
+                                                {% mb_donusturme i.dosya %} {% trans 'MB' %}
+                                                {% else %}
+                                                0 {% trans 'MB' %}
+                                                {% endif %}
+                                                    
+                                                
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-start">
+                                                        
+                                                        <div class="remove" style="margin-left:10px;">
+                                                            <button class="btn btn-sm btn-danger remove-item-btn" onclick="openModal('dosya_sil{{i.id}}')" >{% trans 'Dosyayı Sil' %}</button>
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="noresult" style="display: none">
+                                        <div class="text-center">
+                                            <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
+                                            </lord-icon>
+                                            <h5 class="mt-2">Sorry! No Result Found</h5>
+                                            <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any
+                                                orders for you search.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-manager-detail-content p-3 py-0">
+                            <div class="mx-n3 pt-3 px-3 file-detail-content-scroll" data-simplebar>
+                                <div id="folder-overview">
+                                    <div class="d-flex align-items-center pb-3 border-bottom border-bottom-dashed">
+                                        <h5 class="flex-grow-1 fw-bold mb-0">Overview</h5>
+                                        <div>
+                                            <button type="button" class="btn btn-soft-danger btn-icon btn-sm fs-16 close-btn-overview">
+                                                <i class="ri-close-fill align-bottom"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="simple_dount_chart" data-colors='["--vz-info", "--vz-danger", "--vz-primary", "--vz-success"]' class="apex-charts mt-3" dir="ltr"></div>
+                                    <div class="mt-4">
+                                        <ul class="list-unstyled vstack gap-4">
+                                            {% for i in santiyeler %}
+                                                 <li>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-shrink-0">
+                                                        <div class="avatar-xs">
+                                                            <div class="avatar-title rounded bg-secondary-subtle text-secondary">
+                                                                <i class="ri-file-text-line fs-17"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-3">
+                                                        <h5 class="mb-1 fs-15">{{i.klasor_adi}}</h5>
+                                                        <p class="mb-0 fs-12 text-muted">2348 files</p>
+                                                    </div>
+                                                    <b>27.01 GB</b>
+                                                </div>
+                                            </li>
+                                            {% endfor %}
+                                           
+                                        </ul>
+                                        
+                                    </div>
+
+                                    <div class="pb-3 mt-auto">
+                                        <div class="alert alert-danger d-flex align-items-center mb-0">
+                                            <div class="flex-shrink-0">
+                                                <i class="ri-cloud-line text-danger align-bottom display-5"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h5 class="text-danger fs-14">Upgrade to Pro</h5>
+                                                <p class="text-muted mb-2">Get more space for your...</p>
+                                                <button class="btn btn-sm btn-danger"><i class="ri-upload-cloud-line align-bottom"></i> Upgrade Now</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="file-overview" class="h-100">
+                                    <div class="d-flex h-100 flex-column">
+                                        <div class="d-flex align-items-center pb-3 border-bottom border-bottom-dashed mb-3 gap-2">
+                                            <h5 class="flex-grow-1 fw-bold mb-0">File Preview</h5>
+                                            <div>
+                                                <button type="button" class="btn btn-ghost-primary btn-icon btn-sm fs-16 favourite-btn">
+                                                    <i class="ri-star-fill align-bottom"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-soft-danger btn-icon btn-sm fs-16 close-btn-overview">
+                                                    <i class="ri-close-fill align-bottom"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="pb-3 border-bottom border-bottom-dashed mb-3">
+                                            <div class="file-details-box bg-light p-3 text-center rounded-3 border border-light mb-3">
+                                                <div class="display-4 file-icon">
+                                                    <i class="ri-file-text-fill text-secondary"></i>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-icon btn-sm btn-ghost-success float-end fs-16"><i class="ri-share-forward-line"></i></button>
+                                            <h5 class="fs-16 mb-1 file-name">html.docx</h5>
+                                            <p class="text-muted mb-0 fs-12"><span class="file-size">0.3 KB</span>, <span class="create-date">19 Apr, 2022</span></p>
+                                        </div>
+                                        <div>
+                                            <h5 class="fs-12 text-uppercase text-muted mb-3">File Description :</h5>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-borderless table-nowrap table-sm">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row" style="width: 35%;">File Name :</th>
+                                                            <td class="file-name">html.docx</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">File Type :</th>
+                                                            <td class="file-type">Documents</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Size :</th>
+                                                            <td class="file-size">0.3 KB</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Created :</th>
+                                                            <td class="create-date">19 Apr, 2022</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Path :</th>
+                                                            <td class="file-path"><div class="user-select-all text-truncate">*:\projects\src\assets\images</div></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <div>
+                                                <h5 class="fs-12 text-uppercase text-muted mb-3">Share Information:</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-borderless table-nowrap table-sm">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row" style="width: 35%;">Share Name :</th>
+                                                                <td class="share-name">\\*\Projects</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Share Path :</th>
+                                                                <td class="share-path">velzon:\Documents\</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-auto border-top border-top-dashed py-3">
+                                            <div class="hstack gap-2">
+                                                <button type="button" class="btn btn-soft-primary w-100"><i class="ri-download-2-line align-bottom me-1"></i> Download</button>
+                                                <button type="button" class="btn btn-soft-danger w-100 remove-file-overview" data-remove-id="" data-bs-toggle="modal" data-bs-target="#removeFileItemModal"><i class="ri-close-fill align-bottom me-1"></i> Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <!-- container-fluid -->
+                <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            
+            <!-- End Page-content -->
+            <!-- START CREATE FOLDER MODAL -->
+            <div class="modal" id="dosyaekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Dosya Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:dosya_ekle_2' hashler %}" method="post" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            
+                                <div class="mb-3" id="modal-id" style="display: none;">
+                                    <label for="id-field" class="form-label">{% trans 'ID' %}</label>
+                                    <input type="text" id="id-field" class="form-control" placeholder="{% trans 'ID' %}" readonly />
+                                    <input type="text" id="id-field"  name="ust_klasor" hidden value="{{id_bilgisi}}" class="form-control" placeholder="{% trans 'ID' %}" readonly />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date-field"  class="form-label">{% trans 'Dosya Adı' %}</label>
+                                    <input type="tel" name="klasor" required id="date-field" class="form-control" placeholder="{% trans 'Dosya Adı' %}"  />
+                                    <div class="invalid-feedback">{% trans 'Lütfen telefon alanını boş bırakmayınız.' %}</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email-field" class="form-label">{% trans 'Tarih' %}</label>
+                                    <input type="date" required name="tarih" class="form-control" placeholder="{% trans 'Tarih' %}" >
+                                    <div class="invalid-feedback">{% trans 'Lütfen Tarihi alanını boş bırakmayınız' %}.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
+                                    <textarea name="aciklama" required class="form-control" placeholder="{% trans 'Enter Description' %}" ></textarea>
+                                    
+                                </div>
+                        <div class="form-group">
+                        <label>{% trans 'Dosya Yükle' %}</label>
+                        <input required name="file" type="file" class="form-control" />
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Dosyayı Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+      
+        <!-- END CREATE FOLDER MODAL -->
+          
+            {% for i in santiyeler  %}
+            
+        <div class="modal" id="yeni-kategori{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Klasör Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor__yeniden_adlandir_2' hashler %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                               
+                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                    
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Klasör Adı' %}</label>
+                        <input type="text" value="{{i.klasor_adi}}" name="klasor"  required id="kategori-adi">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Klasör Düzenle' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+                <div class="modal" id="deleteRecordModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'main:klasor_sil_2' hashler %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    
+                                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('deleteRecordModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+            {% endfor %}
+<div class="modal" id="yeni-kategori">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Klasör Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor_olustur_2' hashler %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                                 <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
+               
+                    
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Klasör Adı' %}</label>
+                        <input type="text" name="klasor" required id="kategori-adi">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Klasör Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+       
+            {% for i in dosyalarim  %}
+            <div class="modal" id="dosya_sil{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_sil_2' hashler %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">
+                                    <input type="hidden" name="klasor" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('dosya_sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+            
+            {% endfor %}
+   
+  <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+  <script>
+        // Dropdown menüsünü açma/kapama işlevi
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Menü dışında bir yere tıklanırsa menüyü kapatma
+        window.onclick = function(event) {
+            if (!event.target.matches('.btn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        // Modal açma işlevi (örnek)
+        
+    </script>      
+{% else %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ <style>
+        /* Dropdown Menüsü için Temel Stiller */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-menu {
+            display: none; /* Başlangıçta görünmez */
+            position: absolute;
+            right: 0; /* Menü sağa yaslı */
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-menu a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block; /* Menü görünür hale gelir */
+        }
+
+        .btn {
+            background: transparent; /* Buton arka planı şeffaf */
+            border: none; /* Kenar çizgisi yok */
+            cursor: pointer; /* İmleç işaretçisi */
+        }
+    </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- custom Css-->
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
+    <!--Multi Select Date Picker Calender-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+                
+      
+
+            
+                <main >
+                    <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Dosya Yöneticisi' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Dosya Yöneticisi' %}</a></li>
+                </ul>
+            </div>
+        </div>
+                    <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-1 p-1">
+                        <div class="file-manager-sidebar">
+                            <div class="p-3 d-flex flex-column h-100">
+                                <div class="mb-3">
+                                    <h5 class="mb-0 fw-bold">{% trans 'Depolama Alanım' %}</h5>
+                                </div>
+                                <div class="search-box">
+                                    <input type="text" class="form-control bg-light border-light" placeholder="Search here...">
+                                    <i class="ri-search-2-line search-icon"></i>
+                                </div>
+                                <div class="mt-3 mx-n4 px-4 file-menu-sidebar-scroll" data-simplebar>
+                                     <ul class="list-unstyled file-manager-menu">
+                                        <li>
+                                            <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true" aria-controls="collapseExample">
+                                                <i class="ri-folder-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Şantiye Klasörlerim' %}</span>
+                                            </a>
+                                            <div class="collapse show" id="collapseExample">
+                                                <ul class="sub-menu list-unstyled">
+                                                    <li>
+                                                        <a href="/{{dil}}{% url 'main:sozlesmler_depolamam' %}">{% trans 'Sözleşme Dosyaları' %}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/{{dil}}{% url 'main:hakedis_depolamam' %}">{% trans 'Hakediş Dosyaları' %}</a>
+                                                    </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:dokumanlar' %}"><i class="ri-file-list-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Dökümanlarım' %}</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:media_dosyalari' %}"><i class="ri-image-2-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Media Dosyalarım' %}</span></a>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:zamana_dosyalari' %}"><i class="ri-history-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Geçmiş' %}</span></a>
+                                        </li>
+                                        </li>
+                                        <li>
+                                            <a href="/{{dil}}{% url 'main:silinen_dosyalari' %}"><i class="ri-delete-bin-line align-bottom me-2"></i> <span class="file-list-link">{% trans 'Silinen Dosyalar' %}</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+
+                                <div class="mt-auto">
+                                    <h6 class="fs-11 text-muted text-uppercase mb-3">{% trans 'Depolama Durumum' %}</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <i class="ri-database-2-line fs-17"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3 overflow-hidden">
+                                            {% kullanici_dosya_boyutu request.user.id %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-manager-content w-100 p-3 py-0">
+                            <div class="mx-n3 pt-4 px-4 file-manager-content-scroll" data-simplebar>
+                                <div id="folder-list" class="mb-2">
+                                    <div class="row justify-content-beetwen g-2 mb-3">
+
+                                        <div class="col">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0 me-2 d-block d-lg-none">
+                                                    <button type="button" class="btn btn-soft-success btn-icon btn-sm fs-16 file-menu-btn">
+                                                        <i class="ri-menu-2-fill align-bottom"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="flex-grow-1">
+                       
+                                                     <h6 class="fs-16 mb-0"> <a href="/{{dil}}{% url 'main:depolama_sistemim' %}">{% trans 'Ana Depolama' %}</a> > {% klasor_olayi id_bilgisi %}</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                        <div class="col-auto">
+                                            <div class="d-flex gap-2 align-items-start">
+                                               
+    {% dosya_ekleme_yetenegi request.user.id as bilgisi_al %}
+                                                {% if request.user.kullanicilar_db %}
+                                                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                {% if yetki.dosya_yoneticisi_olusturma %}
+                                                          <button class="status-primary status-btn" onclick="openModal('yeni-kategori')"><i class="ri-add-line align-bottom me-1"></i>{% trans 'Klasör Oluştur' %} </button>
+                                                           {% if bilgisi_al %}
+                                                           <button class="status-primary status-btn"  onclick="openModal('dosyaekle')" ><i class="ri-add-line align-bottom me-1"></i>{% trans 'Dosya Ekle' %} </button>                               
+                                                           {% else %}
+                                                           {% endif %}
+                                                           
+                                                {% else %}
+                                                                                                                
+                                                {% endif %}
+                                                {% else %}
+                                                         <button class="status-primary status-btn"  onclick="openModal('yeni-kategori')"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Klasör Oluştur' %}</button>
+                                                         {% if bilgisi_al %}
+                                                           <button class="status-primary status-btn"  onclick="openModal('dosyaekle')" ><i class="ri-add-line align-bottom me-1"></i>{% trans 'Dosya Ekle' %} </button>                               
+                                                           {% else %}
+                                                           {% endif %}
+                                                {% endif %}
+
+                                                
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                    </div>
+                                    <!--end row-->
+                                    <div class="row" id="folderlist-data">
+                                        {% for i in santiyeler %}
+                                        <div class="col-xxl-3 col-6 folder-card">
+                                            <div class="card bg-light shadow-none" id="folder-1">
+                                                <div class="card-body">
+                                                    <div class="d-flex mb-1">
+                                                        <div class="form-check form-check-danger mb-3 fs-15 flex-grow-1">
+                                                            <input class="form-check-input" type="checkbox" value="" id="folderlistCheckbox_1" >
+                                                            <label class="form-check-label" for="folderlistCheckbox_1"></label>
+                                                        </div>
+                                                        <div class="dropdown">
+            <button data-bs-toggle="dropdown" class="btn btn-ghost-primary btn-icon btn-sm dropdown-toggle" type="button" aria-expanded="false">
+               
+            </button>
+           
+    <ul class="dropdown-menu">
+      {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.dosya_yoneticisi_duzenleme %}
+                            <li>
+                                <a class="dropdown-item edit-folder-list" onclick="openModal('yeni-kategori{{i.id}}')" role="button">{% trans 'Yeniden Adlandır' %}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li>
+                            <a class="dropdown-item edit-folder-list" onclick="openModal('yeni-kategori{{i.id}}')" role="button">{% trans 'Yeniden Adlandır' %}</a>
+                        </li>
+                    {% endif %}
+
+                    {% if request.user.kullanicilar_db %}
+                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                        {% if yetki.dosya_yoneticisi_silme %}
+                            <li>
+                                <a class="dropdown-item edit-folder-list" onclick="openModal('deleteRecordModal{{i.id}}')" role="button">{% trans 'Sil' %}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li>
+                            <a class="dropdown-item edit-folder-list" onclick="openModal('deleteRecordModal{{i.id}}')" role="button">{% trans 'Sil' %}</a>
+                        </li>
+                    {% endif %}
+    </ul>
+  
+            
+        </div>
+                                                    </div>
+
+                                                    <div class="text-center">
+                                                        <div class="mb-2">
+                                                            <i class="ri-folder-2-fill align-bottom text-warning display-5"></i>
+                                                        </div>
+                                                        <h6 class="fs-15 folder-name">{{i.klasor_adi}}</h6>
+                                                    </div>
+                                                    <div class="hstack mt-4 text-muted">
+                                                        {% dosya_sayisi_ve_boyutu i.id %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--end col-->
+                                            {% endfor %}
+                                    </div>
+                                    <!--end row-->
+                                    
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <div class="pagination-wrap hstack gap-2">
+                                        <ul class="pagination pagination-m justify-content-center">
+
+                                            {% if medya.has_previous %}
+                                              <li class="page-item"><a class="page-link" href="?page={{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">« Previous page</a></li>
+                                            
+                                              {% if medya.number > 3 %}
+                                            
+                                                <li class="page-item"><a class="page-link" href="?page=1{{ medya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">1</a></li>
+                                                {% if medya.number > 4 %}
+                                                  <li class="page-item"><span class="page-link">...</span></li>
+                                                {% endif %}
+                                              {% endif %}
+                                            {% endif %}
+                                            
+                                            {% for num in medya.paginator.page_range %}
+                                              {% if medya.number == num %}
+                                                <li class="page-item"><a class="page-link " style="color:black;" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                              {% elif num > medya.number|add:'-3' and num < medya.number|add:'3' %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a></li>
+                                              {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% if medya.has_next %}
+                                              {% if medya.number < medya.paginator.num_pages|add:'-3' %}
+                                                <li class="page-item"><span class="page-link">...</span></li>
+                                                <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                              {% elif medya.number < medya.paginator.num_pages|add:'-2' %}
+                                                <li class="page-item"><a class="page-link" href="?page={{ medya.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ medya.paginator.num_pages }}</a></li>
+                                              {% endif %}
+                                            
+                                              <li class="page-item"><a class="page-link" href="?page={{ medya.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next Page »</a></li>
+                                            {% endif %}
+                                            </ul>
+                                    </div>
+                                </div>
+                                <div class="table-responsive table-card mt-3 mb-1">
+                                    <table class="table align-middle table-nowrap" id="customerTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th scope="col" style="width: 50px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="checkAll" value="option">
+                                                    </div>
+                                                </th>
+                                                <th class="sort" data-sort="customer_name">{% trans 'Klasör Adı' %}</th>
+                                                <th class="sort" data-sort="email">{% trans 'Dosya Adı' %}</th>
+                                                <th class="sort" data-sort="date">{% trans 'Açıklama' %}</th>
+                                                <th class="sort" data-sort="phone">{% trans 'Yüklenme Tarihi' %}</th>
+                                                <th class="sort" data-sort="date">{% trans 'Boyut' %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="list form-check-all">
+                                        {% for i in dosyalarim %}
+                                            <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                <th scope="row">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
+                                                    </div>
+                                                </th>
+                                                <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary"> </a></td>
+                                                <td class="customer_name">{{i.proje_ait_bilgisi.klasor_adi}}
+                                                </td>
+                                                <td class="email">
+                                                <a target="_blank" href="{{i.dosya.url}}">{{i.dosya_adi}}</a></td>
+                                                <td class="date">
+                                                    {{i.aciklama}}
+                                                
+                                                </td>
+                                                <td class="date">
+                                                    {{i.kayit_tarihi}}
+                                                
+                                                </td>
+                                                <td class="date">
+                                                {% if i.dosya %}
+                                                {% mb_donusturme i.dosya %} {% trans 'MB' %}
+                                                {% else %}
+                                                0 {% trans 'MB' %}
+                                                {% endif %}
+                                                    
+                                                
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-start">
+                                                        
+                                                        <div class="remove" style="margin-left:10px;">
+                                                            <button class="btn btn-sm btn-danger remove-item-btn" onclick="openModal('dosya_sil{{i.id}}')" >{% trans 'Dosyayı Sil' %}</button>
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="noresult" style="display: none">
+                                        <div class="text-center">
+                                            <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
+                                            </lord-icon>
+                                            <h5 class="mt-2">Sorry! No Result Found</h5>
+                                            <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any
+                                                orders for you search.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-manager-detail-content p-3 py-0">
+                            <div class="mx-n3 pt-3 px-3 file-detail-content-scroll" data-simplebar>
+                                <div id="folder-overview">
+                                    <div class="d-flex align-items-center pb-3 border-bottom border-bottom-dashed">
+                                        <h5 class="flex-grow-1 fw-bold mb-0">Overview</h5>
+                                        <div>
+                                            <button type="button" class="btn btn-soft-danger btn-icon btn-sm fs-16 close-btn-overview">
+                                                <i class="ri-close-fill align-bottom"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="simple_dount_chart" data-colors='["--vz-info", "--vz-danger", "--vz-primary", "--vz-success"]' class="apex-charts mt-3" dir="ltr"></div>
+                                    <div class="mt-4">
+                                        <ul class="list-unstyled vstack gap-4">
+                                            {% for i in santiyeler %}
+                                                 <li>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-shrink-0">
+                                                        <div class="avatar-xs">
+                                                            <div class="avatar-title rounded bg-secondary-subtle text-secondary">
+                                                                <i class="ri-file-text-line fs-17"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-3">
+                                                        <h5 class="mb-1 fs-15">{{i.klasor_adi}}</h5>
+                                                        <p class="mb-0 fs-12 text-muted">2348 files</p>
+                                                    </div>
+                                                    <b>27.01 GB</b>
+                                                </div>
+                                            </li>
+                                            {% endfor %}
+                                           
+                                        </ul>
+                                        
+                                    </div>
+
+                                    <div class="pb-3 mt-auto">
+                                        <div class="alert alert-danger d-flex align-items-center mb-0">
+                                            <div class="flex-shrink-0">
+                                                <i class="ri-cloud-line text-danger align-bottom display-5"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h5 class="text-danger fs-14">Upgrade to Pro</h5>
+                                                <p class="text-muted mb-2">Get more space for your...</p>
+                                                <button class="btn btn-sm btn-danger"><i class="ri-upload-cloud-line align-bottom"></i> Upgrade Now</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="file-overview" class="h-100">
+                                    <div class="d-flex h-100 flex-column">
+                                        <div class="d-flex align-items-center pb-3 border-bottom border-bottom-dashed mb-3 gap-2">
+                                            <h5 class="flex-grow-1 fw-bold mb-0">File Preview</h5>
+                                            <div>
+                                                <button type="button" class="btn btn-ghost-primary btn-icon btn-sm fs-16 favourite-btn">
+                                                    <i class="ri-star-fill align-bottom"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-soft-danger btn-icon btn-sm fs-16 close-btn-overview">
+                                                    <i class="ri-close-fill align-bottom"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="pb-3 border-bottom border-bottom-dashed mb-3">
+                                            <div class="file-details-box bg-light p-3 text-center rounded-3 border border-light mb-3">
+                                                <div class="display-4 file-icon">
+                                                    <i class="ri-file-text-fill text-secondary"></i>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-icon btn-sm btn-ghost-success float-end fs-16"><i class="ri-share-forward-line"></i></button>
+                                            <h5 class="fs-16 mb-1 file-name">html.docx</h5>
+                                            <p class="text-muted mb-0 fs-12"><span class="file-size">0.3 KB</span>, <span class="create-date">19 Apr, 2022</span></p>
+                                        </div>
+                                        <div>
+                                            <h5 class="fs-12 text-uppercase text-muted mb-3">File Description :</h5>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-borderless table-nowrap table-sm">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row" style="width: 35%;">File Name :</th>
+                                                            <td class="file-name">html.docx</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">File Type :</th>
+                                                            <td class="file-type">Documents</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Size :</th>
+                                                            <td class="file-size">0.3 KB</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Created :</th>
+                                                            <td class="create-date">19 Apr, 2022</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Path :</th>
+                                                            <td class="file-path"><div class="user-select-all text-truncate">*:\projects\src\assets\images</div></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <div>
+                                                <h5 class="fs-12 text-uppercase text-muted mb-3">Share Information:</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-borderless table-nowrap table-sm">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row" style="width: 35%;">Share Name :</th>
+                                                                <td class="share-name">\\*\Projects</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Share Path :</th>
+                                                                <td class="share-path">velzon:\Documents\</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-auto border-top border-top-dashed py-3">
+                                            <div class="hstack gap-2">
+                                                <button type="button" class="btn btn-soft-primary w-100"><i class="ri-download-2-line align-bottom me-1"></i> Download</button>
+                                                <button type="button" class="btn btn-soft-danger w-100 remove-file-overview" data-remove-id="" data-bs-toggle="modal" data-bs-target="#removeFileItemModal"><i class="ri-close-fill align-bottom me-1"></i> Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <!-- container-fluid -->
+                <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            
+            <!-- End Page-content -->
+            <!-- START CREATE FOLDER MODAL -->
+            <div class="modal" id="dosyaekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Dosya Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:dosya_ekle' %}" method="post" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            
+                                <div class="mb-3" id="modal-id" style="display: none;">
+                                    <label for="id-field" class="form-label">{% trans 'ID' %}</label>
+                                    <input type="text" id="id-field" class="form-control" placeholder="{% trans 'ID' %}" readonly />
+                                    <input type="text" id="id-field"  name="ust_klasor" hidden value="{{id_bilgisi}}" class="form-control" placeholder="{% trans 'ID' %}" readonly />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date-field"  class="form-label">{% trans 'Dosya Adı' %}</label>
+                                    <input type="tel" name="klasor" required id="date-field" class="form-control" placeholder="{% trans 'Dosya Adı' %}"  />
+                                    <div class="invalid-feedback">{% trans 'Lütfen telefon alanını boş bırakmayınız.' %}</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email-field" class="form-label">{% trans 'Tarih' %}</label>
+                                    <input type="date" required name="tarih" class="form-control" placeholder="{% trans 'Tarih' %}" >
+                                    <div class="invalid-feedback">{% trans 'Lütfen Tarihi alanını boş bırakmayınız' %}.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
+                                    <textarea name="aciklama" required class="form-control" placeholder="{% trans 'Enter Description' %}" ></textarea>
+                                    
+                                </div>
+                        <div class="form-group">
+                        <label>{% trans 'Dosya Yükle' %}</label>
+                        <input required name="file" type="file" class="form-control" />
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Dosyayı Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+      
+        <!-- END CREATE FOLDER MODAL -->
+          
+            {% for i in santiyeler  %}
+            
+        <div class="modal" id="yeni-kategori{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Klasör Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor__yeniden_adlandir' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                               
+                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                    
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Klasör Adı' %}</label>
+                        <input type="text" value="{{i.klasor_adi}}" name="klasor"  required id="kategori-adi">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Klasör Düzenle' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+                <div class="modal" id="deleteRecordModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'main:klasor_sil' %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    
+                                    <input type="hidden" name="idbilgisi" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('deleteRecordModal{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+            {% endfor %}
+<div class="modal" id="yeni-kategori">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans 'Klasör Ekle' %}
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" method="post" action="/{{dil}}{% url 'main:klasor_olustur' %}" class="needs-validation createfolder-form" id="createfolder-form" novalidate>
+                                 {% csrf_token %}
+                                 <input type="hidden" class="form-control" name="ust_klasor" id="folderid-input" value="{{id_bilgisi}}">
+               
+                    
+                    <div class="form-element">
+                        <label for="kategori-adi">{% trans 'Klasör Adı' %}</label>
+                        <input type="text" name="klasor" required id="kategori-adi">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Klasör Oluştur' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+       
+            {% for i in dosyalarim  %}
+            <div class="modal" id="dosya_sil{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'main:dosya_sil' %}" method="post">
+                            {% csrf_token %}
+                                <div class="mb-4">
+                                    <input type="hidden" name="ust_klasor" class="form-control" id="folderid-input" value="{{id_bilgisi}}">
+                                    <input type="hidden" name="klasor" class="form-control" id="folderid-input" value="{{i.id}}">
+                                </div>
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('dosya_sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+            
+            {% endfor %}
+   
+  <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+        $('input[type="file"]').on('change', function () {
+            var files = $(this).prop('files');
+            var formElement = $(this).closest('.form-element');
+            var fileList = formElement.find('.fileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                fileList.append('<li>' + files[i].name + '</li>');
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+  <script>
+        // Dropdown menüsünü açma/kapama işlevi
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Menü dışında bir yere tıklanırsa menüyü kapatma
+        window.onclick = function(event) {
+            if (!event.target.matches('.btn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        // Modal açma işlevi (örnek)
+        
+    </script>      
+{% endif %}
+ 
+{% endblock sidebar %}

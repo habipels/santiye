@@ -1,0 +1,339 @@
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+<main>
+    <div class="page-header">
+        <div class="page-info">
+            <div class="page-title">
+                <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                {% trans 'Gider Kategorisi' %}
+            </div>
+            <ul class="page-breadcrumb">
+                <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                <li><a href="#">{% trans 'Muhasabe Ayarları' %}</a></li>
+                <li><a href="#">{% trans 'Gider Kategorisi' %}</a></li>
+            </ul>
+        </div>
+        <div class="page-actions">
+         {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.gider_kategorisi_olusturma %}
+                                                  <button class="page-primary-btn" onclick="openModal('cari-ekle')"><i class="icon icon-new"></i>{% trans "Gider Kategorisi Ekle" %}</button>
+                                                  
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                              <button class="page-primary-btn" onclick="openModal('cari-ekle')"><i class="icon icon-new"></i>{% trans "Gider Kategorisi Ekle" %}</button>
+                                                    
+                                            {% endif %}
+       
+
+        </div>
+    </div>
+
+    <div class="large-stats-card table-card table-detail-card">
+        <div class="stats-header">
+            <div class="stats-title">{% trans 'Gider Kategorisi' %}</div>
+            <div class="stats-search">
+                <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                <button><i class="icon icon-search"></i></button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="datatable">
+                <thead>
+                    <tr>
+                      <th class="sort" data-sort="email">{% trans 'Kategori Adı' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Kategori Açıklama' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Renk' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Maaş Faturası İçin Kullan' %}</th>
+                                                    <th class="sort" data-sort="phone">{% trans 'Avans Faturası İçin Kullan' %}</th>
+                                                    <th class="sort" data-sort="date">{% trans 'Kayıt Tarihi' %}</th>
+                        <th class="sort" data-sort="date">{% trans 'Durum' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in santiyeler %}
+                                                <tr style= "{% if request.user.is_superuser %}{% if i.silinme_bilgisi %}background-color: grey;color: white; {% endif %} {% endif %}">
+                                                    
+                                                   
+                                                   
+                                                    <td class="customer_name">{{i.gider_kategori_adi}}
+                                                    </td>
+                                                    <td class="email">
+                                                    {{i.aciklama}}</td>
+                                                    <td class="date">
+                                                        <div style="border: 2px solid black; min-width: 25px;min-height: 25px; background-color: {{i.gider_kategorisi_renk}};"  ></div>
+                                                        {{i.gider_kategorisi_renk}}
+                                                    
+                                                    </td>
+                                                    <td class="kasa">
+                                                     {% if i.maas_icin_kullan  %}
+                                                        Aktif
+                                                     {% else %}
+                                                     {% trans 'Aktif Değil' %}
+                                                     {% endif %}
+                                                     </td>
+                                                     <td class="kasa">
+                                                     {% if i.avans_icin_kullan %}
+                                                         Aktif
+                                                     {% else %}
+                                                     {% trans 'Aktif Değil' %}
+                                                     {% endif %}
+                                                     </td>
+                                                    <td class="date">
+                                                        {{i.kayit_tarihi}}
+                                                    
+                                                    </td>
+                                                    <td>
+                                                        <div class="td-actions">
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.gider_kategorisi_guncelleme %}
+                                                              <a onclick="openModal('cari-ekle_duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                              <a onclick="openModal('cari-ekle_duzenle{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                  
+                                                        {% endif %}
+                                                            
+                                                        {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.gider_kategorisi_silme %}
+                                                           
+                                                        <a onclick="openModal('departman-sil{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>                                               
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                               
+                                                        <a onclick="openModal('departman-sil{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>                                              
+                                                        {% endif %} 
+                                                       
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                   
+                </tbody>
+            </table>
+        </div>
+
+        <div class="large-stats-card-footer-actions">
+            <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+            <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+            <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let datatable = $('#datatable').DataTable({
+                paging: false,
+                searching: true,
+                info: false,
+                
+            });
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            });
+        });
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+</main>
+    <script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+
+    </script>
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+<div class="modal" id="cari-ekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Gelir Kategorisi Ekle' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'accounting:gider_kategorisi_ekleme_2' hashler %}"  method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                
+                                    
+
+                                    <div class="form-element">
+                                        <label for="date-field"  >{% trans 'Gider Kategorisi Adı' %}</label>
+                                        <input type="text"  name="yetkili_adi" id="date-field"   placeholder="{% trans 'Kategori Adı' %}" />
+                                    </div>
+                                    <div class="form-element">
+                                        <label for="date-field"  >{% trans 'Gider Kategorisi Açıklaması' %}</label>
+                                        <input type="text"  name="aciklama" id="date-field"   placeholder="{% trans 'Kategori Açıklaması' %}" />
+                                    </div>
+                                    <div class="form-element">
+                                        <label for="date-field"  >{% trans 'Gider Kategorisi Rengi' %}</label>
+                                        <input type="color"  name="renk" id="date-field"   placeholder="{% trans 'Gider Kategorisi Rengi' %}" />
+                                    </div>
+                                    <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Maaş ödemelerinde kullan' %}</label>
+                                            <select   name="maaslarda_kullan" id="date-field">
+                                            
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            </select>
+                                        </div>
+                                    <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Avans ödemelerinde kullan' %}</label>
+                                            <select   name="avanslarda_kullan" id="date-field">
+                                            
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            </select>
+                                        </div>
+                                <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('cari-ekle')">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Gelir Kategorisi Düzeltme' %} </button>
+                    </div>
+                            </form>
+          
+            </div>
+        </div>
+</div>
+{% for i in santiyeler %}
+<div class="modal" id="cari-ekle_duzenle{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Gider Kategorisi Düzenle' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'accounting:gider_kategorisi_duzenle_2' hashler %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                
+                                    <div class="form-element" id="modal-id" style="display: none;">
+                                        
+                                        <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
+                                    </div>
+
+                                  
+                                        
+                                        <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Gider Kategorisi Adı' %}</label>
+                                            <input type="text" value="{{i.gider_kategori_adi}}"  name="yetkili_adi" id="date-field"   placeholder="{% trans 'Kategori Adı' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Gider Kategorisi Açıklaması' %}</label>
+                                            <input type="text" value="{{i.aciklama}}"  name="aciklama" id="date-field"   placeholder="{% trans 'Kategori Açıklaması' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Gider Kategorisi Rengi' %}</label>
+                                            <input type="color" value="{{i.gider_kategorisi_renk}}"   name="renk" id="date-field"   placeholder="{% trans 'Gider Kategorisi Rengi' %}" />
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Maaş ödemelerinde kullan' %}</label>
+                                            <select   name="maaslarda_kullan" id="date-field">
+                                                {% if i.maas_icin_kullan %}
+                                               
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                            {% else %}
+                                            <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            {% endif %}
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="form-element">
+                                            <label for="date-field"  >{% trans 'Avans ödemelerinde kullan' %}</label>
+                                            <select   name="avanslarda_kullan" id="date-field">
+                                            {% if i.avans_icin_kullan %}
+                                               
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                                <option value="1">{% trans 'Kullanma' %}</option>
+                                            {% else %}
+                                            <option value="1">{% trans 'Kullanma' %}</option>
+                                                <option value="2">{% trans 'Kullan' %}</option> 
+                                            {% endif %}
+                                            </select>
+                                        </div>
+                                        
+                                <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('cari-ekle_duzenle{{i.id}}')">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Gelir Kategorisi Düzeltme' %} </button>
+                    </div>
+                            </form>
+            </div>
+        </div>
+</div>
+    <div class="modal" id="departman-sil{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Silme Uyarısı' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"action="/{{dil}}{% url 'accounting:gider_kategoisi_sil_2' hashler %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    <p> {% trans 'Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.' %}</p>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal('departman-sil{{i.id}}')">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-danger" type="submit"> {% trans 'Sil' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}

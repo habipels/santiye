@@ -1,0 +1,260 @@
+{% load i18n %}
+{% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiadaGo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'go/style/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.6/r-3.0.3/datatables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+    <aside class="sidebar">
+        <div class="sidebar-toggle"><i class="icon icon-sidebar-right"></i><i class="icon icon-sidebar-left"></i></div>
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-main-part"></div>
+            <div class="sidebar-logo-second-part"></div>
+            <div class="sidebar-logo-large-parts">
+                <img src="{% static 'go/images/half-o.png' %}">
+                <img src="{% static 'go/images/o.png' %}">
+            </div>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="active"><a href="#"><i class="icon icon-dashboard"></i> <span>{% trans 'Dashboard' %}</span> </a></li>
+            <li><a href="#"><i class="icon icon-super-admin"></i> <span>Super Admin</span> </a></li>
+            <li><a href="#"><i class="icon icon-document"></i> <span>{% trans 'Raporlar' %}</span> </a></li>
+            <li><a href="#"><i class="icon icon-santiye-yonetimi"></i> <span>{% trans 'Şantiye Yönetimi' %}</span> </a></li>
+            <li><a href="#"><i class="icon icon-muhasebe"></i> <span>Muhasebe</span> </a></li>
+            <li><a href="#"><i class="icon icon-profile"></i> <span>Personel</span> </a></li>
+            <li><a href="#"><i class="icon icon-stok"></i> <span>Satın Alma ve Stok</span> </a></li>
+            <li><a href="#"><i class="icon icon-users"></i> <span>Kullanıcılar</span> </a></li>
+        </ul>
+        <hr>
+        <ul class="sidebar-nav">
+            <li><a href="#"><i class="icon icon-notifications"></i> <span>{% trans 'Bildirimler' %}</span> </a></li>
+            <li><a href="#"><i class="icon icon-settings"></i> <span>Ayarlar</span> </a></li>
+            <li><a href="#"><i class="icon icon-help"></i> <span>Destek ve Yardım</span> </a></li>
+        </ul>
+    </aside>
+
+    <div class="sidebar-mobile-toggle">
+        <img src="{% static 'go/images/logo-sm.png' %}" class="sidebar-mobile-sm-logo" alt="" />
+        <i class="icon icon-chevron-right"></i>
+    </div>
+
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarToggle = document.querySelector(".sidebar-toggle");
+        let sidebarMobileToggle = document.querySelector(".sidebar-mobile-toggle");
+        sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-collapsed");
+        })
+        sidebarMobileToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("sidebar-collapsed");
+        })
+    </script>
+
+    <header>
+        <div class="header-search">
+            <input type="search" name="search" id="search" placeholder="{% trans 'Uygulama içerisinde ara' %}">
+            <button><i class="icon icon-search"></i></button>
+        </div>
+        <div class="header-actions">
+            <div class="header-actions-dropdown">
+                <a href="#"><i class="icon icon-dashboard"></i></a>
+                <div class="actions-dropdown-content">
+                    <div class="actions-dropdown-content-title">
+                        Uygulamalar
+                    </div>
+                    <div class="actions-dropdown-content-apps">
+                        <a href="#" class="adc-app">
+                            <div class="adc-app-icon">
+                                <img src="{% static 'go/images/google-play.png' %}" alt="Google Play">
+                            </div>
+                            <div class="adc-app-title">Android</div>
+                        </a>
+                        <a href="#" class="adc-app">
+                            <div class="adc-app-icon">
+                                <img src="{% static 'go/images/appstore.png' %}" alt="App Store">
+                            </div>
+                            <div class="adc-app-title">IOS</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" onclick="toggleFullScreen()"><i class="icon icon-fullscreen"></i></a>
+            <a href="#"><i class="icon icon-moon"></i></a>
+            <div class="header-actions-dropdown notifications-dropdown">
+                <a href="#"><i class="icon icon-notification"></i></a>
+                <div class="actions-dropdown-content">
+                    <div class="actions-dropdown-content-title">
+                        {% trans 'Bildirimler' %}
+                        <span>12 {% trans 'adet yeni bildiriminiz var.' %}</span>
+                    </div>
+                    <div class="notifications-tabs">
+                        <button onclick="notificationTab(event, 'notification-all')"
+                            class="notification-tab-btn active">{% trans 'adet yeni bildiriminiz var.' %}
+                            <span>22</span></button>
+                        <button onclick="notificationTab(event, 'notification-unread')"
+                            class="notification-tab-btn">Okunmamış <span>3</span></button>
+                    </div>
+                    <div class="notifications" id="notification-all">
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-success">Görevinizi tamamladınız</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title notification-title-danger">Ödeme tarihini geçen bir
+                                    faturanız bulunmaktadır.</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notifications" id="notification-unread" style="display: none;">
+                        <div class="notification">
+                            <div class="notification-avatar">
+                                <img src="{% static 'go/images/avatar-2.png' %}" alt="Avatar">
+                            </div>
+                            <div class="notification-content notification-unread">
+                                <div class="notification-title">tolga_info@biadagroup.com</div>
+                                <div class="notification-subtitle">site_info - klasörler</div>
+                                <div class="notification-date">07 Ağustos 2024 • 09:36</div>
+                                <div class="notification-actions">
+                                    <button class="notification-inspect-button">{% trans 'İncele' %}</button>
+                                    <button class="notification-confirm-button">Onayla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        function notificationTab(e, id) {
+                            var i, x, notificationTabBtn;
+                            x = document.getElementsByClassName("notifications");
+                            for (i = 0; i < x.length; i++) {
+                                x[i].style.display = "none";
+                            }
+                            notificationTabBtn = document.getElementsByClassName("notification-tab-btn");
+                            for (i = 0; i < x.length; i++) {
+                                notificationTabBtn[i].className = notificationTabBtn[i].className.replace(" active", "");
+                            }
+                            document.getElementById(id).style.display = "block";
+                            e.currentTarget.className += " active";
+                        }
+                    </script>
+
+                    <div class="notifications-footer">
+                        <a href="#">Tümünü Gör <i class="icon icon-forward"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-language-wrapper">
+            <div class="header-language">
+            {% for i in diller  %}
+                            {% if i.dil_kisaltması == dil %}
+                <img id="" src="{{i.dil_bayragi_icon.url}}" alt="Header Language" height="20" class="header-language-flag">
+                <span>Türkçe</span>
+                <i class="icon icon-chevron-bottom"></i>
+                  {% else %}
+                            {% endif %}
+                        {% endfor %}
+            </div>
+            <div class="header-language-dropdown">
+            {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+
+                    {% for lang in languages %}
+                        {% for i in diller  %}
+                            {% if i.dil_kisaltması == lang.code %}
+                <div class="language-selector">
+                    <a href="/{{ lang.code }}/{{linki}}" class="dropdown-item notify-item language py-2" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
+                                <img src="{{i.dil_bayragi_icon.url}}" alt="user-image" class="me-2 rounded" height="18">
+                                <span class="align-middle">{{ lang.name_local }}</span>
+                                </a>
+                        {{ lang.name_local }}
+                    
+                </div>
+       {% else %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+            </div>
+        </div>
+        <div class="header-profile-wrapper">
+            <div class="header-profile">
+                <div class="profile-avatar">
+                    <img src="{% static 'go/images/avatar.png' %}" alt="Avatar">
+                </div>
+                <div class="profile-title">
+                    <span>Welcome back </span>
+                    Johnathan
+                </div>
+                <i class="icon icon-chevron-bottom"></i>
+            </div>
+            <div class="header-profile-dropdown">
+                <div class="profile-dropdown-title">
+                    Johnathan
+                    <span>Admin...</span>
+                </div>
+                <div class="profile-dropdown-actions">
+                    <a href="#"><i class="icon icon-profile"></i> Profil</a>
+                    <a href="#"><i class="icon icon-settings"></i> Ayarlar</a>
+                    <a href="#"><i class="icon icon-lock"></i> Ekranı Kilitle</a>
+                </div>
+                <div class="profile-dropdown-logout">
+                    <a href="#">Çıkış Yap</a>
+                </div>
+            </div>
+        </div>
+    </header>

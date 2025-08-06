@@ -1,0 +1,291 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% load custom_tags %}
+
+{% block sidebar %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css">
+
+<form action="/{{dil}}{% url 'crm:crm_teklif_duzenle_gonder' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="teklif_id" value="{{ teklifler.id }}">
+    <main>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="javascript:window.history.back();"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans "Teklif Düzenle" %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Teklif Yönetimi" %}</a></li>
+                    <li><a href="#">{% trans "Teklif Düzenle" %}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans "Müşteri Bilgileri" %}</div>
+            </div>
+
+            <div class="fatura-olustur">
+                <div class="fatura-doviz">
+                    <div class="form-row" style="margin-bottom: 20px;">
+                        <div class="form-element">
+                            <label for="email">{% trans "Teklif Başlığı" %}</label>
+                            <input type="text" required name="Teklif_basligi" id="email" value="{{ teklifler.teklif_basligi }}">
+                        </div>
+                        <div class="form-element">
+                            <label for="adsoyad">{% trans "Ad" %}</label>
+                            <input type="search" class="adsoyad" autocomplete="off" type="text" required name="adsoyad" id="adsoyad" value="{{ teklifler.musterisi.musteri_adi }}">
+                        </div>
+                        <div class="form-element">
+                            <label for="soyad">{% trans "Soyad" %}</label>
+                            <input type="search" class="soyad" autocomplete="off" type="text" required name="soyad" id="soyad" value="{{ teklifler.musterisi.musteri_soyadi }}">
+                        </div>
+                        <div class="form-element">
+                            <label for="telefon">{% trans "Telefon No" %}</label>
+                            <input type="text" required name="telefon" id="telefon" value="{{ teklifler.musterisi.musteri_telefon_numarasi }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fatura-head">
+                    <h3>{% trans "Fatura Kalemleri" %}</h3>
+                    <div class="fatura-head-action">
+                        <a id="kalem-ekle"><i class="icon icon-add"></i> {% trans "Kalem Ekle" %}</a>
+                    </div>
+                </div>
+
+                <div class="fatura-kalemleri-wrapper">
+                    <table class="dataTable fatura-kalemleri">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Hizmet / ürün" %}</th>
+                                <th>{% trans "İndirim" %}</th>
+                                <th>{% trans "Miktar" %}</th>
+                                <th>{% trans "Birim Fiyatı" %}</th>
+                                <th>{% trans "Toplam" %}</th>
+                                <th>{% trans "Toplam IQD" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for kalem in teklif_icerikleri %}
+                            <tr data-id="{{ forloop.counter }}">
+                                <td>
+                                    <div class="form-element">
+                                        <input type="text" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="{% trans "Ürün/Hizmet Adı Giriniz" %}" value="{{ kalem.urun_hizmet }}">
+                                    </div>
+                                    <div class="form-element">
+                                        <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="{% trans "Açıklama" %}" value="{{ kalem.urun_aciklama }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" step="0.01" name="kalem-indirim" id="kalem-indirim" value="{{ kalem.indirim|stringformat:'0.2f' }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" step="0.01" name="kalem-miktar" id="kalem-miktar" value="{{ kalem.miktar|stringformat:'0.2f' }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" step="0.01" name="kalem-birim-fiyati" id="kalem-birim-fiyati" value="{{ kalem.birim_fiyati|stringformat:'0.2f' }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element">
+                                        <input type="number" step="0.01" name="kalem-toplam" id="kalem-toplam" value="{{ kalem.genel_toplam|stringformat:'0.2f' }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-element iqd-input">
+                                        <input type="number" step="0.01" name="kalem-toplam-iqd" id="kalem-toplam-iqd" value="{{ kalem.birim_fiyati_ıqd|stringformat:'0.2f' }}">
+                                    </div>
+                                    <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> {% trans "Sil" %}</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="fatura-detaylar">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>{% trans "Ara Toplam" %}</td>
+                                <th id="info-ara-toplam">$0,00</th>
+                            </tr>
+                            <tr>
+                                <td>{% trans "İndirim" %}</td>
+                                <td id="info-toplam-indirim" style="color: #ff0000;">-$0,00</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Toplam IQD" %}</td>
+                                <td id="info-toplam-iqd">$0,00</td>
+                            </tr>
+                            <tr>
+                                <th>{% trans "Toplam" %}</th>
+                                <th id="info-toplam">$0,00</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="window.history.back();">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit">{% trans "Kaydet" %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</form>
+
+<div class="modal" id="delete-modal">
+    <div class="modal-inner" style="width: 500px">
+        <div class="modal-header">
+            {% trans "Silmek istediğinize emin misiniz?" %}
+        </div>
+        <div class="modal-body">
+            <form>
+                <p>{% trans "Bu işlemin geri dönüşü olmayacaktır." %}</p>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-danger delete-modal-button" type="button">{% trans "Evet, silinsin" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".delete-modal-button").on("click", function () {
+        $(".fatura-kalemleri [data-id=" + $(this).attr("data-delete-id") + "]").remove();
+        closeModal();
+    });
+
+    $("#kalem-ekle").on("click", function () {
+        let lastID = $(".fatura-kalemleri tbody tr:last-child").attr("data-id");
+        $(".fatura-kalemleri tbody").append(`<tr data-id="${++lastID}">
+            <td>
+                <div class="form-element">
+                    <input type="text" name="kalem-urun-hizmet-adi" id="kalem-urun-hizmet-adi" placeholder="{% trans "Ürün/Hizmet Adı Giriniz" %}">
+                </div>
+                <div class="form-element">
+                    <input type="text" name="kalem-aciklama" id="kalem-aciklama" placeholder="{% trans "Açıklama" %}">
+                </div>
+            </td>
+            <td>
+                <div class="form-element">
+                    <input type="number" step="0.01" name="kalem-indirim" id="kalem-indirim">
+                </div>
+            </td>
+            <td>
+                <div class="form-element">
+                    <input type="number" step="0.01" name="kalem-miktar" id="kalem-miktar">
+                </div>
+            </td>
+            <td>
+                <div class="form-element">
+                    <input type="number" step="0.01" name="kalem-birim-fiyati" id="kalem-birim-fiyati">
+                </div>
+            </td>
+            <td>
+                <div class="form-element">
+                    <input type="number" step="0.01" name="kalem-toplam" id="kalem-toplam">
+                </div>
+            </td>
+            <td>
+                <div class="form-element iqd-input">
+                    <input type="number" step="0.01" name="kalem-toplam-iqd" id="kalem-toplam-iqd">
+                </div>
+                <a onclick="openModal('delete-modal');$('.delete-modal-button').attr('data-delete-id', $(this).closest('tr').attr('data-id'))" class="status-cancel stats-lg"><i class="icon icon-action-delete"></i> {% trans "Sil" %}</a>
+            </td>
+        </tr>`)
+    });
+
+    function openModal(modalID, close = true) {
+        if (close) {
+            closeModal();
+        }
+        $("#" + modalID).css("display", "flex").hide().fadeIn()
+    }
+
+    function closeModal(modalID = "") {
+        if (modalID.length === 0) {
+            $(".modal").fadeOut();
+        } else {
+            $("#" + modalID).fadeOut();
+        }
+    }
+
+    $(".modal").on("click", function (e) {
+        if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+            closeModal();
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('.adsoyad').autocomplete({
+            source: '/crm/musteri_bilgisi_views/',
+            minLength: 2,
+            select: function(event, ui) {
+                if (ui.item) {
+                    $('.soyad').val(ui.item.soyadi);
+                    $('.adsoyad').val(ui.item.adi);
+                    $('#telefon').val(ui.item.value);
+                }
+                return false;
+            },
+            response: function(event, ui) {
+                if (ui.content.length === 0) {
+                    alert("{% trans 'Müşteri bulunamadı. Lütfen önce müşteriyi ekleyin.' %}");
+                }
+            }
+        }).data('ui-autocomplete')._renderItem = function(ul, item) {
+            return $('<li>')
+                .append('<div>' + item.label + '<br>' + item.value + '</div>')
+                .appendTo(ul);
+        };
+    });
+</script>
+
+<script>
+    function calculateTotals() {
+        let araToplam = 0;
+        let toplamIndirim = 0;
+        let toplamIQD = 0;
+
+        $(".fatura-kalemleri tbody tr").each(function () {
+            const miktar = parseFloat($(this).find("input[name='kalem-miktar']").val()) || 0;
+            const birimFiyati = parseFloat($(this).find("input[name='kalem-birim-fiyati']").val()) || 0;
+            const indirim = parseFloat($(this).find("input[name='kalem-indirim']").val()) || 0;
+
+            const toplam = miktar * birimFiyati;
+            const indirimliToplam = toplam - (toplam * indirim / 100);
+            const toplamIQDValue = indirimliToplam * 1.5; // Example conversion rate
+
+            $(this).find("input[name='kalem-toplam']").val(indirimliToplam.toFixed(2));
+            $(this).find("input[name='kalem-toplam-iqd']").val(toplamIQDValue.toFixed(2));
+
+            araToplam += toplam;
+            toplamIndirim += toplam * indirim / 100;
+            toplamIQD += toplamIQDValue;
+        });
+
+        $("#info-ara-toplam").text(`$${araToplam.toFixed(2)}`);
+        $("#info-toplam-indirim").text(`-$${toplamIndirim.toFixed(2)}`);
+        $("#info-toplam-iqd").text(`$${toplamIQD.toFixed(2)}`);
+        $("#info-toplam").text(`$${(araToplam - toplamIndirim).toFixed(2)}`);
+    }
+
+    $(document).on("input", ".fatura-kalemleri input", calculateTotals);
+    $(document).ready(calculateTotals);
+</script>
+{% endblock sidebar %}

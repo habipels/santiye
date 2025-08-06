@@ -1,0 +1,131 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% block sidebar %}
+<div class="vertical-overlay"></div>
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form autocomplete="off"class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="row">
+                             <div class="mb-3" id="modal-id" style="display: none;">
+                                        <label for="id-field" class="form-label">{% trans 'ID' %}</label>
+                                        <input type="text" id="id-field" class="form-control" placeholder="{% trans 'ID' %}" readonly />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="customername-field" class="form-label">{% trans 'Taşeron Adı' %}</label>
+                                        <input type="text" name="taseron_adi" id="customername-field" class="form-control" placeholder="{% trans 'Taşeron Adı Gir' %}"  />
+                                        <div class="invalid-feedback">{% trans 'Lütfen Taşeron Adını Boş Bırakmayınız.' %}</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Telefon' %}</label>
+                                        <input type="tel" name="telefonnumarasi" id="date-field" class="form-control" placeholder="{% trans 'Telefon Gir' %}"  />
+                                        <div class="invalid-feedback">{% trans 'Lütfen telefon alanını boş bırakmayınız.' %}</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">{% trans 'Email' %}</label>
+                                        <input type="email" name="email_adresi" class="form-control" placeholder="{% trans 'E-Posta giriniz' %}" >
+                                        <div class="invalid-feedback">{% trans 'Lütfen eposta alanını boş bırakmayınız.' %}</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
+                                        <textarea name="aciklama" class="form-control" placeholder="{% trans 'Enter Description' %}" ></textarea>
+                                        <div class="invalid-feedback">{% trans 'Please enter an email.' %}</div>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">{% trans 'Sözleşmesi Yapılan Projeler' %}</label>
+                                        <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" >
+                                            <option value=""></option>
+                                            {% for blog in blog_bilgisi %}
+                                            <option value="{{ blog.id }}">{{ blog.proje_Adi }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h4 class="card-title mb-0">{% trans 'Sözleşmeleri Yükle' %}</h4>
+                                                </div><!-- end card header -->
+                                            
+                                                <div class="card-body">
+                                                    <p class="text-muted">{% trans 'Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.' %}</p>
+                                                
+                                                    <div class="dropzone">
+                                                        <div class="fallback">
+                                                            <input name="file" type="file" multiple="multiple">
+                                                        </div>
+                                                        <div class="dz-message needsclick">
+                                                            <div class="mb-3">
+                                                                <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+                                                            </div>
+                                                        
+                                                            <h4>{% trans 'Drop files here or click to upload.' %}</h4>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <ul class="list-unstyled mb-0" id="dropzone-preview">
+                                                        <li class="mt-2" id="dropzone-preview-list">
+                                                            <!-- This is used as the file preview template -->
+                                                            <div class="border rounded">
+                                                                <div class="d-flex p-2">
+                                                                    <div class="flex-shrink-0 me-3">
+                                                                        <div class="avatar-sm bg-light rounded">
+                                                                            <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-grow-1">
+                                                                        <div class="pt-1">
+                                                                            <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
+                                                                            <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                                                                            <strong class="error text-danger" data-dz-errormessage></strong>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-shrink-0 ms-3">
+                                                                        <button data-dz-remove class="btn btn-sm btn-danger">{% trans 'Delete' %}</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                    <!-- end dropzon-preview -->
+                                                </div>
+                                                <!-- end card body -->
+                                            </div>
+                                            <!-- end card -->
+                                        </div> <!-- end col -->
+                                        
+                                    </div>
+                                    
+                            <input type="submit" class="btn btn-success waves-effect waves-light mt-5" value="{% trans 'Yeni Taşeron Oluştur' %}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        
+</div>
+
+{% endblock sidebar %}
+    
+

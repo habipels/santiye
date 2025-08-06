@@ -1,0 +1,58 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% block sidebar %}
+{% load static %}
+<form autocomplete="off" class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="page-content options">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label for="basiInput" class="form-label">{% trans 'Yetkili Adı Soyadı' %}</label>
+                    <input type="text" class="form-control" id="basiInput" name="yetkiliAdSoyad" placeholder="{% trans 'Yetkili Adı Soyadı Giriniz' %}" required>
+                </div>
+                <div class="col-sm-12">
+                    <label for="emailInput" class="form-label">{% trans 'E-Posta Adresi' %}</label>
+                    <input type="email" class="form-control" id="emailInput" name="email" placeholder="{% trans 'E-Posta Adresi Giriniz' %}" required>
+                </div>
+                <div class="col-sm-12">
+                    <label for="firmaInput" class="form-label">{% trans 'Firma Adı' %}</label>
+                    <input type="text" class="form-control" id="firmaInput" name="santiyeAdi" placeholder="{% trans 'Firma Adı Giriniz' %}" required>
+                </div>
+                <div class="col-sm-12">
+                    <label for="passwordInput" class="form-label">{% trans 'Şifre' %}</label>
+                    <input type="password" class="form-control" id="passwordInput" name="sfire" placeholder="{% trans 'Şifre Giriniz' %}" required>
+                </div>
+                <div class="col-sm-12 mt-3">
+                    <input type="submit" class="btn btn-success waves-effect waves-light w-100" value="{% trans 'Yeni Firma Oluştur' %}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6">
+                    <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end d-none d-sm-block"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</form>
+{% endblock sidebar %}
+

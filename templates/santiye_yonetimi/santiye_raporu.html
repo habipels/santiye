@@ -1,0 +1,495 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags  %}
+{% load static %}
+{% block sidebar %}
+
+
+{% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
+{%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
+{% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
+    {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
+     {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
+     {% to_int santiye.kat_sayisi as kat_bilgisi %}
+    <main>
+<style>
+/* Rapor bina görseli başlangıcı */
+
+.building-container-report {
+    width: 100%; /* Yapı konteynerinin genişliği */
+    height: 100%; /* Yapı konteynerinin yüksekliği */
+    perspective: 1000px;
+    position: relative;
+}
+
+.building-report {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateY(0deg);
+    transition: transform 0.5s ease;
+    display: flex; /* Katları yan yana sıralamak için */
+    flex-direction: column; /* Katları dikey olarak yerleştirmek için */
+}
+
+.face-report {
+    position: relative; /* Değiştirdik */
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+    backface-visibility: hidden;
+}
+
+.floor-report {
+    width: 100%; /* Kat genişliği */
+    height: 100%; /* 17 kat */
+    background-size: contain; /* Resmin boyutunu koruyarak içeriye sığdırma */
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    opacity: 1; /* Varsayılan görünürlük ayarı */
+}
+
+.completed-report {
+    opacity: 1; /* Tamamlanmış katlar normal görünümde */
+}
+
+.not-completed-report {
+    opacity: 0.4; /* Tamamlanmamış katlar soluk görünümde */
+}
+
+.roof-report {
+    position: absolute;
+    top: -30px; /* Çatının biraz üstünde */
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+/* Rapor bina görseli sonu */
+</style>
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Rapor' %} 
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Rapor' %}</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div id="ilerleme" class="report-charts">
+
+            <div class="report-card">
+                <div class="report-header">
+                    <div class="report-title">{% trans 'İlerleme' %}</div>
+                    <div class="report-stats-info">
+                        <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
+                        <span><i class="icon icon-yellow-circle"></i> {% trans 'Finansal' %}</span>
+                    </div>
+                </div>
+
+                <div class="report-body">
+                    <div id="ilerleme-chart"></div>
+
+                    <script>
+    // Yuvarlama işlemi için verileri düzenle
+    var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
+    var roundedData2 = {{ gun_kalem_sayilari.degerler2 | safe }}.map(x => parseFloat(x.toFixed(2)));
+    var roundedCategories = {{ gun_kalem_sayilari.gunler | safe }};
+
+    var options = {
+        series: [
+            {
+                name: "{% trans 'Finansal' %} ",
+                data: roundedData2,
+            }, 
+            {
+                name: "{% trans 'Fiziksel' %} ",
+                data: roundedData1
+            }
+        ],
+        chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        colors: ['#F9B035', '#6149CD'],
+        responsive: [
+            {
+                breakpoint: 480,
+                options: {
+                    legend: {
+                        position: 'bottom',
+                        offsetX: -10,
+                        offsetY: 0
+                    }
+                }
+            }
+        ],
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 10,
+                borderRadiusApplication: 'end', // 'around', 'end'
+                borderRadiusWhenStacked: 'last', // 'all', 'last'
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 900
+                        }
+                    }
+                }
+            },
+        },
+        xaxis: {
+            type: 'text',
+            categories: roundedCategories,
+        },
+        legend: {
+            show: false
+        },
+        fill: {
+            opacity: 1
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function(val) {
+                return val.toFixed(2); // Değerleri 2 basamağa yuvarla
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#ilerleme-chart"), options);
+    chart.render();
+</script>
+
+                </div>
+            </div>
+
+            <div id="ay_ilerleme" class="report-card">
+                <div class="report-header">
+                    <div class="report-title">{% trans 'İlerleme Tablosu' %}</div>
+                    <div class="report-stats-info">
+                        <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
+                        <span><i class="icon icon-yellow-circle"></i>  {% trans 'Finansal' %}</span>
+                    </div>
+                </div>
+                <div class="report-body">
+
+                    <div id="ilerleme-tablosu-chart"></div>
+
+                    <script>
+                        var options = {
+                            series: [{
+                                name: "{% trans 'Finansal' %} ",
+                                data: {{ay_kalem_sayilari.degerler2 |safe}}
+                            }, {
+                                name:"{% trans 'Fiziksel' %} " ,
+                                data:  {{ay_kalem_sayilari.degerler |safe}}
+                            }],
+                            chart: {
+                                height: 350,
+                                type: 'area',
+                                zoom: {
+                                    enabled: false
+                                }
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth'
+                            },
+                            xaxis: {
+                                type: 'category',
+                                categories: {{ay_kalem_sayilari.aylar |safe}}
+                            },
+                            legend: {
+                                show: false
+                            },
+                            colors: ['#F9B035', '#6149CD'],
+                            tooltip: {
+                                x: {
+                                    format: 'MMM'
+                                }
+                            }
+                        };
+
+                        var chart = new ApexCharts(document.querySelector("#ilerleme-tablosu-chart"), options);
+                        chart.render();
+                    </script>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div id="bina_ilerleme" class="report-card">
+            <div class="report-header">
+                <div class="report-details">
+                    <div class="report-title"><i class="icon icon-yellow-circle"></i>  {{santiye.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</div>
+                    <div class="report-infos">
+                        <div class="report-info">{% trans 'Proje Adı:' %}  <b>{{santiye.proje_santiye_Ait.proje_adi}}</b></div>
+                        <div class="report-info">{% trans 'Yapı Adı:' %} <b>{{santiye.blog_adi}}</b></div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="report-building-body">
+                <div class="report-bb-preview">
+                        <div class="building-container-report">
+                            <div class="building-report" id="building-report">
+                                <div class="face-report" id="face1"></div>
+                                <div class="face-report" id="face2"></div>
+                                <div class="face-report" id="face3"></div>
+                                <div class="face-report" id="face4"></div>
+                            </div>
+                        </div>
+                </div>
+                <div class="report-bb-chart">
+
+                    <div class="form-element">
+                        <select onchange="optionSelected()" name="imalat-kalemi-select" id="imalat-kalemi-select">
+                            <option data-fiziksel="{{fiziksel_ilerleme |safe }}" data-finansal="{{fiziksel_ilerleme |safe }}" data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye 0 %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye 0 %}" >{% trans 'Tümü' %}</option>
+                            {% for i in tablo %}
+                            <option  data-fiziksel="{{i.ilerleme1}}" data-finansal="{{i.ilerleme2}}" value="imalat-kalemi-check-{{i.id}}" data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" >{{i.isim}}</option>
+                        {% endfor %}
+                           
+                        </select>
+                    </div>
+
+
+                    <div id="report-bb-chart"></div>
+
+                    <div class="report-bb-stats">
+                        <div class="report-bb-stat">
+                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i>{% trans 'Tamamlanan' %} </div>
+                            <div class="report-bb-stat-value" id="fiziksel" >%{{fiziksel_ilerleme |safe }}</div>
+                        </div>
+                        <div class="report-bb-stat">
+                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i>{% trans 'Devam Eden' %} </div>
+                            <div class="report-bb-stat-value" id="finansal" >%{% basit_cikarma_duzenli 100 fiziksel_ilerleme  %} </div>
+                        </div>
+                        
+                        <!-- <div class="report-bb-stat">
+                            <div class="report-bb-stat-title"><i class="icon icon-red-circle"></i> Duran</div>
+                            <div class="report-bb-stat-value">%1</div>
+                        </div>-->
+                    </div>
+
+                    <script>
+                        var options = {
+                            series:  [{{fiziksel_ilerlemei |safe }}, {% basit_cikarma_duzenli 100 fiziksel_ilerlemei  %} ],
+                            chart: {
+                                height: 500,
+                                type: 'radialBar',
+                            },
+                            plotOptions: {
+                                radialBar: {
+                                    dataLabels: {
+                                        name: {
+                                            fontSize: '22px',
+                                        },
+                                        value: {
+                                            fontSize: '16px',
+                                        },
+                                        total: {
+                                            show: true,
+                                            label: '{% trans 'Toplam' %}',
+                                            formatter: function (w) {
+                                                return "%100"
+                                            }
+                                        }
+                                    },
+
+                                },
+                            },
+                            labels: ['{% trans 'Tamamlanan' %}', '{% trans 'Devam Eden' %}'],
+                            colors: ['#00A76F', '#DCDCDE']
+                        };
+
+                        var chart = new ApexCharts(document.querySelector("#report-bb-chart"), options);
+                        chart.render();
+                    </script>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="kalemsel_ilerleme" class="report-card">
+            <div class="report-header">
+                <div class="report-title">{% trans 'İmalat Kalemleri' %}</div>
+            </div>
+            <div class="report-body">
+                <div class="imalat-kalemleri">
+                    {% for i in tablo %}
+                
+                    <div class="imalat-kalemi">
+                        <div class="imalat-kalemi-check">
+                            <input data-fiziksel="{{i.ilerleme1}}" data-finansal="{{i.ilerleme2}}" data-completion="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" value="{% ilk_giris_verileri_kalem kat_bilgisi santiye i.id %}" onclick="optionSelectedd(this)" type="checkbox" id="imalat-kalemi-check-{{i.id}}" checked>
+                        </div>
+                        <div class="imalat-kalemi-progress">
+                            <div class="imalat-kalemi-progress-details">
+                                <div class="imalat-kalemi-progress-title">{{i.isim}}</div>
+                                <div class="imalat-kalemi-progress-info">
+                                    <span><i class="icon icon-green-accent-circle"></i>{% trans 'Fiziksel' %}  %{{i.ilerleme1}}</span>
+                                    <span><i class="icon icon-green-circle"></i>{% trans 'Finansal' %}  %{{i.ilerleme2}}</span>
+                                </div>
+                            </div>
+                            <div class="imalat-kalemi-progress-bar">
+                                <div class="ik-progress-bar-fiziksel" style="--percentage: {{i.ilerleme1}}%"></div>
+                                <div class="ik-progress-bar-finansal" style="--percentage: {{i.ilerleme2}}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                 {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $("input[type='checkbox']").on("change", function () {
+                $("input[type='checkbox']").prop("checked", false);
+                $(this).prop("checked", true);
+
+                $("#imalat-kalemi-select").val($(this).attr("id"));
+            });
+
+            $("#imalat-kalemi-select").on("change", function () {
+                $("input[type='checkbox']").prop("checked", false);
+                $("#" + $("#imalat-kalemi-select").val()).prop("checked", true)
+                console.log($("#imalat-kalemi-select").val())
+            })
+        </script>
+
+    </main>
+       <script>
+       
+       {% ilk_giris_verileri kat_bilgisi santiye as sonuc_gonder %}
+       {{sonuc_gonder}}
+        const completionPercentages = {{sonuc_gonder  | safe}} ;
+        
+        function createBuilding(value) {
+            const floors = {{kat_bilgisi}} ;
+            const imageUrl = '{{santiye.proje_santiye_Ait.bina_goruntuleri_aitlik.ondden_goruntu.url}}'; // Resmin doğru yolu
+             // İlk 3 kat %100 tamamlanmış, diğerleri %0
+
+            const face = document.getElementById('face1'); // İlk yüzeyi kullanalım
+
+            for (let j = floors; j >= 1; j--) { // Aşağıdan yukarı doğru artan sıra
+                const floor = document.createElement('div');
+                floor.className = 'floor-report';
+                floor.style.backgroundImage = `url(${imageUrl})`;
+                floor.setAttribute('data-floor', `{% trans 'Kat' %} ${j}`);
+
+                // Tamamlanma durumu kontrolü
+                if (value[j - 1] === 100) {
+                    floor.classList.add('completed-report');
+                    floor.innerHTML = `{% trans 'Kat' %} ${j}: {% trans 'Tamamlandı' %}`;
+                } else {
+                    floor.classList.add('not-completed-report');
+                    floor.innerHTML = `{% trans 'Kat' %} ${j}: {% trans 'Tamamlanmadı' %}`;
+                }
+
+                face.appendChild(floor);
+            }
+        }
+
+        createBuilding(completionPercentages);
+        function optionSelected() {
+    const selectElement = document.getElementById('imalat-kalemi-select');
+    const selectedOption = selectElement.options[selectElement.selectedIndex]; // Seçilen option'u al
+    const selectedData = selectedOption.getAttribute('data-completion'); // `data-completion` özniteliğini al
+    const fiziksel = selectedOption.getAttribute('data-fiziksel');
+    const finansal = selectedOption.getAttribute('data-finansal');
+    document.getElementById("fiziksel").textContent = `%${fiziksel}`;
+    document.getElementById("finansal").textContent = `%${(100 - parseFloat(fiziksel))}`;
+    
+    // JSON dizisini ayrıştır
+    const completionPercentages = JSON.parse(selectedData);
+    const array = []; // Yeni bir dizi oluştur
+    const kat_bilgisi = {{ kat_bilgisi|safe }}; // Burada kat_bilgisi verisini al ve güvenli hale getir
+
+    // Face report elemanlarını temizle
+    const faceReports = document.getElementsByClassName('face-report');
+    for (let i = 0; i < faceReports.length; i++) {
+        faceReports[i].innerHTML = ''; // Her bir face-report'un içeriğini temizle
+    }
+
+    // Kat bilgisi bir sayı ise length ile döngüyü kontrol et
+    for (let index = 0; index < kat_bilgisi; index++) {
+        if (index < completionPercentages.length && completionPercentages[index] === 100) {
+            array[index] = 100; // Koşul sağlanıyorsa 100 ata
+        } else {
+            array[index] = 0; // Koşul sağlanmıyorsa 0 ata
+        }
+    }
+    chart.updateSeries([parseFloat(fiziksel), 100-parseFloat(fiziksel)]);
+    console.log(array); // Boş array kontrolü için
+    createBuilding(array); // Oluşturulan array'i createBuilding'e gönder
+}
+
+
+
+
+    
+    </script>
+    <script>
+function optionSelectedd(checkbox) {
+    const selectedValue = checkbox.value;  // Tıklanan checkbox'ın `value` değerini alır
+    const completionPercentages = JSON.parse(selectedValue);  // `value` JSON formatında olduğu varsayılarak ayrıştırılır
+    const fiziksel = checkbox.getAttribute('data-fiziksel');
+    const finansal = checkbox.getAttribute('data-finansal');
+    document.getElementById("fiziksel").textContent = `%${fiziksel}`;
+    document.getElementById("finansal").textContent = `%${(100 - parseFloat(fiziksel))}`;
+    
+    const array = [];  // Yeni bir dizi oluştur
+    const kat_bilgisi = {{ kat_bilgisi|safe }};  // `kat_bilgisi` verisini al
+
+    // Face report elemanlarını temizle
+    const faceReports = document.getElementsByClassName('face-report');
+    for (let i = 0; i < faceReports.length; i++) {
+        faceReports[i].innerHTML = '';  // Her bir `face-report` elemanının içeriğini temizle
+    }
+
+    // `kat_bilgisi` değerine göre döngü başlatılır
+    for (let index = 0; index < kat_bilgisi; index++) {
+        if (index < completionPercentages.length && completionPercentages[index] === 100) {
+            array[index] = 100;  // `completionPercentages` değerinin 100 olduğu durumda 100 ata
+        } else {
+            array[index] = 0;  // Koşul sağlanmıyorsa 0 ata
+        }
+    }
+    chart.updateSeries([parseFloat(fiziksel), 100-parseFloat(fiziksel)]);
+    console.log(array);  // İşlenmiş `array` çıktısını konsola yazdır
+    createBuilding(array);  // İşlenmiş `array` ile `createBuilding` fonksiyonunu çağır
+}
+</script>
+{% endblock sidebar %}
+

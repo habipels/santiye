@@ -1,0 +1,723 @@
+{% extends "homebase.html" %}
+{% load static %}
+{% load i18n %}
+{% load custom_tags %}
+{% block sidebar %}
+{% if hash_bilgi %}
+
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans "Ayarlar" %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Şantiye Ayarlar" %}</a></li>
+                    <li><a href="#">{% trans "Proje Katmanı" %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+             {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.katman_olusturma %}
+                                                     <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Katman Ekle" %}</button>                                            
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                                  <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Katman Ekle" %}</button>                                                
+                                            {% endif %}
+                
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans "Katmanlar" %}</div>
+                <div class="stats-search">
+                    <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                    <button><i class="icon icon-search"></i></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="datatable">
+                    <thead>
+                        <tr>
+
+                            <th>{% trans "Proje Katmanı Kime Ait" %}</th>
+                            <th>{% trans "Katman Hangi Şantiyeye Ait" %}</th>
+                            <th>{% trans "Proje Katman Adı" %}</th>
+                            <th>{% trans "Proje Katman Dosyası" %}</th>
+                            <th>{% trans "Proje Tip Kayıt Tarihi" %}</th>
+                            <th>{% trans "Durum" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in santiyeler %}
+                      <tr>
+                            <td>{{ i.proje_ait_bilgisi.first_name }}</td>
+                             <td>{{ i.proje_santiye_Ait.proje_adi }}</td>
+                            <td>{{ i.katman_adi }}</td>
+                            <td><div class="td-actions">
+                                {% if i.katman_dosyasi %}
+                                    <a target="_blank" href="{{i.katman_dosyasi.url}}"class="status-info"><i class="icon icon-action-file"></i></a>
+                                {% else %}
+                                {% endif %}               
+                                </div></td>
+                             <td>{{ i.kayit_tarihi }}</td>
+                            <td>
+                                <div class="td-actions">
+                                {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_duzenleme %}
+                                                                <a  onclick="openModal('yeni-proje{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <a  onclick="openModal('yeni-proje{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        {% endif %}
+                                                            
+                                                            {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_silme %}
+                                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% endif %}
+                                    
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                                                {% endfor %}
+                      
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <script>
+            let datatable = new DataTable('#datatable', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+{% for i in santiyeler %}
+    <div class="modal" id="yeni-proje{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Katman Düzenle' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:katman_duzenle_2' hashler %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                   
+                    <div class="form-element">
+                        <label for="taseron-adi">{% trans 'Katman Adı' %}</label>
+                        <input type="text" name="taseron_adi" value="{{i.katman_adi}}" required id="taseron-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye' %}</label>
+                        <select name="blogbilgisi"   data-trigger >
+                        <option value="{{i.proje_santiye_Ait.id}}">{{i.proje_santiye_Ait.proje_adi}}</option>
+                                            {% for blog in insaatlar %}
+                                            <option value="{{blog.id}}">{{blog.proje_adi}}</option>
+                                            {% endfor %}
+                        </select>
+                    </div>
+                   
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input accept="image/*" type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<div class="modal" id="deleteConfirmationModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                <h2>{% trans 'Silmek İstediğinden Emin misin?' %}</h2>
+            <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
+            </div>
+            <div class="modal-body">
+                 <form action="/{{dil}}{% url 'main:katman_sil_2' hashler %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    
+                 
+                    <div class="form-actions">
+                                       <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary"  onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+{% endfor %}
+<div class="modal" id="yeni-proje">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Yeni Katman Ekle' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:katman_ekle_2' hashler %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+              
+                    <div class="form-element">
+                        <label for="taseron-adi">{% trans 'Katman Adı' %}</label>
+                        <input type="text" name="taseron_adi" required id="taseron-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye' %}</label>
+                        <select name="blogbilgisi"   data-trigger >
+                                            {% for blog in insaatlar %}
+                                            <option value="{{blog.id}}">{{blog.proje_adi}}</option>
+                                            {% endfor %}
+                        </select>
+                    </div>
+                   
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input accept="image/*" type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                 
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+    <script>
+        // Tüm dosya inputlarını izle
+        document.querySelectorAll('input[type="file"]').forEach(function(input) {
+            input.addEventListener('change', function() {
+                const fileInput = this;
+                const fileList = fileInput.closest('.form-element').querySelector('.fileList');
+                const fileInputLabel = fileInput.closest('.file-input').querySelector('label');
+                const fileButton = fileInputLabel.querySelector('button');
+                
+                // Dosya listeleri ve loading state'i temizle
+                fileList.innerHTML = '';
+                
+                // Eğer dosya seçildiyse
+                if (fileInput.files.length > 0) {
+                    // Seçilen dosya isimlerini göster
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = fileInput.files[i].name;
+                        fileList.appendChild(listItem);
+                    }
+                    
+                    // Loading state göster
+                    const originalButtonText = fileButton.innerHTML;
+                    fileButton.innerHTML = '<i class="icon icon-loading"></i> {% trans "Dosya Seçildi" %}';
+                    
+                    // 1 saniye sonra normal haline döndür (gerçek yükleme işlemi tamamlanınca form submit edilecek)
+                    setTimeout(function() {
+                        fileButton.innerHTML = originalButtonText;
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+{% else %}
+
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans "Ayarlar" %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Şantiye Ayarlar" %}</a></li>
+                    <li><a href="#">{% trans "Proje Katmanı" %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+             {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.katman_olusturma %}
+                                                     <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Katman Ekle" %}</button>                                            
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                                  <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Katman Ekle" %}</button>                                                
+                                            {% endif %}
+                
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans "Katmanlar" %}</div>
+                <div class="stats-search">
+                    <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                    <button><i class="icon icon-search"></i></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="datatable">
+                    <thead>
+                        <tr>
+
+                            <th>{% trans "Proje Katmanı Kime Ait" %}</th>
+                            <th>{% trans "Katman Hangi Şantiyeye Ait" %}</th>
+                            <th>{% trans "Proje Katman Adı" %}</th>
+                            <th>{% trans "Proje Katman Dosyası" %}</th>
+                            <th>{% trans "Proje Tip Kayıt Tarihi" %}</th>
+                            <th>{% trans "Durum" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in santiyeler %}
+                      <tr>
+                            <td>{{ i.proje_ait_bilgisi.first_name }}</td>
+                             <td>{{ i.proje_santiye_Ait.proje_adi }}</td>
+                            <td>{{ i.katman_adi }}</td>
+                            <td><div class="td-actions">
+                                {% if i.katman_dosyasi %}
+                                    <a target="_blank" href="{{i.katman_dosyasi.url}}"class="status-info"><i class="icon icon-action-file"></i></a>
+                                {% else %}
+                                {% endif %}               
+                                </div></td>
+                             <td>{{ i.kayit_tarihi }}</td>
+                            <td>
+                                <div class="td-actions">
+                                {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_duzenleme %}
+                                                                <a  onclick="openModal('yeni-proje{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <a  onclick="openModal('yeni-proje{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        {% endif %}
+                                                            
+                                                            {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_silme %}
+                                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% endif %}
+                                    
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                                                {% endfor %}
+                      
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <script>
+            let datatable = new DataTable('#datatable', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+{% for i in santiyeler %}
+    <div class="modal" id="yeni-proje{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Katman Düzenle' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:katman_duzenle' %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    {% if request.user.is_superuser %}
+                                        <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
+                                        <select class="form-control" name="kullanici" id="date-field">
+                                            {% for i in kullanicilar %}
+                                                <option value="{{i.id}}">{{i.first_name}}</option>
+                                            {% endfor %}
+                                            
+                                            
+                                        </select>
+                                    </div>
+                                    {% else %}
+                    <div class="form-element">
+                        <label for="taseron-adi">{% trans 'Katman Adı' %}</label>
+                        <input type="text" name="taseron_adi" value="{{i.katman_adi}}" required id="taseron-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye' %}</label>
+                        <select name="blogbilgisi"   data-trigger >
+                        <option value="{{i.proje_santiye_Ait.id}}">{{i.proje_santiye_Ait.proje_adi}}</option>
+                                            {% for blog in insaatlar %}
+                                            <option value="{{blog.id}}">{{blog.proje_adi}}</option>
+                                            {% endfor %}
+                        </select>
+                    </div>
+                   
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input accept="image/*" type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<div class="modal" id="deleteConfirmationModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                <h2>{% trans 'Silmek İstediğinden Emin misin?' %}</h2>
+            <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
+            </div>
+            <div class="modal-body">
+                 <form action="/{{dil}}{% url 'main:katman_sil' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    
+                 
+                    <div class="form-actions">
+                                       <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary"  onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+{% endfor %}
+<div class="modal" id="yeni-proje">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+            {% trans 'Yeni Katman Ekle' %}
+                
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off"class="tablelist-form" action="/{{dil}}{% url 'main:katman_ekle' %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                    {% if request.user.is_superuser %}
+                                        <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Hesap Seç' %}</label>
+                                        <select class="form-control" name="kullanici" id="date-field">
+                                            {% for i in kullanicilar %}
+                                                <option value="{{i.id}}">{{i.first_name}}</option>
+                                            {% endfor %}
+                                            
+                                            
+                                        </select>
+                                    </div>
+                                    {% else %}
+                    <div class="form-element">
+                        <label for="taseron-adi">{% trans 'katman Adı' %}</label>
+                        <input type="text" name="taseron_adi" required id="taseron-adi">
+                    </div>
+                    <div class="form-element">
+                        <label for="sozlesmesi-yapilan-projeler">{% trans 'Şantiye' %}</label>
+                        <select name="blogbilgisi"   data-trigger >
+                                            {% for blog in insaatlar %}
+                                            <option value="{{blog.id}}">{{blog.proje_adi}}</option>
+                                            {% endfor %}
+                        </select>
+                    </div>
+                   
+                    <div class="form-element">
+                        <label for="sozlesme-yukle">{% trans 'Dosya Yükle' %}</label>
+
+                        <div class="file-input">
+                            <label for="sozlesme-yukle">
+                                <img src="{% static 'go/content/images/illustration-upload.png' %}">
+
+                                <button><i class="icon icon-file"></i> {% trans 'Dosya Seç' %}</button>
+                            </label>
+
+                            <input accept="image/*" type="file" name="file" id="sozlesme-yukle">
+                        </div>
+
+                        <ul class="fileList">
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                        <button class="form-action-primary" type="submit">{% trans 'Kaydet' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+    <style>
+        /* Dosya yükleme loading animasyonu için CSS */
+        .icon-loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #333;
+            border-radius: 50%;
+            animation: rotate 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        /* Dark mode uyumlu */
+        .dark-mode .icon-loading {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #fff;
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Dosya listesi stillemesi */
+        .fileList {
+            margin-top: 10px;
+            padding-left: 10px;
+        }
+
+        .fileList li {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .dark-mode .fileList li {
+            color: #ddd;
+        }
+    </style>
+    
+    <script>
+        // Tüm dosya inputlarını izle
+        document.querySelectorAll('input[type="file"]').forEach(function(input) {
+            input.addEventListener('change', function() {
+                const fileInput = this;
+                const fileList = fileInput.closest('.form-element').querySelector('.fileList');
+                const fileInputLabel = fileInput.closest('.file-input').querySelector('label');
+                const fileButton = fileInputLabel.querySelector('button');
+                
+                // Dosya listeleri ve loading state'i temizle
+                fileList.innerHTML = '';
+                
+                // Eğer dosya seçildiyse
+                if (fileInput.files.length > 0) {
+                    // Seçilen dosya isimlerini göster
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = fileInput.files[i].name;
+                        fileList.appendChild(listItem);
+                    }
+                    
+                    // Loading state göster
+                    const originalButtonText = fileButton.innerHTML;
+                    fileButton.innerHTML = '<i class="icon icon-loading"></i> {% trans "Dosya Seçildi" %}';
+                    
+                    // 1 saniye sonra normal haline döndür (gerçek yükleme işlemi tamamlanınca form submit edilecek)
+                    setTimeout(function() {
+                        fileButton.innerHTML = originalButtonText;
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+{% endif %}
+{% endblock sidebar %}

@@ -1,0 +1,1870 @@
+{% load static %}
+{% load custom_tags %}
+{% load i18n %}
+<!doctype html>
+<html lang="{{dil}}" data-layout="{{layout.data_layout}}" data-layout-style="{{layout_sitili.data_layout_style}}" data-layout-position="{{layout_pozisyonu.data_layout_position}}" data-topbar="{{topbar_color.data_topbar}}" data-sidebar="{{sidebar_rengi.data_sidebar}}" data-sidebar-size="{{sidebar_boyutu.data_sidebar_size}}" data-layout-width="{{layout_uzunlugu.data_layout_width}}" data-sidebar-visibility="{{side_bar_gorunum.data_sidebar_visibility}}" data-bs-theme="{{color_sheme.data_bs_theme}}" data-preloader="disable">
+<head>
+    <meta charset="utf-8" />
+    <title>BiadaGO ERP Construciton Software{{site_adi.site_adi_sekme_tr}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="{{site_adi.site_adi_genel}}" name="description" />
+    <meta content="Biada Software" name="author" />
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'go/icon/apple-icon-57x57.png' %}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static 'go/icon/apple-icon-60x60.png' %}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'go/icon/apple-icon-72x72.png' %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'go/icon/apple-icon-76x76.png' %}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'go/icon/apple-icon-114x114.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'go/icon/apple-icon-120x120.png' %}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'go/icon/apple-icon-144x144.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'go/icon/apple-icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'go/icon/apple-icon-180x180.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'go/icon/android-icon-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'go/icon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'go/icon/favicon-96x96.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'go/icon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'go/icon/manifest.json' %}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{% static 'go/icon/ms-icon-144x144.png' %}">
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{{sayfa_iconu.sayfa_icon.url}}">
+
+    <!-- Layout config Js -->
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/css/custom.css' %}" rel="stylesheet" type="text/css" />
+
+
+    {% block head %}
+
+    {% endblock head %}
+<style>
+
+        /* Yükleme çubuğu ayarları */
+    #nprogress .bar {
+      background: #24d6b6 !important;  /* Çizginin rengi */
+      height: 2px !important;          /* Çizginin yüksekliği */
+    }
+    /* Spinnerı kapatmak için */
+    #nprogress .spinner {
+      display: none;
+    }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            max-width: 500px;
+            margin: auto;
+            border: 1px solid #ccc;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            position: relative;
+            background-color: #2c2c2c;
+            padding: 10px 20px;
+            color: #f4f4f4;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .modal-header h5 {
+            font-weight: bold;
+            color: #f4f4f4;
+            margin: 0;
+        }
+
+        .modal-body {
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .shortcut-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .shortcut-list li {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .shortcut-list li span {
+            font-weight: bold;
+            color: #2c2c2c;
+        }
+
+        .close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 24px;
+            color: #f4f4f4;
+            cursor: pointer;
+        }
+
+        .info-text {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+                .custom-context-menu {
+            display: none;
+            position: absolute;
+            background-color: #2c2c2c;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            min-width: 160px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+         .custom-context-menu {
+            display: none;
+            position: absolute;
+            background-color: #2c2c2c;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            min-width: 160px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .custom-context-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-context-menu ul li {
+            padding: 10px 15px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .custom-context-menu ul li:hover {
+            background-color: #24d6b6;
+            color: #fff;
+        }
+
+        .custom-context-menu ul li:active {
+            background-color: #1ba892;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+  <!-- Modal -->
+    <div id="shortcutModal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{% trans 'Kısayol Tuşları' %}</h5>
+                    <span class="close" onclick="closeShortcutModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p class="info-text"><strong>Mac:</strong> Command + Shift + Tuş | <strong>Windows:</strong> Ctrl + Shift + Tuş</p>
+                    <ul class="shortcut-list">
+                        <li><span>F:</span> {% trans 'Fatura ekleme sayfası' %}</li>
+                        <li><span>B:</span> {% trans 'Borçlar sayfası' %}</li>
+                        <li><span>R:</span> {% trans 'Gider raporu sayfası' %}</li>
+                        <li><span>D:</span> {% trans 'Dosya yöneticisi' %}</li>
+                        <li><span>G:</span> {% trans 'Bir önceki sayfaya dön (veriler kaybolmaz)' %}</li>
+                        <li><span>K:</span> {% trans 'Kısayol listesini aç' %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+<div id="layout-wrapper">
+{% block header %}
+
+{% load i18n %}
+{% load static %}
+{% if hash_bilgi %}
+<header id="page-topbar">
+
+    <div class="layout-width">
+        <div class="navbar-header">
+            <div class="d-flex">
+                <!-- LOGO -->
+                <div class="navbar-brand-box horizontal-logo">
+                    <a href="/" class="logo logo-dark">
+                        <span class="logo-sm">
+                            <img src="{{sayfalogusu.image.url}}" alt="" height="40">
+                        </span>
+                        <span class="logo-lg">
+                            <img src="{{sayfalogusu.image.url}}" alt="" height="27">
+                        </span>
+                    </a>
+
+                    <a href="/" class="logo logo-light">
+                        <span class="logo-sm">
+                            <img src="{{sayfalogusu.image.url}}" alt="" height="40">
+                        </span>
+                        <span class="logo-lg">
+                            <img src="{{sayfalogusu.image.url}}" alt="" height="27">
+                        </span>
+                    </a>
+                </div>
+
+                <button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger" id="topnav-hamburger-icon">
+                    <span class="hamburger-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </button>
+
+
+            </div>
+
+            <div class="d-flex align-items-center">
+
+                <div class="dropdown d-md-none topbar-head-dropdown header-item">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="bx bx-search fs-22"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-search-dropdown">
+                        <form autocomplete="off"class="p-3">
+                            <div class="form-group m-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                                    <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="dropdown ms-1 topbar-head-dropdown header-item">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% for i in diller  %}
+                            {% if i.dil_kisaltması == dil %}
+
+                                <img id="" src="{{i.dil_bayragi_icon.url}}" alt="Header Language" height="20" class="rounded">
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+
+                    {% for lang in languages %}
+                        {% for i in diller  %}
+                            {% if i.dil_kisaltması == lang.code %}
+                                <a href="/{{ lang.code }}/{{linki}}" class="dropdown-item notify-item language py-2" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
+                                <img src="{{i.dil_bayragi_icon.url}}" alt="user-image" class="me-2 rounded" height="18">
+                                <span class="align-middle">{{ lang.name_local }}</span>
+                                </a>
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                        <!-- item-->
+
+                    </div>
+                </div>
+
+                <div class="dropdown topbar-head-dropdown ms-1 header-item">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class='bx bx-category-alt fs-22'></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-lg p-0 dropdown-menu-end">
+                        <div class="p-3 border-top-0 border-start-0 border-end-0 border-dashed border">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="m-0 fw-semibold fs-15">{% trans 'Uygulamalar' %}  </h6>
+                                </div>
+                                <div class="col-auto">
+                                        <i class="ri-arrow-right-s-line align-middle"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-2">
+        <div class="row g-0">
+            <div class="col">
+                <a class="dropdown-icon-item" href="#!" id="slackButton">
+                    <img src="{% static 'assets/images/brands/slack.png' %}" alt="slack">
+                    <span>{% trans 'Slack' %}</span>
+                </a>
+            </div>
+            <div class="col">
+                <a class="dropdown-icon-item" href="#!">
+                    <img src="{% static 'assets/images/brands/drive.png' %}" alt="Drive">
+                    <span>{% trans 'Drive' %}</span>
+                </a>
+            </div>
+            <div class="col">
+                <a class="dropdown-icon-item" href="#!">
+                    <img src="{% static 'assets/images/brands/docs.png' %}" alt="Docs">
+                    <span>{% trans 'Docs' %}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+                    </div>
+                </div>
+
+                <div class="ms-1 header-item d-none d-sm-flex">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-toggle="fullscreen">
+                        <i class='bx bx-fullscreen fs-22'></i>
+                    </button>
+                </div>
+
+                <div class="ms-1 header-item d-none d-sm-flex">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode">
+                        <i class='bx bx-moon fs-22'></i>
+                    </button>
+                </div>
+                {% if request.user.is_superuser %}
+                <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                        <i class='bx bx-bell fs-22'></i>
+                        <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">3<span class="visually-hidden">unread messages</span></span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
+
+                        <div class="dropdown-head bg-primary bg-pattern rounded-top">
+                            <div class="p-3">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h6 class="m-0 fs-16 fw-semibold text-white"> {% trans 'Bildirimler' %} </h6>
+                                    </div>
+                                    <div class="col-auto dropdown-tabs">
+                                        <span class="badge bg-light-subtle text-body fs-13">10 {% trans 'Yeni' %}  </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content position-relative" id="notificationItemsTabContent">
+                            <div class="tab-pane fade show active py-2 ps-2" id="all-noti-tab" role="tabpanel">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                        {% for action in latest_actions %}
+                                    <div class="text-reset notification-item d-block dropdown-item position-relative">
+                                        <div class="d-flex">
+                                            <i class="bx bx-badge-check"></i>
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">{{ action.user }}</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">{{ action.content_type }} - {{ action.object_repr }} - {{ action.action_flag }}</p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> {{ action.action_time }}</span>
+                                                </p>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                 {% endfor %}
+                                 <div class="my-3 text-center view-all">
+                                        <a  href="/{{dil}}{% url 'main:loglar' %}" type="button" class="btn btn-soft-success waves-effect waves-light">
+                                            {% trans 'View All Notifications' %} <i class="ri-arrow-right-line align-middle"></i></a>
+                                    </div>
+
+                                   
+
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane fade py-2 ps-2" id="messages-tab" role="tabpanel" aria-labelledby="messages-tab">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                    <div class="text-reset notification-item d-block dropdown-item">
+                                        <div class="d-flex">
+                                            <img src="assets/images/users/avatar-3.jpg" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">James Lemire</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">We talked about a project on linkedin.</p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> 30 min ago</span>
+                                                </p>
+                                            </div>
+                                            <div class="px-2 fs-15">
+                                                <div class="form-check notification-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="messages-notification-check01">
+                                                    <label class="form-check-label" for="messages-notification-check01"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-reset notification-item d-block dropdown-item">
+                                        <div class="d-flex">
+                                            <img src="assets/images/users/avatar-2.jpg" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Angela Bernier</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">Answered to your comment on the cash flow forecast's
+                                                        graph </p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> 2 hrs ago</span>
+                                                </p>
+                                            </div>
+                                            <div class="px-2 fs-15">
+                                                <div class="form-check notification-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="messages-notification-check02">
+                                                    <label class="form-check-label" for="messages-notification-check02"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-reset notification-item d-block dropdown-item">
+                                        <div class="d-flex">
+                                            <img src="assets/images/users/avatar-6.jpg" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Kenneth Brown</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">Mentionned you in his comment on  invoice #12501.
+                                                    </p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> 10 hrs ago</span>
+                                                </p>
+                                            </div>
+                                            <div class="px-2 fs-15">
+                                                <div class="form-check notification-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="messages-notification-check03">
+                                                    <label class="form-check-label" for="messages-notification-check03"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-reset notification-item d-block dropdown-item">
+                                        <div class="d-flex">
+                                            <img src="assets/images/users/avatar-8.jpg" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Maureen Gibson</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">We talked about a project on linkedin.</p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> 3 days ago</span>
+                                                </p>
+                                            </div>
+                                            <div class="px-2 fs-15">
+                                                <div class="form-check notification-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="messages-notification-check04">
+                                                    <label class="form-check-label" for="messages-notification-check04"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="my-3 text-center view-all">
+                                        <button type="button" class="btn btn-soft-success waves-effect waves-light">View
+                                            All Messages <i class="ri-arrow-right-line align-middle"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade p-4" id="alerts-tab" role="tabpanel" aria-labelledby="alerts-tab"></div>
+
+                            <div class="notification-actions" id="notification-actions">
+                                <div class="d-flex text-muted justify-content-center">
+                                    Select <div id="select-content" class="text-body fw-semibold px-1">0</div> Result <button type="button" class="btn btn-link link-danger p-0 ms-3" data-bs-toggle="modal" data-bs-target="#removeNotificationModal">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                {% endif %}
+                <div class="dropdown ms-sm-3 header-item topbar-user">
+                    <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="d-flex align-items-center">
+                        {% if request.user.image %}
+                        <img class="rounded-circle header-profile-user" src="{{request.user.image.url}}" alt="Header Avatar">
+
+                        {% else %}
+                        <img class="rounded-circle header-profile-user" src="{% static 'go/content/images/profile.png' %}" alt="Header Avatar">
+                        {% endif %}
+
+                            <span class="text-start ms-xl-2">
+                                <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{request.user.first_name}} </span>
+                                <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">{{request.user.last_name}}</span>
+                            </span>
+                        </span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <!-- item-->
+                        <h6 class="dropdown-header">{% trans 'Merhaba' %} {{request.user.last_name}} </h6>
+                        <a class="dropdown-item" href="/{{dil}}{% url 'user:profil_bilgisi' %}"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{% trans 'Profilim' %}</span></a>
+                        <a class="dropdown-item" href="/{{dil}}{% url 'users:profile_edit_kismi' %}"><span class="badge bg-success-subtle text-success mt-1 float-end"></span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{% trans 'Ayarlar' %}</span></a>
+                        <a class="dropdown-item" href="/{{dil}}{% url 'users:unlock' %}"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{% trans 'Ekranı kilitle' %}</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/{{dil}}{% url 'users:logout' %}"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">{% trans 'Çıkış yap' %}</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>
+
+    <!-- removeNotificationModal -->
+    <div id="removeNotificationModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="NotificationModalbtn-close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mt-2 text-center">
+                    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
+                    <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                        <h4>Are you sure ?</h4>
+                        <p class="text-muted mx-4 mb-0">Are you sure you want to remove this Notification ?</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                    <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn w-sm btn-danger" id="delete-notification">Yes, Delete It!</button>
+                </div>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- ========== App Menu ========== -->
+    <div class="app-menu navbar-menu">
+            <!-- LOGO -->
+            <div class="navbar-brand-box">
+                <!-- Dark Logo-->
+                <a href="/{{dil}}/" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="{{sayfalogusu.image.url}}" alt="" height="40">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="{{sayfalogusu.image.url}}" alt="" height="45">
+                    </span>
+                </a>
+                <!-- Light Logo-->
+                <a href="/{{dil}}/" class="logo logo-light">
+                    <span class="logo-sm">
+                        <img src="{{sayfalogusu.dark_image.url}}" alt="" height="40">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="{{sayfalogusu.dark_image.url}}" alt="" height="45">
+                    </span>
+                </a>
+                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
+                    <i class="ri-record-circle-line"></i>
+                </button>
+            </div>
+
+            <div id="scrollbar">
+                <div class="container-fluid">
+
+                    <div id="two-column-menu">
+                    </div>
+                    <ul class="navbar-nav" id="navbar-nav">
+                        <li class="menu-title"><span data-key="t-menu">{% trans 'Şantiyenizi Yönetin' %}</span></li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/{{dil}}/" role="button" aria-expanded="false" aria-controls="sidebarLayouts">
+                                <i class="bx bxs-dashboard"></i><span>{% trans 'Genel Özet' %}</span>
+                            </a>
+                        </li> <!-- end Dashboard Menu -->
+
+                        <!--Super Admin Menu-->
+                        {% if request.user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#superAdmin" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-admin-line"></i> <span>{% trans 'Süper Admin' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="superAdmin">
+
+
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:santiye_ekle' %}" class="nav-link" role="button" aria-expanded="false">
+                                            {% trans 'Şantiye Ekle' %}
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:santiye_listele' %}" class="nav-link" role="button" aria-expanded="false">
+                                            {% trans 'Şantiye Ayarları' %}
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:site_ayarlari' %}" class="nav-link">{% trans 'Sistem Ayarları' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:dil_ayari_listele' %}" class="nav-link" role="button" aria-expanded="false">
+                                            {% trans 'Dil Ayarları' %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Super Admin Menu-->
+                        {% else %}
+                        {% endif %}
+
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarAuth" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-file-chart-line"></i> <span>{% trans 'Raporlar' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarAuth">
+
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="#finansalRaporlar" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="false"> Finansal Raporlar
+                                        </a>
+                                        <div class="collapse menu-dropdown" id="finansalRaporlar">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gelirler_ozeti' %}" class="nav-link">{% trans 'Gelir Raporu ' %} </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:giderler_ozeti' %}" class="nav-link">{% trans 'Gider Raporu' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:hesap_ekstra_durumu' %}" class="nav-link">{% trans 'Hesap Ekstresi' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:virman_gondermeler_2' hashler %}"class="nav-link">{% trans 'Virman Raporu' %}  </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog_2' hashler %}" class="nav-link" role="button" aria-expanded="false">{% trans 'Şantiye Raporları' %} 
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <!--Şantiye Yönetimi Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#santiyeYonetimi" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-building-2-line"></i> <span>{% trans 'Şantiye Yönetimi' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="santiyeYonetimi">
+
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog_2' hashler %}" class="nav-link">{% trans 'Proje Yönetimi' %}  </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:yapilacaklar' %}" class="nav-link"  role="button" aria-expanded="false">{% trans 'İş Emirleri' %} 
+                                        </a>
+                                    </li>
+                                   <!-- <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:yapilacaklar_timeline' %}" class="nav-link"> Yapılacaklar </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:takvim_olaylari' %}" class="nav-link"> Takvim </a>
+                                    </li>-->
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:depolama_sistemim' %}" class="nav-link">{% trans 'Dosya Yönetic' %} i </a>
+                                    </li>
+                                  <!--   <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:projeler_sayfasi' %}" class="nav-link"> Projeler </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:kullanicilarim' %}" class="nav-link"> Personeller </a>
+                                    </li>-->
+
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:taseron_sayfasi' %}" class="nav-link">{% trans 'Taşeronlar' %}  </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:ust_yuklenici_sayfasi' %}" class="nav-link">{% trans 'Üst Yüklenici' %}  </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:hakedis_sayfasi' %}" class="nav-link">{% trans 'Hakedişler' %}  </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:sozlesmler_sayfasi' %}" class="nav-link">{% trans 'Sözleşmeler' %} </a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </li><!--Şantiye Yönetimi Menü-->
+
+
+                        <!--Muhasebe Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#muhasebe" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-money-dollar-circle-line"></i> <span>{% trans 'Finans Yönetimi' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="muhasebe">
+
+                                <ul class="nav nav-sm flex-column">
+                                
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi_2' hashler %}" class="nav-link">{% trans 'Gelir Faturası' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi_2' hashler %}" class="nav-link">{% trans 'Gider Faturası' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:a_kasa_viev' hashler %}" class="nav-link">{% trans 'Kasa' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:cari_viev_2' hashler %}" class="nav-link">{% trans 'Cari Hesapları' %}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Muhasebe Menü-->
+
+                        <!--Çalışan Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#calisanyonetimi" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-user-line"></i> <span>{% trans 'Çalışan Yönetimi' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="calisanyonetimi">
+
+                                <ul class="nav nav-sm flex-column">
+                                
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_sayfasi' %}" class="nav-link">{% trans 'Calışanlar' %}</a>
+                                    </li>
+                                     <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_kategori_sayfalari' %}" class="nav-link">{% trans 'Pozisyonlar' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_depertman_sayfalari' %}" class="nav-link">{% trans 'Departmanlar' %}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Çalışan Menü-->
+
+                        <!--Satın Alma ve Stok Menu-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/{{dil}}satin-alma-ve-stok.html" role="button" aria-expanded="false">
+                                <i class="ri-archive-2-fill"></i><span>{% trans 'Satın alma ve Stok' %}</span>
+                            </a>
+                        </li> <!-- end Satın Alma ve Stok Menu -->
+
+
+                    <!--Ayarlar Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#ayarlar" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class=" ri-settings-3-line"></i> <span>{% trans 'Ayarlar' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="ayarlar">
+                
+                                <ul class="nav nav-sm flex-column">
+                                
+                                <li class="nav-item">
+                                        <a href="#kullaniciayar" data-bs-toggle="collapse" class="nav-link">{% trans 'Kullanıcı Ayarları' %} </a>
+                                        <div class="collapse menu-dropdown" id="kullaniciayar">
+                                            <ul class="nav nav-sm flex-column">
+
+                                            <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'users:kullanicilarim' %}" class="nav-link">{% trans 'Kullanıcılar' %}  </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                        <a href="/{{dil}}{% url 'main:kullanici_yetkileri' %}" class="nav-link"> {% trans 'Kullanıcı Yetkileri' %} </a>
+                                            </li>
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#santiyeAyari" data-bs-toggle="collapse" class="nav-link">{% trans 'Şantiye Ayarları' %}  </a>
+                                        <div class="collapse menu-dropdown" id="santiyeAyari">
+                                            <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'main:proje_tipi_2' hashler %}" class="nav-link">{% trans 'Proje Tipi' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'main:santiye_projesi_ekle_2' hashler %}" class="nav-link">{% trans 'Şantiye' %}  </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#muhasebeayar" data-bs-toggle="collapse" class="nav-link"> {% trans 'Muhasebe Ayarları' %} </a>
+                                        <div class="collapse menu-dropdown" id="muhasebeayar">
+                                            <ul class="nav nav-sm flex-column">
+                                            {% if request.user.is_superuser %}
+                                            <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:muhasebe_ayarlari_2' hashler %}" class="nav-link">{% trans 'Muhasebe Ayarları' %}  </a>
+                                                </li>
+                                            {% else %}
+                                            <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:muhasebe_ayarlari' %}" class="nav-link">{% trans 'Muhasebe Ayarları' %}  </a>
+                                                </li>
+                                            
+                                            {% endif %}
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gelir_kategorisi_tipleri_2' hashler %}" class="nav-link">{% trans 'Gelir Kategorileri' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gelir_etiketi_tipleri_2' hashler %}" class="nav-link">{% trans 'Gelir Etiketleri' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gider_kategorisi_tipleri_2' hashler %}" class="nav-link">{% trans 'Gider Kategorileri' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gider_etiketi_tipleri_2' hashler %}" class="nav-link">{% trans 'Gider Etiketleri' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:urun_viev_2' hashler %}" class="nav-link">{% trans 'Ürünler' %}  </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Ayarlar Menü-->
+
+
+                    </ul>
+                </div>
+                <!-- Sidebar -->
+            </div>
+
+            <div class="sidebar-background"></div>
+    </div>
+    <!-- Left Sidebar End -->
+    <!-- Vertical Overlay-->
+    <div class="vertical-overlay"></div>
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+{% else %}
+<header id="page-topbar">
+    <div class="layout-width">
+        <div class="navbar-header">
+            <div class="d-flex">
+                <!-- LOGO -->
+                <div class="navbar-brand-box horizontal-logo">
+                    <a href="/{{dil}}/" class="logo logo-dark">
+                        <span class="logo-sm">
+                            <img src="{{sayfalogusu.image.url}}" alt="" height="40">
+                        </span>
+                        <span class="logo-lg">
+                            <img src="{{sayfalogusu.image.url}}" alt="" height="27">
+                        </span>
+                    </a>
+
+                    <a href="/{{dil}}/" class="logo logo-light">
+                        <span class="logo-sm">
+                            <img src="{{sayfalogusu.image.url}}" alt="" height="40">
+                        </span>
+                        <span class="logo-lg">
+                            <img src="{{sayfalogusu.image.url}}" alt="" height="27">
+                        </span>
+                    </a>
+                </div>
+
+                <button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger" id="topnav-hamburger-icon">
+                    <span class="hamburger-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </button>
+
+
+            </div>
+
+            <div class="d-flex align-items-center">
+
+                <div class="dropdown d-md-none topbar-head-dropdown header-item">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="bx bx-search fs-22"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-search-dropdown">
+                        <form autocomplete="off"class="p-3">
+                            <div class="form-group m-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                                    <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="dropdown ms-1 topbar-head-dropdown header-item">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% for i in diller  %}
+                            {% if i.dil_kisaltması == dil %}
+
+                                <img id="" src="{{i.dil_bayragi_icon.url}}" alt="Header Language" height="20" class="rounded">
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+
+                    {% for lang in languages %}
+                        {% for i in diller  %}
+                            {% if i.dil_kisaltması == lang.code %}
+                                <a href="/{{ lang.code }}/{{linki}}" class="dropdown-item notify-item language py-2" data-lang="{{ lang.code }}" title="{{ lang.name_local }}">
+                                <img src="{{i.dil_bayragi_icon.url}}" alt="user-image" class="me-2 rounded" height="18">
+                                <span class="align-middle">{{ lang.name_local }}</span>
+                                </a>
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                        <!-- item-->
+
+                    </div>
+                </div>
+
+                <div class="dropdown topbar-head-dropdown ms-1 header-item">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class='bx bx-category-alt fs-22'></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-lg p-0 dropdown-menu-end">
+                        <div class="p-3 border-top-0 border-start-0 border-end-0 border-dashed border">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="m-0 fw-semibold fs-15">{% trans 'Uygulamalar' %}  </h6>
+                                </div>
+                                <div class="col-auto">
+                                        <i class="ri-arrow-right-s-line align-middle"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-2">
+        <div class="row g-0">
+            <div class="col">
+                <a class="dropdown-icon-item" href="#!" id="slackButton">
+                    <img src="{% static 'assets/images/brands/slack.png' %}" alt="slack">
+                    <span>{% trans 'Slack' %}</span>
+                </a>
+            </div>
+            <div class="col">
+                <a class="dropdown-icon-item" href="#!">
+                    <img src="{% static 'assets/images/brands/drive.png' %}" alt="Drive">
+                    <span>{% trans 'Drive' %}</span>
+                </a>
+            </div>
+            <div class="col">
+                <a class="dropdown-icon-item" href="#!">
+                    <img src="{% static 'assets/images/brands/docs.png' %}" alt="Docs">
+                    <span>{% trans 'Docs' %}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+                    </div>
+                </div>
+
+                <div class="ms-1 header-item d-none d-sm-flex">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-toggle="fullscreen">
+                        <i class='bx bx-fullscreen fs-22'></i>
+                    </button>
+                </div>
+
+                <div class="ms-1 header-item d-none d-sm-flex">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode">
+                        <i class='bx bx-moon fs-22'></i>
+                    </button>
+                </div>
+                {% if request.user.is_superuser %}
+                <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                        <i class='bx bx-bell fs-22'></i>
+                        <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">3<span class="visually-hidden">unread messages</span></span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
+
+                        <div class="dropdown-head bg-primary bg-pattern rounded-top">
+                            <div class="p-3">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h6 class="m-0 fs-16 fw-semibold text-white"> {% trans 'Notifications' %} </h6>
+                                    </div>
+                                    <div class="col-auto dropdown-tabs">
+                                        <span class="badge bg-light-subtle text-body fs-13"> 10 {% trans 'New' %} </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content position-relative" id="notificationItemsTabContent">
+                            <div class="tab-pane fade show active py-2 ps-2" id="all-noti-tab" role="tabpanel">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                        {% for action in latest_actions %}
+                                    <div class="text-reset notification-item d-block dropdown-item position-relative">
+                                        <div class="d-flex">
+                                            <i class="bx bx-badge-check"></i>
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">{{ action.user }}</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">{{ action.content_type }} - {{ action.object_repr }} - {{ action.action_flag }}</p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> {{ action.action_time }}</span>
+                                                </p>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                 {% endfor %}
+                                 <div class="my-3 text-center view-all">
+                                        <a  href="/{{dil}}{% url 'main:loglar' %}" type="button" class="btn btn-soft-success waves-effect waves-light">View
+                                            {% trans 'All Notifications' %} <i class="ri-arrow-right-line align-middle"></i></a>
+                                    </div>
+
+                                   
+
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane fade py-2 ps-2" id="messages-tab" role="tabpanel" aria-labelledby="messages-tab">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                    <div class="text-reset notification-item d-block dropdown-item">
+                                        <div class="d-flex">
+                                            <img src="assets/images/users/avatar-3.jpg" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">James Lemire</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">We talked about a project on linkedin.</p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> 30 min ago</span>
+                                                </p>
+                                            </div>
+                                            <div class="px-2 fs-15">
+                                                <div class="form-check notification-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="messages-notification-check01">
+                                                    <label class="form-check-label" for="messages-notification-check01"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-reset notification-item d-block dropdown-item">
+                                        <div class="d-flex">
+                                            <img src="assets/images/users/avatar-2.jpg" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Angela Bernier</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">Answered to your comment on the cash flow forecast's
+                                                        graph </p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> 2 hrs ago</span>
+                                                </p>
+                                            </div>
+                                            <div class="px-2 fs-15">
+                                                <div class="form-check notification-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="messages-notification-check02">
+                                                    <label class="form-check-label" for="messages-notification-check02"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-reset notification-item d-block dropdown-item">
+                                        <div class="d-flex">
+                                            <img src="assets/images/users/avatar-6.jpg" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Kenneth Brown</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">Mentionned you in his comment on  invoice #12501.
+                                                    </p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> 10 hrs ago</span>
+                                                </p>
+                                            </div>
+                                            <div class="px-2 fs-15">
+                                                <div class="form-check notification-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="messages-notification-check03">
+                                                    <label class="form-check-label" for="messages-notification-check03"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-reset notification-item d-block dropdown-item">
+                                        <div class="d-flex">
+                                            <img src="assets/images/users/avatar-8.jpg" class="me-3 rounded-circle avatar-xs" alt="user-pic">
+                                            <div class="flex-grow-1">
+                                                <a href="#!" class="stretched-link">
+                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Maureen Gibson</h6>
+                                                </a>
+                                                <div class="fs-13 text-muted">
+                                                    <p class="mb-1">We talked about a project on linkedin.</p>
+                                                </div>
+                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                    <span><i class="mdi mdi-clock-outline"></i> 3 days ago</span>
+                                                </p>
+                                            </div>
+                                            <div class="px-2 fs-15">
+                                                <div class="form-check notification-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="messages-notification-check04">
+                                                    <label class="form-check-label" for="messages-notification-check04"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="my-3 text-center view-all">
+                                        <button type="button" class="btn btn-soft-success waves-effect waves-light">View
+                                            All Messages <i class="ri-arrow-right-line align-middle"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade p-4" id="alerts-tab" role="tabpanel" aria-labelledby="alerts-tab"></div>
+
+                            <div class="notification-actions" id="notification-actions">
+                                <div class="d-flex text-muted justify-content-center">
+                                    Select <div id="select-content" class="text-body fw-semibold px-1">0</div> Result <button type="button" class="btn btn-link link-danger p-0 ms-3" data-bs-toggle="modal" data-bs-target="#removeNotificationModal">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                {% endif %}
+                <div class="dropdown ms-sm-3 header-item topbar-user">
+                    <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="d-flex align-items-center">
+                        {% if request.user.image %}
+                        <img class="rounded-circle header-profile-user" src="{{request.user.image.url}}" alt="Header Avatar">
+
+                        {% else %}
+                        <img class="rounded-circle header-profile-user" src="{% static 'go/content/images/profile.png' %}" alt="Header Avatar">
+                        {% endif %}
+
+                            <span class="text-start ms-xl-2">
+                                <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{request.user.first_name}} </span>
+                                <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">{{request.user.last_name}}</span>
+                            </span>
+                        </span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <!-- item-->
+                        <h6 class="dropdown-header">{% trans 'Merhaba' %} {{request.user.last_name}} </h6>
+                        <a class="dropdown-item" href="/{{dil}}{% url 'user:profil_bilgisi' %}"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{% trans 'Profilim' %}</span></a>
+                        <a class="dropdown-item" href="/{{dil}}{% url 'users:profile_edit_kismi' %}"><span class="badge bg-success-subtle text-success mt-1 float-end"></span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Ayarlar</span></a>
+                        <a class="dropdown-item" href="/{{dil}}{% url 'users:unlock' %}"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{% trans 'Ekranı kilitle' %}</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/{{dil}}{% url 'users:logout' %}"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">{% trans 'Çıkış yap' %}</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>
+
+    <!-- removeNotificationModal -->
+    <div id="removeNotificationModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="NotificationModalbtn-close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mt-2 text-center">
+                    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
+                    <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                        <h4>Are you sure ?</h4>
+                        <p class="text-muted mx-4 mb-0">Are you sure you want to remove this Notification ?</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                    <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn w-sm btn-danger" id="delete-notification">Yes, Delete It!</button>
+                </div>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- ========== App Menu ========== -->
+    <div class="app-menu navbar-menu">
+            <!-- LOGO -->
+            <div class="navbar-brand-box">
+                <!-- Dark Logo-->
+                <a href="/{{dil}}/" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="{{sayfalogusu.image.url}}" alt="" height="40">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="{{sayfalogusu.image.url}}" alt="" height="45">
+                    </span>
+                </a>
+                <!-- Light Logo-->
+                <a href="/{{dil}}/" class="logo logo-light">
+                    <span class="logo-sm">
+                        <img src="{{sayfalogusu.dark_image.url}}" alt="" height="40">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="{{sayfalogusu.dark_image.url}}" alt="" height="45">
+                    </span>
+                </a>
+                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
+                    <i class="ri-record-circle-line"></i>
+                </button>
+            </div>
+
+            <div id="scrollbar">
+                <div class="container-fluid">
+
+                    <div id="two-column-menu">
+                    </div>
+                    <ul class="navbar-nav" id="navbar-nav">
+                        <li class="menu-title"><span data-key="t-menu">{% trans 'Şantiyenizi Yönetin' %}</span></li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/{{dil}}/" role="button" aria-expanded="false" aria-controls="sidebarLayouts">
+                                <i class="bx bxs-dashboard"></i><span>{% trans 'Genel Özet' %}</span>
+                            </a>
+                        </li> <!-- end Dashboard Menu -->
+
+                        <!--Super Admin Menu-->
+                        {% if request.user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#superAdmin" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-admin-line"></i> <span>{% trans 'Süper Admin' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="superAdmin">
+
+
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:santiye_ekle' %}" class="nav-link" role="button" aria-expanded="false">
+                                            {% trans 'Şantiye Ekle' %}
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:santiye_listele' %}" class="nav-link" role="button" aria-expanded="false">
+                                            {% trans 'Şantiye Ayarları' %}
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:site_ayarlari' %}" class="nav-link">{% trans 'Sistem Ayarları' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:dil_ayari_listele' %}" class="nav-link" role="button" aria-expanded="false">
+                                            {% trans 'Dil Ayarları' %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Super Admin Menu-->
+                        {% else %}
+                        {% endif %}
+
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarAuth" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-file-chart-line"></i> <span>{% trans 'Raporlar' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarAuth">
+
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="#finansalRaporlar" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="false"> {% trans 'Finansal Raporlar' %}
+                                        </a>
+                                        <div class="collapse menu-dropdown" id="finansalRaporlar">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gelirler_ozeti' %}" class="nav-link"> {% trans 'Gelir Raporu' %} </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:giderler_ozeti' %}" class="nav-link"> {% trans 'Gider Raporu' %} </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:hesap_ekstra_durumu' %}" class="nav-link">{% trans 'Hesap Ekstresi' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:virman_gondermeler' %}"class="nav-link">{% trans 'Virman Raporu' %} </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" class="nav-link" role="button" aria-expanded="false"> {% trans 'Şantiye Raporları' %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <!--Şantiye Yönetimi Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#santiyeYonetimi" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-building-2-line"></i> <span>{% trans 'Şantiye Yönetimi' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="santiyeYonetimi">
+
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:santiye_kalem_ve_blog' %}" class="nav-link">{% trans 'Proje Yönetimi' %} </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:yapilacaklar' %}" class="nav-link"  role="button" aria-expanded="false">{% trans 'İş Emirleri' %} 
+                                        </a>
+                                    </li>
+                                   <!-- <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:yapilacaklar_timeline' %}" class="nav-link"> Yapılacaklar </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:takvim_olaylari' %}" class="nav-link"> Takvim </a>
+                                    </li>-->
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:depolama_sistemim' %}" class="nav-link">{% trans 'Dosya Yönetici' %} </a>
+                                    </li>
+                                  <!--   <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:projeler_sayfasi' %}" class="nav-link"> Projeler </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:kullanicilarim' %}" class="nav-link"> Personeller </a>
+                                    </li>-->
+
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:taseron_sayfasi' %}" class="nav-link">{% trans 'Taşeronlar' %}  </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:ust_yuklenici_sayfasi' %}" class="nav-link">{% trans 'Üst Yüklenici' %} </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:hakedis_sayfasi' %}" class="nav-link">{% trans 'Hakedişler' %} </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'main:sozlesmler_sayfasi' %}" class="nav-link">{% trans 'Sözleşmeler' %} </a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </li><!--Şantiye Yönetimi Menü-->
+
+
+                        <!--Muhasebe Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#muhasebe" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-money-dollar-circle-line"></i> <span>{% trans 'Finans Yönetimi' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="muhasebe">
+
+                                <ul class="nav nav-sm flex-column">
+                                
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:gelirler_sayfasi' %}" class="nav-link">{% trans 'Gelir Faturası' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:giderler_sayfasi' %}" class="nav-link">{% trans 'Gider Faturası' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:kasa' %}" class="nav-link">{% trans 'Kasa' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:cari' %}" class="nav-link">{% trans 'Cari Hesapları' %}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Muhasebe Menü-->
+                        <!--Çalışan Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#calisanyonetimi" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-user-line"></i> <span>{% trans 'Çalışan Yönetimi' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="calisanyonetimi">
+
+                                <ul class="nav nav-sm flex-column">
+                                
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_sayfasi' %}" class="nav-link">{% trans 'Calışanlar' %}</a>
+                                    </li>
+                                     <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_kategori_sayfalari' %}" class="nav-link">{% trans 'Pozisyonlar' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_depertman_sayfalari' %}" class="nav-link">{% trans 'Departmanlar' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_puantaj_sayfasi' %}" class="nav-link">{% trans 'Puantaj' %}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Çalışan Menü-->
+                        <!--Personal Menu-->
+                        <!--Satın Alma ve Stok Menu Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#satinalma" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class="ri-archive-2-fill"></i> <span>{% trans 'Satın alma ve Stok' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="satinalma">
+
+                                <ul class="nav nav-sm flex-column">
+                                
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'accounting:urunler_kategorisi' %}" class="nav-link">{% trans 'Ürünler Kategorisi' %}</a>
+                                    </li>
+                                     <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_kategori_sayfalari' %}" class="nav-link">{% trans 'Pozisyonlar' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_depertman_sayfalari' %}" class="nav-link">{% trans 'Departmanlar' %}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/{{dil}}{% url 'users:personeller_puantaj_sayfasi' %}" class="nav-link">{% trans 'Puantaj' %}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Satın Alma ve Stok Menu Menü-->
+
+                        
+
+
+                    <!--Ayarlar Menü-->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#ayarlar" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class=" ri-settings-3-line"></i> <span>{% trans 'Ayarlar' %}</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="ayarlar">
+                
+                                <ul class="nav nav-sm flex-column">
+                                
+                                <li class="nav-item">
+                                        <a href="#kullaniciayar" data-bs-toggle="collapse" class="nav-link">{% trans 'Kullanıcı Ayarları' %} </a>
+                                        <div class="collapse menu-dropdown" id="kullaniciayar">
+                                            <ul class="nav nav-sm flex-column">
+
+                                            <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'users:kullanicilarim' %}" class="nav-link">{% trans 'Kullanıcılar' %}  </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                        <a href="/{{dil}}{% url 'main:kullanici_yetkileri' %}" class="nav-link">{% trans 'Kullanıcı Yetkileri' %}  </a>
+                                            </li>
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#santiyeAyari" data-bs-toggle="collapse" class="nav-link">{% trans 'Şantiye Ayarları' %}  </a>
+                                        <div class="collapse menu-dropdown" id="santiyeAyari">
+                                            <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'main:proje_tipi_' %}" class="nav-link">{% trans 'Proje Tipi' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'main:santiye_projesi_ekle_' %}" class="nav-link">{% trans 'Şantiye' %}  </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#muhasebeayar" data-bs-toggle="collapse" class="nav-link">{% trans 'Muhasebe Ayarları' %}  </a>
+                                        <div class="collapse menu-dropdown" id="muhasebeayar">
+                                            <ul class="nav nav-sm flex-column">
+                                            {% if request.user.is_superuser %}
+                                            {% else %}
+                                            <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:muhasebe_ayarlari' %}" class="nav-link">{% trans 'Muhasebe Ayarları' %}  </a>
+                                                </li>
+                                            
+                                            {% endif %}
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gelir_kategorisi_tipleri'  %}" class="nav-link">{% trans 'Gelir Kategorileri ' %}</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gelir_etiketi_tipleri' %}" class="nav-link">{% trans 'Gelir Etiketleri' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gider_kategorisi_tipleri' %}" class="nav-link">{% trans 'Gider Kategorileri' %} </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:gider_etiketi_tipleri' %}" class="nav-link">{% trans 'Gider Etiketleri' %}  </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/{{dil}}{% url 'accounting:urun_viev' %}" class="nav-link">{% trans 'Ürünler' %} </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li><!--Ayarlar Menü-->
+
+
+                    </ul>
+                </div>
+                <!-- Sidebar -->
+            </div>
+
+            <div class="sidebar-background"></div>
+    </div>
+    <!-- Left Sidebar End -->
+    <!-- Vertical Overlay-->
+    <div class="vertical-overlay"></div>
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+{% endif %}
+
+    <!-- END layout-wrapper -->
+{% endblock header %}
+{% block slider %}
+
+{% endblock slider %}
+{% block content %}
+
+{% endblock content %}
+{% block sidebar %}
+
+{% endblock sidebar %}
+</div>
+{% block footer %}
+
+
+{% endblock footer %}
+
+<!-- JAVASCRIPT -->
+    <script>
+        function openShortcutModal() {
+            document.getElementById('shortcutModal').style.display = 'block';
+        }
+
+        function closeShortcutModal() {
+            document.getElementById('shortcutModal').style.display = 'none';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'k' && event.shiftKey && (event.metaKey || event.ctrlKey)) {
+                event.preventDefault();
+                openShortcutModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeShortcutModal();
+            }
+        });
+    </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+
+    <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+    <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+    <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+    <script src="{% static 'assets/js/plugins.js' %}"></script>
+
+    <!-- apexcharts -->
+    <script src="{% static 'assets/libs/apexcharts/apexcharts.min.js' %}"></script>
+
+    <!-- piecharts init
+    <script src="{% static 'assets/js/pages/apexcharts-pie.init.html' %}"></script>
+-->
+    <!-- apexcharts init -->
+    <script src="{% static 'assets/js/pages/apexcharts-column.init.js' %}"></script>
+
+    <!-- projects js -->
+    <script src="{% static 'assets/js/pages/dashboard-projects.init.js' %}"></script>
+
+    <!-- App js -->
+    <script src="{% static 'assets/js/app.js' %}"></script>
+        <!-- JAVASCRIPT -->
+
+    <!-- dropzone min -->
+    <script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
+
+    <!--file Upload-->
+    <script src="{% static 'assets/js/pages/form-file-upload.init.js' %}"></script>
+
+
+    <!-- listjs init -->
+    <script src="{% static 'assets/js/pages/listjs.init.js' %}"></script>
+
+    <!-- Sweet Alerts js -->
+    <script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
+    <script>
+    {% if request.user.is_authenticated %}
+        {% if request.user.kullanicilar_db %}
+         {% kategori_bilgi_ver request.user.kullanicilar_db as bilgi_cagir %}    
+    {% else %}
+       {% kategori_bilgi_ver request.user as bilgi_cagir %}                                           
+    {% endif %}
+         
+         {% endif %}
+function getChartColorsArray(e) {
+    if (null !== document.getElementById(e))
+        return (
+            (e = document.getElementById(e).getAttribute("data-colors")),
+            (e = JSON.parse(e)).map(function (e) {
+                var t = e.replace(" ", "");
+                return -1 === t.indexOf(",")
+                    ? getComputedStyle(document.documentElement).getPropertyValue(t) || t
+                    : 2 == (e = e.split(",")).length
+                    ? "rgba(" + getComputedStyle(document.documentElement).getPropertyValue(e[0]) + "," + e[1] + ")"
+                    : t;
+            })
+        );
+}
+var upadatedonutchart,
+    chartPieBasicColors = getChartColorsArray("simple_pie_chart"),
+    chartDonutBasicColors =
+        (chartPieBasicColors &&
+            ((options = {
+                series: {{bilgi_cagir.a}},
+                chart: { height: 300, type: "pie" },
+                labels: {{bilgi_cagir.isimleri |safe}},
+                legend: { position: "right" },
+                dataLabels: { dropShadow: { enabled: !1 } },
+                colors: {{bilgi_cagir.renk |safe}},
+            }),
+            (chart = new ApexCharts(document.querySelector("#simple_pie_chart"), options)).render()),
+
+        getChartColorsArray("simple_dount_chart")),
+        chartDonutupdatingColors =
+        (chartDonutBasicColors &&
+            ((options = {
+                series: {{bilgi_cagir.a}},
+                chart: { height: 300, type: "donut" },
+                labels:{{bilgi_cagir.isimleri |safe}},
+                legend: { position: "right" },
+                dataLabels: { dropShadow: { enabled: !1 } },
+                colors: {{bilgi_cagir.renk |safe}}
+            }),
+            (chart = new ApexCharts(document.querySelector("#simple_dount_chart"), options)).render()),
+        getChartColorsArray("updating_donut_chart"));
+    </script>
+<script>
+    function disableButton(form) {
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;  // Submit butonunu devre dışı bırakır
+        // Formun gerçekten gönderilmesini sağlamak için true döner
+        return true;
+    }
+</script>
+
+<script>// Kısayollar
+document.addEventListener('keydown', function(event) {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+    // Fatura Ekle (Command/Ctrl + Shift + F)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'f') {
+        event.preventDefault();
+        window.location.href = '/{{dil}}{% url "accounting:gider_ekle" %}';
+    }
+
+    // Borçlar Sayfası (Command/Ctrl + Shift + B)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'b') {
+        event.preventDefault();
+        window.location.href = '/{{dil}}{% url "accounting:giderler_sayfasi_borc" %}';
+    }
+
+    // Geri Git (Command/Ctrl + Shift + G)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'g') {
+        event.preventDefault();
+        history.back();
+    }
+
+    // Dosya Yöneticisi (Command/Ctrl + Shift + D)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'd') {
+        event.preventDefault();
+        window.location.href = '/{{dil}}{% url "main:depolama_sistemim" %}';
+    }
+
+    // Gider Raporu (Command/Ctrl + Shift + R)
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'r') {
+        event.preventDefault();
+        window.location.href = '/{{dil}}{% url "accounting:giderler_ozeti" %}';
+    }
+
+
+});
+
+</script>
+<script>//sesion ile verileri tutuyoruz
+document.querySelector('form').addEventListener('input', function() {
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+    sessionStorage.setItem('formData', JSON.stringify(data));
+});
+
+</script>
+<script>
+$(document).ready(function() {
+    // DataTables zaten başlatılmışsa mevcut tabloyu yeniden başlatmaya çalışmayın
+    if (!$.fn.DataTable.isDataTable('#example')) {
+        var table = $('#example').DataTable({
+            stateSave: true, // Tablo durumu kaydedilir
+            // DataTable ayarları buraya
+            stateSaveCallback: function(settings, data) {
+                // DataTable state verisini sessionStorage'da sakla
+                sessionStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data));
+            },
+            stateLoadCallback: function(settings) {
+                // DataTable state verisini sessionStorage'dan geri yükle
+                return JSON.parse(sessionStorage.getItem('DataTables_' + settings.sInstance));
+            }
+        });
+
+        // Genel arama filtreleme verisini kaydetme
+        table.on('search.dt', function() {
+            var searchValue = table.search();
+            sessionStorage.setItem('globalSearch', searchValue);
+        });
+
+        // Sütun filtreleme verilerini kaydetme
+        table.columns().every(function(index) {
+            var column = this;
+            $('input', this.header()).on('keyup change', function() {
+                column.search(this.value).draw();
+                sessionStorage.setItem('columnSearch_' + index, this.value);
+            });
+        });
+
+        // Sayfa yüklendiğinde genel arama ve sütun filtreleme durumlarını geri yükleme
+        var savedSearch = sessionStorage.getItem('globalSearch');
+        if (savedSearch) {
+            table.search(savedSearch).draw();
+        }
+
+        table.columns().every(function(index) {
+            var savedColumnSearch = sessionStorage.getItem('columnSearch_' + index);
+            if (savedColumnSearch) {
+                this.search(savedColumnSearch).draw();
+                $('input', this.header()).val(savedColumnSearch);
+            }
+        });
+
+        // Sayfa yüklendiğinde DataTable state verilerini geri yükleme
+        var state = table.state.loaded();
+        if (state) {
+            table.page(state.start).draw('page');
+            table.search(state.search.search).draw();
+            table.columns().every(function(index) {
+                var colSearch = state.columns[index].search.search;
+                if (colSearch) {
+                    this.search(colSearch).draw();
+                    $('input', this.header()).val(colSearch);
+                }
+            });
+        }
+    }
+
+    // Formdaki verileri sessionStorage'da tutma
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('input', function() {
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            sessionStorage.setItem('formData', JSON.stringify(data));
+        });
+
+        // Sayfa yüklendiğinde form verilerini geri yükleme
+        const savedFormData = sessionStorage.getItem('formData');
+        if (savedFormData) {
+            const data = JSON.parse(savedFormData);
+            for (let key in data) {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    input.value = data[key];
+                }
+            }
+        }
+    }
+});
+
+</script>
+ <script>
+    // NProgress ayarları
+    NProgress.configure({ 
+      showSpinner: false,   // Spinner'ı kapatma
+      speed: 500,           // Çizginin hareket hızı
+      minimum: 0.08,        // Başlangıç genişliği (minimum %8)
+      trickleSpeed: 200     // Akış hızını ayarlayın
+    });
+
+    // Sayfa geçişlerinde çalıştırmak için:
+    window.addEventListener('beforeunload', function () {
+      NProgress.start();  // Yükleme çubuğunu başlat
+    });
+
+    // Sayfa yüklendiğinde çalıştırmak için:
+    window.addEventListener('load', function () {
+      setTimeout(function() {
+        NProgress.done(); // Sayfa tamamlandığında çizgiyi bitir
+      }, 300); // Yükleme tamamlandıktan sonra kısa bir gecikme ekleyin
+    });
+  </script>
+       
+
+
+{% block javascriptcode %}
+
+
+
+{% endblock javascriptcode %}
+{% block javascriptcodeadd %}
+
+{% endblock javascriptcodeadd %}
+
+</body>
+</html>

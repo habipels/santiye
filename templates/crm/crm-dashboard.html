@@ -1,0 +1,285 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% load custom_tags %}
+{% block sidebar %}
+<main>
+    <div class="crm-infos">
+        <div class="crm-info">
+            <i class="icon icon-home"></i>
+            <span>{{ toplam_daire }}</span>
+            <span>{% trans 'Toplam<br>Daire' %}</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-atanan-daire"></i>
+            <span>{{ atanan_daire }}</span>
+            <span>{% trans 'Atanan<br>Daire' %}</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-atanmamis-daire"></i>
+            <span>{{ atanmamis_daire }}</span>
+            <span>{% trans 'Atanmamış<br>Daire' %}</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-clipboard"></i>
+            <span>{{ acik_talep }}</span>
+            <span>{% trans 'Açık Talep<br>Sayısı' %}</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-clipboard"></i>
+            <span>{{ acik_sikayet }}</span>
+            <span>{% trans 'Açık Şikayet<br>Sayısı' %}</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-watch"></i>
+            <span>{{ beklemedeki_teklifler }}</span>
+            <span>{% trans 'Beklemedeki Teklifler' %}</span>
+        </div>
+        <div class="crm-info">
+            <i class="icon icon-people"></i>
+            <span>{{ toplam_musteri }}</span>
+            <span>{% trans 'Toplam<br>Müşteri' %}</span>
+        </div>
+    </div>
+
+    <div class="crm-head" style="margin-top: 30px;">
+        <div class="crm-title">{% trans 'Tüm Daireler' %}</div>
+        <div class="crm-right"><a href="/{{dil}}{% url 'crm:crm_daireyonetimi' %}" class="crm-head-btn">{% trans 'Tümünü Gör' %}</a></div>
+    </div>
+
+    <div class="tum-daireler">
+        {% for i in daireler %}
+        <div class="daire">
+                <div class="daire-images">
+                    {% daire_musteri_durum i as d  %}
+                            {% if d == 1 %}
+                             <span class="daire-status daire-status-completed">
+                                {% trans "Teslim Edildi" %}</span>
+                            {% else %}
+                                <span class="daire-status daire-status-warning">{% trans "Bekleniyor" %}</span>
+                            {% endif %}
+                    <br>
+                    <div class="daire-thumbnail">
+                        <!--<img src="./content/images/daire-1.jfif" alt="">-->
+                    </div>
+                </div>
+                <div class="daire-details">
+                    <span>{% trans 'Tamamlanma Tarihi:' %} {{i.kayit_tarihi|date:'d.m.Y'}}</span>
+                    <div class="daire-title">{{i.blog_bilgisi.proje_santiye_Ait.proje_adi}}</div>
+                    <div class="daire-title"> <a href="/{{dil}}{% url 'crm:crm_dairedetayi' i.id %}"> {% trans 'Daire No :' %} {{i.daire_no}}</a></div>
+                    <div class="daire-location"><i class="icon icon-location"></i> {% get_city_from_lat_lon i.blog_bilgisi.proje_santiye_Ait.lat i.blog_bilgisi.proje_santiye_Ait.lon  %}</div>
+                    <div class="daire-customer"><i class="icon icon-customer"></i> {% atanan_musteri_sayisi i %} {% trans 'Atanan Müşteri' %}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="crm-head" style="margin-top: 30px;">
+        <div class="crm-title">{% trans 'Talep ve Şikayetler' %} </div>
+        <div class="crm-right"><a href="/{{dil}}{% url 'crm:crm_talepler_sikayetler' %}" class="crm-head-btn">{% trans 'Tümünü Gör' %}</a></div>
+    </div>
+
+    <div class="tab-navs" style="margin-top: 30px; margin-bottom: 10px;">
+        <button class="tab-navs-btn active" data-tab="talepler">{% trans 'Talepler' %}</button>
+        <button class="tab-navs-btn" data-tab="sikayetler">{% trans 'Şikayetler' %}</button>
+    </div>
+
+    <div class="tab-contents">
+        <div class="tab-content active" id="talepler">
+            <div class="table-wrapper">
+                <table id="talepler-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Talep Adı' %}</th>
+                            <th>{% trans 'Talep Tarihi' %}</th>
+                            <th>{% trans 'İşlem Tarihi' %}</th>
+                            <th>{% trans 'Talep Gerekçesi' %}</th>
+                            <th>{% trans 'Durum' %}</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for talep in talepler %}
+                        <tr>
+                            <td>{{ talep.sikayet_nedeni }}</td>
+                            <td>{{ talep.kayit_tarihi|date:"d M Y" }}</td>
+                            <td>{{ talep.islem_tarihi|date:"d M Y" }}</td>
+                            <td style="text-align: left;">{{ talep.sikayet_aciklamasi }}</td>
+                            <td>
+                               {% if talep.durum == "0" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
+                                        </div>
+                                    {% elif talep.durum == "1" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
+                                        </div>
+                                    {% elif talep.durum == "2" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
+                                        </div>
+                                    {% endif %}
+                            </td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="sikayetler">
+            <div class="table-wrapper">
+                <table id="sikayetler-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Şikayet Adı' %}</th>
+                            <th>{% trans 'Şikayet Tarihi' %}</th>
+                            <th>{% trans 'İşlem Tarihi' %}</th>
+                            <th>{% trans 'Şikayet Gerekçesi' %}</th>
+                            <th>{% trans 'Durum' %}</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sikayet in sikayetler %}
+                        <tr>
+                            <td>{{ sikayet.sikayet_nedeni }}</td>
+                            <td>{{ sikayet.kayit_tarihi|date:"d M Y" }}</td>
+                            <td>{{ sikayet.islem_tarihi|date:"d M Y" }}</td>
+                            <td style="text-align: left;">{{ sikayet.sikayet_aciklamasi }}</td>
+                            <td>
+                               {% if sikayet.durum == "0" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Beklemede" %}</span>
+                                        </div>
+                                    {% elif sikayet.durum == "1" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Tamamlandı" %}</span>
+                                        </div>
+                                    {% elif sikayet.durum == "2" %}
+                                    <div class="td-info"><span class="status-pending stats-lg">{% trans "Reddedildi" %}</span>
+                                        </div>
+                                    {% endif %}
+                            </td>
+                           
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+     <script>
+                $(".tab-navs-btn").on("click", function () {
+                    $(".tab-navs-btn").removeClass("active");
+                    $(".tab-content").removeClass("active");
+
+                    $(this).addClass("active");
+                    $("#" + $(this).attr("data-tab")).addClass("active");
+                })
+            </script>
+    <script>
+        let talepler_table = new DataTable('#talepler-table', {
+            paging: false,
+            searching: true,
+            info: false,
+            layout: {
+                topStart: {
+                    //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            },
+            columnDefs: [{ width: '40%', targets: 3 }]
+        });
+
+        let sikayetler_table = new DataTable('#sikayetler-table', {
+            paging: false,
+            searching: true,
+            info: false,
+            layout: {
+                topStart: {
+                    //buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                }
+            },
+            columnDefs: [{ width: '40%', targets: 3 }]
+        });
+    </script>
+    
+    <div class="crm-head" style="margin-top: 30px;">
+        <div class="crm-title">{% trans 'Evrak ve Dokümanlar' %} </div>
+        <div class="crm-right"><a href="/{{dil}}{% url 'crm:crm_evrak_dokuman' %}" class="crm-head-btn">{% trans 'Tümünü Gör' %}</a></div>
+    </div>
+
+    <div class="evrak-ve-dokumanlar">
+        <div class="evd-stats">
+            <div class="evd-stats-chart">
+                <div id="evd-chart"></div>
+
+
+                <script>
+                    var options = {
+                        series: [{{ total_documents }}],
+                        chart: {
+                            type: 'radialBar',
+                            offsetY: -20,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        plotOptions: {
+                            radialBar: {
+                                startAngle: -90,
+                                endAngle: 90,
+                                track: {
+                                    background: "#e7e7e7",
+                                    strokeWidth: '97%',
+                                    margin: 0,
+                                },
+                                dataLabels: {
+                                    name: {
+                                        show: false
+                                    },
+                                    value: {
+                                        show: false
+                                    }
+                                }
+                            }
+                        },
+                        fill: {
+                            type: 'solid',
+                            colors: ['#A04CFF']
+                        }
+                    };
+
+                    var chart = new ApexCharts(document.querySelector("#evd-chart"), options);
+                    chart.render();
+                </script>
+
+            </div>
+
+            <div class="evd-stats-list">
+                <div class="evd-stat">
+                    <i class="icon icon-images-file"></i>
+                    <div class="evd-stat-title">{% trans 'Images' %} <span>{{ image_documents }} {% trans 'files' %}</span></div>
+                    <div class="evd-stat-size">{{ image_size|floatformat:2 }} {% trans 'MB' %}</div>
+                </div>
+                <div class="evd-stat">
+                    <i class="icon icon-media-file"></i>
+                    <div class="evd-stat-title">{% trans 'Media' %} <span>{{ media_documents }} {% trans 'files' %}</span></div>
+                    <div class="evd-stat-size">{{ media_size|floatformat:2 }} {% trans 'MB' %}</div>
+                </div>
+                <div class="evd-stat">
+                    <i class="icon icon-documents-file"></i>
+                    <div class="evd-stat-title">{% trans 'Documents' %} <span>{{ other_documents }} {% trans 'files' %}</span></div>
+                    <div class="evd-stat-size">{{ other_size|floatformat:2 }} {% trans 'MB' %}</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="evd-folders">
+            {% for daire in daireler %}
+            <div class="evd-folder" onclick="window.location.href='{% url 'crm:crm_dairedetayi' daire.id %}'">
+                <i class="icon icon-folder"></i>
+                <div class="evd-folder-name">{% trans 'Daire -' %} {{ daire.daire_no }} / {% trans 'Dokümanlar' %}</div>
+                <span>{{ daire.daire_evraklari.count }}{% trans 'adet dosya' %} </span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock sidebar %}

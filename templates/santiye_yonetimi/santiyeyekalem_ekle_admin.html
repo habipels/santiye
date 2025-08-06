@@ -1,0 +1,81 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% block sidebar %}
+<div class="vertical-overlay"></div>
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form autocomplete="off"class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Şantiye Bilgisi' %}</label>
+                                            <select class="form-control" name="projetipi" id="date-field">
+                                                
+                                                {% for j in santiyeler_bilgileri %}
+                                                    <option value="{{j.id}}">{{j.proje_adi}}</option>
+                                                {% endfor %}
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Kalem Adı' %}</label>
+                                            <input type="text"   name="yetkili_adi" id="date-field" class="form-control"  />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Şantiye Ağırlığı' %}</label>
+                                            <input type="number" value="0"  name="katsayisi" id="date-field" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Finansal Ağırlık' %}</label>
+                                            <input type="number" value="0"  name="blogsayisi" id="date-field" class="form-control"  />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Birimi' %}</label>
+                                            <select class="form-control" name="birim_bilgisi" id="date-field">
+
+                                                {% for l in birim_bilgisi %}
+                                                    <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
+                                                {% endfor %}
+
+
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Metraj' %}</label>
+                                            <input type="number" step="0.001" value="0"  name="metraj" id="date-field" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="date-field" class="form-label">{% trans 'Tutar' %}</label>
+                                            <input type="number" step="0.001" value="0"  name="tutar" id="date-field" class="form-control" />
+                                        </div>
+                                    
+                            <input type="submit" class="btn btn-success waves-effect waves-light mt-5" value="{% trans 'Şantiyeye Kalem Ekle' %}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        
+</div>
+
+{% endblock sidebar %}
+    
+

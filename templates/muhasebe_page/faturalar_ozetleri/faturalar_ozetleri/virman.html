@@ -1,0 +1,107 @@
+{% load static %}
+{% load i18n %}
+{% load custom_tags %}
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Virman Raporları' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans 'Raporlar' %}</a></li>
+                    <li><a href="#">{% trans 'Finans Raporları' %}</a></li>
+                    <li><a href="#">{% trans 'Virman Raporları' %}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+         <form autocomplete="off" method="get">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Virman Raporları' %}</div>
+                <div class="stats-right">
+                
+                    <div class="form-element">
+                        <select name="gonderen_kasa"  id="gonderen-sec">
+                            <option value="">{% trans 'Gönderen Kasayı Seçin' %}</option>
+                                                    {% for i in kasalar %}
+                                                    {% if request.GET.gonderen_kasa == i.id %}
+                                                    <option selected value="{{request.GET.gonderen_kasa}}">{{i.kasa_adi}}</option>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    {% for i in kasalar %}
+                                                    <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                    {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <select name="alici_kasa"  name="alici-sec" id="alici-sec">
+                          <option value="">{% trans 'Alıcı Kasayı Seçin' %}</option>
+                                                    {% for i in kasalar %}
+                                                    {% if request.GET.alici_kasa == i.id %}
+                                                    <option selected value="{{request.GET.alici_kasa}}">{{i.kasa_adi}}</option>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    
+                                                    
+                                                    {% for i in kasalar %}
+                                                    <option value="{{i.id}}">{{i.kasa_adi}}</option>
+                                                    {% endfor %}
+                        </select>
+                    </div>
+                    <button  type="submit" class="status-primary status-btn">
+                                            {% trans 'Ara' %}
+                                            </button>
+                    <div class="status-cancel status-btn"><a href="/{{dil}}{% url 'accounting:virman_gondermeler' %}" type="button" class="btn btn-primary w-100">
+                                                {% trans 'Temizle' %}
+                                            </a></div>
+                    
+                </div>
+            </div>
+        </form>
+            <div class="table-wrapper">
+                <table id="buttons-datatables" class="display table table-bordered dataTable" style="width:100%">
+                    <thead>
+                        <tr>
+                        {% if request.user.is_superuser %}
+                         <th>{% trans 'Hesap' %}</th>
+                        {% endif %}
+                           
+                            <th>{% trans 'Tarih D-M-Y' %}</th>
+                            <th>{% trans 'Gönderen' %}</th>
+                            <th>{% trans 'Alıcı' %}</th>
+                            <th>{% trans 'Tutar' %} </th>
+                            <th>{% trans 'Açıklama' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for i in santiyeler %}
+                        <tr>
+                          {% if request.user.is_superuser %}
+                            <td>{{ i.virman_ait_oldugu.first_name }}</td>
+                          {% endif %}
+                          <td>{{ i.virman_tarihi | date:"d.m.Y" }}</td>
+                          <td>{{ i.gonderen_kasa.kasa_adi }}</td>
+                          <td>{{ i.alici_kasa.kasa_adi }}</td>
+                          <td data-export="{{ i.tutar|stringformat:'f' }}">{{ i.tutar }}</td>
+                          <td>{{ i.aciklama }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                 <div class="large-stats-card-footer-actions">
+            <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
+            <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
+            <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
+        </div>
+            </div>
+
+        </div>
+
+
+
+    </main>

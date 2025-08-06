@@ -1,0 +1,151 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% block sidebar %}
+<div class="vertical-overlay"></div>
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form autocomplete="off"class="santiye-ekle-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Proje Adı' %}</label>
+                                        <input type="text"  name="yetkili_adi" id="date-field" class="form-control" placeholder="{% trans 'Proje Adı' %}" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="date-field" class="form-label">{% trans 'Tarih' %}</label>
+                                        <input name="tarih_bilgisi" type="date" id="date-field" class="form-control" placeholder="{% trans 'Select Date' %}" required />
+                                        <div class="invalid-feedback">{% trans 'Please select a date.' %}</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email-field" class="form-label">{% trans 'Açıklama' %}</label>
+                                        <textarea name="aciklama" class="form-control" placeholder="Enter Description" required></textarea>
+                                        <div class="invalid-feedback">{% trans 'Please enter an email.' %}</div>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">{% trans 'Durum' %}</label>
+                                        <select name="durumu" class="form-control" data-trigger name="status-field" id="status-field" required>
+                                            <option value="">{% trans 'Durum' %}</option>
+                                            <option value="Active">{% trans 'Active' %}</option>
+                                            <option value="Block">{% trans 'Block' %}</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="status-field" class="form-label">{% trans 'Bloklar' %}</label>
+                                        <select name="blogbilgisi" class="form-control" data-trigger multiple name="status-field" id="status-field" required>
+                                            <option value=""></option>
+                                            {% for blog in blog_bilgisi %}
+                                            <option value="{{ blog.id }}">{{ blog.proje_santiye_Ait.proje_adi }}: {{blog.blog_adi}}{{blog.blog_numarasi}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h4 class="card-title mb-0">{% trans 'Dosya Yükle' %}</h4>
+                                                </div><!-- end card header -->
+                                            
+                                                <div class="card-body">
+                                                    <p class="text-muted">{% trans 'Yüklemek istediğiniz dosyayı sürükle bırak yöntemi ile yada direk dosya seçerek yükleyebilirsiniz.' %}</p>
+                                                
+                                                    <div class="dropzone">
+                                                        <div class="fallback">
+                                                            <input name="file" type="file" multiple="multiple">
+                                                        </div>
+                                                        <div class="dz-message needsclick">
+                                                            <div class="mb-3">
+                                                                <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+                                                            </div>
+                                                        
+                                                            <h4>{% trans 'Drop files here or click to upload.' %}</h4>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <ul class="list-unstyled mb-0" id="dropzone-preview">
+                                                        <li class="mt-2" id="dropzone-preview-list">
+                                                            <!-- This is used as the file preview template -->
+                                                            <div class="border rounded">
+                                                                <div class="d-flex p-2">
+                                                                    <div class="flex-shrink-0 me-3">
+                                                                        <div class="avatar-sm bg-light rounded">
+                                                                            <img data-dz-thumbnail class="img-fluid rounded d-block" src="assets/images/new-document.png" alt="Dropzone-Image" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-grow-1">
+                                                                        <div class="pt-1">
+                                                                            <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
+                                                                            <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                                                                            <strong class="error text-danger" data-dz-errormessage></strong>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-shrink-0 ms-3">
+                                                                        <button data-dz-remove class="btn btn-sm btn-danger">{% trans 'Delete' %}</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                    <!-- end dropzon-preview -->
+                                                </div>
+                                                <!-- end card body -->
+                                            </div>
+                                            <!-- end card -->
+                                        </div> <!-- end col -->
+                                    </div>
+                            <input type="submit" class="btn btn-success waves-effect waves-light mt-5" value="{% trans 'Projeyi Oluştur' %}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <script>document.write(new Date().getFullYear())</script> © {{site_adi.footer}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-sm-end d-none d-sm-block">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        
+</div>
+
+{% endblock sidebar %}
+    
+{% block head %}
+    <!-- dropzone-->
+    <link rel="stylesheet" href="{% static 'assets/libs/dropzone/dropzone.css' %}" type="text/css" />
+    <!-- Filepond css -->
+    <link rel="stylesheet" href="{% static 'assets/libs/filepond/filepond.min.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css' %}">
+{% endblock head %}
+{% block javascriptcodeadd %}
+    <!-- prismjs plugin -->
+    <script src="{% static 'assets/libs/prismjs/prism.js' %}"></script>
+    <script src="{% static 'assets/libs/list.js/list.min.js' %}"></script>
+    <script src="{% static 'assets/libs/list.pagination.js/list.pagination.min.js' %}"></script>
+
+    <!-- dropzone min -->
+    <script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
+
+    <!--file Upload-->
+    <script src="{% static 'assets/js/pages/form-file-upload.init.js' %}"></script>
+
+    
+    <!-- listjs init -->
+    <script src="{% static 'assets/js/pages/listjs.init.js' %}"></script>
+
+    <!-- Sweet Alerts js -->
+    <script src="{% static 'assets/libs/sweetalert2/sweetalert2.min.js' %}"></script>
+
+    <!-- App js -->
+    <script src="{% static 'assets/js/app.js' %}"></script>
+{% endblock javascriptcodeadd %}

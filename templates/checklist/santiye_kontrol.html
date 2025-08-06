@@ -1,0 +1,117 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'go/content/style/style.css' %}">
+<link rel="stylesheet" href="{% static 'go/content/style/custom-checklist.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'go/content/style/control-page.css' %}">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="{% static 'go/content/script/control-manager.js' %}"></script>
+{% endblock head %}
+{% block sidebar %}
+{% if hash_bilgi %}
+
+{% else %}
+<main>
+    <div class="page-header">
+        <div class="page-title">
+            <h2>{{ santiyeler.proje_adi }} {% trans "Kontrol Listesi" %}</h2>
+            <div class="block-info">
+                <span class="info-item">
+                    <i class="fa-solid fa-building"></i> {{ daireler.count }} {% trans "Daire" %}
+                </span>
+                <span class="info-item">
+                    <i class="fa-solid fa-layer-group"></i> {{ kat }} {% trans "Kat" %}
+                </span>
+            </div>
+        </div>
+        <div class="page-actions">
+            <button class="button" id="exportReport">
+                <i class="fa-solid fa-file-export"></i> {% trans "Rapor Al" %}
+            </button>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <!-- Filtreler -->
+        <div class="filters-section card">
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{% trans "İş Grubu" %}</label>
+                        <select class="form-control" id="workGroupFilter">
+                            <option value="all">{% trans "Tümü" %}</option>
+                            {% for i in imalat %}
+                            <option value="{{i.is_grubu}}">{{i.is_grubu}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{% trans "Durum" %}</label>
+                        <select class="form-control" id="statusFilter">
+                            <option value="all">{% trans "Tümü" %}</option>
+                            <option value="pending">{% trans "Kontrol Edilmedi" %}</option>
+                            <option value="inProgress">{% trans "Kontrol Ediliyor" %}</option>
+                            <option value="completed">{% trans "Tamamlandı" %}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{% trans "Arama" %}</label>
+                        <input type="text" class="form-control" placeholder="{% trans "Daire no, bölüm adı..." %}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontrol Listesi -->
+        <div class="areas-container">
+            <!-- Katlar -->
+            <div class="area-section">
+                <div class="section-header" data-toggle="collapse" data-target="#floor{{ kat }}">
+                    <h3>{{ kat }}. {% trans "Kat" %}</h3>
+                    <div class="section-status">
+                        <span class="progress-text">{{ daireler.count }}/{{ daireler.count }} {% trans "Tamamlandı" %}</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div id="floor{{ kat }}" class="section-content">
+                    <!-- Daireler -->
+                    <div class="units-grid">
+                        {% for daire in daireler %}
+                        {% daire_imalat_yuzde_hesabi daire as sonuc %}
+                        <div class="unit-card" onclick="location.href='/{{dil}}/sitedetail/{{ daire.id }}/'">
+                            <div class="unit-header">
+                                <h4>{% trans "Daire" %} {{ daire.daire_no }}</h4>
+                                {% if sonuc == 100 %}
+                                <span class="status-badge completed">{% trans "Tamamlandı" %}</span>
+                                {% elif sonuc > 0 %}
+                                <span class="status-badge in-progress">{% trans "Kontrol Ediliyor" %}</span>
+                                {% else %}
+                                <span class="status-badge pending">{% trans "Kontrol Edilmedi" %}</span>
+                                {% endif %}
+                            </div>
+                            <div class="unit-body">
+                                <div class="progress-section">
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: {{sonuc}}%"></div>
+                                    </div>
+                                    <span class="progress-text">{{sonuc}}%</span>
+                                </div>
+                                <div class="work-groups">
+                                    {% for i in imalat %}
+                                    <span class="work-badge pending">{{i.is_grubu}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endif %}
+{% endblock sidebar %}

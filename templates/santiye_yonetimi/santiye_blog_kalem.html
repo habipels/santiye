@@ -1,0 +1,225 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load custom_tags %}
+{% block sidebar %}
+{% load static %}
+{% if hash_bilgi %}
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Proje Yönetimi' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Proje Yönetimi' %}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Proje Yönetimi' %}</div>
+                <div class="stats-search">
+                    <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                    <button><i class="icon icon-search"></i></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="datatable">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Yapı Adı' %}</th>
+                            <th>{% trans 'Kat Sayısı' %}</th>
+                            <th>{% trans 'Proje Sahibi' %}</th>
+                            <th>{% trans 'Süreç Takibi' %}</th>
+                            <th>{% trans 'Rapor' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in santiyeler %}
+                        <tr>
+                            <td>{{i.blog_adi}}</td>
+                            <td>{{i.kat_sayisi | stringformat:'.f'}}</td>
+                            <td>{{i.proje_ait_bilgisi.first_name}}</td>
+                            <td>
+                                
+                                {% if request.user.kullanicilar_db %}
+                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                    {% if yetki.ilerleme_takibi_gorme %}
+                                                    <div class="td-actions">
+                                                        <a href="/{{dil}}{% url 'main:blogtan_kaleme_ilerleme_takibi' i.id i.blog_adi %}" class="status-yit stats-lg">{{i.blog_adi}}</a>
+                                                    </div>
+                                                                                                            
+                                                    {% else %}
+                                                                                                                    
+                                                    {% endif %}
+                                                    {% else %}
+                                                        <div class="td-actions">
+                                                        <a href="/{{dil}}{% url 'main:blogtan_kaleme_ilerleme_takibi_hash' i.id i.blog_adi hashler  %}" class="status-yit stats-lg">{{i.blog_adi}}</a>
+                                                    </div>
+                                                    {% endif %}
+                            </td>
+                            <td>
+                                <div class="td-actions">
+                                      {% if request.user.kullanicilar_db %}
+                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                    {% if yetki.santiye_raporu_gorme %} 
+                                                    <a href="/{{dil}}{% url 'main:santiye_raporu' i.id %}" class="status-primary stats-lg">{% trans 'Rapor Görüntüle' %}</a>
+                                    <!--<a onclick="openModal('rapor-indir')" class="status-info stats-lg"><i
+                                            class="icon icon-file"></i> İndir</a>-->
+                                             
+                                                    {% else %}
+                                                                                                                    
+                                                    {% endif %}
+                                                    {% else %}
+                                                            <a href="/{{dil}}{% url 'main:santiye_raporu_2'  i.id hashler %}" class="status-primary stats-lg">{% trans 'Rapor Görüntüle' %}</a>
+                                    <!--<a onclick="openModal('rapor-indir')" class="status-info stats-lg"><i
+                                            class="icon icon-file"></i> İndir</a>-->
+                                                                                         
+                                                    {% endif %}
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <script>
+            let datatable = new DataTable('#datatable', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                console.log($(this).val());
+                datatable.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+{% else %}
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans 'Proje Yönetimi' %}
+                    
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
+                    <li><a href="#">{% trans 'Şantiye Yönetimi' %}</a></li>
+                    <li><a href="#">{% trans 'Proje Yönetimi' %}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans 'Proje Yönetimi' %}</div>
+                <div class="stats-search">
+                    <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                    <button><i class="icon icon-search"></i></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="datatable">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Yapı Adı' %}</th>
+                            <th>{% trans 'Kat Sayısı' %}</th>
+                            <th>{% trans 'Proje Sahibi' %}</th>
+                            <th>{% trans 'Süreç Takibi' %}</th>
+                            <th>{% trans 'Rapor' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in santiyeler %}
+                        <tr>
+                            <td>{{i.blog_adi}}</td>
+                            <td>{{i.kat_sayisi | stringformat:'.f'}}</td>
+                            <td>{{i.proje_ait_bilgisi.first_name}}</td>
+                            <td>
+                                
+                                {% if request.user.kullanicilar_db %}
+                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                    {% if yetki.ilerleme_takibi_gorme %}
+                                                    <div class="td-actions">
+                                                        <a href="/{{dil}}{% url 'main:blogtan_kaleme_ilerleme_takibi' i.id i.blog_adi %}" class="status-yit stats-lg">{{i.blog_adi}}</a>
+                                                    </div>
+                                                                                                            
+                                                    {% else %}
+                                                                                                                    
+                                                    {% endif %}
+                                                    {% else %}
+                                                        <div class="td-actions">
+                                                        <a href="/{{dil}}{% url 'main:blogtan_kaleme_ilerleme_takibi' i.id i.blog_adi %}" class="status-yit stats-lg">{{i.blog_adi}}</a>
+                                                    </div>
+                                                    {% endif %}
+                            </td>
+                            <td>
+                                <div class="td-actions">
+                                      {% if request.user.kullanicilar_db %}
+                                                    {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                    {% if yetki.santiye_raporu_gorme %} 
+                                                    <a href="/{{dil}}{% url 'main:santiye_raporu' i.id %}" class="status-primary stats-lg">{% trans 'Rapor Görüntüle' %}</a>
+                                    <!--<a onclick="openModal('rapor-indir')" class="status-info stats-lg"><i
+                                            class="icon icon-file"></i> İndir</a>-->
+                                             
+                                                    {% else %}
+                                                                                                                    
+                                                    {% endif %}
+                                                    {% else %}
+                                                            <a href="/{{dil}}{% url 'main:santiye_raporu' i.id %}" class="status-primary stats-lg">{% trans 'Rapor Görüntüle' %}</a>
+                                    <!--<a onclick="openModal('rapor-indir')" class="status-info stats-lg"><i
+                                            class="icon icon-file"></i> İndir</a>-->
+                                                                                         
+                                                    {% endif %}
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <script>
+            let datatable = new DataTable('#datatable', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                console.log($(this).val());
+                datatable.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+{% endif %}
+
+{% endblock sidebar %}
+

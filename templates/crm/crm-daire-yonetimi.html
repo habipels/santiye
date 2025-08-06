@@ -1,0 +1,346 @@
+{% extends "homebase.html" %}
+{% load i18n %}
+{% load static %}
+{% load custom_tags %}
+{% block sidebar %}
+
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans "Daire Yönetimi" %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Daire Yönetimi" %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+                <button class="page-primary-btn" onclick="openModal('daire-ekle')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Daire Ekle" %}</button>
+                <button class="page-primary-btn" onclick="openModal('search-modal')"><i class="icon icon-search"></i>
+                    {% trans "Daire Ara" %}</button>
+            </div>
+        </div>
+
+
+        <div class="tum-daireler daire-yonetimi" style="margin-top: 30px;">
+            {% for i in daireler %}
+            
+            
+            <div class="daire" data-santiye-id="{{ i.blog_bilgisi.proje_santiye_Ait.id }}" data-blok-id="{{ i.blog_bilgisi.blok_id }}" data-kat-id="{{ i.kat_id }}">
+                <div class="daire-images">
+                   
+                    {% daire_musteri_durum i as d  %}
+                            {% if d == 1 %}
+                             <span class="daire-status daire-status-completed">
+                                {% trans "Teslim Edildi" %}</span>
+                            {% else %}
+                                <span class="daire-status daire-status-warning">{% trans "Bekleniyor" %}</span>
+                            {% endif %}
+                    
+                    <br>
+                    <div class="daire-thumbnail">
+                        <!--<img src="./content/images/daire-1.jfif" alt="">-->
+                    </div>
+                </div>
+                <div class="daire-details">
+                    <span>
+                    
+                    {% trans "Tamamlanma Tarihi" %}: {{i.kayit_tarihi|date:'d.m.Y'}}</span>
+                    <div class="daire-title">{{i.blog_bilgisi.proje_santiye_Ait.proje_adi}}</div>
+                    <div class="daire-title"> <a href="/{{dil}}{% url 'crm:crm_dairedetayi' i.id %}">{% trans "Daire No" %} : {{i.daire_no}}</a></div>
+                    <div class="daire-location"><i class="icon icon-location"></i> {% get_city_from_lat_lon i.blog_bilgisi.proje_santiye_Ait.lat i.blog_bilgisi.proje_santiye_Ait.lon  %}</div>
+                    <div class="daire-customer">
+                        <i class="icon icon-customer"></i> 
+                        {% atanan_musteri_sayisi i %} {% trans "Atanan Müşteri" %}
+                        <span>
+                        
+                        </span>
+                    </div>
+                </div>
+            </div>
+          {% endfor %}
+        </div>
+
+
+    </main>
+
+
+
+
+
+    <div class="modal" id="daire-ekle">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans "Daire Ekle" %}
+            </div>
+            <div class="modal-body">
+                <form id="daire-ekle-form" method="POST" action="/{{dil}}{% url 'crm:daire_ekle' %}">
+                    {% csrf_token %}
+                    <div class="form-element">
+                        <label for="santiye">{% trans "Şantiye" %}</label>
+                        <select name="santiye" id="santiye" required>
+                            <option value="" selected disabled>{% trans "Şantiye Seçiniz" %}</option>
+                            {% for santiye in santiyeler %}
+                                <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label for="blok">{% trans "Blok" %}</label>
+                        <select name="blok" id="blok" required>
+                            <option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="kat">{% trans "Kat" %}</label>
+                            <select name="kat" id="kat" required>
+                                <option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>
+                            </select>
+                        </div>
+                        <div class="form-element">
+                            <label for="daire-no">{% trans "Daire No" %}</label>
+                            <input type="text" required name="daire_no">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-element">
+                            <label for="oda-sayisi">{% trans "Oda Sayisi" %}</label>
+                            <input type="number" required name="oda_Sayisi">
+                        </div>
+                        <div class="form-element">
+                            <label for="m2brut">M<sup>2</sup></label>
+                            <input type="number" required name="metrekare">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                        <button class="form-action-primary" type="submit">{% trans "Daire Ekle" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="search-modal">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans "Daire Ara" %}
+            </div>
+            <div class="modal-body">
+                <div class="form-element">
+                    <label for="search-santiye">{% trans "Şantiye" %}</label>
+                    <select id="search-santiye">
+                        <option value="" selected disabled>{% trans "Şantiye Seçiniz" %}</option>
+                        {% for santiye in santiyeler %}
+                            <option value="{{ santiye.id }}">{{ santiye.proje_adi }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="search-blok">{% trans "Blok" %}</label>
+                    <select id="search-blok">
+                        <option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>
+                    </select>
+                </div>
+                <div class="form-element">
+                    <label for="search-kat">{% trans "Kat" %}</label>
+                    <select id="search-kat">
+                        <option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans "Vazgeç" %}</button>
+                    <button class="form-action-primary" type="button" onclick="filterDaireler()">{% trans "Ara" %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.getElementById('santiye').addEventListener('change', function() {
+            const santiyeId = this.value;
+        
+            fetch("{% url 'crm:get_bloglar' %}?santiye_id=" + santiyeId)
+                .then(response => response.json())
+                .then(data => {
+                    const blokSelect = document.getElementById('blok');
+                    blokSelect.innerHTML = '<option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>'; // Önce eski verileri temizle
+        
+                    data.forEach(blok => {
+                        const option = document.createElement('option');
+                        option.value = blok.id;
+                        option.textContent = blok.blog_adi;
+                        blokSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        </script>
+        
+    <script>
+        document.getElementById('search-santiye').addEventListener('change', function() {
+                        option.value = blok.id;
+                        option.textContent = blok.blog_adi;
+                        blokSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('search-blok').addEventListener('change', function() {
+            const blokId = this.value;
+
+            fetch("{% url 'crm:get_katlar' %}?blok_id=" + blokId)
+                .then(response => response.json())
+                .then(data => {
+                    const katSelect = document.getElementById('search-kat');
+                    katSelect.innerHTML = '<option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>';
+
+                    data.forEach(kat => {
+                        const option = document.createElement('option');
+                        option.value = kat.id;
+                        option.textContent = kat.kat_adi;
+                        katSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        function filterDaireler() {
+            const santiyeId = document.getElementById('search-santiye').value;
+            const blokId = document.getElementById('search-blok').value;
+            const katId = document.getElementById('search-kat').value;
+
+            const daireler = document.querySelectorAll('.daire');
+            daireler.forEach(daire => {
+                const daireSantiye = daire.getAttribute('data-santiye-id');
+                const daireBlok = daire.getAttribute('data-blok-id');
+                const daireKat = daire.getAttribute('data-kat-id');
+
+                if (
+                    (!santiyeId || daireSantiye === santiyeId) &&
+                    (!blokId || daireBlok === blokId) &&
+                    (!katId || daireKat === katId)
+                ) {
+                    daire.style.display = 'block';
+                } else {
+                    daire.style.display = 'none';
+                }
+            });
+
+            closeModal();
+        }
+    </script>
+
+    <script>
+        function openModal(modalID, close = true) {
+            if (close) {
+                closeModal();
+            }
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+    </script>
+<script>
+    document.getElementById('blok').addEventListener('change', function() {
+        const blokId = this.value;
+    
+        fetch("{% url 'crm:get_katlar' %}?blok_id=" + blokId)
+            .then(response => response.json())
+            .then(data => {
+                const katSelect = document.getElementById('kat');
+                katSelect.innerHTML = '<option value="" selected disabled>{% trans "Kat Seçiniz" %}</option>'; // Önce eski verileri temizle
+    
+                data.forEach(kat => {
+                    const option = document.createElement('option');
+                    option.value = kat.id;
+                    option.textContent = kat.kat_adi;
+                    katSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+    </script>
+    
+    <script>
+        document.getElementById('daire-ekle-form').addEventListener('submit', function(event) {
+            const santiye = document.getElementById('santiye').value;
+            const blok = document.getElementById('blok').value;
+            const kat = document.getElementById('kat').value;
+
+            if (!santiye || !blok || !kat) {
+                event.preventDefault();
+                alert("{% trans 'Lütfen Şantiye, Blok ve Kat seçimlerini yapınız.' %}");
+            }
+        });
+    </script>
+
+    <script>
+        function toggleDarkMode() {
+            if ($("body").hasClass("dark-mode")) {
+                document.cookie = "dark-mode=false; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+            } else {
+                document.cookie = "dark-mode=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+            }
+            $("body").toggleClass("dark-mode");
+        }
+
+        window.onload = function () {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith("dark-mode=true")) {
+                    document.body.classList.add('dark-mode');
+                    break;
+                }
+            }
+        };
+
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || doc.mozRequestFullScreen || doc.webkitRequestFullScreen || doc.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+
+
+{% endblock sidebar %}

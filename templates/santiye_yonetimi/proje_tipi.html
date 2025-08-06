@@ -1,0 +1,461 @@
+{% extends "homebase.html" %}
+{% load static %}
+{% load i18n %}
+{% load custom_tags %}
+{% block sidebar %}
+{% if hash_bilgi %}
+
+
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans "Ayarlar" %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Şantiye Ayarlar" %}</a></li>
+                    <li><a href="#">{% trans "Proje Tipi" %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+             {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.projeler_olusturma %}
+                                                     <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Proje Ekle" %}</button>                                            
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                                  <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Proje Ekle" %}</button>                                                
+                                            {% endif %}
+                
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans "Projeler" %}</div>
+                <div class="stats-search">
+                    <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
+                    <button><i class="icon icon-search"></i></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="datatable">
+                    <thead>
+                        <tr>
+
+                            <th>{% trans "Proje Tipi Kime Ait" %}</th>
+                            <th>{% trans "Proje Tip Adı" %}</th>
+                            <th>{% trans "Proje Tip Kayıt Tarihi" %}</th>
+                           
+                            <th>{% trans "Durum" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in santiyeler %}
+                      <tr>
+                            <td>{{ i.proje_ait_bilgisi.first_name }}</td>
+                            <td>{{ i.Proje_tipi_adi }}</td>
+                            <td>{{ i.kayit_tarihi }}</td>
+                            <td>
+                                <div class="td-actions">
+                                {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_duzenleme %}
+                                                                <a  onclick="openModal('yeni-proje{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <a  onclick="openModal('yeni-proje{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        {% endif %}
+                                                            
+                                                            {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_silme %}
+                                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% endif %}
+                                    
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                                                {% endfor %}
+                      
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <script>
+            let datatable = new DataTable('#datatable', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+{% for i in santiyeler %}
+    <div class="modal" id="yeni-proje{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans "Projeyi Düzenle" %}
+            </div>
+            <div class="modal-body">
+                 <form class="tablelist-form" action="/{{dil}}{% url 'main:proje_duzenle_2' hashler  %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                 <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
+                    <div class="form-element">
+                        <label for="proje-tipi">{% trans "Proje Tipi" %}</label>
+                        <input type="text" value="{{i.Proje_tipi_adi}}"  name="yetkili_adi" id="proje-tipi"  />
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Devam' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<div class="modal" id="deleteConfirmationModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                <h2>{% trans 'Silmek İstediğinden Emin misin?' %}</h2>
+            <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
+            </div>
+            <div class="modal-body">
+                 <form action="/{{dil}}{% url 'main:proje_Adi_sil_2' hashler  %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    
+                 
+                    <div class="form-actions">
+                                       <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary"  onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+{% endfor %}
+    <div class="modal" id="yeni-proje">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans "Yeni Proje Ekle" %}
+            </div>
+            <div class="modal-body">
+                <form class="tablelist-form" action="/{{dil}}{% url 'main:proje_ekleme_2' hashler  %}"  method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                    <div class="form-element">
+                        <label for="proje-tipi">{% trans "Proje Tipi" %}</label>
+                        <input type="text"  name="yetkili_adi" id="proje-tipi"  />
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Devam' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+{% else %}
+
+
+    <main>
+
+
+        <div class="page-header">
+            <div class="page-info">
+                <div class="page-title">
+                    <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
+                    {% trans "Ayarlar" %}
+                </div>
+                <ul class="page-breadcrumb">
+                    <li><a href="#">{% trans "Dashboard" %}</a></li>
+                    <li><a href="#">{% trans "Şantiye Ayarlar" %}</a></li>
+                    <li><a href="#">{% trans "Proje Tipi" %}</a></li>
+                </ul>
+            </div>
+
+            <div class="page-actions">
+             {% if request.user.kullanicilar_db %}
+                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                            {% if yetki.projeler_olusturma %}
+                                                     <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Proje Ekle" %}</button>                                            
+                                            {% else %}
+                                                                                                            
+                                            {% endif %}
+                                            {% else %}
+                                                  <button class="page-primary-btn" onclick="openModal('yeni-proje')"><i class="icon icon-new"></i>
+                    {% trans "Yeni Proje Ekle" %}</button>                                                
+                                            {% endif %}
+                
+            </div>
+        </div>
+
+        <div class="large-stats-card table-card table-detail-card">
+            <div class="stats-header">
+                <div class="stats-title">{% trans "Projeler" %}</div>
+                <div class="stats-search">
+                    <input type="text" name="stats-search" id="stats-search" placeholder="Ara">
+                    <button><i class="icon icon-search"></i></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="datatable">
+                    <thead>
+                        <tr>
+
+                            <th>{% trans "Proje Tipi Kime Ait" %}</th>
+                            <th>{% trans "Proje Tip Adı" %}</th>
+                            <th>{% trans "Proje Tip Kayıt Tarihi" %}</th>
+                           
+                            <th>{% trans "Durum" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in santiyeler %}
+                      <tr>
+                            <td>{{ i.proje_ait_bilgisi.first_name }}</td>
+                            <td>{{ i.Proje_tipi_adi }}</td>
+                            <td>{{ i.kayit_tarihi }}</td>
+                            <td>
+                                <div class="td-actions">
+                                {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_duzenleme %}
+                                                                <a  onclick="openModal('yeni-proje{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <a  onclick="openModal('yeni-proje{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>
+                                                        {% endif %}
+                                                            
+                                                            {% if request.user.kullanicilar_db %}
+                                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
+                                                        {% if yetki.projeler_silme %}
+                                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% else %}
+                                                                                                                        
+                                                        {% endif %}
+                                                        {% else %}
+                                                            <a onclick="openModal('deleteConfirmationModal{{i.id}}')" class="status-cancel"><i class="icon icon-action-delete"></i></a>
+                                                        {% endif %}
+                                    
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                                                {% endfor %}
+                      
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <script>
+            let datatable = new DataTable('#datatable', {
+                paging: false,
+                searching: true,
+                info: false
+            });
+
+
+            $('#stats-search').keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        </script>
+
+
+    </main>
+{% for i in santiyeler %}
+    <div class="modal" id="yeni-proje{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans "Projeyi Düzenle" %}
+            </div>
+            <div class="modal-body">
+                 <form class="tablelist-form" action="/{{dil}}{% url 'main:proje_duzenle'  %}" method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                 <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}"/>
+                    <div class="form-element">
+                        <label for="proje-tipi">{% trans "Proje Tipi" %}</label>
+                        <input type="text" value="{{i.Proje_tipi_adi}}"  name="yetkili_adi" id="proje-tipi"  />
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Devam' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<div class="modal" id="deleteConfirmationModal{{i.id}}">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                <h2>{% trans 'Silmek İstediğinden Emin misin?' %}</h2>
+            <p>{% trans 'silmek istediğinizden emin misiniz?' %}</p>
+            </div>
+            <div class="modal-body">
+                 <form action="/{{dil}}{% url 'main:proje_Adi_sil'  %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}">
+                    
+                 
+                    <div class="form-actions">
+                                       <button type="submit" class="btn btn-danger" >{% trans 'Evet, Sil' %}</button>
+                <button type="button" class="btn btn-secondary"  onclick="closeModal()">{% trans 'Vazgeç' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+{% endfor %}
+    <div class="modal" id="yeni-proje">
+        <div class="modal-inner" style="width: 500px">
+            <div class="modal-header">
+                {% trans "Yeni Proje Ekle" %}
+            </div>
+            <div class="modal-body">
+                <form class="tablelist-form" action="/{{dil}}{% url 'main:proje_ekleme'  %}"  method="post" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                    <div class="form-element">
+                        <label for="proje-tipi">{% trans "Proje Tipi" %}</label>
+                        <input type="text"  name="yetkili_adi" id="proje-tipi"  />
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç' %} </button>
+                        <button class="form-action-primary" type="submit">{% trans 'Devam' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function openModal(modalID) {
+            closeModal();
+            $("#" + modalID).css("display", "flex").hide().fadeIn()
+        }
+
+        function closeModal(modalID = "") {
+            console.log(modalID.length);
+            if (modalID.length === 0) {
+                $(".modal").fadeOut();
+            } else {
+                $("#" + modalID).fadeOut();
+            }
+        }
+
+        $(".modal").on("click", function (e) {
+            if ($(e.target).closest('.modal-inner').length === 0 && $(e.target).closest('.modal').length) {
+                closeModal();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
+        }
+
+        function updateMaxWidth() {
+            var tableCardWidth = $(".table-card")[0].clientWidth;
+            $(".table-wrapper").css("max-width", tableCardWidth + "px");
+        }
+        $(document).ready(updateMaxWidth);
+        $(window).resize(updateMaxWidth);
+    </script>
+{% endif %}
+{% endblock %}

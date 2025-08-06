@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>C{% trans 'ari Geçmiş Kayıtları' %}</title>
+</head>
+<body>
+    <h1>{{ cari.cari_adi }} - {% trans 'Geçmiş Kayıtları' %}</h1>
+    
+    <h2>{% trans 'Detaylar' %}</h2>
+    <ul>
+        <li>{% trans 'Cari Adı:' %} {{ cari.cari_adi }}</li>
+        <li>{% trans 'Telefon Numarası:' %} {{ cari.telefon_numarasi }}</li>
+        <li>{% trans 'Açıklama' %}: {{ cari.aciklama }}</li>
+        <li>{% trans 'Bakiye:' %} {{ cari.bakiye }}</li>
+        <li>{% trans 'Kayıt Tarihi:' %} {{ cari.kayit_tarihi }}</li>
+    </ul>
+    
+    <h2>{% trans 'Geçmiş Kayıtlar' %}</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>{% trans 'Değişiklik Yapan Kullanıcı' %}</th>
+                <th>{% trans 'Değişiklik Tarihi' %}</th>
+                <th>{% trans 'Değişiklik Türü' %}</th>
+                <th>{% trans 'Değişiklik Nedeni' %}</th>
+                <th>{% trans 'Değişiklik Detayı' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in history %}
+            <tr>
+                <td>{{ record.history_user }}</td>
+                <td>{{ record.history_date }}</td>
+                <td>{{ record.get_history_type_display }}</td>
+                <td>{{ record.history_change_reason }}</td>
+                <td>
+                    <ul>
+                        <li>{% trans 'Cari Adı:' %} {{ record.cari_adi }}</li>
+                        <li>{% trans 'Telefon Numarası:' %} {{ record.telefon_numarasi }}</li>
+                        <li>{% trans 'Açıklama' %}: {{ record.aciklama }}</li>
+                        <li>{% trans 'Bakiye:' %} {{ record.bakiye }}</li>
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
