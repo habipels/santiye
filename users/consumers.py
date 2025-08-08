@@ -10,7 +10,6 @@ from asgiref.sync import sync_to_async
 
 User = get_user_model()
 
-# TCP üzerinden user_id’ye mesaj göndermek için helper
 def send_message_to_user(user_id, message, host="127.0.0.1", port=9001):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,7 +20,6 @@ def send_message_to_user(user_id, message, host="127.0.0.1", port=9001):
     except Exception as e:
         print(f"[TCP ERROR] {user_id}: {e}")
 
-# ORM async dönüşüm
 def get_group_members_excluding_sender(group, sender_user):
     return list(group.members.exclude(id=sender_user.id).all())
 
@@ -71,6 +69,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "profile_picture": user.image.url if hasattr(user, 'image') and user.image else None,
             }
         )
+        await self.channel_layer.group_send(
+            "global_chat",
+            {
+                "type": "global_message",
+                "content": f"{user.username} tarafından bir gruba mesaj gönderildi",
+                "group_id": self.group_id
+            }
+        )
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({
@@ -90,15 +96,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         for member in members:
             print(f"[Bildirim] Üye: {member.username}")
-            # FCM gönderimi
             try:
                 token_obj = await database_sync_to_async(DeviceToken.objects.filter(user=member).first)()
                 if token_obj and token_obj.token:
+                    platform = token_obj.platform.lower()  # "web", "android" veya "ios"
+
+                    if platform == "web":
+                        url = f"https://seninsite.com/chat/{group.id}/"
+                        data_payload = {
+                            "platform": platform,
+                            "url": url,
+                            "group_id": str(group.id)
+                        }
+                    elif platform in ["android", "ios"]:
+                        data_payload = {
+                            "platform": platform,
+                            "screen": "ChatScreen",
+                            "group_id": str(group.id)
+                        }
+                    else:
+                        data_payload = {
+                            "platform": platform,
+                            "group_id": str(group.id)
+                        }
+
                     response = await sync_to_async(send_fcm_notification)(
                         token=token_obj.token,
                         title=sender_user.get_full_name() or sender_user.username,
                         body=content,
-                        data={"group_id": str(group.id)}
+                        platform=platform,
+                        url=data_payload.get("url"),
+                        screen=data_payload.get("screen"),
+                        extra_data={"group_id": data_payload.get("group_id")}
                     )
                     await self.send(text_data=json.dumps({
                         "type": "fcm_status",
@@ -112,7 +141,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "fcm_response": f"Hata: {str(e)}"
                 }))
 
-            # ✅ TCP bildirim gönderimi
             try:
                 await sync_to_async(send_message_to_user)(
                     user_id=member.id,
@@ -120,3 +148,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
             except Exception as e:
                 print(f"[TCP Bildirim Hatası] {member.id}: {e}")
+
+class GlobalConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.channel_layer.group_add("global_chat", self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard("global_chat", self.channel_name)
+
+    async def global_message(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "global_message",
+            "content": event["content"],
+            "group_id": event.get("group_id")
+        }))

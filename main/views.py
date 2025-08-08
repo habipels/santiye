@@ -399,6 +399,7 @@ service={
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-x8ood%40biadago-cloud.iam.gserviceaccount.com",
   "universe_domain": "googleapis.com"
 }
+
 import firebase_admin
 from firebase_admin import credentials, messaging
 
@@ -408,19 +409,36 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
 from firebase_admin import messaging
-def send_fcm_notification(token, title, body):
+import requests
+from django.conf import settings
+
+def send_fcm_notification(token, title, body, platform="mobile", url=None, screen=None, extra_data=None):
     headers = {
         'Authorization': f'Bearer {settings.FCM_ACCESS_TOKEN}',
         'Content-Type': 'application/json; UTF-8',
     }
+
+    message_data = {
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",  # mobilde tıklama için
+        "platform": platform,
+    }
+
+    if platform == "web" and url:
+        message_data["url"] = url
+    elif platform == "mobile" and screen:
+        message_data["screen"] = screen
+
+    if extra_data:
+        message_data.update(extra_data)
 
     data = {
         'message': {
             'token': token,
             'notification': {
                 'title': title,
-                'body': body
-            }
+                'body': body,
+            },
+            'data': message_data,
         }
     }
 
@@ -430,6 +448,7 @@ def send_fcm_notification(token, title, body):
         json=data
     )
     return response.status_code, response.json()
+
 from django.contrib.auth.decorators import login_required
 
 
@@ -6630,14 +6649,31 @@ def yapilacalar_ekle(request):
 
                 # Bildirim gönderimi
                 for user in bloglar_bilgisi:
-                    device_tokens = DeviceToken.objects.filter(user=user).values_list('token', flat=True)
-                    for token in device_tokens:
+                    device_tokens = DeviceToken.objects.filter(user=user)
+                    print(device_tokens)
+                    for device in device_tokens:
+                        platform = device.platform  # "web" veya "mobile"
+                        token = device.token
                         try:
-                            send_fcm_notification(
-                                token=token,
-                                title="Yeni Görev Ataması",
-                                body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}"
-                            )
+                            if platform == "web":
+                                url = f"https://cloud.biadago.com/{user.kullanici_tercih_dili}/thingstodo"  # örnek link
+                                send_fcm_notification(
+                                    token=token,
+                                    title="Yeni Görev Ataması",
+                                    body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}",
+                                    platform="web",
+                                    url=url,
+                                )
+                            else:
+                                # Mobil için ekran ismi ve gerekirse parametreler
+                                send_fcm_notification(
+                                    token=token,
+                                    title="Yeni Görev Ataması",
+                                    body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}",
+                                    platform="mobile",
+                                    screen="TaskDetailScreen",  # mobilde bu ekrana yönlendirme yaparsın
+                                    extra_data={"task_id": str(new_project.id)},
+                                )
                         except Exception as e:
                             print(f"FCM gönderim hatası: {e}")
 

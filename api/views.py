@@ -2038,19 +2038,33 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
 from firebase_admin import messaging
-def send_fcm_notification(token, title, body):
+def send_fcm_notification(token, title, body, platform="mobile", url=None, screen=None, extra_data=None):
     headers = {
         'Authorization': f'Bearer {settings.FCM_ACCESS_TOKEN}',
         'Content-Type': 'application/json; UTF-8',
     }
+
+    message_data = {
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",  # mobilde tıklama için
+        "platform": platform,
+    }
+
+    if platform == "web" and url:
+        message_data["url"] = url
+    elif platform == "mobile" and screen:
+        message_data["screen"] = screen
+
+    if extra_data:
+        message_data.update(extra_data)
 
     data = {
         'message': {
             'token': token,
             'notification': {
                 'title': title,
-                'body': body
-            }
+                'body': body,
+            },
+            'data': message_data,
         }
     }
 
@@ -2088,7 +2102,6 @@ def save_device_token(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def yapilacalar_ekle_api(request):
     if request.user.is_superuser:
         return Response({"detail": "Superuser access is restricted for this endpoint."}, status=status.HTTP_403_FORBIDDEN)
@@ -2134,17 +2147,32 @@ def yapilacalar_ekle_api(request):
                 dosya=file
             )
 
-        # FCM bildirim gönderimi (link ile)
+        # FCM bildirim gönderimi (platforma göre link veya ekran)
         for user in bloglar_bilgisi:
-            device_tokens = DeviceToken.objects.filter(user=user).values_list('token', flat=True)
-            for token in device_tokens:
+            device_tokens = DeviceToken.objects.filter(user=user)
+            for device in device_tokens:
+                token = device.token
+                platform = device.platform.lower()  # "web", "android" veya "ios"
+
                 try:
-                    send_fcm_notification(
-                        token=token,
-                        title="Yeni Görev Ataması",
-                        body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}",
-                        
-                    )
+                    if platform == "web":
+                        url = f"https://seninsite.com/yapilacaklar/{new_project.id}"
+                        send_fcm_notification(
+                            token=token,
+                            title="Yeni Görev Ataması",
+                            body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}",
+                            platform="web",
+                            url=url,
+                        )
+                    elif platform in ["android", "ios"]:
+                        send_fcm_notification(
+                            token=token,
+                            title="Yeni Görev Ataması",
+                            body=f"{request.user.first_name} sana yeni bir görev atadı: {baslik}",
+                            platform=platform,
+                            screen="TaskDetailScreen",
+                            extra_data={"task_id": str(new_project.id)},
+                        )
                 except Exception as e:
                     print(f"FCM gönderim hatası: {e}")
 
