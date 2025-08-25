@@ -56,50 +56,89 @@ def fiyat_duzelt(deger, i=0):
         return y
     else:
         return f"{deger:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+from collections import defaultdict
+from django.utils import timezone
+from django import template
+
+
+
+from django import template
+from django.utils import timezone
+from collections import defaultdict
+
+
 
 @register.simple_tag
 def personel_maas_bilgisi(id):
-    bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()
-    if True:
-        calismalar = calisanlar_calismalari.objects.filter(
-            calisan=get_object_or_none(calisanlar, id=id)
-        ).annotate(
-            year=ExtractYear('tarihi'),
-            month=ExtractMonth('tarihi')
-        ).values(
-            'year', 'month', 'maas__id'  # Maas ID ile gruplanıyor
-        ).annotate(
-            total_normal_calisma_saati=Sum('normal_calisma_saati'),
-            total_mesai_calisma_saati=Sum('mesai_calisma_saati')
-        ).order_by('year', 'month')
+    calisan_obj = get_object_or_none(calisanlar, id=id)
+    if not calisan_obj:
+        return []
 
-        odemeler = calisanlar_calismalari_odemeleri.objects.filter(
-            calisan=get_object_or_none(calisanlar, id=id)
-        ).annotate(
-            year=ExtractYear('tarihi'),
-            month=ExtractMonth('tarihi')
-        ).values(
-            'year', 'month'  # Maas ID ile gruplanıyor
-        ).annotate(
-            total_tutar=Sum('tutar')
-        ).order_by('year', 'month')
+    bilgi = faturalar_icin_bilgiler.objects.filter(
+        gelir_kime_ait_oldugu=calisan_obj.calisan_kime_ait
+    ).last()
+    if not bilgi:
+        return []
 
-        odemeler_dict = {(odeme['year'], odeme['month']): odeme['total_tutar'] for odeme in odemeler}
+    # Çalışmalar (yıl/ay yerel zamandan date() ile)
+    calismalar_qs = calisanlar_calismalari.objects.filter(
+        calisan=calisan_obj
+    ).select_related('maas')
 
-        maas_bilgisi = [
-            {
-                'tarih': str(calis['year']) + "-" + str(calis['month']),
-                'parabirimi': get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).para_birimi,
-                'hakedis_tutari':fiyat_duzelt( (calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + 
-                                  (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)),
-                'odenen':fiyat_duzelt(odemeler_dict.get((calis['year'], calis['month']), 0)),
-                'kalan': fiyat_duzelt(((calis["total_normal_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).maas)/bilgi.gunluk_calisma_saati + 
-                          (calis["total_mesai_calisma_saati"] * get_object_or_none(calisan_maas_durumlari, id=calis["maas__id"]).yevmiye)) - 
-                          odemeler_dict.get((calis['year'], calis['month']), 0)),
-            } for calis in calismalar
-        ]
-        
-        return maas_bilgisi
+    calismalar_data = defaultdict(lambda: {
+        'maas_id': None,
+        'total_normal': 0,
+        'total_mesai': 0
+    })
+
+    for c in calismalar_qs:
+        if not c.tarihi:
+            continue
+        # Saat farkını yok saymak için yerel zamana çevirip sadece date() alıyoruz
+        local_date = timezone.localtime(c.tarihi).date()
+        year, month = local_date.year, local_date.month
+        key = (year, month)
+        calismalar_data[key]['maas_id'] = c.maas_id
+        calismalar_data[key]['total_normal'] += c.normal_calisma_saati or 0
+        calismalar_data[key]['total_mesai'] += c.mesai_calisma_saati or 0
+
+    # Ödemeler (aynı mantık)
+    odemeler_qs = calisanlar_calismalari_odemeleri.objects.filter(
+        calisan=calisan_obj
+    )
+
+    odemeler_dict = defaultdict(float)
+    for o in odemeler_qs:
+        if not o.tarihi:
+            continue
+        local_date = timezone.localtime(o.tarihi).date()
+        year, month = local_date.year, local_date.month
+        odemeler_dict[(year, month)] += o.tutar or 0
+
+    # Maaş bilgisi listesi
+    maas_bilgisi = []
+    for (year, month), data in sorted(calismalar_data.items()):
+        maas_durumu = get_object_or_none(calisan_maas_durumlari, id=data['maas_id'])
+        if not maas_durumu:
+            continue
+
+        hakedis = (
+            (data['total_normal'] * maas_durumu.maas) / bilgi.gunluk_calisma_saati +
+            (data['total_mesai'] * maas_durumu.yevmiye)
+        )
+        odenen = odemeler_dict.get((year, month), 0)
+
+        maas_bilgisi.append({
+            'tarih': f"{year}-{month:02d}",  # Ay her zaman çift haneli
+            'parabirimi': maas_durumu.para_birimi,
+            'hakedis_tutari': fiyat_duzelt(hakedis),
+            'odenen': fiyat_duzelt(odenen),
+            'kalan': fiyat_duzelt(hakedis - odenen),
+        })
+
+    return maas_bilgisi
+
+
 @register.simple_tag
 def bodro_cek(id,tarih):
     bilgi = faturalar_icin_bilgiler.objects.filter(gelir_kime_ait_oldugu  = get_object_or_none(calisanlar, id=id).calisan_kime_ait).last()

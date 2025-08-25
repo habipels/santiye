@@ -1382,8 +1382,9 @@ def personeller_puantaj_sayfasi_2(request,hash):
 from django.http import JsonResponse
 import json
 
+from datetime import datetime, time
+
 def save_attendance(request):
-    from datetime import datetime
     if request.method == 'POST':
         data = json.loads(request.body)  # JSON veriyi al
         tarih = data[0]
@@ -1396,21 +1397,32 @@ def save_attendance(request):
             day = entry.get('day')
             work_type = entry.get('type')
             hours_value = entry.get('value')
-            date_obj = datetime(int(yil), int(ay), int(day))
-            if work_type == "normal":
-                if get_object_or_none(calisanlar_calismalari,calisan = get_object_or_none(calisanlar,id =person_id ),tarihi = date_obj):
-                    calisanlar_calismalari.objects.filter(calisan = get_object_or_none(calisanlar,id =person_id ),tarihi = date_obj
-                    ).update(normal_calisma_saati =float(hours_value))
-                else:
-                    calisanlar_calismalari.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),calisan = get_object_or_none(calisanlar,id =person_id )
-                    ,tarihi = date_obj,maas = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar,id =person_id )).last(),
-                    normal_calisma_saati =float(hours_value) )
-            elif work_type == "overtime":
-                calisanlar_calismalari.objects.filter(calisan = get_object_or_none(calisanlar,id =person_id ),tarihi = date_obj
-                    ).update(mesai_calisma_saati =float(hours_value))
-            # Her bir kayıttaki verilerle istediğiniz işlemi yapabilirsiniz
             
+            # Saat 15:00 olarak datetime objesi oluştur
+            date_obj = datetime.combine(datetime(int(yil), int(ay), int(day)), time(15, 0, 0))
+            
+            if work_type == "normal":
+                if get_object_or_none(calisanlar_calismalari, calisan=get_object_or_none(calisanlar, id=person_id), tarihi=date_obj):
+                    calisanlar_calismalari.objects.filter(
+                        calisan=get_object_or_none(calisanlar, id=person_id),
+                        tarihi=date_obj
+                    ).update(normal_calisma_saati=float(hours_value))
+                else:
+                    calisanlar_calismalari.objects.create(
+                        kayit_tarihi=get_kayit_tarihi_from_request(request),
+                        calisan=get_object_or_none(calisanlar, id=person_id),
+                        tarihi=date_obj,
+                        maas=calisan_maas_durumlari.objects.filter(calisan=get_object_or_none(calisanlar, id=person_id)).last(),
+                        normal_calisma_saati=float(hours_value)
+                    )
+            elif work_type == "overtime":
+                calisanlar_calismalari.objects.filter(
+                    calisan=get_object_or_none(calisanlar, id=person_id),
+                    tarihi=date_obj
+                ).update(mesai_calisma_saati=float(hours_value))
+                
         return JsonResponse({'status': 'success'})
+
 def calismalari_cek(request):
     from datetime import datetime
     if request.method == 'POST':
