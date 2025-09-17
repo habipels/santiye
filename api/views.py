@@ -2618,31 +2618,40 @@ from asgiref.sync import async_to_sync
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def group_chat(request, group_id):
-    context = {}
     group = get_object_or_404(Group, id=group_id)
-    
+
+    # Son 100 mesajı getir ve okunmamışları okundu işaretle
     messages = Message.objects.filter(group=group).order_by('timestamp')[:100]
-    for message in messages:
-        if message.sender != request.user:
-            message.read = True
-            message.save()
+    for msg in messages:
+        if msg.sender != request.user:
+            msg.read = True
+            msg.save()
 
     if request.user.kullanicilar_db:
-        users = User.objects.filter(kullanicilar_db=request.user.kullanicilar_db).exclude(id=request.user.id)
+        users = User.objects.filter(
+            kullanicilar_db=request.user.kullanicilar_db
+        ).exclude(id=request.user.id)
     else:
-        users = User.objects.filter(kullanicilar_db=request.user).exclude(id=request.user.id)
+        users = User.objects.filter(
+            kullanicilar_db=request.user
+        ).exclude(id=request.user.id)
 
     groups = Group.objects.filter(members=request.user)
 
+    message = None
     if request.data:
+        print(request.data)
         content = request.data.get('content')
         dosya = request.FILES.get('file')
-        message = None
 
         if dosya:
-            message = Message.objects.create(sender=request.user, group=group, content=content, file=dosya)
+            message = Message.objects.create(
+                sender=request.user, group=group, content=content, file=dosya
+            )
         else:
-            message = Message.objects.create(sender=request.user, group=group, content=content)
+            message = Message.objects.create(
+                sender=request.user, group=group, content=content
+            )
 
         # WebSocket'e mesajı yayınla
         channel_layer = get_channel_layer()
@@ -2654,13 +2663,24 @@ def group_chat(request, group_id):
                 'file_url': message.file.url if message.file else None,
                 'username': message.sender.username,
                 'timestamp': message.timestamp.isoformat(),
-                'id_bilgisi': message.sender.id ,
-                "last_name":message.sender.last_name, # Kullanıcı bilgilerini al
-                "profile_picture": message.sender.image.url if message.sender.image else "/static/go/images/profile.png",
+                'id_bilgisi': message.sender.id,
+                'last_name': message.sender.last_name,
+                'profile_picture': message.sender.image.url if message.sender.image else "/static/go/images/profile.png",
             }
         )
 
-    return Response(context)
+    # Her zaman JSON dön
+    return Response({
+        "status": "ok",
+        "message": {
+            "id": message.id if message else None,
+            "content": message.content if message else None,
+            "file_url": message.file.url if message and message.file else None,
+            "username": message.sender.username if message else None,
+            "timestamp": message.timestamp.isoformat() if message else None,
+        } if message else None
+    })
+
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
