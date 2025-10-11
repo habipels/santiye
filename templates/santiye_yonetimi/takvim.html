@@ -158,42 +158,125 @@ function exportGanttToPDF() {
         document.querySelectorAll(".no-print").forEach((el) => el.style.display = "");
     });
 }
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
-function exportGanttToExcelFromTasks() {
- document.getElementById("loadingMessage").style.display = "block";
+<script>
+async function exportGanttToExcelFromTasks() {
+  document.getElementById("loadingMessage").style.display = "block";
 
   const ganttData = getDemoProject();
   const today = new Date().getTime();
 
-  const taskRows = ganttData.tasks.map(task => {
-    const endDate = new Date(task.end);
-    const remainingDays = Math.max(0, Math.ceil((task.end - today) / (1000 * 60 * 60 * 24)));
+  // 📅 Tarih aralığını bul
+  const minStart = Math.min(...ganttData.tasks.map(t => t.start));
+  const maxEnd = Math.max(...ganttData.tasks.map(t => t.end));
+  const minDate = new Date(minStart);
+  const maxDate = new Date(maxEnd);
 
-    return {
-      "Kod": task.code || "",
-      "Görev Adı": task.name || "",
-      "Durum": (task.status || "").replace("STATUS_", ""),
-      "Başlangıç": new Date(task.start).toLocaleDateString(),
-      "Bitiş": endDate.toLocaleDateString(),
-      "Süre (gün)": task.duration || "",
-      "İlerleme (%)": task.progress || 0,
-      "Kalan Gün": remainingDays,
-      "Kritik mi?": task.isCritical ? "Evet" : "Hayır",
-      "Seviye": task.level || 0
-    };
+  // Ay listesini oluştur
+  const months = [];
+  let d = new Date(minDate);
+  while (d <= maxDate) {
+    months.push(`${d.getMonth() + 1}`.toString().padStart(2, "0") + "." + d.getFullYear());
+    d.setMonth(d.getMonth() + 1);
+  }
+
+  // 🎨 Seviye renkleri
+  const levelColors = {
+    0: "0070C0", // mavi
+    1: "00B050", // yeşil
+    2: "FFC000", // sarı
+    3: "C00000"  // kırmızı
+  };
+
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet("Gantt Tablosu");
+
+  // 🧱 Başlık
+  const header = ["Kod", "Görev Adı", "Durum", "Başlangıç", "Bitiş", "Süre (gün)", "İlerleme (%)", "Kritik mi?", "Seviye", ...months];
+  ws.addRow(header);
+
+  // 📊 Satırları oluştur
+  ganttData.tasks.forEach(task => {
+    const start = new Date(task.start);
+    const end = new Date(task.end);
+    const progress = Math.min(100, Math.max(0, task.progress || 0));
+    const levelColor = levelColors[task.level] || "A6A6A6";
+    const isCritical = task.isCritical ? "Evet" : "Hayır";
+
+    const rowValues = [
+      task.code || "",
+      task.name || "",
+      (task.status || "").replace("STATUS_", ""),
+      new Date(task.start).toLocaleDateString("tr-TR"),
+      new Date(task.end).toLocaleDateString("tr-TR"),
+      task.duration || "",
+      progress,
+      isCritical,
+      task.level || 0
+    ];
+
+    // Gantt hücreleri (ay bazlı)
+    months.forEach(monthStr => {
+      const [m, y] = monthStr.split(".");
+      const monthStart = new Date(parseInt(y), parseInt(m) - 1, 1);
+      const monthEnd = new Date(parseInt(y), parseInt(m), 0);
+      if (end >= monthStart && start <= monthEnd) {
+        rowValues.push("█"); // dolu alan
+      } else {
+        rowValues.push("");
+      }
+    });
+
+    const row = ws.addRow(rowValues);
+
+    // Renk uygula
+    months.forEach((monthStr, i) => {
+      const colIndex = 10 + i;
+      const cell = row.getCell(colIndex);
+      if (cell.value === "█") {
+        // Dolu alan rengi
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: levelColor }
+        };
+      } else {
+        // Boş alan gri
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "D9D9D9" }
+        };
+      }
+    });
+
+    // % değeri ortasına yaz
+    const startCol = 10;
+    const endCol = 10 + months.length - 1;
+    const middleCol = startCol + Math.floor((endCol - startCol) / 2);
+    const progressCell = row.getCell(middleCol);
+    progressCell.value = `${progress}%`;
+    progressCell.alignment = { horizontal: "center", vertical: "middle" };
+    progressCell.font = { bold: true, color: { argb: "FFFFFF" } };
   });
 
-  const worksheet = XLSX.utils.json_to_sheet(taskRows);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Gantt Tablosu");
+  // 📏 Biçimlendirme
+  ws.columns.forEach(col => { col.width = 12; });
+  ws.getRow(1).font = { bold: true, color: { argb: "FFFFFF" } };
+  ws.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "404040" } };
 
-  // Burada XLSX'ın conditional formatting desteği sınırlı olduğu için 
-  // direkt Excel'de açtıktan sonra elle "İlerleme (%)" kolonuna data bar uygula diyebiliriz.
-
-  XLSX.writeFile(workbook, "Gantt-Chart.xlsx");
+  // 💾 Kaydet
+  const buf = await wb.xlsx.writeBuffer();
+  saveAs(new Blob([buf]), "Proje_Raporu.xlsx");
 
   document.getElementById("loadingMessage").style.display = "none";
 }
+</script>
+
+
+
 </script>
 
 

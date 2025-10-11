@@ -2610,13 +2610,9 @@ def create_group(request):
             group.save()
         
         return Response({"detail": "Grup Başarılı Bir Şekilde OLuşturuldu."}, status=status.HTTP_201_CREATED)
-from main.views import super_admin_kontrolu,dil_bilgisi,translate,sozluk_yapisi,yetki,get_kayit_tarihi_from_request,get_time_zone_from_country,get_country
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def group_chat(request, group_id):
     group = get_object_or_404(Group, id=group_id)
 
@@ -2653,7 +2649,7 @@ def group_chat(request, group_id):
                 sender=request.user, group=group, content=content
             )
 
-        # WebSocket'e mesajı yayınla
+        # WebSocket’e mesajı yayınla (grup)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             f'chat_{group.id}',
@@ -2667,6 +2663,16 @@ def group_chat(request, group_id):
                 'last_name': message.sender.last_name,
                 'profile_picture': message.sender.image.url if message.sender.image else "/static/go/images/profile.png",
             }
+        )
+
+        # 🔹 Global WebSocket’e de mesaj gönder
+        async_to_sync(channel_layer.group_send)(
+            "global_chat",
+            {
+                "type": "global_message",
+                "content": f"{request.user.username} tarafından bir gruba mesaj gönderildi",
+                "group_id": group.id,
+            },
         )
 
     # Her zaman JSON dön
