@@ -115,51 +115,78 @@ $(function() {
 </style>
 
 <script>
-function exportGanttToPDF() {
-    const { jsPDF } = window.jspdf;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    // PDF export işlem uyarısını göster
-    document.getElementById("loadingMessage").style.display = "block";
+<script>
+async function exportGanttToPDF() {
+  const { jsPDF } = window.jspdf;
+  document.getElementById("loadingMessage").style.display = "block";
 
-    const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "px",
-        format: "a4",
-    });
+  // 📄 PDF ayarları
+  const pdf = new jsPDF({
+    orientation: "landscape",
+    unit: "px",
+    format: "a4",
+  });
 
-    const margin = 10; // Sayfa kenarında bırakmak istediğimiz boşluk
+  const margin = 20;
+  const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
+  const pageHeight = pdf.internal.pageSize.getHeight() - 2 * margin;
 
-    // Export öncesi tüm "no-print" sınıfındaki elemanları gizle
-    document.querySelectorAll(".no-print").forEach((el) => el.style.display = "none");
+  // ⚙️ "no-print" elemanlarını gizle
+  document.querySelectorAll(".no-print").forEach(el => el.style.display = "none");
 
-    // #workSpace içeriğini canvas'a dönüştür
-    html2canvas(document.querySelector("#workSpace")).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdfWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  // 🎨 Yüksek çözünürlüklü canvas oluştur
+  const element = document.querySelector("#workSpace");
+  const canvas = await html2canvas(element, {
+    scale: 3, // kaliteyi artırır
+    useCORS: true,
+    logging: false
+  });
 
-        // Görüntüyü PDF'e ekle
-        pdf.addImage(imgData, "PNG", margin, margin, pdfWidth, pdfHeight);
+  const imgData = canvas.toDataURL("image/png");
+  const imgWidth = pageWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        // Footer'ı sabitle
-        pdf.setFontSize(10);
-        const footerText = "{% trans 'BiadaGO Construction ERP Software - www.biadago.com' %}";
-        pdf.text(footerText, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, {
-            align: "center",
-        });
+  let position = margin;
+  let remainingHeight = imgHeight;
 
-        // PDF'i kaydet
-        pdf.save("Gantt-Chart.pdf");
+  // 📜 Çok sayfalı çıktı
+  while (remainingHeight > 0) {
+    pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
+    remainingHeight -= pageHeight;
 
-        // Yükleme mesajını gizle
-        document.getElementById("loadingMessage").style.display = "none";
+    if (remainingHeight > 0) {
+      pdf.addPage();
+      position = margin - (imgHeight - remainingHeight);
+    }
+  }
 
-        // Export sonrası "no-print" elemanlarını geri göster
-        document.querySelectorAll(".no-print").forEach((el) => el.style.display = "");
-    });
+  // 🧾 Başlık ve alt bilgi
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(14);
+  pdf.text("Proje Gantt Çizelgesi", pdf.internal.pageSize.getWidth() / 2, 25, { align: "center" });
+
+  pdf.setFontSize(10);
+  const footerText = "BiadaGO Construction ERP Software - www.biadago.com";
+  pdf.text(footerText, pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, {
+    align: "center"
+  });
+
+  // 💾 PDF Kaydet
+  pdf.save("Proje_Gantt_Cizelgesi.pdf");
+
+  // 🔄 Görünürlükleri geri getir
+  document.querySelectorAll(".no-print").forEach(el => el.style.display = "");
+  document.getElementById("loadingMessage").style.display = "none";
 }
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
 <script>
 async function exportGanttToExcelFromTasks() {
@@ -222,6 +249,8 @@ async function exportGanttToExcelFromTasks() {
       const [m, y] = monthStr.split(".");
       const monthStart = new Date(parseInt(y), parseInt(m) - 1, 1);
       const monthEnd = new Date(parseInt(y), parseInt(m), 0);
+
+      // Hücre dolumu
       if (end >= monthStart && start <= monthEnd) {
         rowValues.push("█"); // dolu alan
       } else {
@@ -231,35 +260,48 @@ async function exportGanttToExcelFromTasks() {
 
     const row = ws.addRow(rowValues);
 
-    // Renk uygula
+    // 🎨 Hücre biçimi ve renk
+    row.eachCell((cell, colNumber) => {
+      cell.alignment = { horizontal: "center", vertical: "middle" };
+      cell.border = {
+        top: { style: "thin", color: { argb: "808080" } },
+        left: { style: "thin", color: { argb: "808080" } },
+        bottom: { style: "thin", color: { argb: "808080" } },
+        right: { style: "thin", color: { argb: "808080" } },
+      };
+    });
+
+    // Gantt hücreleri renkleri
     months.forEach((monthStr, i) => {
       const colIndex = 10 + i;
       const cell = row.getCell(colIndex);
       if (cell.value === "█") {
-        // Dolu alan rengi
         cell.fill = {
           type: "pattern",
           pattern: "solid",
           fgColor: { argb: levelColor }
         };
+        cell.font = { color: { argb: "FFFFFF" }, bold: true };
       } else {
-        // Boş alan gri
         cell.fill = {
           type: "pattern",
           pattern: "solid",
-          fgColor: { argb: "D9D9D9" }
+          fgColor: { argb: "F2F2F2" }
         };
       }
     });
 
     // % değeri ortasına yaz
-    const startCol = 10;
-    const endCol = 10 + months.length - 1;
-    const middleCol = startCol + Math.floor((endCol - startCol) / 2);
-    const progressCell = row.getCell(middleCol);
-    progressCell.value = `${progress}%`;
-    progressCell.alignment = { horizontal: "center", vertical: "middle" };
-    progressCell.font = { bold: true, color: { argb: "FFFFFF" } };
+    const filledCols = months
+      .map((m, i) => 10 + i)
+      .filter(i => row.getCell(i).value === "█");
+    if (filledCols.length > 0) {
+      const midCol = filledCols[Math.floor(filledCols.length / 2)];
+      const progressCell = row.getCell(midCol);
+      progressCell.value = `${progress}%`;
+      progressCell.font = { bold: true, color: { argb: "FFFFFF" } };
+      progressCell.alignment = { horizontal: "center", vertical: "middle" };
+    }
   });
 
   // 📏 Biçimlendirme
@@ -274,6 +316,7 @@ async function exportGanttToExcelFromTasks() {
   document.getElementById("loadingMessage").style.display = "none";
 }
 </script>
+
 
 
 
