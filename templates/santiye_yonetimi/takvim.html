@@ -62,24 +62,36 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
 <script>
-$(function() {
-    $('input[name="start"], input[name="end"]').daterangepicker({
-        singleDatePicker: true,
-        showDropdowns: true,
-        autoUpdateInput: false,
-        locale: {
-            format: 'YYYY-MM-DD'
-        },
-        isInvalidDate: function(date) {
-            return false; // Allow all dates including weekends
-        }
-    });
+const input = document.querySelector('input.date');
 
-    $('input[name="start"], input[name="end"]').on('apply.daterangepicker', function(ev, picker) {
-        $(this).val(picker.startDate.format('YYYY-MM-DD'));
+function clampMillis(millis) {
+    const now = new Date();
+    const min = new Date(now.getFullYear() - 5, now.getMonth(), now.getDate()).getTime();
+    const max = new Date(now.getFullYear() + 5, now.getMonth(), now.getDate()).getTime();
+    return Math.min(Math.max(millis, min), max);
+}
+
+// Takvim açıldığında veya input değiştiğinde
+function syncDate() {
+    let millis = parseInt(input.getAttribute('millis')) || Date.now();
+    millis = clampMillis(millis);
+    input.setAttribute('millis', millis);
+    input.value = new Date(millis).toISOString().slice(0,10); // YYYY-MM-DD format
+}
+
+// Prev/Next tıklamalarında veya input değişiminde sync uygula
+input.addEventListener('input', syncDate);
+document.querySelectorAll('.calElement.prev, .calElement.next').forEach(el => {
+    el.addEventListener('click', () => {
+        setTimeout(syncDate, 10); // Buton tıklamasından sonra uygula
     });
 });
+
+// İlk açılışta da uygula
+syncDate();
+
 </script>
+
 
 {% endblock head %}
 
