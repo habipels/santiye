@@ -697,6 +697,31 @@ def kalem_blog(id):
         bilgiler = bilgiler+ '<a href="#" >{}</a>'.format(str(i.blog_adi))+" , "
     return mark_safe(bilgiler)
 @register.simple_tag
+def kalem_blog_2(id):
+
+    unique_values = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =id)
+    a = []
+    finansal_yuzde = []
+    fiziksel_yuzde = []
+    toplam_kat = 0
+    for i in unique_values:
+        if i.blog_bilgisi in a:
+            pass
+        else:
+            a.append(i.blog_bilgisi)
+            toplam_kat += i.blog_bilgisi.kat_sayisi
+    for i in a:
+        fiziksel_yuzde.append(round((get_object_or_none(santiye_kalemleri, id = id).santiye_agirligi / toplam_kat*i.kat_sayisi),4))
+        finansal_yuzde.append(round((get_object_or_none(santiye_kalemleri, id = id).santiye_finansal_agirligi / toplam_kat*i.kat_sayisi),4))
+
+    bilgiler = ""
+    z = 0
+    for i in a:
+        #/delbuldingsites/{}/{}
+        bilgiler = bilgiler+ '<a href="#" >{} = Fiziksel yuzde ({}) Finansal yuzde ({})</a>'.format(str(i.blog_adi), fiziksel_yuzde[z],finansal_yuzde[z])+" , "
+        z += 1
+    return mark_safe(bilgiler)
+@register.simple_tag
 def calisan_maasi(id):
     maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
     print(maasli.para_birimi)
