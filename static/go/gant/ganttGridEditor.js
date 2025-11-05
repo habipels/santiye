@@ -29,9 +29,17 @@ function GridEditor(master) {
 
   this.gridified = $.gridify(editorTabel);
   this.element = this.gridified.find(".gdfTable").eq(1);
+// Bugünden itibaren 5 yıl geri ve 5 yıl ileri tarih sınırı
+var now = new Date();
+var minDate = new Date(now);
+var maxDate = new Date(now);
+minDate.setFullYear(minDate.getFullYear() - 5);
+maxDate.setFullYear(maxDate.getFullYear() + 5);
 
-  this.minAllowedDate=new Date(new Date().getTime()-3600000*24*365*20).format();
-  this.maxAllowedDate=new Date(new Date().getTime()+3600000*24*365*30).format();
+this.minAllowedDate = minDate.toISOString().split("T")[0]; // ISO format: YYYY-MM-DD
+this.maxAllowedDate = maxDate.toISOString().split("T")[0];
+
+
 }
 
 

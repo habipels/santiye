@@ -28,6 +28,18 @@ jQuery.fn.dateField = function(options) {
     console.error("You must supply an input field");
     return false;
   }
+    // Eğer minDate / maxDate geldiyse, bunları milisaniyeye çevir ve kullan
+  if (options.minDate) {
+    try {
+      options.notBeforeMillis = new Date(options.minDate).getTime();
+    } catch (e) {}
+  }
+
+  if (options.maxDate) {
+    try {
+      options.notAfterMillis = new Date(options.maxDate).getTime();
+    } catch (e) {}
+  }
 
   // --------------------------  start default option values --------------------------
 
