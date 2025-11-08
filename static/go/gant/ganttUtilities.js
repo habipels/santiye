@@ -420,9 +420,7 @@ function computeStartDate(start) {
   d = new Date(start + 3600000 * 12);
   d.setHours(0, 0, 0, 0);
   //move to next working day
-  while (isHoliday(d)) {
-    d.setDate(d.getDate() + 1);
-  }
+  
   d.setHours(0, 0, 0, 0);
   return d;
 }

@@ -573,9 +573,10 @@ Date.prototype.isToday=function(){
 Date.prototype.incrementDateByWorkingDays=function (days) {
   //console.debug("incrementDateByWorkingDays start ",d,days)
   var q = Math.abs(days);
+  
   while (q > 0) {
     this.setDate(this.getDate() + (days > 0 ? 1 : -1));
-    if (!this.isHoliday())
+    
       q--;
   }
   return this;

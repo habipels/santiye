@@ -11238,6 +11238,7 @@ def rfi_Olustur(request):
         rfi_aciklama = request.POST.get("rfi_aciklama")
         ana_imalat_adi = request.POST.get("ana_imalat_adi")
         kontrol = request.POST.getlist("kontrol")
+        print(kontrol,"kontrol")
         sablon_bilgileri = rfi_sablonlar.objects.create(kayit_tarihi = get_kayit_tarihi_from_request(request),rfi_kime_ait = kullanici,
         rfi_santiye = get_object_or_none(santiye,id = santiye_bigisi,proje_ait_bilgisi = kullanici),rfi_baslik = rfi_adi,rfi_kategorisi = rfi_kategorisi,rfi_aciklama = rfi_aciklama,olusturan = request.user)
         if len(kontrol) > 0:
@@ -11411,6 +11412,8 @@ def rfi_duzenleme(request, id):
 
     content["rfi_sablonlari"] = rfi_sablon
     content["rfi_kontrolleri"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi=rfi_sablon)
+    sonuc = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi__id=rfi_sablon.id)
+    print("kontrol",sonuc,rfi_sablon)
     if request.POST:
         # Update the RFI template
         rfi_adi = request.POST.get("rfi_baslik")
@@ -11432,6 +11435,24 @@ def rfi_duzenleme(request, id):
         print(request.POST)
         return redirect_with_language("main:rfi_template")
     return render(request, "checklist/rfi_duzenleme.html", content)
+
+
+def rfi_silme(request):
+    content = sozluk_yapisi()
+
+    # Check if the user has super admin privileges
+    if not super_admin_kontrolu(request):
+        if request.user.kullanicilar_db:
+            a = get_object_or_none(bagli_kullanicilar, kullanicilar=request.user)
+            if not a or not a.izinler.santiye_kontrol:
+                return redirect_with_language("main:yetkisiz")
+        else:
+            kullanici = request.user
+
+    if request.POST:
+        buttonId = request.POST.get("buttonId")
+        rfi_sablonlar.objects.filter(id=buttonId).delete()
+        return redirect_with_language("main:rfi_template")
 
 
 
