@@ -297,29 +297,58 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
       });
     });
 
-    el.blur(function (date) {
-      var inp = $(this);
-      if (inp.isValueChanged()) {
-        if (!Date.isValid(inp.val())) {
-          alert(GanttMaster.messages["INVALID_DATE_FORMAT"]);
-          inp.val(inp.getOldValue());
+   el.blur(function () {
+  var inp = $(this);
 
-        } else {
-          var row = inp.closest("tr");
-          var taskId = row.attr("taskId");
-          var task = self.master.getTask(taskId);
+  if (inp.isValueChanged()) {
+    // Geçersiz tarih formatı kontrolü
+    if (!Date.isValid(inp.val())) {
+      alert(GanttMaster.messages["INVALID_DATE_FORMAT"]);
+      inp.val(inp.getOldValue());
+      return;
+    }
 
-          var leavingField = inp.prop("name");
-          var dates = resynchDates(inp, row.find("[name=start]"), row.find("[name=startIsMilestone]"), row.find("[name=duration]"), row.find("[name=end]"), row.find("[name=endIsMilestone]"));
-          //console.debug("resynchDates",new Date(dates.start), new Date(dates.end),dates.duration)
-          //update task from editor
-          self.master.beginTransaction();
-          self.master.changeTaskDates(task, dates.start, dates.end);
-          self.master.endTransaction();
-          inp.updateOldValue(); //in order to avoid multiple call if nothing changed
-        }
-      }
-    });
+    // Tarihi parse et (Date.parseString Gantt kütüphanesinden gelir)
+    var dateVal = Date.parseString(inp.val());
+    var parsedDate = new Date(dateVal);
+
+    // Bugünden 5 yıl önce ve 5 yıl sonrası sınırları
+    var today = new Date();
+    var minAllowedDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
+    var maxAllowedDate = new Date(today.getFullYear() + 5, today.getMonth(), today.getDate());
+
+    console.log("Girilen tarih:", parsedDate);
+    console.log("İzin verilen aralık:", minAllowedDate, "→", maxAllowedDate);
+
+    // 🚫 Tarih izin verilen aralığın dışında mı?
+    if (parsedDate.getTime() < minAllowedDate.getTime() || parsedDate.getTime() > maxAllowedDate.getTime()) {
+      alert("Tarih izin verilen 5 yıllık aralığın dışında!");
+      inp.val(inp.getOldValue());
+      return; // işlemi durdur
+    }
+
+    // Tarih geçerli ve sınırlar içinde → görevi güncelle
+    var row = inp.closest("tr");
+    var taskId = row.attr("taskId");
+    var task = self.master.getTask(taskId);
+
+    var dates = resynchDates(
+      inp,
+      row.find("[name=start]"),
+      row.find("[name=startIsMilestone]"),
+      row.find("[name=duration]"),
+      row.find("[name=end]"),
+      row.find("[name=endIsMilestone]")
+    );
+
+    self.master.beginTransaction();
+    self.master.changeTaskDates(task, dates.start, dates.end);
+    self.master.endTransaction();
+
+    inp.updateOldValue(); // değişiklik kaydedildi
+  }
+});
+
   });
 
 
