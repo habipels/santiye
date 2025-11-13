@@ -954,20 +954,15 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
         </div>
 
         <div class="page-actions">
-            {% if request.user.kullanicilar_db %}
-                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                {% if yetki.santiye_olusturma %}
-                    <button class="page-primary-btn" id="yeni_santiye" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
-                {% endif %}
-            {% else %}
-                <button class="page-primary-btn"  id="yeni_santiye" onclick="openModal('yeni-santiye')"><i class="icon icon-new"></i>{% trans 'Yeni Şantiye Ekle' %}</button>
-            {% endif %}
+        <b>{% trans 'Toplam Fiziksel Ağırlığı =' %} 0 </b>
+        <b>{% trans 'Toplam Finansal Ağırlığı =' %} 0 </b>
+            
         </div>
     </div>
 
     <div class="large-stats-card table-card table-detail-card">
         <div class="stats-header">
-            <div class="stats-title">{% trans 'Tümü' %}</div>
+            <div class="stats-title">{% trans 'Seçilen Yapı' %} {{blok_bilgisi.blog_adi}}</div>
             <div class="stats-right">
                 <div class="stats-search">
                     <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
@@ -977,21 +972,8 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
         </div>
 
         <div class="tab-navs santiyeler-tab">
-            <button class="tab-navs-btn active" data-tab="santiyeler">{% trans 'Şantiyeler' %}</button>
-            {% if request.user.kullanicilar_db %}
-                {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-            {% if  yetki.blog_gorme %}
-                <button class="tab-navs-btn" disabled data-tab="yapilar">{% trans 'Yapılar' %}</button>
-            {% else %}
-            {% endif %}
-            {% if yetki.kalemleri_gorme %}
-                 <button class="tab-navs-btn" disabled data-tab="kalemler">{% trans 'Kalemler' %}</button>
-            {% else %}
-            {% endif %}
-            {% else %}
-            <button class="tab-navs-btn" disabled data-tab="yapilar">{% trans 'Yapılar' %}</button>
-            <button class="tab-navs-btn" disabled data-tab="kalemler">{% trans 'Kalemler' %}</button>
-            {% endif %}
+            <button class="tab-navs-btn active" data-tab="santiyeler">{% trans 'Kalemler' %}</button>
+            
            
         </div>
 
@@ -1001,77 +983,22 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
                     <table id="santiyeler-table">
                         <thead>
                             <tr>
-                                <th>{% trans 'Proje Sahibi' %}</th>
-                                <th>{% trans 'Şantiye' %}</th>
-                                <th>{% trans 'Proje Tipi' %}</th>
-                                <th>{% trans 'Yapılar' %}</th>
-                                <th>{% trans 'Kalemler' %}</th>
-                                <th>{% trans 'Durum' %}</th>
+                                <th>{% trans 'Kalem Adı' %}</th>
+                                <th>{% trans 'Fiziksel Yüzdesi' %}</th>
+                                <th>{% trans 'Finansal Yüzdesi' %}</th>
+                                <th>{% trans 'Metraj' %}</th>
+                                <th>{% trans 'Tutar' %}</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
-                        {% for i in santiyeler %}
+                        {% for i in santiye_kalemleri %}
                             <tr id="{{i.id}}">
-                                <td>{{i.proje_ait_bilgisi.first_name}}</td>
-                                <td>{{i.proje_adi}}</td>
-                                <td>{{i.proje_tipi.Proje_tipi_adi}}</td>
-                                <td>
-                                    +{% bloglar_getir i %}
-                                    {% if request.user.kullanicilar_db %}
-                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                            {% if yetki.blog_olusturma %}
-                                            <div class="td-actions">
-                                                <a onclick="openModal('yeni-yapi{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'Yapı Ekle' %}</a>
-                                            </div>    
-                                            {% else %}
-                                                                                                            
-                                            {% endif %}
-                                            {% else %}
-                                            <div class="td-actions">
-                                                <a onclick="openModal('yeni-yapi{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'Yapı Ekle' %}</a>
-                                            </div>
-                                            {% endif %}
-                                </td>
-                                <td>
-                                    + {% kalemler_getir i %}
-                                    {% if request.user.kullanicilar_db %}
-                                            {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                            {% if yetki.kalemleri_olusturma %}
-                                            <div class="td-actions">
-                                                <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'İmalat Kalemi Ekle' %}</a>
-                                            </div>    
-                                            {% else %}
-                                                                                                            
-                                            {% endif %}
-                                            {% else %}
-                                            <div class="td-actions">
-                                                <a onclick="openModal('yeni-kalem{{i.id}}')" class="status-info stats-lg"><i class="icon icon-add"></i> {% trans 'İmalat Kalemi Ekle' %}</a>
-                                            </div>
-                                            {% endif %}
-                                    
-                                </td>
-                                <td>
-                                    <div class="td-actions">
-                                        {% if request.user.kullanicilar_db %}
-                                        {% kulanici_yetkileri_kullandirt request.user request.user.kullanicilar_db as yetki %}
-                                        {% if yetki.santiye_duzenleme %}
-                                        <a onclick="openModal('santiye_duzelt{{i.id}}')"class="status-success"><i class="icon icon-action-edit"></i></a>                                           
-                                        {% else %} 
-                                                                                                                        
-                                        {% endif %}
-                                        {% if yetki.santiye_silme %}
-                                        <a onclick="openModal('delete-modal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                                        {% else %} 
-                                                                                                                        
-                                        {% endif %}
-                                        {% else %}
-                                        <a onclick="openModal('santiye_duzelt{{i.id}}')" class="status-success"><i class="icon icon-action-edit"></i></a>                                                                               
-                                        <a onclick="openModal('delete-modal{{i.id}}')"  class="status-cancel"><i class="icon icon-action-delete"></i></a>
-                                        {% endif %}
-                                        
-                                        
-                                    </div>
-                                </td>
+                                <td>{{i.kalem_bilgisi.kalem_adi}}</td>
+                                <td>{{i.blok_agirligi}}</td>
+                                <td>{{i.blok_finansal_agirligi}}</td>
+                                <td>{{i.metraj}}</td>
+                                <td>{{i.tutari}}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -1181,7 +1108,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
 
                                                     </td>
                                                     <td class="date">
-                                                        <a href="{% url 'main:pursantaj_sayfasi' i.id %}" style="background-color: rgb(115, 115, 228);color: white; border: 0px;"><i class="ri-check-double-line label-icon align-middle fs-16 me-2"></i>Pursantaj Gir </a>
+                                                        Pursantaj
 
                                                     </td>
                                                     <td class="date">
@@ -1673,95 +1600,7 @@ document.querySelectorAll('#santiyeler-table tr').forEach(function (row) {
     </div>
 </div>
 
-<div class="modal" id="kalem-duzenle{{i.id}}">
-    <div class="modal-inner" style="width: 500px">
-        <div class="modal-header">
-            {% trans 'İmalat Kalemi Düzenle' %}
 
-        </div>
-        <div class="modal-body">
-            <form autocomplete="off" class="tablelist-form" action="/{{dil}}{% url 'main:santiye_kalemleri_duzenle' %}"
-                method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" id="buttonIdInput" name="geri_don" value="{{i.proje_santiye_Ait.id}}">
-                <input type="hidden" id="buttonIdInput" name="buttonId" value="{{i.id}}" />
-
-                <div class="form-element">
-                    {% secililer_yapi_kalem i.id as secili %}
-                    {% bloglar_form_gonder_kaleme j as yapilari_al %}
-                    <label for="date-field">{% trans 'Yapılar' %}</label>
-                    <p class="input-helper-text">{% trans 'Birden fazla imalat seçmek için Windows kullanıcıları Ctrl,
-                        Mac kullanıcıları Command (⌘) tuşunu kullanabilir.' %}</p>
-                    <select name="projetipi" required id="cokluetiket" class="etkett me-2" multiple
-                        style="height: 45px;">
-                        {% for k in yapilari_al %}
-                        {% if k in secili %}
-                        <option selected value="{{k.id}}">{{k.blog_adi}}</option>
-                        {% else %}
-                        <option value="{{k.id}}">{{k.blog_adi}}</option>
-                        {% endif %}
-                        {% endfor %}
-
-                    </select>
-
-                </div>
-                <div class="form-element">
-                    <label for="date-field">{% trans 'İmalat Alanı' %}</label>
-                    <select required name="kata_veya_binaya_daihil" id="date-field">
-                        <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
-                        <option value="" disabled selected>{% trans 'Lütfen Seçiniz' %}</option>
-                        <option value="0">{% trans 'Kat Bazında' %}</option>
-                        <option value="1">{% trans 'Bina Genelinde' %}</option>
-                        <option value="2">{% trans 'Cephe Bazında' %}</option>
-
-
-
-                    </select>
-                </div>
-                <div class="form-element">
-                                            <label for="date-field" >{% trans 'İmalat Kalemi' %}</label>
-                                            <input type="text" value="{{i.kalem_adi}}"  name="yetkili_adi" id="date-field"  placeholder="{% trans 'İmalat Kalemi' %}" required />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Şantiye Ağırlığı' %}</label>
-                                            <input type="number" step="0.001" value="{{i.santiye_agirligi | stringformat:'.2F'  }}"  name="katsayisi" id="date-field"  placeholder="{% trans 'Şantiye Ağırlığı' %}" required />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Finansal Ağırlık' %}</label>
-                                            <input type="number" step="0.001" value="{{i.santiye_finansal_agirligi | stringformat:'.2F'  }}"  name="blogsayisi" id="date-field"  placeholder="{% trans 'Fİnansal Ağırlığı' %}" required />
-                                        </div>
-                                        <div class="form-element">
-                                            <label for="date-field" >{% trans 'Birimi' %}</label>
-                                            <select  name="birim_bilgisi" id="date-field" required>
-                                                <option selected value="{{i.birimi.id}}">{{i.birimi.Proje_tipi_adi}}</option>
-                                                {% for l in birim_bilgisi %}
-                                                    <option value="{{l.id}}">{{l.Proje_tipi_adi}}</option>
-                                                {% endfor %}
-
-
-                                            </select>
-                                        </div>
-                <div class="form-element">
-                    <label for="date-field">{% trans 'Metraj' %}</label>
-                    <input type="number" step="0.001" value="{{i.metraj|stringformat:'.2f'}}" min="0" name="metraj"
-                        id="date-field" placeholder="{% trans 'Metraj' %}" required />
-                </div>
-                <div class="form-element">
-                    <label for="date-field">{% trans 'Tutar' %}</label>
-                    <input type="number" step="0.001" value="{{i.tutari|stringformat:'.2f'}}" min="0" name="tutar"
-                        id="date-field" placeholder="{% trans 'Tutar' %}" required />
-                </div>
-
-
-
-                <div class="form-actions">
-                    <button class="form-action-secondary" type="button" onclick="closeModal()">{% trans 'Vazgeç'%}</button>
-                    <button class="form-action-primary" type="submit">{% trans 'Güncelle' %}</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 
 

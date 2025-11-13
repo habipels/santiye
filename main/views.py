@@ -1796,10 +1796,10 @@ def santiyeye_kalem_ekle(request):
                     if a.izinler.kalemleri_olusturma:
                         projetipi = request.POST.getlist("projetipi")
                         yetkili_adi = request.POST.get("yetkili_adi")
-                        santiye_agirligi = request.POST.get("katsayisi")
-                        finansal_agirlik = request.POST.get("blogsayisi")
-                        metraj = request.POST.get("metraj")
-                        tutar = request.POST.get("tutar")
+                        santiye_agirligi = 0.5
+                        finansal_agirlik = 0.5
+                        metraj = 0.5
+                        tutar = 0.5
                         birim_bilgisi = request.POST.get("birim_bilgisi")
                         kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
                         id = bloglar.objects.filter(id__in = projetipi).first()
@@ -1810,6 +1810,12 @@ def santiyeye_kalem_ekle(request):
                             santiye_finansal_agirligi = finansal_agirlik,
                             birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
                             tutari = tutar
+                        )
+                        santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                            proje_ait_bilgisi = request.user.kullanicilar_db,
+                            proje_santiye_Ait = id.proje_santiye_Ait,
+                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                            blog_bilgisi = get_object_or_404(bloglar,id =id.id )
                         )
                         if kata_veya_binaya_daihil == "0":
                             blog_lar = bloglar.objects.filter(id__in = projetipi)
@@ -1849,10 +1855,10 @@ def santiyeye_kalem_ekle(request):
             else:
                 projetipi = request.POST.getlist("projetipi")
                 yetkili_adi = request.POST.get("yetkili_adi")
-                santiye_agirligi = request.POST.get("katsayisi")
-                finansal_agirlik = request.POST.get("blogsayisi")
-                metraj = request.POST.get("metraj")
-                tutar = request.POST.get("tutar")
+                santiye_agirligi = 0.5
+                finansal_agirlik = 0.5
+                metraj = 0.5
+                tutar = 0.5
                 birim_bilgisi = request.POST.get("birim_bilgisi")
                 kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
                 id = bloglar.objects.filter(id__in = projetipi).first()
@@ -1864,6 +1870,12 @@ def santiyeye_kalem_ekle(request):
                     birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
                     tutari = tutar
                 )
+                santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                            proje_ait_bilgisi = request.user.kullanicilar_db,
+                            proje_santiye_Ait = id.proje_santiye_Ait,
+                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                            blog_bilgisi = get_object_or_404(bloglar,id =id.id )
+                        )
                 if kata_veya_binaya_daihil == "0":
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
@@ -1897,6 +1909,12 @@ def santiyeye_kalem_ekle(request):
                             )
                         
     return redirect_with_language("main:santiye_projesi_ekle_")
+
+def pursantaj_sayfasi(request,blok_id):
+    content = sozluk_yapisi()
+    content["blok_bilgisi"] = get_object_or_404(bloglar,id = blok_id)
+    content["santiye_kalemleri"] = santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = blok_id)
+    return render(request,"santiye_yonetimi/pursantaj_girme_sayfasi.html",content)
 
 def kalem_sil(request):
     if request.POST:

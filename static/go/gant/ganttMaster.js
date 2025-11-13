@@ -1647,22 +1647,24 @@ function checkChanges() {
   var changes = false;
 
   // Kullanıcı tarafından yapılan son işlem kontrol edilir
-  if (self.__undoStack.length > 0 && self.lastManualStatusChangeId) {
-    var oldProject = JSON.parse(self.__undoStack[0]);
+  // Kullanıcı tarafından yapılan son işlem kontrol edilir
+if (self.__undoStack && self.__undoStack.length > 0 && self.lastManualStatusChangeId) {
+  var oldProject = JSON.parse(self.__undoStack[0]);
 
-    var oldTask = oldProject.tasks.find(t => t.id == self.lastManualStatusChangeId);
-    var newTask = self.tasks.find(t => t.id == self.lastManualStatusChangeId);
+  var oldTask = oldProject.tasks.find(t => t.id == self.lastManualStatusChangeId);
+  var newTask = self.tasks.find(t => t.id == self.lastManualStatusChangeId);
 
-    if (oldTask && newTask) {
-      if (
-        oldTask.status !== newTask.status ||
-        oldTask.start !== newTask.start ||
-        oldTask.end !== newTask.end
-      ) {
-        changes = true;
-      }
+  if (oldTask && newTask) {
+    if (
+      oldTask.status !== newTask.status ||
+      oldTask.start !== newTask.start ||
+      oldTask.end !== newTask.end
+    ) {
+      changes = true;
     }
   }
+}
+
 
   $("#LOG_CHANGES_CONTAINER").css("display", changes ? "inline-block" : "none");
 }

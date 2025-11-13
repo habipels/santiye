@@ -391,9 +391,10 @@ $.splittify = {
 
 
 //<%------------------------------------------------------------------------  UTILITIES ---------------------------------------------------------------%>
-// same dates returns 1
-function getDurationInUnits(start,end){
-  return start.distanceInWorkingDays(end)+1; // working in days
+function getDurationInUnits(start, end) {
+  // hafta sonu dahil toplam gün sayısı
+  var diff = end.getTime() - start.getTime();
+  return Math.round(diff / (1000*60*60*24)) + 1;
 }
 
 //con due date uguali ritorna 0: usata per cancolare la distanza effettiva tra due date
@@ -436,27 +437,18 @@ function computeEnd(end) {
 function computeEndDate(end) {
   var d = new Date(end - 3600000 * 12);
   d.setHours(23, 59, 59, 999);
-  //move to next working day
-  while (isHoliday(d)) {
-    d.setDate(d.getDate() + 1);
-  }
-  d.setHours(23, 59, 59, 999);
+  // Hafta sonlarını atlamayı kaldırıyoruz
+  // while (isHoliday(d)) { d.setDate(d.getDate() + 1); }
   return d;
 }
 
 function computeEndByDuration(start, duration) {
-//console.debug("computeEndByDuration start ",d,duration)
   var d = new Date(start);
-  var q = duration - 1;
-  while (q > 0) {
-    d.setDate(d.getDate() + 1);
-    if (!isHoliday(d))
-      q--;
-  }
+  // duration kadar gün ekle, hafta sonu kontrolü yok
+  d.setDate(d.getDate() + duration - 1);
   d.setHours(23, 59, 59, 999);
   return d.getTime();
 }
-
 
 function incrementDateByWorkingDays(date, days) {
   var d = new Date(date);

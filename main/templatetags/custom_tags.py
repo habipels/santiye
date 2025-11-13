@@ -698,29 +698,93 @@ def kalem_blog(id):
     return mark_safe(bilgiler)
 @register.simple_tag
 def kalem_blog_2(id):
-
-    unique_values = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =id)
-    a = []
-    finansal_yuzde = []
-    fiziksel_yuzde = []
-    toplam_kat = 0
-    for i in unique_values:
-        if i.blog_bilgisi in a:
-            pass
-        else:
-            a.append(i.blog_bilgisi)
-            toplam_kat += i.blog_bilgisi.kat_sayisi
-    for i in a:
-        fiziksel_yuzde.append(round((get_object_or_none(santiye_kalemleri, id = id).santiye_agirligi / toplam_kat*i.kat_sayisi),4))
-        finansal_yuzde.append(round((get_object_or_none(santiye_kalemleri, id = id).santiye_finansal_agirligi / toplam_kat*i.kat_sayisi),4))
-
-    bilgiler = ""
-    z = 0
-    for i in a:
-        #/delbuldingsites/{}/{}
-        bilgiler = bilgiler+ '<a href="#" >{} = Fiziksel yuzde ({}) Finansal yuzde ({})</a>'.format(str(i.blog_adi), fiziksel_yuzde[z],finansal_yuzde[z])+" , "
-        z += 1
-    return mark_safe(bilgiler)
+    try:
+        # Mevcut kalemi bul
+        kalem = get_object_or_404(santiye_kalemleri, id=id)
+        santiye_id = kalem.proje_santiye_Ait.id
+        
+        # Mevcut kalemin dağıtıldığı blokları bul (TEKİL)
+        mevcut_dagilimlar = santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi=kalem).select_related('blog_bilgisi')
+        if not mevcut_dagilimlar:
+            return mark_safe("<span style='color: red;'>Bu kalem hiçbir bloğa dağıtılmamış</span>")
+        
+        # Dağıtılan blokları ve toplam kat sayısını bul (TEKİL)
+        dagitilan_bloklar = []
+        blok_ids = set()
+        toplam_kat = 0
+        
+        for dagilim in mevcut_dagilimlar:
+            if dagilim.blog_bilgisi and dagilim.blog_bilgisi.id not in blok_ids:
+                dagitilan_bloklar.append(dagilim.blog_bilgisi)
+                blok_ids.add(dagilim.blog_bilgisi.id)
+                toplam_kat += dagilim.blog_bilgisi.kat_sayisi
+        
+        if toplam_kat == 0:
+            return mark_safe("<span style='color: red;'>Toplam kat sayısı 0</span>")
+        
+        # Bu şantiyedeki tüm kalemleri al
+        tum_kalemler = santiye_kalemleri.objects.filter(
+            proje_santiye_Ait=santiye_id, 
+            silinme_bilgisi=False
+        )
+        
+        # Her blok için toplamları hesapla
+        blok_toplamlari = {}
+        for blok in dagitilan_bloklar:
+            blok_toplamlari[blok.id] = {
+                'fiziksel_toplam': 0,
+                'finansal_toplam': 0,
+                'blok_adi': blok.blog_adi
+            }
+            
+            # Bu bloğa dağıtılan tüm kalemlerin toplamını hesapla
+            for kalem_item in tum_kalemler:
+                # Bu kalem bu bloğa dağıtılmış mı kontrol et
+                dagitilmis_mi = santiye_kalemlerin_dagilisi.objects.filter(
+                    kalem_bilgisi=kalem_item,
+                    blog_bilgisi=blok
+                ).exists()
+                
+                if dagitilmis_mi:
+                    fiziksel_katki = (kalem_item.santiye_agirligi / toplam_kat * blok.kat_sayisi)
+                    finansal_katki = (kalem_item.santiye_finansal_agirligi / toplam_kat * blok.kat_sayisi)
+                    
+                    blok_toplamlari[blok.id]['fiziksel_toplam'] += fiziksel_katki
+                    blok_toplamlari[blok.id]['finansal_toplam'] += finansal_katki
+        
+        # Mevcut kalemin normalize edilmiş dağılımını hesapla (HER BLOK İÇİN SADECE 1 KEZ)
+        bilgiler = ""
+        for blok in dagitilan_bloklar:
+            if blok.id not in blok_toplamlari:
+                continue
+                
+            blok_toplam = blok_toplamlari[blok.id]
+            
+            # İlk dağılım
+            fiziksel_ilk = (kalem.santiye_agirligi / toplam_kat * blok.kat_sayisi)
+            finansal_ilk = (kalem.santiye_finansal_agirligi / toplam_kat * blok.kat_sayisi)
+            
+            # Normalizasyon (0 bölme hatasından kaçın)
+            fiziksel_normalize = 0
+            finansal_normalize = 0
+            
+            if blok_toplam['fiziksel_toplam'] > 0:
+                fiziksel_normalize = round(fiziksel_ilk * (100 / blok_toplam['fiziksel_toplam']), 4)
+            else:
+                fiziksel_normalize = round(fiziksel_ilk, 4)
+                
+            if blok_toplam['finansal_toplam'] > 0:
+                finansal_normalize = round(finansal_ilk * (100 / blok_toplam['finansal_toplam']), 4)
+            else:
+                finansal_normalize = round(finansal_ilk, 4)
+            
+            # SADECE 1 KEZ EKLE
+            bilgiler += f'<a href="#">{blok.blog_adi} = Fiziksel yuzde ({fiziksel_normalize}) Finansal yuzde ({finansal_normalize})</a> , '
+        
+        return mark_safe(bilgiler.rstrip(' , '))
+        
+    except Exception as e:
+        return mark_safe(f"<span style='color: red;'>Hata: {str(e)}</span>")
 @register.simple_tag
 def calisan_maasi(id):
     maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()

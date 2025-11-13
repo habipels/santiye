@@ -54,9 +54,10 @@ urlpatterns = [#
     #şantiye proje işlemleri
     #
     path("yetkisiz", views.yetkisiz, name="yetkisiz"),
-    #şantiye Kalemleri
+    #şantiye Kalemleri #
     path("buldingsite/<int:id>", views.santtiye_kalemleri, name="santtiye_kalemleri"),
     path("addbuldingsite", views.santiyeye_kalem_ekle, name="santiyeye_kalem_ekle"),
+    path("pursantaj/<int:blok_id>", views.pursantaj_sayfasi, name="pursantaj_sayfasi"),
     path("control/addbuldingsite/<str:hash>", views.santiyeye_kalem_ekle_2, name="santiyeye_kalem_ekle_2"),
     path("adminaddbuldingsite/<int:id>", views.santiye_kalem_ekle_admin, name="santiye_kalem_ekle_admin"),
     path("addbuldingsiteadmin/<int:id>", views.santiye_kalem_ekle_admin, name="santiye_kalem_ekle_admin"),
