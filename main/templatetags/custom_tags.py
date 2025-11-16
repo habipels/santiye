@@ -298,7 +298,7 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri(id,k_b):
         toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
         toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
         try:
-            genel_toplam = ((toplam_yapilan_kalem*(i.santiye_agirligi))/toplam_kalem)+genel_toplam
+            genel_toplam = ((toplam_yapilan_kalem*(get_object_or_none(santiye_kalemleri_blok_verileri,blog_bilgisi_id = id , kalem_bilgisi_id = i.id).blok_agirligi))/toplam_kalem)+genel_toplam
         except:
             genel_toplam = genel_toplam
     return round(genel_toplam,2)
@@ -310,7 +310,7 @@ def bloglar_daireleri_kalemleri_finansal_bilgileri(id,k_b):
         toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
         toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
         try:
-            genel_toplam = ((toplam_yapilan_kalem*(i.santiye_finansal_agirligi))/toplam_kalem)+genel_toplam
+            genel_toplam = ((toplam_yapilan_kalem*(get_object_or_none(santiye_kalemleri_blok_verileri,blog_bilgisi_id = id , kalem_bilgisi_id = i.id).blok_finansal_agirligi))/toplam_kalem)+genel_toplam
         except:
             genel_toplam = genel_toplam
     return round(genel_toplam,2)
@@ -360,13 +360,13 @@ def get_son_bir_hafta_icinde_degisenler(id):
 
     for kalem in degisen_kalemler:
         degisme_gunu = kalem.degistirme_tarihi.date()
-        fiziksel = kalem.kalem_bilgisi.santiye_agirligi
-        finansal = kalem.kalem_bilgisi.santiye_finansal_agirligi
+        fiziksel = get_object_or_none(santiye_kalemleri_blok_verileri, blog_bilgisi_id=id,kalem_bilgisi_id = kalem.kalem_bilgisi.id).blok_agirligi
+        finansal = get_object_or_none(santiye_kalemleri_blok_verileri, blog_bilgisi_id=id,kalem_bilgisi_id = kalem.kalem_bilgisi.id).blok_finansal_agirligi
         kat = kalem.blog_bilgisi.kat_sayisi
 
         sonuc_fiziksel = fiziksel / kat
         sonuc_finansal = finansal / kat
-
+        #print(sonuc_fiziksel,sonuc_finansal)
         gun_gun_kalemler[degisme_gunu].append(kalem)
         gun_gun_kalemlerfiz[degisme_gunu].append(sonuc_fiziksel)
         gun_gun_kalemlerfin[degisme_gunu].append(sonuc_finansal)
@@ -427,8 +427,8 @@ def get_yil_icinde_degisenler(id):
 
     for kalem in degisen_kalemler:
         degisme_ayi = kalem.degistirme_tarihi.strftime("%Y-%m")  # Ay ve yılı belirlemek için
-        fiziksel = kalem.kalem_bilgisi.santiye_agirligi
-        finansal = kalem.kalem_bilgisi.santiye_finansal_agirligi
+        fiziksel = get_object_or_none(santiye_kalemleri_blok_verileri, blog_bilgisi_id=id,kalem_bilgisi_id = kalem.kalem_bilgisi.id).blok_agirligi
+        finansal = get_object_or_none(santiye_kalemleri_blok_verileri, blog_bilgisi_id=id,kalem_bilgisi_id = kalem.kalem_bilgisi.id).blok_finansal_agirligi
         kat = kalem.blog_bilgisi.kat_sayisi
 
         sonuc_fiziksel = fiziksel / kat
@@ -698,8 +698,11 @@ def kalem_blog(id):
     return mark_safe(bilgiler)
 @register.simple_tag
 def kalem_blok_dagilsi_yuzde(id,blok_id):
-    a = get_object_or_404(santiye_kalemleri_blok_verileri,kalem_bilgisi_id = id,blog_bilgisi_id = blok_id  )
-    
+    a = get_object_or_none(santiye_kalemleri_blok_verileri,kalem_bilgisi_id = id,blog_bilgisi_id = blok_id ,kalem_bilgisi__silinme_bilgisi = False)
+    #print(a.blok_agirligi,a.blok_finansal_agirligi)
+    if a == None:
+        return {"fiziksel_yuzde":0,"finansal_yuzde":0}
+    #if  a.blok_agirligi == None or a.blok_finansal_agirligi == None:
     return {"fiziksel_yuzde":a.blok_agirligi,"finansal_yuzde":a.blok_finansal_agirligi}
 @register.simple_tag
 def kalem_blog_2(id):
@@ -793,7 +796,7 @@ def kalem_blog_2(id):
 @register.simple_tag
 def calisan_maasi(id):
     maasli = calisan_maas_durumlari.objects.filter(calisan = get_object_or_none(calisanlar, id = id)).last()
-    print(maasli.para_birimi)
+    #print(maasli.para_birimi)
     return maasli
 @register.simple_tag
 def secililer_yapi_kalem(id):

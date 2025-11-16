@@ -2263,7 +2263,8 @@ chart.render();
                                     <h5>{{ i.yapi }}</h5>
                                     {%  bloglari_rapora_yansitma i.proje_santiye_Ait as blog %}
                                     {% bloglar_daireleri_kalemleri_fiziksel_bilgileri i.id blog.k as fiziksel_ilerlemei  %}
-                                    <div class="blok-ikon" data-id="{{ i.id }}">
+                                    {% bloglar_daireleri_kalemleri_finansal_bilgileri i.id blog.k as finansal_ilerlemei  %}
+                                    <div class="blok-ikon" data-name="{{ i.yapi }}" data-id="{{ i.id }}">
                                         <i class="fas fa-building"></i>
                                     </div>
                                 </div>
@@ -2271,10 +2272,19 @@ chart.render();
                                     <div class="ilerleme-bar-arka">
                                         <div class="ilerleme-bar-on" data-width="{{fiziksel_ilerlemei |safe }}" data-id="{{ i.id }}"></div>
                                     </div>
-                                    <div class="yuzde-gosterge">%{{fiziksel_ilerlemei |safe }}</div>
+                                    <div class="yuzde-gosterge">%{{fiziksel_ilerlemei |safe }} {% trans 'Fiziksel' %}</div>
                                 </div>
                                 <div class="blok-detay">
-                                    <span>{% trans 'Tamamlandı' %}</span>
+                                    <span>{% trans 'Fiziksel' %}</span>
+                                </div>
+                                <div class="ilerleme-container">
+                                    <div class="ilerleme-bar-arka">
+                                        <div class="ilerleme-bar-on" data-width="{{finansal_ilerlemei |safe }}" data-id="{{ i.id}}_finansal "></div>
+                                    </div>
+                                    <div class="yuzde-gosterge">%{{finansal_ilerlemei |safe }} {% trans 'Finansal' %}</div>
+                                </div>
+                                <div class="blok-detay">
+                                    <span>{% trans 'Finansal' %}</span>
                                 </div>
                             </div>
                         {% endfor %}
@@ -2669,7 +2679,8 @@ chart.render();
                                     <h5>{{ i.yapi }}</h5>
                                     {%  bloglari_rapora_yansitma i.proje_santiye_Ait as blog %}
                                     {% bloglar_daireleri_kalemleri_fiziksel_bilgileri i.id blog.k as fiziksel_ilerlemei  %}
-                                    <div class="blok-ikon" data-id="{{ i.id }}">
+                                    {% bloglar_daireleri_kalemleri_finansal_bilgileri i.id blog.k as finansal_ilerlemei  %}
+                                    <div class="blok-ikon" data-name="{{ i.yapi }}" data-id="{{ i.id }}">
                                         <i class="fas fa-building"></i>
                                     </div>
                                 </div>
@@ -2677,10 +2688,19 @@ chart.render();
                                     <div class="ilerleme-bar-arka">
                                         <div class="ilerleme-bar-on" data-width="{{fiziksel_ilerlemei |safe }}" data-id="{{ i.id }}"></div>
                                     </div>
-                                    <div class="yuzde-gosterge">%{{fiziksel_ilerlemei |safe }}</div>
+                                    <div class="yuzde-gosterge">%{{fiziksel_ilerlemei |safe }} {% trans 'Fiziksel' %}</div>
                                 </div>
                                 <div class="blok-detay">
-                                    <span>{% trans 'Tamamlandı' %}</span>
+                                    <span>{% trans 'Fiziksel' %}</span>
+                                </div>
+                                <div class="ilerleme-container">
+                                    <div class="ilerleme-bar-arka">
+                                        <div class="ilerleme-bar-on" data-width="{{finansal_ilerlemei |safe }}" data-id="{{ i.id }}_finansal"></div>
+                                    </div>
+                                    <div class="yuzde-gosterge">%{{finansal_ilerlemei |safe }} {% trans 'Finansal' %}</div>
+                                </div>
+                                <div class="blok-detay">
+                                    <span>{% trans 'Finansal' %}</span>
                                 </div>
                             </div>
                         </div>
@@ -4340,30 +4360,28 @@ createBuilding();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 
 <script>
-// Sayfa yüklendiğinde çalışacak kodlar
 document.addEventListener('DOMContentLoaded', function() {
-    // Rastgele renk oluşturma fonksiyonu
     function getRandomColor() {
         return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
     }
 
-    // Blok ikonlarına ve ilerleme çubuklarına rastgele renk atama
+    // Blok ikonlarına rastgele renk atama
     const blokIkonlar = document.querySelectorAll('.blok-ikon');
     blokIkonlar.forEach(ikon => {
-        const randomColor = getRandomColor(); // Rastgele renk oluştur
-        ikon.style.backgroundColor = randomColor; // İkona rengi uygula
+        const randomColor = getRandomColor();
+        ikon.style.backgroundColor = randomColor;
 
-        // İlgili ilerleme çubuğuna da aynı rengi uygula
         const id = ikon.getAttribute('data-id');
-        const progressBar = document.querySelector(`.ilerleme-bar-on[data-id="${id}"]`);
-        if (progressBar) {
-            progressBar.style.backgroundColor = randomColor;
-        }
+        const fizikselBar = document.querySelector(`.ilerleme-bar-on[data-id="${id}"]`);
+        if (fizikselBar) fizikselBar.style.backgroundColor = randomColor;
+
+        const finansalBar = document.querySelector(`.ilerleme-bar-on[data-id="${id}_finansal"]`);
+        if (finansalBar) finansalBar.style.backgroundColor = '#007bff';
     });
 
     // İlerleme çubuklarını animasyon ile göster
-    const progressBars = document.querySelectorAll('.ilerleme-bar-on');
-    progressBars.forEach(bar => {
+    const allBars = document.querySelectorAll('.ilerleme-bar-on');
+    allBars.forEach(bar => {
         const targetWidth = bar.getAttribute('data-width');
         setTimeout(() => {
             bar.style.width = targetWidth + '%';
@@ -4372,57 +4390,61 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Sayaç animasyonu
     const counters = document.querySelectorAll('.yuzde-gosterge');
-    counters.forEach((counter, index) => {
-        const progressBar = progressBars[index];
-        const targetValue = parseInt(progressBar.getAttribute('data-width'));
-        counter.textContent = '%' + targetValue;
+    counters.forEach(counter => {
+        const bar = counter.previousElementSibling.querySelector('.ilerleme-bar-on');
+        if (bar) counter.textContent = '%' + parseInt(bar.getAttribute('data-width'));
     });
 
-    // Grafik için veriler dinamik olarak alınır
-    const bloklar = Array.from(document.querySelectorAll('.blok-baslik h5')).map(el => el.textContent);
-    const tamamlanmaYuzdeleri = Array.from(document.querySelectorAll('.ilerleme-bar-on')).map(bar => parseInt(bar.getAttribute('data-width')));
-    const colors = Array.from(document.querySelectorAll('.blok-ikon')).map(ikon => ikon.style.backgroundColor); // İkon renklerini al
-    const borderColors = colors.map(color => color); // Kenar renkleri aynı olsun
+    // Doughnut chart için sadece fiziksel barlar
+    const fizikselBars = Array.from(document.querySelectorAll('.ilerleme-bar-on:not([data-id$="_finansal"])'));
+    const labels = fizikselBars.map(bar => {
+        // Blok adını direkt blok-ikon'dan al
+        const id = bar.getAttribute('data-id');
+        const ikon = document.querySelector(`.blok-ikon[data-id="${id}"]`);
+        return ikon ? ikon.getAttribute('data-name') : 'Bilinmiyor';
+    });
+    const data = fizikselBars.map(bar => parseInt(bar.getAttribute('data-width')));
+    const colors = fizikselBars.map(bar => {
+        const id = bar.getAttribute('data-id');
+        const ikon = document.querySelector(`.blok-ikon[data-id="${id}"]`);
+        return ikon ? ikon.style.backgroundColor : '#cccccc';
+    });
 
-    // Doughnut Chart - Pasta Grafik
-    const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
-    const doughnutChart = new Chart(ctxDoughnut, {
-        type: 'doughnut',
-        data: {
-            labels: bloklar,
-            datasets: [{
-                data: tamamlanmaYuzdeleri,
-                backgroundColor: colors,
-                borderColor: borderColors,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-                legend: {
-                    position: 'right',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.label + ': %' + context.raw;
+    const ctx = document.getElementById('doughnutChart');
+    if (ctx) {
+        new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors,
+                    borderColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': %' + context.raw;
+                            }
                         }
                     }
-                },
-                title: {
-                    display: false
-                },
-                animation: {
-                    animateRotate: true,
-                    animateScale: true
                 }
             }
-        }
-    });
+        });
+    }
 });
 </script>
+
+
+
+
 
 {% endblock javascriptcode %}

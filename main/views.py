@@ -2149,7 +2149,14 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     content = sozluk_yapisi()
     content["id"] = get_object_or_404(bloglar,id = id)
     content["blog_id"] = id
-    content["santiye_kalem_baglantisi"]  =santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = id)
+    veri  =santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__silinme_bilgisi = False) 
+    fiziksel_toplam = 0
+    finansal_toplam = 0
+    for i in veri:
+        fiziksel_toplam += i.blok_agirligi
+        finansal_toplam += i.blok_finansal_agirligi
+    content["fiziksel_toplam"] = fiziksel_toplam
+    content["finansal_toplam"] = finansal_toplam
     if request.user.is_authenticated:
         if request.user.is_superuser:
             content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = get_object_or_404(bloglar,id = id).proje_ait_bilgisi)
