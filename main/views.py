@@ -1811,15 +1811,16 @@ def santiyeye_kalem_ekle(request):
                             birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
                             tutari = tutar
                         )
-                        santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
-                            proje_ait_bilgisi = request.user.kullanicilar_db,
-                            proje_santiye_Ait = id.proje_santiye_Ait,
-                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
-                            blog_bilgisi = get_object_or_404(bloglar,id =id.id )
-                        )
+                        
                         if kata_veya_binaya_daihil == "0":
                             blog_lar = bloglar.objects.filter(id__in = projetipi)
                             for i in blog_lar:
+                                santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user.kullanicilar_db,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                                 for j in range(0,int(i.kat_sayisi)):
                                     santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                         proje_ait_bilgisi = request.user.kullanicilar_db,
@@ -1830,6 +1831,12 @@ def santiyeye_kalem_ekle(request):
                         elif kata_veya_binaya_daihil == "1":
                             blog_lar = bloglar.objects.filter(id__in = projetipi)
                             for i in blog_lar:
+                                santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user.kullanicilar_db,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                                 for j in range(0,int(i.kat_sayisi)):
                                     santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                         proje_ait_bilgisi = request.user.kullanicilar_db,
@@ -1841,6 +1848,12 @@ def santiyeye_kalem_ekle(request):
                         elif kata_veya_binaya_daihil == "2":
                             blog_lar = bloglar.objects.filter(id__in = projetipi)
                             for i in blog_lar:
+                                santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user.kullanicilar_db,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                                 for j in range(0,4):
                                     santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                         proje_ait_bilgisi = request.user.kullanicilar_db,
@@ -1870,15 +1883,16 @@ def santiyeye_kalem_ekle(request):
                     birimi = get_object_or_404(birimler,id =birim_bilgisi ),metraj = metraj,
                     tutari = tutar
                 )
-                santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
-                            proje_ait_bilgisi = request.user.kullanicilar_db,
-                            proje_santiye_Ait = id.proje_santiye_Ait,
-                            kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
-                            blog_bilgisi = get_object_or_404(bloglar,id =id.id )
-                        )
+                
                 if kata_veya_binaya_daihil == "0":
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
+                        santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                         for j in range(0,int(i.kat_sayisi)):
                             santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
@@ -1889,6 +1903,12 @@ def santiyeye_kalem_ekle(request):
                 elif kata_veya_binaya_daihil == "1":
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
+                        santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                         for j in range(0,int(i.kat_sayisi)):
                             santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
@@ -1900,6 +1920,12 @@ def santiyeye_kalem_ekle(request):
                 elif kata_veya_binaya_daihil == "2":
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
+                        santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id =kalem.id ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                         for j in range(0,4):
                             santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
@@ -1914,6 +1940,18 @@ def pursantaj_sayfasi(request,blok_id):
     content = sozluk_yapisi()
     content["blok_bilgisi"] = get_object_or_404(bloglar,id = blok_id)
     content["santiye_kalemleri"] = santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = blok_id)
+    kalemlerin_bilgileri = santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = blok_id)
+    if request.POST:
+        for kalem in kalemlerin_bilgileri:
+            try:
+                kalem.blok_agirligi = float(request.POST.get(f"blok_agirligi_{kalem.id}", 0))
+                kalem.blok_finansal_agirligi = float(request.POST.get(f"blok_finansal_agirligi_{kalem.id}", 0))
+                kalem.metraj = float(request.POST.get(f"metraj_{kalem.id}", 0))
+                kalem.tutari = float(request.POST.get(f"tutar_{kalem.id}", 0))
+                kalem.save()
+            except Exception as e:
+                print(f"Kalem {kalem.id} kaydedilirken hata: {e}")
+
     return render(request,"santiye_yonetimi/pursantaj_girme_sayfasi.html",content)
 
 def kalem_sil(request):
@@ -2111,6 +2149,7 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
     content = sozluk_yapisi()
     content["id"] = get_object_or_404(bloglar,id = id)
     content["blog_id"] = id
+    content["santiye_kalem_baglantisi"]  =santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = id)
     if request.user.is_authenticated:
         if request.user.is_superuser:
             content["santiyeler_bilgileri"] = santiye.objects.filter(silinme_bilgisi = False,proje_ait_bilgisi = get_object_or_404(bloglar,id = id).proje_ait_bilgisi)
@@ -2123,16 +2162,8 @@ def blogtan_kaleme_ilerleme_takibi(request,id,slug):
                     kalem_id.append(i.kalem_bilgisi.id)
 
             profile =  santiye_kalemleri.objects.filter(id__in = kalem_id,silinme_bilgisi = False)
-            page_num = request.GET.get('page', 1)
-            paginator = Paginator(profile, 10) # 6 employees per page
-            try:
-                page_obj = paginator.page(page_num)
-            except PageNotAnInteger:
-                # if page is not an integer, deliver the first page
-                page_obj = paginator.page(1)
-            except EmptyPage:
-                # if the page is out of range, deliver the last page
-                page_obj = paginator.page(paginator.num_pages)
+            
+            
             content["santiyeler"] = profile
             content["top"]  = profile
             content["medya"] = page_obj

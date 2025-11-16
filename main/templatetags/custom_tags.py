@@ -697,6 +697,11 @@ def kalem_blog(id):
         bilgiler = bilgiler+ '<a href="#" >{}</a>'.format(str(i.blog_adi))+" , "
     return mark_safe(bilgiler)
 @register.simple_tag
+def kalem_blok_dagilsi_yuzde(id,blok_id):
+    a = get_object_or_404(santiye_kalemleri_blok_verileri,kalem_bilgisi_id = id,blog_bilgisi_id = blok_id  )
+    
+    return {"fiziksel_yuzde":a.blok_agirligi,"finansal_yuzde":a.blok_finansal_agirligi}
+@register.simple_tag
 def kalem_blog_2(id):
     try:
         # Mevcut kalemi bul
