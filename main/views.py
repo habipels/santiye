@@ -1979,13 +1979,14 @@ def kalem_sil(request):
 def santiye_kalemleri_duzenle(request):
     if request.POST:
         buttonId = request.POST.get("buttonId")
+        
         santiye_kalemlerin_dagilisi.objects.filter(kalem_bilgisi__id =buttonId).delete()
         yetkili_adi = request.POST.get("yetkili_adi")
-        santiye_agirligi = request.POST.get("katsayisi")
-        finansal_agirlik = request.POST.get("blogsayisi")
+        santiye_agirligi = 0.5
+        finansal_agirlik = 0.5
         geri_don = request.POST.get("geri_don")
-        metraj = request.POST.get("metraj")
-        tutar = request.POST.get("tutar")
+        metraj = 0.5
+        tutar = 0.5
         birim_bilgisi = request.POST.get("birim_bilgisi")
         kata_veya_binaya_daihil = request.POST.get("kata_veya_binaya_daihil")
         projetipi = request.POST.getlist("projetipi")
@@ -2025,6 +2026,12 @@ def santiye_kalemleri_duzenle(request):
                             if kata_veya_binaya_daihil == "0":
                                 blog_lar = bloglar.objects.filter(id__in = projetipi)
                                 for i in blog_lar:
+                                    santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user.kullanicilar_db,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id = buttonId ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                                     for j in range(0,int(i.kat_sayisi)):
                                         santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                             proje_ait_bilgisi = request.user.kullanicilar_db,
@@ -2035,6 +2042,12 @@ def santiye_kalemleri_duzenle(request):
                             elif kata_veya_binaya_daihil == "1":
                                 blog_lar = bloglar.objects.filter(id__in = projetipi)
                                 for i in blog_lar:
+                                    santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user.kullanicilar_db,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id = buttonId ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                                     for j in range(0,int(i.kat_sayisi)):
                                         santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                             proje_ait_bilgisi = request.user.kullanicilar_db,
@@ -2046,6 +2059,12 @@ def santiye_kalemleri_duzenle(request):
                             elif kata_veya_binaya_daihil == "2":
                                 blog_lar = bloglar.objects.filter(id__in = projetipi)
                                 for i in blog_lar:
+                                    santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user.kullanicilar_db,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id = buttonId ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                                     for j in range(0,4):
                                         santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                             proje_ait_bilgisi = request.user.kullanicilar_db,
@@ -2067,6 +2086,12 @@ def santiye_kalemleri_duzenle(request):
                 if kata_veya_binaya_daihil == "0":
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
+                        santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id = buttonId ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                         for j in range(0,int(i.kat_sayisi)):
                             santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
@@ -2077,6 +2102,12 @@ def santiye_kalemleri_duzenle(request):
                 elif kata_veya_binaya_daihil == "1":
                     blog_lar = bloglar.objects.filter(id__in = projetipi)
                     for i in blog_lar:
+                        santiye_kalemleri_blok_verileri.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
+                                    proje_ait_bilgisi = request.user,
+                                    proje_santiye_Ait = id.proje_santiye_Ait,
+                                    kalem_bilgisi = get_object_or_404(santiye_kalemleri,id = buttonId ),
+                                    blog_bilgisi = get_object_or_404(bloglar,id =i.id )
+                                )
                         for j in range(0,int(i.kat_sayisi)):
                             santiye_kalemlerin_dagilisi.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),
                                 proje_ait_bilgisi = request.user,
