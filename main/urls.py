@@ -201,6 +201,7 @@ urlpatterns = [#
     #yapilacaklar
     # 
     #takvim
+    path("get_bloglar", views.get_bloglar_kalemler, name="get_bloglar_kalemler"),
     path("generalreporttake/<int:rapor_id>", views.rapor_gonder, name="rapor_gonder"),
     path("generalreport", views.genel_rapor_sayfasi, name="genel_rapor_sayfasi"),
     path("control/generalreport/<str:hash>", views.genel_rapor_sayfasi_2, name="genel_rapor_sayfasi_2"),

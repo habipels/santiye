@@ -394,7 +394,7 @@ $.splittify = {
 function getDurationInUnits(start, end) {
   // hafta sonu dahil toplam gün sayısı
   var diff = end.getTime() - start.getTime();
-  return Math.round(diff / (1000*60*60*24)) + 1;
+  return Math.round(diff / (1000*60*60*24)) ;
 }
 
 //con due date uguali ritorna 0: usata per cancolare la distanza effettiva tra due date

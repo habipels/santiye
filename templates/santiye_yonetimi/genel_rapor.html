@@ -564,7 +564,7 @@
                             <th>{% trans 'Kayıp Gün Sayısı' %}</th>
                             <th>{% trans 'Kayıp Gün Açıklaması' %}</th>
                             <th>{% trans 'Şantiye' %}</th>
-                            <th>{% trans 'Proje' %}</th>
+                            <th>{% trans 'Blok Bilgisi' %}</th>
                             <th>{% trans 'Oluşturan' %}</th>
                             <th>{% trans 'Sıcaklık' %}</th>
                             <th>{% trans 'Rüzgar' %}</th>
@@ -588,7 +588,7 @@
                             <td>{{i.proje_santiye_Ait.proje_adi}}
                             
                             </td>
-                            <td>{{i.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
+                            <td>{{i.blok_bilgisi.blog_adi}}</td>
                             <td>{{i.raporu_olusturan.last_name}}</td>
                             <td>{{hava.hava_durumu_sicaklik}}</td>
                             <td>{{hava.hava_durumu_ruzgar}} km/h</td>
@@ -907,6 +907,10 @@
                         <option data-id="{{i.id}}" value="{{i.proje_santiye_Ait.proje_adi}}>>{{i.kalem_adi}}">{{i.proje_santiye_Ait.proje_adi}}>>{{i.kalem_adi}}</option>
                     {% endfor %}
                 </select>
+            </div>
+            <div class="form-element">
+                <label for="calisan-adet">{% trans 'Çalışan Sayısı' %}</label>
+                <input type="number" id="calisan-adet" min="1" class="form-control">
             </div>
             <div class="form-element">
                 <label for="imalat-aciklama">{% trans 'Açıklama' %}</label>
@@ -1371,7 +1375,7 @@
                             <th>{% trans 'Kayıp Gün Sayısı' %}</th>
                             <th>{% trans 'Kayıp Gün Açıklaması' %}</th>
                             <th>{% trans 'Şantiye' %}</th>
-                            <th>{% trans 'Proje' %}</th>
+                            <th>{% trans 'Blok Bilgisi' %}</th>
                             <th>{% trans 'Oluşturan' %}</th>
                             <th>{% trans 'Sıcaklık' %}</th>
                             <th>{% trans 'Rüzgar' %}</th>
@@ -1395,7 +1399,7 @@
                             <td>{{i.proje_santiye_Ait.proje_adi}}
                             
                             </td>
-                            <td>{{i.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</td>
+                            <td>{{i.blok_bilgisi.blog_adi}}</td>
                             <td>{{i.raporu_olusturan.last_name}}</td>
                             <td>{{hava.hava_durumu_sicaklik}}</td>
                             <td>{{hava.hava_durumu_ruzgar}} km/h</td>
@@ -1457,13 +1461,19 @@
                         </div>
                         <div class="form-element">
                             <label for="santiye-secimi">{% trans 'Şantiye Seçimi' %}</label>
-                            <select id="santiye-secimi" required name="santiye" class="styled-select">
+                            <select id="santiye-secimi" id="santiye"  required name="santiye" class="styled-select">
                                 <option value="" disabled selected>{% trans 'Şantiye Seçiniz' %}</option>
                                 {% for i in projeler %}
                                 <option value="{{i.id}}">{{i.proje_adi}}</option>
                                 {% endfor %}
                             </select>
                         </div>
+                        <div class="form-element">
+                        <label for="blok">{% trans "Blok" %}</label>
+                        <select name="blok" id="blok" required>
+                            <option value="" selected disabled>{% trans "Blok Seçiniz" %}</option>
+                        </select>
+                    </div>
 
                         <div id="button-container">
                             <!-- Başlangıç Butonu -->
@@ -1710,10 +1720,12 @@
                 <label for="imalat-secimi">{% trans 'İmalat Seçimi' %}</label>
                 <select id="imalat-secimi" class="styled-select">
                     <option value="" disabled selected>{% trans 'İmalat Kalemi Seçiniz' %}</option>
-                    {% for i in imalat_kalemleri %}
-                        <option data-id="{{i.id}}" value="{{i.proje_santiye_Ait.proje_adi}}>>{{i.kalem_adi}}">{{i.proje_santiye_Ait.proje_adi}}>>{{i.kalem_adi}}</option>
-                    {% endfor %}
+                 
                 </select>
+            </div>
+            <div class="form-element">
+                <label for="calisan-adet">{% trans 'Çalışan Sayısı' %}</label>
+                <input type="number" id="calisan-adet" min="1" class="form-control">
             </div>
             <div class="form-element">
                 <label for="imalat-aciklama">{% trans 'Açıklama' %}</label>
@@ -1850,23 +1862,41 @@
                 list.appendChild(sayisii);
             ekleEleman('malzeme-list', `${malzeme} - ${adet} adet`);
         }
+function ekleImalat() {
+    const imalat = document.getElementById('imalat-secimi').value;
+    const aciklama = document.getElementById('imalat-aciklama').value;
+    const calisan_adet = document.getElementById('calisan-adet').value;
 
-        function ekleImalat() {
-            const imalat = document.getElementById('imalat-secimi').value;
-            const aciklama = document.getElementById('imalat-aciklama').value;
-            const list = document.getElementById("imalat-list");
-                const listItem = document.createElement('input');
-                listItem.hidden = true;
-                listItem.value= document.getElementById('imalat-secimi').options[document.getElementById('imalat-secimi').selectedIndex].getAttribute("data-id");;
-                listItem.name ="imalat"
-                list.appendChild(listItem);
-                const sayisii = document.createElement('input');
-                sayisii.hidden= true;
-                sayisii.value=aciklama;
-                sayisii.name ="aciklama"
-                list.appendChild(sayisii);
-            ekleEleman('imalat-list', `${imalat} - ${aciklama}`);
-        }
+    const selectedOption = document.querySelector('#imalat-secimi option:checked');
+    const imalat_id = selectedOption.dataset.id;
+
+    const list = document.getElementById("imalat-list");
+
+    // ---- İMALAT ID ----
+    const listItem = document.createElement('input');
+    listItem.hidden = true;
+    listItem.value = imalat_id;
+    listItem.name = "imalat";
+    list.appendChild(listItem);
+
+    // ---- AÇIKLAMA ----
+    const aciklamaInput = document.createElement('input');
+    aciklamaInput.hidden = true;
+    aciklamaInput.value = aciklama;
+    aciklamaInput.name = "aciklama";
+    list.appendChild(aciklamaInput);
+
+    // ---- ÇALIŞAN SAYISI ----
+    const calisanInput = document.createElement('input');
+    calisanInput.hidden = true;
+    calisanInput.value = calisan_adet;   // DOĞRU DEĞER
+    calisanInput.name = "calisan_adet";
+    list.appendChild(calisanInput);
+
+    // Ekrana yazdır
+    ekleEleman('imalat-list', `${imalat} - ${aciklama} - ${calisan_adet} kişi`);
+}
+
 
         function ekleGenelDurum() {
             const aciklama = document.getElementById('genel-aciklama').value;
@@ -2122,5 +2152,45 @@
     </script>
 {% endif %}
 
+<script>
+document.getElementById('santiye-secimi').addEventListener('change', function() {
+    const santiyeId = this.value;
 
+    fetch("{% url 'crm:get_bloglar' %}?santiye_id=" + santiyeId)
+        .then(response => response.json())
+        .then(data => {
+            const blokSelect = document.getElementById('blok');
+            blokSelect.innerHTML = '<option value="" selected disabled>Blok Seçiniz</option>';
+
+            data.forEach(blok => {
+                const option = document.createElement('option');
+                option.value = blok.id;
+                option.textContent = blok.blog_adi;
+                blokSelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+});
+</script>
+<script>
+document.getElementById('blok').addEventListener('change', function() {
+    const blokId = this.value;
+
+    fetch("{% url 'main:get_bloglar_kalemler' %}?santiye_id=" + blokId)
+        .then(response => response.json())
+        .then(data => {
+            const blokSelectt = document.getElementById('imalat-secimi');
+            blokSelectt.innerHTML = '<option value="" selected disabled>Kalem Seçiniz</option>';
+
+            data.forEach(blokk => {
+                const option = document.createElement('option');
+                option.setAttribute("data-id", blokk.kalem_bilgisi__id);
+                option.value = blokk.kalem_bilgisi__kalem_adi;
+                option.textContent = blokk.kalem_bilgisi__kalem_adi;
+                blokSelectt.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+});
+</script>
 {% endblock sidebar %}

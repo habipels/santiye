@@ -1939,8 +1939,8 @@ def santiyeye_kalem_ekle(request):
 def pursantaj_sayfasi(request,blok_id):
     content = sozluk_yapisi()
     content["blok_bilgisi"] = get_object_or_404(bloglar,id = blok_id)
-    content["santiye_kalemleri"] = santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = blok_id)
-    kalemlerin_bilgileri = santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = blok_id)
+    content["santiye_kalemleri"] = santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = blok_id,kalem_bilgisi__silinme_bilgisi = False)
+    kalemlerin_bilgileri = santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = blok_id,kalem_bilgisi__silinme_bilgisi = False)
     if request.POST:
         for kalem in kalemlerin_bilgileri:
             try:
@@ -10350,6 +10350,7 @@ def genel_rapor_olustur(request):
     if request.POST:
         rapor_tarihi = request.POST.get("rapor_tarihi")
         secili_santiye = request.POST.get("santiye")
+        secili_blok = request.POST.get("blok")
         depertman = request.POST.getlist("depert")
         personel = request.POST.getlist("depertsayisi")
         hava_durumu_sicaklik = request.POST.getlist("hava_durumu_sicaklik")
@@ -10357,7 +10358,9 @@ def genel_rapor_olustur(request):
         malzeme = request.POST.getlist("malzeme")
         malzemesayisi = request.POST.getlist("malzemesayisi")
         imalat = request.POST.getlist("imalat")
+        calisan_adet = request.POST.getlist("calisan_adet")
         aciklama = request.POST.getlist("aciklama")
+        print(imalat,calisan_adet,aciklama)
         aciklamalar = request.POST.getlist("aciklamalar")
         rapor_bitis_tarihi =request.POST.get("rapor_bitis_tarihi")
         kayipgun = request.POST.get("kayipgun")
@@ -10383,7 +10386,7 @@ def genel_rapor_olustur(request):
             else:
                 kullanici =  request.user
         veri = genel_rapor.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),proje_ait_bilgisi = kullanici,raporu_olusturan = request.user,
-                                   proje_santiye_Ait = get_object_or_none(santiye,id=secili_santiye),
+                                   proje_santiye_Ait = get_object_or_none(santiye,id=secili_santiye),blok_bilgisi = get_object_or_none(bloglar,id=secili_blok),
                                    tarih =rapor_tarihi,bitis_tarih = rapor_bitis_tarihi,kayip_gun_sayisi = float(kayipgun),
                                    kayip_gun_aciklamasi =otherReason , kayip_gun_sebebi = kayipsebebi )
         for i in range(len(depertman)):
@@ -10405,6 +10408,7 @@ def genel_rapor_olustur(request):
             genel_imalat.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
                                           proje_ait_bilgisi = get_object_or_none(genel_rapor,id = veri.id),
                                           imalet_kalemi = get_object_or_none(santiye_kalemleri,id = imalat[i]),
+                                          imalat_calisan_sayisi = float(calisan_adet[i]),
                                           imalat_aciklama = aciklama[i] )
         for i in range(len(aciklamalar)):
             genel_aciklamalar.objects.create(kayit_tarihi=get_kayit_tarihi_from_request(request),hangi_rapor = kullanici,
@@ -11500,7 +11504,7 @@ def rfi_duzenleme(request, id):
     content["rfi_sablonlari"] = rfi_sablon
     content["rfi_kontrolleri"] = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi=rfi_sablon)
     sonuc = rfi_sablon_kalemleri.objects.filter(sablon_bilgisi__id=rfi_sablon.id)
-    print("kontrol",sonuc,rfi_sablon)
+    
     if request.POST:
         # Update the RFI template
         rfi_adi = request.POST.get("rfi_baslik")
@@ -11521,6 +11525,7 @@ def rfi_duzenleme(request, id):
                                                                     sablon_bilgisi=get_object_or_none(rfi_sablonlar, id=id))
         print(request.POST)
         return redirect_with_language("main:rfi_template")
+    content["logosu"] = faturalar_icin_logo.objects.filter(gelir_kime_ait_oldugu =kullanici).last()
     return render(request, "checklist/rfi_duzenleme.html", content)
 
 
@@ -12083,3 +12088,11 @@ def kullanici_verilerini_klonla_view(request, kaynak_kullanici_id, hedef_kullani
         raise
 
     return redirect("admin:index")
+def get_bloglar_kalemler(request):
+    santiye_id = request.GET.get('santiye_id')
+    kalemler_veriler = santiye_kalemleri_blok_verileri.objects.filter(blog_bilgisi__id = santiye_id).values('kalem_bilgisi__id', 'kalem_bilgisi__kalem_adi')
+    if kalemler_veriler:
+       
+        return JsonResponse(list(kalemler_veriler), safe=False)
+
+    return JsonResponse({'error': 'Şantiye bulunamadı'}, status=400)
