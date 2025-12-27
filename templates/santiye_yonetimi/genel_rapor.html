@@ -1333,6 +1333,29 @@
             </div>
 
             <div class="page-actions">
+                    {% with request.GET.general_rapor_aranan as secili_id %}
+<select id="santiyeSec"
+        onchange="var v=this.value; window.location.href=v=='' ? '{% url 'main:genel_rapor_sayfasi' %}' : '{% url 'main:genel_rapor_sayfasi' %}?general_rapor_aranan=' + v;">
+
+    <!-- Seçili olan ilk sırada görünsün -->
+    {% if secili_id %}
+        {% for i in bloklar %}
+            {% if i.id|stringformat:"s" == secili_id %}
+                <option value="{{ i.id }}" selected>{{ i.blog_adi }}</option>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <!-- Sonra tüm seçenekleri normal sırayla listele -->
+    <option value="">{% trans 'Tüm Şantiyeler' %}</option>
+    {% for i in bloklar %}
+        <option value="{{ i.id }}"
+            {% if i.id|stringformat:"s" == secili_id %}style="display:none"{% endif %}>
+            {{ i.blog_adi }}
+        </option>
+    {% endfor %}
+</select>
+{% endwith %}
 
                     <button class="page-primary-btn" onclick="openModal('yeni-gunluk')"><i class="icon icon-new"></i>
                         {% trans 'Yeni Günlük Rapor oluştur' %}
@@ -1361,6 +1384,7 @@
                         </div>
                     </div>
                 <div class="stats-search">
+                    
                     <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
                     <button><i class="icon icon-search"></i></button>
                 </div>

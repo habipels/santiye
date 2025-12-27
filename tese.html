@@ -1,86 +1,249 @@
-<main>
-    <div class="page-header">
-        <div class="page-info">
-            <div class="page-title">
-                <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
-                {% trans 'Hesap Ayarları' %}
-            </div>
-            <ul class="page-breadcrumb">
-                <li><a href="/{{dil}}/">{% trans 'Dashboard' %}</a></li>
-                <li><a href="#" >{% trans 'Süper Admin' %}</a></li>
-                <li><a href="#">{% trans 'Hesap Ayarları' %}</a></li>
-            </ul>
-        </div>
-        <div class="page-actions">
-         <a type="button" class="btn btn-success add-btn" href="/{{dil}}{% url 'main:santiye_ekle' %}"><i class="ri-add-line align-bottom me-1"></i> {% trans 'Hesap ekle' %}</a>
-     </div>
-    </div>
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Grafik Sayfası</title>
 
-    <div class="large-stats-card table-card table-detail-card">
-        <div class="stats-header">
-            <div class="stats-title">{% trans 'Hesaplar' %}</div>
-            <div class="stats-search">
-                <input type="text" name="stats-search" id="stats-search" placeholder="{% trans 'Ara' %}">
-                <button><i class="icon icon-search"></i></button>
-            </div>
-        </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        <div class="table-wrapper">
-            <table id="datatable">
-                <thead>
-                    <tr>
-                         <!-- Gizli ID sütunu -->
-                     <th class="sort" data-sort="customer_name">{% trans 'Firma Adı' %}</th>
-                                                    <th class="sort" data-sort="email">{% trans 'Yetkili Adı Soyadı' %}</th>
-                                                    <th class="sort" data-sort="phone">{% trans 'Email' %}</th>
-                                                    <th class="sort" data-sort="date">{% trans 'Durum' %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                   {% for i in santiyeler %}
-                                                <tr style=  "{% if i.is_superuser %}background-color: red !important;color: white; {% endif %}{% if i.kullanici_silme_bilgisi %}background-color: grey;color: white; {% endif %}">
-                                                    <th scope="row">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
-                                                        </div>
-                                                    </th>
-                                                    <td class="id" style="display:none; "><a href="javascript:void(0);" class="fw-medium link-primary">#VZ2101</a></td>
-                                                    <td class="customer_name">{{i.first_name}}</td>
-                                                    <td class="email">{{i.last_name}}</td>
-                                                    <td class="date">{{i.email}}</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-start">
-                                                        
-                                                            <div class="edit">
-                                                                <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal{{i.id}}">{% trans 'Firmayı Düzenle' %}</button>
-                                                            </div>
-                                                            {% if i.kullanici_silme_bilgisi %}
-                                                            {% else %}
-                                                            <div class="remove" style="margin-left:10px;">
-                                                                <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal{{i.id}}">{% trans 'Firmayı Sil' %}</button>
-                                                            </div>
-                                                            {% endif %}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-            </table>
-            <style>
-                            .dt-buttons {
-                                opacity: 0;
-                                height: 0;
-                                position: fixed;
-                                top: 10000px;
-                                left: 10000px;
-                            } 
-                            </style>
-                            <div class="large-stats-card-footer-actions">
-                                <a onclick="$('.buttons-pdf').click()" class="lsc-footer-action"><i class="icon icon-pdf"></i></a>
-                                <a onclick="$('.buttons-excel').click()" class="lsc-footer-action"><i class="icon icon-xlsx"></i></a>
-                                <a onclick="$('.buttons-print').click()" class="lsc-footer-action"><i class="icon icon-print"></i></a>
-                            </div>
-        </div>
-    </div>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6fa;
+      padding: 30px;
+    }
 
-</main>
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .card {
+      flex: 1;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+
+    .card h2 {
+      text-align:center;
+      margin-bottom: 20px;
+    }
+
+    .scroll-box {
+      padding: 10px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+
+<!-- ================= 1) YAN YANA 2 DONUT ================= -->
+<div class="row">
+  
+  <div class="card">
+    <h2>Donut 1</h2>
+    <canvas id="donut1"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>Donut 2</h2>
+    <canvas id="donut2"></canvas>
+  </div>
+
+</div>
+
+
+<!-- ================= 2) YAN YANA 2 BAR ================= -->
+<div class="row">
+
+  <div class="card">
+    <h2>Bar Grafik 1 (10 kalem)</h2>
+    <canvas id="bar1"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>Bar Grafik 2 (10 kalem)</h2>
+    <canvas id="bar2"></canvas>
+  </div>
+
+</div>
+
+
+<!-- ================= 3) EN ALTA DEV YATAY BAR ================= -->
+<div class="card">
+  <h2>Yatay Bar Grafik (50–200 kalem)</h2>
+  <div class="scroll-box">
+    <canvas id="bigBar"></canvas>
+  </div>
+</div>
+
+
+
+<script>
+/* ============================================================
+        SABİT BOYUTLU DONUT GRAFİK — TEK YERDEN AYAR
+=============================================================== */
+
+const DONUT_SIZE = 300;   // 🔥 Donut boyutunu sadece buradan değiştir
+
+// Canvas boyutlarını uygula
+document.getElementById("donut1").width  = DONUT_SIZE;
+document.getElementById("donut1").height = DONUT_SIZE;
+
+document.getElementById("donut2").width  = DONUT_SIZE;
+document.getElementById("donut2").height = DONUT_SIZE;
+
+
+// 🔥 Donut 1
+function createDonut1(canvasId, completed, remaining) {
+    return new Chart(document.getElementById(canvasId), {
+        type: 'doughnut',
+        data: {
+            labels: ['Tamamlanan', 'Kalan'],
+            datasets: [{
+                data: [completed, remaining],
+                backgroundColor: ['#062941', '#dcdcdc'],   // 🔥 Donut 1 renk
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+}
+
+// 🔥 Donut 2
+function createDonut2(canvasId, completed, remaining) {
+    return new Chart(document.getElementById(canvasId), {
+        type: 'doughnut',
+        data: {
+            labels: ['Tamamlanan', 'Kalan'],
+            datasets: [{
+                data: [completed, remaining],
+                backgroundColor: ['#d9ef33', '#dcdcdc'],   // 🔥 Donut 2 renk
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+}
+
+// Donutları oluştur
+createDonut1("donut1", 70, 30);
+createDonut2("donut2", 40, 60);
+
+
+
+
+/* ============================================================
+                   BAR 1 & BAR 2 (10 kalem)
+=============================================================== */
+let labelsSmall = [];
+let valuesSmall = [];
+
+for (let i = 1; i <= 10; i++) {
+  labelsSmall.push("Kalem " + i);
+  valuesSmall.push(Math.floor(Math.random() * 100));
+}
+
+
+// 🔥 Bar 1 farklı renk
+function createBar1(canvasId) {
+  return new Chart(document.getElementById(canvasId), {
+    type: 'bar',
+    data: {
+      labels: labelsSmall,
+      datasets: [{
+        data: valuesSmall,
+        backgroundColor: '#d9ef33',   // 🔥 Bar 1 renk
+        borderRadius: 6
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true, max: 100 } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+
+// 🔥 Bar 2 farklı renk
+function createBar2(canvasId) {
+  return new Chart(document.getElementById(canvasId), {
+    type: 'bar',
+    data: {
+      labels: labelsSmall,
+      datasets: [{
+        data: valuesSmall,
+        backgroundColor: '#062941',   // 🔥 Bar 2 renk
+        borderRadius: 6
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true, max: 100 } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+
+// Bar grafikleri oluştur
+createBar1('bar1');
+createBar2('bar2');
+
+
+
+/* ============================================================
+       EN ALTTAGİ DEV YATAY BAR — 50–200 KALEM
+=============================================================== */
+
+let labelsBig = [];
+let valuesBig = [];
+
+for (let i = 1; i <= 70; i++) {
+  labelsBig.push("Kalem " + i);
+  valuesBig.push(Math.floor(Math.random() * 100));
+}
+
+new Chart(document.getElementById('bigBar'), {
+  type: 'bar',
+  data: {
+    labels: labelsBig,
+    datasets: [{
+      data: valuesBig,
+      backgroundColor: '#062941',
+      borderRadius: 5,
+      barThickness: 7
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    scales: {
+      y: {
+        ticks: {
+          autoSkip: false,
+          font: { size: 13 }
+        }
+      },
+      x: { beginAtZero: true, max: 100 }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+</script>
+
+</body>
+</html>

@@ -3,6 +3,7 @@
 {% load custom_tags %}
 {% load static %}
 {% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
@@ -177,7 +178,7 @@ table {
         .preview-container {
             max-width: 210mm;
             margin: 0 auto;
-            padding: 20mm;
+            /*padding: 20mm;*/
             background: #fff;
         }
 
@@ -581,8 +582,11 @@ table {
             display: flex;
             flex-direction: column;
             gap: 20px;
-            padding: 20px;
-            min-height: 100%;
+             /* 🔥 TAM KAPLAMA */
+            height: 100%;
+            width: 100%;
+
+            box-sizing: border-box;
         }
 
         .report-row {
@@ -4085,296 +4089,227 @@ createComponent(type) {
             
             break;
 
-        case 'proje-ozeti':
-    component = $(`
-        <div class="report-card" data-size="large" data-type="proje-ozeti">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-clipboard-list"></i>
-                    {% trans 'Proje Özeti' %}
-                </div>
-                <div class="card-actions">
-                    <button class="card-action-btn size-down" title="{% trans 'Küçült' %}">
-                        <i class="icon icon-minus"></i>
-                    </button>
-                    <button class="card-action-btn size-up" title="{% trans 'Büyült' %}">
-                        <i class="icon icon-plus"></i>
-                    </button>
-                    <button class="card-action-btn remove" title="{% trans 'Sil' %}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-            
-                {% for santiye in bloklar %}
-                {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
-                {%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
-                {% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
-                {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
-                {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
-                    {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
-                    {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
-                    {% to_int santiye.kat_sayisi as kat_bilgisi %}
-                    <div class="card-body" id="ilerleme_isleri{{santiye.id}}" style="display:none;">
-                <div id="ilerleme{{santiye.id}}" class="report-charts" style="display: none;">
+      case 'proje-ozeti':
 
-                    <div class="report-card">
-                        <div class="report-header">
-                            <div class="report-title">{% trans 'İlerleme' %}</div>
-                            <div class="report-stats-info">
-                                <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
-                                <span><i class="icon icon-yellow-circle"></i> {% trans 'Finansal' %}</span>
-                            </div>
-                        </div>
+component = $(`
+<style>
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
 
-                        <div class="report-body">
-                            <div id="ilerleme-chart{{santiye.id}}"></div>
+  .card {
+    flex: 1;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+    padding: 15px;
+  }
 
-                        </div>
-                    </div>
-                </div>
-              <div id="ay_ilerleme{{santiye.id}}" class="report-card" >
-                <div class="report-header">
-                    <div class="report-title">{% trans 'İlerleme Tablosu' %}</div>
-                    <div class="report-stats-info">
-                        <span><i class="icon icon-purple-circle"></i> {% trans 'Fiziksel' %} </span>
-                        <span><i class="icon icon-yellow-circle"></i>  {% trans 'Finansal' %}</span>
-                    </div>
-                </div>
-                <div class="report-body">
+  .card h2 {
+    text-align:center;
+    margin-bottom: 20px;
+  }
 
-                    <div id="ilerleme-tablosu-chart{{santiye.id}}"></div>
+  .scroll-box {
+    padding: 10px;
+    border-radius: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+</style>
 
+{% for santiye in bloklar %}
+<h3 style="text-align:center; margin-bottom: 30px;">{{ santiye.blog_adi }}</h3>
+<hr style="margin-bottom: 30px;">
 
-                </div>
-            </div>
-            <div id="genel_ilerleme{{santiye.id}}" class="report-card" >
-                <div class="report-header">
-                    <div class="report-details">
-                        <div class="report-title"><i class="icon icon-yellow-circle"></i>  {{santiye.proje_santiye_Ait.proje_tipi.Proje_tipi_adi}}</div>
-                        <div class="report-infos">
-                            <div class="report-info">{% trans 'Proje Adı:' %}  <b>{{santiye.proje_santiye_Ait.proje_adi}}</b></div>
-                            <div class="report-info">{% trans 'Yapı Adı:' %} <b>{{santiye.blog_adi}}</b></div>
-                        </div>
-                    </div>
-                </div>
+<div class="row">
+  <div class="card">
+    <h2>Donut 1</h2>
+    <canvas class="donut1"
+      data-completed="{{ santiye.tamamlanan }}"
+      data-remaining="{{ santiye.kalan }}">
+    </canvas>
+  </div>
 
-             <div class="report-building-body">
-                <div class="report-bb-preview">
-                        <div class="building-container-report">
-                            <div class="building-report" id="building-report">
-                                <div class="face-report" id="face1"></div>
-                                <div class="face-report" id="face2"></div>
-                                <div class="face-report" id="face3"></div>
-                                <div class="face-report" id="face4"></div>
-                            </div>
-                        </div>
-                </div>
-                <div class="report-bb-chart" >
+  <div class="card">
+    <h2>Donut 2</h2>
+    <canvas class="donut2"
+      data-completed="{{ santiye.is_bitmis }}"
+      data-remaining="{{ santiye.is_kalan }}">
+    </canvas>
+  </div>
+</div>
 
-                    
+<div class="row">
+  <div class="card">
+    <h2>Bar Grafik 1</h2>
+    <canvas class="bar1"
+      data-labels='{{ santiye.bar1_labels|safe }}'
+      data-values='{{ santiye.bar1_values|safe }}'>
+    </canvas>
+  </div>
 
+  <div class="card">
+    <h2>Bar Grafik 2</h2>
+    <canvas class="bar2"
+      data-labels='{{ santiye.bar2_labels|safe }}'
+      data-values='{{ santiye.bar2_values|safe }}'>
+    </canvas>
+  </div>
+</div>
 
-                    <div id="report-bb-chart{{santiye.id}}"></div>
+<div class="card">
+  <h2>Yatay Bar Grafik</h2>
+  <div class="scroll-box">
+    <canvas class="bigBar"
+      data-labels='{{ santiye.big_labels|safe }}'
+      data-values='{{ santiye.big_values|safe }}'>
+    </canvas>
+  </div>
+</div>
 
-                    <div class="report-bb-stats">
-                        <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-green-circle"></i>{% trans 'Tamamlanan' %} </div>
-                            <div class="report-bb-stat-value" id="fiziksel" >%{{fiziksel_ilerlemei |safe }}</div>
-                        </div>
-                        <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-white-circle"></i>{% trans 'Devam Eden' %} </div>
-                            <div class="report-bb-stat-value" id="finansal" >%{% basit_cikarma_duzenli 100 fiziksel_ilerlemei  %} </div>
-                        </div>
-                        
-                        <!-- <div class="report-bb-stat">
-                            <div class="report-bb-stat-title"><i class="icon icon-red-circle"></i> Duran</div>
-                            <div class="report-bb-stat-value">%1</div>
-                        </div>-->
-                    </div>
-                </div>
-            </div>
-        </div>
-        </hr>
-        </div>
-                {% endfor %}
-            
-        </div>
-    `);
+<hr style="margin: 40px 0;">
+{% endfor %}
+`);
 
-    setTimeout(() => {
-        
-        {% for santiye in bloklar %}
-                {% bloglar_daireleri_kalemleri_fiziksel_bilgilerii santiye.id as fiziksel_ilerlemei  %}
-                {%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
-                {% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerleme  %}
-                {% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerleme  %}
-                {% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme santiye.id blog.k as tablo  %}
-                    {% get_son_bir_hafta_icinde_degisenler santiye.id  as gun_kalem_sayilari  %}
-                    {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
-                    {% to_int santiye.kat_sayisi as kat_bilgisi %}
-                    var deger = "{{santiye.proje_santiye_Ait.id}}";
-                   
-                    if (santiye == deger || santiye == "0") {
-                      
-                        
-                    
-                    var roundedData1 = {{ gun_kalem_sayilari.degerler | safe }}.map(x => parseFloat(x.toFixed(2)));
-    var roundedData2 = {{ gun_kalem_sayilari.degerler2 | safe }}.map(x => parseFloat(x.toFixed(2)));
-    var roundedCategories = {{ gun_kalem_sayilari.gunler | safe }};
-    var options = {
-        series: [
-            {
-                name: "{% trans 'Finansal' %} ",
-                data: roundedData2,
-            }, 
-            {
-                name: "{% trans 'Fiziksel' %} ",
-                data: roundedData1
-            }
-        ],
-        chart: {
-            type: 'bar',
-            height: 350,
-            stacked: true,
-            toolbar: {
-                show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        colors: ['#F9B035', '#6149CD'],
-        responsive: [
-            {
-                breakpoint: 480,
-                options: {
-                    legend: {
-                        position: 'bottom',
-                        offsetX: -10,
-                        offsetY: 0
-                    }
-                }
-            }
-        ],
-        plotOptions: {
-            bar: {
-                horizontal: false,
-                borderRadius: 10,
-                borderRadiusApplication: 'end', // 'around', 'end'
-                borderRadiusWhenStacked: 'last', // 'all', 'last'
-                dataLabels: {
-                    total: {
-                        enabled: true,
-                        style: {
-                            fontSize: '13px',
-                            fontWeight: 900
-                        }
-                    }
-                }
-            },
-        },
-        xaxis: {
-            type: 'text',
-            categories: roundedCategories,
-        },
-        legend: {
-            show: false
-        },
-        fill: {
-            opacity: 1
-        },
-        dataLabels: {
-            enabled: true,
-            formatter: function(val) {
-                return val.toFixed(2); // Değerleri 2 basamağa yuvarla
-            }
-        }
-    };
+setTimeout(() => {
 
-    var charts = new ApexCharts(document.querySelector("#ilerleme-chart{{santiye.id}}"), options);
-    charts.render();
-    var optionss = {
-                            series: [{
-                                name: "{% trans 'Finansal' %} ",
-                                data: {{ay_kalem_sayilari.degerler2 |safe}}
-                            }, {
-                                name:"{% trans 'Fiziksel' %} " ,
-                                data:  {{ay_kalem_sayilari.degerler |safe}}
-                            }],
-                            chart: {
-                                height: 350,
-                                type: 'area',
-                                zoom: {
-                                    enabled: false
-                                }
-                            },
-                            dataLabels: {
-                                enabled: false
-                            },
-                            stroke: {
-                                curve: 'smooth'
-                            },
-                            xaxis: {
-                                type: 'category',
-                                categories: {{ay_kalem_sayilari.aylar |safe}}
-                            },
-                            legend: {
-                                show: false
-                            },
-                            colors: ['#F9B035', '#6149CD'],
-                            tooltip: {
-                                x: {
-                                    format: 'MMM'
-                                }
-                            }
-                        };
+const DONUT_SIZE = 200;
 
-                        var charts = new ApexCharts(document.querySelector("#ilerleme-tablosu-chart{{santiye.id}}"), optionss);
-                        charts.render();
-                        var optionsbb = {
-                            series:  [{{fiziksel_ilerlemei |safe }}, {% basit_cikarma_duzenli 100 fiziksel_ilerlemei  %} ],
-                            chart: {
-                                height: 500,
-                                type: 'radialBar',
-                            },
-                            plotOptions: {
-                                radialBar: {
-                                    dataLabels: {
-                                        name: {
-                                            fontSize: '22px',
-                                        },
-                                        value: {
-                                            fontSize: '16px',
-                                        },
-                                        total: {
-                                            show: true,
-                                            label: '{% trans 'Toplam' %}',
-                                            formatter: function (w) {
-                                                return "%100"
-                                            }
-                                        }
-                                    },
+/* ================= DONUT 1 ================= */
+document.querySelectorAll('.donut1').forEach(c => {
 
-                                },
-                            },
-                            labels: ['{% trans 'Tamamlanan' %}', '{% trans 'Devam Eden' %}'],
-                            colors: ['#00A76F', '#DCDCDE']
-                        };
+  const completed = Number(c.dataset.completed);
+  const remaining = Number(c.dataset.remaining);
 
-                        var chartbb = new ApexCharts(document.querySelector("#report-bb-chart{{santiye.id}}"), optionsbb);
-                        chartbb.render();
-                   
-                    document.getElementById('ilerleme_isleri{{santiye.id}}').style.display = "block";
-                }
-                {% endfor %}
+  c.width = DONUT_SIZE;
+  c.height = DONUT_SIZE;
 
-            }, 100);
-            
+  new Chart(c, {
+    type: 'doughnut',
+    data: {
+      labels: ['Tamamlanan', 'Kalan'],
+      datasets: [{
+        data: [completed, remaining],
+        backgroundColor: ['#062941', '#dcdcdc'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: false,
+      cutout: '70%',
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+});
 
- 
+/* ================= DONUT 2 ================= */
+document.querySelectorAll('.donut2').forEach(c => {
 
-            break;
+  const completed = Number(c.dataset.completed);
+  const remaining = Number(c.dataset.remaining);
+
+  c.width = DONUT_SIZE;
+  c.height = DONUT_SIZE;
+
+  new Chart(c, {
+    type: 'doughnut',
+    data: {
+      labels: ['Tamamlanan', 'Kalan'],
+      datasets: [{
+        data: [completed, remaining],
+        backgroundColor: ['#d9ef33', '#dcdcdc'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: false,
+      cutout: '70%',
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+});
+
+/* ================= BAR 1 ================= */
+document.querySelectorAll('.bar1').forEach(c => {
+
+  const labels = JSON.parse(c.dataset.labels);
+  const values = JSON.parse(c.dataset.values);
+
+  new Chart(c, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: '#d9ef33',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true, max: 100 } },
+      plugins: { legend: { display: false } }
+    }
+  });
+});
+
+/* ================= BAR 2 ================= */
+document.querySelectorAll('.bar2').forEach(c => {
+
+  const labels = JSON.parse(c.dataset.labels);
+  const values = JSON.parse(c.dataset.values);
+
+  new Chart(c, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: '#062941',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true, max: 100 } },
+      plugins: { legend: { display: false } }
+    }
+  });
+});
+
+/* ================= BIG YATAY BAR ================= */
+document.querySelectorAll('.bigBar').forEach(c => {
+
+  const labels = JSON.parse(c.dataset.labels);
+  const values = JSON.parse(c.dataset.values);
+
+  new Chart(c, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: '#062941',
+        barThickness: 7,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      scales: {
+        x: { beginAtZero: true, max: 100 },
+        y: { ticks: { autoSkip: false } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+});
+
+}, 100);
+
+break;
+
 
         case 'ilerleme-grafik':
             component = $(`

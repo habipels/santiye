@@ -14,6 +14,34 @@
      {% get_yil_icinde_degisenler santiye.id  as ay_kalem_sayilari  %}
      {% to_int santiye.kat_sayisi as kat_bilgisi %}
     <main>
+    <style>
+@media print {
+    body {
+        zoom: 75%; /* Taşmayı engeller, sağ taraf kaymasını çözer */
+    }
+
+    /* Sayfayı tam ortala */
+    html, body {
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Sayfada görünmesini istemediğin öğeleri gizlemek için: */
+    .sidebar, .navbar, .header , .page-header {
+        display: none !important;
+    }
+    header {
+        display: none !important;
+    }
+
+    /* Tablolar tam sayfaya otursun */
+    table {
+        width: 100% !important;
+    }
+}
+</style>
+
 <style>
 /* Rapor bina görseli başlangıcı */
 
@@ -83,6 +111,8 @@
                 <div class="page-title">
                     <a href="#" onclick="history.back(); return false;"><i class="icon icon-arrow-circle-left"></i></a>
                     {% trans 'Rapor' %} 
+                    <button onclick="tamSayfaPdf()" class="btn btn-danger">{% trans 'PDF Olarak İndir' %}</button>
+
                 </div>
                 <ul class="page-breadcrumb">
                     <li><a href="#">{% trans 'Dashboard' %}</a></li>
@@ -491,5 +521,11 @@ function optionSelectedd(checkbox) {
     createBuilding(array);  // İşlenmiş `array` ile `createBuilding` fonksiyonunu çağır
 }
 </script>
+<script>
+function tamSayfaPdf() {
+    window.print();
+}
+</script>
+
 {% endblock sidebar %}
 
