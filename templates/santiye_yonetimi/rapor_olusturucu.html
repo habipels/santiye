@@ -4121,6 +4121,8 @@ component = $(`
 </style>
 
 {% for santiye in bloklar %}
+{%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id santiye as fiziksel_ilerleme  %}
 <h3 style="text-align:center; margin-bottom: 30px;">{{ santiye.blog_adi }}</h3>
 <hr style="margin-bottom: 30px;">
 
@@ -4128,8 +4130,8 @@ component = $(`
   <div class="card">
     <h2>Donut 1</h2>
     <canvas class="donut1"
-      data-completed="{{ santiye.tamamlanan }}"
-      data-remaining="{{ santiye.kalan }}">
+      data-completed="{{fiziksel_ilerleme |safe }}"
+      data-remaining="{% basit_cikarma_duzenli 100 fiziksel_ilerleme  %}">
     </canvas>
   </div>
 
