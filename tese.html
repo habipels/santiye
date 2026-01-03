@@ -1,249 +1,155 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <title>Grafik Sayfası</title>
+<meta charset="UTF-8">
+<title>Finansal Rapor – Tablo</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{
+    background:#f4f6f9;
+    font-family:Arial, Helvetica, sans-serif;
+    padding:30px;
+}
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #f4f6fa;
-      padding: 30px;
-    }
+.table-wrapper{
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.06);
+    padding:20px;
+    margin-bottom:30px;
+}
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-    }
+h2{
+    margin:0 0 15px;
+    font-size:18px;
+    color:#1f2937;
+}
 
-    .card {
-      flex: 1;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-      margin-bottom: 30px;
-    }
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+}
 
-    .card h2 {
-      text-align:center;
-      margin-bottom: 20px;
-    }
+th{
+    background:#f9fafb;
+    color:#6b7280;
+    font-weight:600;
+    text-align:left;
+    padding:12px;
+    border-bottom:2px solid #e5e7eb;
+}
 
-    .scroll-box {
-      padding: 10px;
-      border-radius: 10px;
-    }
-  </style>
+td{
+    padding:12px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+tr:last-child td{
+    border-bottom:none;
+}
+
+.right{text-align:right;}
+.center{text-align:center;}
+
+.badge{
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+.success{background:#dcfce7;color:#166534}
+.danger{background:#fee2e2;color:#991b1b}
+.info{background:#e0e7ff;color:#1e3a8a}
+</style>
 </head>
+
 <body>
 
-
-<!-- ================= 1) YAN YANA 2 DONUT ================= -->
-<div class="row">
-  
-  <div class="card">
-    <h2>Donut 1</h2>
-    <canvas id="donut1"></canvas>
-  </div>
-
-  <div class="card">
-    <h2>Donut 2</h2>
-    <canvas id="donut2"></canvas>
-  </div>
-
+<!-- BORÇ & ÖDEME TABLOSU -->
+<div class="table-wrapper">
+    <h2>Borç ve Ödeme İzlemesi</h2>
+    <table>
+        <tr>
+            <th>Kalem</th>
+            <th class="right">Tutar ($)</th>
+            <th class="center">Durum</th>
+        </tr>
+        <tr>
+            <td>Toplam Borç</td>
+            <td class="right">1.297.684</td>
+            <td class="center"><span class="badge danger">Borç</span></td>
+        </tr>
+        <tr>
+            <td>Toplam Hakediş</td>
+            <td class="right">1.952.611</td>
+            <td class="center"><span class="badge info">Beklenen</span></td>
+        </tr>
+        <tr>
+            <td>Alınan Ödeme</td>
+            <td class="right">968.125</td>
+            <td class="center"><span class="badge success">Tahsil</span></td>
+        </tr>
+        <tr>
+            <td>Kalan Ödeme</td>
+            <td class="right">984.486</td>
+            <td class="center"><span class="badge danger">Bekliyor</span></td>
+        </tr>
+    </table>
 </div>
 
-
-<!-- ================= 2) YAN YANA 2 BAR ================= -->
-<div class="row">
-
-  <div class="card">
-    <h2>Bar Grafik 1 (10 kalem)</h2>
-    <canvas id="bar1"></canvas>
-  </div>
-
-  <div class="card">
-    <h2>Bar Grafik 2 (10 kalem)</h2>
-    <canvas id="bar2"></canvas>
-  </div>
-
+<!-- GELİR / GİDER TABLOSU -->
+<div class="table-wrapper">
+    <h2>Gelir – Gider Analizi</h2>
+    <table>
+        <tr>
+            <th>Tür</th>
+            <th class="right">Toplam ($)</th>
+            <th class="center">İşlem Sayısı</th>
+            <th class="right">Ort. İşlem</th>
+        </tr>
+        <tr>
+            <td>Gelir</td>
+            <td class="right">1.428.635</td>
+            <td class="center">61</td>
+            <td class="right">23.420</td>
+        </tr>
+        <tr>
+            <td>Gider</td>
+            <td class="right">516.814</td>
+            <td class="center">186</td>
+            <td class="right">7.653</td>
+        </tr>
+        <tr>
+            <td><strong>Net Kar / Zarar</strong></td>
+            <td class="right"><strong>+765.305</strong></td>
+            <td class="center">—</td>
+            <td class="right"><span class="badge success">KAR</span></td>
+        </tr>
+    </table>
 </div>
 
-
-<!-- ================= 3) EN ALTA DEV YATAY BAR ================= -->
-<div class="card">
-  <h2>Yatay Bar Grafik (50–200 kalem)</h2>
-  <div class="scroll-box">
-    <canvas id="bigBar"></canvas>
-  </div>
+<!-- ORANLAR TABLOSU -->
+<div class="table-wrapper">
+    <h2>Finansal Oranlar</h2>
+    <table>
+        <tr>
+            <th>Oran</th>
+            <th class="right">Değer</th>
+            <th class="center">Yorum</th>
+        </tr>
+        <tr>
+            <td>Gelir / Gider Oranı</td>
+            <td class="right">1.00x</td>
+            <td class="center"><span class="badge success">İyi</span></td>
+        </tr>
+        <tr>
+            <td>Borç / Gelir Oranı</td>
+            <td class="right">%90.8</td>
+            <td class="center"><span class="badge danger">Yüksek</span></td>
+        </tr>
+    </table>
 </div>
-
-
-
-<script>
-/* ============================================================
-        SABİT BOYUTLU DONUT GRAFİK — TEK YERDEN AYAR
-=============================================================== */
-
-const DONUT_SIZE = 300;   // 🔥 Donut boyutunu sadece buradan değiştir
-
-// Canvas boyutlarını uygula
-document.getElementById("donut1").width  = DONUT_SIZE;
-document.getElementById("donut1").height = DONUT_SIZE;
-
-document.getElementById("donut2").width  = DONUT_SIZE;
-document.getElementById("donut2").height = DONUT_SIZE;
-
-
-// 🔥 Donut 1
-function createDonut1(canvasId, completed, remaining) {
-    return new Chart(document.getElementById(canvasId), {
-        type: 'doughnut',
-        data: {
-            labels: ['Tamamlanan', 'Kalan'],
-            datasets: [{
-                data: [completed, remaining],
-                backgroundColor: ['#062941', '#dcdcdc'],   // 🔥 Donut 1 renk
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: false,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: { legend: { position: 'bottom' } }
-        }
-    });
-}
-
-// 🔥 Donut 2
-function createDonut2(canvasId, completed, remaining) {
-    return new Chart(document.getElementById(canvasId), {
-        type: 'doughnut',
-        data: {
-            labels: ['Tamamlanan', 'Kalan'],
-            datasets: [{
-                data: [completed, remaining],
-                backgroundColor: ['#d9ef33', '#dcdcdc'],   // 🔥 Donut 2 renk
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: false,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: { legend: { position: 'bottom' } }
-        }
-    });
-}
-
-// Donutları oluştur
-createDonut1("donut1", 70, 30);
-createDonut2("donut2", 40, 60);
-
-
-
-
-/* ============================================================
-                   BAR 1 & BAR 2 (10 kalem)
-=============================================================== */
-let labelsSmall = [];
-let valuesSmall = [];
-
-for (let i = 1; i <= 10; i++) {
-  labelsSmall.push("Kalem " + i);
-  valuesSmall.push(Math.floor(Math.random() * 100));
-}
-
-
-// 🔥 Bar 1 farklı renk
-function createBar1(canvasId) {
-  return new Chart(document.getElementById(canvasId), {
-    type: 'bar',
-    data: {
-      labels: labelsSmall,
-      datasets: [{
-        data: valuesSmall,
-        backgroundColor: '#d9ef33',   // 🔥 Bar 1 renk
-        borderRadius: 6
-      }]
-    },
-    options: {
-      scales: { y: { beginAtZero: true, max: 100 } },
-      plugins: { legend: { display: false } }
-    }
-  });
-}
-
-
-// 🔥 Bar 2 farklı renk
-function createBar2(canvasId) {
-  return new Chart(document.getElementById(canvasId), {
-    type: 'bar',
-    data: {
-      labels: labelsSmall,
-      datasets: [{
-        data: valuesSmall,
-        backgroundColor: '#062941',   // 🔥 Bar 2 renk
-        borderRadius: 6
-      }]
-    },
-    options: {
-      scales: { y: { beginAtZero: true, max: 100 } },
-      plugins: { legend: { display: false } }
-    }
-  });
-}
-
-
-// Bar grafikleri oluştur
-createBar1('bar1');
-createBar2('bar2');
-
-
-
-/* ============================================================
-       EN ALTTAGİ DEV YATAY BAR — 50–200 KALEM
-=============================================================== */
-
-let labelsBig = [];
-let valuesBig = [];
-
-for (let i = 1; i <= 70; i++) {
-  labelsBig.push("Kalem " + i);
-  valuesBig.push(Math.floor(Math.random() * 100));
-}
-
-new Chart(document.getElementById('bigBar'), {
-  type: 'bar',
-  data: {
-    labels: labelsBig,
-    datasets: [{
-      data: valuesBig,
-      backgroundColor: '#062941',
-      borderRadius: 5,
-      barThickness: 7
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    scales: {
-      y: {
-        ticks: {
-          autoSkip: false,
-          font: { size: 13 }
-        }
-      },
-      x: { beginAtZero: true, max: 100 }
-    },
-    plugins: { legend: { display: false } }
-  }
-});
-</script>
 
 </body>
 </html>

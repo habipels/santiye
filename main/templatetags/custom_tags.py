@@ -301,6 +301,7 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri(id,k_b):
             genel_toplam = ((toplam_yapilan_kalem*(get_object_or_none(santiye_kalemleri_blok_verileri,blog_bilgisi_id = id , kalem_bilgisi_id = i.id).blok_agirligi))/toplam_kalem)+genel_toplam
         except:
             genel_toplam = genel_toplam
+    
     return round(genel_toplam,2)
 @register.simple_tag
 def bloglar_daireleri_kalemleri_finansal_bilgileri(id,k_b):
@@ -495,6 +496,194 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme(id,k_b):
         genel_toplam.append({"isim":i.kalem_adi,"id": i.id,"ilerleme1":a,"ilerleme2":b})
 
     return genel_toplam
+
+import json
+
+@register.simple_tag
+def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme_rapor(id, k_b):
+
+    blok_kalemleri = santiye_kalemleri_blok_verileri.objects.filter(
+        blog_bilgisi__id=id,
+        kalem_bilgisi__in=k_b
+    ).order_by('-blok_agirligi')[:10]   # 🔥 AĞIRLIK → İLK 10
+
+    if not blok_kalemleri:
+        return None
+
+    isimler = []
+    degerler = []
+
+    for bk in blok_kalemleri:
+
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id,
+            kalem_bilgisi=bk.kalem_bilgisi
+        ).count()
+
+        if toplam_kalem == 0:
+            continue
+
+        toplam_yapilan = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id,
+            kalem_bilgisi=bk.kalem_bilgisi,
+            tamamlanma_bilgisi=True
+        ).count()
+
+        oran = round((toplam_yapilan / toplam_kalem) * 100)
+
+        isimler.append(bk.kalem_bilgisi.kalem_adi)
+        degerler.append(oran)
+
+    if not isimler:
+        return None
+
+    return {
+        "isimler": json.dumps(isimler),
+        "degerler": json.dumps(degerler)
+    }
+@register.simple_tag
+def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme_rapor_yatay_bar(id, k_b):
+
+    blok_kalemleri = santiye_kalemleri_blok_verileri.objects.filter(
+        blog_bilgisi__id=id
+    ).order_by('-blok_agirligi') # 🔥 AĞIRLIK → İLK 10
+
+    if not blok_kalemleri:
+        return None
+
+    isimler = []
+    degerler = []
+
+    for bk in blok_kalemleri:
+
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id,
+            kalem_bilgisi=bk.kalem_bilgisi
+        ).count()
+
+        if toplam_kalem == 0:
+            continue
+
+        toplam_yapilan = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id,
+            kalem_bilgisi=bk.kalem_bilgisi,
+            tamamlanma_bilgisi=True
+        ).count()
+
+        oran = round((toplam_yapilan / toplam_kalem) * 100)
+
+        isimler.append(bk.kalem_bilgisi.kalem_adi)
+        degerler.append(oran)
+
+    if not isimler:
+        return None
+
+    return {
+        "isimler": json.dumps(isimler),
+        "degerler": json.dumps(degerler)
+    }
+
+
+from django.db.models import Sum
+
+
+@register.simple_tag
+def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme_rapor_yatay_bar(id, k_b):
+
+    # 🔥 BLOK AĞIRLIĞINA GÖRE KALEMLER (TEKİL + TOPLAM AĞIRLIK)
+    blok_kalemleri = (
+        santiye_kalemleri_blok_verileri.objects
+        .filter(blog_bilgisi__id=id)
+        .values(
+            'kalem_bilgisi__id',
+            'kalem_bilgisi__kalem_adi'
+        )
+        .annotate(toplam_agirlik=Sum('blok_agirligi'))
+        .order_by('-toplam_agirlik')[:10]   # 🔥 İLK 10
+    )
+
+    if not blok_kalemleri:
+        return None
+
+    isimler = []
+    degerler = []
+
+    for bk in blok_kalemleri:
+        kalem_id = bk['kalem_bilgisi__id']
+
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id,
+            kalem_bilgisi__id=kalem_id
+        ).count()
+
+        if toplam_kalem == 0:
+            continue
+
+        toplam_yapilan = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id,
+            kalem_bilgisi__id=kalem_id,
+            tamamlanma_bilgisi=True
+        ).count()
+
+        oran = round((toplam_yapilan / toplam_kalem) * 100)
+
+        isimler.append(bk['kalem_bilgisi__kalem_adi'])
+        degerler.append(oran)
+
+    if not isimler:
+        return None
+
+    return {
+        "isimler": json.dumps(isimler),
+        "degerler": json.dumps(degerler)
+    }
+
+@register.simple_tag
+def bloglar_daireleri_kalemleri_finansal_bilgileri_toplama_gonderme_rapor_f(id, k_b):
+
+    # 🔥 Finansal ağırlığa göre sırala – ilk 10
+    blok_kalemleri = santiye_kalemleri_blok_verileri.objects.filter(
+        blog_bilgisi__id=id,
+        kalem_bilgisi__in=k_b
+    ).order_by('-blok_finansal_agirligi')[:10]
+
+    if not blok_kalemleri:
+        return None
+
+    isimler = []
+    degerler = []
+
+    for bk in blok_kalemleri:
+
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id,
+            kalem_bilgisi=bk.kalem_bilgisi
+        ).count()
+
+        if toplam_kalem == 0:
+            continue
+
+        toplam_yapilan = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id,
+            kalem_bilgisi=bk.kalem_bilgisi,
+            tamamlanma_bilgisi=True
+        ).count()
+
+        # 🔥 Finansal yüzde hesabı
+        oran = round((toplam_yapilan / toplam_kalem) * 100)
+
+        isimler.append(bk.kalem_bilgisi.kalem_adi)
+        degerler.append(oran)
+
+    if not isimler:
+        return None
+
+    return {
+        "isimler": json.dumps(isimler),
+        "degerler": json.dumps(degerler)
+    }
+
+
 @register.simple_tag
 def days_until(bitis_tarihi):
     from django.utils import timezone

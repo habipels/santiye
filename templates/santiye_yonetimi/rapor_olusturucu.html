@@ -4121,43 +4121,48 @@ component = $(`
 </style>
 
 {% for santiye in bloklar %}
-{%  bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
-{% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id santiye as fiziksel_ilerleme  %}
-<h3 style="text-align:center; margin-bottom: 30px;">{{ santiye.blog_adi }}</h3>
-<hr style="margin-bottom: 30px;">
+{% bloglari_rapora_yansitma santiye.proje_santiye_Ait as blog %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri santiye.id blog.k as fiziksel_ilerlemei %}
+{% bloglar_daireleri_kalemleri_finansal_bilgileri santiye.id blog.k as finansal_ilerlemei %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme_rapor santiye.id blog.k as tablo %}
+{% bloglar_daireleri_kalemleri_finansal_bilgileri_toplama_gonderme_rapor_f santiye.id blog.k as tablo2 %}
+{% bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme_rapor_yatay_bar santiye.id blog.k as bigbar %}
+
+<h3 style="text-align:center; margin-bottom:30px;">{{ santiye.blog_adi }}</h3>
+<hr style="margin-bottom:30px;">
 
 <div class="row">
   <div class="card">
-    <h2>Donut 1</h2>
+    <h2>{{ santiye.blog_adi }} Fiziksel</h2>
     <canvas class="donut1"
-      data-completed="{{fiziksel_ilerleme |safe }}"
-      data-remaining="{% basit_cikarma_duzenli 100 fiziksel_ilerleme  %}">
+      data-completed="{{ fiziksel_ilerlemei|safe }}"
+      data-remaining="{% basit_cikarma_duzenli 100 fiziksel_ilerlemei %}">
     </canvas>
   </div>
 
   <div class="card">
-    <h2>Donut 2</h2>
+    <h2>{{ santiye.blog_adi }} Finansal</h2>
     <canvas class="donut2"
-      data-completed="{{ santiye.is_bitmis }}"
-      data-remaining="{{ santiye.is_kalan }}">
+      data-completed="{{ finansal_ilerlemei|safe }}"
+      data-remaining="{% basit_cikarma_duzenli 100 finansal_ilerlemei %}">
     </canvas>
   </div>
 </div>
 
 <div class="row">
   <div class="card">
-    <h2>Bar Grafik 1</h2>
+    <h2>Fiziksel İlk 10 Kalem</h2>
     <canvas class="bar1"
-      data-labels='{{ santiye.bar1_labels|safe }}'
-      data-values='{{ santiye.bar1_values|safe }}'>
+      data-labels='{{ tablo.isimler|safe }}'
+      data-values='{{ tablo.degerler|safe }}'>
     </canvas>
   </div>
 
   <div class="card">
-    <h2>Bar Grafik 2</h2>
+    <h2>Finansal İlk 10 Kalem</h2>
     <canvas class="bar2"
-      data-labels='{{ santiye.bar2_labels|safe }}'
-      data-values='{{ santiye.bar2_values|safe }}'>
+      data-labels='{{ tablo2.isimler|safe }}'
+      data-values='{{ tablo2.degerler|safe }}'>
     </canvas>
   </div>
 </div>
@@ -4166,147 +4171,95 @@ component = $(`
   <h2>Yatay Bar Grafik</h2>
   <div class="scroll-box">
     <canvas class="bigBar"
-      data-labels='{{ santiye.big_labels|safe }}'
-      data-values='{{ santiye.big_values|safe }}'>
+     data-labels='{{ bigbar.isimler|safe }}'
+  data-values='{{ bigbar.degerler|safe }}'>
     </canvas>
   </div>
 </div>
 
-<hr style="margin: 40px 0;">
+<hr style="margin:40px 0;">
 {% endfor %}
 `);
 
 setTimeout(() => {
 
-const DONUT_SIZE = 200;
+  const DONUT_SIZE = 200;
 
-/* ================= DONUT 1 ================= */
-document.querySelectorAll('.donut1').forEach(c => {
+  /* ===== DONUT GENEL ===== */
+  function drawDonut(selector, color) {
+    document.querySelectorAll(selector).forEach(c => {
 
-  const completed = Number(c.dataset.completed);
-  const remaining = Number(c.dataset.remaining);
+      const completed = Number(c.dataset.completed || 0);
+      const remaining = Number(c.dataset.remaining || 0);
 
-  c.width = DONUT_SIZE;
-  c.height = DONUT_SIZE;
+      c.width = DONUT_SIZE;
+      c.height = DONUT_SIZE;
 
-  new Chart(c, {
-    type: 'doughnut',
-    data: {
-      labels: ['Tamamlanan', 'Kalan'],
-      datasets: [{
-        data: [completed, remaining],
-        backgroundColor: ['#062941', '#dcdcdc'],
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: false,
-      cutout: '70%',
-      plugins: { legend: { position: 'bottom' } }
-    }
-  });
-});
+      new Chart(c, {
+        type: 'doughnut',
+        data: {
+          labels: ['Tamamlanan', 'Kalan'],
+          datasets: [{
+            data: [completed, remaining],
+            backgroundColor: [color, '#dcdcdc'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: false,
+          cutout: '70%',
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    });
+  }
 
-/* ================= DONUT 2 ================= */
-document.querySelectorAll('.donut2').forEach(c => {
+  drawDonut('.donut1', '#062941');
+  drawDonut('.donut2', '#d9ef33');
 
-  const completed = Number(c.dataset.completed);
-  const remaining = Number(c.dataset.remaining);
+  /* ===== BAR GÜVENLİ ===== */
+  function drawBar(selector, color, horizontal=false) {
 
-  c.width = DONUT_SIZE;
-  c.height = DONUT_SIZE;
+    document.querySelectorAll(selector).forEach(c => {
 
-  new Chart(c, {
-    type: 'doughnut',
-    data: {
-      labels: ['Tamamlanan', 'Kalan'],
-      datasets: [{
-        data: [completed, remaining],
-        backgroundColor: ['#d9ef33', '#dcdcdc'],
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: false,
-      cutout: '70%',
-      plugins: { legend: { position: 'bottom' } }
-    }
-  });
-});
+      if (!c.dataset.labels || !c.dataset.values) return;
 
-/* ================= BAR 1 ================= */
-document.querySelectorAll('.bar1').forEach(c => {
+      let labels, values;
+      try {
+        labels = JSON.parse(c.dataset.labels);
+        values = JSON.parse(c.dataset.values);
+      } catch {
+        return;
+      }
 
-  const labels = JSON.parse(c.dataset.labels);
-  const values = JSON.parse(c.dataset.values);
+      if (!labels.length || !values.length) return;
 
-  new Chart(c, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: '#d9ef33',
-        borderRadius: 6
-      }]
-    },
-    options: {
-      scales: { y: { beginAtZero: true, max: 100 } },
-      plugins: { legend: { display: false } }
-    }
-  });
-});
+      new Chart(c, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: color,
+            borderRadius: 6,
+            barThickness: horizontal ? 7 : undefined
+          }]
+        },
+        options: {
+          indexAxis: horizontal ? 'y' : 'x',
+          scales: {
+            x: { beginAtZero: true, max: 100 },
+            y: { beginAtZero: true, max: 100, ticks: { autoSkip: false } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    });
+  }
 
-/* ================= BAR 2 ================= */
-document.querySelectorAll('.bar2').forEach(c => {
-
-  const labels = JSON.parse(c.dataset.labels);
-  const values = JSON.parse(c.dataset.values);
-
-  new Chart(c, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: '#062941',
-        borderRadius: 6
-      }]
-    },
-    options: {
-      scales: { y: { beginAtZero: true, max: 100 } },
-      plugins: { legend: { display: false } }
-    }
-  });
-});
-
-/* ================= BIG YATAY BAR ================= */
-document.querySelectorAll('.bigBar').forEach(c => {
-
-  const labels = JSON.parse(c.dataset.labels);
-  const values = JSON.parse(c.dataset.values);
-
-  new Chart(c, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: '#062941',
-        barThickness: 7,
-        borderRadius: 5
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      scales: {
-        x: { beginAtZero: true, max: 100 },
-        y: { ticks: { autoSkip: false } }
-      },
-      plugins: { legend: { display: false } }
-    }
-  });
-});
+  drawBar('.bar1', '#d9ef33');
+  drawBar('.bar2', '#062941');
+  drawBar('.bigBar', '#062941', true);
 
 }, 100);
 
