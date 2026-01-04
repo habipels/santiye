@@ -2,153 +2,348 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Finansal Rapor – Tablo</title>
-
+<title>Finans Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body{
-    background:#f4f6f9;
-    font-family:Arial, Helvetica, sans-serif;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#ffffff;
+}
+
+/* Ortak başlık */
+.yatay-bar{
+    width:100%;
+    background:#052940;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:12px 0;
+}
+.yatay-bar span{
+    color:#daf225;
+    font-size:24px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+.alt-cizgi{
+    width:100%;
+    height:10px;
+    background:#052940;
+}
+
+/* Kartlar */
+.kartlar{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
     padding:30px;
 }
-
-.table-wrapper{
-    background:#fff;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,.06);
-    padding:20px;
-    margin-bottom:30px;
+.kart{
+    background:#e0e0e0;
+    height:140px;
+    border-radius:8px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.3s;
 }
-
-h2{
-    margin:0 0 15px;
+.kart:hover{
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+.kart-icerik{
+    text-align:center;
+}
+.baslik{
     font-size:18px;
-    color:#1f2937;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+.sayi{
+    font-size:28px;
+    font-weight:bold;
 }
 
-table{
+/* Donut alan */
+.donut-alan{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+    padding:40px;
+    text-align:center;
+}
+.donut-kutu{
+    background:#f5f5f5;
+    padding:25px;
+    border-radius:12px;
+}
+.donut{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    margin:0 auto 15px;
+    position:relative;
+}
+.donut::after{
+    content:"";
+    width:90px;
+    height:90px;
+    background:#fff;
+    border-radius:50%;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+}
+
+/* Donut renkleri (SENİN DEDİĞİN GİBİ) */
+.gelir-gider{
+    background:conic-gradient(#ffc107 0 50.1%, #db3445 50.1% 100%);
+}
+.net-durum{
+    background:conic-gradient(#ffc107 0 50%, #32a648 50% 100%);
+}
+.borc-gelir{
+    background:conic-gradient(#cfcfcf 0 9.2%, #ffc107 9.2% 100%);
+}
+
+.donut-baslik{ font-weight:bold; }
+.donut-deger{ font-size:18px; font-weight:bold; }
+.legend{ font-size:14px; margin-top:6px; }
+
+.alt-bar{
+    width:140px;
+    height:10px;
+    background:#d0d0d0;
+    margin:10px auto 0;
+    border-radius:5px;
+}
+.alt-cizgi{
     width:100%;
-    border-collapse:collapse;
-    font-size:14px;
+    height:10px;
+    background:#052940;
 }
 
-th{
-    background:#f9fafb;
-    color:#6b7280;
-    font-weight:600;
-    text-align:left;
-    padding:12px;
-    border-bottom:2px solid #e5e7eb;
+/* grafik alan */
+.grafik-kutu{
+    padding:30px 40px 50px;
+    }
+/* Responsive */
+@media(max-width:1024px){
+    .kartlar{ grid-template-columns:repeat(2,1fr); }
+    .donut-alan{ grid-template-columns:1fr; }
 }
-
-td{
-    padding:12px;
-    border-bottom:1px solid #e5e7eb;
+@media(max-width:600px){
+    .kartlar{ grid-template-columns:1fr; }
 }
-
-tr:last-child td{
-    border-bottom:none;
-}
-
-.right{text-align:right;}
-.center{text-align:center;}
-
-.badge{
-    padding:4px 10px;
-    border-radius:20px;
-    font-size:12px;
-    font-weight:600;
-}
-.success{background:#dcfce7;color:#166534}
-.danger{background:#fee2e2;color:#991b1b}
-.info{background:#e0e7ff;color:#1e3a8a}
 </style>
 </head>
 
 <body>
 
-<!-- BORÇ & ÖDEME TABLOSU -->
-<div class="table-wrapper">
-    <h2>Borç ve Ödeme İzlemesi</h2>
-    <table>
-        <tr>
-            <th>Kalem</th>
-            <th class="right">Tutar ($)</th>
-            <th class="center">Durum</th>
-        </tr>
-        <tr>
-            <td>Toplam Borç</td>
-            <td class="right">1.297.684</td>
-            <td class="center"><span class="badge danger">Borç</span></td>
-        </tr>
-        <tr>
-            <td>Toplam Hakediş</td>
-            <td class="right">1.952.611</td>
-            <td class="center"><span class="badge info">Beklenen</span></td>
-        </tr>
-        <tr>
-            <td>Alınan Ödeme</td>
-            <td class="right">968.125</td>
-            <td class="center"><span class="badge success">Tahsil</span></td>
-        </tr>
-        <tr>
-            <td>Kalan Ödeme</td>
-            <td class="right">984.486</td>
-            <td class="center"><span class="badge danger">Bekliyor</span></td>
-        </tr>
-    </table>
+<!-- BORÇ VE ÖDEME -->
+<div class="yatay-bar"><span>BORC VE ODEME IZLEMESI</span></div>
+<div class="alt-cizgi"></div>
+
+<div class="kartlar">
+    <div class="kart"><div class="kart-icerik" style="color:#db3445"><div class="baslik">TOPLAM BORÇ</div><div class="sayi">₺ 1.250.000</div></div></div>
+    <div class="kart"><div class="kart-icerik" style="color:#ffc107"><div class="baslik">HAKEDİŞ</div><div class="sayi">₺ 850.000</div></div></div>
+    <div class="kart"><div class="kart-icerik" style="color:#32a648"><div class="baslik">ALINAN ÖDEME</div><div class="sayi">₺ 420.000</div></div></div>
+    <div class="kart"><div class="kart-icerik" style="color:#052940"><div class="baslik">KALAN ÖDEME</div><div class="sayi">₺ 830.000</div></div></div>
 </div>
 
-<!-- GELİR / GİDER TABLOSU -->
-<div class="table-wrapper">
-    <h2>Gelir – Gider Analizi</h2>
-    <table>
-        <tr>
-            <th>Tür</th>
-            <th class="right">Toplam ($)</th>
-            <th class="center">İşlem Sayısı</th>
-            <th class="right">Ort. İşlem</th>
-        </tr>
-        <tr>
-            <td>Gelir</td>
-            <td class="right">1.428.635</td>
-            <td class="center">61</td>
-            <td class="right">23.420</td>
-        </tr>
-        <tr>
-            <td>Gider</td>
-            <td class="right">516.814</td>
-            <td class="center">186</td>
-            <td class="right">7.653</td>
-        </tr>
-        <tr>
-            <td><strong>Net Kar / Zarar</strong></td>
-            <td class="right"><strong>+765.305</strong></td>
-            <td class="center">—</td>
-            <td class="right"><span class="badge success">KAR</span></td>
-        </tr>
-    </table>
+<!-- ANA FINANSAL GÖSTERGELER (ESKİ DOĞRU HAL) -->
+<div class="yatay-bar"><span>ANA FINANSAL GOSTERGELER</span></div>
+<div class="alt-cizgi"></div>
+
+<div class="kartlar">
+    <div class="kart"><div class="kart-icerik" style="color:#32a648"><div class="baslik">TOPLAM GELİR</div><div class="sayi">₺ 2.300.000</div></div></div>
+    <div class="kart"><div class="kart-icerik" style="color:#db3445"><div class="baslik">TOPLAM GİDER</div><div class="sayi">₺ 1.950.000</div></div></div>
+    <div class="kart"><div class="kart-icerik" style="color:#32a648"><div class="baslik">NET KAR / ZARAR</div><div class="sayi">₺ 350.000</div></div></div>
+    <div class="kart"><div class="kart-icerik" style="color:#db3445"><div class="baslik">BORÇ ORANI</div><div class="sayi">% 62</div></div></div>
 </div>
 
-<!-- ORANLAR TABLOSU -->
-<div class="table-wrapper">
-    <h2>Finansal Oranlar</h2>
-    <table>
-        <tr>
-            <th>Oran</th>
-            <th class="right">Değer</th>
-            <th class="center">Yorum</th>
-        </tr>
-        <tr>
-            <td>Gelir / Gider Oranı</td>
-            <td class="right">1.00x</td>
-            <td class="center"><span class="badge success">İyi</span></td>
-        </tr>
-        <tr>
-            <td>Borç / Gelir Oranı</td>
-            <td class="right">%90.8</td>
-            <td class="center"><span class="badge danger">Yüksek</span></td>
-        </tr>
-    </table>
+<!-- GELİR GİDER ANALİZİ -->
+<div class="yatay-bar"><span>GELIR GIDER ANALIZI</span></div>
+<div class="alt-cizgi"></div>
+
+<div class="donut-alan">
+    <div class="donut-kutu">
+        <div class="donut gelir-gider"></div>
+        <div class="donut-baslik">Gelir / Gider Oranı</div>
+        <div class="donut-deger">% 50.1 Gelir</div>
+        <div class="legend">🟡 Gelir | 🔴 Gider</div>
+        <div class="alt-bar"></div>
+    </div>
+
+    <div class="donut-kutu">
+        <div class="donut net-durum"></div>
+        <div class="donut-baslik">Net Durum</div>
+        <div class="donut-deger">KAR</div>
+        <div class="legend">🟡 Nötr | 🟢 Kar</div>
+        <div class="alt-bar"></div>
+    </div>
+
+    <div class="donut-kutu">
+        <div class="donut borc-gelir"></div>
+        <div class="donut-baslik">Borç / Gelir Oranı</div>
+        <div class="donut-deger">% 90.8</div>
+        <div class="legend">⚪ Gelir | 🟡 Borç</div>
+        <div class="alt-bar"></div>
+    </div>
+</div>
+<!-- AYLIK NET KAR TRENDI -->
+<div class="yatay-bar"><span>AYLIK NET KAR TRENDI</span></div>
+<div class="alt-cizgi"></div>
+
+<style>
+.trend-alan{
+    padding:30px 40px 50px;
+}
+.trend-tablo{
+    width:100%;
+    border-collapse:collapse;
+}
+.trend-tablo th{
+    text-align:left;
+    padding:12px;
+    background:#f0f0f0;
+    font-size:16px;
+}
+.trend-tablo td{
+    padding:14px 12px;
+    vertical-align:middle;
+    font-size:15px;
+}
+.trend-bar{
+    height:18px;
+    border-radius:6px;
+    background:#ddd;
+    overflow:hidden;
+}
+.trend-fill{
+    height:100%;
+    border-radius:6px;
+}
+.netkar{ background:#32a648; width:65%; }
+.gelir{ background:#ffc107; width:85%; }
+.gider{ background:#db3445; width:72%; }
+
+.trend-deger{
+    font-weight:bold;
+    white-space:nowrap;
+}
+</style>
+
+<!-- AYLIK NET KAR TRENDI -->
+<div class="yatay-bar">
+    <span>AYLIK NET KAR TRENDİ</span>
+</div>
+<div class="alt-cizgi"></div>
+
+<div class="grafik-kutu">
+    <canvas id="finansGrafik" height="120"></canvas>
+</div>
+
+<script>
+const ctx = document.getElementById('finansGrafik');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [
+            "01.03","10.03","27.03","30.04","06.05","12.05","14.05",
+            "22.05","04.06","15.06","03.07","08.07","16.07","22.07",
+            "04.08","11.08","27.08","03.09","08.09","18.09","27.09",
+            "09.10","01.11","06.11","12.11"
+        ],
+        datasets: [
+            {
+                label: "Net Kar",
+                data: [
+                    0,2000,-3000,1500,0,40000,-10000,
+                    5000,-20000,30000,10000,15000,-5000,20000,
+                    30000,15000,20000,25000,35000,-20000,20000,
+                    150000,10000,5000,-20000
+                ],
+                borderColor: "#ffc107",
+                backgroundColor: "transparent",
+                tension: 0.4
+            },
+            {
+                label: "Gider",
+                data: [
+                    10000,5000,7000,6000,8000,50000,20000,
+                    15000,25000,30000,20000,22000,18000,30000,
+                    40000,25000,30000,35000,70000,20000,30000,
+                    320000,15000,20000,10000
+                ],
+                borderColor: "#db3445",
+                backgroundColor: "transparent",
+                tension: 0.4
+            },
+            {
+                label: "Gelir",
+                data: [
+                    0,7000,9000,8000,10000,75000,25000,
+                    20000,45000,35000,40000,30000,25000,50000,
+                    60000,45000,50000,55000,80000,0,40000,
+                    310000,35000,45000,20000
+                ],
+                borderColor: "#3b82f6",
+                backgroundColor: "transparent",
+                tension: 0.4
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+                labels:{
+                    boxWidth:15,
+                    font:{ size:14 }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: false,
+                grid: {
+                    color: "#ddd"
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+</script>
+<!-- EKSTRA DONUTLAR -->
+<div class="yatay-bar"><span>EKSTRA FINANSAL GOSTERGELER</span></div>
+<div class="alt-cizgi"></div>
+
+<div class="donut-alan">
+    <div class="donut-kutu">
+        <div class="donut" style="background:conic-gradient(#32a648 0 60%, #db3445 60% 100%)"></div>
+        <div class="donut-baslik">Nakit Akışı</div>
+        <div class="donut-deger">% 60 Pozitif</div>
+        <div class="legend">🟢 Pozitif | 🔴 Negatif</div>
+        <div class="alt-bar"></div>
+    </div>
+
+    <div class="donut-kutu">
+        <div class="donut" style="background:conic-gradient(#ffc107 0 70%, #3b82f6 70% 100%)"></div>
+        <div class="donut-baslik">Yatırım Getirisi</div>
+        <div class="donut-deger">% 70 Getiri</div>
+        <div class="legend">🟡 Getiri | 🔵 Kayıp</div>
+        <div class="alt-bar"></div>
+    </div>
 </div>
 
 </body>

@@ -586,7 +586,126 @@ def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme_rapor_yatay_
 
 from django.db.models import Sum
 
+@register.simple_tag
+def rapor_olusturucu_rapor_bilgileri_finansal(id):
+    tum_gider = 0
+    tum_gelir = 0
+    net_kar_zarar = 0
+    borc_orani = 0
+    toplam_borc = 0
+    hakedis = 0
+    alinan_odemeler = 0
+    kalan_odemeler = 0
+    gelirin_gidere_orani = 0
+    giderin_net_kara_orani = 0
+    borcun_gelire_orani = 0
+    a = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=id,silinme_bilgisi=False,kalan_tutar__gt=0)
+    b = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=id,silinme_bilgisi=False,kalan_tutar__gt=0)
+    for i in a:
+        toplam_borc = toplam_borc + i.kalan_tutar
+    for j in b:
+        hakedis = hakedis - j.kalan_tutar+ j.toplam_tutar 
 
+    b = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=id,silinme_bilgisi=False,kalan_tutar__gte=0)
+    for j in b:
+        alinan_odemeler = alinan_odemeler + j.toplam_tutar - j.kalan_tutar
+        kalan_odemeler = kalan_odemeler + j.kalan_tutar
+    try:
+        borc_orani = (toplam_borc / hakedis) * 100
+    except:
+        borc_orani = 0
+    
+    ##----------------------------------------------
+    a = Gider_Bilgisi.objects.filter(gelir_kime_ait_oldugu=id,silinme_bilgisi=False)
+    b = Gelir_Bilgisi.objects.filter(gelir_kime_ait_oldugu=id,silinme_bilgisi=False)
+    for i in a:
+        tum_gider = tum_gider + i.toplam_tutar
+    for j in b:
+        tum_gelir = tum_gelir + j.toplam_tutar
+    net_kar_zarar = tum_gelir - tum_gider
+   
+    gelirin_gidere_orani = round((tum_gelir/tum_gider)*100,2)
+    giderin_net_kara_orani = round((tum_gider/net_kar_zarar)*100,2)
+    borcun_gelire_orani = round((toplam_borc/tum_gelir)*100,2)
+    tum_gider = fiyat_duzelt(tum_gider)
+    tum_gelir = fiyat_duzelt(tum_gelir)
+    net_kar_zarar = fiyat_duzelt(net_kar_zarar)
+    borc_orani = round(borc_orani,2)
+    alinan_odemeler = fiyat_duzelt(alinan_odemeler)    
+    toplam_borc = fiyat_duzelt(toplam_borc)
+    hakedis = fiyat_duzelt(hakedis)
+    kalan_odemeler = fiyat_duzelt(kalan_odemeler)
+    #----------------------------------------------
+    today = datetime.today()
+    aylar = []
+    gelirler = []
+    giderler = []
+    net_karlar = []  # 👈 SADECE BU EKLENDİ
+
+    month_names = {
+        1: _("Ocak"),
+        2: _("Şubat"),
+        3: _("Mart"),
+        4: _("Nisan"),
+        5: _("Mayıs"),
+        6: _("Haziran"),
+        7: _("Temmuz"),
+        8: _("Ağustos"),
+        9: _("Eylül"),
+        10: _("Ekim"),
+        11: _("Kasım"),
+        12: _("Aralık")
+    }
+
+    for i in range(12):
+        start_of_month = (today - relativedelta(months=i)).replace(day=1)
+        end_of_month = (start_of_month + relativedelta(months=1)) - relativedelta(days=1)
+
+        if True:
+            total_gelir = Gelir_odemesi.objects.filter(
+                tarihi__gte=start_of_month,
+                tarihi__lte=end_of_month,
+                silinme_bilgisi=False
+            ).aggregate(total=Sum('tutar'))['total'] or 0
+
+            total_gider = Gider_odemesi.objects.filter(
+                tarihi__gte=start_of_month,
+                tarihi__lte=end_of_month,
+                silinme_bilgisi=False
+            ).aggregate(total=Sum('tutar'))['total'] or 0
+        else:
+            total_gelir = Gelir_odemesi.objects.filter(
+                tarihi__gte=start_of_month,
+                tarihi__lte=end_of_month,
+                gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=bilgi,
+                silinme_bilgisi=False
+            ).aggregate(total=Sum('tutar'))['total'] or 0
+
+            total_gider = Gider_odemesi.objects.filter(
+                tarihi__gte=start_of_month,
+                tarihi__lte=end_of_month,
+                gelir_kime_ait_oldugu__gelir_kime_ait_oldugu=bilgi,
+                silinme_bilgisi=False
+            ).aggregate(total=Sum('tutar'))['total'] or 0
+
+        gelirler.append(round(total_gelir, 2))
+        giderler.append(round(total_gider, 2))
+        net_karlar.append(round(total_gelir - total_gider, 2))  # 👈 NET KAR
+
+        aylar.append(f"{month_names[start_of_month.month]} {start_of_month.year}")
+
+    aylar.reverse()
+    gelirler.reverse()
+    giderler.reverse()
+    net_karlar.reverse()
+    return{"toplam_borc":toplam_borc,"hakedis":hakedis,"alinan_odemeler":alinan_odemeler,
+           "kalan_odemeler":kalan_odemeler,"net_kar_zarar":net_kar_zarar,"borc_orani":borc_orani,
+           "tum_gider":tum_gider,"tum_gelir":tum_gelir,"gelirin_gidere_orani":gelirin_gidere_orani,
+           "giderin_net_kara_orani":giderin_net_kara_orani,"borcun_gelire_orani":borcun_gelire_orani,
+             "aylar": json.dumps(aylar, ensure_ascii=False),
+    "gelir": json.dumps(gelirler),
+    "gider": json.dumps(giderler),
+    "net_kar": json.dumps(net_karlar)}
 @register.simple_tag
 def bloglar_daireleri_kalemleri_fiziksel_bilgileri_toplama_gonderme_rapor_yatay_bar(id, k_b):
 

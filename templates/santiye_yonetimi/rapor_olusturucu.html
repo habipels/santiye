@@ -2377,6 +2377,15 @@ table {
                                     <div class="component-desc">{% trans 'Aylık gelir ve gider karşılaştırması' %}</div>
                                 </div>
                             </div>
+                            <div class="component-item" data-type="gelir-gider-detay">
+                                <div class="component-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="component-info">
+                                    <div class="component-name">{% trans 'Gelir/Gider Analizi Detaylı' %}</div>
+                                   
+                                </div>
+                            </div>
                             <div class="component-item" data-type="kasa-durumu">
                                 <div class="component-icon">
                                     <i class="fas fa-wallet"></i>
@@ -3695,9 +3704,334 @@ createComponent(type) {
             
             // ... rest of the component code ...
             break;
+        case 'gelir-gider-detay':
+    component = $(`
+     <style>
+.trend-alan{
+    padding:30px 40px 50px;
+}
+.trend-tablo{
+    width:100%;
+    border-collapse:collapse;
+}
+.trend-tablo th{
+    text-align:left;
+    padding:12px;
+    background:#f0f0f0;
+    font-size:16px;
+}
+.trend-tablo td{
+    padding:14px 12px;
+    vertical-align:middle;
+    font-size:15px;
+}
+.trend-bar{
+    height:18px;
+    border-radius:6px;
+    background:#ddd;
+    overflow:hidden;
+}
+.trend-fill{
+    height:100%;
+    border-radius:6px;
+}
+.netkar{ background:#32a648; width:65%; }
+.gelir{ background:#ffc107; width:85%; }
+.gider{ background:#db3445; width:72%; }
 
+.trend-deger{
+    font-weight:bold;
+    white-space:nowrap;
+}
+</style><style>
+
+
+/* Ortak başlık */
+.yatay-bar{
+    width:100%;
+    background:#052940;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:12px 0;
+}
+.yatay-bar span{
+    color:#daf225;
+    font-size:24px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+.alt-cizgi{
+    width:100%;
+    height:10px;
+    background:#052940;
+}
+
+/* Kartlar */
+.kartlar{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    padding:30px;
+}
+.kart{
+    background:#e0e0e0;
+    height:140px;
+    border-radius:8px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.3s;
+}
+.kart:hover{
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+.kart-icerik{
+    text-align:center;
+}
+.baslik{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+.sayi{
+    font-size:28px;
+    font-weight:bold;
+}
+
+/* Donut alan */
+.donut-alan{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+    padding:40px;
+    text-align:center;
+}
+.donut-kutu{
+    background:#f5f5f5;
+    padding:25px;
+    border-radius:12px;
+}
+.donut{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    margin:0 auto 15px;
+    position:relative;
+}
+.donut::after{
+    content:"";
+    width:90px;
+    height:90px;
+    background:#fff;
+    border-radius:50%;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+}
+
+/* Donut renkleri (SENİN DEDİĞİN GİBİ) */
+.gelir-gider{
+    background:conic-gradient(#ffc107 0 50.1%, #db3445 50.1% 100%);
+}
+.net-durum{
+    background:conic-gradient(#ffc107 0 50%, #32a648 50% 100%);
+}
+.borc-gelir{
+    background:conic-gradient(#cfcfcf 0 9.2%, #ffc107 9.2% 100%);
+}
+
+.donut-baslik{ font-weight:bold; }
+.donut-deger{ font-size:18px; font-weight:bold; }
+.legend{ font-size:14px; margin-top:6px; }
+
+.alt-bar{
+    width:140px;
+    height:10px;
+    background:#d0d0d0;
+    margin:10px auto 0;
+    border-radius:5px;
+}
+.alt-cizgi{
+    width:100%;
+    height:10px;
+    background:#052940;
+}
+
+/* grafik alan */
+.grafik-kutu{
+    padding:30px 40px 50px;
+    }
+/* Responsive */
+@media(max-width:1024px){
+    .kartlar{ grid-template-columns:repeat(2,1fr); }
+    .donut-alan{ grid-template-columns:1fr; }
+}
+@media(max-width:600px){
+    .kartlar{ grid-template-columns:1fr; }
+}
+</style>
+        <div class="report-card" data-size="medium">
+            <div class="card-body">
+                {% if request.user.kullanicilar_db %}
+                {% rapor_olusturucu_rapor_bilgileri_finansal request.user.kullanicilar_db as finasn_bilgisi %}
+                {% else %}
+                {% rapor_olusturucu_rapor_bilgileri_finansal request.user as finasn_bilgisi %}
+                {% endif %}
+                <!-- BORÇ VE ÖDEME -->
+                <div class="yatay-bar"><span>{% trans "BORC VE ODEME IZLEMESI" %}</span></div>
+                <div class="alt-cizgi"></div>
+
+                <div class="kartlar">
+                    <div class="kart"><div class="kart-icerik" style="color:#db3445"><div class="baslik">{% trans "TOPLAM BORÇ" %}</div><div class="sayi">{{finasn_bilgisi.toplam_borc}} $</div></div></div>
+                    <div class="kart"><div class="kart-icerik" style="color:#ffc107"><div class="baslik">{% trans "HAKEDİŞ" %}</div><div class="sayi">{{finasn_bilgisi.hakedis}} $</div></div></div>
+                    <div class="kart"><div class="kart-icerik" style="color:#32a648"><div class="baslik">{% trans "ALINAN ÖDEME" %}</div><div class="sayi">{{finasn_bilgisi.alinan_odemeler}} $</div></div></div>
+                    <div class="kart"><div class="kart-icerik" style="color:#052940"><div class="baslik">{% trans "KALAN ÖDEME" %}</div><div class="sayi">{{finasn_bilgisi.kalan_odemeler}} $</div></div></div>
+                </div>
+
+                <!-- ANA FINANSAL GÖSTERGELER -->
+                <div class="yatay-bar"><span>{% trans "ANA FINANSAL GOSTERGELER" %}</span></div>
+                <div class="alt-cizgi"></div>
+
+                <div class="kartlar">
+                    <div class="kart"><div class="kart-icerik" style="color:#32a648"><div class="baslik">{% trans "TOPLAM GELİR" %}</div><div class="sayi">₺ {{finasn_bilgisi.tum_gelir}}</div></div></div>
+                    <div class="kart"><div class="kart-icerik" style="color:#db3445"><div class="baslik">{% trans "TOPLAM GİDER" %}</div><div class="sayi">₺ {{finasn_bilgisi.tum_gider}}</div></div></div>
+                    <div class="kart"><div class="kart-icerik" style="color:#32a648"><div class="baslik">{% trans "NET KAR / ZARAR" %}</div><div class="sayi">₺ {{finasn_bilgisi.net_kar_zarar}}</div></div></div>
+                    <div class="kart"><div class="kart-icerik" style="color:#db3445"><div class="baslik">{% trans "BORÇ ORANI" %}</div><div class="sayi">% {{finasn_bilgisi.borc_orani}}</div></div></div>
+                </div>
+
+                <!-- GELİR GİDER ANALİZİ -->
+                <div class="yatay-bar"><span>{% trans "GELIR GIDER ANALIZI" %}</span></div>
+                <div class="alt-cizgi"></div>
+
+                <div class="donut-alan">
+                    <div class="donut-kutu">
+                        <div class="donut gelir-gider"></div>
+                        <div class="donut-baslik">{% trans "Gelir / Gider Oranı" %}</div>
+                        <div class="donut-deger">% {{finasn_bilgisi.gelirin_gidere_orani}} Gelir</div>
+                        <div class="legend">🟡 {% trans "Gelir" %} | 🔴 {% trans "Gider" %}</div>
+                        <div class="alt-bar"></div>
+                    </div>
+
+                    <div class="donut-kutu">
+                        <div class="donut net-durum"></div>
+                        <div class="donut-baslik">{% trans "Net Durum" %}</div>
+                        <div class="donut-deger">{{finasn_bilgisi.net_durum}}</div>
+                        <div class="legend">🟡 {% trans "Nötr" %} | 🟢 {% trans "Kar" %}</div>
+                        <div class="alt-bar"></div>
+                    </div>
+
+                    <div class="donut-kutu">
+                        <div class="donut borc-gelir"></div>
+                        <div class="donut-baslik">{% trans "Borç / Gelir Oranı" %}</div>
+                        <div class="donut-deger">% {{finasn_bilgisi.borcun_gelire_orani}}</div>
+                        <div class="legend">⚪ {% trans "Gelir" %} | 🟡 {% trans "Borç" %}</div>
+                        <div class="alt-bar"></div>
+                    </div>
+                </div>
+
+                <!-- AYLIK NET KAR TRENDI -->
+                <div class="yatay-bar"><span>{% trans "AYLIK NET KAR TRENDİ" %}</span></div>
+                <div class="alt-cizgi"></div>
+
+                <div class="grafik-kutu">
+                    <canvas
+    id="finansGrafik"
+  class="finansLine"
+  height="120"
+  data-labels='{{ finasn_bilgisi.aylar|safe }}'
+  data-gelir='{{ finasn_bilgisi.gelir|safe }}'
+  data-gider='{{ finasn_bilgisi.gider|safe }}'
+  data-netkar='{{ finasn_bilgisi.net_kar|safe }}'>
+</canvas>
+                </div>
+
+               
+
+            </div>
+            <div class="resize-handle resize-handle-e"></div>
+            <div class="resize-handle resize-handle-s"></div>
+            <div class="resize-handle resize-handle-se"></div>
+        </div>
+    `);
+
+   setTimeout(() => {
+
+  document.querySelectorAll('.finansLine').forEach(c => {
+
+    if (!c.dataset.labels) return;
+
+    let labels, gelir, gider, netkar;
+
+    try {
+      labels = JSON.parse(c.dataset.labels);
+      gelir  = JSON.parse(c.dataset.gelir);
+      gider  = JSON.parse(c.dataset.gider);
+      netkar = JSON.parse(c.dataset.netkar);
+    } catch (e) {
+      console.error("Dataset JSON hatası", e);
+      return;
+    }
+
+    if (!labels.length) return;
+
+    new Chart(c, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Net Kar",
+            data: netkar,
+            borderColor: "#32a648",
+            backgroundColor: "transparent",
+            tension: 0.4
+          },
+          {
+            label: "Gider",
+            data: gider,
+            borderColor: "#db3445",
+            backgroundColor: "transparent",
+            tension: 0.4
+          },
+          {
+            label: "Gelir",
+            data: gelir,
+            borderColor: "#ffc107",
+            backgroundColor: "transparent",
+            tension: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { boxWidth: 14 }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            grid: { color: "#ddd" }
+          },
+          x: {
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+  });
+
+}, 100);
+        break;
         case 'kasa-durumu':
             component = $(`
+           
                 <div class="report-card" data-size="small">
                     <div class="card-header">
                         <div class="card-title">
