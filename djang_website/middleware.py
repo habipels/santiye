@@ -18,31 +18,37 @@ class ExcludeFirebaseSWMiddlewareControlMiddelware:
         self.status_url = getattr(settings, 'BLOCKER_URL', None)
 
     def __call__(self, request):
-        print("GitHubStatusControlMiddleware tetiklendi")
+
+        # ✅ STATİK / MEDIA / ADMIN BYPASS
+        if (
+            request.path.startswith('/static/') or
+            request.path.startswith('/media/') or
+            request.path.startswith('/uploads/') or
+            request.path.startswith('/admin/')
+        ):
+            return self.get_response(request)
+
         if not self.status_url:
-            print("BLOCKER_URL ayarlı değil, middleware geçiliyor")
             return self.get_response(request)
 
         try:
-            # Cache önlemek için zaman parametresi ekleyebiliriz
-            import time
-            url = f"{self.status_url}?t={int(time.time())}"
-            response = requests.get(url, timeout=3)
-            durum = response.text.strip().lower()
-            print(f"Durum dosyasından gelen: '{durum}'")
+            response = requests.get(self.status_url, timeout=3)
+            data = response.json()
+            durum = str(data.get("status", "")).lower()
 
             if durum != "aktif":
-                print("Sistem pasif, isteği engelliyorum")
                 return JsonResponse({
                     "success": False,
-                    "detail": "Sistem şu anda pasif. Lütfen daha sonra tekrar deneyiniz."
+                    "detail": data.get(
+                        "hata_mesajı",
+                        "Sistem şu anda pasif."
+                    )
                 }, status=503)
 
-        except Exception as e:
-            print(f"Middleware hata: {e}")
+        except Exception:
             return JsonResponse({
                 "success": False,
-                "detail": "Durum kontrol edilemedi. Lütfen yöneticinizle görüşün."
+                "detail": "Durum kontrol edilemedi."
             }, status=503)
 
         return self.get_response(request)

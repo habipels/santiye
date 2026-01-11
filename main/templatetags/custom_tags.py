@@ -291,18 +291,39 @@ def bloglar_daireleri_kalemleri_finansal(id):
     yuzde = (toplam_yapilan_kalem*100)/toplam_kalem
     return round(yuzde,2)
 @register.simple_tag
-def bloglar_daireleri_kalemleri_fiziksel_bilgileri(id,k_b):
+def bloglar_daireleri_kalemleri_fiziksel_bilgileri(id, k_b):
     genel_toplam = 0
+
     for i in k_b:
-        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,kalem_bilgisi__id = i.id).count()
-        toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = True,kalem_bilgisi__id = i.id).count()
-        toplam_yapilmayan_kalem = santiye_kalemlerin_dagilisi.objects.filter(blog_bilgisi__id = id,tamamlanma_bilgisi = False,kalem_bilgisi__id = i.id).count()
-        try:
-            genel_toplam = ((toplam_yapilan_kalem*(get_object_or_none(santiye_kalemleri_blok_verileri,blog_bilgisi_id = id , kalem_bilgisi_id = i.id).blok_agirligi))/toplam_kalem)+genel_toplam
-        except:
-            genel_toplam = genel_toplam
-    
-    return round(genel_toplam,2)
+        toplam_kalem = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id, kalem_bilgisi__id=i.id
+        ).count()
+
+        if toplam_kalem == 0:
+            continue  # Bölme hatasını önlemek için
+
+        toplam_yapilan_kalem = santiye_kalemlerin_dagilisi.objects.filter(
+            blog_bilgisi__id=id, tamamlanma_bilgisi=True, kalem_bilgisi__id=i.id
+        ).count()
+
+        # Blok kaydını güvenli şekilde al veya oluştur
+        blok = get_object_or_none(
+            santiye_kalemleri_blok_verileri,
+            blog_bilgisi_id=id,
+            kalem_bilgisi_id=i.id
+        )
+        if not blok:
+            blok = santiye_kalemleri_blok_verileri.objects.create(
+                blog_bilgisi_id=id,
+                kalem_bilgisi_id=i.id,
+                blok_agirligi=0,
+                blok_finansal_agirligi=0
+            )
+
+        genel_toplam += (toplam_yapilan_kalem * blok.blok_agirligi) / toplam_kalem
+
+    return round(genel_toplam, 2)
+
 @register.simple_tag
 def bloglar_daireleri_kalemleri_finansal_bilgileri(id,k_b):
     genel_toplam = 0
